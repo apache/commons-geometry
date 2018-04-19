@@ -59,7 +59,7 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-numbers-fraction</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-rng-client-api</artifactId>

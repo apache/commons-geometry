@@ -42,7 +42,7 @@
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
   </properties>
-  
+
   <build>
     <plugins>
       <!-- Make the core test utilities accessible to other projects. -->
