@@ -19,15 +19,12 @@ package org.apache.commons.geometry.core.partitioning;
 import java.util.Formatter;
 import java.util.Locale;
 
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.Point;
 
 /** Dumping visitor.
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-public abstract class TreeDumper<S extends Space> implements BSPTreeVisitor<S> {
+public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P> {
     /** Builder for the string representation of the dumped tree. */
     private final StringBuilder dump;
 
@@ -66,17 +63,17 @@ public abstract class TreeDumper<S extends Space> implements BSPTreeVisitor<S> {
     /** Format a string representation of the hyperplane underlying a cut sub-hyperplane.
      * @param hyperplane hyperplane to format
      */
-    protected abstract void formatHyperplane(Hyperplane<S> hyperplane);
+    protected abstract void formatHyperplane(Hyperplane<P> hyperplane);
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<S> node) {
+    public Order visitOrder(final BSPTree<P> node) {
         return Order.SUB_MINUS_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<S> node) {
+    public void visitInternalNode(final BSPTree<P> node) {
         formatter.format("%s %s internal ", prefix, type(node));
         formatHyperplane(node.getCut().getHyperplane());
         formatter.format("%n");
@@ -85,10 +82,10 @@ public abstract class TreeDumper<S extends Space> implements BSPTreeVisitor<S> {
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<S> node) {
+    public void visitLeafNode(final BSPTree<P> node) {
         formatter.format("%s %s leaf %s%n",
                          prefix, type(node), node.getAttribute());
-        for (BSPTree<S> n = node;
+        for (BSPTree<P> n = node;
              n.getParent() != null && n == n.getParent().getPlus();
              n = n.getParent()) {
             prefix = prefix.substring(0, prefix.length() - 2);
@@ -100,7 +97,7 @@ public abstract class TreeDumper<S extends Space> implements BSPTreeVisitor<S> {
      * @return "plus " or "minus" depending on the node being the plus or minus
      * child of its parent ("plus " is arbitrarily returned for the root node)
      */
-    private String type(final BSPTree<S> node) {
+    private String type(final BSPTree<P> node) {
         return (node.getParent() != null && node == node.getParent().getMinus()) ? "minus" : "plus ";
     }
 }

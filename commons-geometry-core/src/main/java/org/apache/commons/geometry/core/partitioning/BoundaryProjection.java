@@ -17,22 +17,24 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** Class holding the result of point projection on region boundary.
+ *
  * <p>This class is a simple placeholder, it does not provide any
  * processing methods.</p>
+ *
  * <p>Instances of this class are guaranteed to be immutable</p>
- * @param <S> Type of the space.
+ *
+ * @param <P> Point type defining the space
  * @see AbstractRegion#projectToBoundary(Point)
  */
-public class BoundaryProjection<S extends Space> {
+public class BoundaryProjection<P extends Point<P>> {
 
     /** Original point. */
-    private final Point<S> original;
+    private final P original;
 
     /** Projected point. */
-    private final Point<S> projected;
+    private final P projected;
 
     /** Offset of the point with respect to the boundary it is projected on. */
     private final double offset;
@@ -42,7 +44,7 @@ public class BoundaryProjection<S extends Space> {
      * @param projected projected point
      * @param offset offset of the point with respect to the boundary it is projected on
      */
-    public BoundaryProjection(final Point<S> original, final Point<S> projected, final double offset) {
+    public BoundaryProjection(final P original, final P projected, final double offset) {
         this.original  = original;
         this.projected = projected;
         this.offset    = offset;
@@ -51,14 +53,14 @@ public class BoundaryProjection<S extends Space> {
     /** Get the original point.
      * @return original point
      */
-    public Point<S> getOriginal() {
+    public P getOriginal() {
         return original;
     }
 
     /** Projected point.
      * @return projected point, or null if there are no boundary
      */
-    public Point<S> getProjected() {
+    public P getProjected() {
         return projected;
     }
 

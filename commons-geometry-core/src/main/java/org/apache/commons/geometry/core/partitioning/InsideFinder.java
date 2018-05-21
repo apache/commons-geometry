@@ -16,16 +16,16 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Point;
 
 /** Utility class checking if inside nodes can be found
  * on the plus and minus sides of an hyperplane.
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-class InsideFinder<S extends Space> {
+class InsideFinder<P extends Point<P>> {
 
     /** Region on which to operate. */
-    private final Region<S> region;
+    private final Region<P> region;
 
     /** Indicator of inside leaf nodes found on the plus side. */
     private boolean plusFound;
@@ -36,7 +36,7 @@ class InsideFinder<S extends Space> {
     /** Simple constructor.
      * @param region region on which to operate
      */
-    InsideFinder(final Region<S> region) {
+    InsideFinder(final Region<P> region) {
         this.region = region;
         plusFound  = false;
         minusFound = false;
@@ -56,7 +56,7 @@ class InsideFinder<S extends Space> {
      * @param node current BSP tree node
      * @param sub sub-hyperplane
      */
-    public void recurseSides(final BSPTree<S> node, final SubHyperplane<S> sub) {
+    public void recurseSides(final BSPTree<P> node, final SubHyperplane<P> sub) {
 
         if (node.getCut() == null) {
             if ((Boolean) node.getAttribute()) {
@@ -67,8 +67,8 @@ class InsideFinder<S extends Space> {
             return;
         }
 
-        final Hyperplane<S> hyperplane = node.getCut().getHyperplane();
-        final SubHyperplane.SplitSubHyperplane<S> split = sub.split(hyperplane);
+        final Hyperplane<P> hyperplane = node.getCut().getHyperplane();
+        final SubHyperplane.SplitSubHyperplane<P> split = sub.split(hyperplane);
         switch (split.getSide()) {
         case PLUS :
             // the sub-hyperplane is entirely in the plus sub-tree

@@ -18,16 +18,14 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 
-import org.apache.commons.geometry.euclidean.twod.Euclidean2D;
-import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
-import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 
 /** Extractor for {@link PolygonsSet polyhedrons sets} outlines.
  * <p>This class extracts the 2D outlines from {{@link PolygonsSet
@@ -36,29 +34,29 @@ import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
 public class OutlineExtractor {
 
     /** Abscissa axis of the projection plane. */
-    private final Cartesian3D u;
+    private final Vector3D u;
 
     /** Ordinate axis of the projection plane. */
-    private final Cartesian3D v;
+    private final Vector3D v;
 
     /** Normal of the projection plane (viewing direction). */
-    private final Cartesian3D w;
+    private final Vector3D w;
 
     /** Build an extractor for a specific projection plane.
      * @param u abscissa axis of the projection point
      * @param v ordinate axis of the projection point
      */
-    public OutlineExtractor(final Cartesian3D u, final Cartesian3D v) {
+    public OutlineExtractor(final Vector3D u, final Vector3D v) {
         this.u = u;
         this.v = v;
-        w = Cartesian3D.crossProduct(u, v);
+        this.w = u.crossProduct(v);
     }
 
     /** Extract the outline of a polyhedrons set.
      * @param polyhedronsSet polyhedrons set whose outline must be extracted
      * @return an outline, as an array of loops.
      */
-    public Cartesian2D[][] getOutline(final PolyhedronsSet polyhedronsSet) {
+    public Point2D[][] getOutline(final PolyhedronsSet polyhedronsSet) {
 
         // project all boundary facets into one polygons set
         final BoundaryProjector projector = new BoundaryProjector(polyhedronsSet.getTolerance());
@@ -66,9 +64,9 @@ public class OutlineExtractor {
         final PolygonsSet projected = projector.getProjected();
 
         // Remove the spurious intermediate vertices from the outline
-        final Cartesian2D[][] outline = projected.getVertices();
+        final Point2D[][] outline = projected.getVertices();
         for (int i = 0; i < outline.length; ++i) {
-            final Cartesian2D[] rawLoop = outline[i];
+            final Point2D[] rawLoop = outline[i];
             int end = rawLoop.length;
             int j = 0;
             while (j < end) {
@@ -85,7 +83,7 @@ public class OutlineExtractor {
             }
             if (end != rawLoop.length) {
                 // resize the array
-                outline[i] = new Cartesian2D[end];
+                outline[i] = new Point2D[end];
                 System.arraycopy(rawLoop, 0, outline[i], 0, end);
             }
         }
@@ -102,10 +100,10 @@ public class OutlineExtractor {
      * @param i index of the point to check (must be between 0 and n-1)
      * @return true if the point is exactly between its neighbors
      */
-    private boolean pointIsBetween(final Cartesian2D[] loop, final int n, final int i) {
-        final Cartesian2D previous = loop[(i + n - 1) % n];
-        final Cartesian2D current  = loop[i];
-        final Cartesian2D next     = loop[(i + 1) % n];
+    private boolean pointIsBetween(final Point2D[] loop, final int n, final int i) {
+        final Point2D previous = loop[(i + n - 1) % n];
+        final Point2D current  = loop[i];
+        final Point2D next     = loop[(i + 1) % n];
         final double dx1       = current.getX() - previous.getX();
         final double dy1       = current.getY() - previous.getY();
         final double dx2       = next.getX()    - current.getX();
@@ -117,7 +115,7 @@ public class OutlineExtractor {
     }
 
     /** Visitor projecting the boundary facets on a plane. */
-    private class BoundaryProjector implements BSPTreeVisitor<Euclidean3D> {
+    private class BoundaryProjector implements BSPTreeVisitor<Point3D> {
 
         /** Projection of the polyhedrons set on the plane. */
         private PolygonsSet projected;
@@ -129,22 +127,22 @@ public class OutlineExtractor {
          * @param tolerance tolerance below which points are considered identical
          */
         BoundaryProjector(final double tolerance) {
-            this.projected = new PolygonsSet(new BSPTree<Euclidean2D>(Boolean.FALSE), tolerance);
+            this.projected = new PolygonsSet(new BSPTree<Point2D>(Boolean.FALSE), tolerance);
             this.tolerance = tolerance;
         }
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(final BSPTree<Euclidean3D> node) {
+        public Order visitOrder(final BSPTree<Point3D> node) {
             return Order.MINUS_SUB_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitInternalNode(final BSPTree<Euclidean3D> node) {
+        public void visitInternalNode(final BSPTree<Point3D> node) {
             @SuppressWarnings("unchecked")
-            final BoundaryAttribute<Euclidean3D> attribute =
-                (BoundaryAttribute<Euclidean3D>) node.getAttribute();
+            final BoundaryAttribute<Point3D> attribute =
+                (BoundaryAttribute<Point3D>) node.getAttribute();
             if (attribute.getPlusOutside() != null) {
                 addContribution(attribute.getPlusOutside(), false);
             }
@@ -155,33 +153,33 @@ public class OutlineExtractor {
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(final BSPTree<Euclidean3D> node) {
+        public void visitLeafNode(final BSPTree<Point3D> node) {
         }
 
         /** Add he contribution of a boundary facet.
          * @param facet boundary facet
          * @param reversed if true, the facet has the inside on its plus side
          */
-        private void addContribution(final SubHyperplane<Euclidean3D> facet, final boolean reversed) {
+        private void addContribution(final SubHyperplane<Point3D> facet, final boolean reversed) {
 
             // extract the vertices of the facet
             @SuppressWarnings("unchecked")
-            final AbstractSubHyperplane<Euclidean3D, Euclidean2D> absFacet =
-                (AbstractSubHyperplane<Euclidean3D, Euclidean2D>) facet;
+            final AbstractSubHyperplane<Point3D, Point2D> absFacet =
+                (AbstractSubHyperplane<Point3D, Point2D>) facet;
             final Plane plane    = (Plane) facet.getHyperplane();
 
             final double scal = plane.getNormal().dotProduct(w);
             if (Math.abs(scal) > 1.0e-3) {
-                Cartesian2D[][] vertices =
+                Point2D[][] vertices =
                     ((PolygonsSet) absFacet.getRemainingRegion()).getVertices();
 
                 if ((scal < 0) ^ reversed) {
                     // the facet is seen from the inside,
                     // we need to invert its boundary orientation
-                    final Cartesian2D[][] newVertices = new Cartesian2D[vertices.length][];
+                    final Point2D[][] newVertices = new Point2D[vertices.length][];
                     for (int i = 0; i < vertices.length; ++i) {
-                        final Cartesian2D[] loop = vertices[i];
-                        final Cartesian2D[] newLoop = new Cartesian2D[loop.length];
+                        final Point2D[] loop = vertices[i];
+                        final Point2D[] newLoop = new Point2D[loop.length];
                         if (loop[0] == null) {
                             newLoop[0] = null;
                             for (int j = 1; j < loop.length; ++j) {
@@ -201,22 +199,22 @@ public class OutlineExtractor {
                 }
 
                 // compute the projection of the facet in the outline plane
-                final ArrayList<SubHyperplane<Euclidean2D>> edges = new ArrayList<>();
-                for (Cartesian2D[] loop : vertices) {
+                final ArrayList<SubHyperplane<Point2D>> edges = new ArrayList<>();
+                for (Point2D[] loop : vertices) {
                     final boolean closed = loop[0] != null;
                     int previous         = closed ? (loop.length - 1) : 1;
-                    Cartesian3D previous3D  = plane.toSpace(loop[previous]);
+                    Vector3D previous3D  = plane.toSpace(loop[previous]).asVector();
                     int current          = (previous + 1) % loop.length;
-                    Cartesian2D pPoint       = new Cartesian2D(previous3D.dotProduct(u),
+                    Point2D pPoint       = new Point2D(previous3D.dotProduct(u),
                                                          previous3D.dotProduct(v));
                     while (current < loop.length) {
 
-                        final Cartesian3D current3D = plane.toSpace((Point<Euclidean2D>) loop[current]);
-                        final Cartesian2D  cPoint    = new Cartesian2D(current3D.dotProduct(u),
+                        final Vector3D current3D = plane.toSpace(loop[current]).asVector();
+                        final Point2D  cPoint    = new Point2D(current3D.dotProduct(u),
                                                                  current3D.dotProduct(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
                             new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, tolerance);
-                        SubHyperplane<Euclidean2D> edge = line.wholeHyperplane();
+                        SubHyperplane<Point2D> edge = line.wholeHyperplane();
 
                         if (closed || (previous != 1)) {
                             // the previous point is a real vertex
@@ -247,7 +245,7 @@ public class OutlineExtractor {
                 final PolygonsSet projectedFacet = new PolygonsSet(edges, tolerance);
 
                 // add the contribution of the facet to the global outline
-                projected = (PolygonsSet) new RegionFactory<Euclidean2D>().union(projected, projectedFacet);
+                projected = (PolygonsSet) new RegionFactory<Point2D>().union(projected, projectedFacet);
 
             }
         }

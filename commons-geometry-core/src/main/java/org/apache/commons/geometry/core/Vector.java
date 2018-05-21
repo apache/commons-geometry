@@ -16,41 +16,50 @@
  */
 package org.apache.commons.geometry.core;
 
-import java.text.NumberFormat;
-
-/** This interface represents a generic vector in a vectorial space or a point in an affine space.
- * @param <S> Type of the space.
- * @see Space
- * @see Point
+/** Interface representing a vector in a vector space. The most common
+ * use of this interface is to represent displacement vectors in an affine
+ * space.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Vector_space">Vector space</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Affine_space">Affine space</a>
+ *
+ * @see AffinePoint
+ *
+ * @param <V> Vector implementation type
  */
-public interface Vector<S extends Space> {
+public interface Vector<V extends Vector<V>> extends Spatial {
 
-    /** Get the space to which the point belongs.
-     * @return containing space
+    /** Get the zero (null) vector of the space.
+     * @return zero vector of the space
      */
-    Space getSpace();
+    V getZero();
 
-    /** Get the null vector of the vectorial space or origin point of the affine space.
-     * @return null vector of the vectorial space or origin point of the affine space
-     */
-    Vector<S> getZero();
-
-    /** Get the L<sub>1</sub> norm for the vector.
+    /** Get the L<sub>1</sub> norm for the vector. This is defined as the
+     * sum of the absolute values of all vector components.
+     *
+     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
      * @return L<sub>1</sub> norm for the vector
      */
     double getNorm1();
 
-    /** Get the L<sub>2</sub> norm for the vector.
+    /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector.
+     * This corresponds to the common notion of vector magnitude or length.
+     * This is defined as the square root of the sum of the squares of all vector components.
+     * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
      * @return Euclidean norm for the vector
      */
     double getNorm();
 
-    /** Get the square of the norm for the vector.
+    /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
+     * for the vector. This is equal to the sum of the squares of all vector components.
+     * @see #getNorm()
      * @return square of the Euclidean norm for the vector
      */
     double getNormSq();
 
-    /** Get the L<sub>&infin;</sub> norm for the vector.
+    /** Get the L<sub>&infin;</sub> norm for the vector. This is defined as the
+     * maximum of the absolute values of all vector components.
+     * @see <a href="http://mathworld.wolfram.com/L-Infinity-Norm.html">L<sub>&infin;</sub> Norm</a>
      * @return L<sub>&infin;</sub> norm for the vector
      */
     double getNormInf();
@@ -59,102 +68,85 @@ public interface Vector<S extends Space> {
      * @param v vector to add
      * @return a new vector
      */
-    Vector<S> add(Vector<S> v);
+    V add(V v);
 
     /** Add a scaled vector to the instance.
      * @param factor scale factor to apply to v before adding it
      * @param v vector to add
      * @return a new vector
      */
-    Vector<S> add(double factor, Vector<S> v);
+    V add(double factor, V v);
 
     /** Subtract a vector from the instance.
      * @param v vector to subtract
      * @return a new vector
      */
-    Vector<S> subtract(Vector<S> v);
+    V subtract(V v);
 
     /** Subtract a scaled vector from the instance.
      * @param factor scale factor to apply to v before subtracting it
      * @param v vector to subtract
      * @return a new vector
      */
-    Vector<S> subtract(double factor, Vector<S> v);
+    V subtract(double factor, V v);
 
-    /** Get the opposite of the instance.
-     * @return a new vector which is opposite to the instance
+    /** Get the negation of the instance.
+     * @return a new vector which is the negation of the instance
      */
-    Vector<S> negate();
+    V negate();
 
-    /** Get a normalized vector aligned with the instance.
+    /** Get a normalized vector aligned with the instance. The returned
+     * vector has a magnitude of 1.
      * @return a new normalized vector
      * @exception IllegalStateException if the norm is zero
      */
-    Vector<S> normalize() throws IllegalStateException;
+    V normalize() throws IllegalStateException;
 
     /** Multiply the instance by a scalar.
      * @param a scalar
      * @return a new vector
      */
-    Vector<S> scalarMultiply(double a);
-
-    /**
-     * Returns true if any coordinate of this point is NaN; false otherwise
-     * @return  true if any coordinate of this point is NaN; false otherwise
-     */
-    boolean isNaN();
-
-    /**
-     * Returns true if any coordinate of this vector is infinite and none are NaN;
-     * false otherwise
-     * @return  true if any coordinate of this vector is infinite and none are NaN;
-     * false otherwise
-     */
-    boolean isInfinite();
+    V scalarMultiply(double a);
 
     /** Compute the distance between the instance and another vector according to the L<sub>1</sub> norm.
      * <p>Calling this method is equivalent to calling:
      * <code>q.subtract(p).getNorm1()</code> except that no intermediate
      * vector is built</p>
+     * @see #getNorm1()
      * @param v second vector
      * @return the distance between the instance and p according to the L<sub>1</sub> norm
      */
-    double distance1(Vector<S> v);
+    double distance1(V v);
 
     /** Compute the distance between the instance and another vector.
      * @param v second vector
      * @return the distance between the instance and v
      */
-    double distance(Vector<S> v);
+    double distance(V v);
 
     /** Compute the distance between the instance and another vector according to the L<sub>&infin;</sub> norm.
      * <p>Calling this method is equivalent to calling:
      * <code>q.subtract(p).getNormInf()</code> except that no intermediate
      * vector is built</p>
+     * @see #getNormInf()
      * @param v second vector
      * @return the distance between the instance and p according to the L<sub>&infin;</sub> norm
      */
-    double distanceInf(Vector<S> v);
+    double distanceInf(V v);
 
     /** Compute the square of the distance between the instance and another vector.
      * <p>Calling this method is equivalent to calling:
      * <code>q.subtract(p).getNormSq()</code> except that no intermediate
      * vector is built</p>
+     * @see #getNormSq()
      * @param v second vector
      * @return the square of the distance between the instance and p
      */
-    double distanceSq(Vector<S> v);
+    double distanceSq(V v);
 
     /** Compute the dot-product of the instance and another vector.
      * @param v second vector
-     * @return the dot product this.v
+     * @return the dot product this &middot; v
      */
-    double dotProduct(Vector<S> v);
-
-    /** Get a string representation of this vector.
-     * @param format the custom format for components
-     * @return a string representation of this vector
-     */
-    String toString(final NumberFormat format);
-
+    double dotProduct(V v);
 }

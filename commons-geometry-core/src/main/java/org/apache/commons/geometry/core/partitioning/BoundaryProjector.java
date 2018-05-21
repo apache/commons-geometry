@@ -20,23 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
 
 /** Local tree visitor to compute projection on boundary.
- * @param <S> Type of the space.
- * @param <T> Type of the sub-space.
+ * @param <P> Point type defining the space
+ * @param <S> Point type defining the sub-space
  */
-class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisitor<S> {
+class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTreeVisitor<P> {
 
     /** Original point. */
-    private final Point<S> original;
+    private final P original;
 
     /** Current best projected point. */
-    private Point<S> projected;
+    private P projected;
 
     /** Leaf node closest to the test point. */
-    private BSPTree<S> leaf;
+    private BSPTree<P> leaf;
 
     /** Current offset. */
     private double offset;
@@ -44,7 +43,7 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
     /** Simple constructor.
      * @param original original point
      */
-    BoundaryProjector(final Point<S> original) {
+    BoundaryProjector(final P original) {
         this.original  = original;
         this.projected = null;
         this.leaf      = null;
@@ -53,7 +52,7 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<S> node) {
+    public Order visitOrder(final BSPTree<P> node) {
         // we want to visit the tree so that the first encountered
         // leaf is the one closest to the test point
         if (node.getCut().getHyperplane().getOffset(original) <= 0) {
@@ -65,22 +64,22 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<S> node) {
+    public void visitInternalNode(final BSPTree<P> node) {
 
         // project the point on the cut sub-hyperplane
-        final Hyperplane<S> hyperplane = node.getCut().getHyperplane();
+        final Hyperplane<P> hyperplane = node.getCut().getHyperplane();
         final double signedOffset = hyperplane.getOffset(original);
         if (Math.abs(signedOffset) < offset) {
 
             // project point
-            final Point<S> regular = hyperplane.project(original);
+            final P regular = hyperplane.project(original);
 
             // get boundary parts
-            final List<Region<T>> boundaryParts = boundaryRegions(node);
+            final List<Region<S>> boundaryParts = boundaryRegions(node);
 
             // check if regular projection really belongs to the boundary
             boolean regularFound = false;
-            for (final Region<T> part : boundaryParts) {
+            for (final Region<S> part : boundaryParts) {
                 if (!regularFound && belongsToPart(regular, hyperplane, part)) {
                     // the projected point lies in the boundary
                     projected    = regular;
@@ -93,8 +92,8 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
                 // the regular projected point is not on boundary,
                 // so we have to check further if a singular point
                 // (i.e. a vertex in 2D case) is a possible projection
-                for (final Region<T> part : boundaryParts) {
-                    final Point<S> spI = singularProjection(regular, hyperplane, part);
+                for (final Region<S> part : boundaryParts) {
+                    final P spI = singularProjection(regular, hyperplane, part);
                     if (spI != null) {
                         final double distance = original.distance(spI);
                         if (distance < offset) {
@@ -112,7 +111,7 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<S> node) {
+    public void visitLeafNode(final BSPTree<P> node) {
         if (leaf == null) {
             // this is the first leaf we visit,
             // it is the closest one to the original point
@@ -123,7 +122,7 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
     /** Get the projection.
      * @return projection
      */
-    public BoundaryProjection<S> getProjection() {
+    public BoundaryProjection<P> getProjection() {
 
         // fix offset sign
         offset = Math.copySign(offset, (Boolean) leaf.getAttribute() ? -1 : +1);
@@ -136,12 +135,12 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
      * @param node internal node
      * @return regions in the node sub-hyperplane
      */
-    private List<Region<T>> boundaryRegions(final BSPTree<S> node) {
+    private List<Region<S>> boundaryRegions(final BSPTree<P> node) {
 
-        final List<Region<T>> regions = new ArrayList<>(2);
+        final List<Region<S>> regions = new ArrayList<>(2);
 
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<S> ba = (BoundaryAttribute<S>) node.getAttribute();
+        final BoundaryAttribute<P> ba = (BoundaryAttribute<P>) node.getAttribute();
         addRegion(ba.getPlusInside(),  regions);
         addRegion(ba.getPlusOutside(), regions);
 
@@ -153,10 +152,10 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
      * @param sub sub-hyperplane defining the region
      * @param list to fill up
      */
-    private void addRegion(final SubHyperplane<S> sub, final List<Region<T>> list) {
+    private void addRegion(final SubHyperplane<P> sub, final List<Region<S>> list) {
         if (sub != null) {
             @SuppressWarnings("unchecked")
-            final Region<T> region = ((AbstractSubHyperplane<S, T>) sub).getRemainingRegion();
+            final Region<S> region = ((AbstractSubHyperplane<P, S>) sub).getRemainingRegion();
             if (region != null) {
                 list.add(region);
             }
@@ -169,12 +168,12 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
      * @param part boundary part
      * @return true if point lies on the boundary part
      */
-    private boolean belongsToPart(final Point<S> point, final Hyperplane<S> hyperplane,
-                                  final Region<T> part) {
+    private boolean belongsToPart(final P point, final Hyperplane<P> hyperplane,
+                                  final Region<S> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")
-        final Embedding<S, T> embedding = (Embedding<S, T>) hyperplane;
+        final Embedding<P, S> embedding = (Embedding<P, S>) hyperplane;
         return part.checkPoint(embedding.toSubSpace(point)) != Location.OUTSIDE;
 
     }
@@ -185,13 +184,13 @@ class BoundaryProjector<S extends Space, T extends Space> implements BSPTreeVisi
      * @param part boundary part
      * @return projection to a singular point of boundary part (may be null)
      */
-    private Point<S> singularProjection(final Point<S> point, final Hyperplane<S> hyperplane,
-                                        final Region<T> part) {
+    private P singularProjection(final P point, final Hyperplane<P> hyperplane,
+                                        final Region<S> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")
-        final Embedding<S, T> embedding = (Embedding<S, T>) hyperplane;
-        final BoundaryProjection<T> bp = part.projectToBoundary(embedding.toSubSpace(point));
+        final Embedding<P, S> embedding = (Embedding<P, S>) hyperplane;
+        final BoundaryProjection<S> bp = part.projectToBoundary(embedding.toSubSpace(point));
 
         // back to initial dimension
         return (bp.getProjected() == null) ? null : embedding.toSpace(bp.getProjected());

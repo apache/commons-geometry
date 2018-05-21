@@ -16,36 +16,39 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Point;
 
 /** Class holding boundary attributes.
+ *
  * <p>This class is used for the attributes associated with the
  * nodes of region boundary shell trees returned by the {@link
  * Region#getTree(boolean) Region.getTree(includeBoundaryAttributes)}
  * when the boolean {@code includeBoundaryAttributes} parameter is
  * set to {@code true}. It contains the parts of the node cut
  * sub-hyperplane that belong to the boundary.</p>
+ *
  * <p>This class is a simple placeholder, it does not provide any
  * processing methods.</p>
- * @param <S> Type of the space.
+ *
+ * @param <P> Point type defining the space
  * @see Region#getTree
  */
-public class BoundaryAttribute<S extends Space> {
+public class BoundaryAttribute<P extends Point<P>> {
 
     /** Part of the node cut sub-hyperplane that belongs to the
      * boundary and has the outside of the region on the plus side of
      * its underlying hyperplane (may be null).
      */
-    private final SubHyperplane<S> plusOutside;
+    private final SubHyperplane<P> plusOutside;
 
     /** Part of the node cut sub-hyperplane that belongs to the
      * boundary and has the inside of the region on the plus side of
      * its underlying hyperplane (may be null).
      */
-    private final SubHyperplane<S> plusInside;
+    private final SubHyperplane<P> plusInside;
 
     /** Sub-hyperplanes that were used to split the boundary part. */
-    private final NodesSet<S> splitters;
+    private final NodesSet<P> splitters;
 
     /** Simple constructor.
      * @param plusOutside part of the node cut sub-hyperplane that
@@ -57,9 +60,9 @@ public class BoundaryAttribute<S extends Space> {
      * @param splitters sub-hyperplanes that were used to
      * split the boundary part (may be null)
      */
-    BoundaryAttribute(final SubHyperplane<S> plusOutside,
-                      final SubHyperplane<S> plusInside,
-                      final NodesSet<S> splitters) {
+    BoundaryAttribute(final SubHyperplane<P> plusOutside,
+                      final SubHyperplane<P> plusInside,
+                      final NodesSet<P> splitters) {
         this.plusOutside = plusOutside;
         this.plusInside  = plusInside;
         this.splitters   = splitters;
@@ -72,7 +75,7 @@ public class BoundaryAttribute<S extends Space> {
      * boundary and has the outside of the region on the plus side of
      * its underlying hyperplane
      */
-    public SubHyperplane<S> getPlusOutside() {
+    public SubHyperplane<P> getPlusOutside() {
         return plusOutside;
     }
 
@@ -83,14 +86,14 @@ public class BoundaryAttribute<S extends Space> {
      * boundary and has the inside of the region on the plus side of
      * its underlying hyperplane
      */
-    public SubHyperplane<S> getPlusInside() {
+    public SubHyperplane<P> getPlusInside() {
         return plusInside;
     }
 
     /** Get the sub-hyperplanes that were used to split the boundary part.
      * @return sub-hyperplanes that were used to split the boundary part
      */
-    public NodesSet<S> getSplitters() {
+    public NodesSet<P> getSplitters() {
         return splitters;
     }
 

@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** This interface represents a region of a space as a partition.
 
@@ -46,9 +45,9 @@ import org.apache.commons.geometry.core.Space;
  * versions, which breaks compatibility for external implementations.
  * </p>
 
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-public interface Region<S extends Space> {
+public interface Region<P extends Point<P>> {
 
     /** Enumerate for the location of a point with respect to the region. */
     enum Location {
@@ -78,7 +77,7 @@ public interface Region<S extends Space> {
      * @param newTree inside/outside BSP tree representing the new region
      * @return the built region
      */
-    Region<S> buildNew(BSPTree<S> newTree);
+    Region<P> buildNew(BSPTree<P> newTree);
 
     /** Copy the instance.
      * <p>The instance created is completely independant of the original
@@ -87,7 +86,7 @@ public interface Region<S extends Space> {
      * attributes and immutable objects).</p>
      * @return a new region, copy of the instance
      */
-    Region<S> copySelf();
+    Region<P> copySelf();
 
     /** Check if the instance is empty.
      * @return true if the instance is empty
@@ -101,7 +100,7 @@ public interface Region<S extends Space> {
      * property)
      * @return true if the sub-tree starting at the given node is empty
      */
-    boolean isEmpty(final BSPTree<S> node);
+    boolean isEmpty(final BSPTree<P> node);
 
     /** Check if the instance covers the full space.
      * @return true if the instance covers the full space
@@ -115,26 +114,26 @@ public interface Region<S extends Space> {
      * property)
      * @return true if the sub-tree starting at the given node covers the full space
      */
-    boolean isFull(final BSPTree<S> node);
+    boolean isFull(final BSPTree<P> node);
 
     /** Check if the instance entirely contains another region.
      * @param region region to check against the instance
      * @return true if the instance contains the specified tree
      */
-    boolean contains(final Region<S> region);
+    boolean contains(final Region<P> region);
 
     /** Check a point with respect to the region.
      * @param point point to check
      * @return a code representing the point status: either {@link
      * Location#INSIDE}, {@link Location#OUTSIDE} or {@link Location#BOUNDARY}
      */
-    Location checkPoint(final Point<S> point);
+    Location checkPoint(final P point);
 
     /** Project a point on the boundary of the region.
      * @param point point to check
      * @return projection of the point on the boundary
      */
-    BoundaryProjection<S> projectToBoundary(final Point<S> point);
+    BoundaryProjection<P> projectToBoundary(final P point);
 
     /** Get the underlying BSP tree.
 
@@ -175,7 +174,7 @@ public interface Region<S extends Space> {
      * @return underlying BSP tree
      * @see BoundaryAttribute
      */
-    BSPTree<S> getTree(final boolean includeBoundaryAttributes);
+    BSPTree<P> getTree(final boolean includeBoundaryAttributes);
 
     /** Get the size of the boundary.
      * @return the size of the boundary (this is 0 in 1D, a length in
@@ -192,7 +191,7 @@ public interface Region<S extends Space> {
     /** Get the barycenter of the instance.
      * @return an object representing the barycenter
      */
-    Point<S> getBarycenter();
+    P getBarycenter();
 
     /** Get the parts of a sub-hyperplane that are contained in the region.
      * <p>The parts of the sub-hyperplane that belong to the boundary are
@@ -200,6 +199,6 @@ public interface Region<S extends Space> {
      * @param sub sub-hyperplane traversing the region
      * @return filtered sub-hyperplane
      */
-    SubHyperplane<S> intersection(final SubHyperplane<S> sub);
+    SubHyperplane<P> intersection(final SubHyperplane<P> sub);
 
 }

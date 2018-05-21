@@ -19,7 +19,6 @@ package org.apache.commons.geometry.enclosing;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** Interface for generating balls based on support points.
  * <p>
@@ -30,12 +29,12 @@ import org.apache.commons.geometry.core.Space;
  * @param <P> Point type.
  * @see EnclosingBall
  */
-public interface SupportBallGenerator<S extends Space, P extends Point<S>> {
+public interface SupportBallGenerator<P extends Point<P>> {
 
     /** Create a ball whose boundary lies on prescribed support points.
      * @param support support points (may be empty)
      * @return ball whose boundary lies on the prescribed support points
      */
-    EnclosingBall<S, P> ballOnSupport(List<P> support);
+    EnclosingBall<P> ballOnSupport(List<P> support);
 
 }

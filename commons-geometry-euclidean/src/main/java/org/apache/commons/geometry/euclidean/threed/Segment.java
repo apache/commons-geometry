@@ -22,10 +22,10 @@ package org.apache.commons.geometry.euclidean.threed;
 public class Segment {
 
     /** Start point of the segment. */
-    private final Cartesian3D start;
+    private final Point3D start;
 
     /** End point of the segments. */
-    private final Cartesian3D end;
+    private final Point3D end;
 
     /** Line containing the segment. */
     private final Line     line;
@@ -35,7 +35,7 @@ public class Segment {
      * @param end end point of the segment
      * @param line line containing the segment
      */
-    public Segment(final Cartesian3D start, final Cartesian3D end, final Line line) {
+    public Segment(final Point3D start, final Point3D end, final Line line) {
         this.start  = start;
         this.end    = end;
         this.line   = line;
@@ -44,14 +44,14 @@ public class Segment {
     /** Get the start point of the segment.
      * @return start point of the segment
      */
-    public Cartesian3D getStart() {
+    public Point3D getStart() {
         return start;
     }
 
     /** Get the end point of the segment.
      * @return end point of the segment
      */
-    public Cartesian3D getEnd() {
+    public Point3D getEnd() {
         return end;
     }
 

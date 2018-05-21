@@ -16,19 +16,18 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class S1Point implements Point<Sphere1D> {
+public class S1Point implements Point<S1Point> {
 
    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final S1Point NaN = new S1Point(Double.NaN, Cartesian2D.NaN);
+    public static final S1Point NaN = new S1Point(Double.NaN, Vector2D.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -38,7 +37,7 @@ public class S1Point implements Point<Sphere1D> {
     private final double alpha;
 
     /** Corresponding 2D normalized vector. */
-    private final Cartesian2D vector;
+    private final Vector2D vector;
 
     /** Simple constructor.
      * Build a vector from its coordinates
@@ -47,14 +46,14 @@ public class S1Point implements Point<Sphere1D> {
      */
     public S1Point(final double alpha) {
         this(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha),
-             new Cartesian2D(Math.cos(alpha), Math.sin(alpha)));
+             new Vector2D(Math.cos(alpha), Math.sin(alpha)));
     }
 
     /** Build a point from its internal components.
      * @param alpha azimuthal angle \( \alpha \)
      * @param vector corresponding vector
      */
-    private S1Point(final double alpha, final Cartesian2D vector) {
+    private S1Point(final double alpha, final Vector2D vector) {
         this.alpha  = alpha;
         this.vector = vector;
     }
@@ -70,14 +69,14 @@ public class S1Point implements Point<Sphere1D> {
     /** Get the corresponding normalized vector in the 2D euclidean space.
      * @return normalized vector
      */
-    public Cartesian2D getVector() {
+    public Vector2D getVector() {
         return vector;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Space getSpace() {
-        return Sphere1D.getInstance();
+    public int getDimension() {
+        return 1;
     }
 
     /** {@inheritDoc} */
@@ -88,8 +87,14 @@ public class S1Point implements Point<Sphere1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double distance(final Point<Sphere1D> point) {
-        return distance(this, (S1Point) point);
+    public boolean isInfinite() {
+        return !isNaN() && Double.isInfinite(alpha);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double distance(final S1Point point) {
+        return distance(this, point);
     }
 
     /** Compute the distance (angular separation) between two points.
@@ -98,7 +103,7 @@ public class S1Point implements Point<Sphere1D> {
      * @return the angular separation between p1 and p2
      */
     public static double distance(S1Point p1, S1Point p2) {
-        return Cartesian2D.angle(p1.vector, p2.vector);
+        return p1.vector.angle(p2.vector);
     }
 
     /**
@@ -154,5 +159,4 @@ public class S1Point implements Point<Sphere1D> {
         }
         return 1759 * Double.hashCode(alpha);
     }
-
 }

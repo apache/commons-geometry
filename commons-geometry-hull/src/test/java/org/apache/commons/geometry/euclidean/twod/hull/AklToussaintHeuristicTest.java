@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.util.Collection;
 
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.hull.AklToussaintHeuristic;
 import org.apache.commons.geometry.euclidean.twod.hull.ConvexHullGenerator2D;
 import org.apache.commons.geometry.euclidean.twod.hull.MonotoneChain;
@@ -34,7 +34,7 @@ public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest
     }
 
     @Override
-    protected Collection<Cartesian2D> reducePoints(Collection<Cartesian2D> points) {
+    protected Collection<Point2D> reducePoints(Collection<Point2D> points) {
         return AklToussaintHeuristic.reducePoints(points);
     }
 

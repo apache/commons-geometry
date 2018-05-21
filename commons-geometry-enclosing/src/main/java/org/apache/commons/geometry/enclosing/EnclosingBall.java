@@ -19,7 +19,6 @@ package org.apache.commons.geometry.enclosing;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** This class represents a ball enclosing some points.
  * @param <S> Space type.
@@ -28,7 +27,7 @@ import org.apache.commons.geometry.core.Space;
  * @see Point
  * @see Encloser
  */
-public class EnclosingBall<S extends Space, P extends Point<S>> implements Serializable {
+public class EnclosingBall<P extends Point<P>> implements Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20140126L;

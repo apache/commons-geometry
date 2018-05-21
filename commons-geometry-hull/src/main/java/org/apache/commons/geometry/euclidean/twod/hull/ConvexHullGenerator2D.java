@@ -18,17 +18,16 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.util.Collection;
 
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
-import org.apache.commons.geometry.euclidean.twod.Euclidean2D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.hull.ConvexHullGenerator;
 
 /**
  * Interface for convex hull generators in the two-dimensional euclidean space.
  */
-public interface ConvexHullGenerator2D extends ConvexHullGenerator<Euclidean2D, Cartesian2D> {
+public interface ConvexHullGenerator2D extends ConvexHullGenerator<Point2D> {
 
     /** {@inheritDoc} */
     @Override
-    ConvexHull2D generate(Collection<Cartesian2D> points) throws IllegalStateException;
+    ConvexHull2D generate(Collection<Point2D> points) throws IllegalStateException;
 
 }

@@ -17,12 +17,9 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -30,378 +27,741 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class Vector3DTest {
-    @Test
-    public void testConstructors() {
-        double r = Math.sqrt(2) /2;
-        checkVector(new Cartesian3D(2, new Cartesian3D(Math.PI / 3, -Math.PI / 4)),
-                    r, r * Math.sqrt(3), -2 * r);
-        checkVector(new Cartesian3D(2, Cartesian3D.PLUS_I,
-                                 -3, Cartesian3D.MINUS_K),
-                    2, 0, 3);
-        checkVector(new Cartesian3D(2, Cartesian3D.PLUS_I,
-                                 5, Cartesian3D.PLUS_J,
-                                 -3, Cartesian3D.MINUS_K),
-                    2, 5, 3);
-        checkVector(new Cartesian3D(2, Cartesian3D.PLUS_I,
-                                 5, Cartesian3D.PLUS_J,
-                                 5, Cartesian3D.MINUS_J,
-                                 -3, Cartesian3D.MINUS_K),
-                    2, 0, 3);
-        checkVector(new Cartesian3D(new double[] { 2,  5,  -3 }),
-                    2, 5, -3);
-    }
+
+    private static final double EPS = Math.ulp(1d);
 
     @Test
-    public void testSpace() {
-        Space space = new Cartesian3D(1, 2, 2).getSpace();
-        Assert.assertEquals(3, space.getDimension());
-        Assert.assertEquals(2, space.getSubSpace().getDimension());
+    public void testConstants() {
+        // act/assert
+        checkVector(Vector3D.ZERO, 0, 0, 0);
+
+        checkVector(Vector3D.PLUS_X, 1, 0, 0);
+        checkVector(Vector3D.MINUS_X, -1, 0, 0);
+
+        checkVector(Vector3D.PLUS_Y, 0, 1, 0);
+        checkVector(Vector3D.MINUS_Y, 0, -1, 0);
+
+        checkVector(Vector3D.PLUS_Z, 0, 0, 1);
+        checkVector(Vector3D.MINUS_Z, 0, 0, -1);
+
+        checkVector(Vector3D.NaN, Double.NaN, Double.NaN, Double.NaN);
+        checkVector(Vector3D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        checkVector(Vector3D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test
     public void testZero() {
-        Assert.assertEquals(0, new Cartesian3D(1, 2, 2).getZero().getNorm(), 1.0e-15);
+        // act
+        Vector3D zero = Vector3D.of(1, 2, 3).getZero();
+
+        // assert
+        checkVector(zero, 0, 0, 0);
+        Assert.assertEquals(0, zero.getNorm(), EPS);
     }
 
     @Test
-    public void testEquals() {
-        Cartesian3D u1 = new Cartesian3D(1, 2, 3);
-        Cartesian3D u2 = new Cartesian3D(1, 2, 3);
-        Assert.assertTrue(u1.equals(u1));
-        Assert.assertTrue(u1.equals(u2));
-        Assert.assertFalse(u1.equals(new Rotation(1, 0, 0, 0, false)));
-        Assert.assertFalse(u1.equals(new Cartesian3D(1, 2, 3 + 10 * Precision.EPSILON)));
-        Assert.assertFalse(u1.equals(new Cartesian3D(1, 2 + 10 * Precision.EPSILON, 3)));
-        Assert.assertFalse(u1.equals(new Cartesian3D(1 + 10 * Precision.EPSILON, 2, 3)));
-        Assert.assertTrue(new Cartesian3D(0, Double.NaN, 0).equals(new Cartesian3D(0, 0, Double.NaN)));
-    }
-
-    @Test
-    public void testHash() {
-        Assert.assertEquals(new Cartesian3D(0, Double.NaN, 0).hashCode(), new Cartesian3D(0, 0, Double.NaN).hashCode());
-        Cartesian3D u = new Cartesian3D(1, 2, 3);
-        Cartesian3D v = new Cartesian3D(1, 2, 3 + 10 * Precision.EPSILON);
-        Assert.assertTrue(u.hashCode() != v.hashCode());
-    }
-
-    @Test
-    public void testInfinite() {
-        Assert.assertTrue(new Cartesian3D(1, 1, Double.NEGATIVE_INFINITY).isInfinite());
-        Assert.assertTrue(new Cartesian3D(1, Double.NEGATIVE_INFINITY, 1).isInfinite());
-        Assert.assertTrue(new Cartesian3D(Double.NEGATIVE_INFINITY, 1, 1).isInfinite());
-        Assert.assertFalse(new Cartesian3D(1, 1, 2).isInfinite());
-        Assert.assertFalse(new Cartesian3D(1, Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
-    }
-
-    @Test
-    public void testNaN() {
-        Assert.assertTrue(new Cartesian3D(1, 1, Double.NaN).isNaN());
-        Assert.assertTrue(new Cartesian3D(1, Double.NaN, 1).isNaN());
-        Assert.assertTrue(new Cartesian3D(Double.NaN, 1, 1).isNaN());
-        Assert.assertFalse(new Cartesian3D(1, 1, 2).isNaN());
-        Assert.assertFalse(new Cartesian3D(1, 1, Double.NEGATIVE_INFINITY).isNaN());
-    }
-
-    @Test
-    public void testToString() {
-        Assert.assertEquals("{3; 2; 1}", new Cartesian3D(3, 2, 1).toString());
-        NumberFormat format = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
-        Assert.assertEquals("{3.000; 2.000; 1.000}", new Cartesian3D(3, 2, 1).toString(format));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testWrongDimension() {
-        new Cartesian3D(new double[] { 2,  5 });
-    }
-
-    @Test
-    public void testCoordinates() {
-        Cartesian3D v = new Cartesian3D(1, 2, 3);
-        Assert.assertTrue(Math.abs(v.getX() - 1) < 1.0e-12);
-        Assert.assertTrue(Math.abs(v.getY() - 2) < 1.0e-12);
-        Assert.assertTrue(Math.abs(v.getZ() - 3) < 1.0e-12);
-        double[] coordinates = v.toArray();
-        Assert.assertTrue(Math.abs(coordinates[0] - 1) < 1.0e-12);
-        Assert.assertTrue(Math.abs(coordinates[1] - 2) < 1.0e-12);
-        Assert.assertTrue(Math.abs(coordinates[2] - 3) < 1.0e-12);
+    public void testAsPoint() {
+        // act/assert
+        checkPoint(Vector3D.of(1, 2, 3).asPoint(), 1, 2, 3);
+        checkPoint(Vector3D.of(-1, -2, -3).asPoint(), -1, -2, -3);
+        checkPoint(Vector3D.of(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).asPoint(),
+                Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test
     public void testNorm1() {
-        Assert.assertEquals(0.0, Cartesian3D.ZERO.getNorm1(), 0);
-        Assert.assertEquals(6.0, new Cartesian3D(1, -2, 3).getNorm1(), 0);
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm1(), EPS);
+        Assert.assertEquals(9.0, Vector3D.of(2, -3, 4).getNorm1(), EPS);
+        Assert.assertEquals(9.0, Vector3D.of(-2, 3, -4).getNorm1(), EPS);
     }
 
     @Test
     public void testNorm() {
-        Assert.assertEquals(0.0, Cartesian3D.ZERO.getNorm(), 0);
-        Assert.assertEquals(Math.sqrt(14), new Cartesian3D(1, 2, 3).getNorm(), 1.0e-12);
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm(), 0);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).getNorm(), EPS);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).getNorm(), EPS);
     }
 
     @Test
     public void testNormSq() {
-        Assert.assertEquals(0.0, new Cartesian3D(0, 0, 0).getNormSq(), 0);
-        Assert.assertEquals(14, new Cartesian3D(1, 2, 3).getNormSq(), 1.0e-12);
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm(), 0);
+        Assert.assertEquals(29, Vector3D.of(2, 3, 4).getNormSq(), EPS);
+        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getNormSq(), EPS);
     }
 
     @Test
     public void testNormInf() {
-        Assert.assertEquals(0.0, Cartesian3D.ZERO.getNormInf(), 0);
-        Assert.assertEquals(3.0, new Cartesian3D(1, -2, 3).getNormInf(), 0);
-    }
-
-    @Test
-    public void testDistance1() {
-        Cartesian3D v1 = new Cartesian3D(1, -2, 3);
-        Cartesian3D v2 = new Cartesian3D(-4, 2, 0);
-        Assert.assertEquals(0.0, Cartesian3D.distance1(Cartesian3D.MINUS_I, Cartesian3D.MINUS_I), 0);
-        Assert.assertEquals(12.0, Cartesian3D.distance1(v1, v2), 1.0e-12);
-        Assert.assertEquals(v1.subtract(v2).getNorm1(), Cartesian3D.distance1(v1, v2), 1.0e-12);
-    }
-
-    @Test
-    public void testDistance() {
-        Cartesian3D v1 = new Cartesian3D(1, -2, 3);
-        Cartesian3D v2 = new Cartesian3D(-4, 2, 0);
-        Assert.assertEquals(0.0, Cartesian3D.distance(Cartesian3D.MINUS_I, Cartesian3D.MINUS_I), 0);
-        Assert.assertEquals(Math.sqrt(50), Cartesian3D.distance(v1, v2), 1.0e-12);
-        Assert.assertEquals(v1.subtract(v2).getNorm(), Cartesian3D.distance(v1, v2), 1.0e-12);
-    }
-
-    @Test
-    public void testDistanceSq() {
-        Cartesian3D v1 = new Cartesian3D(1, -2, 3);
-        Cartesian3D v2 = new Cartesian3D(-4, 2, 0);
-        Assert.assertEquals(0.0, Cartesian3D.distanceSq(Cartesian3D.MINUS_I, Cartesian3D.MINUS_I), 0);
-        Assert.assertEquals(50.0, Cartesian3D.distanceSq(v1, v2), 1.0e-12);
-        Assert.assertEquals(Cartesian3D.distance(v1, v2) * Cartesian3D.distance(v1, v2),
-                            Cartesian3D.distanceSq(v1, v2), 1.0e-12);
-  }
-
-    @Test
-    public void testDistanceInf() {
-        Cartesian3D v1 = new Cartesian3D(1, -2, 3);
-        Cartesian3D v2 = new Cartesian3D(-4, 2, 0);
-        Assert.assertEquals(0.0, Cartesian3D.distanceInf(Cartesian3D.MINUS_I, Cartesian3D.MINUS_I), 0);
-        Assert.assertEquals(5.0, Cartesian3D.distanceInf(v1, v2), 1.0e-12);
-        Assert.assertEquals(v1.subtract(v2).getNormInf(), Cartesian3D.distanceInf(v1, v2), 1.0e-12);
-    }
-
-    @Test
-    public void testSubtract() {
-        Cartesian3D v1 = new Cartesian3D(1, 2, 3);
-        Cartesian3D v2 = new Cartesian3D(-3, -2, -1);
-        v1 = v1.subtract(v2);
-        checkVector(v1, 4, 4, 4);
-
-        checkVector(v2.subtract(v1), -7, -6, -5);
-        checkVector(v2.subtract(3, v1), -15, -14, -13);
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getNormInf(), 0);
+        Assert.assertEquals(4, Vector3D.of(2, 3, 4).getNormInf(), EPS);
+        Assert.assertEquals(4, Vector3D.of(-2, -3, -4).getNormInf(), EPS);
     }
 
     @Test
     public void testAdd() {
-        Cartesian3D v1 = new Cartesian3D(1, 2, 3);
-        Cartesian3D v2 = new Cartesian3D(-3, -2, -1);
-        v1 = v1.add(v2);
-        checkVector(v1, -2, 0, 2);
+        // arrange
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(-4, -5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
 
-        checkVector(v2.add(v1), -5, -2, 1);
-        checkVector(v2.add(3, v1), -9, -2, 5);
+        // act/assert
+        checkVector(v1.add(v1), 2, 4, 6);
+
+        checkVector(v1.add(v2), -3, -3, -3);
+        checkVector(v2.add(v1), -3, -3, -3);
+
+        checkVector(v1.add(v3), 8, 10, 12);
+        checkVector(v3.add(v1), 8, 10, 12);
     }
 
     @Test
-    public void testScalarProduct() {
-        Cartesian3D v = new Cartesian3D(1, 2, 3);
-        v = v.scalarMultiply(3);
-        checkVector(v, 3, 6, 9);
+    public void testAdd_scaled() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(-4, -5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
 
-        checkVector(v.scalarMultiply(0.5), 1.5, 3, 4.5);
+        // act/assert
+        checkVector(v1.add(0, v1), 1, 2, 3);
+        checkVector(v1.add(0.5, v1), 1.5, 3, 4.5);
+        checkVector(v1.add(1, v1), 2, 4, 6);
+
+        checkVector(v1.add(2, v2), -7, -8, -9);
+        checkVector(v2.add(2, v1), -2, -1, -0);
+
+        checkVector(v1.add(-2, v3), -13, -14, -15);
+        checkVector(v3.add(-2, v1), 5, 4, 3);
     }
 
     @Test
-    public void testVectorialProducts() {
-        Cartesian3D v1 = new Cartesian3D(2, 1, -4);
-        Cartesian3D v2 = new Cartesian3D(3, 1, -1);
+    public void testSubtract() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(-4, -5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
 
-        Assert.assertTrue(Math.abs(Cartesian3D.dotProduct(v1, v2) - 11) < 1.0e-12);
+        // act/assert
+        checkVector(v1.subtract(v1), 0, 0, 0);
 
-        Cartesian3D v3 = Cartesian3D.crossProduct(v1, v2);
-        checkVector(v3, 3, -10, -1);
+        checkVector(v1.subtract(v2), 5, 7, 9);
+        checkVector(v2.subtract(v1), -5, -7, -9);
 
-        Assert.assertTrue(Math.abs(Cartesian3D.dotProduct(v1, v3)) < 1.0e-12);
-        Assert.assertTrue(Math.abs(Cartesian3D.dotProduct(v2, v3)) < 1.0e-12);
+        checkVector(v1.subtract(v3), -6, -6, -6);
+        checkVector(v3.subtract(v1), 6, 6, 6);
     }
 
     @Test
-    public void testCrossProductCancellation() {
-        Cartesian3D v1 = new Cartesian3D(9070467121.0, 4535233560.0, 1);
-        Cartesian3D v2 = new Cartesian3D(9070467123.0, 4535233561.0, 1);
-        checkVector(Cartesian3D.crossProduct(v1, v2), -1, 2, 1);
+    public void testSubtract_scaled() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(-4, -5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
 
-        double scale    = Math.scalb(1.0, 100);
-        Cartesian3D big1   = new Cartesian3D(scale, v1);
-        Cartesian3D small2 = new Cartesian3D(1 / scale, v2);
-        checkVector(Cartesian3D.crossProduct(big1, small2), -1, 2, 1);
+        // act/assert
+        checkVector(v1.subtract(0, v1), 1, 2, 3);
+        checkVector(v1.subtract(0.5, v1), 0.5, 1, 1.5);
+        checkVector(v1.subtract(1, v1), 0, 0, 0);
 
-    }
+        checkVector(v1.subtract(2, v2), 9, 12, 15);
+        checkVector(v2.subtract(2, v1), -6, -9, -12);
 
-    @Test
-    public void testAngular() {
-        Assert.assertEquals(0,           Cartesian3D.PLUS_I.getAlpha(), 1.0e-10);
-        Assert.assertEquals(0,           Cartesian3D.PLUS_I.getDelta(), 1.0e-10);
-        Assert.assertEquals(Math.PI / 2, Cartesian3D.PLUS_J.getAlpha(), 1.0e-10);
-        Assert.assertEquals(0,           Cartesian3D.PLUS_J.getDelta(), 1.0e-10);
-        Assert.assertEquals(0,           Cartesian3D.PLUS_K.getAlpha(), 1.0e-10);
-        Assert.assertEquals(Math.PI / 2, Cartesian3D.PLUS_K.getDelta(), 1.0e-10);
-
-        Cartesian3D u = new Cartesian3D(-1, 1, -1);
-        Assert.assertEquals(3 * Math.PI /4, u.getAlpha(), 1.0e-10);
-        Assert.assertEquals(-1.0 / Math.sqrt(3), Math.sin(u.getDelta()), 1.0e-10);
-    }
-
-    @Test
-    public void testAngularSeparation() {
-        Cartesian3D v1 = new Cartesian3D(2, -1, 4);
-
-        Cartesian3D  k = v1.normalize();
-        Cartesian3D  i = k.orthogonal();
-        Cartesian3D v2 = k.scalarMultiply(Math.cos(1.2)).add(i.scalarMultiply(Math.sin(1.2)));
-
-        Assert.assertTrue(Math.abs(Cartesian3D.angle(v1, v2) - 1.2) < 1.0e-12);
-  }
-
-    @Test
-    public void testNormalize() {
-        Assert.assertEquals(1.0, new Cartesian3D(5, -4, 2).normalize().getNorm(), 1.0e-12);
-        try {
-            Cartesian3D.ZERO.normalize();
-            Assert.fail("an exception should have been thrown");
-        } catch (IllegalStateException e) {
-            // expected behavior
-        }
+        checkVector(v1.subtract(-2, v3), 15, 18, 21);
+        checkVector(v3.subtract(-2, v1), 9, 12, 15);
     }
 
     @Test
     public void testNegate() {
-        checkVector(new Cartesian3D(0.1, 2.5, 1.3).negate(), -0.1, -2.5, -1.3);
+        // act/assert
+        checkVector(Vector3D.of(0.1, 2.5, 1.3).negate(), -0.1, -2.5, -1.3);
+        checkVector(Vector3D.of(-0.1, -2.5, -1.3).negate(), 0.1, 2.5, 1.3);
+    }
+
+    @Test
+    public void testNormalize() {
+        // arrange
+        double invSqrt3 = 1 / Math.sqrt(3);
+
+        // act/assert
+        checkVector(Vector3D.of(100, 0, 0).normalize(), 1, 0, 0);
+        checkVector(Vector3D.of(-100, 0, 0).normalize(), -1, 0, 0);
+
+        checkVector(Vector3D.of(0, 100, 0).normalize(), 0, 1, 0);
+        checkVector(Vector3D.of(0, -100, 0).normalize(), 0, -1, 0);
+
+        checkVector(Vector3D.of(0, 0, 100).normalize(), 0, 0, 1);
+        checkVector(Vector3D.of(0, 0, -100).normalize(), 0, 0, -1);
+
+        checkVector(Vector3D.of(2, 2, 2).normalize(), invSqrt3, invSqrt3, invSqrt3);
+        checkVector(Vector3D.of(-2, -2, -2).normalize(), -invSqrt3, -invSqrt3, -invSqrt3);
+
+        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().getNorm(), 1.0e-12);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNormalize_zeroNorm() {
+        // act/assert
+        Vector3D.ZERO.normalize();
     }
 
     @Test
     public void testOrthogonal() {
-        Cartesian3D v1 = new Cartesian3D(0.1, 2.5, 1.3);
-        Assert.assertEquals(0.0, Cartesian3D.dotProduct(v1, v1.orthogonal()), 1.0e-12);
-        Cartesian3D v2 = new Cartesian3D(2.3, -0.003, 7.6);
-        Assert.assertEquals(0.0, Cartesian3D.dotProduct(v2, v2.orthogonal()), 1.0e-12);
-        Cartesian3D v3 = new Cartesian3D(-1.7, 1.4, 0.2);
-        Assert.assertEquals(0.0, Cartesian3D.dotProduct(v3, v3.orthogonal()), 1.0e-12);
-        Cartesian3D v4 = new Cartesian3D(4.2, 0.1, -1.8);
-        Assert.assertEquals(0.0, Cartesian3D.dotProduct(v4, v4.orthogonal()), 1.0e-12);
-        try {
-            new Cartesian3D(0, 0, 0).orthogonal();
-            Assert.fail("an exception should have been thrown");
-        } catch (IllegalStateException e) {
-            // expected behavior
-        }
+        // arrange
+        Vector3D v1 = Vector3D.of(0.1, 2.5, 1.3);
+        Vector3D v2 = Vector3D.of(2.3, -0.003, 7.6);
+        Vector3D v3 = Vector3D.of(-1.7, 1.4, 0.2);
+        Vector3D v4 = Vector3D.of(4.2, 0.1, -1.8);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.dotProduct(v1.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v2.dotProduct(v2.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v3.dotProduct(v3.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v4.dotProduct(v4.orthogonal()), EPS);
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void testOrthogonal_zeroNorm() {
+        // act/assert
+        Vector3D.ZERO.orthogonal();
+    }
+
     @Test
     public void testAngle() {
-        Assert.assertEquals(0.22572612855273393616,
-                            Cartesian3D.angle(new Cartesian3D(1, 2, 3), new Cartesian3D(4, 5, 6)),
-                            1.0e-12);
-        Assert.assertEquals(7.98595620686106654517199e-8,
-                            Cartesian3D.angle(new Cartesian3D(1, 2, 3), new Cartesian3D(2, 4, 6.000001)),
-                            1.0e-12);
-        Assert.assertEquals(3.14159257373023116985197793156,
-                            Cartesian3D.angle(new Cartesian3D(1, 2, 3), new Cartesian3D(-2, -4, -6.000001)),
-                            1.0e-12);
-        try {
-            Cartesian3D.angle(Cartesian3D.ZERO, Cartesian3D.PLUS_I);
-            Assert.fail("an exception should have been thrown");
-        } catch (IllegalArgumentException e) {
-            // expected behavior
-        }
+        // arrange
+        double tolerance = 1e-10;
+
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(4, 5, 6);
+
+        // act/assert
+        Assert.assertEquals(0.22572612855273393616, v1.angle(v2), tolerance);
+        Assert.assertEquals(7.98595620686106654517199e-8, v1.angle(Vector3D.of(2, 4, 6.000001)), tolerance);
+        Assert.assertEquals(3.14159257373023116985197793156, v1.angle(Vector3D.of(-2, -4, -6.000001)), tolerance);
+
+        Assert.assertEquals(0.0, Vector3D.PLUS_X.angle(Vector3D.PLUS_X), tolerance);
+        Assert.assertEquals(Geometry.PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_X), tolerance);
+
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.PLUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.PLUS_Z), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_Z), tolerance);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAngle_zeroNorm() {
+        // act/assert
+        Vector3D.ZERO.angle(Vector3D.PLUS_X);
     }
 
     @Test
-    public void testAccurateDotProduct() {
-        // the following two vectors are nearly but not exactly orthogonal
-        // naive dot product (i.e. computing u1.x * u2.x + u1.y * u2.y + u1.z * u2.z
-        // leads to a result of 0.0, instead of the correct -1.855129...
-        Cartesian3D u1 = new Cartesian3D(-1321008684645961.0 /  268435456.0,
-                                   -5774608829631843.0 /  268435456.0,
-                                   -7645843051051357.0 / 8589934592.0);
-        Cartesian3D u2 = new Cartesian3D(-5712344449280879.0 /    2097152.0,
-                                   -4550117129121957.0 /    2097152.0,
-                                    8846951984510141.0 /     131072.0);
-        double sNaive = u1.getX() * u2.getX() + u1.getY() * u2.getY() + u1.getZ() * u2.getZ();
-        double sAccurate = u1.dotProduct(u2);
-        Assert.assertEquals(0.0, sNaive, 1.0e-30);
-        Assert.assertEquals(-2088690039198397.0 / 1125899906842624.0, sAccurate, 1.0e-15);
+    public void testAngle_angularSeparation() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2, -1, 4);
+
+        Vector3D  k = v1.normalize();
+        Vector3D  i = k.orthogonal();
+        Vector3D v2 = k.scalarMultiply(Math.cos(1.2)).add(i.scalarMultiply(Math.sin(1.2)));
+
+        // act/assert
+        Assert.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
+  }
+
+    @Test
+    public void testAngle_static() {
+        // arrange
+        double tolerance = 1e-10;
+
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(4, 5, 6);
+
+        // act/assert
+        Assert.assertEquals(0.22572612855273393616, Vector3D.angle(v1, v2), tolerance);
+        Assert.assertEquals(7.98595620686106654517199e-8, Vector3D.angle(v1, Vector3D.of(2, 4, 6.000001)), tolerance);
+        Assert.assertEquals(3.14159257373023116985197793156, Vector3D.angle(v1, Vector3D.of(-2, -4, -6.000001)), tolerance);
+
+        Assert.assertEquals(0.0, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_X), tolerance);
+        Assert.assertEquals(Geometry.PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_X), tolerance);
+
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_Z), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_Z), tolerance);
     }
 
     @Test
-    public void testDotProduct() {
-        // we compare accurate versus naive dot product implementations
-        // on regular vectors (i.e. not extreme cases like in the previous test)
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237l);
-        for (int i = 0; i < 10000; ++i) {
-            double ux = 10000 * random.nextDouble();
-            double uy = 10000 * random.nextDouble();
-            double uz = 10000 * random.nextDouble();
-            double vx = 10000 * random.nextDouble();
-            double vy = 10000 * random.nextDouble();
-            double vz = 10000 * random.nextDouble();
-            double sNaive = ux * vx + uy * vy + uz * vz;
-            double sAccurate = new Cartesian3D(ux, uy, uz).dotProduct(new Cartesian3D(vx, vy, vz));
-            Assert.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
-        }
+    public void testCrossProduct() {
+        // act/assert
+        checkVector(Vector3D.PLUS_X.crossProduct(Vector3D.PLUS_Y), 0, 0, 1);
+        checkVector(Vector3D.PLUS_X.crossProduct(Vector3D.MINUS_Y), 0, 0, -1);
+
+        checkVector(Vector3D.MINUS_X.crossProduct(Vector3D.MINUS_Y), 0, 0, 1);
+        checkVector(Vector3D.MINUS_X.crossProduct(Vector3D.PLUS_Y), 0, 0, -1);
+
+        checkVector(Vector3D.of(2, 1, -4).crossProduct(Vector3D.of(3, 1, -1)), 3, -10, -1);
+
+        double invSqrt6 = 1 / Math.sqrt(6);
+        checkVector(Vector3D.of(1, 1, 1).crossProduct(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
     }
 
     @Test
-    public void testAccurateCrossProduct() {
+    public void testCrossProduct_nearlyAntiParallel() {
         // the vectors u1 and u2 are nearly but not exactly anti-parallel
         // (7.31e-16 degrees from 180 degrees) naive cross product (i.e.
         // computing u1.x * u2.x + u1.y * u2.y + u1.z * u2.z
         // leads to a result of   [0.0009765, -0.0001220, -0.0039062],
         // instead of the correct [0.0006913, -0.0001254, -0.0007909]
-        final Cartesian3D u1 = new Cartesian3D(-1321008684645961.0 /   268435456.0,
+
+        // arrange
+        final Vector3D u1 = Vector3D.of(-1321008684645961.0 /   268435456.0,
                                          -5774608829631843.0 /   268435456.0,
                                          -7645843051051357.0 /  8589934592.0);
-        final Cartesian3D u2 = new Cartesian3D( 1796571811118507.0 /  2147483648.0,
+        final Vector3D u2 = Vector3D.of( 1796571811118507.0 /  2147483648.0,
                                           7853468008299307.0 /  2147483648.0,
                                           2599586637357461.0 / 17179869184.0);
-        final Cartesian3D u3 = new Cartesian3D(12753243807587107.0 / 18446744073709551616.0,
+        final Vector3D u3 = Vector3D.of(12753243807587107.0 / 18446744073709551616.0,
                                          -2313766922703915.0 / 18446744073709551616.0,
                                           -227970081415313.0 /   288230376151711744.0);
-        Cartesian3D cNaive = new Cartesian3D(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
+
+        // act
+        Vector3D cNaive = Vector3D.of(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
                                        u1.getZ() * u2.getX() - u1.getX() * u2.getZ(),
                                        u1.getX() * u2.getY() - u1.getY() * u2.getX());
-        Cartesian3D cAccurate = u1.crossProduct(u2);
+        Vector3D cAccurate = u1.crossProduct(u2);
+
+        // assert
         Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.getNorm());
         Assert.assertEquals(0.0, u3.distance(cAccurate), 1.0e-30 * cAccurate.getNorm());
     }
 
     @Test
-    public void testCrossProduct() {
+    public void testCrossProduct_accuracy() {
         // we compare accurate versus naive cross product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
         UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 885362227452043215l);
         for (int i = 0; i < 10000; ++i) {
+            // arrange
             double ux = 10000 * random.nextDouble();
             double uy = 10000 * random.nextDouble();
             double uz = 10000 * random.nextDouble();
             double vx = 10000 * random.nextDouble();
             double vy = 10000 * random.nextDouble();
             double vz = 10000 * random.nextDouble();
-            Cartesian3D cNaive = new Cartesian3D(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
-            Cartesian3D cAccurate = new Cartesian3D(ux, uy, uz).crossProduct(new Cartesian3D(vx, vy, vz));
+
+            // act
+            Vector3D cNaive = Vector3D.of(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
+            Vector3D cAccurate = Vector3D.of(ux, uy, uz).crossProduct(Vector3D.of(vx, vy, vz));
+
+            // assert
             Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.getNorm());
         }
     }
 
-    private void checkVector(Cartesian3D v, double x, double y, double z) {
-        Assert.assertEquals(x, v.getX(), 1.0e-12);
-        Assert.assertEquals(y, v.getY(), 1.0e-12);
-        Assert.assertEquals(z, v.getZ(), 1.0e-12);
+    @Test
+    public void testCrossProduct_cancellation() {
+        // act/assert
+        Vector3D v1 = Vector3D.of(9070467121.0, 4535233560.0, 1);
+        Vector3D v2 = Vector3D.of(9070467123.0, 4535233561.0, 1);
+        checkVector(v1.crossProduct(v2), -1, 2, 1);
+
+        double scale    = Math.scalb(1.0, 100);
+        Vector3D big1   = Vector3D.linearCombination(scale, v1);
+        Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
+        checkVector(big1.crossProduct(small2), -1, 2, 1);
+    }
+
+    @Test
+    public void testCrossProduct_static() {
+        // act/assert
+        checkVector(Vector3D.crossProduct(Vector3D.PLUS_X, Vector3D.PLUS_Y), 0, 0, 1);
+        checkVector(Vector3D.crossProduct(Vector3D.PLUS_X, Vector3D.MINUS_Y), 0, 0, -1);
+
+        checkVector(Vector3D.crossProduct(Vector3D.MINUS_X, Vector3D.MINUS_Y), 0, 0, 1);
+        checkVector(Vector3D.crossProduct(Vector3D.MINUS_X, Vector3D.PLUS_Y), 0, 0, -1);
+
+        checkVector(Vector3D.crossProduct(Vector3D.of(2, 1, -4), Vector3D.of(3, 1, -1)), 3, -10, -1);
+
+        double invSqrt6 = 1 / Math.sqrt(6);
+        checkVector(Vector3D.crossProduct(Vector3D.of(1, 1, 1), Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
+    }
+
+    @Test
+    public void testScalarMultiply() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2, 3, 4);
+        Vector3D v2 = Vector3D.of(-2, -3, -4);
+
+        // act/assert
+        checkVector(v1.scalarMultiply(0), 0, 0, 0);
+        checkVector(v1.scalarMultiply(0.5), 1, 1.5, 2);
+        checkVector(v1.scalarMultiply(1), 2, 3, 4);
+        checkVector(v1.scalarMultiply(2), 4, 6, 8);
+        checkVector(v1.scalarMultiply(-2), -4, -6, -8);
+
+        checkVector(v2.scalarMultiply(0), 0, 0, 0);
+        checkVector(v2.scalarMultiply(0.5), -1, -1.5, -2);
+        checkVector(v2.scalarMultiply(1), -2, -3, -4);
+        checkVector(v2.scalarMultiply(2), -4, -6, -8);
+        checkVector(v2.scalarMultiply(-2), 4, 6, 8);
+    }
+
+    @Test
+    public void testDistance1() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 2, 0);
+        Vector3D v3 = Vector3D.of(5, -6, -7);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.distance1(v1), EPS);
+        Assert.assertEquals(0.0, v2.distance1(v2), EPS);
+
+        Assert.assertEquals(12.0, v1.distance1(v2), EPS);
+        Assert.assertEquals(12.0, v2.distance1(v1), EPS);
+
+        Assert.assertEquals(v1.subtract(v2).getNorm1(), v1.distance1(v2), EPS);
+
+        Assert.assertEquals(18, v1.distance1(v3), EPS);
+        Assert.assertEquals(18, v3.distance1(v1), EPS);
+    }
+
+    @Test
+    public void testDistance() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 2, 0);
+        Vector3D v3 = Vector3D.of(5, -6, -7);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.distance(v1), EPS);
+        Assert.assertEquals(0.0, v2.distance(v2), EPS);
+
+        Assert.assertEquals(Math.sqrt(50), v1.distance(v2), EPS);
+        Assert.assertEquals(Math.sqrt(50), v2.distance(v1), EPS);
+
+        Assert.assertEquals(v1.subtract(v2).getNorm(), v1.distance(v2), EPS);
+
+        Assert.assertEquals(Math.sqrt(132), v1.distance(v3), EPS);
+        Assert.assertEquals(Math.sqrt(132), v3.distance(v1), EPS);
+    }
+
+    @Test
+    public void testDistanceSq() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 2, 0);
+        Vector3D v3 = Vector3D.of(5, -6, -7);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.distanceSq(v1), EPS);
+        Assert.assertEquals(0.0, v2.distanceSq(v2), EPS);
+
+        Assert.assertEquals(50, v1.distanceSq(v2), EPS);
+        Assert.assertEquals(50, v2.distanceSq(v1), EPS);
+
+        Assert.assertEquals(v1.subtract(v2).getNormSq(), v1.distanceSq(v2), EPS);
+
+        Assert.assertEquals(132, v1.distanceSq(v3), EPS);
+        Assert.assertEquals(132, v3.distanceSq(v1), EPS);
+  }
+
+    @Test
+    public void testDistanceInf() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 2, 0);
+        Vector3D v3 = Vector3D.of(5, -6, -7);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.distanceInf(v1), EPS);
+        Assert.assertEquals(0.0, v2.distanceInf(v2), EPS);
+
+        Assert.assertEquals(5, v1.distanceInf(v2), EPS);
+        Assert.assertEquals(5, v2.distanceInf(v1), EPS);
+
+        Assert.assertEquals(v1.subtract(v2).getNormInf(), v1.distanceInf(v2), EPS);
+
+        Assert.assertEquals(10, v1.distanceInf(v3), EPS);
+        Assert.assertEquals(10, v3.distanceInf(v1), EPS);
+    }
+
+    @Test
+    public void testDotProduct() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
+
+        // act/assert
+        Assert.assertEquals(14, v1.dotProduct(v1), EPS);
+
+        Assert.assertEquals(-32, v1.dotProduct(v2), EPS);
+        Assert.assertEquals(-32, v2.dotProduct(v1), EPS);
+
+        Assert.assertEquals(18, v1.dotProduct(v3), EPS);
+        Assert.assertEquals(18, v3.dotProduct(v1), EPS);
+    }
+
+    @Test
+    public void testDotProduct_nearlyOrthogonal() {
+        // the following two vectors are nearly but not exactly orthogonal
+        // naive dot product (i.e. computing u1.x * u2.x + u1.y * u2.y + u1.z * u2.z
+        // leads to a result of 0.0, instead of the correct -1.855129...
+
+        // arrange
+        Vector3D u1 = Vector3D.of(-1321008684645961.0 /  268435456.0,
+                                   -5774608829631843.0 /  268435456.0,
+                                   -7645843051051357.0 / 8589934592.0);
+        Vector3D u2 = Vector3D.of(-5712344449280879.0 /    2097152.0,
+                                   -4550117129121957.0 /    2097152.0,
+                                    8846951984510141.0 /     131072.0);
+
+        // act
+        double sNaive = u1.getX() * u2.getX() + u1.getY() * u2.getY() + u1.getZ() * u2.getZ();
+        double sAccurate = u1.dotProduct(u2);
+
+        // assert
+        Assert.assertEquals(0.0, sNaive, 1.0e-30);
+        Assert.assertEquals(-2088690039198397.0 / 1125899906842624.0, sAccurate, 1.0e-15);
+    }
+
+    @Test
+    public void testDotProduct_accuracy() {
+        // we compare accurate versus naive dot product implementations
+        // on regular vectors (i.e. not extreme cases like in the previous test)
+        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237l);
+        for (int i = 0; i < 10000; ++i) {
+            // arrange
+            double ux = 10000 * random.nextDouble();
+            double uy = 10000 * random.nextDouble();
+            double uz = 10000 * random.nextDouble();
+            double vx = 10000 * random.nextDouble();
+            double vy = 10000 * random.nextDouble();
+            double vz = 10000 * random.nextDouble();
+
+            // act
+            double sNaive = ux * vx + uy * vy + uz * vz;
+            double sAccurate = Vector3D.of(ux, uy, uz).dotProduct(Vector3D.of(vx, vy, vz));
+
+            // assert
+            Assert.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);
+        }
+    }
+
+    @Test
+    public void testDotProduct_static() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -2, 3);
+        Vector3D v2 = Vector3D.of(-4, 5, -6);
+        Vector3D v3 = Vector3D.of(7, 8, 9);
+
+        // act/assert
+        Assert.assertEquals(14, Vector3D.dotProduct(v1, v1), EPS);
+
+        Assert.assertEquals(-32, Vector3D.dotProduct(v1, v2), EPS);
+        Assert.assertEquals(-32, Vector3D.dotProduct(v2, v1), EPS);
+
+        Assert.assertEquals(18, Vector3D.dotProduct(v1, v3), EPS);
+        Assert.assertEquals(18, Vector3D.dotProduct(v3, v1), EPS);
+    }
+
+    @Test
+    public void testHashCode() {
+        // arrange
+        double delta = 10 * Precision.EPSILON;
+        Vector3D u = Vector3D.of(1, 1, 1);
+        Vector3D v = Vector3D.of(1 + delta, 1 + delta, 1 + delta);
+        Vector3D w = Vector3D.of(1, 1, 1);
+
+        // act/assert
+        Assert.assertTrue(u.hashCode() != v.hashCode());
+        Assert.assertEquals(u.hashCode(), w.hashCode());
+
+        Assert.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.NaN.hashCode());
+        Assert.assertEquals(Vector3D.of(0, Double.NaN, 0).hashCode(), Vector3D.NaN.hashCode());
+        Assert.assertEquals(Vector3D.of(Double.NaN, 0, 0).hashCode(), Vector3D.NaN.hashCode());
+        Assert.assertEquals(Vector3D.of(0, 0, Double.NaN).hashCode(), Vector3D.of(Double.NaN, 0, 0).hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        double delta = 10 * Precision.EPSILON;
+        Vector3D u1 = Vector3D.of(1, 2, 3);
+        Vector3D u2 = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        Assert.assertFalse(u1.equals(null));
+        Assert.assertFalse(u1.equals(new Object()));
+
+        Assert.assertTrue(u1.equals(u1));
+        Assert.assertTrue(u1.equals(u2));
+
+        Assert.assertFalse(u1.equals(Vector3D.of(-1, -2, -3)));
+        Assert.assertFalse(u1.equals(Vector3D.of(1 + delta, 2, 3)));
+        Assert.assertFalse(u1.equals(Vector3D.of(1, 2 + delta, 3)));
+        Assert.assertFalse(u1.equals(Vector3D.of(1, 2, 3 + delta)));
+
+        Assert.assertTrue(Vector3D.of(0, Double.NaN, 0).equals(Vector3D.of(Double.NaN, 0, 0)));
+
+        Assert.assertTrue(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
+        Assert.assertFalse(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
+        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).equals(Vector3D.of(0, 0, Double.POSITIVE_INFINITY)));
+
+        Assert.assertTrue(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
+        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
+        Assert.assertFalse(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).equals(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0)));
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        Vector3D v = Vector3D.of(1, 2, 3);
+        Pattern pattern = Pattern.compile("\\{1.{0,2}; 2.{0,2}; 3.{0,2}\\}");
+
+        // act
+        String str = v.toString();
+
+        // assert
+        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
+                    pattern.matcher(str).matches());
+    }
+
+    @Test
+    public void testOf() {
+        // act/assert
+        checkVector(Vector3D.of(1, 2, 3), 1, 2, 3);
+        checkVector(Vector3D.of(-1, -2, -3), -1, -2, -3);
+        checkVector(Vector3D.of(Math.PI, Double.NaN, Double.POSITIVE_INFINITY),
+                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
+        checkVector(Vector3D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E),
+                Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
+    }
+
+    @Test
+    public void testOf_coordinateArg() {
+        // act/assert
+        checkVector(Vector3D.of(Point3D.of(1, 2, 3)), 1, 2, 3);
+        checkVector(Vector3D.of(Point3D.of(-1, -2, -3)), -1, -2, -3);
+        checkVector(Vector3D.of(Point3D.of(Math.PI, Double.NaN, Double.POSITIVE_INFINITY)),
+                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
+        checkVector(Vector3D.of(Point3D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E)),
+                   Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
+    }
+
+    @Test
+    public void testOf_arrayArg() {
+        // act/assert
+        checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
+        checkVector(Vector3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
+        checkVector(Vector3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
+        checkVector(Vector3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+                Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testOf_arrayArg_invalidDimensions() {
+        // act/assert
+        Vector3D.of(new double[] { 0.0, 0.0 });
+    }
+
+    @Test
+    public void testLinearCombination1() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        checkVector(Vector3D.linearCombination(0, p1), 0, 0, 0);
+
+        checkVector(Vector3D.linearCombination(1, p1), 1, 2, 3);
+        checkVector(Vector3D.linearCombination(-1, p1), -1, -2, -3);
+
+        checkVector(Vector3D.linearCombination(0.5, p1), 0.5, 1, 1.5);
+        checkVector(Vector3D.linearCombination(-0.5, p1), -0.5, -1, -1.5);
+    }
+
+    @Test
+    public void testLinearCombination2() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 2, 3);
+        Vector3D p2 = Vector3D.of(-3, -4, -5);
+
+        // act/assert
+        checkVector(Vector3D.linearCombination(2, p1, -3, p2), 11, 16, 21);
+        checkVector(Vector3D.linearCombination(-3, p1, 2, p2), -9, -14, -19);
+    }
+
+    @Test
+    public void testLinearCombination3() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 2, 3);
+        Vector3D p2 = Vector3D.of(-3, -4, -5);
+        Vector3D p3 = Vector3D.of(5, 6, 7);
+
+        // act/assert
+        checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3), 31, 40, 49);
+        checkVector(Vector3D.linearCombination(-3, p1, 2, p2, -4, p3), -29, -38, -47);
+    }
+
+    @Test
+    public void testLinearCombination4() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 2, 3);
+        Vector3D p2 = Vector3D.of(-3, -4, -5);
+        Vector3D p3 = Vector3D.of(5, 6, 7);
+        Vector3D p4 = Vector3D.of(-7, -8, 9);
+
+        // act/assert
+        checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80, 4);
+        checkVector(Vector3D.linearCombination(-3, p1, 2, p2, -4, p3, 5, p4), -64, -78, -2);
+    }
+
+    @Test
+    public void testConstructors() {
+        double r = Math.sqrt(2) /2;
+        checkVector(Vector3D.linearCombination(2, Vector3D.fromSpherical(Math.PI / 3, -Math.PI / 4)),
+                    r, r * Math.sqrt(3), -2 * r);
+        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
+                                 -3, Vector3D.MINUS_Z),
+                    2, 0, 3);
+        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
+                                 5, Vector3D.PLUS_Y,
+                                 -3, Vector3D.MINUS_Z),
+                    2, 5, 3);
+        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
+                                 5, Vector3D.PLUS_Y,
+                                 5, Vector3D.MINUS_Y,
+                                 -3, Vector3D.MINUS_Z),
+                    2, 0, 3);
+        checkVector(Vector3D.of(new double[] { 2,  5,  -3 }),
+                    2, 5, -3);
+    }
+
+    @Test
+    public void testAngular() {
+        Assert.assertEquals(0,           Vector3D.PLUS_X.getAlpha(), 1.0e-10);
+        Assert.assertEquals(0,           Vector3D.PLUS_X.getDelta(), 1.0e-10);
+        Assert.assertEquals(Math.PI / 2, Vector3D.PLUS_Y.getAlpha(), 1.0e-10);
+        Assert.assertEquals(0,           Vector3D.PLUS_Y.getDelta(), 1.0e-10);
+        Assert.assertEquals(0,           Vector3D.PLUS_Z.getAlpha(), 1.0e-10);
+        Assert.assertEquals(Math.PI / 2, Vector3D.PLUS_Z.getDelta(), 1.0e-10);
+
+        Vector3D u = Vector3D.of(-1, 1, -1);
+        Assert.assertEquals(3 * Math.PI /4, u.getAlpha(), 1.0e-10);
+        Assert.assertEquals(-1.0 / Math.sqrt(3), Math.sin(u.getDelta()), 1.0e-10);
+    }
+
+    private void checkVector(Vector3D v, double x, double y, double z) {
+        Assert.assertEquals(x, v.getX(), EPS);
+        Assert.assertEquals(y, v.getY(), EPS);
+        Assert.assertEquals(z, v.getZ(), EPS);
+    }
+
+    private void checkPoint(Point3D p, double x, double y, double z) {
+        Assert.assertEquals(x, p.getX(), EPS);
+        Assert.assertEquals(y, p.getY(), EPS);
+        Assert.assertEquals(z, p.getZ(), EPS);
     }
 }

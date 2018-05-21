@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** This interface defines mappers between a space and one of its sub-spaces.
 
@@ -27,8 +26,8 @@ import org.apache.commons.geometry.core.Space;
  * of the dimensions differences. As an example, {@link
  * org.apache.commons.geometry.euclidean.threed.Line Line} in 3D
  * implements Embedding&lt;{@link
- * org.apache.commons.geometry.euclidean.threed.Cartesian3D Cartesian3D}, {@link
- * org.apache.commons.geometry.euclidean.oned.Cartesian1D Cartesian1D}&gt;, i.e. it
+ * org.apache.commons.geometry.euclidean.threed.Point3D Point3D}, {@link
+ * org.apache.commons.geometry.euclidean.oned.Point1D Point1D}&gt;, i.e. it
  * maps directly dimensions 3 and 1.</p>
 
  * <p>In the 3D euclidean space, hyperplanes are 2D planes, and the 1D
@@ -41,12 +40,12 @@ import org.apache.commons.geometry.core.Space;
  * versions, which breaks compatibility for external implementations.
  * </p>
 
- * @param <S> Type of the embedding space.
- * @param <T> Type of the embedded sub-space.
+ * @param <P> Point type defining the embedding space.
+ * @param <S> Point type defining the embedded sub-space.
 
  * @see Hyperplane
  */
-public interface Embedding<S extends Space, T extends Space> {
+public interface Embedding<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a space point into a sub-space point.
      * @param point n-dimension point of the space
@@ -54,7 +53,7 @@ public interface Embedding<S extends Space, T extends Space> {
      * the specified space point
      * @see #toSpace
      */
-    Point<T> toSubSpace(Point<S> point);
+    S toSubSpace(P point);
 
     /** Transform a sub-space point into a space point.
      * @param point (n-1)-dimension point of the sub-space
@@ -62,6 +61,6 @@ public interface Embedding<S extends Space, T extends Space> {
      * specified sub-space point
      * @see #toSubSpace
      */
-    Point<S> toSpace(Point<T> point);
+    P toSpace(S point);
 
 }

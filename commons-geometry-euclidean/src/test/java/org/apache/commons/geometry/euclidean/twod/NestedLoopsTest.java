@@ -31,13 +31,13 @@ public class NestedLoopsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNestedLoops() throws Exception {
-        Cartesian2D oneOne = new Cartesian2D(1.0, 1.0);
-        Cartesian2D oneNegativeOne = new Cartesian2D(1.0, -1.0);
-        Cartesian2D negativeOneNegativeOne = new Cartesian2D(-1.0, -1.0);
-        Cartesian2D negativeOneOne = new Cartesian2D(-1.0, 1.0);
-        Cartesian2D origin = new Cartesian2D(0, 0);
+        Point2D oneOne = new Point2D(1.0, 1.0);
+        Point2D oneNegativeOne = new Point2D(1.0, -1.0);
+        Point2D negativeOneNegativeOne = new Point2D(-1.0, -1.0);
+        Point2D negativeOneOne = new Point2D(-1.0, 1.0);
+        Point2D origin = new Point2D(0, 0);
 
-        Cartesian2D [] vertices = new Cartesian2D[]{
+        Point2D [] vertices = new Point2D[]{
                 oneOne,
                 oneNegativeOne,
                 negativeOneNegativeOne,
@@ -54,8 +54,8 @@ public class NestedLoopsTest {
         surroundedField.setAccessible(Boolean.TRUE);
         loopField.setAccessible(Boolean.TRUE);
         List<NestedLoops> surrounded = (List<NestedLoops>) surroundedField.get(nestedLoops);
-        Cartesian2D[] loop = (Cartesian2D []) loopField.get(surrounded.get(0));
-        Set<Cartesian2D> vertexSet = new HashSet<>(Arrays.asList(loop));
+        Point2D[] loop = (Point2D []) loopField.get(surrounded.get(0));
+        Set<Point2D> vertexSet = new HashSet<>(Arrays.asList(loop));
         Assert.assertTrue(vertexSet.contains(oneOne));
         Assert.assertTrue(vertexSet.contains(oneNegativeOne));
         Assert.assertTrue(vertexSet.contains(negativeOneNegativeOne));

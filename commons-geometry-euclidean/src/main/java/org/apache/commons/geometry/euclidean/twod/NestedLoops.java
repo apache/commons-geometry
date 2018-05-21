@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -44,13 +43,13 @@ import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 class NestedLoops {
 
     /** Boundary loop. */
-    private Cartesian2D[] loop;
+    private Point2D[] loop;
 
     /** Surrounded loops. */
     private List<NestedLoops> surrounded;
 
     /** Polygon enclosing a finite region. */
-    private Region<Euclidean2D> polygon;
+    private Region<Point2D> polygon;
 
     /** Indicator for original loop orientation. */
     private boolean originalIsClockwise;
@@ -76,7 +75,7 @@ class NestedLoops {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if an outline has an open boundary loop
      */
-    private NestedLoops(final Cartesian2D[] loop, final double tolerance)
+    private NestedLoops(final Point2D[] loop, final double tolerance)
         throws IllegalArgumentException {
 
         if (loop[0] == null) {
@@ -88,15 +87,15 @@ class NestedLoops {
         this.tolerance  = tolerance;
 
         // build the polygon defined by the loop
-        final ArrayList<SubHyperplane<Euclidean2D>> edges = new ArrayList<>();
-        Cartesian2D current = loop[loop.length - 1];
+        final ArrayList<SubHyperplane<Point2D>> edges = new ArrayList<>();
+        Point2D current = loop[loop.length - 1];
         for (int i = 0; i < loop.length; ++i) {
-            final Cartesian2D previous = current;
+            final Point2D previous = current;
             current = loop[i];
             final Line   line   = new Line(previous, current, tolerance);
             final IntervalsSet region =
-                new IntervalsSet(line.toSubSpace((Point<Euclidean2D>) previous).getX(),
-                                 line.toSubSpace((Point<Euclidean2D>) current).getX(),
+                new IntervalsSet(line.toSubSpace(previous).getX(),
+                                 line.toSubSpace(current).getX(),
                                  tolerance);
             edges.add(new SubLine(line, region));
         }
@@ -104,7 +103,7 @@ class NestedLoops {
 
         // ensure the polygon encloses a finite region of the plane
         if (Double.isInfinite(polygon.getSize())) {
-            polygon = new RegionFactory<Euclidean2D>().getComplement(polygon);
+            polygon = new RegionFactory<Point2D>().getComplement(polygon);
             originalIsClockwise = false;
         } else {
             originalIsClockwise = true;
@@ -117,7 +116,7 @@ class NestedLoops {
      * @exception IllegalArgumentException if an outline has crossing
      * boundary loops or open boundary loops
      */
-    public void add(final Cartesian2D[] bLoop) throws IllegalArgumentException {
+    public void add(final Point2D[] bLoop) throws IllegalArgumentException {
         add(new NestedLoops(bLoop, tolerance));
     }
 
@@ -146,7 +145,7 @@ class NestedLoops {
         }
 
         // we should be separate from the remaining children
-        RegionFactory<Euclidean2D> factory = new RegionFactory<>();
+        RegionFactory<Point2D> factory = new RegionFactory<>();
         for (final NestedLoops child : surrounded) {
             if (!factory.intersection(node.polygon, child.polygon).isEmpty()) {
                 throw new IllegalArgumentException("Some outline boundary loops cross each other");
@@ -159,7 +158,7 @@ class NestedLoops {
 
     /** Correct the orientation of the loops contained in the tree.
      * <p>This is this method that really inverts the loops that where
-     * provided through the {@link #add(Cartesian2D[]) add} method if
+     * provided through the {@link #add(Point2D[]) add} method if
      * they are mis-oriented</p>
      */
     public void correctOrientation() {
@@ -179,7 +178,7 @@ class NestedLoops {
             int min = -1;
             int max = loop.length;
             while (++min < --max) {
-                final Cartesian2D tmp = loop[min];
+                final Point2D tmp = loop[min];
                 loop[min] = loop[max];
                 loop[max] = tmp;
             }

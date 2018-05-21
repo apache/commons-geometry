@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
  * <p>
@@ -38,26 +37,26 @@ import org.apache.commons.geometry.core.Space;
  * @param <S> Space type.
  * @param <P> Point type.
  */
-public class WelzlEncloser<S extends Space, P extends Point<S>> implements Encloser<S, P> {
+public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
     /** Tolerance below which points are consider to be identical. */
     private final double tolerance;
 
     /** Generator for balls on support. */
-    private final SupportBallGenerator<S, P> generator;
+    private final SupportBallGenerator<P> generator;
 
     /** Simple constructor.
      * @param tolerance below which points are consider to be identical
      * @param generator generator for balls on support
      */
-    public WelzlEncloser(final double tolerance, final SupportBallGenerator<S, P> generator) {
+    public WelzlEncloser(final double tolerance, final SupportBallGenerator<P> generator) {
         this.tolerance = tolerance;
         this.generator = generator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public EnclosingBall<S, P> enclose(final Iterable<P> points) {
+    public EnclosingBall<P> enclose(final Iterable<P> points) {
 
         if (points == null || !points.iterator().hasNext()) {
             // return an empty ball
@@ -73,15 +72,15 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
      * @param points points to be enclosed
      * @return enclosing ball
      */
-    private EnclosingBall<S, P> pivotingBall(final Iterable<P> points) {
+    private EnclosingBall<P> pivotingBall(final Iterable<P> points) {
 
         final P first = points.iterator().next();
-        final List<P> extreme = new ArrayList<>(first.getSpace().getDimension() + 1);
-        final List<P> support = new ArrayList<>(first.getSpace().getDimension() + 1);
+        final List<P> extreme = new ArrayList<>(first.getDimension() + 1);
+        final List<P> support = new ArrayList<>(first.getDimension() + 1);
 
         // start with only first point selected as a candidate support
         extreme.add(first);
-        EnclosingBall<S, P> ball = moveToFrontBall(extreme, extreme.size(), support);
+        EnclosingBall<P> ball = moveToFrontBall(extreme, extreme.size(), support);
 
         while (true) {
 
@@ -96,7 +95,7 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
             // recurse search, restricted to the small subset containing support and farthest point
             support.clear();
             support.add(farthest);
-            EnclosingBall<S, P> savedBall = ball;
+            EnclosingBall<P> savedBall = ball;
             ball = moveToFrontBall(extreme, extreme.size(), support);
             if (ball.getRadius() < savedBall.getRadius()) {
                 // this should never happen
@@ -120,13 +119,13 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
      * @param support points that must belong to the ball support
      * @return enclosing ball, for the extreme subset only
      */
-    private EnclosingBall<S, P> moveToFrontBall(final List<P> extreme, final int nbExtreme,
+    private EnclosingBall<P> moveToFrontBall(final List<P> extreme, final int nbExtreme,
                                                 final List<P> support) {
 
         // create a new ball on the prescribed support
-        EnclosingBall<S, P> ball = generator.ballOnSupport(support);
+        EnclosingBall<P> ball = generator.ballOnSupport(support);
 
-        if (ball.getSupportSize() <= ball.getCenter().getSpace().getDimension()) {
+        if (ball.getSupportSize() <= ball.getCenter().getDimension()) {
 
             for (int i = 0; i < nbExtreme; ++i) {
                 final P pi = extreme.get(i);
@@ -159,7 +158,7 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
      * @param ball current ball
      * @return farthest point
      */
-    public P selectFarthest(final Iterable<P> points, final EnclosingBall<S, P> ball) {
+    public P selectFarthest(final Iterable<P> points, final EnclosingBall<P> ball) {
 
         final P center = ball.getCenter();
         P farthest   = null;

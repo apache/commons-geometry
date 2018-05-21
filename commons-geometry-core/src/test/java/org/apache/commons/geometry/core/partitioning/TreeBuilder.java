@@ -20,15 +20,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.core.partitioning.AbstractRegion;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.Point;
 
 /** Local class for building an {@link AbstractRegion} tree.
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-public abstract class TreeBuilder<S extends Space> {
+public abstract class TreeBuilder<P extends Point<P>> {
 
     /** Keyword for tolerance. */
     private static final String TOLERANCE = "tolerance";
@@ -52,7 +49,7 @@ public abstract class TreeBuilder<S extends Space> {
     private static final String FALSE     = "false";
 
     /** Tree root. */
-    private BSPTree<S> root;
+    private BSPTree<P> root;
 
     /** Tolerance. */
     private final double tolerance;
@@ -86,7 +83,7 @@ public abstract class TreeBuilder<S extends Space> {
      * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
-    private void parseTree(final BSPTree<S> node)
+    private void parseTree(final BSPTree<P> node)
         throws IOException, ParseException {
         if (INTERNAL.equals(getWord(INTERNAL, LEAF))) {
             // this is an internal node, it has a cut sub-hyperplane (stored as a whole hyperplane)
@@ -142,7 +139,7 @@ public abstract class TreeBuilder<S extends Space> {
     /** Get the built tree.
      * @return built tree
      */
-    public BSPTree<S> getTree() {
+    public BSPTree<P> getTree() {
         return root;
     }
 
@@ -158,7 +155,7 @@ public abstract class TreeBuilder<S extends Space> {
      * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
-    protected abstract Hyperplane<S> parseHyperplane()
+    protected abstract Hyperplane<P> parseHyperplane()
         throws IOException, ParseException;
 
 }

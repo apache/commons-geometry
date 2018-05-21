@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.euclidean.twod.Line;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.numbers.core.Precision;
 
 /**
@@ -73,15 +73,15 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
     /** {@inheritDoc} */
     @Override
-    public Collection<Cartesian2D> findHullVertices(final Collection<Cartesian2D> points) {
+    public Collection<Point2D> findHullVertices(final Collection<Point2D> points) {
 
-        final List<Cartesian2D> pointsSortedByXAxis = new ArrayList<>(points);
+        final List<Point2D> pointsSortedByXAxis = new ArrayList<>(points);
 
         // sort the points in increasing order on the x-axis
-        Collections.sort(pointsSortedByXAxis, new Comparator<Cartesian2D>() {
+        Collections.sort(pointsSortedByXAxis, new Comparator<Point2D>() {
             /** {@inheritDoc} */
             @Override
-            public int compare(final Cartesian2D o1, final Cartesian2D o2) {
+            public int compare(final Point2D o1, final Point2D o2) {
                 final double tolerance = getTolerance();
                 // need to take the tolerance value into account, otherwise collinear points
                 // will not be handled correctly when building the upper/lower hull
@@ -95,21 +95,21 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         });
 
         // build lower hull
-        final List<Cartesian2D> lowerHull = new ArrayList<>();
-        for (Cartesian2D p : pointsSortedByXAxis) {
+        final List<Point2D> lowerHull = new ArrayList<>();
+        for (Point2D p : pointsSortedByXAxis) {
             updateHull(p, lowerHull);
         }
 
         // build upper hull
-        final List<Cartesian2D> upperHull = new ArrayList<>();
+        final List<Point2D> upperHull = new ArrayList<>();
         for (int idx = pointsSortedByXAxis.size() - 1; idx >= 0; idx--) {
-            final Cartesian2D p = pointsSortedByXAxis.get(idx);
+            final Point2D p = pointsSortedByXAxis.get(idx);
             updateHull(p, upperHull);
         }
 
         // concatenate the lower and upper hulls
         // the last point of each list is omitted as it is repeated at the beginning of the other list
-        final List<Cartesian2D> hullVertices = new ArrayList<>(lowerHull.size() + upperHull.size() - 2);
+        final List<Point2D> hullVertices = new ArrayList<>(lowerHull.size() + upperHull.size() - 2);
         for (int idx = 0; idx < lowerHull.size() - 1; idx++) {
             hullVertices.add(lowerHull.get(idx));
         }
@@ -131,12 +131,12 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
      * @param point the current point
      * @param hull the partial hull
      */
-    private void updateHull(final Cartesian2D point, final List<Cartesian2D> hull) {
+    private void updateHull(final Point2D point, final List<Point2D> hull) {
         final double tolerance = getTolerance();
 
         if (hull.size() == 1) {
             // ensure that we do not add an identical point
-            final Cartesian2D p1 = hull.get(0);
+            final Point2D p1 = hull.get(0);
             if (p1.distance(point) < tolerance) {
                 return;
             }
@@ -144,8 +144,8 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
         while (hull.size() >= 2) {
             final int size = hull.size();
-            final Cartesian2D p1 = hull.get(size - 2);
-            final Cartesian2D p2 = hull.get(size - 1);
+            final Point2D p1 = hull.get(size - 2);
+            final Point2D p2 = hull.get(size - 1);
 
             final double offset = new Line(p1, p2, tolerance).getOffset(point);
             if (Math.abs(offset) < tolerance) {

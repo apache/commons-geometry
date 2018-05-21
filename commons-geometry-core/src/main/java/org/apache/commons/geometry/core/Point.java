@@ -16,30 +16,23 @@
  */
 package org.apache.commons.geometry.core;
 
-import java.io.Serializable;
-
-/** This interface represents a generic geometrical point.
- * @param <S> Type of the space.
- * @see Space
- * @see Vector
+/** Interface representing a point in a mathematical space.
+ * Implementations of this interface are sufficient to define a
+ * space since they define both the structure of the points making up
+ * the space and the operations permitted on them. The only mathematical
+ * requirement at this level is that the represented space have a defined
+ * distance metric, meaning an operation that can compute the distance
+ * between two points (ie, the space must be a metric space).
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Metric_space">Metric space</a>
+ *
+ * @param <P> Point implementation type
  */
-public interface Point<S extends Space> extends Serializable {
+public interface Point<P extends Point<P>> extends Spatial {
 
-    /** Get the space to which the point belongs.
-     * @return containing space
-     */
-    Space getSpace();
-
-    /**
-     * Returns true if any coordinate of this point is NaN; false otherwise
-     * @return  true if any coordinate of this point is NaN; false otherwise
-     */
-    boolean isNaN();
-
-    /** Compute the distance between the instance and another point.
+    /** Compute the distance between this point and another point.
      * @param p second point
-     * @return the distance between the instance and p
+     * @return the distance between this point and p
      */
-    double distance(Point<S> p);
-
+    double distance(P p);
 }
