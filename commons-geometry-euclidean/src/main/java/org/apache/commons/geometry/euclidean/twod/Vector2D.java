@@ -68,17 +68,16 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** Get the vector coordinates as a dimension 2 array.
      * @return vector coordinates
-     * @see #Cartesian2D(double[])
      */
     @Override
     public double[] toArray() {
-        return new double[] { x, y };
+        return new double[] { getX(), getY() };
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2D asPoint() {
-        return new Point2D(x, y);
+        return new Point2D(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -90,55 +89,59 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double getNorm1() {
-        return Math.abs(x) + Math.abs(y);
+        return Math.abs(getX()) + Math.abs(getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
+        final double x = getX();
+        final double y = getY();
         return Math.sqrt ((x * x) + (y * y));
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
+        final double x = getX();
+        final double y = getY();
         return (x * x) + (y * y);
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormInf() {
-        return Math.max(Math.abs(x), Math.abs(y));
+        return Math.max(Math.abs(getX()), Math.abs(getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D add(Vector2D v) {
-        return new Vector2D(x + v.x, y + v.y);
+        return new Vector2D(getX() + v.getX(), getY() + v.getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D add(double factor, Vector2D v) {
-        return new Vector2D(x + (factor * v.x), y + (factor * v.y));
+        return new Vector2D(getX() + (factor * v.getX()), getY() + (factor * v.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(Vector2D v) {
-        return new Vector2D(x - v.x, y - v.y);
+        return new Vector2D(getX() - v.getX(), getY() - v.getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(double factor, Vector2D v) {
-        return new Vector2D(x - (factor * v.x), y - (factor * v.y));
+        return new Vector2D(getX() - (factor * v.getX()), getY() - (factor * v.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D negate() {
-        return new Vector2D(-x, -y);
+        return new Vector2D(-getX(), -getY());
     }
 
     /** {@inheritDoc} */
@@ -154,14 +157,14 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D scalarMultiply(double a) {
-        return new Vector2D(a * x, a * y);
+        return new Vector2D(a * getX(), a * getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance1(Vector2D v) {
-        double dx = Math.abs(x - v.x);
-        double dy = Math.abs(y - v.y);
+        double dx = Math.abs(getX() - v.getX());
+        double dy = Math.abs(getY() - v.getY());
         return dx + dy;
     }
 
@@ -174,23 +177,23 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double distanceInf(Vector2D v) {
-        double dx = Math.abs(x - v.x);
-        double dy = Math.abs(y - v.y);
+        double dx = Math.abs(getX() - v.getX());
+        double dy = Math.abs(getY() - v.getY());
         return Math.max(dx, dy);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector2D v) {
-        double dx = x - v.x;
-        double dy = y - v.y;
+        double dx = getX() - v.getX();
+        double dy = getY() - v.getY();
         return (dx * dx) + (dy * dy);
     }
 
     /** {@inheritDoc} */
     @Override
     public double dotProduct(Vector2D v) {
-        return LinearCombination.value(x, v.x, y, v.y);
+        return LinearCombination.value(getX(), v.getX(), getY(), v.getY());
     }
 
     /** Compute the angular separation in radians between this vector
@@ -215,7 +218,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         double threshold = normProduct * 0.9999;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
-            final double n = Math.abs(LinearCombination.value(x, v.y, -y, v.x));
+            final double n = Math.abs(LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
             if (dot >= 0) {
                 return Math.asin(n / normProduct);
             }
@@ -247,10 +250,10 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @see <a href="http://mathworld.wolfram.com/CrossProduct.html">Cross product (Mathworld)</a>
      */
     public double crossProduct(final Vector2D p1, final Vector2D p2) {
-        final double x1 = p2.x - p1.x;
-        final double y1 = y - p1.y;
-        final double x2 = x - p1.x;
-        final double y2 = p2.y - p1.y;
+        final double x1 = p2.getX() - p1.getX();
+        final double y1 = getY() - p1.getY();
+        final double x2 = getX() - p1.getX();
+        final double y2 = p2.getY() - p1.getY();
         return LinearCombination.value(x1, y1, -x2, y2);
     }
 
@@ -266,7 +269,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         if (isNaN()) {
             return 542;
         }
-        return 122 * (76 * Double.hashCode(x) +  Double.hashCode(y));
+        return 122 * (76 * Double.hashCode(getX()) +  Double.hashCode(getY()));
     }
 
     /**
@@ -300,7 +303,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y);
+            return (getX() == rhs.getX()) && (getY() == rhs.getY());
         }
         return false;
     }
@@ -308,7 +311,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "{" + x + "; " + y + "}";
+        return "{" + getX() + "; " + getY() + "}";
     }
 
     /** Computes the dot product between to vectors. This method simply
@@ -347,7 +350,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector instance
      */
     public static Vector2D of(Cartesian2D value) {
-        return new Vector2D(value.x, value.y);
+        return new Vector2D(value.getX(), value.getY());
     }
 
     /** Creates a vector from the coordinates in the given 2-element array.
@@ -375,7 +378,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector with coordinates calculated by {@code a * c}
      */
     public static Vector2D linearCombination(double a, Cartesian2D c) {
-        return new Vector2D(a * c.x, a * c.y);
+        return new Vector2D(a * c.getX(), a * c.getY());
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -394,8 +397,8 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY()));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -417,8 +420,8 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
             double a3, Cartesian2D c3) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -442,7 +445,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
             double a3, Cartesian2D c3, double a4, Cartesian2D c4) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x, a4, c4.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y, a4, c4.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()));
     }
 }

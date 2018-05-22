@@ -57,7 +57,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public Vector3D asVector() {
-        return Vector3D.of(x, y, z);
+        return Vector3D.of(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
@@ -70,9 +70,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     @Override
     public Vector3D subtract(Point3D p) {
         return new Vector3D(
-                    x - p.x,
-                    y - p.y,
-                    z - p.z
+                    getX() - p.getX(),
+                    getY() - p.getY(),
+                    getZ() - p.getZ()
                 );
     }
 
@@ -86,9 +86,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     @Override
     public Point3D add(Vector3D v) {
         return new Point3D(
-                    x + v.x,
-                    y + v.y,
-                    z + v.z
+                    getX() + v.getX(),
+                    getY() + v.getY(),
+                    getZ() + v.getZ()
                 );
     }
 
@@ -103,7 +103,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * Double.hashCode(x) +  3 * Double.hashCode(y) +  Double.hashCode(z));
+        return 643 * (164 * Double.hashCode(getX()) +  3 * Double.hashCode(getY()) +  Double.hashCode(getZ()));
     }
 
     /** Test for the equality of two points.
@@ -137,7 +137,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
+            return (getX() == rhs.getX()) && (getY() == rhs.getY()) && (getZ() == rhs.getZ());
         }
         return false;
     }
@@ -145,7 +145,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + x + "; " + y + "; " + z + ")";
+        return "(" + getX() + "; " + getY() + "; " + getZ() + ")";
     }
 
     /** Returns a point with the given coordinate values
@@ -163,7 +163,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return point instance
      */
     public static Point3D of(Cartesian3D value) {
-        return new Point3D(value.x, value.y, value.z);
+        return new Point3D(value.getX(), value.getY(), value.getZ());
     }
 
     /** Creates a point from the coordinates in the given 3-element array.
@@ -197,7 +197,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return point with coordinates calculated by {@code a * c}
      */
     public static Point3D vectorCombination(double a, Cartesian3D c) {
-        return new Point3D(a * c.x, a * c.y, a * c.z);
+        return new Point3D(a * c.getX(), a * c.getY(), a * c.getZ());
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -222,9 +222,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      */
     public static Point3D vectorCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2) {
         return new Point3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -252,9 +252,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     public static Point3D vectorCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
             double a3, Cartesian3D c3) {
         return new Point3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z, a3, c3.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -284,8 +284,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     public static Point3D vectorCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
             double a3, Cartesian3D c3, double a4, Cartesian3D c4) {
         return new Point3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x, a4, c4.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y, a4, c4.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z, a3, c3.z, a4, c4.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ(), a4, c4.getZ()));
     }
 }

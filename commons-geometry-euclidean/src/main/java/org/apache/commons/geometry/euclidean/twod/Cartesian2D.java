@@ -28,10 +28,10 @@ public abstract class Cartesian2D implements Spatial {
     private static final long serialVersionUID = 2918583078965478552L;
 
     /** Abscissa (first coordinate) */
-    protected final double x;
+    private final double x;
 
     /** Ordinate (second coordinate) */
-    protected final double y;
+    private final double y;
 
     /**
      * Simple Cartesian constructor.

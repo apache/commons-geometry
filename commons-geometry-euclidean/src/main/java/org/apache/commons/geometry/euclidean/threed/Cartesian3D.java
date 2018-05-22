@@ -28,13 +28,13 @@ public abstract class Cartesian3D implements Spatial {
     private static final long serialVersionUID = 6249091865814886817L;
 
     /** Abscissa (first coordinate value) */
-    protected final double x;
+    private final double x;
 
     /** Ordinate (second coordinate value) */
-    protected final double y;
+    private final double y;
 
     /** Height (third coordinate value)*/
-    protected final double z;
+    private final double z;
 
     /** Simple constructor.
      * @param x abscissa (first coordinate value)
