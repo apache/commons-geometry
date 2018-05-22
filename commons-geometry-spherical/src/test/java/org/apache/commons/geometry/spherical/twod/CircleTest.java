@@ -36,7 +36,7 @@ public class CircleTest {
 
     @Test
     public void testEquator() {
-        Circle circle = new Circle(new Vector3D(0, 0, 1000), 1.0e-10).copySelf();
+        Circle circle = new Circle(Vector3D.of(0, 0, 1000), 1.0e-10).copySelf();
         Assert.assertEquals(Vector3D.PLUS_Z, circle.getPole());
         Assert.assertEquals(1.0e-10, circle.getTolerance(), 1.0e-20);
         circle.revertSelf();
@@ -83,7 +83,7 @@ public class CircleTest {
     @Test
     public void testPhase() {
         Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
-        Vector3D p = new Vector3D(1, 2, -4);
+        Vector3D p = Vector3D.of(1, 2, -4);
         Vector3D samePhase = circle.getPointAt(circle.getPhase(p));
         Assert.assertEquals(0.0,
                             Vector3D.angle(Vector3D.crossProduct(circle.getPole(), p),
@@ -101,7 +101,7 @@ public class CircleTest {
         Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
         Assert.assertEquals(0.0, circle.toSubSpace(new S2Point(circle.getXAxis())).getAlpha(), 1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, circle.toSubSpace(new S2Point(circle.getYAxis())).getAlpha(), 1.0e-10);
-        Vector3D p = new Vector3D(1, 2, -4);
+        Vector3D p = Vector3D.of(1, 2, -4);
         Assert.assertEquals(circle.getPhase(p), circle.toSubSpace(new S2Point(p)).getAlpha(), 1.0e-10);
     }
 

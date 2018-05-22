@@ -110,9 +110,9 @@ public class SubCircleTest {
     public void testSideSplitConsistency() {
 
         double tolerance = 1.0e-6;
-        Circle hyperplane = new Circle(new Vector3D(9.738804529764676E-5, -0.6772824575010357, -0.7357230887208355),
+        Circle hyperplane = new Circle(Vector3D.of(9.738804529764676E-5, -0.6772824575010357, -0.7357230887208355),
                                        tolerance);
-        SubCircle sub = new SubCircle(new Circle(new Vector3D(2.1793884139073498E-4, 0.9790647032675541, -0.20354915700704285),
+        SubCircle sub = new SubCircle(new Circle(Vector3D.of(2.1793884139073498E-4, 0.9790647032675541, -0.20354915700704285),
                                                  tolerance),
                                       new ArcsSet(4.7121441684170700, 4.7125386635004760, tolerance));
         SplitSubHyperplane<S2Point> split = sub.split(hyperplane);

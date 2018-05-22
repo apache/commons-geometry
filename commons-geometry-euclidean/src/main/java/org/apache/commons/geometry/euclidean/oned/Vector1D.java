@@ -25,23 +25,23 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Vector1D> {
 
     /** Zero vector (coordinates: 0). */
-    public static final Vector1D ZERO = new Vector1D(0.0);
+    public static final Vector1D ZERO = Vector1D.of(0.0);
 
     /** Unit vector (coordinates: 1). */
-    public static final Vector1D ONE  = new Vector1D(1.0);
+    public static final Vector1D ONE  = Vector1D.of(1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final Vector1D NaN = new Vector1D(Double.NaN);
+    public static final Vector1D NaN = Vector1D.of(Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector1D POSITIVE_INFINITY =
-        new Vector1D(Double.POSITIVE_INFINITY);
+        Vector1D.of(Double.POSITIVE_INFINITY);
 
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector1D NEGATIVE_INFINITY =
-        new Vector1D(Double.NEGATIVE_INFINITY);
+        Vector1D.of(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
     private static final long serialVersionUID = 1582116020164328846L;
@@ -49,7 +49,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
-    public Vector1D(double x) {
+    private Vector1D(double x) {
         super(x);
     }
 
@@ -92,31 +92,31 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D add(Vector1D v) {
-        return new Vector1D(getX() + v.getX());
+        return Vector1D.of(getX() + v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D add(double factor, Vector1D v) {
-        return new Vector1D(getX() + (factor * v.getX()));
+        return Vector1D.of(getX() + (factor * v.getX()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D subtract(Vector1D v) {
-        return new Vector1D(getX() - v.getX());
+        return Vector1D.of(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D subtract(double factor, Vector1D v) {
-        return new Vector1D(getX() - (factor * v.getX()));
+        return Vector1D.of(getX() - (factor * v.getX()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D negate() {
-        return new Vector1D(-getX());
+        return Vector1D.of(-getX());
     }
 
     /** {@inheritDoc} */
@@ -132,7 +132,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D scalarMultiply(double a) {
-        return new Vector1D(a * getX());
+        return Vector1D.of(a * getX());
     }
 
     /** {@inheritDoc} */

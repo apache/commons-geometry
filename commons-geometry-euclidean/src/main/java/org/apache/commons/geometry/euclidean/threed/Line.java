@@ -135,7 +135,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      */
     @Override
     public Point1D toSubSpace(final Point3D point) {
-        return new Point1D(getAbscissa(point));
+        return Point1D.of(getAbscissa(point));
     }
 
     /** Transform a sub-space point into a space point.

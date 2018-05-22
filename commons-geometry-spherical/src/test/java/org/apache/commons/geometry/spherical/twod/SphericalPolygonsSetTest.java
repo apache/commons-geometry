@@ -156,7 +156,7 @@ public class SphericalPolygonsSetTest {
         Assert.assertEquals(3, count);
 
         Assert.assertEquals(0.0,
-                            octant.getBarycenter().distance(new S2Point(new Vector3D(1, 1, 1))),
+                            octant.getBarycenter().distance(new S2Point(Vector3D.of(1, 1, 1))),
                             1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, octant.getSize(), 1.0e-10);
 
@@ -166,7 +166,7 @@ public class SphericalPolygonsSetTest {
 
         EnclosingBall<S2Point> reversedCap =
                 ((SphericalPolygonsSet) factory.getComplement(octant)).getEnclosingCap();
-        Assert.assertEquals(0, reversedCap.getCenter().distance(new S2Point(new Vector3D(-1, -1, -1))), 1.0e-10);
+        Assert.assertEquals(0, reversedCap.getCenter().distance(new S2Point(Vector3D.of(-1, -1, -1))), 1.0e-10);
         Assert.assertEquals(Math.PI - Math.asin(1.0 / Math.sqrt(3)), reversedCap.getRadius(), 1.0e-10);
 
     }
@@ -274,14 +274,14 @@ public class SphericalPolygonsSetTest {
         boundary.add(create(Vector3D.PLUS_Z,  Vector3D.MINUS_Y, Vector3D.PLUS_X,  tol, 0.0, 0.5 * Math.PI));
         SphericalPolygonsSet polygon = new SphericalPolygonsSet(boundary, tol);
 
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(new Vector3D( 1,  1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(new Vector3D(-1,  1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(new Vector3D(-1, -1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(new Vector3D( 1, -1,  1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(new Vector3D( 1,  1, -1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(new Vector3D(-1,  1, -1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(new Vector3D(-1, -1, -1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(new Vector3D( 1, -1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(Vector3D.of( 1,  1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(Vector3D.of(-1,  1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(Vector3D.of(-1, -1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(Vector3D.of( 1, -1,  1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(Vector3D.of( 1,  1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(Vector3D.of(-1,  1, -1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(new S2Point(Vector3D.of(-1, -1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(new S2Point(Vector3D.of( 1, -1, -1).normalize())));
 
         Assert.assertEquals(Geometry.TWO_PI, polygon.getSize(), 1.0e-10);
         Assert.assertEquals(3 * Math.PI, polygon.getBoundarySize(), 1.0e-10);
@@ -366,7 +366,7 @@ public class SphericalPolygonsSetTest {
     public void testPartWithHole() {
         double tol = 0.01;
         double alpha = 0.7;
-        S2Point center = new S2Point(new Vector3D(1, 1, 1));
+        S2Point center = new S2Point(Vector3D.of(1, 1, 1));
         SphericalPolygonsSet hexa = new SphericalPolygonsSet(center.getVector(), Vector3D.PLUS_Z, alpha, 6, tol);
         SphericalPolygonsSet hole  = new SphericalPolygonsSet(tol,
                                                               new S2Point(Math.PI / 6, Math.PI / 3),
@@ -395,7 +395,7 @@ public class SphericalPolygonsSetTest {
     @Test
     public void testConcentricSubParts() {
         double tol = 0.001;
-        Vector3D center = new Vector3D(1, 1, 1);
+        Vector3D center = Vector3D.of(1, 1, 1);
         SphericalPolygonsSet hexaOut   = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.9,  6, tol);
         SphericalPolygonsSet hexaIn    = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.8,  6, tol);
         SphericalPolygonsSet pentaOut  = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.7,  5, tol);

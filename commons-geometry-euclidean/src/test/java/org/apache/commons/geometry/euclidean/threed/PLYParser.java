@@ -175,7 +175,7 @@ public class PLYParser {
                     fields.get(zIndex).getToken() != Token.UNKNOWN) {
                     complain();
                 }
-                vertices[i] = new Point3D(Double.parseDouble(fields.get(xIndex).getValue()),
+                vertices[i] = Point3D.of(Double.parseDouble(fields.get(xIndex).getValue()),
                                            Double.parseDouble(fields.get(yIndex).getValue()),
                                            Double.parseDouble(fields.get(zIndex).getValue()));
             }

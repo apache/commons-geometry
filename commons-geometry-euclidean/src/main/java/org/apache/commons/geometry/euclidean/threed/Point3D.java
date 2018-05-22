@@ -26,20 +26,20 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D, Vector3D> {
 
     /** Zero point (coordinates: 0, 0, 0). */
-    public static final Point3D ZERO   = new Point3D(0, 0, 0);
+    public static final Point3D ZERO   = Point3D.of(0, 0, 0);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final Point3D NaN = new Point3D(Double.NaN, Double.NaN, Double.NaN);
+    public static final Point3D NaN = Point3D.of(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A point with all coordinates set to positive infinity. */
     public static final Point3D POSITIVE_INFINITY =
-        new Point3D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Point3D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** A point with all coordinates set to negative infinity. */
     public static final Point3D NEGATIVE_INFINITY =
-        new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        Point3D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 1313493323784566947L;
@@ -50,7 +50,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @param y ordinate
      * @param z height
      */
-    public Point3D(double x, double y, double z) {
+    private Point3D(double x, double y, double z) {
         super(x, y, z);
     }
 
@@ -69,7 +69,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public Vector3D subtract(Point3D p) {
-        return new Vector3D(
+        return Vector3D.of(
                     getX() - p.getX(),
                     getY() - p.getY(),
                     getZ() - p.getZ()
@@ -85,7 +85,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public Point3D add(Vector3D v) {
-        return new Point3D(
+        return Point3D.of(
                     getX() + v.getX(),
                     getY() + v.getY(),
                     getZ() + v.getZ()

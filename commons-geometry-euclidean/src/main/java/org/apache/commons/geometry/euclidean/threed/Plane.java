@@ -241,7 +241,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
     @Override
     public Point2D toSubSpace(final Point3D point) {
         Vector3D vec = point.asVector();
-        return new Point2D(vec.dotProduct(u), vec.dotProduct(v));
+        return Point2D.of(vec.dotProduct(u), vec.dotProduct(v));
     }
 
     /** Transform an in-plane point into a 3D space point.
@@ -380,7 +380,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
         }
 
         final double r = 1.0 / determinant;
-        return new Point3D(
+        return Point3D.of(
                             (-a23 * d1 - (c1 * b3 - c3 * b1) * d2 - (c2 * b1 - c1 * b2) * d3) * r,
                             (-b23 * d1 - (c3 * a1 - c1 * a3) * d2 - (c1 * a2 - c2 * a1) * d3) * r,
                             (-c23 * d1 - (b1 * a3 - b3 * a1) * d2 - (b2 * a1 - b1 * a2) * d3) * r);

@@ -46,7 +46,7 @@ public class S1Point implements Point<S1Point> {
      */
     public S1Point(final double alpha) {
         this(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha),
-             new Vector2D(Math.cos(alpha), Math.sin(alpha)));
+             Vector2D.of(Math.cos(alpha), Math.sin(alpha)));
     }
 
     /** Build a point from its internal components.

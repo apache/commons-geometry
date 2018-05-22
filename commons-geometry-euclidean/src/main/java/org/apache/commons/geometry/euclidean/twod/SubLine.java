@@ -81,8 +81,8 @@ public class SubLine extends AbstractSubHyperplane<Point2D, Point1D> {
         final List<Segment> segments = new ArrayList<>(list.size());
 
         for (final Interval interval : list) {
-            final Point2D start = line.toSpace(new Point1D(interval.getInf()));
-            final Point2D end   = line.toSpace(new Point1D(interval.getSup()));
+            final Point2D start = line.toSpace(Point1D.of(interval.getInf()));
+            final Point2D end   = line.toSpace(Point1D.of(interval.getSup()));
             segments.add(new Segment(start, end, line));
         }
 

@@ -118,7 +118,7 @@ public class S2Point implements Point<S2Point> {
         final double cosPhi   = Math.cos(phi);
         final double sinPhi   = Math.sin(phi);
 
-        return new Vector3D(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
+        return Vector3D.of(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
 
     }
 

@@ -25,20 +25,20 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D, Vector2D> {
 
     /** Origin (coordinates: 0, 0). */
-    public static final Point2D ZERO   = new Point2D(0, 0);
+    public static final Point2D ZERO   = Point2D.of(0, 0);
 
  // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final Point2D NaN = new Point2D(Double.NaN, Double.NaN);
+    public static final Point2D NaN = Point2D.of(Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A point with all coordinates set to positive infinity. */
     public static final Point2D POSITIVE_INFINITY =
-        new Point2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Point2D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** A point with all coordinates set to negative infinity. */
     public static final Point2D NEGATIVE_INFINITY =
-        new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        Point2D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
     private static final long serialVersionUID = 266938651998679754L;
@@ -48,14 +48,14 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @param x abscissa
      * @param y ordinate
      */
-    public Point2D(double x, double y) {
+    private Point2D(double x, double y) {
         super(x, y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D asVector() {
-        return new Vector2D(getX(), getY());
+        return Vector2D.of(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -79,7 +79,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public Point2D add(Vector2D v) {
-        return new Point2D(getX() + v.getX(), getY() + v.getY());
+        return Point2D.of(getX() + v.getX(), getY() + v.getY());
     }
 
     /**

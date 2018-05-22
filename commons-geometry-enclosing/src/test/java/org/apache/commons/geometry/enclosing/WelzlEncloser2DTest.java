@@ -88,7 +88,7 @@ public class WelzlEncloser2DTest {
             for (int i = 0; i < nbPoints; ++i) {
                 double x = random.nextDouble();
                 double y = random.nextDouble();
-                points.add(new Point2D(x, y));
+                points.add(Point2D.of(x, y));
             }
             checkDisk(points);
         }
@@ -97,7 +97,7 @@ public class WelzlEncloser2DTest {
     private List<Point2D> buildList(final double ... coordinates) {
         List<Point2D> list = new ArrayList<>(coordinates.length / 2);
         for (int i = 0; i < coordinates.length; i += 2) {
-            list.add(new Point2D(coordinates[i], coordinates[i + 1]));
+            list.add(Point2D.of(coordinates[i], coordinates[i + 1]));
         }
         return list;
     }
