@@ -14,31 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.euclidean.twod.Euclidean2D;
+import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Euclidean3DTest {
+public class LimitAngleTest {
 
     @Test
-    public void testDimension() {
-        Assert.assertEquals(3, Euclidean3D.getInstance().getDimension());
-    }
-
-    @Test
-    public void testSubSpace() {
-        Assert.assertTrue(Euclidean2D.getInstance() == Euclidean3D.getInstance().getSubSpace());
-    }
-
-    @Test
-    public void testSerialization() {
-        Space e3 = Euclidean3D.getInstance();
-        Space deserialized = (Space) GeometryTestUtils.serializeAndRecover(e3);
-        Assert.assertTrue(e3 == deserialized);
+    public void testReversedLimit() {
+        for (int k = -2; k < 3; ++k) {
+            LimitAngle l  = new LimitAngle(new S1Point(1.0 + k * Geometry.TWO_PI), false, 1.0e-10);
+            Assert.assertEquals(l.getLocation().getAlpha(), l.getReverse().getLocation().getAlpha(), 1.0e-10);
+            Assert.assertEquals(l.getTolerance(), l.getReverse().getTolerance(), 1.0e-10);
+            Assert.assertTrue(l.sameOrientationAs(l));
+            Assert.assertFalse(l.sameOrientationAs(l.getReverse()));
+            Assert.assertEquals(Geometry.TWO_PI, l.wholeSpace().getSize(), 1.0e-10);
+            Assert.assertEquals(Geometry.TWO_PI, l.getReverse().wholeSpace().getSize(), 1.0e-10);
+        }
     }
 
 }

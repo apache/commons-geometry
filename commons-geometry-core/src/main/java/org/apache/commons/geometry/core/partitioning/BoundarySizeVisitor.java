@@ -16,12 +16,12 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Point;
 
 /** Visitor computing the boundary size.
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-class BoundarySizeVisitor<S extends Space> implements BSPTreeVisitor<S> {
+class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor<P> {
 
     /** Size of the boundary. */
     private double boundarySize;
@@ -34,16 +34,16 @@ class BoundarySizeVisitor<S extends Space> implements BSPTreeVisitor<S> {
 
     /** {@inheritDoc}*/
     @Override
-    public Order visitOrder(final BSPTree<S> node) {
+    public Order visitOrder(final BSPTree<P> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc}*/
     @Override
-    public void visitInternalNode(final BSPTree<S> node) {
+    public void visitInternalNode(final BSPTree<P> node) {
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<S> attribute =
-            (BoundaryAttribute<S>) node.getAttribute();
+        final BoundaryAttribute<P> attribute =
+            (BoundaryAttribute<P>) node.getAttribute();
         if (attribute.getPlusOutside() != null) {
             boundarySize += attribute.getPlusOutside().getSize();
         }
@@ -54,7 +54,7 @@ class BoundarySizeVisitor<S extends Space> implements BSPTreeVisitor<S> {
 
     /** {@inheritDoc}*/
     @Override
-    public void visitLeafNode(final BSPTree<S> node) {
+    public void visitLeafNode(final BSPTree<P> node) {
     }
 
     /** Get the size of the boundary.

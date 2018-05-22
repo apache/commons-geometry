@@ -18,14 +18,12 @@ package org.apache.commons.geometry.core.partitioning;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.Point;
 
 /** Base for classes that create string representations of {@link BSPTree}s.
- * @param <S>
+ * @param <P> Point type defining the space
  */
-public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> {
+public abstract class TreePrinter<P extends Point<P>> implements BSPTreeVisitor<P> {
 
     /** Indent per tree level */
     protected static final String INDENT = "    ";
@@ -40,7 +38,7 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
      * @param tree
      * @return
      */
-    public String writeAsString(BSPTree<S> tree) {
+    public String writeAsString(BSPTree<P> tree) {
         output.delete(0, output.length());
 
         tree.visit(this);
@@ -50,13 +48,13 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(BSPTree<S> node) {
+    public Order visitOrder(BSPTree<P> node) {
         return Order.SUB_MINUS_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(BSPTree<S> node) {
+    public void visitInternalNode(BSPTree<P> node) {
         writeLinePrefix(node);
         writeInternalNode(node);
 
@@ -67,13 +65,13 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(BSPTree<S> node) {
+    public void visitLeafNode(BSPTree<P> node) {
         writeLinePrefix(node);
         writeLeafNode(node);
 
         write("\n");
 
-        BSPTree<S> cur = node;
+        BSPTree<P> cur = node;
         while (cur.getParent() != null && cur.getParent().getPlus() == cur) {
             --depth;
             cur = cur.getParent();
@@ -85,7 +83,7 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
      * for the node itself.
      * @param node
      */
-    protected void writeLinePrefix(BSPTree<S> node) {
+    protected void writeLinePrefix(BSPTree<P> node) {
         for (int i=0; i<depth; ++i) {
             write(INDENT);
         }
@@ -106,7 +104,7 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
      * @param node
      * @return
      */
-    protected String nodeIdString(BSPTree<S> node) {
+    protected String nodeIdString(BSPTree<P> node) {
         String str = Objects.toString(node);
         int idx = str.lastIndexOf('.');
         if (idx > -1) {
@@ -125,13 +123,13 @@ public abstract class TreePrinter<S extends Space> implements BSPTreeVisitor<S> 
     /** Method for subclasses to provide their own string representation
      * of the given internal node.
      */
-    protected abstract void writeInternalNode(BSPTree<S> node);
+    protected abstract void writeInternalNode(BSPTree<P> node);
 
     /** Writes a leaf node. The default implementation here simply writes
      * the node attribute as a string.
      * @param node
      */
-    protected void writeLeafNode(BSPTree<S> node) {
+    protected void writeLeafNode(BSPTree<P> node) {
         write(String.valueOf(node.getAttribute()));
     }
 }

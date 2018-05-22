@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** This interface represents an hyperplane of a space.
 
@@ -32,14 +31,14 @@ import org.apache.commons.geometry.core.Space;
 
  * <p>
  * Note that this interface is <em>not</em> intended to be implemented
- * by Apache Commons Math users, it is only intended to be implemented
+ * by Apache Commons Geometry users, it is only intended to be implemented
  * within the library itself. New methods may be added even for minor
  * versions, which breaks compatibility for external implementations.
  * </p>
 
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
  */
-public interface Hyperplane<S extends Space> {
+public interface Hyperplane<P extends Point<P>> {
 
     /** Copy the instance.
      * <p>The instance created is completely independant of the original
@@ -47,7 +46,7 @@ public interface Hyperplane<S extends Space> {
      * shared (except for immutable objects).</p>
      * @return a new hyperplane, copy of the instance
      */
-    Hyperplane<S> copySelf();
+    Hyperplane<P> copySelf();
 
     /** Get the offset (oriented distance) of a point.
      * <p>The offset is 0 if the point is on the underlying hyperplane,
@@ -57,13 +56,13 @@ public interface Hyperplane<S extends Space> {
      * @param point point to check
      * @return offset of the point
      */
-    double getOffset(Point<S> point);
+    double getOffset(P point);
 
     /** Project a point to the hyperplane.
      * @param point point to project
      * @return projected point
      */
-    Point<S> project(Point<S> point);
+    P project(P point);
 
     /** Get the tolerance below which points are considered to belong to the hyperplane.
      * @return tolerance below which points are considered to belong to the hyperplane
@@ -79,16 +78,16 @@ public interface Hyperplane<S extends Space> {
      * @return true if the instance and the other hyperplane have
      * the same orientation
      */
-    boolean sameOrientationAs(Hyperplane<S> other);
+    boolean sameOrientationAs(Hyperplane<P> other);
 
     /** Build a sub-hyperplane covering the whole hyperplane.
      * @return a sub-hyperplane covering the whole hyperplane
      */
-    SubHyperplane<S> wholeHyperplane();
+    SubHyperplane<P> wholeHyperplane();
 
     /** Build a region covering the whole space.
      * @return a region containing the instance
      */
-    Region<S> wholeSpace();
+    Region<P> wholeSpace();
 
 }

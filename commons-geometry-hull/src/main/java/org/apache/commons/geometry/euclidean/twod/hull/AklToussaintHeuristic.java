@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
  * A simple heuristic to improve the performance of convex hull algorithms.
@@ -49,15 +50,15 @@ public final class AklToussaintHeuristic {
      * @param points the original point set
      * @return a reduced point set, useful as input for convex hull algorithms
      */
-    public static Collection<Cartesian2D> reducePoints(final Collection<Cartesian2D> points) {
+    public static Collection<Point2D> reducePoints(final Collection<Point2D> points) {
 
         // find the leftmost point
         int size = 0;
-        Cartesian2D minX = null;
-        Cartesian2D maxX = null;
-        Cartesian2D minY = null;
-        Cartesian2D maxY = null;
-        for (Cartesian2D p : points) {
+        Point2D minX = null;
+        Point2D maxX = null;
+        Point2D minY = null;
+        Point2D maxY = null;
+        for (Point2D p : points) {
             if (minX == null || p.getX() < minX.getX()) {
                 minX = p;
             }
@@ -77,14 +78,14 @@ public final class AklToussaintHeuristic {
             return points;
         }
 
-        final List<Cartesian2D> quadrilateral = buildQuadrilateral(minY, maxX, maxY, minX);
+        final List<Point2D> quadrilateral = buildQuadrilateral(minY, maxX, maxY, minX);
         // if the quadrilateral is not well formed, e.g. only 2 points, do not attempt to reduce
         if (quadrilateral.size() < 3) {
             return points;
         }
 
-        final List<Cartesian2D> reducedPoints = new ArrayList<>(quadrilateral);
-        for (final Cartesian2D p : points) {
+        final List<Point2D> reducedPoints = new ArrayList<>(quadrilateral);
+        for (final Point2D p : points) {
             // check all points if they are within the quadrilateral
             // in which case they can not be part of the convex hull
             if (!insideQuadrilateral(p, quadrilateral)) {
@@ -101,9 +102,9 @@ public final class AklToussaintHeuristic {
      * @param points the respective points with min/max x/y coordinate
      * @return the quadrilateral
      */
-    private static List<Cartesian2D> buildQuadrilateral(final Cartesian2D... points) {
-        List<Cartesian2D> quadrilateral = new ArrayList<>();
-        for (Cartesian2D p : points) {
+    private static List<Point2D> buildQuadrilateral(final Point2D... points) {
+        List<Point2D> quadrilateral = new ArrayList<>();
+        for (Point2D p : points) {
             if (!quadrilateral.contains(p)) {
                 quadrilateral.add(p);
             }
@@ -117,32 +118,33 @@ public final class AklToussaintHeuristic {
      * @param quadrilateralPoints the convex quadrilateral, represented by 4 points
      * @return {@code true} if the point is inside the quadrilateral, {@code false} otherwise
      */
-    private static boolean insideQuadrilateral(final Cartesian2D point,
-                                               final List<Cartesian2D> quadrilateralPoints) {
+    private static boolean insideQuadrilateral(final Point2D point,
+                                               final List<Point2D> quadrilateralPoints) {
 
-        Cartesian2D p1 = quadrilateralPoints.get(0);
-        Cartesian2D p2 = quadrilateralPoints.get(1);
+        Vector2D p0 = point.asVector();
+        Vector2D p1 = quadrilateralPoints.get(0).asVector();
+        Vector2D p2 = quadrilateralPoints.get(1).asVector();
 
         if (point.equals(p1) || point.equals(p2)) {
             return true;
         }
 
         // get the location of the point relative to the first two vertices
-        final double last = point.crossProduct(p1, p2);
+        final double last = p0.crossProduct(p1, p2);
         final int size = quadrilateralPoints.size();
         // loop through the rest of the vertices
         for (int i = 1; i < size; i++) {
             p1 = p2;
-            p2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1);
+            p2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1).asVector();
 
-            if (point.equals(p1) || point.equals(p2)) {
+            if (p0.equals(p1) || p0.equals(p2)) {
                 return true;
             }
 
             // do side of line test: multiply the last location with this location
             // if they are the same sign then the operation will yield a positive result
             // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-            if (last * point.crossProduct(p1, p2) < 0) {
+            if (last * p0.crossProduct(p1, p2) < 0) {
                 return false;
             }
         }

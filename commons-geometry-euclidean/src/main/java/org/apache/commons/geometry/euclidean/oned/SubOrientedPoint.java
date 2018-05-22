@@ -25,14 +25,14 @@ import org.apache.commons.geometry.core.partitioning.Region;
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class SubOrientedPoint extends AbstractSubHyperplane<Euclidean1D, Euclidean1D> {
+public class SubOrientedPoint extends AbstractSubHyperplane<Point1D, Point1D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubOrientedPoint(final Hyperplane<Euclidean1D> hyperplane,
-                            final Region<Euclidean1D> remainingRegion) {
+    public SubOrientedPoint(final Hyperplane<Point1D> hyperplane,
+                            final Region<Point1D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
@@ -50,14 +50,14 @@ public class SubOrientedPoint extends AbstractSubHyperplane<Euclidean1D, Euclide
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Euclidean1D, Euclidean1D> buildNew(final Hyperplane<Euclidean1D> hyperplane,
-                                                                       final Region<Euclidean1D> remainingRegion) {
+    protected AbstractSubHyperplane<Point1D, Point1D> buildNew(final Hyperplane<Point1D> hyperplane,
+                                                                       final Region<Point1D> remainingRegion) {
         return new SubOrientedPoint(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<Euclidean1D> split(final Hyperplane<Euclidean1D> hyperplane) {
+    public SplitSubHyperplane<Point1D> split(final Hyperplane<Point1D> hyperplane) {
         final OrientedPoint thisHyperplane = (OrientedPoint) getHyperplane();
         final double global = hyperplane.getOffset(thisHyperplane.getLocation());
 
@@ -65,11 +65,11 @@ public class SubOrientedPoint extends AbstractSubHyperplane<Euclidean1D, Euclide
         final double tolerance = thisHyperplane.getTolerance();
 
         if (global < -tolerance) {
-            return new SplitSubHyperplane<Euclidean1D>(null, this);
+            return new SplitSubHyperplane<Point1D>(null, this);
         } else if (global > tolerance) {
-            return new SplitSubHyperplane<Euclidean1D>(this, null);
+            return new SplitSubHyperplane<Point1D>(this, null);
         } else {
-            return new SplitSubHyperplane<Euclidean1D>(null, null);
+            return new SplitSubHyperplane<Point1D>(null, null);
         }
     }
 

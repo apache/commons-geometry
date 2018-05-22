@@ -19,7 +19,7 @@ package org.apache.commons.geometry.spherical;
 
 import java.io.Serializable;
 
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** This class provides conversions related to <a
  * href="http://mathworld.wolfram.com/SphericalCoordinates.html">spherical coordinates</a>.
@@ -54,7 +54,7 @@ public class SphericalCoordinates implements Serializable {
     private static final long serialVersionUID = 20130206L;
 
     /** Cartesian coordinates. */
-    private final Cartesian3D v;
+    private final Vector3D v;
 
     /** Radius. */
     private final double r;
@@ -80,7 +80,7 @@ public class SphericalCoordinates implements Serializable {
     /** Build a spherical coordinates transformer from Cartesian coordinates.
      * @param v Cartesian coordinates
      */
-    public SphericalCoordinates(final Cartesian3D v) {
+    public SphericalCoordinates(final Vector3D v) {
 
         // Cartesian coordinates
         this.v = v;
@@ -110,7 +110,7 @@ public class SphericalCoordinates implements Serializable {
         this.phi   = phi;
 
         // Cartesian coordinates
-        this.v  = new Cartesian3D(r * cosTheta * sinPhi,
+        this.v  = new Vector3D(r * cosTheta * sinPhi,
                                r * sinTheta * sinPhi,
                                r * cosPhi);
 
@@ -119,7 +119,7 @@ public class SphericalCoordinates implements Serializable {
     /** Get the Cartesian coordinates.
      * @return Cartesian coordinates
      */
-    public Cartesian3D getCartesian() {
+    public Vector3D getCartesian() {
         return v;
     }
 
@@ -386,7 +386,7 @@ public class SphericalCoordinates implements Serializable {
          * @return replacement {@link SphericalCoordinates}
          */
         private Object readResolve() {
-            return new SphericalCoordinates(new Cartesian3D(x, y, z));
+            return new SphericalCoordinates(new Vector3D(x, y, z));
         }
 
     }

@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 
 /** This class represents a 1D oriented hyperplane.
@@ -25,10 +23,10 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class OrientedPoint implements Hyperplane<Euclidean1D> {
+public class OrientedPoint implements Hyperplane<Point1D> {
 
-    /** Vector location. */
-    private final Cartesian1D location;
+    /** Point location. */
+    private final Point1D location;
 
     /** Orientation. */
     private boolean direct;
@@ -42,7 +40,7 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
      * abscissas greater than {@code location}
      * @param tolerance tolerance below which points are considered to belong to the hyperplane
      */
-    public OrientedPoint(final Cartesian1D location, final boolean direct, final double tolerance) {
+    public OrientedPoint(final Point1D location, final boolean direct, final double tolerance) {
         this.location  = location;
         this.direct    = direct;
         this.tolerance = tolerance;
@@ -58,18 +56,10 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
         return this;
     }
 
-    /** Get the offset (oriented distance) of a vector.
-     * @param vector vector to check
-     * @return offset of the vector
-     */
-    public double getOffset(Vector<Euclidean1D> vector) {
-        return getOffset((Point<Euclidean1D>) vector);
-    }
-
     /** {@inheritDoc} */
     @Override
-    public double getOffset(final Point<Euclidean1D> point) {
-        final double delta = ((Cartesian1D) point).getX() - location.getX();
+    public double getOffset(final Point1D point) {
+        final double delta = point.getX() - location.getX();
         return direct ? delta : -delta;
     }
 
@@ -100,13 +90,13 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Euclidean1D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Point1D> other) {
         return !(direct ^ ((OrientedPoint) other).direct);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point<Euclidean1D> project(Point<Euclidean1D> point) {
+    public Point1D project(Point1D point) {
         return location;
     }
 
@@ -119,7 +109,7 @@ public class OrientedPoint implements Hyperplane<Euclidean1D> {
     /** Get the hyperplane location on the real line.
      * @return the hyperplane location
      */
-    public Cartesian1D getLocation() {
+    public Point1D getLocation() {
         return location;
     }
 

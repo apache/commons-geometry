@@ -16,33 +16,30 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.euclidean.oned.Cartesian1D;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
-import org.apache.commons.geometry.euclidean.twod.Euclidean2D;
+import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 
 /** The class represent planes in a three dimensional space.
  */
-public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Euclidean2D> {
+public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
 
     /** Offset of the origin with respect to the plane. */
     private double originOffset;
 
     /** Origin of the plane frame. */
-    private Cartesian3D origin;
+    private Point3D origin;
 
     /** First vector of the plane frame (in plane). */
-    private Cartesian3D u;
+    private Vector3D u;
 
     /** Second vector of the plane frame (in plane). */
-    private Cartesian3D v;
+    private Vector3D v;
 
     /** Third vector of the plane frame (plane normal). */
-    private Cartesian3D w;
+    private Vector3D w;
 
     /** Tolerance below which points are considered identical. */
     private final double tolerance;
@@ -52,7 +49,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public Plane(final Cartesian3D normal, final double tolerance)
+    public Plane(final Vector3D normal, final double tolerance)
         throws IllegalArgumentException {
         setNormal(normal);
         this.tolerance = tolerance;
@@ -66,11 +63,11 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public Plane(final Cartesian3D p, final Cartesian3D normal, final double tolerance)
+    public Plane(final Point3D p, final Vector3D normal, final double tolerance)
         throws IllegalArgumentException {
         setNormal(normal);
         this.tolerance = tolerance;
-        originOffset = -p.dotProduct(w);
+        this.originOffset = -p.asVector().dotProduct(w);
         setFrame();
     }
 
@@ -83,7 +80,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the points do not constitute a plane
      */
-    public Plane(final Cartesian3D p1, final Cartesian3D p2, final Cartesian3D p3, final double tolerance)
+    public Plane(final Point3D p1, final Point3D p2, final Point3D p3, final double tolerance)
         throws IllegalArgumentException {
         this(p1, p2.subtract(p1).crossProduct(p3.subtract(p1)), tolerance);
     }
@@ -119,9 +116,9 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param normal normal direction to the plane
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public void reset(final Cartesian3D p, final Cartesian3D normal) throws IllegalArgumentException {
+    public void reset(final Point3D p, final Vector3D normal) throws IllegalArgumentException {
         setNormal(normal);
-        originOffset = -p.dotProduct(w);
+        originOffset = -p.asVector().dotProduct(w);
         setFrame();
     }
 
@@ -143,20 +140,20 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param normal normal direction to the plane (will be copied)
      * @exception IllegalArgumentException if the normal norm is too close to zero
      */
-    private void setNormal(final Cartesian3D normal) throws IllegalArgumentException {
+    private void setNormal(final Vector3D normal) throws IllegalArgumentException {
         final double norm = normal.getNorm();
         if (norm < 1.0e-10) {
             throw new IllegalArgumentException("Norm is zero");
         }
-        w = new Cartesian3D(1.0 / norm, normal);
+        w = Vector3D.linearCombination(1.0 / norm, normal);
     }
 
     /** Reset the plane frame.
      */
     private void setFrame() {
-        origin = new Cartesian3D(-originOffset, w);
+        origin = Vector3D.linearCombination(-originOffset, w).asPoint();
         u = w.orthogonal();
-        v = Cartesian3D.crossProduct(w, u);
+        v = w.crossProduct(u);
     }
 
     /** Get the origin point of the plane frame.
@@ -165,7 +162,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @return the origin point of the plane frame (point closest to the
      * 3D-space origin)
      */
-    public Cartesian3D getOrigin() {
+    public Point3D getOrigin() {
         return origin;
     }
 
@@ -177,7 +174,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @see #getU
      * @see #getV
      */
-    public Cartesian3D getNormal() {
+    public Vector3D getNormal() {
         return w;
     }
 
@@ -189,7 +186,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @see #getV
      * @see #getNormal
      */
-    public Cartesian3D getU() {
+    public Vector3D getU() {
         return u;
     }
 
@@ -201,13 +198,13 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @see #getU
      * @see #getNormal
      */
-    public Cartesian3D getV() {
+    public Vector3D getV() {
         return v;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point<Euclidean3D> project(Point<Euclidean3D> point) {
+    public Point3D project(Point3D point) {
         return toSpace(toSubSpace(point));
     }
 
@@ -229,67 +226,32 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * reversed.</p>
      */
     public void revertSelf() {
-        final Cartesian3D tmp = u;
+        final Vector3D tmp = u;
         u = v;
         v = tmp;
         w = w.negate();
         originOffset = -originOffset;
     }
 
-    /** Transform a space vector into a sub-space vector.
-     * @param vector n-dimension vector of the space
-     * @return (n-1)-dimension vector of the sub-space corresponding to
-     * the specified space vector
-     */
-    public Cartesian2D toSubSpace(Vector<Euclidean3D> vector) {
-        return toSubSpace((Cartesian3D) vector);
-    }
-
-    /** Transform a sub-space point into a space point.
-     * @param vector (n-1)-dimension point of the sub-space
-     * @return n-dimension point of the space corresponding to the
-     * specified sub-space point
-     */
-    public Cartesian3D toSpace(Vector<Euclidean2D> vector) {
-        return toSpace((Cartesian2D) vector);
-    }
-
     /** Transform a 3D space point into an in-plane point.
-     * @param point point of the space (must be a {@link Cartesian3D} instance)
+     * @param point point of the space (must be a {@link Point3D} instance)
      * @return in-plane point
      * @see #toSpace
      */
     @Override
-    public Cartesian2D toSubSpace(final Point<Euclidean3D> point) {
-        return toSubSpace((Cartesian3D) point);
+    public Point2D toSubSpace(final Point3D point) {
+        Vector3D vec = point.asVector();
+        return new Point2D(vec.dotProduct(u), vec.dotProduct(v));
     }
 
     /** Transform an in-plane point into a 3D space point.
-     * @param point in-plane point (must be a {@link Cartesian2D} instance)
+     * @param point in-plane point (must be a {@link Point2D} instance)
      * @return 3D space point
      * @see #toSubSpace
      */
     @Override
-    public Cartesian3D toSpace(final Point<Euclidean2D> point) {
-        return toSpace((Cartesian2D) point);
-    }
-
-    /** Transform a 3D space point into an in-plane point.
-     * @param point point of the space
-     * @return in-plane point
-     * @see #toSpace
-     */
-    public Cartesian2D toSubSpace(final Cartesian3D point) {
-        return new Cartesian2D(point.dotProduct(u), point.dotProduct(v));
-    }
-
-    /** Transform an in-plane point into a 3D space point.
-     * @param point in-plane point
-     * @return 3D space point
-     * @see #toSubSpace
-     */
-    public Cartesian3D toSpace(final Cartesian2D point) {
-        return new Cartesian3D(point.getX(), u, point.getY(), v, -originOffset, w);
+    public Point3D toSpace(final Point2D point) {
+        return Point3D.vectorCombination(point.getX(), u, point.getY(), v, -originOffset, w);
     }
 
     /** Get one point from the 3D-space.
@@ -299,8 +261,8 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @return one point in the 3D-space, with given coordinates and offset
      * relative to the plane
      */
-    public Cartesian3D getPointAt(final Cartesian2D inPlane, final double offset) {
-        return new Cartesian3D(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
+    public Point3D getPointAt(final Point2D inPlane, final double offset) {
+        return Point3D.vectorCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
     }
 
     /** Check if the instance is similar to another plane.
@@ -311,7 +273,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @return true if the planes are similar
      */
     public boolean isSimilarTo(final Plane plane) {
-        final double angle = Cartesian3D.angle(w, plane.w);
+        final double angle = w.angle(plane.w);
         return ((angle < 1.0e-10) && (Math.abs(originOffset - plane.originOffset) < tolerance)) ||
                ((angle > (Math.PI - 1.0e-10)) && (Math.abs(originOffset + plane.originOffset) < tolerance));
     }
@@ -322,9 +284,9 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param rotation vectorial rotation operator
      * @return a new plane
      */
-    public Plane rotate(final Cartesian3D center, final Rotation rotation) {
+    public Plane rotate(final Point3D center, final Rotation rotation) {
 
-        final Cartesian3D delta = origin.subtract(center);
+        final Vector3D delta = origin.subtract(center);
         final Plane plane = new Plane(center.add(rotation.applyTo(delta)),
                                       rotation.applyTo(w), tolerance);
 
@@ -341,7 +303,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param translation translation to apply
      * @return a new plane
      */
-    public Plane translate(final Cartesian3D translation) {
+    public Plane translate(final Vector3D translation) {
 
         final Plane plane = new Plane(origin.add(translation), w, tolerance);
 
@@ -358,15 +320,15 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @return intersection point between between the line and the
      * instance (null if the line is parallel to the instance)
      */
-    public Cartesian3D intersection(final Line line) {
-        final Cartesian3D direction = line.getDirection();
+    public Point3D intersection(final Line line) {
+        final Vector3D direction = line.getDirection();
         final double   dot       = w.dotProduct(direction);
         if (Math.abs(dot) < 1.0e-10) {
             return null;
         }
-        final Cartesian3D point = line.toSpace(Cartesian1D.ZERO);
-        final double   k     = -(originOffset + w.dotProduct(point)) / dot;
-        return new Cartesian3D(1.0, point, k, direction);
+        final Point3D point = line.toSpace(Point1D.ZERO);
+        final double   k     = -(originOffset + w.dotProduct(point.asVector())) / dot;
+        return Point3D.vectorCombination(1.0, point, k, direction);
     }
 
     /** Build the line shared by the instance and another plane.
@@ -375,11 +337,11 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * other plane (really a {@link Line Line} instance)
      */
     public Line intersection(final Plane other) {
-        final Cartesian3D direction = Cartesian3D.crossProduct(w, other.w);
+        final Vector3D direction = w.crossProduct(other.w);
         if (direction.getNorm() < tolerance) {
             return null;
         }
-        final Cartesian3D point = intersection(this, other, new Plane(direction, tolerance));
+        final Point3D point = intersection(this, other, new Plane(direction, tolerance));
         return new Line(point, point.add(direction), tolerance);
     }
 
@@ -389,7 +351,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param plane3 third plane2
      * @return intersection point of three planes, null if some planes are parallel
      */
-    public static Cartesian3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
+    public static Point3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
 
         // coefficients of the three planes linear equations
         final double a1 = plane1.w.getX();
@@ -418,7 +380,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
         }
 
         final double r = 1.0 / determinant;
-        return new Cartesian3D(
+        return new Point3D(
                             (-a23 * d1 - (c1 * b3 - c3 * b1) * d2 - (c2 * b1 - c1 * b2) * d3) * r,
                             (-b23 * d1 - (c3 * a1 - c1 * a3) * d2 - (c1 * a2 - c2 * a1) * d3) * r,
                             (-c23 * d1 - (b1 * a3 - b3 * a1) * d2 - (b2 * a1 - b1 * a2) * d3) * r);
@@ -446,7 +408,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @param p point to check
      * @return true if p belongs to the plane
      */
-    public boolean contains(final Cartesian3D p) {
+    public boolean contains(final Point3D p) {
         return Math.abs(getOffset(p)) < tolerance;
     }
 
@@ -464,14 +426,6 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
         return originOffset + (sameOrientationAs(plane) ? -plane.originOffset : plane.originOffset);
     }
 
-    /** Get the offset (oriented distance) of a vector.
-     * @param vector vector to check
-     * @return offset of the vector
-     */
-//    public double getOffset(Vector<Euclidean3D> vector) {
-//        return getOffset((Point<Euclidean3D>) vector);
-//    }
-
     /** Get the offset (oriented distance) of a point.
      * <p>The offset is 0 if the point is on the underlying hyperplane,
      * it is positive if the point is on one particular side of the
@@ -481,8 +435,8 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * @return offset of the point
      */
     @Override
-    public double getOffset(final Point<Euclidean3D> point) {
-        return ((Cartesian3D) point).dotProduct(w) + originOffset;
+    public double getOffset(final Point3D point) {
+        return point.asVector().dotProduct(w) + originOffset;
     }
 
     /** Check if the instance has the same orientation as another hyperplane.
@@ -491,7 +445,7 @@ public class Plane implements Hyperplane<Euclidean3D>, Embedding<Euclidean3D, Eu
      * the same orientation
      */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Euclidean3D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Point3D> other) {
         return (((Plane) other).w).dotProduct(w) > 0.0;
     }
 

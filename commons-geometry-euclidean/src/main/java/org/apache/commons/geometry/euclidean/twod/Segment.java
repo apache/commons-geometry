@@ -16,17 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.Point;
-
 /** Simple container for a two-points segment.
  */
 public class Segment {
 
     /** Start point of the segment. */
-    private final Cartesian2D start;
+    private final Point2D start;
 
     /** End point of the segment. */
-    private final Cartesian2D end;
+    private final Point2D end;
 
     /** Line containing the segment. */
     private final Line     line;
@@ -36,7 +34,7 @@ public class Segment {
      * @param end end point of the segment
      * @param line line containing the segment
      */
-    public Segment(final Cartesian2D start, final Cartesian2D end, final Line line) {
+    public Segment(final Point2D start, final Point2D end, final Line line) {
         this.start  = start;
         this.end    = end;
         this.line   = line;
@@ -45,14 +43,14 @@ public class Segment {
     /** Get the start point of the segment.
      * @return start point of the segment
      */
-    public Cartesian2D getStart() {
+    public Point2D getStart() {
         return start;
     }
 
     /** Get the end point of the segment.
      * @return end point of the segment
      */
-    public Cartesian2D getEnd() {
+    public Point2D getEnd() {
         return end;
     }
 
@@ -77,7 +75,7 @@ public class Segment {
      * @param p to check
      * @return distance between the instance and the point
      */
-    public double distance(final Cartesian2D p) {
+    public double distance(final Point2D p) {
         final double deltaX = end.getX() - start.getX();
         final double deltaY = end.getY() - start.getY();
 
@@ -92,8 +90,8 @@ public class Segment {
 
         // if point isn't on the line segment, just return the shortest distance to the end points
         if (r < 0 || r > 1) {
-            final double dist1 = getStart().distance((Point<Euclidean2D>) p);
-            final double dist2 = getEnd().distance((Point<Euclidean2D>) p);
+            final double dist1 = getStart().distance(p);
+            final double dist2 = getEnd().distance(p);
 
             return Math.min(dist1, dist2);
         }
@@ -102,8 +100,8 @@ public class Segment {
             final double px = start.getX() + r * deltaX;
             final double py = start.getY() + r * deltaY;
 
-            final Cartesian2D interPt = new Cartesian2D(px, py);
-            return interPt.distance((Point<Euclidean2D>) p);
+            final Point2D interPt = new Point2D(px, py);
+            return interPt.distance(p);
         }
     }
 }

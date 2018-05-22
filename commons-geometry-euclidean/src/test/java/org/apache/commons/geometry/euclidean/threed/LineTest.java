@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.euclidean.threed.Line;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,22 +23,22 @@ public class LineTest {
 
     @Test
     public void testContains() {
-        Cartesian3D p1 = new Cartesian3D(0, 0, 1);
-        Line l = new Line(p1, new Cartesian3D(0, 0, 2), 1.0e-10);
+        Point3D p1 = new Point3D(0, 0, 1);
+        Line l = new Line(p1, new Point3D(0, 0, 2), 1.0e-10);
         Assert.assertTrue(l.contains(p1));
-        Assert.assertTrue(l.contains(new Cartesian3D(1.0, p1, 0.3, l.getDirection())));
-        Cartesian3D u = l.getDirection().orthogonal();
-        Cartesian3D v = Cartesian3D.crossProduct(l.getDirection(), u);
+        Assert.assertTrue(l.contains(Point3D.vectorCombination(1.0, p1, 0.3, l.getDirection())));
+        Vector3D u = l.getDirection().orthogonal();
+        Vector3D v = l.getDirection().crossProduct(u);
         for (double alpha = 0; alpha < 2 * Math.PI; alpha += 0.3) {
-            Assert.assertTrue(! l.contains(p1.add(new Cartesian3D(Math.cos(alpha), u,
+            Assert.assertTrue(! l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
                                                                Math.sin(alpha), v))));
         }
     }
 
     @Test
     public void testSimilar() {
-        Cartesian3D p1  = new Cartesian3D (1.2, 3.4, -5.8);
-        Cartesian3D p2  = new Cartesian3D (3.4, -5.8, 1.2);
+        Point3D p1  = new Point3D (1.2, 3.4, -5.8);
+        Point3D p2  = new Point3D (3.4, -5.8, 1.2);
         Line     lA  = new Line(p1, p2, 1.0e-10);
         Line     lB  = new Line(p2, p1, 1.0e-10);
         Assert.assertTrue(lA.isSimilarTo(lB));
@@ -49,91 +47,91 @@ public class LineTest {
 
     @Test
     public void testPointDistance() {
-        Line l = new Line(new Cartesian3D(0, 1, 1), new Cartesian3D(0, 2, 2), 1.0e-10);
-        Assert.assertEquals(Math.sqrt(3.0 / 2.0), l.distance(new Cartesian3D(1, 0, 1)), 1.0e-10);
-        Assert.assertEquals(0, l.distance(new Cartesian3D(0, -4, -4)), 1.0e-10);
+        Line l = new Line(new Point3D(0, 1, 1), new Point3D(0, 2, 2), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(3.0 / 2.0), l.distance(new Point3D(1, 0, 1)), 1.0e-10);
+        Assert.assertEquals(0, l.distance(new Point3D(0, -4, -4)), 1.0e-10);
     }
 
     @Test
     public void testLineDistance() {
-        Line l = new Line(new Cartesian3D(0, 1, 1), new Cartesian3D(0, 2, 2), 1.0e-10);
+        Line l = new Line(new Point3D(0, 1, 1), new Point3D(0, 2, 2), 1.0e-10);
         Assert.assertEquals(1.0,
-                            l.distance(new Line(new Cartesian3D(1, 0, 1), new Cartesian3D(1, 0, 2), 1.0e-10)),
+                            l.distance(new Line(new Point3D(1, 0, 1), new Point3D(1, 0, 2), 1.0e-10)),
                             1.0e-10);
         Assert.assertEquals(0.5,
-                            l.distance(new Line(new Cartesian3D(-0.5, 0, 0), new Cartesian3D(-0.5, -1, -1), 1.0e-10)),
+                            l.distance(new Line(new Point3D(-0.5, 0, 0), new Point3D(-0.5, -1, -1), 1.0e-10)),
                             1.0e-10);
         Assert.assertEquals(0.0,
                             l.distance(l),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.distance(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -5, -5), 1.0e-10)),
+                            l.distance(new Line(new Point3D(0, -4, -4), new Point3D(0, -5, -5), 1.0e-10)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.distance(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -3, -4), 1.0e-10)),
+                            l.distance(new Line(new Point3D(0, -4, -4), new Point3D(0, -3, -4), 1.0e-10)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.distance(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(1, -4, -4), 1.0e-10)),
+                            l.distance(new Line(new Point3D(0, -4, -4), new Point3D(1, -4, -4), 1.0e-10)),
                             1.0e-10);
         Assert.assertEquals(Math.sqrt(8),
-                            l.distance(new Line(new Cartesian3D(0, -4, 0), new Cartesian3D(1, -4, 0), 1.0e-10)),
+                            l.distance(new Line(new Point3D(0, -4, 0), new Point3D(1, -4, 0), 1.0e-10)),
                             1.0e-10);
     }
 
     @Test
     public void testClosest() {
-        Line l = new Line(new Cartesian3D(0, 1, 1), new Cartesian3D(0, 2, 2), 1.0e-10);
+        Line l = new Line(new Point3D(0, 1, 1), new Point3D(0, 2, 2), 1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(new Line(new Cartesian3D(1, 0, 1), new Cartesian3D(1, 0, 2), 1.0e-10)).distance(new Cartesian3D(0, 0, 0)),
+                            l.closestPoint(new Line(new Point3D(1, 0, 1), new Point3D(1, 0, 2), 1.0e-10)).distance(new Point3D(0, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.5,
-                            l.closestPoint(new Line(new Cartesian3D(-0.5, 0, 0), new Cartesian3D(-0.5, -1, -1), 1.0e-10)).distance(new Cartesian3D(-0.5, 0, 0)),
+                            l.closestPoint(new Line(new Point3D(-0.5, 0, 0), new Point3D(-0.5, -1, -1), 1.0e-10)).distance(new Point3D(-0.5, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(l).distance(new Cartesian3D(0, 0, 0)),
+                            l.closestPoint(l).distance(new Point3D(0, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -5, -5), 1.0e-10)).distance(new Cartesian3D(0, 0, 0)),
+                            l.closestPoint(new Line(new Point3D(0, -4, -4), new Point3D(0, -5, -5), 1.0e-10)).distance(new Point3D(0, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -3, -4), 1.0e-10)).distance(new Cartesian3D(0, -4, -4)),
+                            l.closestPoint(new Line(new Point3D(0, -4, -4), new Point3D(0, -3, -4), 1.0e-10)).distance(new Point3D(0, -4, -4)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(1, -4, -4), 1.0e-10)).distance(new Cartesian3D(0, -4, -4)),
+                            l.closestPoint(new Line(new Point3D(0, -4, -4), new Point3D(1, -4, -4), 1.0e-10)).distance(new Point3D(0, -4, -4)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.closestPoint(new Line(new Cartesian3D(0, -4, 0), new Cartesian3D(1, -4, 0), 1.0e-10)).distance(new Cartesian3D(0, -2, -2)),
+                            l.closestPoint(new Line(new Point3D(0, -4, 0), new Point3D(1, -4, 0), 1.0e-10)).distance(new Point3D(0, -2, -2)),
                             1.0e-10);
     }
 
     @Test
     public void testIntersection() {
-        Line l = new Line(new Cartesian3D(0, 1, 1), new Cartesian3D(0, 2, 2), 1.0e-10);
-        Assert.assertNull(l.intersection(new Line(new Cartesian3D(1, 0, 1), new Cartesian3D(1, 0, 2), 1.0e-10)));
-        Assert.assertNull(l.intersection(new Line(new Cartesian3D(-0.5, 0, 0), new Cartesian3D(-0.5, -1, -1), 1.0e-10)));
+        Line l = new Line(new Point3D(0, 1, 1), new Point3D(0, 2, 2), 1.0e-10);
+        Assert.assertNull(l.intersection(new Line(new Point3D(1, 0, 1), new Point3D(1, 0, 2), 1.0e-10)));
+        Assert.assertNull(l.intersection(new Line(new Point3D(-0.5, 0, 0), new Point3D(-0.5, -1, -1), 1.0e-10)));
         Assert.assertEquals(0.0,
-                            l.intersection(l).distance(new Cartesian3D(0, 0, 0)),
+                            l.intersection(l).distance(new Point3D(0, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.intersection(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -5, -5), 1.0e-10)).distance(new Cartesian3D(0, 0, 0)),
+                            l.intersection(new Line(new Point3D(0, -4, -4), new Point3D(0, -5, -5), 1.0e-10)).distance(new Point3D(0, 0, 0)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.intersection(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(0, -3, -4), 1.0e-10)).distance(new Cartesian3D(0, -4, -4)),
+                            l.intersection(new Line(new Point3D(0, -4, -4), new Point3D(0, -3, -4), 1.0e-10)).distance(new Point3D(0, -4, -4)),
                             1.0e-10);
         Assert.assertEquals(0.0,
-                            l.intersection(new Line(new Cartesian3D(0, -4, -4), new Cartesian3D(1, -4, -4), 1.0e-10)).distance(new Cartesian3D(0, -4, -4)),
+                            l.intersection(new Line(new Point3D(0, -4, -4), new Point3D(1, -4, -4), 1.0e-10)).distance(new Point3D(0, -4, -4)),
                             1.0e-10);
-        Assert.assertNull(l.intersection(new Line(new Cartesian3D(0, -4, 0), new Cartesian3D(1, -4, 0), 1.0e-10)));
+        Assert.assertNull(l.intersection(new Line(new Point3D(0, -4, 0), new Point3D(1, -4, 0), 1.0e-10)));
     }
 
     @Test
     public void testRevert() {
 
         // setup
-        Line line = new Line(new Cartesian3D(1653345.6696423641, 6170370.041579291, 90000),
-                             new Cartesian3D(1650757.5050732433, 6160710.879908984, 0.9),
+        Line line = new Line(new Point3D(1653345.6696423641, 6170370.041579291, 90000),
+                             new Point3D(1650757.5050732433, 6160710.879908984, 0.9),
                              1.0e-10);
-        Cartesian3D expected = line.getDirection().negate();
+        Vector3D expected = line.getDirection().negate();
 
         // action
         Line reverted = line.revert();

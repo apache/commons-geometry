@@ -17,19 +17,18 @@
 package org.apache.commons.geometry.enclosing;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /** Interface for algorithms computing enclosing balls.
  * @param <S> Space type.
  * @param <P> Point type.
  * @see EnclosingBall
  */
-public interface Encloser<S extends Space, P extends Point<S>> {
+public interface Encloser<P extends Point<P>> {
 
     /** Find a ball enclosing a list of points.
      * @param points points to enclose
      * @return enclosing ball
      */
-    EnclosingBall<S, P> enclose(Iterable<P> points);
+    EnclosingBall<P> enclose(Iterable<P> points);
 
 }

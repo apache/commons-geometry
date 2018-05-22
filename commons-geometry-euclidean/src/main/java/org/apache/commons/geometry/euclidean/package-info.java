@@ -14,26 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core;
-
-import java.io.Serializable;
-
-/** This interface represents a generic space, with affine and vectorial counterparts.
- * @see Vector
+/**
+ *
+ * <p>
+ * This package provides basic interfaces for Euclidean components.
+ * </p>
  */
-public interface Space extends Serializable {
-
-    /** Get the dimension of the space.
-     * @return dimension of the space
-     */
-    int getDimension();
-
-    /** Get the n-1 dimension subspace of this space.
-     * @return n-1 dimension sub-space of this space
-     * @see #getDimension()
-     * @exception UnsupportedOperationException for dimension-1 spaces
-     * which do not have sub-spaces
-     */
-    Space getSubSpace() throws UnsupportedOperationException;
-
-}
+package org.apache.commons.geometry.euclidean;

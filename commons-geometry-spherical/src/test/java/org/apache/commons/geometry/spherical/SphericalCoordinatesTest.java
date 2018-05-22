@@ -17,7 +17,7 @@
 
 package org.apache.commons.geometry.spherical;
 
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,43 +28,43 @@ public class SphericalCoordinatesTest {
     public void testCoordinatesStoC() {
         double piO2 = 0.5 * Math.PI;
         SphericalCoordinates sc1 = new SphericalCoordinates(2.0, 0, piO2);
-        Assert.assertEquals(0, sc1.getCartesian().distance(new Cartesian3D(2, 0, 0)), 1.0e-10);
+        Assert.assertEquals(0, sc1.getCartesian().distance(new Vector3D(2, 0, 0)), 1.0e-10);
         SphericalCoordinates sc2 = new SphericalCoordinates(2.0, piO2, piO2);
-        Assert.assertEquals(0, sc2.getCartesian().distance(new Cartesian3D(0, 2, 0)), 1.0e-10);
+        Assert.assertEquals(0, sc2.getCartesian().distance(new Vector3D(0, 2, 0)), 1.0e-10);
         SphericalCoordinates sc3 = new SphericalCoordinates(2.0, Math.PI, piO2);
-        Assert.assertEquals(0, sc3.getCartesian().distance(new Cartesian3D(-2, 0, 0)), 1.0e-10);
+        Assert.assertEquals(0, sc3.getCartesian().distance(new Vector3D(-2, 0, 0)), 1.0e-10);
         SphericalCoordinates sc4 = new SphericalCoordinates(2.0, -piO2, piO2);
-        Assert.assertEquals(0, sc4.getCartesian().distance(new Cartesian3D(0, -2, 0)), 1.0e-10);
+        Assert.assertEquals(0, sc4.getCartesian().distance(new Vector3D(0, -2, 0)), 1.0e-10);
         SphericalCoordinates sc5 = new SphericalCoordinates(2.0, 1.23456, 0);
-        Assert.assertEquals(0, sc5.getCartesian().distance(new Cartesian3D(0, 0, 2)), 1.0e-10);
+        Assert.assertEquals(0, sc5.getCartesian().distance(new Vector3D(0, 0, 2)), 1.0e-10);
         SphericalCoordinates sc6 = new SphericalCoordinates(2.0, 6.54321, Math.PI);
-        Assert.assertEquals(0, sc6.getCartesian().distance(new Cartesian3D(0, 0, -2)), 1.0e-10);
+        Assert.assertEquals(0, sc6.getCartesian().distance(new Vector3D(0, 0, -2)), 1.0e-10);
     }
 
     @Test
     public void testCoordinatesCtoS() {
         double piO2 = 0.5 * Math.PI;
-        SphericalCoordinates sc1 = new SphericalCoordinates(new Cartesian3D(2, 0, 0));
+        SphericalCoordinates sc1 = new SphericalCoordinates(new Vector3D(2, 0, 0));
         Assert.assertEquals(2,           sc1.getR(),     1.0e-10);
         Assert.assertEquals(0,           sc1.getTheta(), 1.0e-10);
         Assert.assertEquals(piO2,        sc1.getPhi(),   1.0e-10);
-        SphericalCoordinates sc2 = new SphericalCoordinates(new Cartesian3D(0, 2, 0));
+        SphericalCoordinates sc2 = new SphericalCoordinates(new Vector3D(0, 2, 0));
         Assert.assertEquals(2,           sc2.getR(),     1.0e-10);
         Assert.assertEquals(piO2,        sc2.getTheta(), 1.0e-10);
         Assert.assertEquals(piO2,        sc2.getPhi(),   1.0e-10);
-        SphericalCoordinates sc3 = new SphericalCoordinates(new Cartesian3D(-2, 0, 0));
+        SphericalCoordinates sc3 = new SphericalCoordinates(new Vector3D(-2, 0, 0));
         Assert.assertEquals(2,           sc3.getR(),     1.0e-10);
         Assert.assertEquals(Math.PI, sc3.getTheta(), 1.0e-10);
         Assert.assertEquals(piO2,        sc3.getPhi(),   1.0e-10);
-        SphericalCoordinates sc4 = new SphericalCoordinates(new Cartesian3D(0, -2, 0));
+        SphericalCoordinates sc4 = new SphericalCoordinates(new Vector3D(0, -2, 0));
         Assert.assertEquals(2,           sc4.getR(),     1.0e-10);
         Assert.assertEquals(-piO2,       sc4.getTheta(), 1.0e-10);
         Assert.assertEquals(piO2,        sc4.getPhi(),   1.0e-10);
-        SphericalCoordinates sc5 = new SphericalCoordinates(new Cartesian3D(0, 0, 2));
+        SphericalCoordinates sc5 = new SphericalCoordinates(new Vector3D(0, 0, 2));
         Assert.assertEquals(2,           sc5.getR(),     1.0e-10);
         //  don't check theta on poles, as it is singular
         Assert.assertEquals(0,           sc5.getPhi(),   1.0e-10);
-        SphericalCoordinates sc6 = new SphericalCoordinates(new Cartesian3D(0, 0, -2));
+        SphericalCoordinates sc6 = new SphericalCoordinates(new Vector3D(0, 0, -2));
         Assert.assertEquals(2,           sc6.getR(),     1.0e-10);
         //  don't check theta on poles, as it is singular
         Assert.assertEquals(Math.PI, sc6.getPhi(),   1.0e-10);

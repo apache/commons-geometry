@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Point;
 
 /** This interface represents the remaining parts of an hyperplane after
  * other parts have been chopped off.
@@ -35,9 +35,9 @@ import org.apache.commons.geometry.core.Space;
  * versions, which breaks compatibility for external implementations.
  * </p>
 
- * @param <S> Type of the embedding space.
+ * @param <P> Point type defining the embedding space.
  */
-public interface SubHyperplane<S extends Space> {
+public interface SubHyperplane<P extends Point<P>> {
 
     /** Copy the instance.
      * <p>The instance created is completely independent of the original
@@ -46,12 +46,12 @@ public interface SubHyperplane<S extends Space> {
      * objects).</p>
      * @return a new sub-hyperplane, copy of the instance
      */
-    SubHyperplane<S> copySelf();
+    SubHyperplane<P> copySelf();
 
     /** Get the underlying hyperplane.
      * @return underlying hyperplane
      */
-    Hyperplane<S> getHyperplane();
+    Hyperplane<P> getHyperplane();
 
     /** Check if the instance is empty.
      * @return true if the instance is empty
@@ -70,19 +70,19 @@ public interface SubHyperplane<S extends Space> {
      * on the plus side of the hyperplane and the part of the
      * instance on the minus side of the hyperplane
      */
-    SplitSubHyperplane<S> split(Hyperplane<S> hyperplane);
+    SplitSubHyperplane<P> split(Hyperplane<P> hyperplane);
 
     /** Compute the union of the instance and another sub-hyperplane.
      * @param other other sub-hyperplane to union (<em>must</em> be in the
      * same hyperplane as the instance)
      * @return a new sub-hyperplane, union of the instance and other
      */
-    SubHyperplane<S> reunite(SubHyperplane<S> other);
+    SubHyperplane<P> reunite(SubHyperplane<P> other);
 
     /** Class holding the results of the {@link #split split} method.
      * @param <U> Type of the embedding space.
      */
-    class SplitSubHyperplane<U extends Space> {
+    class SplitSubHyperplane<U extends Point<U>> {
 
         /** Part of the sub-hyperplane on the plus side of the splitting hyperplane. */
         private final SubHyperplane<U> plus;

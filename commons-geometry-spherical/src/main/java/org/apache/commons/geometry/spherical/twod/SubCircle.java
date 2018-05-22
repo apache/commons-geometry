@@ -16,41 +16,41 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
-import org.apache.commons.geometry.spherical.oned.Sphere1D;
+import org.apache.commons.geometry.spherical.oned.S1Point;
 
 /** This class represents a sub-hyperplane for {@link Circle}.
  */
-public class SubCircle extends AbstractSubHyperplane<Sphere2D, Sphere1D> {
+public class SubCircle extends AbstractSubHyperplane<S2Point, S1Point> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubCircle(final Hyperplane<Sphere2D> hyperplane,
-                     final Region<Sphere1D> remainingRegion) {
+    public SubCircle(final Hyperplane<S2Point> hyperplane,
+                     final Region<S1Point> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Sphere2D, Sphere1D> buildNew(final Hyperplane<Sphere2D> hyperplane,
-                                                                 final Region<Sphere1D> remainingRegion) {
+    protected AbstractSubHyperplane<S2Point, S1Point> buildNew(final Hyperplane<S2Point> hyperplane,
+                                                                 final Region<S1Point> remainingRegion) {
         return new SubCircle(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<Sphere2D> split(final Hyperplane<Sphere2D> hyperplane) {
+    public SplitSubHyperplane<S2Point> split(final Hyperplane<S2Point> hyperplane) {
 
         final Circle thisCircle   = (Circle) getHyperplane();
         final Circle otherCircle  = (Circle) hyperplane;
-        final double angle = Cartesian3D.angle(thisCircle.getPole(), otherCircle.getPole());
+        final double angle = Vector3D.angle(thisCircle.getPole(), otherCircle.getPole());
 
         if (angle < thisCircle.getTolerance() || angle > Math.PI - thisCircle.getTolerance()) {
             // the two circles are aligned or opposite

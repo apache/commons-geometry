@@ -24,32 +24,32 @@ import java.util.Map;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
 
 /** Visitor building edges.
  */
-class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
+class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
     /** Root of the tree. */
-    private final BSPTree<Sphere2D> root;
+    private final BSPTree<S2Point> root;
 
     /** Tolerance below which points are consider to be identical. */
     private final double tolerance;
 
     /** Built edges and their associated nodes. */
-    private final Map<Edge, BSPTree<Sphere2D>> edgeToNode;
+    private final Map<Edge, BSPTree<S2Point>> edgeToNode;
 
     /** Reversed map. */
-    private final Map<BSPTree<Sphere2D>, List<Edge>> nodeToEdgesList;
+    private final Map<BSPTree<S2Point>, List<Edge>> nodeToEdgesList;
 
     /** Simple constructor.
      * @param root tree root
      * @param tolerance below which points are consider to be identical
      */
-    EdgesBuilder(final BSPTree<Sphere2D> root, final double tolerance) {
+    EdgesBuilder(final BSPTree<S2Point> root, final double tolerance) {
         this.root            = root;
         this.tolerance       = tolerance;
         this.edgeToNode      = new IdentityHashMap<>();
@@ -58,16 +58,16 @@ class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<Sphere2D> node) {
+    public Order visitOrder(final BSPTree<S2Point> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<Sphere2D> node) {
+    public void visitInternalNode(final BSPTree<S2Point> node) {
         nodeToEdgesList.put(node, new ArrayList<Edge>());
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<Sphere2D> attribute = (BoundaryAttribute<Sphere2D>) node.getAttribute();
+        final BoundaryAttribute<S2Point> attribute = (BoundaryAttribute<S2Point>) node.getAttribute();
         if (attribute.getPlusOutside() != null) {
             addContribution((SubCircle) attribute.getPlusOutside(), false, node);
         }
@@ -78,7 +78,7 @@ class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<Sphere2D> node) {
+    public void visitLeafNode(final BSPTree<S2Point> node) {
     }
 
     /** Add the contribution of a boundary edge.
@@ -87,7 +87,7 @@ class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
      * @param node node to which the edge belongs
      */
     private void addContribution(final SubCircle sub, final boolean reversed,
-                                 final BSPTree<Sphere2D> node) {
+                                 final BSPTree<S2Point> node) {
         final Circle circle  = (Circle) sub.getHyperplane();
         final List<Arc> arcs = ((ArcsSet) sub.getRemainingRegion()).asList();
         for (final Arc a : arcs) {
@@ -117,16 +117,16 @@ class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
 
         // get the candidate nodes
         final S2Point point = previous.getEnd().getLocation();
-        final List<BSPTree<Sphere2D>> candidates = root.getCloseCuts(point, tolerance);
+        final List<BSPTree<S2Point>> candidates = root.getCloseCuts(point, tolerance);
 
         // the following edge we are looking for must start from one of the candidates nodes
         double closest = tolerance;
         Edge following = null;
-        for (final BSPTree<Sphere2D> node : candidates) {
+        for (final BSPTree<S2Point> node : candidates) {
             for (final Edge edge : nodeToEdgesList.get(node)) {
                 if (edge != previous && edge.getStart().getIncoming() == null) {
-                    final Cartesian3D edgeStart = edge.getStart().getLocation().getVector();
-                    final double gap         = Cartesian3D.angle(point.getVector(), edgeStart);
+                    final Vector3D edgeStart = edge.getStart().getLocation().getVector();
+                    final double gap         = Vector3D.angle(point.getVector(), edgeStart);
                     if (gap <= closest) {
                         closest   = gap;
                         following = edge;
@@ -136,8 +136,8 @@ class EdgesBuilder implements BSPTreeVisitor<Sphere2D> {
         }
 
         if (following == null) {
-            final Cartesian3D previousStart = previous.getStart().getLocation().getVector();
-            if (Cartesian3D.angle(point.getVector(), previousStart) <= tolerance) {
+            final Vector3D previousStart = previous.getStart().getLocation().getVector();
+            if (Vector3D.angle(point.getVector(), previousStart) <= tolerance) {
                 // the edge connects back to itself
                 return previous;
             }

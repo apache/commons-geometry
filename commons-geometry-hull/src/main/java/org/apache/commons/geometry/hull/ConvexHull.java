@@ -19,7 +19,6 @@ package org.apache.commons.geometry.hull;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 import org.apache.commons.geometry.core.partitioning.Region;
 
 /**
@@ -28,7 +27,7 @@ import org.apache.commons.geometry.core.partitioning.Region;
  * @param <S> Space type.
  * @param <P> Point type.
  */
-public interface ConvexHull<S extends Space, P extends Point<S>> extends Serializable {
+public interface ConvexHull<P extends Point<P>> extends Serializable {
 
     /**
      * Get the vertices of the convex hull.
@@ -42,5 +41,5 @@ public interface ConvexHull<S extends Space, P extends Point<S>> extends Seriali
      * @throws IllegalStateException if the number of vertices is not enough to
      * build a region in the respective space
      */
-    Region<S> createRegion() throws IllegalStateException;
+    Region<P> createRegion() throws IllegalStateException;
 }

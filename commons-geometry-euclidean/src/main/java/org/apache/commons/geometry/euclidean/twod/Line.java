@@ -16,18 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.numbers.arrays.LinearCombination;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.apache.commons.geometry.euclidean.oned.Euclidean1D;
-import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
-import org.apache.commons.geometry.euclidean.oned.Cartesian1D;
+import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
+import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents an oriented line in the 2D plane.
 
@@ -53,7 +50,7 @@ import org.apache.commons.geometry.euclidean.oned.Cartesian1D;
  * left half plane is the set of points with negative offsets and the
  * right half plane is the set of points with positive offsets.</p>
  */
-public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euclidean1D> {
+public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
     /** Angle with respect to the abscissa axis. */
     private double angle;
 
@@ -78,7 +75,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param p2 second point
      * @param tolerance tolerance below which points are considered identical
      */
-    public Line(final Cartesian2D p1, final Cartesian2D p2, final double tolerance) {
+    public Line(final Point2D p1, final Point2D p2, final double tolerance) {
         reset(p1, p2);
         this.tolerance = tolerance;
     }
@@ -88,7 +85,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param angle angle of the line with respect to abscissa axis
      * @param tolerance tolerance below which points are considered identical
      */
-    public Line(final Cartesian2D p, final double angle, final double tolerance) {
+    public Line(final Point2D p, final double angle, final double tolerance) {
         reset(p, angle);
         this.tolerance = tolerance;
     }
@@ -135,7 +132,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param p1 first point
      * @param p2 second point
      */
-    public void reset(final Cartesian2D p1, final Cartesian2D p2) {
+    public void reset(final Point2D p1, final Point2D p2) {
         unlinkReverse();
         final double dx = p2.getX() - p1.getX();
         final double dy = p2.getY() - p1.getY();
@@ -157,7 +154,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param p point belonging to the line
      * @param alpha angle of the line with respect to abscissa axis
      */
-    public void reset(final Cartesian2D p, final double alpha) {
+    public void reset(final Point2D p, final double alpha) {
         unlinkReverse();
         this.angle   = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha);
         cos          = Math.cos(this.angle);
@@ -193,8 +190,8 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * instance.</p>
      * <p>
      * As long as neither the instance nor its reverse are modified
-     * (i.e. as long as none of the {@link #reset(Cartesian2D, Cartesian2D)},
-     * {@link #reset(Cartesian2D, double)}, {@link #revertSelf()},
+     * (i.e. as long as none of the {@link #reset(Point2D, Point2D)},
+     * {@link #reset(Point2D, double)}, {@link #revertSelf()},
      * {@link #setAngle(double)} or {@link #setOriginOffset(double)}
      * methods are called), then the line and its reverse remain linked
      * together so that {@code line.getReverse().getReverse() == line}.
@@ -212,53 +209,17 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
         return reverse;
     }
 
-    /** Transform a space point into a sub-space point.
-     * @param vector n-dimension point of the space
-     * @return (n-1)-dimension point of the sub-space corresponding to
-     * the specified space point
-     */
-    public Cartesian1D toSubSpace(Vector<Euclidean2D> vector) {
-        return toSubSpace((Cartesian2D) vector);
-    }
-
-    /** Transform a sub-space point into a space point.
-     * @param vector (n-1)-dimension point of the sub-space
-     * @return n-dimension point of the space corresponding to the
-     * specified sub-space point
-     */
-    public Cartesian2D toSpace(Vector<Euclidean1D> vector) {
-        return toSpace((Cartesian1D) vector);
+    /** {@inheritDoc} */
+    @Override
+    public Point1D toSubSpace(final Point2D point) {
+        return new Point1D(LinearCombination.value(cos, point.getX(), sin, point.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Cartesian1D toSubSpace(final Point<Euclidean2D> point) {
-        return toSubSpace((Cartesian2D) point);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Cartesian2D toSpace(final Point<Euclidean1D> point) {
-        return toSpace((Cartesian1D) point);
-    }
-
-    /** Transform a space point into a sub-space point.
-     * @param cartesian n-dimension point of the space
-     * @return (n-1)-dimension point of the sub-space corresponding to
-     * the specified space point
-     */
-    public Cartesian1D toSubSpace(final Cartesian2D cartesian) {
-        return new Cartesian1D(LinearCombination.value(cos, cartesian.getX(), sin, cartesian.getY()));
-    }
-
-    /** Transform a sub-space point into a space point.
-     * @param cartesian (n-1)-dimension point of the sub-space
-     * @return n-dimension point of the space corresponding to the
-     * specified sub-space point
-     */
-    public Cartesian2D toSpace(Cartesian1D cartesian) {
-        final double abscissa = cartesian.getX();
-        return new Cartesian2D(LinearCombination.value(abscissa, cos, -originOffset, sin),
+    public Point2D toSpace(final Point1D point) {
+        final double abscissa = point.getX();
+        return new Point2D(LinearCombination.value(abscissa, cos, -originOffset, sin),
                             LinearCombination.value(abscissa, sin,  originOffset, cos));
     }
 
@@ -267,18 +228,18 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @return intersection point of the instance and the other line
      * or null if there are no intersection points
      */
-    public Cartesian2D intersection(final Line other) {
+    public Point2D intersection(final Line other) {
         final double d = LinearCombination.value(sin, other.cos, -other.sin, cos);
         if (Math.abs(d) < tolerance) {
             return null;
         }
-        return new Cartesian2D(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
+        return new Point2D(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
                             LinearCombination.value(sin, other.originOffset, -other.sin, originOffset) / d);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point<Euclidean2D> project(Point<Euclidean2D> point) {
+    public Point2D project(Point2D point) {
         return toSpace(toSubSpace(point));
     }
 
@@ -318,31 +279,15 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
                (LinearCombination.value(cos, line.cos, sin, line.sin) > 0 ? -line.originOffset : line.originOffset);
     }
 
-    /** Get the offset (oriented distance) of a vector.
-     * @param vector vector to check
-     * @return offset of the vector
-     */
-    public double getOffset(Vector<Euclidean2D> vector) {
-        return getOffset((Cartesian2D) vector);
+    /** {@inheritDoc} */
+    @Override
+    public double getOffset(final Point2D point) {
+        return LinearCombination.value(sin, point.getX(), -cos, point.getY(), 1.0, originOffset);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getOffset(final Point<Euclidean2D> point) {
-        return getOffset((Cartesian2D) point);
-    }
-
-    /** Get the offset (oriented distance) of a point.
-     * @param cartesian point to check
-     * @return offset of the point
-     */
-    public double getOffset(Cartesian2D cartesian) {
-        return LinearCombination.value(sin, cartesian.getX(), -cos, cartesian.getY(), 1.0, originOffset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean sameOrientationAs(final Hyperplane<Euclidean2D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Point2D> other) {
         final Line otherL = (Line) other;
         return LinearCombination.value(sin, otherL.sin, cos, otherL.cos) >= 0.0;
     }
@@ -353,10 +298,10 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @return one point in the plane, with given abscissa and offset
      * relative to the line
      */
-    public Cartesian2D getPointAt(final Cartesian1D abscissa, final double offset) {
+    public Point2D getPointAt(final Point1D abscissa, final double offset) {
         final double x       = abscissa.getX();
         final double dOffset = offset - originOffset;
-        return new Cartesian2D(LinearCombination.value(x, cos,  dOffset, sin),
+        return new Point2D(LinearCombination.value(x, cos,  dOffset, sin),
                             LinearCombination.value(x, sin, -dOffset, cos));
     }
 
@@ -364,7 +309,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param p point to check
      * @return true if p belongs to the line
      */
-    public boolean contains(final Cartesian2D p) {
+    public boolean contains(final Point2D p) {
         return Math.abs(getOffset(p)) < tolerance;
     }
 
@@ -376,7 +321,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param p to check
      * @return distance between the instance and the point
      */
-    public double distance(final Cartesian2D p) {
+    public double distance(final Point2D p) {
         return Math.abs(getOffset(p));
     }
 
@@ -392,7 +337,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
     /** Translate the line to force it passing by a point.
      * @param p point by which the line should pass
      */
-    public void translateToPoint(final Cartesian2D p) {
+    public void translateToPoint(final Point2D p) {
         originOffset = LinearCombination.value(cos, p.getY(), -sin, p.getX());
     }
 
@@ -437,12 +382,12 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * @param cX1 transform addendum for output abscissa
      * @param cY1 transform addendum for output ordinate
      * @return a new transform that can be applied to either {@link
-     * Cartesian2D}, {@link Line Line} or {@link
+     * Point2D}, {@link Line Line} or {@link
      * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      * @exception IllegalArgumentException if the transform is non invertible
      */
-    public static Transform<Euclidean2D, Euclidean1D> getTransform(final double cXX,
+    public static Transform<Point2D, Point1D> getTransform(final double cXX,
                                                                    final double cYX,
                                                                    final double cXY,
                                                                    final double cYY,
@@ -459,7 +404,7 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
      * applied to a large number of lines (for example to a large
      * polygon)./<p>
      */
-    private static class LineTransform implements Transform<Euclidean2D, Euclidean1D> {
+    private static class LineTransform implements Transform<Point2D, Point1D> {
 
         /** Transform factor between input abscissa and output abscissa. */
         private final double cXX;
@@ -520,17 +465,16 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
 
         /** {@inheritDoc} */
         @Override
-        public Cartesian2D apply(final Point<Euclidean2D> point) {
-            final Cartesian2D p2D = (Cartesian2D) point;
-            final double  x   = p2D.getX();
-            final double  y   = p2D.getY();
-            return new Cartesian2D(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
+        public Point2D apply(final Point2D point) {
+            final double  x   = point.getX();
+            final double  y   = point.getY();
+            return new Point2D(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
                                 LinearCombination.value(cYX, x, cYY, y, cY1, 1));
         }
 
         /** {@inheritDoc} */
         @Override
-        public Line apply(final Hyperplane<Euclidean2D> hyperplane) {
+        public Line apply(final Hyperplane<Point2D> hyperplane) {
             final Line   line    = (Line) hyperplane;
             final double rOffset = LinearCombination.value(c1X, line.cos, c1Y, line.sin, c11, line.originOffset);
             final double rCos    = LinearCombination.value(cXX, line.cos, cXY, line.sin);
@@ -543,13 +487,13 @@ public class Line implements Hyperplane<Euclidean2D>, Embedding<Euclidean2D, Euc
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Euclidean1D> apply(final SubHyperplane<Euclidean1D> sub,
-                                                final Hyperplane<Euclidean2D> original,
-                                                final Hyperplane<Euclidean2D> transformed) {
+        public SubHyperplane<Point1D> apply(final SubHyperplane<Point1D> sub,
+                                                final Hyperplane<Point2D> original,
+                                                final Hyperplane<Point2D> transformed) {
             final OrientedPoint op     = (OrientedPoint) sub.getHyperplane();
             final Line originalLine    = (Line) original;
             final Line transformedLine = (Line) transformed;
-            final Cartesian1D newLoc =
+            final Point1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
             return new OrientedPoint(newLoc, op.isDirect(), originalLine.tolerance).wholeHyperplane();
         }

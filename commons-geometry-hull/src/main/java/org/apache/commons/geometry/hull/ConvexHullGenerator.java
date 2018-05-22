@@ -19,7 +19,6 @@ package org.apache.commons.geometry.hull;
 import java.util.Collection;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 /**
  * Interface for convex hull generators.
@@ -30,7 +29,7 @@ import org.apache.commons.geometry.core.Space;
  * @see <a href="http://en.wikipedia.org/wiki/Convex_hull">Convex Hull (Wikipedia)</a>
  * @see <a href="http://mathworld.wolfram.com/ConvexHull.html">Convex Hull (MathWorld)</a>
  */
-public interface ConvexHullGenerator<S extends Space, P extends Point<S>> {
+public interface ConvexHullGenerator<P extends Point<P>> {
 
     /**
      * Builds the convex hull from the set of input points.
@@ -40,5 +39,5 @@ public interface ConvexHullGenerator<S extends Space, P extends Point<S>> {
      * @throws IllegalStateException if generator fails to generate a convex hull for
      * the given set of input points
      */
-    ConvexHull<S, P> generate(Collection<P> points) throws IllegalStateException;
+    ConvexHull<P> generate(Collection<P> points) throws IllegalStateException;
 }

@@ -21,42 +21,40 @@ import java.util.List;
 
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
-import org.apache.commons.geometry.euclidean.threed.Euclidean3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
-import org.apache.commons.geometry.euclidean.twod.Euclidean2D;
+import org.apache.commons.geometry.euclidean.threed.Point3D;
+import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
 import org.apache.commons.numbers.fraction.BigFraction;
 
 /** Class generating an enclosing ball from its support points.
  */
-public class SphereGenerator implements SupportBallGenerator<Euclidean3D, Cartesian3D> {
+public class SphereGenerator implements SupportBallGenerator<Point3D> {
 
     /** {@inheritDoc} */
     @Override
-    public EnclosingBall<Euclidean3D, Cartesian3D> ballOnSupport(final List<Cartesian3D> support) {
+    public EnclosingBall<Point3D> ballOnSupport(final List<Point3D> support) {
 
         if (support.size() < 1) {
-            return new EnclosingBall<>(Cartesian3D.ZERO, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Point3D.ZERO, Double.NEGATIVE_INFINITY);
         } else {
-            final Cartesian3D vA = support.get(0);
+            final Point3D vA = support.get(0);
             if (support.size() < 2) {
                 return new EnclosingBall<>(vA, 0, vA);
             } else {
-                final Cartesian3D vB = support.get(1);
+                final Point3D vB = support.get(1);
                 if (support.size() < 3) {
-                    return new EnclosingBall<>(new Cartesian3D(0.5, vA, 0.5, vB),
+                    return new EnclosingBall<>(Point3D.vectorCombination(0.5, vA, 0.5, vB),
                                                                     0.5 * vA.distance(vB),
                                                                     vA, vB);
                 } else {
-                    final Cartesian3D vC = support.get(2);
+                    final Point3D vC = support.get(2);
                     if (support.size() < 4) {
 
                         // delegate to 2D disk generator
                         final Plane p = new Plane(vA, vB, vC,
-                                                  1.0e-10 * (vA.getNorm1() + vB.getNorm1() + vC.getNorm1()));
-                        final EnclosingBall<Euclidean2D, Cartesian2D> disk =
+                                                  1.0e-10 * (vA.asVector().getNorm1() + vB.asVector().getNorm1() + vC.asVector().getNorm1()));
+                        final EnclosingBall<Point2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
                                                                                 p.toSubSpace(vB),
                                                                                 p.toSubSpace(vC)));
@@ -66,7 +64,7 @@ public class SphereGenerator implements SupportBallGenerator<Euclidean3D, Cartes
                                                                         disk.getRadius(), vA, vB, vC);
 
                     } else {
-                        final Cartesian3D vD = support.get(3);
+                        final Point3D vD = support.get(3);
                         // a sphere is 3D can be defined as:
                         // (1)   (x - x_0)^2 + (y - y_0)^2 + (z - z_0)^2 = r^2
                         // which can be written:
@@ -119,7 +117,7 @@ public class SphereGenerator implements SupportBallGenerator<Euclidean3D, Cartes
                         final BigFraction dy      = c3[0].subtract(centerY);
                         final BigFraction dz      = c4[0].subtract(centerZ);
                         final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy)).add(dz.multiply(dz));
-                        return new EnclosingBall<>(new Cartesian3D(centerX.doubleValue(),
+                        return new EnclosingBall<>(new Point3D(centerX.doubleValue(),
                                                                                      centerY.doubleValue(),
                                                                                      centerZ.doubleValue()),
                                                                         Math.sqrt(r2.doubleValue()),

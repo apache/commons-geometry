@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.oned;
+package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Space;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.commons.geometry.core.Vector;
 
-public class Euclidean1DTest {
+/** Represents a vector in a Euclidean space of any dimension.
+ *
+ * @param <P> Point implementation type
+ * @param <V> Vector implementation type
+ */
+public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends EuclideanVector<P, V>> extends Vector<V> {
 
-    @Test
-    public void testDimension() {
-        Assert.assertEquals(1, Euclidean1D.getInstance().getDimension());
-    }
-
-    @Test(expected=UnsupportedOperationException.class)
-    public void testSubSpace() {
-        Euclidean1D.getInstance().getSubSpace();
-    }
-
-    @Test
-    public void testSerialization() {
-        Space e1 = Euclidean1D.getInstance();
-        Space deserialized = (Space) GeometryTestUtils.serializeAndRecover(e1);
-        Assert.assertTrue(e1 == deserialized);
-    }
-
+    /** Returns a point with the same coordinates as this vector.
+     * This is equivalent to the expression {@code P = Z + v}, where
+     * {@code v} is this vector, {@code Z} is the zero point, and
+     * {@code P} is the returned point.
+     * @return point with the same coordinates as this vector
+     */
+    P asPoint();
 }

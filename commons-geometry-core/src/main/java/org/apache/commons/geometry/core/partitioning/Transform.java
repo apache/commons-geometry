@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
 
 
 /** This interface represents an inversible affine transform in a space.
@@ -46,22 +45,22 @@ import org.apache.commons.geometry.core.Space;
  *   </li>
  * </ul>
 
- * @param <S> Type of the embedding space.
- * @param <T> Type of the embedded sub-space.
+ * @param <P> Point type defining the embedding space.
+ * @param <S> Point type defining the embedded sub-space.
  */
-public interface Transform<S extends Space, T extends Space> {
+public interface Transform<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a point of a space.
      * @param point point to transform
      * @return a new object representing the transformed point
      */
-    Point<S> apply(Point<S> point);
+    P apply(P point);
 
     /** Transform an hyperplane of a space.
      * @param hyperplane hyperplane to transform
      * @return a new object representing the transformed hyperplane
      */
-    Hyperplane<S> apply(Hyperplane<S> hyperplane);
+    Hyperplane<P> apply(Hyperplane<P> hyperplane);
 
     /** Transform a sub-hyperplane embedded in an hyperplane.
      * @param sub sub-hyperplane to transform
@@ -73,6 +72,6 @@ public interface Transform<S extends Space, T extends Space> {
      * <em>has</em> been applied to it)
      * @return a new object representing the transformed sub-hyperplane
      */
-    SubHyperplane<T> apply(SubHyperplane<T> sub, Hyperplane<S> original, Hyperplane<S> transformed);
+    SubHyperplane<S> apply(SubHyperplane<S> sub, Hyperplane<P> original, Hyperplane<P> transformed);
 
 }

@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.apache.commons.geometry.core.Space;
+import org.apache.commons.geometry.core.Point;
 
 /** This interface is used to visit {@link BSPTree BSP tree} nodes.
 
@@ -40,12 +40,12 @@ import org.apache.commons.geometry.core.Space;
  *   </li>
  * </ul>
 
- * @param <S> Type of the space.
+ * @param <P> Point type defining the space
 
  * @see BSPTree
  * @see SubHyperplane
  */
-public interface BSPTreeVisitor<S extends Space> {
+public interface BSPTreeVisitor<P extends Point<P>> {
 
     /** Enumerate for visit order with respect to plus sub-tree, minus sub-tree and cut sub-hyperplane. */
     enum Order {
@@ -92,7 +92,7 @@ public interface BSPTreeVisitor<S extends Space> {
      * {@link Order#MINUS_PLUS_SUB}, {@link Order#MINUS_SUB_PLUS},
      * {@link Order#SUB_PLUS_MINUS}, {@link Order#SUB_MINUS_PLUS}
      */
-    Order visitOrder(BSPTree<S> node);
+    Order visitOrder(BSPTree<P> node);
 
     /** Visit a BSP tree node node having a non-null sub-hyperplane.
      * <p>It is guaranteed that this method will be called after {@link
@@ -101,12 +101,12 @@ public interface BSPTreeVisitor<S extends Space> {
      * @param node BSP node guaranteed to have a non null cut sub-hyperplane
      * @see #visitLeafNode
      */
-    void visitInternalNode(BSPTree<S> node);
+    void visitInternalNode(BSPTree<P> node);
 
     /** Visit a leaf BSP tree node node having a null sub-hyperplane.
      * @param node leaf BSP node having a null sub-hyperplane
      * @see #visitInternalNode
      */
-    void visitLeafNode(BSPTree<S> node);
+    void visitLeafNode(BSPTree<P> node);
 
 }

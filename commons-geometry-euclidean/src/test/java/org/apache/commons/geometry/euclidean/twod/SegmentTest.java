@@ -23,20 +23,20 @@ public class SegmentTest {
 
     @Test
     public void testDistance() {
-        Cartesian2D start = new Cartesian2D(2, 2);
-        Cartesian2D end = new Cartesian2D(-2, -2);
+        Point2D start = new Point2D(2, 2);
+        Point2D end = new Point2D(-2, -2);
         Segment segment = new Segment(start, end, new Line(start, end, 1.0e-10));
 
         // distance to center of segment
-        Assert.assertEquals(Math.sqrt(2), segment.distance(new Cartesian2D(1, -1)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(2), segment.distance(new Point2D(1, -1)), 1.0e-10);
 
         // distance a point on segment
-        Assert.assertEquals(Math.sin(Math.PI / 4.0), segment.distance(new Cartesian2D(0, -1)), 1.0e-10);
+        Assert.assertEquals(Math.sin(Math.PI / 4.0), segment.distance(new Point2D(0, -1)), 1.0e-10);
 
         // distance to end point
-        Assert.assertEquals(Math.sqrt(8), segment.distance(new Cartesian2D(0, 4)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(8), segment.distance(new Point2D(0, 4)), 1.0e-10);
 
         // distance to start point
-        Assert.assertEquals(Math.sqrt(8), segment.distance(new Cartesian2D(0, -4)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(8), segment.distance(new Point2D(0, -4)), 1.0e-10);
     }
 }

@@ -20,10 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.euclidean.oned.Euclidean1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.AbstractRegion;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
@@ -32,15 +28,17 @@ import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.oned.Cartesian1D;
+import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
+import org.apache.commons.geometry.euclidean.oned.Point1D;
 import org.apache.commons.numbers.core.Precision;
 
 /** This class represents a 2D region: a set of polygons.
  */
-public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
+public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
 
     /** Vertices organized as boundary loops. */
-    private Cartesian2D[][] vertices;
+    private Point2D[][] vertices;
 
     /** Build a polygons set representing the whole plane.
      * @param tolerance tolerance below which points are considered identical
@@ -69,7 +67,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * @param tree inside/outside BSP tree representing the region
      * @param tolerance tolerance below which points are considered identical
      */
-    public PolygonsSet(final BSPTree<Euclidean2D> tree, final double tolerance) {
+    public PolygonsSet(final BSPTree<Point2D> tree, final double tolerance) {
         super(tree, tolerance);
     }
 
@@ -94,7 +92,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * collection of {@link SubHyperplane SubHyperplane} objects
      * @param tolerance tolerance below which points are considered identical
      */
-    public PolygonsSet(final Collection<SubHyperplane<Euclidean2D>> boundary, final double tolerance) {
+    public PolygonsSet(final Collection<SubHyperplane<Point2D>> boundary, final double tolerance) {
         super(boundary, tolerance);
     }
 
@@ -141,7 +139,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * belong to the hyperplane (which is therefore more a slab)
      * @param vertices vertices of the simple loop boundary
      */
-    public PolygonsSet(final double hyperplaneThickness, final Cartesian2D ... vertices) {
+    public PolygonsSet(final double hyperplaneThickness, final Point2D ... vertices) {
         super(verticesToTree(hyperplaneThickness, vertices), hyperplaneThickness);
     }
 
@@ -160,10 +158,10 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
             // too thin box, build an empty polygons set
             return null;
         }
-        final Cartesian2D minMin = new Cartesian2D(xMin, yMin);
-        final Cartesian2D minMax = new Cartesian2D(xMin, yMax);
-        final Cartesian2D maxMin = new Cartesian2D(xMax, yMin);
-        final Cartesian2D maxMax = new Cartesian2D(xMax, yMax);
+        final Point2D minMin = new Point2D(xMin, yMin);
+        final Point2D minMax = new Point2D(xMin, yMax);
+        final Point2D maxMin = new Point2D(xMax, yMin);
+        final Point2D maxMax = new Point2D(xMax, yMax);
         return new Line[] {
             new Line(minMin, maxMin, tolerance),
             new Line(maxMin, maxMax, tolerance),
@@ -187,8 +185,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree<Euclidean2D> verticesToTree(final double hyperplaneThickness,
-                                                       final Cartesian2D ... vertices) {
+    private static BSPTree<Point2D> verticesToTree(final double hyperplaneThickness,
+                                                       final Point2D ... vertices) {
 
         final int n = vertices.length;
         if (n == 0) {
@@ -224,7 +222,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
             // check if another vertex also happens to be on this line
             for (final Vertex vertex : vArray) {
                 if (vertex != start && vertex != end &&
-                    Math.abs(line.getOffset((Point<Euclidean2D>) vertex.getLocation())) <= hyperplaneThickness) {
+                    Math.abs(line.getOffset(vertex.getLocation())) <= hyperplaneThickness) {
                     vertex.bindWith(line);
                 }
             }
@@ -232,7 +230,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         }
 
         // build the tree top-down
-        final BSPTree<Euclidean2D> tree = new BSPTree<>();
+        final BSPTree<Point2D> tree = new BSPTree<>();
         insertEdges(hyperplaneThickness, tree, edges);
 
         return tree;
@@ -248,7 +246,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * (excluding edges not belonging to the cell defined by this node)
      */
     private static void insertEdges(final double hyperplaneThickness,
-                                    final BSPTree<Euclidean2D> node,
+                                    final BSPTree<Point2D> node,
                                     final List<Edge> edges) {
 
         // find an edge with an hyperplane that can be inserted in the node
@@ -270,7 +268,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         if (inserted == null) {
             // no suitable edge was found, the node remains a leaf node
             // we need to set its inside/outside boolean indicator
-            final BSPTree<Euclidean2D> parent = node.getParent();
+            final BSPTree<Point2D> parent = node.getParent();
             if (parent == null || node == parent.getMinus()) {
                 node.setAttribute(Boolean.TRUE);
             } else {
@@ -285,8 +283,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         final List<Edge> minusList = new ArrayList<>();
         for (final Edge edge : edges) {
             if (edge != inserted) {
-                final double startOffset = inserted.getLine().getOffset((Point<Euclidean2D>) edge.getStart().getLocation());
-                final double endOffset   = inserted.getLine().getOffset((Point<Euclidean2D>) edge.getEnd().getLocation());
+                final double startOffset = inserted.getLine().getOffset(edge.getStart().getLocation());
+                final double endOffset   = inserted.getLine().getOffset(edge.getEnd().getLocation());
                 Side startSide = (Math.abs(startOffset) <= hyperplaneThickness) ?
                                  Side.HYPER : ((startOffset < 0) ? Side.MINUS : Side.PLUS);
                 Side endSide   = (Math.abs(endOffset) <= hyperplaneThickness) ?
@@ -341,7 +339,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
     private static class Vertex {
 
         /** Vertex location. */
-        private final Cartesian2D location;
+        private final Point2D location;
 
         /** Incoming edge. */
         private Edge incoming;
@@ -355,7 +353,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         /** Build a non-processed vertex not owned by any node yet.
          * @param location vertex location
          */
-        Vertex(final Cartesian2D location) {
+        Vertex(final Point2D location) {
             this.location = location;
             this.incoming = null;
             this.outgoing = null;
@@ -365,7 +363,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         /** Get Vertex location.
          * @return vertex location
          */
-        public Cartesian2D getLocation() {
+        public Point2D getLocation() {
             return location;
         }
 
@@ -450,7 +448,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         private final Line line;
 
         /** Node whose cut hyperplane contains this edge. */
-        private BSPTree<Euclidean2D> node;
+        private BSPTree<Point2D> node;
 
         /** Build an edge not contained in any node yet.
          * @param start start vertex
@@ -494,7 +492,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         /** Set the node whose cut hyperplane contains this edge.
          * @param node node whose cut hyperplane contains this edge
          */
-        public void setNode(final BSPTree<Euclidean2D> node) {
+        public void setNode(final BSPTree<Point2D> node) {
             this.node = node;
         }
 
@@ -502,7 +500,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
          * @return node whose cut hyperplane contains this edge
          * (null if edge has not yet been inserted into the BSP tree)
          */
-        public BSPTree<Euclidean2D> getNode() {
+        public BSPTree<Point2D> getNode() {
             return node;
         }
 
@@ -529,7 +527,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
 
     /** {@inheritDoc} */
     @Override
-    public PolygonsSet buildNew(final BSPTree<Euclidean2D> tree) {
+    public PolygonsSet buildNew(final BSPTree<Point2D> tree) {
         return new PolygonsSet(tree, getTolerance());
     }
 
@@ -537,22 +535,22 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
     @Override
     protected void computeGeometricalProperties() {
 
-        final Cartesian2D[][] v = getVertices();
+        final Point2D[][] v = getVertices();
 
         if (v.length == 0) {
-            final BSPTree<Euclidean2D> tree = getTree(false);
+            final BSPTree<Point2D> tree = getTree(false);
             if (tree.getCut() == null && (Boolean) tree.getAttribute()) {
                 // the instance covers the whole space
                 setSize(Double.POSITIVE_INFINITY);
-                setBarycenter((Point<Euclidean2D>) Cartesian2D.NaN);
+                setBarycenter(Point2D.NaN);
             } else {
                 setSize(0);
-                setBarycenter((Point<Euclidean2D>) Cartesian2D.NaN);
+                setBarycenter(Point2D.NaN);
             }
         } else if (v[0][0] == null) {
             // there is at least one open-loop: the polygon is infinite
             setSize(Double.POSITIVE_INFINITY);
-            setBarycenter((Point<Euclidean2D>) Cartesian2D.NaN);
+            setBarycenter(Point2D.NaN);
         } else {
             // all loops are closed, we compute some integrals around the shape
 
@@ -560,10 +558,10 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
             double sumX = 0;
             double sumY = 0;
 
-            for (Cartesian2D[] loop : v) {
+            for (Point2D[] loop : v) {
                 double x1 = loop[loop.length - 1].getX();
                 double y1 = loop[loop.length - 1].getY();
-                for (final Cartesian2D point : loop) {
+                for (final Point2D point : loop) {
                     final double x0 = x1;
                     final double y0 = y1;
                     x1 = point.getX();
@@ -578,10 +576,10 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
             if (sum < 0) {
                 // the polygon as a finite outside surrounded by an infinite inside
                 setSize(Double.POSITIVE_INFINITY);
-                setBarycenter((Point<Euclidean2D>) Cartesian2D.NaN);
+                setBarycenter(Point2D.NaN);
             } else {
                 setSize(sum / 2);
-                setBarycenter((Point<Euclidean2D>) new Cartesian2D(sumX / (3 * sum), sumY / (3 * sum)));
+                setBarycenter(new Point2D(sumX / (3 * sum), sumY / (3 * sum)));
             }
 
         }
@@ -611,10 +609,10 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * loops with the open loops first (the returned value is guaranteed
      * to be non-null)
      */
-    public Cartesian2D[][] getVertices() {
+    public Point2D[][] getVertices() {
         if (vertices == null) {
             if (getTree(false).getCut() == null) {
-                vertices = new Cartesian2D[0][];
+                vertices = new Point2D[0][];
             } else {
 
                 // build the unconnected segments
@@ -653,7 +651,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                 }
 
                 // transform the loops in an array of arrays of points
-                vertices = new Cartesian2D[loops.size()][];
+                vertices = new Point2D[loops.size()][];
                 int i = 0;
 
                 for (final List<Segment> loop : loops) {
@@ -661,14 +659,14 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                         (loop.size() == 2 && loop.get(0).getStart() == null && loop.get(1).getEnd() == null)) {
                         // single infinite line
                         final Line line = loop.get(0).getLine();
-                        vertices[i++] = new Cartesian2D[] {
+                        vertices[i++] = new Point2D[] {
                             null,
-                            line.toSpace(new Cartesian1D(-Float.MAX_VALUE)),
-                            line.toSpace(new Cartesian1D(+Float.MAX_VALUE))
+                            line.toSpace(new Point1D(-Float.MAX_VALUE)),
+                            line.toSpace(new Point1D(+Float.MAX_VALUE))
                         };
                     } else if (loop.get(0).getStart() == null) {
                         // open loop with at least one real point
-                        final Cartesian2D[] array = new Cartesian2D[loop.size() + 2];
+                        final Point2D[] array = new Point2D[loop.size() + 2];
                         int j = 0;
                         for (Segment segment : loop) {
 
@@ -677,7 +675,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                                 double x = segment.getLine().toSubSpace(segment.getEnd()).getX();
                                 x -= Math.max(1.0, Math.abs(x / 2));
                                 array[j++] = null;
-                                array[j++] = segment.getLine().toSpace(new Cartesian1D(x));
+                                array[j++] = segment.getLine().toSpace(new Point1D(x));
                             }
 
                             if (j < (array.length - 1)) {
@@ -687,13 +685,13 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                                 // last dummy point
                                 double x = segment.getLine().toSubSpace(segment.getStart()).getX();
                                 x += Math.max(1.0, Math.abs(x / 2));
-                                array[j++] = segment.getLine().toSpace(new Cartesian1D(x));
+                                array[j++] = segment.getLine().toSpace(new Point1D(x));
                             }
 
                         }
                         vertices[i++] = array;
                     } else {
-                        final Cartesian2D[] array = new Cartesian2D[loop.size()];
+                        final Point2D[] array = new Point2D[loop.size()];
                         int j = 0;
                         for (Segment segment : loop) {
                             array[j++] = segment.getStart();
@@ -717,8 +715,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         int connected = 0;
         for (final ConnectableSegment segment : segments) {
             if (segment.getNext() == null) {
-                final BSPTree<Euclidean2D> node = segment.getNode();
-                final BSPTree<Euclidean2D> end  = segment.getEndNode();
+                final BSPTree<Point2D> node = segment.getNode();
+                final BSPTree<Point2D> end  = segment.getEndNode();
                 for (final ConnectableSegment candidateNext : segments) {
                     if (candidateNext.getPrevious()  == null &&
                         candidateNext.getNode()      == end &&
@@ -743,8 +741,8 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         int connected = 0;
         for (final ConnectableSegment segment : segments) {
             if (segment.getNext() == null) {
-                final Hyperplane<Euclidean2D> hyperplane = segment.getNode().getCut().getHyperplane();
-                final BSPTree<Euclidean2D> end  = segment.getEndNode();
+                final Hyperplane<Point2D> hyperplane = segment.getNode().getCut().getHyperplane();
+                final BSPTree<Point2D> end  = segment.getEndNode();
                 for (final ConnectableSegment candidateNext : segments) {
                     if (candidateNext.getPrevious()                      == null &&
                         candidateNext.getNode().getCut().getHyperplane() == hyperplane &&
@@ -773,12 +771,12 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         int connected = 0;
         for (final ConnectableSegment segment : segments) {
             if (segment.getNext() == null && segment.getEnd() != null) {
-                final Cartesian2D end = segment.getEnd();
+                final Point2D end = segment.getEnd();
                 ConnectableSegment selectedNext = null;
                 double min = Double.POSITIVE_INFINITY;
                 for (final ConnectableSegment candidateNext : segments) {
                     if (candidateNext.getPrevious() == null && candidateNext.getStart() != null) {
-                        final double distance = Cartesian2D.distance(end, candidateNext.getStart());
+                        final double distance = end.distance(candidateNext.getStart());
                         if (distance < min) {
                             selectedNext = candidateNext;
                             min          = distance;
@@ -885,13 +883,13 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
     private static class ConnectableSegment extends Segment {
 
         /** Node containing segment. */
-        private final BSPTree<Euclidean2D> node;
+        private final BSPTree<Point2D> node;
 
         /** Node whose intersection with current node defines start point. */
-        private final BSPTree<Euclidean2D> startNode;
+        private final BSPTree<Point2D> startNode;
 
         /** Node whose intersection with current node defines end point. */
-        private final BSPTree<Euclidean2D> endNode;
+        private final BSPTree<Point2D> endNode;
 
         /** Previous segment. */
         private ConnectableSegment previous;
@@ -910,10 +908,10 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
          * @param startNode node whose intersection with current node defines start point
          * @param endNode node whose intersection with current node defines end point
          */
-        ConnectableSegment(final Cartesian2D start, final Cartesian2D end, final Line line,
-                           final BSPTree<Euclidean2D> node,
-                           final BSPTree<Euclidean2D> startNode,
-                           final BSPTree<Euclidean2D> endNode) {
+        ConnectableSegment(final Point2D start, final Point2D end, final Line line,
+                           final BSPTree<Point2D> node,
+                           final BSPTree<Point2D> startNode,
+                           final BSPTree<Point2D> endNode) {
             super(start, end, line);
             this.node      = node;
             this.startNode = startNode;
@@ -926,21 +924,21 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
         /** Get the node containing segment.
          * @return node containing segment
          */
-        public BSPTree<Euclidean2D> getNode() {
+        public BSPTree<Point2D> getNode() {
             return node;
         }
 
         /** Get the node whose intersection with current node defines start point.
          * @return node whose intersection with current node defines start point
          */
-        public BSPTree<Euclidean2D> getStartNode() {
+        public BSPTree<Point2D> getStartNode() {
             return startNode;
         }
 
         /** Get the node whose intersection with current node defines end point.
          * @return node whose intersection with current node defines end point
          */
-        public BSPTree<Euclidean2D> getEndNode() {
+        public BSPTree<Point2D> getEndNode() {
             return endNode;
         }
 
@@ -989,7 +987,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
     }
 
     /** Visitor building segments. */
-    private static class SegmentsBuilder implements BSPTreeVisitor<Euclidean2D> {
+    private static class SegmentsBuilder implements BSPTreeVisitor<Point2D> {
 
         /** Tolerance for close nodes connection. */
         private final double tolerance;
@@ -1007,16 +1005,16 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(final BSPTree<Euclidean2D> node) {
+        public Order visitOrder(final BSPTree<Point2D> node) {
             return Order.MINUS_SUB_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitInternalNode(final BSPTree<Euclidean2D> node) {
+        public void visitInternalNode(final BSPTree<Point2D> node) {
             @SuppressWarnings("unchecked")
-            final BoundaryAttribute<Euclidean2D> attribute = (BoundaryAttribute<Euclidean2D>) node.getAttribute();
-            final Iterable<BSPTree<Euclidean2D>> splitters = attribute.getSplitters();
+            final BoundaryAttribute<Point2D> attribute = (BoundaryAttribute<Point2D>) node.getAttribute();
+            final Iterable<BSPTree<Point2D>> splitters = attribute.getSplitters();
             if (attribute.getPlusOutside() != null) {
                 addContribution(attribute.getPlusOutside(), node, splitters, false);
             }
@@ -1027,7 +1025,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(final BSPTree<Euclidean2D> node) {
+        public void visitLeafNode(final BSPTree<Point2D> node) {
         }
 
         /** Add the contribution of a boundary facet.
@@ -1036,26 +1034,26 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
          * @param splitters splitters for the boundary facet
          * @param reversed if true, the facet has the inside on its plus side
          */
-        private void addContribution(final SubHyperplane<Euclidean2D> sub,
-                                     final BSPTree<Euclidean2D> node,
-                                     final Iterable<BSPTree<Euclidean2D>> splitters,
+        private void addContribution(final SubHyperplane<Point2D> sub,
+                                     final BSPTree<Point2D> node,
+                                     final Iterable<BSPTree<Point2D>> splitters,
                                      final boolean reversed) {
             @SuppressWarnings("unchecked")
-            final AbstractSubHyperplane<Euclidean2D, Euclidean1D> absSub =
-                (AbstractSubHyperplane<Euclidean2D, Euclidean1D>) sub;
+            final AbstractSubHyperplane<Point2D, Point1D> absSub =
+                (AbstractSubHyperplane<Point2D, Point1D>) sub;
             final Line line      = (Line) sub.getHyperplane();
             final List<Interval> intervals = ((IntervalsSet) absSub.getRemainingRegion()).asList();
             for (final Interval i : intervals) {
 
                 // find the 2D points
-                final Cartesian2D startV = Double.isInfinite(i.getInf()) ?
-                                        null : line.toSpace(new Cartesian1D(i.getInf()));
-                final Cartesian2D endV   = Double.isInfinite(i.getSup()) ?
-                                        null : line.toSpace(new Cartesian1D(i.getSup()));
+                final Point2D startV = Double.isInfinite(i.getInf()) ?
+                                        null : line.toSpace(new Point1D(i.getInf()));
+                final Point2D endV   = Double.isInfinite(i.getSup()) ?
+                                        null : line.toSpace(new Point1D(i.getSup()));
 
                 // recover the connectivity information
-                final BSPTree<Euclidean2D> startN = selectClosest(startV, splitters);
-                final BSPTree<Euclidean2D> endN   = selectClosest(endV, splitters);
+                final BSPTree<Point2D> startN = selectClosest(startV, splitters);
+                final BSPTree<Point2D> endN   = selectClosest(endV, splitters);
 
                 if (reversed) {
                     segments.add(new ConnectableSegment(endV, startV, line.getReverse(),
@@ -1073,12 +1071,12 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
          * @param candidates candidate nodes
          * @return node closest to point, or null if point is null or no node is closer than tolerance
          */
-        private BSPTree<Euclidean2D> selectClosest(final Cartesian2D point, final Iterable<BSPTree<Euclidean2D>> candidates) {
+        private BSPTree<Point2D> selectClosest(final Point2D point, final Iterable<BSPTree<Point2D>> candidates) {
             if (point != null) {
-                BSPTree<Euclidean2D> selected = null;
+                BSPTree<Point2D> selected = null;
                 double min = Double.POSITIVE_INFINITY;
 
-                for (final BSPTree<Euclidean2D> node : candidates) {
+                for (final BSPTree<Point2D> node : candidates) {
                     final double distance = Math.abs(node.getCut().getHyperplane().getOffset(point));
                     if (distance < min) {
                         selected = node;

@@ -17,8 +17,7 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Space;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** This class represents a point on the 2-sphere.
  * <p>
@@ -30,29 +29,29 @@ import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
  * </p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class S2Point implements Point<Sphere2D> {
+public class S2Point implements Point<S2Point> {
 
     /** +I (coordinates: \( \theta = 0, \varphi = \pi/2 \)). */
-    public static final S2Point PLUS_I = new S2Point(0, 0.5 * Math.PI, Cartesian3D.PLUS_I);
+    public static final S2Point PLUS_I = new S2Point(0, 0.5 * Math.PI, Vector3D.PLUS_X);
 
     /** +J (coordinates: \( \theta = \pi/2, \varphi = \pi/2 \))). */
-    public static final S2Point PLUS_J = new S2Point(0.5 * Math.PI, 0.5 * Math.PI, Cartesian3D.PLUS_J);
+    public static final S2Point PLUS_J = new S2Point(0.5 * Math.PI, 0.5 * Math.PI, Vector3D.PLUS_Y);
 
     /** +K (coordinates: \( \theta = any angle, \varphi = 0 \)). */
-    public static final S2Point PLUS_K = new S2Point(0, 0, Cartesian3D.PLUS_K);
+    public static final S2Point PLUS_K = new S2Point(0, 0, Vector3D.PLUS_Z);
 
     /** -I (coordinates: \( \theta = \pi, \varphi = \pi/2 \)). */
-    public static final S2Point MINUS_I = new S2Point(Math.PI, 0.5 * Math.PI, Cartesian3D.MINUS_I);
+    public static final S2Point MINUS_I = new S2Point(Math.PI, 0.5 * Math.PI, Vector3D.MINUS_X);
 
     /** -J (coordinates: \( \theta = 3\pi/2, \varphi = \pi/2 \)). */
-    public static final S2Point MINUS_J = new S2Point(1.5 * Math.PI, 0.5 * Math.PI, Cartesian3D.MINUS_J);
+    public static final S2Point MINUS_J = new S2Point(1.5 * Math.PI, 0.5 * Math.PI, Vector3D.MINUS_Y);
 
     /** -K (coordinates: \( \theta = any angle, \varphi = \pi \)). */
-    public static final S2Point MINUS_K = new S2Point(0, Math.PI, Cartesian3D.MINUS_K);
+    public static final S2Point MINUS_K = new S2Point(0, Math.PI, Vector3D.MINUS_Z);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final S2Point NaN = new S2Point(Double.NaN, Double.NaN, Cartesian3D.NaN);
+    public static final S2Point NaN = new S2Point(Double.NaN, Double.NaN, Vector3D.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -65,7 +64,7 @@ public class S2Point implements Point<Sphere2D> {
     private final double phi;
 
     /** Corresponding 3D normalized vector. */
-    private final Cartesian3D vector;
+    private final Vector3D vector;
 
     /** Simple constructor.
      * Build a vector from its spherical coordinates
@@ -85,8 +84,8 @@ public class S2Point implements Point<Sphere2D> {
      * @param vector 3D vector
      * @exception IllegalArgumentException if vector norm is zero
      */
-    public S2Point(final Cartesian3D vector) throws IllegalArgumentException {
-        this(Math.atan2(vector.getY(), vector.getX()), Cartesian3D.angle(Cartesian3D.PLUS_K, vector),
+    public S2Point(final Vector3D vector) throws IllegalArgumentException {
+        this(Math.atan2(vector.getY(), vector.getX()), Vector3D.PLUS_Z.angle(vector),
              vector.normalize());
     }
 
@@ -95,7 +94,7 @@ public class S2Point implements Point<Sphere2D> {
      * @param phi polar angle \( \varphi \)
      * @param vector corresponding vector
      */
-    private S2Point(final double theta, final double phi, final Cartesian3D vector) {
+    private S2Point(final double theta, final double phi, final Vector3D vector) {
         this.theta  = theta;
         this.phi    = phi;
         this.vector = vector;
@@ -107,7 +106,7 @@ public class S2Point implements Point<Sphere2D> {
      * @return normalized vector
      * @exception IllegalArgumentException if \( \varphi \) is not in the [\( 0; \pi \)] range
      */
-    private static Cartesian3D vector(final double theta, final double phi)
+    private static Vector3D vector(final double theta, final double phi)
        throws IllegalArgumentException {
 
         if (phi < 0 || phi > Math.PI) {
@@ -119,7 +118,7 @@ public class S2Point implements Point<Sphere2D> {
         final double cosPhi   = Math.cos(phi);
         final double sinPhi   = Math.sin(phi);
 
-        return new Cartesian3D(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
+        return new Vector3D(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
 
     }
 
@@ -142,20 +141,26 @@ public class S2Point implements Point<Sphere2D> {
     /** Get the corresponding normalized vector in the 3D euclidean space.
      * @return normalized vector
      */
-    public Cartesian3D getVector() {
+    public Vector3D getVector() {
         return vector;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Space getSpace() {
-        return Sphere2D.getInstance();
+    public int getDimension() {
+        return 2;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isNaN() {
         return Double.isNaN(theta) || Double.isNaN(phi);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInfinite() {
+        return !isNaN() && (Double.isInfinite(theta) || Double.isInfinite(phi));
     }
 
     /** Get the opposite of the instance.
@@ -167,8 +172,8 @@ public class S2Point implements Point<Sphere2D> {
 
     /** {@inheritDoc} */
     @Override
-    public double distance(final Point<Sphere2D> point) {
-        return distance(this, (S2Point) point);
+    public double distance(final S2Point point) {
+        return distance(this, point);
     }
 
     /** Compute the distance (angular separation) between two points.
@@ -177,7 +182,7 @@ public class S2Point implements Point<Sphere2D> {
      * @return the angular separation between p1 and p2
      */
     public static double distance(S2Point p1, S2Point p2) {
-        return Cartesian3D.angle(p1.vector, p2.vector);
+        return p1.vector.angle(p2.vector);
     }
 
     /**
@@ -231,5 +236,4 @@ public class S2Point implements Point<Sphere2D> {
         }
         return 134 * (37 * Double.hashCode(theta) +  Double.hashCode(phi));
     }
-
 }

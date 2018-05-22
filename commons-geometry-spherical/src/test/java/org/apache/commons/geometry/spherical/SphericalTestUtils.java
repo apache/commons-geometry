@@ -19,16 +19,15 @@ package org.apache.commons.geometry.spherical;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.LimitAngle;
 import org.apache.commons.geometry.spherical.oned.S1Point;
-import org.apache.commons.geometry.spherical.oned.Sphere1D;
 import org.apache.commons.geometry.spherical.twod.Circle;
-import org.apache.commons.geometry.spherical.twod.Sphere2D;
+import org.apache.commons.geometry.spherical.twod.S2Point;
 import org.apache.commons.geometry.spherical.twod.SphericalPolygonsSet;
 
 /** Test utilities for spherical spaces.
@@ -40,11 +39,11 @@ public class SphericalTestUtils {
      * @return string representation of the region
      */
     public static String dump(final ArcsSet arcsSet) {
-        final TreeDumper<Sphere1D> visitor = new TreeDumper<Sphere1D>("ArcsSet", arcsSet.getTolerance()) {
+        final TreeDumper<S1Point> visitor = new TreeDumper<S1Point>("ArcsSet", arcsSet.getTolerance()) {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Sphere1D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane<S1Point> hyperplane) {
                 final LimitAngle h = (LimitAngle) hyperplane;
                 getFormatter().format("%22.15e %b %22.15e",
                                       h.getLocation().getAlpha(), h.isDirect(), h.getTolerance());
@@ -60,11 +59,11 @@ public class SphericalTestUtils {
      * @return string representation of the region
      */
     public static String dump(final SphericalPolygonsSet sphericalPolygonsSet) {
-        final TreeDumper<Sphere2D> visitor = new TreeDumper<Sphere2D>("SphericalPolygonsSet", sphericalPolygonsSet.getTolerance()) {
+        final TreeDumper<S2Point> visitor = new TreeDumper<S2Point>("SphericalPolygonsSet", sphericalPolygonsSet.getTolerance()) {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Sphere2D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane<S2Point> hyperplane) {
                 final Circle h = (Circle) hyperplane;
                 getFormatter().format("%22.15e %22.15e %22.15e %22.15e",
                                       h.getPole().getX(), h.getPole().getY(), h.getPole().getZ(),
@@ -84,7 +83,7 @@ public class SphericalTestUtils {
      */
     public static ArcsSet parseArcsSet(final String s)
         throws IOException, ParseException {
-        final TreeBuilder<Sphere1D> builder = new TreeBuilder<Sphere1D>("ArcsSet", s) {
+        final TreeBuilder<S1Point> builder = new TreeBuilder<S1Point>("ArcsSet", s) {
 
             /** {@inheritDoc} */
             @Override
@@ -105,13 +104,13 @@ public class SphericalTestUtils {
      */
     public static SphericalPolygonsSet parseSphericalPolygonsSet(final String s)
         throws IOException, ParseException {
-        final TreeBuilder<Sphere2D> builder = new TreeBuilder<Sphere2D>("SphericalPolygonsSet", s) {
+        final TreeBuilder<S2Point> builder = new TreeBuilder<S2Point>("SphericalPolygonsSet", s) {
 
             /** {@inheritDoc} */
             @Override
             public Circle parseHyperplane()
                 throws IOException, ParseException {
-                return new Circle(new Cartesian3D(getNumber(), getNumber(), getNumber()), getNumber());
+                return new Circle(new Vector3D(getNumber(), getNumber(), getNumber()), getNumber());
             }
 
         };
