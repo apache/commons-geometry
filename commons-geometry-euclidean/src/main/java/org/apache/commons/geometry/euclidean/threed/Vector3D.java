@@ -83,19 +83,22 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public Point3D asPoint() {
-        return Point3D.of(x, y, z);
+        return Point3D.of(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm1() {
-        return Math.abs(x) + Math.abs(y) + Math.abs(z);
+        return Math.abs(getX()) + Math.abs(getY()) + Math.abs(getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
         // there are no cancellation problems here, so we use the straightforward formula
+        final double x = getX();
+        final double y = getY();
+        final double z = getZ();
         return Math.sqrt ((x * x) + (y * y) + (z * z));
     }
 
@@ -103,36 +106,39 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public double getNormSq() {
         // there are no cancellation problems here, so we use the straightforward formula
+        final double x = getX();
+        final double y = getY();
+        final double z = getZ();
         return (x * x) + (y * y) + (z * z);
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormInf() {
-        return Math.max(Math.max(Math.abs(x), Math.abs(y)), Math.abs(z));
+        return Math.max(Math.max(Math.abs(getX()), Math.abs(getY())), Math.abs(getZ()));
     }
 
     /** Get the azimuth of the vector.
      * @return azimuth (&alpha;) of the vector, between -&pi; and +&pi;
      */
     public double getAlpha() {
-        return Math.atan2(y, x);
+        return Math.atan2(getY(), getX());
     }
 
     /** Get the elevation of the vector.
      * @return elevation (&delta;) of the vector, between -&pi;/2 and +&pi;/2
      */
     public double getDelta() {
-        return Math.asin(z / getNorm());
+        return Math.asin(getZ() / getNorm());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D add(Vector3D v) {
         return new Vector3D(
-                    x + v.x,
-                    y + v.y,
-                    z + v.z
+                    getX() + v.getX(),
+                    getY() + v.getY(),
+                    getZ() + v.getZ()
                 );
     }
 
@@ -140,9 +146,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public Vector3D add(double factor, Vector3D v) {
         return new Vector3D(
-                    x + (factor * v.x),
-                    y + (factor * v.y),
-                    z + (factor * v.z)
+                    getX() + (factor * v.getX()),
+                    getY() + (factor * v.getY()),
+                    getZ() + (factor * v.getZ())
                 );
     }
 
@@ -150,9 +156,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public Vector3D subtract(Vector3D v) {
         return new Vector3D(
-                    x - v.x,
-                    y - v.y,
-                    z - v.z
+                    getX() - v.getX(),
+                    getY() - v.getY(),
+                    getZ() - v.getZ()
                 );
     }
 
@@ -160,16 +166,16 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public Vector3D subtract(double factor, Vector3D v) {
         return new Vector3D(
-                    x - (factor * v.x),
-                    y - (factor * v.y),
-                    z - (factor * v.z)
+                    getX() - (factor * v.getX()),
+                    getY() - (factor * v.getY()),
+                    getZ() - (factor * v.getZ())
                 );
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D negate() {
-        return new Vector3D(-x, -y, -z);
+        return new Vector3D(-getX(), -getY(), -getZ());
     }
 
     /** {@inheritDoc} */
@@ -202,6 +208,10 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         if (threshold == 0) {
             throw new IllegalStateException(ZERO_NORM_MSG);
         }
+
+        final double x = getX();
+        final double y = getY();
+        final double z = getZ();
 
         if (Math.abs(x) <= threshold) {
             double inverse  = 1 / Math.sqrt(y * y + z * z);
@@ -250,23 +260,23 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @return the cross product this ^ v as a new Cartesian3D
      */
     public Vector3D crossProduct(final Vector3D v) {
-        return new Vector3D(LinearCombination.value(y, v.z, -z, v.y),
-                            LinearCombination.value(z, v.x, -x, v.z),
-                            LinearCombination.value(x, v.y, -y, v.x));
+        return new Vector3D(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
+                            LinearCombination.value(getZ(), v.getX(), -getX(), v.getZ()),
+                            LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D scalarMultiply(double a) {
-        return new Vector3D(a * x, a * y, a * z);
+        return new Vector3D(a * getX(), a * getY(), a * getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance1(Vector3D v) {
-        double dx = Math.abs(v.x - x);
-        double dy = Math.abs(v.y - y);
-        double dz = Math.abs(v.z - z);
+        double dx = Math.abs(v.getX() - getX());
+        double dy = Math.abs(v.getY() - getY());
+        double dz = Math.abs(v.getZ() - getZ());
 
         return dx + dy + dz;
     }
@@ -280,9 +290,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public double distanceInf(Vector3D v) {
-        double dx = Math.abs(v.x - x);
-        double dy = Math.abs(v.y - y);
-        double dz = Math.abs(v.z - z);
+        double dx = Math.abs(v.getX() - getX());
+        double dy = Math.abs(v.getY() - getY());
+        double dz = Math.abs(v.getZ() - getZ());
 
         return Math.max(Math.max(dx, dy), dz);
     }
@@ -290,9 +300,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector3D v) {
-        double dx = v.x - x;
-        double dy = v.y - y;
-        double dz = v.z - z;
+        double dx = v.getX() - getX();
+        double dy = v.getY() - getY();
+        double dz = v.getZ() - getZ();
 
         return (dx * dx) + (dy * dy) + (dz * dz);
     }
@@ -307,7 +317,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      */
     @Override
     public double dotProduct(Vector3D v) {
-        return LinearCombination.value(x, v.x, y, v.y, z, v.z);
+        return LinearCombination.value(getX(), v.getX(), getY(), v.getY(), getZ(), v.getZ());
     }
 
     /**
@@ -321,7 +331,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * Double.hashCode(x) +  3 * Double.hashCode(y) +  Double.hashCode(z));
+        return 643 * (164 * Double.hashCode(getX()) +  3 * Double.hashCode(getY()) +  Double.hashCode(getZ()));
     }
 
     /**
@@ -355,7 +365,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
+            return (getX() == rhs.getX()) && (getY() == rhs.getY()) && (getZ() == rhs.getZ());
         }
         return false;
     }
@@ -363,7 +373,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "{" + x + "; " + y + "; " + z + "}";
+        return "{" + getX() + "; " + getY() + "; " + getZ() + "}";
     }
 
     /** Computes the dot product between to vectors. This method simply
@@ -414,7 +424,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @return vector instance
      */
     public static Vector3D of(Cartesian3D value) {
-        return new Vector3D(value.x, value.y, value.z);
+        return new Vector3D(value.getX(), value.getY(), value.getZ());
     }
 
     /** Creates a vector from the coordinates in the given 3-element array.
@@ -461,7 +471,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @return vector with coordinates calculated by {@code a * c}
      */
     public static Vector3D linearCombination(double a, Cartesian3D c) {
-        return new Vector3D(a * c.x, a * c.y, a * c.z);
+        return new Vector3D(a * c.getX(), a * c.getY(), a * c.getZ());
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -480,9 +490,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      */
     public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ()));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -504,9 +514,9 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
             double a3, Cartesian3D c3) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z, a3, c3.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ()));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -530,8 +540,8 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
             double a3, Cartesian3D c3, double a4, Cartesian3D c4) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x, a4, c4.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y, a4, c4.y),
-                LinearCombination.value(a1, c1.z, a2, c2.z, a3, c3.z, a4, c4.z));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()),
+                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ(), a4, c4.getZ()));
     }
 }

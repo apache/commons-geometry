@@ -63,13 +63,13 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public double distance(Point1D p) {
-        return Math.abs(p.x - x);
+        return Math.abs(p.getX() - getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D subtract(Point1D p) {
-        return Vector1D.of(x - p.x);
+        return Vector1D.of(getX() - p.getX());
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public Point1D add(Vector1D v) {
-        return new Point1D(x + v.x);
+        return new Point1D(getX() + v.getX());
     }
 
     /**
@@ -95,7 +95,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         if (isNaN()) {
             return 7785;
         }
-        return 997 * Double.hashCode(x);
+        return 997 * Double.hashCode(getX());
     }
 
     /**
@@ -129,7 +129,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
                 return this.isNaN();
             }
 
-            return x == rhs.x;
+            return getX() == rhs.getX();
         }
         return false;
     }
@@ -137,7 +137,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + x + ")";
+        return "(" + getX() + ")";
     }
 
     /** Returns a point with the given coordinate value.
@@ -153,7 +153,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @return point instance
      */
     public static Point1D of(Cartesian1D value) {
-        return new Point1D(value.x);
+        return new Point1D(value.getX());
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -176,7 +176,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @see {@link Vector1D#linearCombination(double, Vector1D)}
      */
     public static Point1D vectorCombination(double a, Cartesian1D c) {
-        return new Point1D(a * c.x);
+        return new Point1D(a * c.getX());
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -202,7 +202,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      */
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2) {
         return new Point1D(
-                LinearCombination.value(a1, c1.x, a2, c2.x));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -231,7 +231,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
             double a3, Cartesian1D c3) {
         return new Point1D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -262,6 +262,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
             double a3, Cartesian1D c3, double a4, Cartesian1D c4) {
         return new Point1D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x, a4, c4.x));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()));
     }
 }

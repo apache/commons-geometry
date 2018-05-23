@@ -55,7 +55,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public Vector2D asVector() {
-        return new Vector2D(x, y);
+        return new Vector2D(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -67,7 +67,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(Point2D p) {
-        return Vector2D.of(x - p.x, y - p.y);
+        return Vector2D.of(getX() - p.getX(), getY() - p.getY());
     }
 
     /** {@inheritDoc} */
@@ -79,7 +79,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public Point2D add(Vector2D v) {
-        return new Point2D(x + v.x, y + v.y);
+        return new Point2D(getX() + v.getX(), getY() + v.getY());
     }
 
     /**
@@ -93,7 +93,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         if (isNaN()) {
             return 542;
         }
-        return 122 * (76 * Double.hashCode(x) +  Double.hashCode(y));
+        return 122 * (76 * Double.hashCode(getX()) +  Double.hashCode(getY()));
     }
 
     /** Test for the equality of two points.
@@ -126,7 +126,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
                 return this.isNaN();
             }
 
-            return (x == rhs.x) && (y == rhs.y);
+            return (getX() == rhs.getX()) && (getY() == rhs.getY());
         }
         return false;
     }
@@ -134,7 +134,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + x + "; " + y + ")";
+        return "(" + getX() + "; " + getY() + ")";
     }
 
     /** Returns a point with the given coordinate values
@@ -151,7 +151,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @return point instance
      */
     public static Point2D of(Cartesian2D value) {
-        return new Point2D(value.x, value.y);
+        return new Point2D(value.getX(), value.getY());
     }
 
     /** Returns a point with the coordinates from the given 2-element array.
@@ -185,7 +185,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @return point with coordinates calculated by {@code a * c}
      */
     public static Point2D vectorCombination(double a, Cartesian2D c) {
-        return new Point2D(a * c.x, a * c.y);
+        return new Point2D(a * c.getX(), a * c.getY());
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -210,8 +210,8 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      */
     public static Point2D vectorCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2) {
         return new Point2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -239,8 +239,8 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     public static Point2D vectorCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
             double a3, Cartesian2D c3) {
         return new Point2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()));
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
@@ -270,7 +270,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     public static Point2D vectorCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
             double a3, Cartesian2D c3, double a4, Cartesian2D c4) {
         return new Point2D(
-                LinearCombination.value(a1, c1.x, a2, c2.x, a3, c3.x, a4, c4.x),
-                LinearCombination.value(a1, c1.y, a2, c2.y, a3, c3.y, a4, c4.y));
+                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
+                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()));
     }
 }

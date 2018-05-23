@@ -27,7 +27,7 @@ public abstract class Cartesian1D implements Spatial {
     private static final long serialVersionUID = -1178039568877797126L;
 
     /** Abscissa (coordinate value). */
-    protected final double x;
+    private final double x;
 
     /**
      * Simple constructor.
