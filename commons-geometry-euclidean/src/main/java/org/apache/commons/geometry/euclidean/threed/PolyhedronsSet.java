@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -204,7 +205,7 @@ public class PolyhedronsSet extends AbstractRegion<Point3D, Point2D> {
                     if (!found) {
                         final Point3D start = vertices.get(vA);
                         final Point3D end   = vertices.get(vB);
-                        throw new IllegalArgumentException("Edge joining points " + start + " and " + end + " is connected to one facet only");
+                        throw new IllegalArgumentException(MessageFormat.format("Edge joining points {0} and {1} is connected to one facet only", start, end));
                     }
                 }
             }
@@ -312,7 +313,7 @@ public class PolyhedronsSet extends AbstractRegion<Point3D, Point2D> {
                     if (successors[v][l] == successors[v][k]) {
                         final Point3D start = vertices.get(v);
                         final Point3D end   = vertices.get(successors[v][k]);
-                        throw new IllegalArgumentException("Facet orientation mismatch around edge joining points " + start + " and " + end);
+                        throw new IllegalArgumentException(MessageFormat.format("Facet orientation mismatch around edge joining points {0} and {1}", start, end));
                     }
                 }
 

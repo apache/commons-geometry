@@ -14,31 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.hull;
-
-import java.io.Serializable;
-
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Region;
-
 /**
- * This class represents a convex hull.
  *
- * @param <P> Point type.
+ * <p>
+ * This package provides classes related to the smallest enclosing ball problem in three dimensions.
+ * </p>
+ *
  */
-public interface ConvexHull<P extends Point<P>> extends Serializable {
-
-    /**
-     * Get the vertices of the convex hull.
-     * @return vertices of the convex hull
-     */
-    P[] getVertices();
-
-    /**
-     * Returns a new region that is enclosed by the convex hull.
-     * @return the region enclosed by the convex hull
-     * @throws IllegalStateException if the number of vertices is not enough to
-     * build a region in the respective space
-     */
-    Region<P> createRegion() throws IllegalStateException;
-}
+package org.apache.commons.geometry.euclidean.threed.enclosing;

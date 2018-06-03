@@ -266,6 +266,7 @@ public class BSPTree<P extends Point<P>> {
                 minus.visit(visitor);
                 break;
             case SUB_MINUS_PLUS:
+            default:
                 visitor.visitInternalNode(this);
                 minus.visit(visitor);
                 plus.visit(visitor);
