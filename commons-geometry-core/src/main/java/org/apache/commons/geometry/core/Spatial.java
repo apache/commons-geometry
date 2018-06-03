@@ -16,11 +16,9 @@
  */
 package org.apache.commons.geometry.core;
 
-import java.io.Serializable;
-
 /** Interface representing a generic element in a mathematical space.
  */
-public interface Spatial extends Serializable {
+public interface Spatial {
 
     /** Returns the number of dimensions in the space that this element
      * belongs to.

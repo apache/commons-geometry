@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
@@ -25,7 +27,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 /** This class represents a point on the 1-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class S1Point implements Point<S1Point> {
+public final class S1Point implements Point<S1Point>, Serializable {
 
    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */

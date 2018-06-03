@@ -17,12 +17,14 @@
 
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Spatial;
 
 /** This class represents a set of Cartesian coordinates in
  * two-dimensional Euclidean space.
  */
-public abstract class Cartesian2D implements Spatial {
+public abstract class Cartesian2D implements Spatial, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 2918583078965478552L;

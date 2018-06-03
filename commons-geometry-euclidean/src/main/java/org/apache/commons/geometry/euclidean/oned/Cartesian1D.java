@@ -16,12 +16,14 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Spatial;
 
 /** This class represents a Cartesian coordinate value in
  * one-dimensional Euclidean space.
  */
-public abstract class Cartesian1D implements Spatial {
+public abstract class Cartesian1D implements Spatial, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = -1178039568877797126L;

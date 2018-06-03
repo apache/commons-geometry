@@ -17,12 +17,14 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Spatial;
 
 /** This class represents a Cartesian coordinate value in
  * three-dimensional Euclidean space.
  */
-public abstract class Cartesian3D implements Spatial {
+public abstract class Cartesian3D implements Spatial, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 6249091865814886817L;

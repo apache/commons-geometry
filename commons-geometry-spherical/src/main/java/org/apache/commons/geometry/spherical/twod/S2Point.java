@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
@@ -31,7 +33,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  * </p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class S2Point implements Point<S2Point> {
+public final class S2Point implements Point<S2Point>, Serializable {
 
     /** +I (coordinates: \( \theta = 0, \varphi = \pi/2 \)). */
     public static final S2Point PLUS_I = new S2Point(0, 0.5 * Math.PI, Vector3D.PLUS_X);
