@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -42,6 +44,16 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
 
     /** Serializable UID. */
     private static final long serialVersionUID = 266938651998679754L;
+
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory2D<Point2D> FACTORY = new Coordinates.Factory2D<Point2D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Point2D create(double a1, double a2) {
+            return new Point2D(a1, a2);
+        }
+    };
 
     /** Simple constructor.
      * Build a point from its coordinates
@@ -134,7 +146,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + getX() + "; " + getY() + ")";
+        return SimpleCoordinateFormat.getPointFormat().format(getX(), getY());
     }
 
     /** Returns a point with the given coordinate values
@@ -164,6 +176,23 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 2");
         }
         return new Point2D(p[0], p[1]);
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Point2D parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new point instances.
+     * @return point factory instance
+     */
+    public static Coordinates.Factory2D<Point2D> getFactory() {
+        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

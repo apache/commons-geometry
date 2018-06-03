@@ -28,6 +28,14 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
     /** Space character */
     private static final String SPACE = " ";
 
+    /** Static instance configured with default values for working with points. */
+    private static final SimpleCoordinateFormat DEFAULT_POINT_FORMAT =
+            new SimpleCoordinateFormat(DEFAULT_SEPARATOR, "(", ")");
+
+    /** Static instance configured with default values for working with vectors. */
+    private static final SimpleCoordinateFormat DEFAULT_VECTOR_FORMAT =
+            new SimpleCoordinateFormat(DEFAULT_SEPARATOR, "{", "}");
+
     /** Creates a new format instance with the default separator value and the given
      * tuple prefix and suffix.
      * @param prefix coordinate tuple prefix; may be null
@@ -47,17 +55,17 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
     }
 
     /** Returns a 1D coordinate tuple string with the given value.
-     * @param v coordinate value
+     * @param a coordinate value
      * @return 1D coordinate tuple string
      */
-    public String format1D(double v) {
+    public String format(double a) {
         StringBuilder sb = new StringBuilder();
 
         if (getPrefix() != null) {
             sb.append(getPrefix());
         }
 
-        sb.append(v);
+        sb.append(a);
 
         if (getSuffix() != null) {
             sb.append(getSuffix());
@@ -67,21 +75,21 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
     }
 
     /** Returns a 2D coordinate tuple string with the given values.
-     * @param v1 first coordinate value
-     * @param v2 second coordinate value
+     * @param a1 first coordinate value
+     * @param a2 second coordinate value
      * @return 2D coordinate tuple string
      */
-    public String format2D(double v1, double v2) {
+    public String format(double a1, double a2) {
         StringBuilder sb = new StringBuilder();
 
         if (getPrefix() != null) {
             sb.append(getPrefix());
         }
 
-        sb.append(v1);
+        sb.append(a1);
         sb.append(getSeparator());
         sb.append(SPACE);
-        sb.append(v2);
+        sb.append(a2);
 
         if (getSuffix() != null) {
             sb.append(getSuffix());
@@ -91,25 +99,25 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
     }
 
     /** Returns a 3D coordinate tuple string with the given values.
-     * @param v1 first coordinate value
-     * @param v2 second coordinate value
-     * @param v3 third coordinate value
+     * @param a1 first coordinate value
+     * @param a2 second coordinate value
+     * @param a3 third coordinate value
      * @return 3D coordinate tuple string
      */
-    public String format3D(double v1, double v2, double v3) {
+    public String format(double a1, double a2, double a3) {
         StringBuilder sb = new StringBuilder();
 
         if (getPrefix() != null) {
             sb.append(getPrefix());
         }
 
-        sb.append(v1);
+        sb.append(a1);
         sb.append(getSeparator());
         sb.append(SPACE);
-        sb.append(v2);
+        sb.append(a2);
         sb.append(getSeparator());
         sb.append(SPACE);
-        sb.append(v3);
+        sb.append(a3);
 
         if (getSuffix() != null) {
             sb.append(getSuffix());
@@ -120,12 +128,13 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
 
     /** Parses the given string as a 1D coordinate tuple and passes the coordinate value to the
      * given factory. The object created by the factory is returned.
+     * @param <T> The type created by {@code factory}
      * @param str the string to be parsed
      * @param factory object that will be passed the parsed coordinate value
      * @return object created by {@code factory}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse1D(String str, Coordinates.Factory1D<T> factory) throws IllegalArgumentException {
+    public <T> T parse(String str, Coordinates.Factory1D<T> factory) throws IllegalArgumentException {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -138,12 +147,13 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
 
     /** Parses the given string as a 2D coordinate tuple and passes the coordinate values to the
      * given factory. The object created by the factory is returned.
+     * @param <T> The type created by {@code factory}
      * @param str the string to be parsed
      * @param factory object that will be passed the parsed coordinate values
      * @return object created by {@code factory}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse2D(String str, Coordinates.Factory2D<T> factory) throws IllegalArgumentException {
+    public <T> T parse(String str, Coordinates.Factory2D<T> factory) throws IllegalArgumentException {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -157,12 +167,13 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
 
     /** Parses the given string as a 3D coordinate tuple and passes the coordinate values to the
      * given factory. The object created by the factory is returned.
+     * @param <T> The type created by {@code factory}
      * @param str the string to be parsed
      * @param factory object that will be passed the parsed coordinate values
      * @return object created by {@code factory}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse3D(String str, Coordinates.Factory3D<T> factory) throws IllegalArgumentException {
+    public <T> T parse(String str, Coordinates.Factory3D<T> factory) throws IllegalArgumentException {
         ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -173,5 +184,19 @@ public class SimpleCoordinateFormat extends AbstractCoordinateParser {
         endParse(str, pos);
 
         return factory.create(v1, v2, v3);
+    }
+
+    /** Returns a default instance for working with points.
+     * @return instance configured with default values for points
+     */
+    public static SimpleCoordinateFormat getPointFormat() {
+        return DEFAULT_POINT_FORMAT;
+    }
+
+    /** Returns a default instance for working with vectors.
+     * @return instance configured with default values for vectors.
+     */
+    public static SimpleCoordinateFormat getVectorFormat() {
+        return DEFAULT_VECTOR_FORMAT;
     }
 }

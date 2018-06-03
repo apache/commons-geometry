@@ -17,13 +17,15 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class S1Point implements Point<S1Point> {
+public final class S1Point implements Point<S1Point> {
 
    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -33,21 +35,21 @@ public class S1Point implements Point<S1Point> {
     /** Serializable UID. */
     private static final long serialVersionUID = 20131218L;
 
-    /** Azimuthal angle \( \alpha \). */
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory1D<S1Point> FACTORY = new Coordinates.Factory1D<S1Point>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public S1Point create(double a) {
+            return S1Point.of(a);
+        }
+    };
+
+    /** Azimuthal angle in radians \( \alpha \). */
     private final double alpha;
 
     /** Corresponding 2D normalized vector. */
     private final Vector2D vector;
-
-    /** Simple constructor.
-     * Build a vector from its coordinates
-     * @param alpha azimuthal angle \( \alpha \)
-     * @see #getAlpha()
-     */
-    public S1Point(final double alpha) {
-        this(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha),
-             Vector2D.of(Math.cos(alpha), Math.sin(alpha)));
-    }
 
     /** Build a point from its internal components.
      * @param alpha azimuthal angle \( \alpha \)
@@ -58,7 +60,7 @@ public class S1Point implements Point<S1Point> {
         this.vector = vector;
     }
 
-    /** Get the azimuthal angle \( \alpha \).
+    /** Get the azimuthal angle in radians \( \alpha \).
      * @return azimuthal angle \( \alpha \)
      * @see #S1Point(double)
      */
@@ -158,5 +160,40 @@ public class S1Point implements Point<S1Point> {
             return 542;
         }
         return 1759 * Double.hashCode(alpha);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleCoordinateFormat.getPointFormat().format(getAlpha());
+    }
+
+    /** Creates a new point instance from the given azimuthal coordinate value.
+     * @param alpha azimuthal angle in radians \( \alpha \)
+     * @return point instance with the given azimuth coordinate value
+     * @see #getAlpha()
+     */
+    public static S1Point of(double alpha) {
+        double normalizedAlpha = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha);
+        Vector2D vector = Vector2D.of(Math.cos(normalizedAlpha), Math.sin(normalizedAlpha));
+
+        return new S1Point(normalizedAlpha, vector);
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static S1Point parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new point instances.
+     * @return point factory instance
+     */
+    public static Coordinates.Factory1D<S1Point> getFactory() {
+        return FACTORY;
     }
 }

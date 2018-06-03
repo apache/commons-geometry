@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -45,6 +47,16 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
 
     /** Serializable UID. */
     private static final long serialVersionUID = 7556674948671647925L;
+
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory1D<Point1D> FACTORY = new Coordinates.Factory1D<Point1D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Point1D create(double a) {
+            return new Point1D(a);
+        }
+    };
 
     /** Simple constructor.
      * @param x abscissa (coordinate value)
@@ -136,7 +148,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + getX() + ")";
+        return SimpleCoordinateFormat.getPointFormat().format(getX());
     }
 
     /** Returns a point with the given coordinate value.
@@ -153,6 +165,23 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      */
     public static Point1D of(Cartesian1D value) {
         return new Point1D(value.getX());
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Point1D parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new point instances.
+     * @return point factory instance
+     */
+    public static Coordinates.Factory1D<Point1D> getFactory() {
+        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

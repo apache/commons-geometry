@@ -17,17 +17,20 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.util.Coordinates;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class S1PointTest {
 
+    private static final double EPS = 1e-10;
+
     @Test
     public void testS1Point() {
         for (int k = -2; k < 3; ++k) {
-            S1Point p = new S1Point(1.0 + k * Geometry.TWO_PI);
-            Assert.assertEquals(Math.cos(1.0), p.getVector().getX(), 1.0e-10);
-            Assert.assertEquals(Math.sin(1.0), p.getVector().getY(), 1.0e-10);
+            S1Point p = S1Point.of(1.0 + k * Geometry.TWO_PI);
+            Assert.assertEquals(Math.cos(1.0), p.getVector().getX(), EPS);
+            Assert.assertEquals(Math.sin(1.0), p.getVector().getY(), EPS);
             Assert.assertFalse(p.isNaN());
         }
     }
@@ -35,14 +38,14 @@ public class S1PointTest {
     @Test
     public void testNaN() {
         Assert.assertTrue(S1Point.NaN.isNaN());
-        Assert.assertTrue(S1Point.NaN.equals(new S1Point(Double.NaN)));
-        Assert.assertFalse(new S1Point(1.0).equals(S1Point.NaN));
+        Assert.assertTrue(S1Point.NaN.equals(S1Point.of(Double.NaN)));
+        Assert.assertFalse(S1Point.of(1.0).equals(S1Point.NaN));
     }
 
     @Test
     public void testEquals() {
-        S1Point a = new S1Point(1.0);
-        S1Point b = new S1Point(1.0);
+        S1Point a = S1Point.of(1.0);
+        S1Point b = S1Point.of(1.0);
         Assert.assertEquals(a.hashCode(), b.hashCode());
         Assert.assertFalse(a == b);
         Assert.assertTrue(a.equals(b));
@@ -52,9 +55,44 @@ public class S1PointTest {
 
     @Test
     public void testDistance() {
-        S1Point a = new S1Point(1.0);
-        S1Point b = new S1Point(a.getAlpha() + 0.5 * Math.PI);
+        S1Point a = S1Point.of(1.0);
+        S1Point b = S1Point.of(a.getAlpha() + 0.5 * Math.PI);
         Assert.assertEquals(0.5 * Math.PI, a.distance(b), 1.0e-10);
+    }
+
+    @Test
+    public void testToString() {
+        // act/assert
+        Assert.assertEquals("(0.0)", S1Point.of(0.0).toString());
+        Assert.assertEquals("(1.0)", S1Point.of(1.0).toString());
+    }
+
+    @Test
+    public void testParse() {
+        // act/assert
+        checkPoint(S1Point.parse("(0)"), 0.0);
+        checkPoint(S1Point.parse("(1)"), 1.0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        S1Point.parse("abc");
+    }
+
+    @Test
+    public void testGetFactory() {
+        // act
+        Coordinates.Factory1D<S1Point> factory = S1Point.getFactory();
+
+        // assert
+        checkPoint(factory.create(0), 0);
+        checkPoint(factory.create(1), 1);
+        checkPoint(factory.create(Geometry.TWO_PI), 0);
+    }
+
+    private void checkPoint(S1Point p, double alpha) {
+        Assert.assertEquals(alpha, p.getAlpha(), EPS);
     }
 
 }

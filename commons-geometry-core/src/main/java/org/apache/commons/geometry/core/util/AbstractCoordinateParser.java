@@ -114,7 +114,8 @@ public abstract class AbstractCoordinateParser {
             return value;
         }
         catch (NumberFormatException exc) {
-            throw new CoordinateParseException("Failed to parse number from string at index " + startIdx + ": " + substr, exc);
+            fail(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
+            return 0.0; // for the compiler
         }
     }
 
@@ -133,8 +134,8 @@ public abstract class AbstractCoordinateParser {
         }
     }
 
-    /** Ends a parse operation by ensuring that all non-whitespace characters in the string have been parsed. An exception
-     * is thrown if extra content is found.
+    /** Ends a parse operation by ensuring that all non-whitespace characters in the string have been parsed. An
+     * exception is thrown if extra content is found.
      * @param str the string being parsed
      * @param pos the current parsing position
      * @throws IllegalArgumentException if extra non-whitespace content is found past the current parsing position
@@ -142,7 +143,7 @@ public abstract class AbstractCoordinateParser {
     protected void endParse(String str, ParsePosition pos) throws IllegalArgumentException {
         consumeWhitespace(str, pos);
         if (pos.getIndex() != str.length()) {
-            throw new CoordinateParseException("Failed to parse string: unexpected content at index " + pos.getIndex());
+            fail("unexpected content", str, pos);
         }
     }
 
@@ -209,9 +210,33 @@ public abstract class AbstractCoordinateParser {
             final int idx = pos.getIndex();
             final String actualSeq = str.substring(idx, Math.min(str.length(), idx + seq.length()));
 
-            throw new CoordinateParseException("Failed to parse string: expected \"" + seq +
-                    "\" but found \"" + actualSeq + "\" at index " + idx);
+            fail(String.format("expected \"%s\" but found \"%s\"", seq, actualSeq), str, pos);
         }
+    }
+
+    /** Aborts the current parsing operation by throwing an {@link IllegalArgumentException} with an informative
+     * error message.
+     * @param msg the error message
+     * @param str the string being parsed
+     * @param pos the current parse position
+     * @throws IllegalArgumentException the exception signaling a parse failure
+     */
+    protected void fail(String msg, String str, ParsePosition pos) throws IllegalArgumentException {
+        fail(msg, str, pos, null);
+    }
+
+    /** Aborts the current parsing operation by throwing an {@link IllegalArgumentException} with an informative
+     * error message.
+     * @param msg the error message
+     * @param str the string being parsed
+     * @param pos the current parse position
+     * @param cause the original cause of the error
+     * @throws IllegalArgumentException the exception signaling a parse failure
+     */
+    protected void fail(String msg, String str, ParsePosition pos, Throwable cause) throws IllegalArgumentException {
+        String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s", str, pos.getIndex(), msg);
+
+        throw new CoordinateParseException(fullMsg, cause);
     }
 
     /** Exception class for errors occurring during coordinate parsing.
@@ -222,17 +247,10 @@ public abstract class AbstractCoordinateParser {
         private static final long serialVersionUID = 1494716029613981959L;
 
         /** Simple constructor.
-         * @param msg the exception message.
-         */
-        public CoordinateParseException(String msg) {
-            super(msg);
-        }
-
-        /** Simple constructor with cause.
          * @param msg the exception message
          * @param cause the exception root cause
          */
-        public CoordinateParseException(String msg, Throwable cause) {
+        CoordinateParseException(String msg, Throwable cause) {
             super(msg, cause);
         }
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -45,6 +47,16 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** Serializable UID. */
     private static final long serialVersionUID = 1582116020164328846L;
+
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory1D<Vector1D> FACTORY = new Coordinates.Factory1D<Vector1D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D create(double a) {
+            return new Vector1D(a);
+        }
+    };
 
     /** Simple constructor.
      * @param x abscissa (coordinate value)
@@ -220,7 +232,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "{" + getX() + "}";
+        return SimpleCoordinateFormat.getVectorFormat().format(getX());
     }
 
     /** Returns a vector with the given coordinate value.
@@ -237,6 +249,23 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     public static Vector1D of(Cartesian1D value) {
         return new Vector1D(value.getX());
+    }
+
+    /** Parses the given string and returns a new vector instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return vector instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Vector1D parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getVectorFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new vector instances.
+     * @return vector factory instance
+     */
+    public static Coordinates.Factory1D<Vector1D> getFactory() {
+        return FACTORY;
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

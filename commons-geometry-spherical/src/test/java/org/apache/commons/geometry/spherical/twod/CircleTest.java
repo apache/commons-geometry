@@ -47,7 +47,7 @@ public class CircleTest {
 
     @Test
     public void testXY() {
-        Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
+        Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
         Assert.assertEquals(0.0, circle.getPointAt(0).distance(circle.getXAxis()), 1.0e-10);
         Assert.assertEquals(0.0, circle.getPointAt(0.5 * Math.PI).distance(circle.getYAxis()), 1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, Vector3D.angle(circle.getXAxis(), circle.getYAxis()), 1.0e-10);
@@ -60,7 +60,7 @@ public class CircleTest {
 
     @Test
     public void testReverse() {
-        Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
+        Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
         Circle reversed = circle.getReverse();
         Assert.assertEquals(0.0, reversed.getPointAt(0).distance(reversed.getXAxis()), 1.0e-10);
         Assert.assertEquals(0.0, reversed.getPointAt(0.5 * Math.PI).distance(reversed.getYAxis()), 1.0e-10);
@@ -82,7 +82,7 @@ public class CircleTest {
 
     @Test
     public void testPhase() {
-        Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
+        Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
         Vector3D p = Vector3D.of(1, 2, -4);
         Vector3D samePhase = circle.getPointAt(circle.getPhase(p));
         Assert.assertEquals(0.0,
@@ -98,20 +98,20 @@ public class CircleTest {
 
     @Test
     public void testSubSpace() {
-        Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
-        Assert.assertEquals(0.0, circle.toSubSpace(new S2Point(circle.getXAxis())).getAlpha(), 1.0e-10);
-        Assert.assertEquals(0.5 * Math.PI, circle.toSubSpace(new S2Point(circle.getYAxis())).getAlpha(), 1.0e-10);
+        Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
+        Assert.assertEquals(0.0, circle.toSubSpace(S2Point.of(circle.getXAxis())).getAlpha(), 1.0e-10);
+        Assert.assertEquals(0.5 * Math.PI, circle.toSubSpace(S2Point.of(circle.getYAxis())).getAlpha(), 1.0e-10);
         Vector3D p = Vector3D.of(1, 2, -4);
-        Assert.assertEquals(circle.getPhase(p), circle.toSubSpace(new S2Point(p)).getAlpha(), 1.0e-10);
+        Assert.assertEquals(circle.getPhase(p), circle.toSubSpace(S2Point.of(p)).getAlpha(), 1.0e-10);
     }
 
     @Test
     public void testSpace() {
-        Circle circle = new Circle(new S2Point(1.2, 2.5), new S2Point(-4.3, 0), 1.0e-10);
+        Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
         for (double alpha = 0; alpha < Geometry.TWO_PI; alpha += 0.1) {
             Vector3D p = Vector3D.linearCombination(Math.cos(alpha), circle.getXAxis(),
                                       Math.sin(alpha), circle.getYAxis());
-            Vector3D q = circle.toSpace(new S1Point(alpha)).getVector();
+            Vector3D q = circle.toSpace(S1Point.of(alpha)).getVector();
             Assert.assertEquals(0.0, p.distance(q), 1.0e-10);
             Assert.assertEquals(0.5 * Math.PI, Vector3D.angle(circle.getPole(), q), 1.0e-10);
         }
@@ -120,12 +120,12 @@ public class CircleTest {
     @Test
     public void testOffset() {
         Circle circle = new Circle(Vector3D.PLUS_Z, 1.0e-10);
-        Assert.assertEquals(0.0,                circle.getOffset(new S2Point(Vector3D.PLUS_X)),  1.0e-10);
-        Assert.assertEquals(0.0,                circle.getOffset(new S2Point(Vector3D.MINUS_X)), 1.0e-10);
-        Assert.assertEquals(0.0,                circle.getOffset(new S2Point(Vector3D.PLUS_Y)),  1.0e-10);
-        Assert.assertEquals(0.0,                circle.getOffset(new S2Point(Vector3D.MINUS_Y)), 1.0e-10);
-        Assert.assertEquals(-0.5 * Math.PI, circle.getOffset(new S2Point(Vector3D.PLUS_Z)),  1.0e-10);
-        Assert.assertEquals(0.5 * Math.PI, circle.getOffset(new S2Point(Vector3D.MINUS_Z)), 1.0e-10);
+        Assert.assertEquals(0.0,                circle.getOffset(S2Point.of(Vector3D.PLUS_X)),  1.0e-10);
+        Assert.assertEquals(0.0,                circle.getOffset(S2Point.of(Vector3D.MINUS_X)), 1.0e-10);
+        Assert.assertEquals(0.0,                circle.getOffset(S2Point.of(Vector3D.PLUS_Y)),  1.0e-10);
+        Assert.assertEquals(0.0,                circle.getOffset(S2Point.of(Vector3D.MINUS_Y)), 1.0e-10);
+        Assert.assertEquals(-0.5 * Math.PI, circle.getOffset(S2Point.of(Vector3D.PLUS_Z)),  1.0e-10);
+        Assert.assertEquals(0.5 * Math.PI, circle.getOffset(S2Point.of(Vector3D.MINUS_Z)), 1.0e-10);
 
     }
 
@@ -164,7 +164,7 @@ public class CircleTest {
                                       RotationConvention.VECTOR_OPERATOR);
             Transform<S2Point, S1Point> t = Circle.getTransform(r);
 
-            S2Point  p = new S2Point(Vector3D.of(sphRandom.nextVector()));
+            S2Point  p = S2Point.of(Vector3D.of(sphRandom.nextVector()));
             S2Point tp = t.apply(p);
             Assert.assertEquals(0.0, r.applyTo(p.getVector()).distance(tp.getVector()), 1.0e-10);
 
@@ -175,7 +175,7 @@ public class CircleTest {
             Assert.assertEquals(0.0, r.applyTo(c.getYAxis()).distance(tc.getYAxis()), 1.0e-10);
             Assert.assertEquals(c.getTolerance(), ((Circle) t.apply(c)).getTolerance(), 1.0e-10);
 
-            SubLimitAngle  sub = new LimitAngle(new S1Point(Geometry.TWO_PI * random.nextDouble()),
+            SubLimitAngle  sub = new LimitAngle(S1Point.of(Geometry.TWO_PI * random.nextDouble()),
                                                 random.nextBoolean(), 1.0e-10).wholeHyperplane();
             Vector3D psub = c.getPointAt(((LimitAngle) sub.getHyperplane()).getLocation().getAlpha());
             SubLimitAngle tsub = (SubLimitAngle) t.apply(sub, c, tc);

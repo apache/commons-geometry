@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -183,6 +184,27 @@ public class Point1DTest {
     }
 
     @Test
+    public void testParse() {
+        // act/assert
+        checkPoint(Point1D.parse("(1)"), 1);
+        checkPoint(Point1D.parse("(-1)"), -1);
+
+        checkPoint(Point1D.parse("(0.01)"), 1e-2);
+        checkPoint(Point1D.parse("(-1e-3)"), -1e-3);
+
+        checkPoint(Point1D.parse("(NaN)"), Double.NaN);
+
+        checkPoint(Point1D.parse(Point1D.ZERO.toString()), 0);
+        checkPoint(Point1D.parse(Point1D.ONE.toString()), 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        Point1D.parse("abc");
+    }
+
+    @Test
     public void testOf() {
         // act/assert
         checkPoint(Point1D.of(0), 0.0);
@@ -204,6 +226,16 @@ public class Point1DTest {
         checkPoint(Point1D.of(Vector1D.of(Double.NaN)), Double.NaN);
         checkPoint(Point1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
         checkPoint(Point1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testGetFactory() {
+        // act
+        Coordinates.Factory1D<Point1D> factory = Point1D.getFactory();
+
+        // assert
+        checkPoint(factory.create(1), 1);
+        checkPoint(factory.create(-1), -1);
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -173,7 +174,7 @@ public class Point3DTest {
     public void testToString() {
         // arrange
         Point3D p = Point3D.of(1, 2, 3);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}; 2.{0,2}; 3.{0,2}\\)");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
 
         // act
         String str = p.toString();
@@ -181,6 +182,25 @@ public class Point3DTest {
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
                     pattern.matcher(str).matches());
+    }
+
+    @Test
+    public void testParse() {
+        // act/assert
+        checkPoint(Point3D.parse("(1, 2, 0)"), 1, 2, 0);
+        checkPoint(Point3D.parse("(-1, -2, 0)"), -1, -2, 0);
+
+        checkPoint(Point3D.parse("(0.01, -1e-3, 1e3)"), 1e-2, -1e-3, 1e3);
+
+        checkPoint(Point3D.parse("(NaN, -Infinity, Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        checkPoint(Point3D.parse(Point3D.ZERO.toString()), 0, 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        Point3D.parse("abc");
     }
 
     @Test
@@ -220,6 +240,16 @@ public class Point3DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Point3D.of(new double[] { 0.0, 0.0 });
+    }
+
+    @Test
+    public void testGetFactory() {
+        // act
+        Coordinates.Factory3D<Point3D> factory = Point3D.getFactory();
+
+        // assert
+        checkPoint(factory.create(1, 2, 3), 1, 2, 3);
+        checkPoint(factory.create(-1, -2, -3), -1, -2, -3);
     }
 
     @Test

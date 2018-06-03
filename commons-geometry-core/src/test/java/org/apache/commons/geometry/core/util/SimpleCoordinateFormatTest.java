@@ -23,7 +23,6 @@ public class SimpleCoordinateFormatTest {
 
     private static final double EPS = 1e-10;
 
-    private static final String COMMA = ",";
     private static final String OPEN_PAREN = "(";
     private static final String CLOSE_PAREN = ")";
 
@@ -80,7 +79,7 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("{", "}");
 
         // assert
-        Assert.assertEquals(COMMA, formatter.getSeparator());
+        Assert.assertEquals(",", formatter.getSeparator());
         Assert.assertEquals("{", formatter.getPrefix());
         Assert.assertEquals("}", formatter.getSuffix());
     }
@@ -91,11 +90,11 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0)", formatter.format1D(1.0));
-        Assert.assertEquals("(-1.0)", formatter.format1D(-1.0));
-        Assert.assertEquals("(NaN)", formatter.format1D(Double.NaN));
-        Assert.assertEquals("(-Infinity)", formatter.format1D(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("(Infinity)", formatter.format1D(Double.POSITIVE_INFINITY));
+        Assert.assertEquals("(1.0)", formatter.format(1.0));
+        Assert.assertEquals("(-1.0)", formatter.format(-1.0));
+        Assert.assertEquals("(NaN)", formatter.format(Double.NaN));
+        Assert.assertEquals("(-Infinity)", formatter.format(Double.NEGATIVE_INFINITY));
+        Assert.assertEquals("(Infinity)", formatter.format(Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -104,11 +103,11 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0", formatter.format1D(1.0));
-        Assert.assertEquals("-1.0", formatter.format1D(-1.0));
-        Assert.assertEquals("NaN", formatter.format1D(Double.NaN));
-        Assert.assertEquals("-Infinity", formatter.format1D(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("Infinity", formatter.format1D(Double.POSITIVE_INFINITY));
+        Assert.assertEquals("1.0", formatter.format(1.0));
+        Assert.assertEquals("-1.0", formatter.format(-1.0));
+        Assert.assertEquals("NaN", formatter.format(Double.NaN));
+        Assert.assertEquals("-Infinity", formatter.format(Double.NEGATIVE_INFINITY));
+        Assert.assertEquals("Infinity", formatter.format(Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -117,10 +116,10 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0, -1.0)", formatter.format2D(1.0, -1.0));
-        Assert.assertEquals("(-1.0, 1.0)", formatter.format2D(-1.0, 1.0));
-        Assert.assertEquals("(NaN, -Infinity)", formatter.format2D(Double.NaN, Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("(-Infinity, Infinity)", formatter.format2D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertEquals("(1.0, -1.0)", formatter.format(1.0, -1.0));
+        Assert.assertEquals("(-1.0, 1.0)", formatter.format(-1.0, 1.0));
+        Assert.assertEquals("(NaN, -Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
+        Assert.assertEquals("(-Infinity, Infinity)", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -129,10 +128,10 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0, -1.0", formatter.format2D(1.0, -1.0));
-        Assert.assertEquals("-1.0, 1.0", formatter.format2D(-1.0, 1.0));
-        Assert.assertEquals("NaN, -Infinity", formatter.format2D(Double.NaN, Double.NEGATIVE_INFINITY));
-        Assert.assertEquals("-Infinity, Infinity", formatter.format2D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertEquals("1.0, -1.0", formatter.format(1.0, -1.0));
+        Assert.assertEquals("-1.0, 1.0", formatter.format(-1.0, 1.0));
+        Assert.assertEquals("NaN, -Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY));
+        Assert.assertEquals("-Infinity, Infinity", formatter.format(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -141,9 +140,9 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        Assert.assertEquals("(1.0, 0.0, -1.0)", formatter.format3D(1.0, 0.0, -1.0));
-        Assert.assertEquals("(-1.0, 1.0, 0.0)", formatter.format3D(-1.0, 1.0, 0.0));
-        Assert.assertEquals("(NaN, -Infinity, Infinity)", formatter.format3D(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertEquals("(1.0, 0.0, -1.0)", formatter.format(1.0, 0.0, -1.0));
+        Assert.assertEquals("(-1.0, 1.0, 0.0)", formatter.format(-1.0, 1.0, 0.0));
+        Assert.assertEquals("(NaN, -Infinity, Infinity)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -152,9 +151,9 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
 
         // act/assert
-        Assert.assertEquals("1.0, 0.0, -1.0", formatter.format3D(1.0, 0.0, -1.0));
-        Assert.assertEquals("-1.0, 1.0, 0.0", formatter.format3D(-1.0, 1.0, 0.0));
-        Assert.assertEquals("NaN, -Infinity, Infinity", formatter.format3D(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertEquals("1.0, 0.0, -1.0", formatter.format(1.0, 0.0, -1.0));
+        Assert.assertEquals("-1.0, 1.0, 0.0", formatter.format(-1.0, 1.0, 0.0));
+        Assert.assertEquals("NaN, -Infinity, Infinity", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
     @Test
@@ -163,9 +162,9 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("||", "<<", ">>");
 
         // act/assert
-        Assert.assertEquals("<<1.0>>", formatter.format1D(1.0));
-        Assert.assertEquals("<<1.0|| 2.0>>", formatter.format2D(1.0, 2.0));
-        Assert.assertEquals("<<1.0|| 2.0|| 3.0>>", formatter.format3D(1.0, 2.0, 3.0));
+        Assert.assertEquals("<<1.0>>", formatter.format(1.0));
+        Assert.assertEquals("<<1.0|| 2.0>>", formatter.format(1.0, 2.0));
+        Assert.assertEquals("<<1.0|| 2.0|| 3.0>>", formatter.format(1.0, 2.0, 3.0));
     }
 
     @Test
@@ -226,12 +225,12 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        checkParse1DFailure(formatter, "", "expected \"(\" but found \"\" at index 0");
-        checkParse1DFailure(formatter, "(1 ", "expected \")\" but found \"\" at index 3");
+        checkParse1DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
+        checkParse1DFailure(formatter, "(1 ", "index 3: expected \")\" but found \"\"");
 
-        checkParse1DFailure(formatter, "(abc)", "Failed to parse number from string at index 1: abc");
+        checkParse1DFailure(formatter, "(abc)", "unable to parse number from string \"abc\"");
 
-        checkParse1DFailure(formatter, "(1) 1", "unexpected content at index 4");
+        checkParse1DFailure(formatter, "(1) 1", "index 4: unexpected content");
     }
 
     @Test
@@ -288,12 +287,12 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        checkParse2DFailure(formatter, "", "expected \"(\" but found \"\" at index 0");
-        checkParse2DFailure(formatter, "(1, 2 ", "expected \")\" but found \"\" at index 6");
+        checkParse2DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
+        checkParse2DFailure(formatter, "(1, 2 ", "index 6: expected \")\" but found \"\"");
 
-        checkParse2DFailure(formatter, "(0,abc)", "Failed to parse number from string at index 3: abc");
+        checkParse2DFailure(formatter, "(0,abc)", "index 3: unable to parse number from string \"abc\"");
 
-        checkParse2DFailure(formatter, "(1, 2) 1", "unexpected content at index 7");
+        checkParse2DFailure(formatter, "(1, 2) 1", "index 7: unexpected content");
     }
 
     @Test
@@ -348,12 +347,12 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
-        checkParse3DFailure(formatter, "", "expected \"(\" but found \"\" at index 0");
-        checkParse3DFailure(formatter, "(1, 2, 3", "expected \")\" but found \"\" at index 8");
+        checkParse3DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
+        checkParse3DFailure(formatter, "(1, 2, 3", "index 8: expected \")\" but found \"\"");
 
-        checkParse3DFailure(formatter, "(0,0,abc)", "Failed to parse number from string at index 5: abc");
+        checkParse3DFailure(formatter, "(0,0,abc)", "index 5: unable to parse number from string \"abc\"");
 
-        checkParse3DFailure(formatter, "(1, 2, 3) 1", "unexpected content at index 10");
+        checkParse3DFailure(formatter, "(1, 2, 3) 1", "index 10: unexpected content");
     }
 
     @Test
@@ -373,21 +372,47 @@ public class SimpleCoordinateFormatTest {
         SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("||", "<<", ">>");
 
         // act/assert
-        checkParse1DFailure(formatter, "<", "expected \"<<\" but found \"<\" at index 0");
-        checkParse1DFailure(formatter, "<1.0>>", "expected \"<<\" but found \"<1\" at index 0");
-        checkParse2DFailure(formatter, "<<1.0| 2.0>>", "Failed to parse number from string at index 2: 1.0| 2.0");
-        checkParse3DFailure(formatter, "<<1.0|| 2.0|| 3.0>", "Failed to parse number from string at index 13:  3.0>");
+        checkParse1DFailure(formatter, "<", "index 0: expected \"<<\" but found \"<\"");
+        checkParse1DFailure(formatter, "<1.0>>", "index 0: expected \"<<\" but found \"<1\"");
+        checkParse2DFailure(formatter, "<<1.0| 2.0>>", "index 2: unable to parse number from string \"1.0| 2.0\"");
+        checkParse3DFailure(formatter, "<<1.0|| 2.0|| 3.0>", "index 13: unable to parse number from string \" 3.0>\"");
+    }
+
+    @Test
+    public void testDefaultPointFormat() {
+        // act
+        SimpleCoordinateFormat formatter = SimpleCoordinateFormat.getPointFormat();
+
+        // assert
+        Assert.assertEquals(",", formatter.getSeparator());
+        Assert.assertEquals("(", formatter.getPrefix());
+        Assert.assertEquals(")", formatter.getSuffix());
+
+        Assert.assertEquals("(1.0, 2.0)", formatter.format(1, 2));
+    }
+
+    @Test
+    public void testDefaultVectorFormat() {
+        // act
+        SimpleCoordinateFormat formatter = SimpleCoordinateFormat.getVectorFormat();
+
+        // assert
+        Assert.assertEquals(",", formatter.getSeparator());
+        Assert.assertEquals("{", formatter.getPrefix());
+        Assert.assertEquals("}", formatter.getSuffix());
+
+        Assert.assertEquals("{1.0, 2.0}", formatter.format(1, 2));
     }
 
     private void checkParse1D(SimpleCoordinateFormat formatter, String str, double v) {
-        Stub1D result = formatter.parse1D(str, FACTORY_1D);
+        Stub1D result = formatter.parse(str, FACTORY_1D);
 
         Assert.assertEquals(v, result.v, EPS);
     }
 
     private void checkParse1DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
         try {
-            formatter.parse1D(str, FACTORY_1D);
+            formatter.parse(str, FACTORY_1D);
             Assert.fail("Operation should have failed");
         }
         catch (IllegalArgumentException exc) {
@@ -398,7 +423,7 @@ public class SimpleCoordinateFormatTest {
     }
 
     private void checkParse2D(SimpleCoordinateFormat formatter, String str, double v1, double v2) {
-        Stub2D result = formatter.parse2D(str, FACTORY_2D);
+        Stub2D result = formatter.parse(str, FACTORY_2D);
 
         Assert.assertEquals(v1, result.v1, EPS);
         Assert.assertEquals(v2, result.v2, EPS);
@@ -406,7 +431,7 @@ public class SimpleCoordinateFormatTest {
 
     private void checkParse2DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
         try {
-            formatter.parse2D(str, FACTORY_2D);
+            formatter.parse(str, FACTORY_2D);
             Assert.fail("Operation should have failed");
         }
         catch (IllegalArgumentException exc) {
@@ -417,7 +442,7 @@ public class SimpleCoordinateFormatTest {
     }
 
     private void checkParse3D(SimpleCoordinateFormat formatter, String str, double v1, double v2, double v3) {
-        Stub3D result = formatter.parse3D(str, FACTORY_3D);
+        Stub3D result = formatter.parse(str, FACTORY_3D);
 
         Assert.assertEquals(v1, result.v1, EPS);
         Assert.assertEquals(v2, result.v2, EPS);
@@ -426,7 +451,7 @@ public class SimpleCoordinateFormatTest {
 
     private void checkParse3DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
         try {
-            formatter.parse3D(str, FACTORY_3D);
+            formatter.parse(str, FACTORY_3D);
             Assert.fail("Operation should have failed");
         }
         catch (IllegalArgumentException exc) {

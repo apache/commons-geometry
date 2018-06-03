@@ -17,6 +17,8 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -43,6 +45,16 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 1313493323784566947L;
+
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory3D<Point3D> FACTORY = new Coordinates.Factory3D<Point3D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Point3D create(double a1, double a2, double a3) {
+            return new Point3D(a1, a2, a3);
+        }
+    };
 
     /** Simple constructor.
      * Build a point from its coordinates
@@ -145,7 +157,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + getX() + "; " + getY() + "; " + getZ() + ")";
+        return SimpleCoordinateFormat.getPointFormat().format(getX(), getY(), getZ());
     }
 
     /** Returns a point with the given coordinate values
@@ -176,6 +188,23 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 3");
         }
         return new Point3D(p[0], p[1], p[2]);
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Point3D parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new point instances.
+     * @return point factory instance
+     */
+    public static Coordinates.Factory3D<Point3D> getFactory() {
+        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

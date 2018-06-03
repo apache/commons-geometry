@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -156,7 +157,7 @@ public class Point2DTest {
     public void testToString() {
         // arrange
         Point2D p = Point2D.of(1, 2);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}; 2.{0,2}\\)");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
         String str = p.toString();
@@ -164,6 +165,25 @@ public class Point2DTest {
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
                     pattern.matcher(str).matches());
+    }
+
+    @Test
+    public void testParse() {
+        // act/assert
+        checkPoint(Point2D.parse("(1, 2)"), 1, 2);
+        checkPoint(Point2D.parse("(-1, -2)"), -1, -2);
+
+        checkPoint(Point2D.parse("(0.01, -1e-3)"), 1e-2, -1e-3);
+
+        checkPoint(Point2D.parse("(NaN, -Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
+
+        checkPoint(Point2D.parse(Point2D.ZERO.toString()), 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        Point2D.parse("abc");
     }
 
     @Test
@@ -197,6 +217,16 @@ public class Point2DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Point2D.of(new double[] {0.0 });
+    }
+
+    @Test
+    public void testGetFactory() {
+        // act
+        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
+
+        // assert
+        checkPoint(factory.create(1, 2), 1, 2);
+        checkPoint(factory.create(-1, -2), -1, -2);
     }
 
     @Test

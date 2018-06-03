@@ -20,43 +20,43 @@ package org.apache.commons.geometry.core.util;
  */
 public class Coordinates {
 
-    /** Interface for classes that create new instances of a type from a single coordinate value.
+    /** Interface for classes that create objects from a single coordinate value.
      * @param <T> The type created by this factory.
      */
-    public static interface Factory1D<T> {
+    public interface Factory1D<T> {
 
         /** Creates a new instance of type T from the given coordinate value.
-         * @param v the first coordinate value
+         * @param a the coordinate value
          * @return a new instance of type T
          */
-        T create(double v);
+        T create(double a);
     }
 
-    /** Interface for classes that create new instances of a type from two coordinate values.
+    /** Interface for classes that create objects from two coordinate values.
      * @param <T> The type created by this factory.
      */
-    public static interface Factory2D<T> {
+    public interface Factory2D<T> {
 
         /** Creates a new instance of type T from the given coordinate values.
-         * @param v1 the first coordinate value
-         * @param v2 the second coordinate value
+         * @param a1 the first coordinate value
+         * @param a2 the second coordinate value
          * @return a new instance of type T
          */
-        T create(double v1, double v2);
+        T create(double a1, double a2);
     }
 
-    /** Interface for classes that create new instances of a type from three coordinate values.
+    /** Interface for classes that create objects from three coordinate values.
      * @param <T> The type created by this factory.
      */
-    public static interface Factory3D<T> {
+    public interface Factory3D<T> {
 
         /** Creates a new instance of type T from the given coordinate values.
-         * @param v1 the first coordinate value
-         * @param v2 the second coordinate value
-         * @param v3 the third coordinate value
+         * @param a1 the first coordinate value
+         * @param a2 the second coordinate value
+         * @param a3 the third coordinate value
          * @return a new instance of type T
          */
-        T create(double v1, double v2, double v3);
+        T create(double a1, double a2, double a3);
     }
 
     /** Private constructor. */

@@ -16,13 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
+public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = Vector3D.of(0, 0, 0);
@@ -63,6 +65,16 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
+
+    /** Factory for delegating instance creation. */
+    private static Coordinates.Factory3D<Vector3D> FACTORY = new Coordinates.Factory3D<Vector3D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3D create(double a1, double a2, double a3) {
+            return new Vector3D(a1, a2, a3);
+        }
+    };
 
     /** Simple constructor.
      * Build a vector from its coordinates
@@ -373,7 +385,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "{" + getX() + "; " + getY() + "; " + getZ() + "}";
+        return SimpleCoordinateFormat.getVectorFormat().format(getX(), getY(), getZ());
     }
 
     /** Computes the dot product between to vectors. This method simply
@@ -456,6 +468,23 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         double z = Math.sin(delta);
 
         return new Vector3D(x, y, z);
+    }
+
+    /** Parses the given string and returns a new vector instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return vector instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Vector3D parse(String str) throws IllegalArgumentException {
+        return SimpleCoordinateFormat.getVectorFormat().parse(str, FACTORY);
+    }
+
+    /** Returns a factory object that can be used to created new vector instances.
+     * @return vector factory instance
+     */
+    public static Coordinates.Factory3D<Vector3D> getFactory() {
+        return FACTORY;
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
