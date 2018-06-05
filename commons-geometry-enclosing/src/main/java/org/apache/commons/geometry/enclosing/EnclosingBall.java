@@ -22,7 +22,6 @@ import org.apache.commons.geometry.core.Point;
 
 /** This class represents a ball enclosing some points.
  * @param <P> Point type.
- * @see Space
  * @see Point
  * @see Encloser
  */

@@ -77,7 +77,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
     /** Get the remaining region of the hyperplane.
      * <p>The returned region is expressed in the canonical hyperplane
      * frame and has the hyperplane dimension. For example a chopped
-     * hyperplane in the 3D euclidean is a 2D plane and the
+     * hyperplane in the 3D Euclidean is a 2D plane and the
      * corresponding region is a convex 2D polygon.</p>
      * @return remaining region of the hyperplane
      */

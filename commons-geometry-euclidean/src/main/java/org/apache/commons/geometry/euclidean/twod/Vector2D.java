@@ -331,7 +331,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @param v1 first vector
      * @param v2 second vector
      * @return the dot product
-     * @see {@link #dotProduct(Vector2D)}
+     * @see #dotProduct(Vector2D)
      */
     public static double dotProduct(Vector2D v1, Vector2D v2) {
         return v1.dotProduct(v2);
@@ -342,7 +342,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @param v1 first vector
      * @param v2 second vector
      * @return the angle between the vectors in radians
-     * @see {@link #angle(Vector2D)}
+     * @see #angle(Vector2D)
      */
     public static double angle(Vector2D v1, Vector2D v2) {
         return v1.angle(v2);

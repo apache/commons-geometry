@@ -18,7 +18,7 @@
  *
  * <p>
  * This package provides algorithms to generate the convex hull
- * for a set of points in an two-dimensional euclidean space.
+ * for a set of points in an two-dimensional Euclidean space.
  * </p>
  *
  */

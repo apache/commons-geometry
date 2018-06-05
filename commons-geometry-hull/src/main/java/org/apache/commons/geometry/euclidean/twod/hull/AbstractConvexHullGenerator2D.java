@@ -21,7 +21,7 @@ import java.util.Collection;
 import org.apache.commons.geometry.euclidean.twod.Point2D;
 
 /**
- * Abstract base class for convex hull generators in the two-dimensional euclidean space.
+ * Abstract base class for convex hull generators in the two-dimensional Euclidean space.
  */
 abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 

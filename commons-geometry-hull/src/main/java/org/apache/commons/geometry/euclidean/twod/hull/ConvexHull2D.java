@@ -29,7 +29,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
 /**
- * This class represents a convex hull in an two-dimensional euclidean space.
+ * This class represents a convex hull in an two-dimensional Euclidean space.
  */
 public class ConvexHull2D implements ConvexHull<Point2D>, Serializable {
 

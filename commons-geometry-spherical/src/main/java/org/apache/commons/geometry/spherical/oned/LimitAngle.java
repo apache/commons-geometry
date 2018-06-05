@@ -83,9 +83,9 @@ public class LimitAngle implements Hyperplane<S1Point> {
      * <p>Since this class represent zero dimension spaces which does
      * not have lower dimension sub-spaces, this method returns a dummy
      * implementation of a {@link
-     * org.apache.commons.geometry.partitioning.SubHyperplane SubHyperplane}.
+     * org.apache.commons.geometry.core.partitioning.SubHyperplane SubHyperplane}.
      * This implementation is only used to allow the {@link
-     * org.apache.commons.geometry.partitioning.SubHyperplane
+     * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} class implementation to work properly, it should
      * <em>not</em> be used otherwise.</p>
      * @return a dummy sub hyperplane

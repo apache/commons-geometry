@@ -68,8 +68,8 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * class does not push the user towards one specific definition and hence does not
  * provide methods like <code>projectVectorIntoDestinationFrame</code> or
  * <code>computeTransformedDirection</code>. It provides simpler and more generic
- * methods: {@link #applyTo(Vector3D) applyTo(Cartesian3D)} and {@link
- * #applyInverseTo(Vector3D) applyInverseTo(Cartesian3D)}.</p>
+ * methods: {@link #applyTo(Vector3D) applyTo(Vector3D)} and {@link
+ * #applyInverseTo(Vector3D) applyInverseTo(Vector3D)}.</p>
  *
  * <p>Since a rotation is basically a vectorial operator, several rotations can be
  * composed together and the composite operation <code>r = r<sub>1</sub> o

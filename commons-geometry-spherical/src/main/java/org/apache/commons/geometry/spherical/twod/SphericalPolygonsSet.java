@@ -103,7 +103,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
-     * org.apache.commons.geometry.partitioning.Region#checkPoint(org.apache.commons.geometry.Point)
+     * org.apache.commons.geometry.core.partitioning.Region#checkPoint(org.apache.commons.geometry.core.Point)
      * checkPoint} method will not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
@@ -420,7 +420,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * <p>
      * This method is intended as a first test to quickly identify points
      * that are guaranteed to be outside of the region, hence performing a full
-     * {@link #checkPoint(org.apache.commons.geometry.Point) checkPoint}
+     * {@link #checkPoint(org.apache.commons.geometry.core.Point) checkPoint}
      * only if the point status remains undecided after the quick check. It is
      * is therefore mostly useful to speed up computation for small polygons with
      * complex shapes (say a country boundary on Earth), as the spherical cap will
@@ -455,7 +455,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * In the special cases of empty or whole sphere polygons, special
      * spherical caps are returned, with angular radius set to negative
      * or positive infinity so the {@link
-     * EnclosingBall#contains(org.apache.commons.geometry.Point) ball.contains(point)}
+     * EnclosingBall#contains(org.apache.commons.geometry.core.Point) ball.contains(point)}
      * method return always false or true.
      * </p>
      * <p>

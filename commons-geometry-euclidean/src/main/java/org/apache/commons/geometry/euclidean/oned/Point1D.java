@@ -201,7 +201,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @param a scale factor for first coordinate
      * @param c first coordinate
      * @return point with coordinates calculated by {@code a * c}
-     * @see {@link Vector1D#linearCombination(double, Vector1D)}
+     * @see Vector1D#linearCombination(double, Cartesian1D)
      */
     public static Point1D vectorCombination(double a, Cartesian1D c) {
         return new Point1D(a * c.getX());
@@ -226,7 +226,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @param a2 scale factor for second coordinate
      * @param c2 second coordinate
      * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2)}
-     * @see {@link Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D)}
+     * @see Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D)
      */
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2) {
         return new Point1D(
@@ -254,7 +254,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @param a3 scale factor for third coordinate
      * @param c3 third coordinate
      * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3)}
-     * @see {@link Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D, double, Cartesian1D)}
+     * @see Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D, double, Cartesian1D)
      */
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
             double a3, Cartesian1D c3) {
@@ -285,7 +285,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @param a4 scale factor for fourth coordinate
      * @param c4 fourth coordinate
      * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3) + (a4 * c4)}
-     * @see {@link Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D, double, Cartesian1D, double, Cartesian1D)}
+     * @see Vector1D#linearCombination(double, Cartesian1D, double, Cartesian1D, double, Cartesian1D, double, Cartesian1D)
      */
     public static Point1D vectorCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
             double a3, Cartesian1D c3, double a4, Cartesian1D c4) {

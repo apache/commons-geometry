@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
  * Note that due to the wrapping around \(2 \pi\), barycenter is
  * ill-defined here. It was defined only in order to fulfill
  * the requirements of the {@link
- * org.apache.commons.geometry.partitioning.Region Region}
+ * org.apache.commons.geometry.core.partitioning.Region Region}
  * interface, but its use is discouraged.
  * </p>
  */
@@ -101,7 +101,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
-     * org.apache.commons.geometry.partitioning.Region#checkPoint(org.apache.commons.geometry.Point)
+     * org.apache.commons.geometry.core.partitioning.Region#checkPoint(org.apache.commons.geometry.core.Point)
      * checkPoint} method will not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
@@ -932,7 +932,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     /** Specialized exception for inconsistent BSP tree state inconsistency.
      * <p>
      * This exception is thrown at {@link ArcsSet} construction time when the
-     * {@link org.apache.commons.geometry.partitioning.Region.Location inside/outside}
+     * {@link org.apache.commons.geometry.core.partitioning.Region.Location inside/outside}
      * state is not consistent at the 0, \(2 \pi \) crossing.
      * </p>
      */
