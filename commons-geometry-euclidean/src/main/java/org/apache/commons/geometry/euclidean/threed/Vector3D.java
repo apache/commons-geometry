@@ -27,38 +27,38 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
-    public static final Vector3D ZERO   = Vector3D.of(0, 0, 0);
+    public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
 
     /** First canonical vector (coordinates: 1, 0, 0). */
-    public static final Vector3D PLUS_X = Vector3D.of(1, 0, 0);
+    public static final Vector3D PLUS_X = new Vector3D(1, 0, 0);
 
     /** Opposite of the first canonical vector (coordinates: -1, 0, 0). */
-    public static final Vector3D MINUS_X = Vector3D.of(-1, 0, 0);
+    public static final Vector3D MINUS_X = new Vector3D(-1, 0, 0);
 
     /** Second canonical vector (coordinates: 0, 1, 0). */
-    public static final Vector3D PLUS_Y = Vector3D.of(0, 1, 0);
+    public static final Vector3D PLUS_Y = new Vector3D(0, 1, 0);
 
     /** Opposite of the second canonical vector (coordinates: 0, -1, 0). */
-    public static final Vector3D MINUS_Y = Vector3D.of(0, -1, 0);
+    public static final Vector3D MINUS_Y = new Vector3D(0, -1, 0);
 
     /** Third canonical vector (coordinates: 0, 0, 1). */
-    public static final Vector3D PLUS_Z = Vector3D.of(0, 0, 1);
+    public static final Vector3D PLUS_Z = new Vector3D(0, 0, 1);
 
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
-    public static final Vector3D MINUS_Z = Vector3D.of(0, 0, -1);
+    public static final Vector3D MINUS_Z = new Vector3D(0, 0, -1);
 
  // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final Vector3D NaN = Vector3D.of(Double.NaN, Double.NaN, Double.NaN);
+    public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector3D POSITIVE_INFINITY =
-        Vector3D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        new Vector3D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector3D NEGATIVE_INFINITY =
-        Vector3D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
     private static final long serialVersionUID = 3695385854431542858L;
@@ -147,7 +147,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D add(Vector3D v) {
-        return Vector3D.of(
+        return new Vector3D(
                     getX() + v.getX(),
                     getY() + v.getY(),
                     getZ() + v.getZ()
@@ -157,7 +157,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D add(double factor, Vector3D v) {
-        return Vector3D.of(
+        return new Vector3D(
                     getX() + (factor * v.getX()),
                     getY() + (factor * v.getY()),
                     getZ() + (factor * v.getZ())
@@ -167,7 +167,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D subtract(Vector3D v) {
-        return Vector3D.of(
+        return new Vector3D(
                     getX() - v.getX(),
                     getY() - v.getY(),
                     getZ() - v.getZ()
@@ -177,7 +177,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D subtract(double factor, Vector3D v) {
-        return Vector3D.of(
+        return new Vector3D(
                     getX() - (factor * v.getX()),
                     getY() - (factor * v.getY()),
                     getZ() - (factor * v.getZ())
@@ -187,7 +187,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D negate() {
-        return Vector3D.of(-getX(), -getY(), -getZ());
+        return new Vector3D(-getX(), -getY(), -getZ());
     }
 
     /** {@inheritDoc} */
@@ -227,13 +227,13 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
         if (Math.abs(x) <= threshold) {
             double inverse  = 1 / Math.sqrt(y * y + z * z);
-            return Vector3D.of(0, inverse * z, -inverse * y);
+            return new Vector3D(0, inverse * z, -inverse * y);
         } else if (Math.abs(y) <= threshold) {
             double inverse  = 1 / Math.sqrt(x * x + z * z);
-            return Vector3D.of(-inverse * z, 0, inverse * x);
+            return new Vector3D(-inverse * z, 0, inverse * x);
         }
         double inverse  = 1 / Math.sqrt(x * x + y * y);
-        return Vector3D.of(inverse * y, -inverse * x, 0);
+        return new Vector3D(inverse * y, -inverse * x, 0);
     }
 
     /** Compute the angular separation between two vectors.
@@ -272,7 +272,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @return the cross product this ^ v as a new Cartesian3D
      */
     public Vector3D crossProduct(final Vector3D v) {
-        return Vector3D.of(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
+        return new Vector3D(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
                             LinearCombination.value(getZ(), v.getX(), -getX(), v.getZ()),
                             LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
     }
@@ -280,7 +280,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D scalarMultiply(double a) {
-        return Vector3D.of(a * getX(), a * getY(), a * getZ());
+        return new Vector3D(a * getX(), a * getY(), a * getZ());
     }
 
     /** {@inheritDoc} */
