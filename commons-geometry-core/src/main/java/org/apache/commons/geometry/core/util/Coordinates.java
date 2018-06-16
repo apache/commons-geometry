@@ -23,6 +23,7 @@ public class Coordinates {
     /** Interface for classes that create objects from a single coordinate value.
      * @param <T> The type created by this factory.
      */
+    @FunctionalInterface
     public interface Factory1D<T> {
 
         /** Creates a new instance of type T from the given coordinate value.
@@ -35,6 +36,7 @@ public class Coordinates {
     /** Interface for classes that create objects from two coordinate values.
      * @param <T> The type created by this factory.
      */
+    @FunctionalInterface
     public interface Factory2D<T> {
 
         /** Creates a new instance of type T from the given coordinate values.
@@ -48,6 +50,7 @@ public class Coordinates {
     /** Interface for classes that create objects from three coordinate values.
      * @param <T> The type created by this factory.
      */
+    @FunctionalInterface
     public interface Factory3D<T> {
 
         /** Creates a new instance of type T from the given coordinate values.
