@@ -27,23 +27,23 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D, Vector1D> {
 
     /** Origin (coordinates: 0). */
-    public static final Point1D ZERO = Point1D.of(0.0);
+    public static final Point1D ZERO = new Point1D(0.0);
 
     /** Unit (coordinates: 1). */
-    public static final Point1D ONE  = Point1D.of(1.0);
+    public static final Point1D ONE  = new Point1D(1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final Point1D NaN = Point1D.of(Double.NaN);
+    public static final Point1D NaN = new Point1D(Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A point with all coordinates set to positive infinity. */
     public static final Point1D POSITIVE_INFINITY =
-        Point1D.of(Double.POSITIVE_INFINITY);
+        new Point1D(Double.POSITIVE_INFINITY);
 
     /** A point with all coordinates set to negative infinity. */
     public static final Point1D NEGATIVE_INFINITY =
-        Point1D.of(Double.NEGATIVE_INFINITY);
+        new Point1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
     private static final long serialVersionUID = 7556674948671647925L;
@@ -92,7 +92,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public Point1D add(Vector1D v) {
-        return Point1D.of(getX() + v.getX());
+        return new Point1D(getX() + v.getX());
     }
 
     /**

@@ -28,20 +28,20 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D, Vector3D> {
 
     /** Zero point (coordinates: 0, 0, 0). */
-    public static final Point3D ZERO   = Point3D.of(0, 0, 0);
+    public static final Point3D ZERO   = new Point3D(0, 0, 0);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final Point3D NaN = Point3D.of(Double.NaN, Double.NaN, Double.NaN);
+    public static final Point3D NaN = new Point3D(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A point with all coordinates set to positive infinity. */
     public static final Point3D POSITIVE_INFINITY =
-        Point3D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        new Point3D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** A point with all coordinates set to negative infinity. */
     public static final Point3D NEGATIVE_INFINITY =
-        Point3D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 1313493323784566947L;
@@ -97,7 +97,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public Point3D add(Vector3D v) {
-        return Point3D.of(
+        return new Point3D(
                     getX() + v.getX(),
                     getY() + v.getY(),
                     getZ() + v.getZ()

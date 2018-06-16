@@ -27,32 +27,32 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
-    public static final Vector2D ZERO   = Vector2D.of(0, 0);
+    public static final Vector2D ZERO   = new Vector2D(0, 0);
 
     /** Unit vector pointing in the direction of the positive x-axis. */
-    public static final Vector2D PLUS_X = Vector2D.of(1, 0);
+    public static final Vector2D PLUS_X = new Vector2D(1, 0);
 
     /** Unit vector pointing in the direction of the negative x-axis. */
-    public static final Vector2D MINUS_X = Vector2D.of(-1, 0);
+    public static final Vector2D MINUS_X = new Vector2D(-1, 0);
 
     /** Unit vector pointing in the direction of the positive y-axis. */
-    public static final Vector2D PLUS_Y = Vector2D.of(0, 1);
+    public static final Vector2D PLUS_Y = new Vector2D(0, 1);
 
     /** Unit vector pointing in the direction of the negative y-axis. */
-    public static final Vector2D MINUS_Y = Vector2D.of(0, -1);
+    public static final Vector2D MINUS_Y = new Vector2D(0, -1);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
-    public static final Vector2D NaN = Vector2D.of(Double.NaN, Double.NaN);
+    public static final Vector2D NaN = new Vector2D(Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** A vector with all coordinates set to positive infinity. */
     public static final Vector2D POSITIVE_INFINITY =
-        Vector2D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        new Vector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector2D NEGATIVE_INFINITY =
-        Vector2D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
     private static final long serialVersionUID = 1746839897232305304L;
@@ -129,31 +129,31 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D add(Vector2D v) {
-        return Vector2D.of(getX() + v.getX(), getY() + v.getY());
+        return new Vector2D(getX() + v.getX(), getY() + v.getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D add(double factor, Vector2D v) {
-        return Vector2D.of(getX() + (factor * v.getX()), getY() + (factor * v.getY()));
+        return new Vector2D(getX() + (factor * v.getX()), getY() + (factor * v.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(Vector2D v) {
-        return Vector2D.of(getX() - v.getX(), getY() - v.getY());
+        return new Vector2D(getX() - v.getX(), getY() - v.getY());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(double factor, Vector2D v) {
-        return Vector2D.of(getX() - (factor * v.getX()), getY() - (factor * v.getY()));
+        return new Vector2D(getX() - (factor * v.getX()), getY() - (factor * v.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D negate() {
-        return Vector2D.of(-getX(), -getY());
+        return new Vector2D(-getX(), -getY());
     }
 
     /** {@inheritDoc} */
@@ -169,7 +169,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D scalarMultiply(double a) {
-        return Vector2D.of(a * getX(), a * getY());
+        return new Vector2D(a * getX(), a * getY());
     }
 
     /** {@inheritDoc} */
