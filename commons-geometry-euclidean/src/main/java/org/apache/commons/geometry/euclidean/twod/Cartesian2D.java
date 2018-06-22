@@ -96,8 +96,8 @@ public abstract class Cartesian2D implements Spatial, Serializable {
      * @return Euclidean distance
      */
     protected double euclideanDistance(Cartesian2D other) {
-        double dx = x - other.x;
-        double dy = y - other.y;
-        return Math.sqrt((dx * dx) + (dy * dy));
+        final double dx = x - other.x;
+        final double dy = y - other.y;
+        return Math.hypot(dx, dy);
     }
 }
