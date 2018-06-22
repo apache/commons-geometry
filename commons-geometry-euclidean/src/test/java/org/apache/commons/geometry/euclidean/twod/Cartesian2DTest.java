@@ -1,5 +1,6 @@
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,6 +67,38 @@ public class Cartesian2DTest {
         Assert.assertFalse(new StubCartesian2D(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
         Assert.assertFalse(new StubCartesian2D(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
         Assert.assertFalse(new StubCartesian2D(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
+    public void testToPolar() {
+        // arrange
+        double sqrt2 = Math.sqrt(2.0);
+
+        // act/assert
+        checkPolar(new StubCartesian2D(0, 0).toPolar(), 0, 0);
+
+        checkPolar(new StubCartesian2D(1, 0).toPolar(), 1, 0);
+        checkPolar(new StubCartesian2D(-1, 0).toPolar(), 1, Geometry.PI);
+
+        checkPolar(new StubCartesian2D(0, 2).toPolar(), 2, Geometry.HALF_PI);
+        checkPolar(new StubCartesian2D(0, -2).toPolar(), 2, Geometry.MINUS_HALF_PI);
+
+        checkPolar(new StubCartesian2D(sqrt2, sqrt2).toPolar(), 2, 0.25 * Geometry.PI);
+        checkPolar(new StubCartesian2D(-sqrt2, sqrt2).toPolar(), 2, 0.75 * Geometry.PI);
+        checkPolar(new StubCartesian2D(sqrt2, -sqrt2).toPolar(), 2, -0.25 * Geometry.PI);
+        checkPolar(new StubCartesian2D(-sqrt2, -sqrt2).toPolar(), 2, -0.75 * Geometry.PI);
+    }
+
+    @Test
+    public void testToPolar_NaNAndInfinite() {
+        // act/assert
+        Assert.assertTrue(new StubCartesian2D(Double.NaN, Double.NaN).toPolar().isNaN());
+        Assert.assertTrue(new StubCartesian2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).toPolar().isInfinite());
+    }
+
+    private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
+        Assert.assertEquals(radius, polar.getRadius(), TEST_TOLERANCE);
+        Assert.assertEquals(azimuth, polar.getAzimuth(), TEST_TOLERANCE);
     }
 
     private static class StubCartesian2D extends Cartesian2D {

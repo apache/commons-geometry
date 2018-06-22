@@ -485,6 +485,28 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testOfPolar() {
+        // arrange
+        double eps = 1e-15;
+        double sqrt2 = Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.ofPolar(0, 0), 0, 0, eps);
+        checkVector(Vector2D.ofPolar(1, 0), 1, 0, eps);
+
+        checkVector(Vector2D.ofPolar(2, Geometry.PI), -2, 0, eps);
+        checkVector(Vector2D.ofPolar(-2, Geometry.PI), 2, 0, eps);
+
+        checkVector(Vector2D.ofPolar(2, Geometry.HALF_PI), 0, 2, eps);
+        checkVector(Vector2D.ofPolar(-2, Geometry.HALF_PI), 0, -2, eps);
+
+        checkVector(Vector2D.ofPolar(2, 0.25 * Geometry.PI), sqrt2, sqrt2, eps);
+        checkVector(Vector2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
+        checkVector(Vector2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
+        checkVector(Vector2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
+    }
+
+    @Test
     public void testGetFactory() {
         // act
         Coordinates.Factory2D<Vector2D> factory = Vector2D.getFactory();
@@ -546,8 +568,12 @@ public class Vector2DTest {
     }
 
     private void checkVector(Vector2D v, double x, double y) {
-        Assert.assertEquals(x, v.getX(), EPS);
-        Assert.assertEquals(y, v.getY(), EPS);
+        checkVector(v, x, y, EPS);
+    }
+
+    private void checkVector(Vector2D v, double x, double y, double eps) {
+        Assert.assertEquals(x, v.getX(), eps);
+        Assert.assertEquals(y, v.getY(), eps);
     }
 
     private void checkPoint(Point2D p, double x, double y) {

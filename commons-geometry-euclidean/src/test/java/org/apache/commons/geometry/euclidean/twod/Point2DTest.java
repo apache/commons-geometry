@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -220,6 +221,28 @@ public class Point2DTest {
     }
 
     @Test
+    public void testOfPolar() {
+        // arrange
+        double eps = 1e-15;
+        double sqrt2 = Math.sqrt(2.0);
+
+        // act/assert
+        checkPoint(Point2D.ofPolar(0, 0), 0, 0, eps);
+        checkPoint(Point2D.ofPolar(1, 0), 1, 0, eps);
+
+        checkPoint(Point2D.ofPolar(2, Geometry.PI), -2, 0, eps);
+        checkPoint(Point2D.ofPolar(-2, Geometry.PI), 2, 0, eps);
+
+        checkPoint(Point2D.ofPolar(2, Geometry.HALF_PI), 0, 2, eps);
+        checkPoint(Point2D.ofPolar(-2, Geometry.HALF_PI), 0, -2, eps);
+
+        checkPoint(Point2D.ofPolar(2, 0.25 * Geometry.PI), sqrt2, sqrt2, eps);
+        checkPoint(Point2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
+        checkPoint(Point2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
+        checkPoint(Point2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
+    }
+
+    @Test
     public void testGetFactory() {
         // act
         Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
@@ -286,7 +309,11 @@ public class Point2DTest {
     }
 
     private void checkPoint(Point2D p, double x, double y) {
-        Assert.assertEquals(x, p.getX(), EPS);
-        Assert.assertEquals(y, p.getY(), EPS);
+        checkPoint(p, x, y, EPS);
+    }
+
+    private void checkPoint(Point2D p, double x, double y, double eps) {
+        Assert.assertEquals(x, p.getX(), eps);
+        Assert.assertEquals(y, p.getY(), eps);
     }
 }

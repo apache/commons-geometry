@@ -59,6 +59,13 @@ public abstract class Cartesian2D implements Spatial, Serializable {
         return y;
     }
 
+    /** Return an equivalent set of coordinates in polar form.
+     * @return An equivalent set of coordinates in polar form.
+     */
+    public PolarCoordinates toPolar() {
+        return PolarCoordinates.ofCartesian(x, y);
+    }
+
     /** Get the coordinates for this instance as a dimension 2 array.
      * @return coordinates for this instance
      */

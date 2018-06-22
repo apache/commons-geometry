@@ -178,6 +178,15 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         return new Point2D(p[0], p[1]);
     }
 
+    /**Return a point with coordinates equivalent to the given set of polar coordinates.
+     * @param radius The polar coordinate radius value.
+     * @param azimuth The polar coordinate azimuth angle in radians.
+     * @return point instance with coordinates equivalent to the given polar coordinates.
+     */
+    public static Point2D ofPolar(final double radius, final double azimuth) {
+        return PolarCoordinates.toCartesian(radius, azimuth, getFactory());
+    }
+
     /** Parses the given string and returns a new point instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse

@@ -377,6 +377,15 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return new Vector2D(v[0], v[1]);
     }
 
+    /** Return a vector with coordinates equivalent to the given set of polar coordinates.
+     * @param radius The polar coordinate radius value.
+     * @param azimuth The polar coordinate azimuth angle in radians.
+     * @return vector instance with coordinates equivalent to the given polar coordinates.
+     */
+    public static Vector2D ofPolar(final double radius, final double azimuth) {
+        return PolarCoordinates.toCartesian(radius, azimuth, getFactory());
+    }
+
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
