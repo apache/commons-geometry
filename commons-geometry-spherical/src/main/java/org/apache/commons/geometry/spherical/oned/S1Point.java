@@ -19,8 +19,8 @@ package org.apache.commons.geometry.spherical.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.util.RealFunction;
+import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
@@ -38,12 +38,12 @@ public final class S1Point implements Point<S1Point>, Serializable {
     private static final long serialVersionUID = 20131218L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory1D<S1Point> FACTORY = new Coordinates.Factory1D<S1Point>() {
+    private static RealFunction<S1Point> FACTORY = new RealFunction<S1Point>() {
 
         /** {@inheritDoc} */
         @Override
-        public S1Point create(double a) {
-            return S1Point.of(a);
+        public S1Point apply(double n) {
+            return S1Point.of(n);
         }
     };
 
@@ -167,7 +167,7 @@ public final class S1Point implements Point<S1Point>, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(getAlpha());
+        return SimpleTupleFormat.getDefault().format(getAlpha());
     }
 
     /** Creates a new point instance from the given azimuthal coordinate value.
@@ -189,13 +189,13 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static S1Point parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a factory object that can be used to created new point instances.
      * @return point factory instance
      */
-    public static Coordinates.Factory1D<S1Point> getFactory() {
+    public static RealFunction<S1Point> getFactory() {
         return FACTORY;
     }
 }

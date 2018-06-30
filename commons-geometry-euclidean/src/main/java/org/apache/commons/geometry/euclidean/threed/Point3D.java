@@ -17,8 +17,8 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.util.RealFunction3N;
+import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -47,12 +47,12 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     private static final long serialVersionUID = 1313493323784566947L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory3D<Point3D> FACTORY = new Coordinates.Factory3D<Point3D>() {
+    private static RealFunction3N<Point3D> FACTORY = new RealFunction3N<Point3D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Point3D create(double a1, double a2, double a3) {
-            return new Point3D(a1, a2, a3);
+        public Point3D apply(double n1, double n2, double n3) {
+            return new Point3D(n1, n2, n3);
         }
     };
 
@@ -154,12 +154,6 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(getX(), getY(), getZ());
-    }
-
     /** Returns a point with the given coordinate values
      * @param x abscissa (first coordinate value)
      * @param y ordinate (second coordinate value)
@@ -197,13 +191,13 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point3D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a factory object that can be used to created new point instances.
      * @return point factory instance
      */
-    public static Coordinates.Factory3D<Point3D> getFactory() {
+    public static RealFunction3N<Point3D> getFactory() {
         return FACTORY;
     }
 

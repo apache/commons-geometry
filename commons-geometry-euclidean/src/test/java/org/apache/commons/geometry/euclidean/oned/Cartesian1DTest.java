@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,6 +64,20 @@ public class Cartesian1DTest {
 
         Assert.assertFalse(new StubCartesian1D(1).isInfinite());
         Assert.assertFalse(new StubCartesian1D(Double.NaN).isInfinite());
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        StubCartesian1D c = new StubCartesian1D(1);
+        Pattern pattern = Pattern.compile("\\(1.{0,2}\\)");
+
+        // act
+        String str = c.toString();
+
+        // assert
+        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
+                    pattern.matcher(str).matches());
     }
 
     private static class StubCartesian1D extends Cartesian1D {

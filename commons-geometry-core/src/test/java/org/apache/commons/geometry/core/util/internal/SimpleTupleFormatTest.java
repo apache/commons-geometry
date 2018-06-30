@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util;
+package org.apache.commons.geometry.core.util.internal;
 
+import org.apache.commons.geometry.core.util.RealFunction;
+import org.apache.commons.geometry.core.util.RealFunction2N;
+import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SimpleCoordinateFormatTest {
+public class SimpleTupleFormatTest {
 
     private static final double EPS = 1e-10;
 
     private static final String OPEN_PAREN = "(";
     private static final String CLOSE_PAREN = ")";
 
-    private static Coordinates.Factory1D<Stub1D> FACTORY_1D = new Coordinates.Factory1D<Stub1D>() {
+    private static RealFunction<Stub1D> FACTORY_1D = new RealFunction<Stub1D>() {
 
         @Override
-        public Stub1D create(double v) {
+        public Stub1D apply(double v) {
             Stub1D result = new Stub1D();
             result.v = v;
 
@@ -37,10 +40,10 @@ public class SimpleCoordinateFormatTest {
         }
     };
 
-    private static Coordinates.Factory2D<Stub2D> FACTORY_2D = new Coordinates.Factory2D<Stub2D>() {
+    private static RealFunction2N<Stub2D> FACTORY_2D = new RealFunction2N<Stub2D>() {
 
         @Override
-        public Stub2D create(double v1, double v2) {
+        public Stub2D apply(double v1, double v2) {
             Stub2D result = new Stub2D();
             result.v1 = v1;
             result.v2 = v2;
@@ -49,10 +52,10 @@ public class SimpleCoordinateFormatTest {
         }
     };
 
-    private static Coordinates.Factory3D<Stub3D> FACTORY_3D = new Coordinates.Factory3D<Stub3D>() {
+    private static RealFunction3N<Stub3D> FACTORY_3D = new RealFunction3N<Stub3D>() {
 
         @Override
-        public Stub3D create(double v1, double v2, double v3) {
+        public Stub3D apply(double v1, double v2, double v3) {
             Stub3D result = new Stub3D();
             result.v1 = v1;
             result.v2 = v2;
@@ -65,7 +68,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testConstructor() {
         // act
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("|", "{", "}");
+        SimpleTupleFormat formatter = new SimpleTupleFormat("|", "{", "}");
 
         // assert
         Assert.assertEquals("|", formatter.getSeparator());
@@ -76,7 +79,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testConstructor_defaultSeparator() {
         // act
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("{", "}");
+        SimpleTupleFormat formatter = new SimpleTupleFormat("{", "}");
 
         // assert
         Assert.assertEquals(",", formatter.getSeparator());
@@ -87,7 +90,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat1D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0)", formatter.format(1.0));
@@ -100,7 +103,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat1D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0", formatter.format(1.0));
@@ -113,7 +116,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat2D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0, -1.0)", formatter.format(1.0, -1.0));
@@ -125,7 +128,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat2D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0, -1.0", formatter.format(1.0, -1.0));
@@ -137,7 +140,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat3D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         Assert.assertEquals("(1.0, 0.0, -1.0)", formatter.format(1.0, 0.0, -1.0));
@@ -148,7 +151,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat3D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         Assert.assertEquals("1.0, 0.0, -1.0", formatter.format(1.0, 0.0, -1.0));
@@ -159,7 +162,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testFormat_longTokens() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("||", "<<", ">>");
+        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         Assert.assertEquals("<<1.0>>", formatter.format(1.0));
@@ -170,7 +173,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse1D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse1D(formatter, "(1)", 1.0);
@@ -196,7 +199,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse1D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse1D(formatter, "1", 1.0);
@@ -222,7 +225,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse1D_failure() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse1DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -236,7 +239,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse2D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse2D(formatter, "(1,-2)", 1.0, -2.0);
@@ -260,7 +263,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse2D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse2D(formatter, "1,-2", 1.0, -2.0);
@@ -284,7 +287,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse2D_failure() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse2DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -298,7 +301,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse3D() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse3D(formatter, "(1,-2,3)", 1.0, -2.0, 3.0);
@@ -321,7 +324,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse3D_noPrefixSuffix() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(null, null);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
 
         // act/assert
         checkParse3D(formatter, "1,-2,3", 1.0, -2.0, 3.0);
@@ -344,7 +347,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse3D_failure() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat(OPEN_PAREN, CLOSE_PAREN);
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
 
         // act/assert
         checkParse3DFailure(formatter, "", "index 0: expected \"(\" but found \"\"");
@@ -358,7 +361,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse_longTokens() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("||", "<<", ">>");
+        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         checkParse1D(formatter, "<<1.0>>", 1.0);
@@ -369,7 +372,7 @@ public class SimpleCoordinateFormatTest {
     @Test
     public void testParse_longTokens_failure() {
         // arrange
-        SimpleCoordinateFormat formatter = new SimpleCoordinateFormat("||", "<<", ">>");
+        SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");
 
         // act/assert
         checkParse1DFailure(formatter, "<", "index 0: expected \"<<\" but found \"<\"");
@@ -379,9 +382,9 @@ public class SimpleCoordinateFormatTest {
     }
 
     @Test
-    public void testDefaultPointFormat() {
+    public void testDefaultInstance() {
         // act
-        SimpleCoordinateFormat formatter = SimpleCoordinateFormat.getPointFormat();
+        SimpleTupleFormat formatter = SimpleTupleFormat.getDefault();
 
         // assert
         Assert.assertEquals(",", formatter.getSeparator());
@@ -391,26 +394,13 @@ public class SimpleCoordinateFormatTest {
         Assert.assertEquals("(1.0, 2.0)", formatter.format(1, 2));
     }
 
-    @Test
-    public void testDefaultVectorFormat() {
-        // act
-        SimpleCoordinateFormat formatter = SimpleCoordinateFormat.getVectorFormat();
-
-        // assert
-        Assert.assertEquals(",", formatter.getSeparator());
-        Assert.assertEquals("{", formatter.getPrefix());
-        Assert.assertEquals("}", formatter.getSuffix());
-
-        Assert.assertEquals("{1.0, 2.0}", formatter.format(1, 2));
-    }
-
-    private void checkParse1D(SimpleCoordinateFormat formatter, String str, double v) {
+    private void checkParse1D(SimpleTupleFormat formatter, String str, double v) {
         Stub1D result = formatter.parse(str, FACTORY_1D);
 
         Assert.assertEquals(v, result.v, EPS);
     }
 
-    private void checkParse1DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
+    private void checkParse1DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_1D);
             Assert.fail("Operation should have failed");
@@ -422,14 +412,14 @@ public class SimpleCoordinateFormatTest {
         }
     }
 
-    private void checkParse2D(SimpleCoordinateFormat formatter, String str, double v1, double v2) {
+    private void checkParse2D(SimpleTupleFormat formatter, String str, double v1, double v2) {
         Stub2D result = formatter.parse(str, FACTORY_2D);
 
         Assert.assertEquals(v1, result.v1, EPS);
         Assert.assertEquals(v2, result.v2, EPS);
     }
 
-    private void checkParse2DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
+    private void checkParse2DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_2D);
             Assert.fail("Operation should have failed");
@@ -441,7 +431,7 @@ public class SimpleCoordinateFormatTest {
         }
     }
 
-    private void checkParse3D(SimpleCoordinateFormat formatter, String str, double v1, double v2, double v3) {
+    private void checkParse3D(SimpleTupleFormat formatter, String str, double v1, double v2, double v3) {
         Stub3D result = formatter.parse(str, FACTORY_3D);
 
         Assert.assertEquals(v1, result.v1, EPS);
@@ -449,7 +439,7 @@ public class SimpleCoordinateFormatTest {
         Assert.assertEquals(v3, result.v3, EPS);
     }
 
-    private void checkParse3DFailure(SimpleCoordinateFormat formatter, String str, String msgSubstr) {
+    private void checkParse3DFailure(SimpleTupleFormat formatter, String str, String msgSubstr) {
         try {
             formatter.parse(str, FACTORY_3D);
             Assert.fail("Operation should have failed");

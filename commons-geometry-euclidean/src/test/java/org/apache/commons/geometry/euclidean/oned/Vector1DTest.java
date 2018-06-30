@@ -2,7 +2,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -281,7 +281,7 @@ public class Vector1DTest {
     public void testToString() {
         // arrange
         Vector1D v = Vector1D.of(3);
-        Pattern pattern = Pattern.compile("\\{3.{0,2}\\}");
+        Pattern pattern = Pattern.compile("\\(3.{0,2}\\)");
 
         // act
         String str = v.toString();
@@ -294,13 +294,13 @@ public class Vector1DTest {
     @Test
     public void testParse() {
         // act/assert
-        checkVector(Vector1D.parse("{1}"), 1);
-        checkVector(Vector1D.parse("{-1}"), -1);
+        checkVector(Vector1D.parse("(1)"), 1);
+        checkVector(Vector1D.parse("(-1)"), -1);
 
-        checkVector(Vector1D.parse("{0.01}"), 1e-2);
-        checkVector(Vector1D.parse("{-1e-3}"), -1e-3);
+        checkVector(Vector1D.parse("(0.01)"), 1e-2);
+        checkVector(Vector1D.parse("(-1e-3)"), -1e-3);
 
-        checkVector(Vector1D.parse("{NaN}"), Double.NaN);
+        checkVector(Vector1D.parse("(NaN)"), Double.NaN);
 
         checkVector(Vector1D.parse(Vector1D.ZERO.toString()), 0);
         checkVector(Vector1D.parse(Vector1D.ONE.toString()), 1);
@@ -339,11 +339,11 @@ public class Vector1DTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory1D<Vector1D> factory = Vector1D.getFactory();
+        RealFunction<Vector1D> factory = Vector1D.getFactory();
 
         // assert
-        checkVector(factory.create(1), 1);
-        checkVector(factory.create(-1), -1);
+        checkVector(factory.apply(1), 1);
+        checkVector(factory.apply(-1), -1);
     }
 
     @Test

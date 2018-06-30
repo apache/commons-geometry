@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction2N;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -222,11 +222,11 @@ public class Point2DTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
+        RealFunction2N<Point2D> factory = Point2D.getFactory();
 
         // assert
-        checkPoint(factory.create(1, 2), 1, 2);
-        checkPoint(factory.create(-1, -2), -1, -2);
+        checkPoint(factory.apply(1, 2), 1, 2);
+        checkPoint(factory.apply(-1, -2), -1, -2);
     }
 
     @Test

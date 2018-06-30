@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -231,11 +231,11 @@ public class Point1DTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory1D<Point1D> factory = Point1D.getFactory();
+        RealFunction<Point1D> factory = Point1D.getFactory();
 
         // assert
-        checkPoint(factory.create(1), 1);
-        checkPoint(factory.create(-1), -1);
+        checkPoint(factory.apply(1), 1);
+        checkPoint(factory.apply(-1), -1);
     }
 
     @Test

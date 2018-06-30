@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.util.RealFunction;
+import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -49,12 +49,12 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     private static final long serialVersionUID = 1582116020164328846L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory1D<Vector1D> FACTORY = new Coordinates.Factory1D<Vector1D>() {
+    private static RealFunction<Vector1D> FACTORY = new RealFunction<Vector1D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D create(double a) {
-            return new Vector1D(a);
+        public Vector1D apply(double n) {
+            return new Vector1D(n);
         }
     };
 
@@ -229,12 +229,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getVectorFormat().format(getX());
-    }
-
     /** Returns a vector with the given coordinate value.
      * @param x vector coordinate
      * @return vector instance
@@ -258,13 +252,13 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Vector1D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getVectorFormat().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a factory object that can be used to created new vector instances.
      * @return vector factory instance
      */
-    public static Coordinates.Factory1D<Vector1D> getFactory() {
+    public static RealFunction<Vector1D> getFactory() {
         return FACTORY;
     }
 

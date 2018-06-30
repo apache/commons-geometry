@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -245,11 +245,11 @@ public class Point3DTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory3D<Point3D> factory = Point3D.getFactory();
+        RealFunction3N<Point3D> factory = Point3D.getFactory();
 
         // assert
-        checkPoint(factory.create(1, 2, 3), 1, 2, 3);
-        checkPoint(factory.create(-1, -2, -3), -1, -2, -3);
+        checkPoint(factory.apply(1, 2, 3), 1, 2, 3);
+        checkPoint(factory.apply(-1, -2, -3), -1, -2, -3);
     }
 
     @Test

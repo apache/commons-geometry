@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -83,12 +83,12 @@ public class S1PointTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory1D<S1Point> factory = S1Point.getFactory();
+        RealFunction<S1Point> factory = S1Point.getFactory();
 
         // assert
-        checkPoint(factory.create(0), 0);
-        checkPoint(factory.create(1), 1);
-        checkPoint(factory.create(Geometry.TWO_PI), 0);
+        checkPoint(factory.apply(0), 0);
+        checkPoint(factory.apply(1), 1);
+        checkPoint(factory.apply(Geometry.TWO_PI), 0);
     }
 
     private void checkPoint(S1Point p, double alpha) {

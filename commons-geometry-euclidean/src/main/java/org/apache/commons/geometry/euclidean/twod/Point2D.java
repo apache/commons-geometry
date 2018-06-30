@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.util.RealFunction2N;
+import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -46,12 +46,12 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     private static final long serialVersionUID = 266938651998679754L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory2D<Point2D> FACTORY = new Coordinates.Factory2D<Point2D>() {
+    private static RealFunction2N<Point2D> FACTORY = new RealFunction2N<Point2D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Point2D create(double a1, double a2) {
-            return new Point2D(a1, a2);
+        public Point2D apply(double n1, double n2) {
+            return new Point2D(n1, n2);
         }
     };
 
@@ -143,12 +143,6 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(getX(), getY());
-    }
-
     /** Returns a point with the given coordinate values
      * @param x abscissa (first coordinate value)
      * @param y ordinate (second coordinate value)
@@ -185,13 +179,13 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point2D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a factory object that can be used to created new point instances.
      * @return point factory instance
      */
-    public static Coordinates.Factory2D<Point2D> getFactory() {
+    public static RealFunction2N<Point2D> getFactory() {
         return FACTORY;
     }
 

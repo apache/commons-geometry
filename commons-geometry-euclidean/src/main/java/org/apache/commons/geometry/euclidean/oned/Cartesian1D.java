@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Spatial;
+import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 
 /** This class represents a Cartesian coordinate value in
  * one-dimensional Euclidean space.
@@ -63,5 +64,11 @@ public abstract class Cartesian1D implements Spatial, Serializable {
     @Override
     public boolean isInfinite() {
         return !isNaN() && Double.isInfinite(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(getX());
     }
 }

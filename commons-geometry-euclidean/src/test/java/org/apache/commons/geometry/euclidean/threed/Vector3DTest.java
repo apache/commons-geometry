@@ -20,7 +20,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -619,7 +619,7 @@ public class Vector3DTest {
     public void testToString() {
         // arrange
         Vector3D v = Vector3D.of(1, 2, 3);
-        Pattern pattern = Pattern.compile("\\{1.{0,2}, 2.{0,2}, 3.{0,2}\\}");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
 
         // act
         String str = v.toString();
@@ -632,12 +632,12 @@ public class Vector3DTest {
     @Test
     public void testParse() {
         // act/assert
-        checkVector(Vector3D.parse("{1, 2, 3}"), 1, 2, 3);
-        checkVector(Vector3D.parse("{-1, -2, -3}"), -1, -2, -3);
+        checkVector(Vector3D.parse("(1, 2, 3)"), 1, 2, 3);
+        checkVector(Vector3D.parse("(-1, -2, -3)"), -1, -2, -3);
 
-        checkVector(Vector3D.parse("{0.01, -1e-3, 0}"), 1e-2, -1e-3, 0);
+        checkVector(Vector3D.parse("(0.01, -1e-3, 0)"), 1e-2, -1e-3, 0);
 
-        checkVector(Vector3D.parse("{NaN, -Infinity, Infinity}"), Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        checkVector(Vector3D.parse("(NaN, -Infinity, Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         checkVector(Vector3D.parse(Vector3D.ZERO.toString()), 0, 0, 0);
         checkVector(Vector3D.parse(Vector3D.MINUS_X.toString()), -1, 0, 0);
@@ -691,11 +691,11 @@ public class Vector3DTest {
     @Test
     public void testGetFactory() {
         // act
-        Coordinates.Factory3D<Vector3D> factory = Vector3D.getFactory();
+        RealFunction3N<Vector3D> factory = Vector3D.getFactory();
 
         // assert
-        checkVector(factory.create(1, 2, 3), 1, 2, 3);
-        checkVector(factory.create(-1, -2, -3), -1, -2, -3);
+        checkVector(factory.apply(1, 2, 3), 1, 2, 3);
+        checkVector(factory.apply(-1, -2, -3), -1, -2, -3);
     }
 
     @Test
