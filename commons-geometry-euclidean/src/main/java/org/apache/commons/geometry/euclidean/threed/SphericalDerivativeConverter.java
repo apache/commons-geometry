@@ -16,52 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-
-import java.io.Serializable;
-
-/** This class provides conversions related to <a
- * href="http://mathworld.wolfram.com/SphericalCoordinates.html">spherical coordinates</a>.
- * <p>
- * The conventions used here are the mathematical ones, i.e. spherical coordinates are
- * related to Cartesian coordinates as follows:
- * </p>
- * <ul>
- *   <li>x = r cos(&theta;) sin(&Phi;)</li>
- *   <li>y = r sin(&theta;) sin(&Phi;)</li>
- *   <li>z = r cos(&Phi;)</li>
- * </ul>
- * <ul>
- *   <li>r       = &radic;(x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>)</li>
- *   <li>&theta; = atan2(y, x)</li>
- *   <li>&Phi;   = acos(z/r)</li>
- * </ul>
- * <p>
- * r is the radius, &theta; is the azimuthal angle in the x-y plane and &Phi; is the polar
- * (co-latitude) angle. These conventions are <em>different</em> from the conventions used
- * in physics (and in particular in spherical harmonics) where the meanings of &theta; and
- * &Phi; are reversed.
- * </p>
- * <p>
- * This class provides conversion of coordinates and also of gradient and Hessian
- * between spherical and Cartesian coordinates.
- * </p>
+/** Class containing methods for converting gradients and Hessian
+ * matrices from spherical to Cartesian coordinates.
  */
-public class SphericalCoordinates_OLD implements Serializable {
+public class SphericalDerivativeConverter {
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20130206L;
+    /** Spherical coordinates. */
+    private final SphericalCoordinates spherical;
 
-    /** Cartesian coordinates. */
-    private final Vector3D v;
-
-    /** Radius. */
-    private final double r;
-
-    /** Azimuthal angle in the x-y plane &theta;. */
-    private final double theta;
-
-    /** Polar angle (co-latitude) &Phi;. */
-    private final double phi;
+    /** Cartesian vector equivalent to spherical coordinates. */
+    private final Vector3D vector;
 
     /** Jacobian of (r, &theta; &Phi;). */
     private double[][] jacobian;
@@ -75,77 +39,26 @@ public class SphericalCoordinates_OLD implements Serializable {
     /** Hessian of polar (co-latitude) angle &Phi;. */
     private double[][] phiHessian;
 
-    /** Build a spherical coordinates transformer from Cartesian coordinates.
-     * @param v Cartesian coordinates
-     */
-    public SphericalCoordinates_OLD(final Vector3D v) {
+    public SphericalDerivativeConverter(SphericalCoordinates spherical) {
+        this.spherical = spherical;
+        this.vector = spherical.toVector();
 
-        // Cartesian coordinates
-        this.v = v;
-
-        // remaining spherical coordinates
-        this.r     = v.getNorm();
-        this.theta = 0.0; //v.getAlpha();
-        this.phi   = Math.acos(v.getZ() / r);
-
+        computeJacobian();
     }
 
-    /** Build a spherical coordinates transformer from spherical coordinates.
-     * @param r radius
-     * @param theta azimuthal angle in x-y plane
-     * @param phi polar (co-latitude) angle
+    /** Return the {@link SphericalCoordinates} for this instance.
+     * @return spherical coordinates for this instance
      */
-    public SphericalCoordinates_OLD(final double r, final double theta, final double phi) {
-
-        final double cosTheta = Math.cos(theta);
-        final double sinTheta = Math.sin(theta);
-        final double cosPhi   = Math.cos(phi);
-        final double sinPhi   = Math.sin(phi);
-
-        // spherical coordinates
-        this.r     = r;
-        this.theta = theta;
-        this.phi   = phi;
-
-        // Cartesian coordinates
-        this.v  = Vector3D.of(r * cosTheta * sinPhi,
-                               r * sinTheta * sinPhi,
-                               r * cosPhi);
-
+    public SphericalCoordinates getSpherical() {
+        return spherical;
     }
 
-    /** Get the Cartesian coordinates.
-     * @return Cartesian coordinates
+    /** Return the {@link Vector3D} for this instance. This vector is
+     * equivalent to the spherical coordinates.
+     * @return vector for this instance
      */
-    public Vector3D getCartesian() {
-        return v;
-    }
-
-    /** Get the radius.
-     * @return radius r
-     * @see #getTheta()
-     * @see #getPhi()
-     */
-    public double getR() {
-        return r;
-    }
-
-    /** Get the azimuthal angle in x-y plane.
-     * @return azimuthal angle in x-y plane &theta;
-     * @see #getR()
-     * @see #getPhi()
-     */
-    public double getTheta() {
-        return theta;
-    }
-
-    /** Get the polar (co-latitude) angle.
-     * @return polar (co-latitude) angle &Phi;
-     * @see #getR()
-     * @see #getTheta()
-     */
-    public double getPhi() {
-        return phi;
+    public Vector3D getVector() {
+        return vector;
     }
 
     /** Convert a gradient with respect to spherical coordinates into a gradient
@@ -156,10 +69,6 @@ public class SphericalCoordinates_OLD implements Serializable {
      * {df/dx, df/dy, df/dz}
      */
     public double[] toCartesianGradient(final double[] sGradient) {
-
-        // lazy evaluation of Jacobian
-        computeJacobian();
-
         // compose derivatives as gradient^T . J
         // the expressions have been simplified since we know jacobian[1][2] = dTheta/dZ = 0
         return new double[] {
@@ -167,7 +76,6 @@ public class SphericalCoordinates_OLD implements Serializable {
             sGradient[0] * jacobian[0][1] + sGradient[1] * jacobian[1][1] + sGradient[2] * jacobian[2][1],
             sGradient[0] * jacobian[0][2]                                 + sGradient[2] * jacobian[2][2]
         };
-
     }
 
     /** Convert a Hessian with respect to spherical coordinates into a Hessian
@@ -189,8 +97,6 @@ public class SphericalCoordinates_OLD implements Serializable {
      *  {d<sup>2</sup>f/dxdz, d<sup>2</sup>f/dydz, d<sup>2</sup>f/dz<sup>2</sup>}}
      */
     public double[][] toCartesianHessian(final double[][] sHessian, final double[] sGradient) {
-
-        computeJacobian();
         computeHessians();
 
         // compose derivative as J^T . H_f . J + df/dr H_r + df/dtheta H_theta + df/dphi H_phi
@@ -233,52 +139,47 @@ public class SphericalCoordinates_OLD implements Serializable {
         cHessian[1][2] = cHessian[2][1];
 
         return cHessian;
-
     }
 
-    /** Lazy evaluation of (r, &theta;, &phi;) Jacobian.
-     */
+    /** Evaluates (r, &theta;, &phi;) Jacobian. */
     private void computeJacobian() {
-        if (jacobian == null) {
 
-            // intermediate variables
-            final double x    = v.getX();
-            final double y    = v.getY();
-            final double z    = v.getZ();
-            final double rho2 = x * x + y * y;
-            final double rho  = Math.sqrt(rho2);
-            final double r2   = rho2 + z * z;
+        // intermediate variables
+        final double r    = spherical.getRadius();
+        final double x    = vector.getX();
+        final double y    = vector.getY();
+        final double z    = vector.getZ();
+        final double rho2 = x * x + y * y;
+        final double rho  = Math.sqrt(rho2);
+        final double r2   = rho2 + z * z;
 
-            jacobian = new double[3][3];
+        jacobian = new double[3][3];
 
-            // row representing the gradient of r
-            jacobian[0][0] = x / r;
-            jacobian[0][1] = y / r;
-            jacobian[0][2] = z / r;
+        // row representing the gradient of r
+        jacobian[0][0] = x / r;
+        jacobian[0][1] = y / r;
+        jacobian[0][2] = z / r;
 
-            // row representing the gradient of theta
-            jacobian[1][0] = -y / rho2;
-            jacobian[1][1] =  x / rho2;
-            // jacobian[1][2] is already set to 0 at allocation time
+        // row representing the gradient of theta
+        jacobian[1][0] = -y / rho2;
+        jacobian[1][1] =  x / rho2;
+        // jacobian[1][2] is already set to 0 at allocation time
 
-            // row representing the gradient of phi
-            jacobian[2][0] = x * z / (rho * r2);
-            jacobian[2][1] = y * z / (rho * r2);
-            jacobian[2][2] = -rho / r2;
-
-        }
+        // row representing the gradient of phi
+        jacobian[2][0] = x * z / (rho * r2);
+        jacobian[2][1] = y * z / (rho * r2);
+        jacobian[2][2] = -rho / r2;
     }
 
-    /** Lazy evaluation of Hessians.
-     */
+    /** Lazy evaluation of Hessians. */
     private void computeHessians() {
-
         if (rHessian == null) {
 
             // intermediate variables
-            final double x      = v.getX();
-            final double y      = v.getY();
-            final double z      = v.getZ();
+            final double r      = spherical.getRadius();
+            final double x      = vector.getX();
+            final double y      = vector.getY();
+            final double z      = vector.getZ();
             final double x2     = x * x;
             final double y2     = y * y;
             final double z2     = z * z;
@@ -335,58 +236,6 @@ public class SphericalCoordinates_OLD implements Serializable {
             phiHessian[0][1] = phiHessian[1][0];
             phiHessian[0][2] = phiHessian[2][0];
             phiHessian[1][2] = phiHessian[2][1];
-
         }
-
     }
-
-    /**
-     * Replace the instance with a data transfer object for serialization.
-     * @return data transfer object that will be serialized
-     */
-    private Object writeReplace() {
-        return new DataTransferObject(v.getX(), v.getY(), v.getZ());
-    }
-
-    /** Internal class used only for serialization. */
-    private static class DataTransferObject implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20130206L;
-
-        /** Abscissa.
-         * @serial
-         */
-        private final double x;
-
-        /** Ordinate.
-         * @serial
-         */
-        private final double y;
-
-        /** Height.
-         * @serial
-         */
-        private final double z;
-
-        /** Simple constructor.
-         * @param x abscissa
-         * @param y ordinate
-         * @param z height
-         */
-        DataTransferObject(final double x, final double y, final double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        /** Replace the deserialized data transfer object with a {@link SphericalCoordinates_OLD}.
-         * @return replacement {@link SphericalCoordinates_OLD}
-         */
-        private Object readResolve() {
-            return new SphericalCoordinates_OLD(Vector3D.of(x, y, z));
-        }
-
-    }
-
 }
