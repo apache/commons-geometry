@@ -130,20 +130,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return Math.max(Math.max(Math.abs(getX()), Math.abs(getY())), Math.abs(getZ()));
     }
 
-    /** Get the azimuth of the vector.
-     * @return azimuth (&alpha;) of the vector, between -&pi; and +&pi;
-     */
-    public double getAlpha() {
-        return Math.atan2(getY(), getX());
-    }
-
-    /** Get the elevation of the vector.
-     * @return elevation (&delta;) of the vector, between -&pi;/2 and +&pi;/2
-     */
-    public double getDelta() {
-        return Math.asin(getZ() / getNorm());
-    }
-
     /** {@inheritDoc} */
     @Override
     public Vector3D add(Vector3D v) {

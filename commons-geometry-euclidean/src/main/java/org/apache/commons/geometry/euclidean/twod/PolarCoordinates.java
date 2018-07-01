@@ -26,13 +26,14 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a set of polar coordinates in 2 dimensional
- * Euclidean space. Coordinates are normalized so that {@code radius >= 0}
- * and {@code -pi < azimuth <= pi}.
+ * Euclidean space. Coordinates are normalized so that {@code radius}
+ * is in the range {@code [0, +infinity)} and {@code azimuth} is in the
+ * range {@code (-pi, pi]}.
  */
 public class PolarCoordinates implements Spatial, Serializable {
 
     /** Serializable version UID */
-    private static final long serialVersionUID = -3122872387910228544L;
+    private static final long serialVersionUID = 20180630L;
 
     /** Shared parser/formatter instance **/
     private static final PolarCoordinatesParser PARSER = new PolarCoordinatesParser();
@@ -43,11 +44,27 @@ public class PolarCoordinates implements Spatial, Serializable {
     /** Azimuth angle in radians. */
     private final double azimuth;
 
-    /** Simple constructor. Input values must already be normalized.
+    /** Simple constructor. Input values are normalized.
      * @param radius Radius value.
      * @param azimuth Azimuth angle in radians.
      */
-    private PolarCoordinates(final double radius, final double azimuth) {
+    private PolarCoordinates(double radius, double azimuth) {
+        if (radius < 0) {
+            // negative radius; flip the angles
+            radius = Math.abs(radius);
+            azimuth += Geometry.PI;
+        }
+
+        if (Double.isFinite(azimuth) && (azimuth <= Geometry.MINUS_PI || azimuth > Geometry.PI)) {
+            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
+
+            // azimuth is now in the range [-pi, pi] but we want it to be in the range
+            // (-pi, pi] in order to have completely unique coordinates
+            if (azimuth <= -Geometry.PI) {
+                azimuth += Geometry.TWO_PI;
+            }
+        }
+
         this.radius = radius;
         this.azimuth = azimuth;
     }
@@ -177,21 +194,6 @@ public class PolarCoordinates implements Spatial, Serializable {
      * @return
      */
     public static PolarCoordinates of(double radius, double azimuth) {
-        if (radius < 0) {
-            radius = Math.abs(radius);
-            azimuth += Geometry.PI;
-        }
-
-        if (Double.isFinite(azimuth)) {
-            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
-
-            // the above normalizes the azimuth to -pi <= azimuth <= pi
-            // but we want -pi < azimuth <= pi to have completely unique coordinates
-            if (azimuth <= -Geometry.PI) {
-                azimuth += Geometry.TWO_PI;
-            }
-        }
-
         return new PolarCoordinates(radius, azimuth);
     }
 
@@ -212,7 +214,8 @@ public class PolarCoordinates implements Spatial, Serializable {
      * and azimuth is within the range {@code (-pi, pi]}. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param input the string to parse
-     * @return
+     * @return new {@link PolarCoordinates} instance
+     * @throws IllegalArgumentException if the string format is invalid.
      */
     public static PolarCoordinates parse(String input) {
         return PARSER.parse(input);
@@ -225,8 +228,8 @@ public class PolarCoordinates implements Spatial, Serializable {
      * @param azimuth Azimuth value in radians
      * @param factory Factory instance that will be passed the computed Cartesian coordinates
      * @param <T> Type returned by the factory
-     * @return the value returned by the given factory when passed Cartesian
-     *      coordinates equivalent to given set of polar coordinates.
+     * @return the value returned by the factory when passed Cartesian
+     *      coordinates equivalent to the given set of polar coordinates.
      */
     public static <T> T toCartesian(final double radius, final double azimuth, final Coordinates.Factory2D<T> factory) {
         final double x = radius * Math.cos(azimuth);
@@ -293,8 +296,7 @@ public class PolarCoordinates implements Spatial, Serializable {
             readSuffix(str, pos);
             endParse(str, pos);
 
-            // use the factory method so that the values will be normalized
-            return PolarCoordinates.of(radius, azimuth);
+            return new PolarCoordinates(radius, azimuth);
         }
     }
 }

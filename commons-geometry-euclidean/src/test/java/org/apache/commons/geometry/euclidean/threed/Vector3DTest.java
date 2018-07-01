@@ -770,20 +770,6 @@ public class Vector3DTest {
                     2, 5, -3);
     }
 
-    @Test
-    public void testAngular() {
-        Assert.assertEquals(0,           Vector3D.PLUS_X.getAlpha(), 1.0e-10);
-        Assert.assertEquals(0,           Vector3D.PLUS_X.getDelta(), 1.0e-10);
-        Assert.assertEquals(Math.PI / 2, Vector3D.PLUS_Y.getAlpha(), 1.0e-10);
-        Assert.assertEquals(0,           Vector3D.PLUS_Y.getDelta(), 1.0e-10);
-        Assert.assertEquals(0,           Vector3D.PLUS_Z.getAlpha(), 1.0e-10);
-        Assert.assertEquals(Math.PI / 2, Vector3D.PLUS_Z.getDelta(), 1.0e-10);
-
-        Vector3D u = Vector3D.of(-1, 1, -1);
-        Assert.assertEquals(3 * Math.PI /4, u.getAlpha(), 1.0e-10);
-        Assert.assertEquals(-1.0 / Math.sqrt(3), Math.sin(u.getDelta()), 1.0e-10);
-    }
-
     private void checkVector(Vector3D v, double x, double y, double z) {
         Assert.assertEquals(x, v.getX(), EPS);
         Assert.assertEquals(y, v.getY(), EPS);

@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.spherical;
+package org.apache.commons.geometry.euclidean.threed;
 
 
 import java.io.Serializable;
-
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** This class provides conversions related to <a
  * href="http://mathworld.wolfram.com/SphericalCoordinates.html">spherical coordinates</a>.
@@ -48,7 +46,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  * between spherical and Cartesian coordinates.
  * </p>
  */
-public class SphericalCoordinates implements Serializable {
+public class SphericalCoordinates_OLD implements Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20130206L;
@@ -80,14 +78,14 @@ public class SphericalCoordinates implements Serializable {
     /** Build a spherical coordinates transformer from Cartesian coordinates.
      * @param v Cartesian coordinates
      */
-    public SphericalCoordinates(final Vector3D v) {
+    public SphericalCoordinates_OLD(final Vector3D v) {
 
         // Cartesian coordinates
         this.v = v;
 
         // remaining spherical coordinates
         this.r     = v.getNorm();
-        this.theta = v.getAlpha();
+        this.theta = 0.0; //v.getAlpha();
         this.phi   = Math.acos(v.getZ() / r);
 
     }
@@ -97,7 +95,7 @@ public class SphericalCoordinates implements Serializable {
      * @param theta azimuthal angle in x-y plane
      * @param phi polar (co-latitude) angle
      */
-    public SphericalCoordinates(final double r, final double theta, final double phi) {
+    public SphericalCoordinates_OLD(final double r, final double theta, final double phi) {
 
         final double cosTheta = Math.cos(theta);
         final double sinTheta = Math.sin(theta);
@@ -382,11 +380,11 @@ public class SphericalCoordinates implements Serializable {
             this.z = z;
         }
 
-        /** Replace the deserialized data transfer object with a {@link SphericalCoordinates}.
-         * @return replacement {@link SphericalCoordinates}
+        /** Replace the deserialized data transfer object with a {@link SphericalCoordinates_OLD}.
+         * @return replacement {@link SphericalCoordinates_OLD}
          */
         private Object readResolve() {
-            return new SphericalCoordinates(Vector3D.of(x, y, z));
+            return new SphericalCoordinates_OLD(Vector3D.of(x, y, z));
         }
 
     }
