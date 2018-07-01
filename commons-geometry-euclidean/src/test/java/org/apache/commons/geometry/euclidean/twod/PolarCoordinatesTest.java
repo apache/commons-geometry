@@ -319,7 +319,7 @@ public class PolarCoordinatesTest {
     public void testToString() {
         // arrange
         PolarCoordinates polar = PolarCoordinates.of(1, 2);
-        Pattern pattern = Pattern.compile("\\(r=1.{0,2}, az=2.{0,2}\\)");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
         String str = polar.toString();;
@@ -332,15 +332,24 @@ public class PolarCoordinatesTest {
     @Test
     public void testParse() {
         // act/assert
-        checkPolar(PolarCoordinates.parse("(r=1, az=2)"), 1, 2);
-        checkPolar(PolarCoordinates.parse("( r= -1, az= 0.5 )"), 1, 0.5 - Geometry.PI);
-        checkPolar(PolarCoordinates.parse("( r=NaN, az= -Infinity )"), Double.NaN, Double.NEGATIVE_INFINITY);
+        checkPolar(PolarCoordinates.parse("(1, 2)"), 1, 2);
+        checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 - Geometry.PI);
+        checkPolar(PolarCoordinates.parse("(NaN,-Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParse_failure() {
         // act/assert
         PolarCoordinates.parse("abc");
+    }
+
+    @Test
+    public void testGetFactory() {
+        // act
+        Coordinates.Factory2D<PolarCoordinates> factory = PolarCoordinates.getFactory();
+
+        // assert
+        checkPolar(factory.create(-1, Geometry.HALF_PI), 1, Geometry.MINUS_HALF_PI);
     }
 
     private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {

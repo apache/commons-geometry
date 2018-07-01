@@ -4,7 +4,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -328,8 +327,8 @@ public class SphericalCoordinatesTest {
     @Test
     public void testParse() {
         // act/assert
-        checkSpherical(SphericalCoordinates.parse("(1, 2, -3)"), 1, 2, 3);
-        checkSpherical(SphericalCoordinates.parse("(  2e0 , 5 , -0.000 )"), 2, 5 - Geometry.TWO_PI, 0);
+        checkSpherical(SphericalCoordinates.parse("(1, 2, 3)"), 1, 2, 3);
+        checkSpherical(SphericalCoordinates.parse("(  -2.0 , 1 , -5e-1)"), 2, 1 - Geometry.PI, Geometry.PI - 0.5);
         checkSpherical(SphericalCoordinates.parse("(NaN,Infinity,-Infinity)"), Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 

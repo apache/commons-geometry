@@ -39,7 +39,6 @@ public class SphericalCoordinates implements Spatial, Serializable {
         public SphericalCoordinates create(double a1, double a2, double a3) {
             return new SphericalCoordinates(a1, a2, a3);
         }
-
     };
 
     /** Radius value. */

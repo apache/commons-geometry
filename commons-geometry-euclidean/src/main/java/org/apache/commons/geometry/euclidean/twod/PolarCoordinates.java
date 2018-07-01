@@ -17,12 +17,11 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.io.Serializable;
-import java.text.ParsePosition;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.AbstractCoordinateParser;
 import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a set of polar coordinates in 2 dimensional
@@ -35,8 +34,15 @@ public class PolarCoordinates implements Spatial, Serializable {
     /** Serializable version UID */
     private static final long serialVersionUID = 20180630L;
 
-    /** Shared parser/formatter instance **/
-    private static final PolarCoordinatesParser PARSER = new PolarCoordinatesParser();
+    /** Factory object for delegating instance creation. */
+    private static final Coordinates.Factory2D<PolarCoordinates> FACTORY = new Coordinates.Factory2D<PolarCoordinates>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public PolarCoordinates create(double a1, double a2) {
+            return new PolarCoordinates(a1, a2);
+        }
+    };
 
     /** Radius value */
     private final double radius;
@@ -183,7 +189,7 @@ public class PolarCoordinates implements Spatial, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return PARSER.format(this);
+        return SimpleCoordinateFormat.getPointFormat().format(radius, azimuth);
     }
 
     /** Return a new polar coordinate instance with the given values.
@@ -191,7 +197,7 @@ public class PolarCoordinates implements Spatial, Serializable {
      * and azimuth in the range {@code (-pi, pi]}.
      * @param radius Radius value.
      * @param azimuth Azimuth angle in radians.
-     * @return
+     * @return new {@link PolarCoordinates} instance
      */
     public static PolarCoordinates of(double radius, double azimuth) {
         return new PolarCoordinates(radius, azimuth);
@@ -210,15 +216,14 @@ public class PolarCoordinates implements Spatial, Serializable {
     }
 
     /** Parse the given string and return a new polar coordinates instance. The parsed
-     * coordinates are normalized so that radius is within the range {@code [0, +infinity)}
-     * and azimuth is within the range {@code (-pi, pi]}. The expected string
+     * coordinates are normalized as in the {@link #of(double, double)} method. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param input the string to parse
      * @return new {@link PolarCoordinates} instance
      * @throws IllegalArgumentException if the string format is invalid.
      */
     public static PolarCoordinates parse(String input) {
-        return PARSER.parse(input);
+        return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
     }
 
     /** Convert the given set of polar coordinates to Cartesian coordinates.
@@ -238,65 +243,10 @@ public class PolarCoordinates implements Spatial, Serializable {
         return factory.create(x, y);
     }
 
-    /** Parser and formatter class for polar coordinates. */
-    private static class PolarCoordinatesParser extends AbstractCoordinateParser {
-
-        /** String prefix for the radius value. */
-        private static final String RADIUS_PREFIX = "r=";
-
-        /** String prefix for the azimuth value. */
-        private static final String AZIMUTH_PREFIX = "az=";
-
-        /** Simple constructor. */
-        private PolarCoordinatesParser() {
-            super(",", "(", ")");
-        }
-
-        /** Return a standardized string representation of the given set of polar
-         * coordinates.
-         * @param polar coordinates to format
-         * @return a standard string representation of the polar coordinates
-         */
-        public String format(PolarCoordinates polar) {
-            final StringBuilder sb = new StringBuilder();
-
-            sb.append(getPrefix());
-
-            sb.append(RADIUS_PREFIX);
-            sb.append(polar.getRadius());
-
-            sb.append(getSeparator());
-            sb.append(" ");
-
-            sb.append(AZIMUTH_PREFIX);
-            sb.append(polar.getAzimuth());
-
-            sb.append(getSuffix());
-
-            return sb.toString();
-        }
-
-        /** Parse the given string and return a set of standardized polar coordinates.
-         * @param str the string to parse
-         * @return polar coordinates
-         */
-        public PolarCoordinates parse(String str) {
-            final ParsePosition pos = new ParsePosition(0);
-
-            readPrefix(str, pos);
-
-            consumeWhitespace(str, pos);
-            readSequence(str, RADIUS_PREFIX, pos);
-            final double radius = readCoordinateValue(str, pos);
-
-            consumeWhitespace(str, pos);
-            readSequence(str, AZIMUTH_PREFIX, pos);
-            final double azimuth = readCoordinateValue(str, pos);
-
-            readSuffix(str, pos);
-            endParse(str, pos);
-
-            return new PolarCoordinates(radius, azimuth);
-        }
+    /** Return a factory object for creating new {@link PolarCoordinates} instances.
+     * @return factory object for creating new instances.
+     */
+    public static Coordinates.Factory2D<PolarCoordinates> getFactory() {
+        return FACTORY;
     }
 }
