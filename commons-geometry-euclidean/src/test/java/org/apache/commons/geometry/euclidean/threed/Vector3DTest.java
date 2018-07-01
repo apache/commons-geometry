@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class Vector3DTest {
 
-    private static final double EPS = Math.ulp(1d);
+    private static final double EPS = 1e-15;
 
     @Test
     public void testConstants() {
@@ -689,6 +689,27 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testOfSpherical() {
+     // arrange
+        double sqrt3 = Math.sqrt(3);
+
+        // act/assert
+        checkVector(Vector3D.ofSpherical(0, 0, 0), 0, 0, 0);
+
+        checkVector(Vector3D.ofSpherical(1, 0, Geometry.HALF_PI), 1, 0, 0);
+        checkVector(Vector3D.ofSpherical(1, Geometry.PI, Geometry.HALF_PI), -1, 0, 0);
+
+        checkVector(Vector3D.ofSpherical(2, Geometry.HALF_PI, Geometry.HALF_PI), 0, 2, 0);
+        checkVector(Vector3D.ofSpherical(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI), 0, -2, 0);
+
+        checkVector(Vector3D.ofSpherical(3, 0, 0), 0, 0, 3);
+        checkVector(Vector3D.ofSpherical(3, 0, Geometry.PI), 0, 0, -3);
+
+        checkVector(Vector3D.ofSpherical(sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3)), 1, 1, 1);
+        checkVector(Vector3D.ofSpherical(sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
+    }
+
+    @Test
     public void testGetFactory() {
         // act
         Coordinates.Factory3D<Vector3D> factory = Vector3D.getFactory();
@@ -747,27 +768,6 @@ public class Vector3DTest {
         // act/assert
         checkVector(Vector3D.linearCombination(2, p1, -3, p2, 4, p3, -5, p4), 66, 80, 4);
         checkVector(Vector3D.linearCombination(-3, p1, 2, p2, -4, p3, 5, p4), -64, -78, -2);
-    }
-
-    @Test
-    public void testConstructors() {
-        double r = Math.sqrt(2) /2;
-        checkVector(Vector3D.linearCombination(2, Vector3D.fromSpherical(Math.PI / 3, -Math.PI / 4)),
-                    r, r * Math.sqrt(3), -2 * r);
-        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
-                                 -3, Vector3D.MINUS_Z),
-                    2, 0, 3);
-        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
-                                 5, Vector3D.PLUS_Y,
-                                 -3, Vector3D.MINUS_Z),
-                    2, 5, 3);
-        checkVector(Vector3D.linearCombination(2, Vector3D.PLUS_X,
-                                 5, Vector3D.PLUS_Y,
-                                 5, Vector3D.MINUS_Y,
-                                 -3, Vector3D.MINUS_Z),
-                    2, 0, 3);
-        checkVector(Vector3D.of(new double[] { 2,  5,  -3 }),
-                    2, 5, -3);
     }
 
     private void checkVector(Vector3D v, double x, double y, double z) {

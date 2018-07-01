@@ -190,6 +190,17 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         return new Point3D(p[0], p[1], p[2]);
     }
 
+    /** Create a point from a set of spherical coordinates.
+     * @param radius the spherical radius value
+     * @param azimuth the angle in the x-y plane measured in radians counter-clockwise from the
+     *      positive x axis.
+     * @param polar the angle with the positive z axis in radians.
+     * @return a point instance with the given set of spherical coordinates
+     */
+    public static Point3D ofSpherical(double radius, double azimuth, double polar) {
+        return SphericalCoordinates.toCartesian(radius, azimuth, polar, FACTORY);
+    }
+
     /** Parses the given string and returns a new point instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse

@@ -437,21 +437,15 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return new Vector3D(v[0], v[1], v[2]);
     }
 
-    /** Builds a vector from its azimuthal coordinates
-     * @param alpha azimuth (&alpha;) around Z
-     *              (0 is +X, &pi;/2 is +Y, &pi; is -X and 3&pi;/2 is -Y)
-     * @param delta elevation (&delta;) above (XY) plane, from -&pi;/2 to +&pi;/2
-     * @see #getAlpha()
-     * @see #getDelta()
-     * @return new vector instance with the given azimuthal coordinates
+    /** Create a vector from a set of spherical coordinates.
+     * @param radius the spherical radius value
+     * @param azimuth the angle in the x-y plane measured in radians counter-clockwise from the
+     *      positive x axis.
+     * @param polar the angle with the positive z axis in radians.
+     * @return a vector instance with the given set of spherical coordinates
      */
-    public static Vector3D fromSpherical(double alpha, double delta) {
-        double cosDelta = Math.cos(delta);
-        double x = Math.cos(alpha) * cosDelta;
-        double y = Math.sin(alpha) * cosDelta;
-        double z = Math.sin(delta);
-
-        return new Vector3D(x, y, z);
+    public static Vector3D ofSpherical(double radius, double azimuth, double polar) {
+        return SphericalCoordinates.toCartesian(radius, azimuth, polar, FACTORY);
     }
 
     /** Parses the given string and returns a new vector instance. The expected string

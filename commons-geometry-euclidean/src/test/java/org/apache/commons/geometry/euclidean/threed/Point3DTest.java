@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -25,7 +26,7 @@ import org.junit.Test;
 
 public class Point3DTest {
 
-    private static final double EPS = Math.ulp(1d);
+    private static final double EPS = 1e-15;
 
     @Test
     public void testConstants() {
@@ -240,6 +241,27 @@ public class Point3DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Point3D.of(new double[] { 0.0, 0.0 });
+    }
+
+    @Test
+    public void testOfSpherical() {
+     // arrange
+        double sqrt3 = Math.sqrt(3);
+
+        // act/assert
+        checkPoint(Point3D.ofSpherical(0, 0, 0), 0, 0, 0);
+
+        checkPoint(Point3D.ofSpherical(1, 0, Geometry.HALF_PI), 1, 0, 0);
+        checkPoint(Point3D.ofSpherical(1, Geometry.PI, Geometry.HALF_PI), -1, 0, 0);
+
+        checkPoint(Point3D.ofSpherical(2, Geometry.HALF_PI, Geometry.HALF_PI), 0, 2, 0);
+        checkPoint(Point3D.ofSpherical(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI), 0, -2, 0);
+
+        checkPoint(Point3D.ofSpherical(3, 0, 0), 0, 0, 3);
+        checkPoint(Point3D.ofSpherical(3, 0, Geometry.PI), 0, 0, -3);
+
+        checkPoint(Point3D.ofSpherical(sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3)), 1, 1, 1);
+        checkPoint(Point3D.ofSpherical(sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
     }
 
     @Test

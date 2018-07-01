@@ -173,8 +173,8 @@ public class SphericalCoordinatesTest {
         checkVector(SphericalCoordinates.of(3, 0, 0).toVector(), 0, 0, 3);
         checkVector(SphericalCoordinates.of(3, 0, Geometry.PI).toVector(), 0, 0, -3);
 
-        checkVector(SphericalCoordinates.of(Math.sqrt(3), QUARTER_PI, Math.acos(1 / sqrt3)).toVector(), 1, 1, 1);
-        checkVector(SphericalCoordinates.of(Math.sqrt(3), MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3)).toVector(), -1, -1, -1);
+        checkVector(SphericalCoordinates.of(sqrt3, QUARTER_PI, Math.acos(1 / sqrt3)).toVector(), 1, 1, 1);
+        checkVector(SphericalCoordinates.of(sqrt3, MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3)).toVector(), -1, -1, -1);
     }
 
     @Test

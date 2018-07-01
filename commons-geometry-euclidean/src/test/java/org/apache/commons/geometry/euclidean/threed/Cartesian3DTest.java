@@ -1,5 +1,6 @@
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +32,28 @@ public class Cartesian3DTest {
         Assert.assertEquals(1.0, arr[0], TEST_TOLERANCE);
         Assert.assertEquals(2.0, arr[1], TEST_TOLERANCE);
         Assert.assertEquals(3.0, arr[2], TEST_TOLERANCE);
+    }
+
+
+    @Test
+    public void testToSpherical() {
+        // arrange
+        double sqrt3 = Math.sqrt(3);
+
+        // act/assert
+        checkSpherical(new StubCartesian3D(0, 0, 0).toSpherical(), 0, 0, 0);
+
+        checkSpherical(new StubCartesian3D(0.1, 0, 0).toSpherical(), 0.1, 0, Geometry.HALF_PI);
+        checkSpherical(new StubCartesian3D(-0.1, 0, 0).toSpherical(), 0.1, Geometry.PI, Geometry.HALF_PI);
+
+        checkSpherical(new StubCartesian3D(0, 0.1, 0).toSpherical(), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkSpherical(new StubCartesian3D(0, -0.1, 0).toSpherical(), 0.1, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
+
+        checkSpherical(new StubCartesian3D(0, 0, 0.1).toSpherical(), 0.1, 0, 0);
+        checkSpherical(new StubCartesian3D(0, 0, -0.1).toSpherical(), 0.1, 0, Geometry.PI);
+
+        checkSpherical(new StubCartesian3D(1, 1, 1).toSpherical(), sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3));
+        checkSpherical(new StubCartesian3D(-1, -1, -1).toSpherical(), sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3));
     }
 
     @Test
@@ -71,6 +94,12 @@ public class Cartesian3DTest {
         Assert.assertFalse(new StubCartesian3D(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
         Assert.assertFalse(new StubCartesian3D(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
         Assert.assertFalse(new StubCartesian3D(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    private void checkSpherical(SphericalCoordinates c, double radius, double azimuth, double polar) {
+        Assert.assertEquals(radius, c.getRadius(), TEST_TOLERANCE);
+        Assert.assertEquals(azimuth, c.getAzimuth(), TEST_TOLERANCE);
+        Assert.assertEquals(polar, c.getPolar(), TEST_TOLERANCE);
     }
 
     private static class StubCartesian3D extends Cartesian3D {
