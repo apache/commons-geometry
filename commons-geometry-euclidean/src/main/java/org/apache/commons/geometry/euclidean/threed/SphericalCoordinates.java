@@ -24,9 +24,49 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Class representing a set of spherical coordinates in 3 dimensional Euclidean space.
+/** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> 
+ * in 3 dimensional Euclidean space.
+ * 
+ * <p>Spherical coordinates for a point are defined by three values:
+ * <ol>
+ * 	<li><em>Radius</em> - The distance from the point to a fixed referenced point.</li>
+ * 	<li><em>Azimuth angle</em> - The angle measured from a fixed reference direction in a plane to
+ * the orthogonal projection of the point on that plane.</li>
+ *	<li><em>Polar angle</em> - The angle measured from a fixed zenith direction to the point. The zenith
+ *direction must be orthogonal to the reference plane.</li>
+ * </ol>
+ * This class follows the convention of using the origin as the reference point; the positive x-axis as the
+ * reference direction for the azimuth angle, measured in the x-y plane with positive angles moving counter-clockwise 
+ * toward the positive y-axis; and the positive z-axis as the zenith direction. Spherical coordinates are
+ * related to Cartesian coordinates as follows:
+ * <pre>
+ * x = r cos(&theta;) sin(&Phi;)
+ * y = r sin(&theta;) sin(&Phi;)
+ * z = r cos(&Phi;)
+ * 
+ * r = &radic;(x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>)
+ * &theta; = atan2(y, x)
+ * &Phi; = acos(z/r)
+ * </pre>
+ * where <em>r</em> is the radius, <em>&theta;</em> is the azimuth angle, and <em>&Phi;</em> is the polar angle
+ * of the spherical coordinates.
+ * </p>
+ * 
+ * <p>There are numerous, competing conventions for the symbols used to represent spherical coordinate values. For
+ * example, the mathematical convention is to use <em>(r, &theta;, &Phi;)</em> to represent radius, azimuth angle, and
+ * polar angle, whereas the physics convention flips the angle values and uses <em>(r, &Phi;, &theta;)</em>. As such,
+ * this class avoids the use of these symbols altogether in favor of the less ambiguous formal names of the values,
+ * e.g. {@code radius}, {@code azimuth}, and {@code polar}.
+ * </p>
+ * 
+ * <p>In order to ensure the uniqueness of coordinate sets, coordinate values 
+ * are normalized so that {@code radius} is in the range {@code [0, +Infinity)}, 
+ * {@code azimuth} is in the range {@code (-pi, pi]}, and {@code polar} is in the
+ * range {@code [0, pi]}.</p>
+ * 
+ * @see <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">Spherical Coordinate System</a>
  */
-public class SphericalCoordinates implements Spatial, Serializable {
+public final class SphericalCoordinates implements Spatial, Serializable {
 
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20180623L;
@@ -84,7 +124,7 @@ public class SphericalCoordinates implements Spatial, Serializable {
         this.polar = polar;
     }
 
-    /** Return the radius value. The value is in the range {@code [0, +infinity)}.
+    /** Return the radius value. The value is in the range {@code [0, +Infinity)}.
      * @return the radius value
      */
     public double getRadius() {
@@ -152,8 +192,7 @@ public class SphericalCoordinates implements Spatial, Serializable {
         return toCartesian(Point3D.getFactory());
     }
 
-    /**
-     * Get a hashCode for this set of spherical coordinates.
+    /** Get a hashCode for this set of spherical coordinates.
      * <p>All NaN values have the same hash code.</p>
      *
      * @return a hash code value for this object
@@ -207,8 +246,8 @@ public class SphericalCoordinates implements Spatial, Serializable {
         return SimpleCoordinateFormat.getPointFormat().format(radius, azimuth, polar);
     }
 
-    /** Create a {@link SphericalCoordinates} instance from the given values. The values are normalized
-     * so that {@code radius} lies in the range {@code [0, +infinity)}, {@code azimuth} lies in the range
+    /** Return a new instance with the given spherical coordinate values. The values are normalized
+     * so that {@code radius} lies in the range {@code [0, +Infinity)}, {@code azimuth} lies in the range
      * {@code (-pi, +pi]}, and {@code polar} lies in the range {@code [0, +pi]}.
      * @param radius the length of the line segment from the origin to the coordinate point.
      * @param azimuth the angle in the x-y plane, measured in radians counter-clockwise

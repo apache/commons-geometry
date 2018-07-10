@@ -24,12 +24,33 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Class representing a set of polar coordinates in 2 dimensional
- * Euclidean space. Coordinates are normalized so that {@code radius}
- * is in the range {@code [0, +infinity)} and {@code azimuth} is in the
- * range {@code (-pi, pi]}.
+/** Class representing <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">polar coordinates</a> 
+ * in 2 dimensional Euclidean space. 
+ * 
+ * <p>Polar coordinates are defined by a distance from a reference point
+ * and an angle from a reference direction. The distance value is called 
+ * the radial coordinate, or <em>radius</em>, and the angle is called the angular coordinate,
+ * or <em>azimuth</em>. This class follows the standard
+ * mathematical convention of using the positive x-axis as the reference
+ * direction and measuring positive angles counter-clockwise, toward the 
+ * positive y-axis. The origin is used as the reference point. Polar coordinate
+ * are related to Cartesian coordinates as follows:
+ * <pre> 
+ * x = r * cos(&theta;)
+ * y = r * sin(&theta;)
+ * 
+ * r = &radic;(x<sup>2</sup> + y<sup>2</sup>)
+ * &theta; = atan2(y, x)
+ * </pre>
+ * where <em>r</em> is the radius and <em>&theta;</em> is the azimuth of the polar coordinates.
+ * </p>
+ * <p>In order to ensure the uniqueness of coordinate sets, coordinate values 
+ * are normalized so that {@code radius} is in the range {@code [0, +Infinity)} 
+ * and {@code azimuth} is in the range {@code (-pi, pi]}.</p>
+ * 
+ * @see <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">Polar Coordinate System</a>
  */
-public class PolarCoordinates implements Spatial, Serializable {
+public final class PolarCoordinates implements Spatial, Serializable {
 
     /** Serializable version UID */
     private static final long serialVersionUID = 20180630L;
@@ -47,7 +68,7 @@ public class PolarCoordinates implements Spatial, Serializable {
     /** Radius value */
     private final double radius;
 
-    /** Azimuth angle in radians. */
+    /** Azimuth angle in radians */
     private final double azimuth;
 
     /** Simple constructor. Input values are normalized.
@@ -137,8 +158,7 @@ public class PolarCoordinates implements Spatial, Serializable {
         return toCartesian(Point2D.getFactory());
     }
 
-    /**
-     * Get a hashCode for this set of polar coordinates.
+    /** Get a hashCode for this set of polar coordinates.
      * <p>All NaN values have the same hash code.</p>
      *
      * @return a hash code value for this object
@@ -192,9 +212,9 @@ public class PolarCoordinates implements Spatial, Serializable {
         return SimpleCoordinateFormat.getPointFormat().format(radius, azimuth);
     }
 
-    /** Return a new polar coordinate instance with the given values.
-     * The values are normalized so that radius lies in the range {@code [0, +infinity)}
-     * and azimuth in the range {@code (-pi, pi]}.
+    /** Return a new instance with the given polar coordinate values.
+     * The values are normalized so that {@code radius} lies in the range {@code [0, +infinity)}
+     * and {@code azimuth} in the range {@code (-pi, pi]}.
      * @param radius Radius value.
      * @param azimuth Azimuth angle in radians.
      * @return new {@link PolarCoordinates} instance
