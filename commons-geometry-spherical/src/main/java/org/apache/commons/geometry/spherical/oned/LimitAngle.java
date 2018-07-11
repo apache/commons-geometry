@@ -58,7 +58,7 @@ public class LimitAngle implements Hyperplane<S1Point> {
     /** {@inheritDoc} */
     @Override
     public double getOffset(final S1Point point) {
-        final double delta = point.getAlpha() - location.getAlpha();
+        final double delta = point.getAzimuth() - location.getAzimuth();
         return direct ? delta : -delta;
     }
 

@@ -22,11 +22,12 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> 
+/** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a>
  * in 3 dimensional Euclidean space.
- * 
+ *
  * <p>Spherical coordinates for a point are defined by three values:
  * <ol>
  * 	<li><em>Radius</em> - The distance from the point to a fixed referenced point.</li>
@@ -36,14 +37,14 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *direction must be orthogonal to the reference plane.</li>
  * </ol>
  * This class follows the convention of using the origin as the reference point; the positive x-axis as the
- * reference direction for the azimuth angle, measured in the x-y plane with positive angles moving counter-clockwise 
+ * reference direction for the azimuth angle, measured in the x-y plane with positive angles moving counter-clockwise
  * toward the positive y-axis; and the positive z-axis as the zenith direction. Spherical coordinates are
  * related to Cartesian coordinates as follows:
  * <pre>
  * x = r cos(&theta;) sin(&Phi;)
  * y = r sin(&theta;) sin(&Phi;)
  * z = r cos(&Phi;)
- * 
+ *
  * r = &radic;(x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>)
  * &theta; = atan2(y, x)
  * &Phi; = acos(z/r)
@@ -51,19 +52,19 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * where <em>r</em> is the radius, <em>&theta;</em> is the azimuth angle, and <em>&Phi;</em> is the polar angle
  * of the spherical coordinates.
  * </p>
- * 
+ *
  * <p>There are numerous, competing conventions for the symbols used to represent spherical coordinate values. For
  * example, the mathematical convention is to use <em>(r, &theta;, &Phi;)</em> to represent radius, azimuth angle, and
  * polar angle, whereas the physics convention flips the angle values and uses <em>(r, &Phi;, &theta;)</em>. As such,
  * this class avoids the use of these symbols altogether in favor of the less ambiguous formal names of the values,
  * e.g. {@code radius}, {@code azimuth}, and {@code polar}.
  * </p>
- * 
- * <p>In order to ensure the uniqueness of coordinate sets, coordinate values 
- * are normalized so that {@code radius} is in the range {@code [0, +Infinity)}, 
+ *
+ * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
+ * are normalized so that {@code radius} is in the range {@code [0, +Infinity)},
  * {@code azimuth} is in the range {@code (-pi, pi]}, and {@code polar} is in the
  * range {@code [0, pi]}.</p>
- * 
+ *
  * @see <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">Spherical Coordinate System</a>
  */
 public final class SphericalCoordinates implements Spatial, Serializable {
@@ -103,25 +104,9 @@ public final class SphericalCoordinates implements Spatial, Serializable {
             polar += Geometry.PI;
         }
 
-        if (Double.isFinite(azimuth) && (azimuth <= Geometry.MINUS_PI || azimuth > Geometry.PI)) {
-            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
-
-            // azimuth is now in the range [-pi, pi] but we want it to be in the range
-            // (-pi, pi] in order to have completely unique coordinates
-            if (azimuth <= -Geometry.PI) {
-                azimuth += Geometry.TWO_PI;
-            }
-        }
-
-        // normalize the polar angle; this is the angle between the polar vector and the point ray
-        // so it is unsigned (unlike the azimuth) and should be in the range [0, pi]
-        if (Double.isFinite(polar)) {
-            polar = Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(polar));
-        }
-
         this.radius = radius;
-        this.azimuth = azimuth;
-        this.polar = polar;
+        this.azimuth = normalizeAzimuth(azimuth);
+        this.polar = normalizePolar(polar);
     }
 
     /** Return the radius value. The value is in the range {@code [0, +Infinity)}.
@@ -286,6 +271,34 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      */
     public static SphericalCoordinates parse(String input) {
         return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
+    }
+
+    /** Normalize an azimuth value to be within the range {@code (-pi, +pi]}. This
+     * is exactly equivalent to {@link PolarCoordinates#normalizeAzimuth(double)}.
+     * @param azimuth azimuth value in radians
+     * @return equivalent azimuth value in the range {@code (-pi, +pi]}.
+     * @see PolarCoordinates#normalizeAzimuth(double)
+     */
+    public static double normalizeAzimuth(double azimuth) {
+        return PolarCoordinates.normalizeAzimuth(azimuth);
+    }
+
+    /** Normalize a polar value to be within the range {@code [0, +pi]}. Since the
+     * polar angle is the angle between two vectors (the zenith direction and the
+     * point vector), the sign of the angle is not significant as in the azimuth angle.
+     * For example, a polar angle of {@code -pi/2} and one of {@code +pi/2} will both
+     * normalize to {@code pi/2}.
+     * @param polar polar value in radians
+     * @return equalivalent polar value in the range {@code [0, +pi]}
+     */
+    public static double normalizePolar(double polar) {
+        // normalize the polar angle; this is the angle between the polar vector and the point ray
+        // so it is unsigned (unlike the azimuth) and should be in the range [0, pi]
+        if (Double.isFinite(polar)) {
+            polar = Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(polar));
+        }
+
+        return polar;
     }
 
     /** Convert the given set of spherical coordinates to Cartesian coordinates.

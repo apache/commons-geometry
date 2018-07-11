@@ -344,6 +344,30 @@ public class PolarCoordinatesTest {
     }
 
     @Test
+    public void testNormalizeAzimuth() {
+        // act/assert
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(0), 0.0, EPS);
+
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.PI + Geometry.HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.TWO_PI), 0.0, EPS);
+
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.PI - Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.TWO_PI), 0.0, EPS);
+    }
+
+    @Test
+    public void testNormalizeAzimuth_NaNAndInfinite() {
+        // act/assert
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NaN), Double.NaN, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
+    }
+
+    @Test
     public void testGetFactory() {
         // act
         Coordinates.Factory2D<PolarCoordinates> factory = PolarCoordinates.getFactory();

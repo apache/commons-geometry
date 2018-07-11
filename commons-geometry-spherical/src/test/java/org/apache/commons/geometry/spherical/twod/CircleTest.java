@@ -99,10 +99,10 @@ public class CircleTest {
     @Test
     public void testSubSpace() {
         Circle circle = new Circle(S2Point.of(1.2, 2.5), S2Point.of(-4.3, 0), 1.0e-10);
-        Assert.assertEquals(0.0, circle.toSubSpace(S2Point.of(circle.getXAxis())).getAlpha(), 1.0e-10);
-        Assert.assertEquals(0.5 * Math.PI, circle.toSubSpace(S2Point.of(circle.getYAxis())).getAlpha(), 1.0e-10);
+        Assert.assertEquals(0.0, circle.toSubSpace(S2Point.of(circle.getXAxis())).getAzimuth(), 1.0e-10);
+        Assert.assertEquals(0.5 * Math.PI, circle.toSubSpace(S2Point.of(circle.getYAxis())).getAzimuth(), 1.0e-10);
         Vector3D p = Vector3D.of(1, 2, -4);
-        Assert.assertEquals(circle.getPhase(p), circle.toSubSpace(S2Point.of(p)).getAlpha(), 1.0e-10);
+        Assert.assertEquals(circle.getPhase(p), circle.toSubSpace(S2Point.of(p)).getAzimuth(), 1.0e-10);
     }
 
     @Test
@@ -177,9 +177,9 @@ public class CircleTest {
 
             SubLimitAngle  sub = new LimitAngle(S1Point.of(Geometry.TWO_PI * random.nextDouble()),
                                                 random.nextBoolean(), 1.0e-10).wholeHyperplane();
-            Vector3D psub = c.getPointAt(((LimitAngle) sub.getHyperplane()).getLocation().getAlpha());
+            Vector3D psub = c.getPointAt(((LimitAngle) sub.getHyperplane()).getLocation().getAzimuth());
             SubLimitAngle tsub = (SubLimitAngle) t.apply(sub, c, tc);
-            Vector3D ptsub = tc.getPointAt(((LimitAngle) tsub.getHyperplane()).getLocation().getAlpha());
+            Vector3D ptsub = tc.getPointAt(((LimitAngle) tsub.getHyperplane()).getLocation().getAzimuth());
             Assert.assertEquals(0.0, r.applyTo(psub).distance(ptsub), 1.0e-10);
 
         }

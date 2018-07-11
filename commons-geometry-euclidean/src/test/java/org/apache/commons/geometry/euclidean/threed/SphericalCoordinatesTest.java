@@ -23,7 +23,6 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class SphericalCoordinatesTest {
 
     private static final double EPS = 1e-10;
@@ -352,6 +351,54 @@ public class SphericalCoordinatesTest {
     public void testParse_failure() {
         // act/assert
         SphericalCoordinates.parse("abc");
+    }
+
+    @Test
+    public void testNormalizeAzimuth() {
+        // act/assert
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(0), 0.0, EPS);
+
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.PI + Geometry.HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.TWO_PI), 0.0, EPS);
+
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.PI - Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.TWO_PI), 0.0, EPS);
+    }
+
+    @Test
+    public void testNormalizeAzimuth_NaNAndInfinite() {
+        // act/assert
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.NaN), Double.NaN, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
+    }
+
+    @Test
+    public void testNormalizePolar() {
+        // act/assert
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(0), 0.0, EPS);
+
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Geometry.PI + Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Geometry.TWO_PI), 0.0, EPS);
+
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Geometry.MINUS_HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(-Geometry.PI), Geometry.PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(-Geometry.PI - Geometry.HALF_PI), Geometry.HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(-Geometry.TWO_PI), 0.0, EPS);
+    }
+
+    @Test
+    public void testNormalizePolar_NaNAndInfinite() {
+        // act/assert
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NaN), Double.NaN, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
     }
 
     @Test

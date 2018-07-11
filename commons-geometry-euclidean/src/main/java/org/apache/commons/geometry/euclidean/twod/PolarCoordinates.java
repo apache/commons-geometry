@@ -24,30 +24,30 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Class representing <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">polar coordinates</a> 
- * in 2 dimensional Euclidean space. 
- * 
+/** Class representing <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">polar coordinates</a>
+ * in 2 dimensional Euclidean space.
+ *
  * <p>Polar coordinates are defined by a distance from a reference point
- * and an angle from a reference direction. The distance value is called 
+ * and an angle from a reference direction. The distance value is called
  * the radial coordinate, or <em>radius</em>, and the angle is called the angular coordinate,
  * or <em>azimuth</em>. This class follows the standard
  * mathematical convention of using the positive x-axis as the reference
- * direction and measuring positive angles counter-clockwise, toward the 
+ * direction and measuring positive angles counter-clockwise, toward the
  * positive y-axis. The origin is used as the reference point. Polar coordinate
  * are related to Cartesian coordinates as follows:
- * <pre> 
+ * <pre>
  * x = r * cos(&theta;)
  * y = r * sin(&theta;)
- * 
+ *
  * r = &radic;(x<sup>2</sup> + y<sup>2</sup>)
  * &theta; = atan2(y, x)
  * </pre>
  * where <em>r</em> is the radius and <em>&theta;</em> is the azimuth of the polar coordinates.
  * </p>
- * <p>In order to ensure the uniqueness of coordinate sets, coordinate values 
- * are normalized so that {@code radius} is in the range {@code [0, +Infinity)} 
+ * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
+ * are normalized so that {@code radius} is in the range {@code [0, +Infinity)}
  * and {@code azimuth} is in the range {@code (-pi, pi]}.</p>
- * 
+ *
  * @see <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">Polar Coordinate System</a>
  */
 public final class PolarCoordinates implements Spatial, Serializable {
@@ -82,18 +82,8 @@ public final class PolarCoordinates implements Spatial, Serializable {
             azimuth += Geometry.PI;
         }
 
-        if (Double.isFinite(azimuth) && (azimuth <= Geometry.MINUS_PI || azimuth > Geometry.PI)) {
-            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
-
-            // azimuth is now in the range [-pi, pi] but we want it to be in the range
-            // (-pi, pi] in order to have completely unique coordinates
-            if (azimuth <= -Geometry.PI) {
-                azimuth += Geometry.TWO_PI;
-            }
-        }
-
         this.radius = radius;
-        this.azimuth = azimuth;
+        this.azimuth = normalizeAzimuth(azimuth);;
     }
 
     /** Return the radius value. The value will be greater than or equal to 0.
@@ -244,6 +234,24 @@ public final class PolarCoordinates implements Spatial, Serializable {
      */
     public static PolarCoordinates parse(String input) {
         return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
+    }
+
+    /** Normalize an azimuth value to be within the range {@code (-pi, +pi]}.
+     * @param azimuth azimuth value in radians
+     * @return equivalent azimuth value in the range {@code (-pi, +pi]}.
+     */
+    public static double normalizeAzimuth(double azimuth) {
+        if (Double.isFinite(azimuth) && (azimuth <= Geometry.MINUS_PI || azimuth > Geometry.PI)) {
+            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
+
+            // azimuth is now in the range [-pi, pi] but we want it to be in the range
+            // (-pi, pi] in order to have completely unique coordinates
+            if (azimuth <= -Geometry.PI) {
+                azimuth += Geometry.TWO_PI;
+            }
+        }
+
+        return azimuth;
     }
 
     /** Convert the given set of polar coordinates to Cartesian coordinates.
