@@ -81,12 +81,12 @@ public class Cartesian2DTest {
         checkPolar(new StubCartesian2D(-1, 0).toPolar(), 1, Geometry.PI);
 
         checkPolar(new StubCartesian2D(0, 2).toPolar(), 2, Geometry.HALF_PI);
-        checkPolar(new StubCartesian2D(0, -2).toPolar(), 2, Geometry.MINUS_HALF_PI);
+        checkPolar(new StubCartesian2D(0, -2).toPolar(), 2, Geometry.THREE_HALVES_PI);
 
         checkPolar(new StubCartesian2D(sqrt2, sqrt2).toPolar(), 2, 0.25 * Geometry.PI);
         checkPolar(new StubCartesian2D(-sqrt2, sqrt2).toPolar(), 2, 0.75 * Geometry.PI);
-        checkPolar(new StubCartesian2D(sqrt2, -sqrt2).toPolar(), 2, -0.25 * Geometry.PI);
-        checkPolar(new StubCartesian2D(-sqrt2, -sqrt2).toPolar(), 2, -0.75 * Geometry.PI);
+        checkPolar(new StubCartesian2D(sqrt2, -sqrt2).toPolar(), 2, 1.75 * Geometry.PI);
+        checkPolar(new StubCartesian2D(-sqrt2, -sqrt2).toPolar(), 2, 1.25 * Geometry.PI);
     }
 
     @Test

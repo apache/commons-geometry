@@ -41,7 +41,7 @@ public class SphericalCoordinatesTest {
         checkSpherical(SphericalCoordinates.of(1, Geometry.HALF_PI, Geometry.PI),
                 1, Geometry.HALF_PI, Geometry.PI);
         checkSpherical(SphericalCoordinates.of(1, Geometry.MINUS_HALF_PI, Geometry.HALF_PI),
-                1, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
+                1, Geometry.THREE_HALVES_PI, Geometry.HALF_PI);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class SphericalCoordinatesTest {
         checkSpherical(SphericalCoordinates.of(2, Geometry.TWO_PI, 0), 2, 0, 0);
         checkSpherical(SphericalCoordinates.of(2, Geometry.HALF_PI + Geometry.TWO_PI, 0), 2, Geometry.HALF_PI, 0);
         checkSpherical(SphericalCoordinates.of(2, -Geometry.PI, 0), 2, Geometry.PI, 0);
-        checkSpherical(SphericalCoordinates.of(2, Geometry.PI * 1.5, 0), 2, Geometry.MINUS_HALF_PI, 0);
+        checkSpherical(SphericalCoordinates.of(2, Geometry.THREE_HALVES_PI, 0), 2, Geometry.THREE_HALVES_PI, 0);
     }
 
     @Test
@@ -95,10 +95,10 @@ public class SphericalCoordinatesTest {
         checkSpherical(SphericalCoordinates.of(-2, 0, 0), 2, Geometry.PI, Geometry.PI);
         checkSpherical(SphericalCoordinates.of(-2, Geometry.PI, Geometry.PI), 2, 0, 0);
 
-        checkSpherical(SphericalCoordinates.of(-3, Geometry.HALF_PI, QUARTER_PI), 3, Geometry.MINUS_HALF_PI, THREE_QUARTER_PI);
+        checkSpherical(SphericalCoordinates.of(-3, Geometry.HALF_PI, QUARTER_PI), 3, Geometry.THREE_HALVES_PI, THREE_QUARTER_PI);
         checkSpherical(SphericalCoordinates.of(-3, Geometry.MINUS_HALF_PI, THREE_QUARTER_PI), 3, Geometry.HALF_PI, QUARTER_PI);
 
-        checkSpherical(SphericalCoordinates.of(-4, QUARTER_PI, Geometry.HALF_PI), 4, MINUS_THREE_QUARTER_PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.of(-4, QUARTER_PI, Geometry.HALF_PI), 4, Geometry.PI + QUARTER_PI, Geometry.HALF_PI);
         checkSpherical(SphericalCoordinates.of(-4, MINUS_THREE_QUARTER_PI, Geometry.HALF_PI), 4, QUARTER_PI, Geometry.HALF_PI);
     }
 
@@ -125,13 +125,13 @@ public class SphericalCoordinatesTest {
         checkSpherical(SphericalCoordinates.ofCartesian(-0.1, 0, 0), 0.1, Geometry.PI, Geometry.HALF_PI);
 
         checkSpherical(SphericalCoordinates.ofCartesian(0, 0.1, 0), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkSpherical(SphericalCoordinates.ofCartesian(0, -0.1, 0), 0.1, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.ofCartesian(0, -0.1, 0), 0.1, Geometry.THREE_HALVES_PI, Geometry.HALF_PI);
 
         checkSpherical(SphericalCoordinates.ofCartesian(0, 0, 0.1), 0.1, 0, 0);
         checkSpherical(SphericalCoordinates.ofCartesian(0, 0, -0.1), 0.1, 0, Geometry.PI);
 
         checkSpherical(SphericalCoordinates.ofCartesian(1, 1, 1), sqrt3, QUARTER_PI, Math.acos(1 / sqrt3));
-        checkSpherical(SphericalCoordinates.ofCartesian(-1, -1, -1), sqrt3, MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3));
+        checkSpherical(SphericalCoordinates.ofCartesian(-1, -1, -1), sqrt3, 1.25 * Geometry.PI, Math.acos(-1 / sqrt3));
     }
 
     @Test
@@ -343,7 +343,7 @@ public class SphericalCoordinatesTest {
     public void testParse() {
         // act/assert
         checkSpherical(SphericalCoordinates.parse("(1, 2, 3)"), 1, 2, 3);
-        checkSpherical(SphericalCoordinates.parse("(  -2.0 , 1 , -5e-1)"), 2, 1 - Geometry.PI, Geometry.PI - 0.5);
+        checkSpherical(SphericalCoordinates.parse("(  -2.0 , 1 , -5e-1)"), 2, 1 + Geometry.PI, Geometry.PI - 0.5);
         checkSpherical(SphericalCoordinates.parse("(NaN,Infinity,-Infinity)"), Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
@@ -360,10 +360,10 @@ public class SphericalCoordinatesTest {
 
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.HALF_PI), Geometry.HALF_PI, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.PI), Geometry.PI, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.PI + Geometry.HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.THREE_HALVES_PI), Geometry.THREE_HALVES_PI, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.TWO_PI), 0.0, EPS);
 
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.THREE_HALVES_PI, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.PI), Geometry.PI, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.PI - Geometry.HALF_PI), Geometry.HALF_PI, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-Geometry.TWO_PI), 0.0, EPS);

@@ -62,7 +62,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
  * are normalized so that {@code radius} is in the range {@code [0, +Infinity)},
- * {@code azimuth} is in the range {@code (-pi, pi]}, and {@code polar} is in the
+ * {@code azimuth} is in the range {@code [0, 2pi)}, and {@code polar} is in the
  * range {@code [0, pi]}.</p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">Spherical Coordinate System</a>
@@ -117,7 +117,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     }
 
     /** Return the azimuth angle in radians. This is the angle in the x-y plane measured counter-clockwise from
-     * the positive x axis. The angle is in the range {@code (-pi, pi]}.
+     * the positive x axis. The angle is in the range {@code [0, 2pi)}.
      * @return the azimuth angle in radians
      */
     public double getAzimuth() {
@@ -233,7 +233,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
 
     /** Return a new instance with the given spherical coordinate values. The values are normalized
      * so that {@code radius} lies in the range {@code [0, +Infinity)}, {@code azimuth} lies in the range
-     * {@code (-pi, +pi]}, and {@code polar} lies in the range {@code [0, +pi]}.
+     * {@code [0, 2pi)}, and {@code polar} lies in the range {@code [0, +pi]}.
      * @param radius the length of the line segment from the origin to the coordinate point.
      * @param azimuth the angle in the x-y plane, measured in radians counter-clockwise
      *      from the positive x-axis.
@@ -273,10 +273,10 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
     }
 
-    /** Normalize an azimuth value to be within the range {@code (-pi, +pi]}. This
+    /** Normalize an azimuth value to be within the range {@code [0, 2pi)}. This
      * is exactly equivalent to {@link PolarCoordinates#normalizeAzimuth(double)}.
      * @param azimuth azimuth value in radians
-     * @return equivalent azimuth value in the range {@code (-pi, +pi]}.
+     * @return equivalent azimuth value in the range {@code [0, 2pi)}.
      * @see PolarCoordinates#normalizeAzimuth(double)
      */
     public static double normalizeAzimuth(double azimuth) {

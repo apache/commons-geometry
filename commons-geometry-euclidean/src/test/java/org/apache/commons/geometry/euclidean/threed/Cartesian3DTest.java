@@ -47,13 +47,13 @@ public class Cartesian3DTest {
         checkSpherical(new StubCartesian3D(-0.1, 0, 0).toSpherical(), 0.1, Geometry.PI, Geometry.HALF_PI);
 
         checkSpherical(new StubCartesian3D(0, 0.1, 0).toSpherical(), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkSpherical(new StubCartesian3D(0, -0.1, 0).toSpherical(), 0.1, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
+        checkSpherical(new StubCartesian3D(0, -0.1, 0).toSpherical(), 0.1, Geometry.PI + Geometry.HALF_PI, Geometry.HALF_PI);
 
         checkSpherical(new StubCartesian3D(0, 0, 0.1).toSpherical(), 0.1, 0, 0);
         checkSpherical(new StubCartesian3D(0, 0, -0.1).toSpherical(), 0.1, 0, Geometry.PI);
 
         checkSpherical(new StubCartesian3D(1, 1, 1).toSpherical(), sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3));
-        checkSpherical(new StubCartesian3D(-1, -1, -1).toSpherical(), sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3));
+        checkSpherical(new StubCartesian3D(-1, -1, -1).toSpherical(), sqrt3, 1.25 * Geometry.PI, Math.acos(-1 / sqrt3));
     }
 
     @Test

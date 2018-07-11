@@ -23,7 +23,6 @@ import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
@@ -59,7 +58,7 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @param vector corresponding vector
      */
     private S1Point(final double azimuth) {
-        this.azimuth  = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
+        this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);
         this.vector = Double.isFinite(azimuth) ? Vector2D.ofPolar(1.0, azimuth) : Vector2D.NaN;
     }
 

@@ -35,7 +35,7 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.of(2, 0), 2, 0);
         checkPolar(PolarCoordinates.of(2, Geometry.HALF_PI), 2, Geometry.HALF_PI);
         checkPolar(PolarCoordinates.of(2, Geometry.PI), 2, Geometry.PI);
-        checkPolar(PolarCoordinates.of(2, Geometry.MINUS_HALF_PI), 2, Geometry.MINUS_HALF_PI);
+        checkPolar(PolarCoordinates.of(2, Geometry.MINUS_HALF_PI), 2, Geometry.THREE_HALVES_PI);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.of(2, Geometry.TWO_PI), 2, 0);
         checkPolar(PolarCoordinates.of(2, Geometry.HALF_PI + Geometry.TWO_PI), 2, Geometry.HALF_PI);
         checkPolar(PolarCoordinates.of(2, -Geometry.PI), 2, Geometry.PI);
-        checkPolar(PolarCoordinates.of(2, Geometry.PI * 1.5), 2, Geometry.MINUS_HALF_PI);
+        checkPolar(PolarCoordinates.of(2, -Geometry.PI * 1.5), 2, Geometry.HALF_PI);
     }
 
     @Test
@@ -58,9 +58,8 @@ public class PolarCoordinatesTest {
         checkAzimuthWrapAround(2, Geometry.PI - delta);
         checkAzimuthWrapAround(2, Geometry.PI);
 
-        checkAzimuthWrapAround(2, 0);
-        checkAzimuthWrapAround(2, -delta);
-        checkAzimuthWrapAround(2, delta - Geometry.PI);
+        checkAzimuthWrapAround(2, Geometry.THREE_HALVES_PI);
+        checkAzimuthWrapAround(2, Geometry.TWO_PI - delta);
     }
 
     private void checkAzimuthWrapAround(double radius, double azimuth) {
@@ -79,7 +78,7 @@ public class PolarCoordinatesTest {
     public void testOf_negativeRadius() {
         // act/assert
         checkPolar(PolarCoordinates.of(-1, 0), 1, Geometry.PI);
-        checkPolar(PolarCoordinates.of(-1e-6, Geometry.HALF_PI), 1e-6, Geometry.MINUS_HALF_PI);
+        checkPolar(PolarCoordinates.of(-1e-6, Geometry.HALF_PI), 1e-6, Geometry.THREE_HALVES_PI);
         checkPolar(PolarCoordinates.of(-2, Geometry.PI), 2, 0);
         checkPolar(PolarCoordinates.of(-3, Geometry.MINUS_HALF_PI), 3, Geometry.HALF_PI);
     }
@@ -110,10 +109,10 @@ public class PolarCoordinatesTest {
 
         checkPolar(PolarCoordinates.ofCartesian(-1, 1), sqrt2, 0.75 * Geometry.PI);
         checkPolar(PolarCoordinates.ofCartesian(-1, 0), 1, Geometry.PI);
-        checkPolar(PolarCoordinates.ofCartesian(-1, -1), sqrt2, - 0.75 * Geometry.PI);
+        checkPolar(PolarCoordinates.ofCartesian(-1, -1), sqrt2, 1.25 * Geometry.PI);
 
-        checkPolar(PolarCoordinates.ofCartesian(0, -1), 1, Geometry.MINUS_HALF_PI);
-        checkPolar(PolarCoordinates.ofCartesian(1, -1), sqrt2, -0.25 * Geometry.PI);
+        checkPolar(PolarCoordinates.ofCartesian(0, -1), 1, 1.5 * Geometry.PI);
+        checkPolar(PolarCoordinates.ofCartesian(1, -1), sqrt2, 1.75 * Geometry.PI);
     }
 
     @Test
@@ -333,7 +332,7 @@ public class PolarCoordinatesTest {
     public void testParse() {
         // act/assert
         checkPolar(PolarCoordinates.parse("(1, 2)"), 1, 2);
-        checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 - Geometry.PI);
+        checkPolar(PolarCoordinates.parse("( -1 , 0.5 )"), 1, 0.5 + Geometry.PI);
         checkPolar(PolarCoordinates.parse("(NaN,-Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
     }
 
@@ -350,10 +349,10 @@ public class PolarCoordinatesTest {
 
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.HALF_PI), Geometry.HALF_PI, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.PI), Geometry.PI, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.PI + Geometry.HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.THREE_HALVES_PI), Geometry.THREE_HALVES_PI, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.TWO_PI), 0.0, EPS);
 
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.MINUS_HALF_PI, EPS);
+        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Geometry.MINUS_HALF_PI), Geometry.THREE_HALVES_PI, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.PI), Geometry.PI, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.PI - Geometry.HALF_PI), Geometry.HALF_PI, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-Geometry.TWO_PI), 0.0, EPS);
@@ -373,7 +372,7 @@ public class PolarCoordinatesTest {
         Coordinates.Factory2D<PolarCoordinates> factory = PolarCoordinates.getFactory();
 
         // assert
-        checkPolar(factory.create(-1, Geometry.HALF_PI), 1, Geometry.MINUS_HALF_PI);
+        checkPolar(factory.create(-1, Geometry.HALF_PI), 1, Geometry.THREE_HALVES_PI);
     }
 
     private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {

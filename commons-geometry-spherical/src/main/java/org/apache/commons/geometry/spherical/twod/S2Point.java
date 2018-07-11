@@ -79,11 +79,10 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @param azimuth azimuthal angle in the x-y plane
      * @param polar polar angle
      * @param vector corresponding vector; if null, the vector is computed
-     * @throws IllegalArgumentException
      */
     private S2Point(final double azimuth, final double polar, final Vector3D vector) {
-        this.azimuth = azimuth;
-        this.polar = polar;
+        this.azimuth = SphericalCoordinates.normalizeAzimuth(azimuth);
+        this.polar = SphericalCoordinates.normalizePolar(polar);
         this.vector = (vector != null) ? vector : Vector3D.ofSpherical(1.0, azimuth, polar);
     }
 
@@ -213,13 +212,8 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance with the given coordinates
      * @see #getAzimuth()
      * @see #getPolar()
-     * @exception IllegalArgumentException if polar is not in the {@code [0, +pi]} range
      */
     public static S2Point of(final double azimuth, final double polar) throws IllegalArgumentException {
-        if (polar < 0 || polar > Math.PI) {
-            throw new IllegalArgumentException(polar + " is out of [" + 0 + ", " + Math.PI + "] range");
-        }
-
         return new S2Point(azimuth, polar, null);
     }
 

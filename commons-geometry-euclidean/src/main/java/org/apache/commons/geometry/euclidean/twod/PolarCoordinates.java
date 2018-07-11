@@ -46,7 +46,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * </p>
  * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
  * are normalized so that {@code radius} is in the range {@code [0, +Infinity)}
- * and {@code azimuth} is in the range {@code (-pi, pi]}.</p>
+ * and {@code azimuth} is in the range {@code [0, 2pi)}.</p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">Polar Coordinate System</a>
  */
@@ -94,7 +94,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
     }
 
     /** Return the azimuth angle in radians. The value will be
-     * in the range {@code (-pi, pi]}.
+     * in the range {@code [0, 2pi)}.
      * @return azimuth value in radians.
      */
     public double getAzimuth() {
@@ -203,8 +203,8 @@ public final class PolarCoordinates implements Spatial, Serializable {
     }
 
     /** Return a new instance with the given polar coordinate values.
-     * The values are normalized so that {@code radius} lies in the range {@code [0, +infinity)}
-     * and {@code azimuth} in the range {@code (-pi, pi]}.
+     * The values are normalized so that {@code radius} lies in the range {@code [0, +Infinity)}
+     * and {@code azimuth} in the range {@code [0, 2pi)}.
      * @param radius Radius value.
      * @param azimuth Azimuth angle in radians.
      * @return new {@link PolarCoordinates} instance
@@ -236,18 +236,18 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
     }
 
-    /** Normalize an azimuth value to be within the range {@code (-pi, +pi]}.
+    /** Normalize an azimuth value to be within the range {@code [0, 2pi)}.
      * @param azimuth azimuth value in radians
-     * @return equivalent azimuth value in the range {@code (-pi, +pi]}.
+     * @return equivalent azimuth value in the range {@code [0, 2pi)}.
      */
     public static double normalizeAzimuth(double azimuth) {
-        if (Double.isFinite(azimuth) && (azimuth <= Geometry.MINUS_PI || azimuth > Geometry.PI)) {
-            azimuth = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(azimuth);
+        if (Double.isFinite(azimuth) && (azimuth < 0.0 || azimuth >= Geometry.TWO_PI)) {
+            azimuth = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
 
-            // azimuth is now in the range [-pi, pi] but we want it to be in the range
-            // (-pi, pi] in order to have completely unique coordinates
-            if (azimuth <= -Geometry.PI) {
-                azimuth += Geometry.TWO_PI;
+            // azimuth is now in the range [0, 2pi] but we want it to be in the range
+            // [0, 2pi) in order to have completely unique coordinates
+            if (azimuth >= Geometry.TWO_PI) {
+                azimuth -= Geometry.TWO_PI;
             }
         }
 

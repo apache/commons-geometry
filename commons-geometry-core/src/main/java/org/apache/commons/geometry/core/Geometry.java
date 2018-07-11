@@ -32,11 +32,14 @@ public class Geometry {
     /** Constant value for {@code -2*pi}. */
     public static final double MINUS_TWO_PI = -2.0 * Math.PI;
 
-    /** Constant value for {@code pi / 2}. */
+    /** Constant value for {@code pi/2}. */
     public static final double HALF_PI = 0.5 * Math.PI;
 
-    /** Constant value for {@code - pi / 2}. */
+    /** Constant value for {@code - pi/2}. */
     public static final double MINUS_HALF_PI = - 0.5 * Math.PI;
+
+    /** Constant value for {@code  3*pi/2}. */
+    public static final double THREE_HALVES_PI = 1.5 * Math.PI;
 
     /** Private constructor */
     private Geometry() {}

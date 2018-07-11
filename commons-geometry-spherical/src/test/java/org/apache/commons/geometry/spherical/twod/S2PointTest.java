@@ -30,23 +30,13 @@ public class S2PointTest {
     public void testS2Point() {
         for (int k = -2; k < 3; ++k) {
             S2Point p = S2Point.of(1.0 + k * Geometry.TWO_PI, 1.4);
-            Assert.assertEquals(1.0 + k * Geometry.TWO_PI, p.getAzimuth(), EPS);
+            Assert.assertEquals(1.0, p.getAzimuth(), EPS);
             Assert.assertEquals(1.4, p.getPolar(), EPS);
             Assert.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), EPS);
             Assert.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), EPS);
             Assert.assertEquals(Math.cos(1.4), p.getVector().getZ(), EPS);
             Assert.assertFalse(p.isNaN());
         }
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testNegativePolarAngle() {
-        S2Point.of(1.0, -1.0);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testTooLargePolarAngle() {
-        S2Point.of(1.0, 3.5);
     }
 
     @Test

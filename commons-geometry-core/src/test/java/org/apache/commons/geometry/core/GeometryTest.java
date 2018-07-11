@@ -35,6 +35,8 @@ public class GeometryTest {
 
         Assert.assertEquals(Math.PI / 2.0, Geometry.HALF_PI, 0.0);
         Assert.assertEquals(-Math.PI / 2.0, Geometry.MINUS_HALF_PI, eps);
+
+        Assert.assertEquals((3.0 * Math.PI) / 2.0, Geometry.THREE_HALVES_PI, eps);
     }
 
     @Test
