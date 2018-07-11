@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.util.RealFunction;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -46,10 +46,10 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         new Vector1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 1582116020164328846L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static RealFunction<Vector1D> FACTORY = new RealFunction<Vector1D>() {
+    private static DoubleFunction1N<Vector1D> FACTORY = new DoubleFunction1N<Vector1D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -253,13 +253,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     public static Vector1D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new vector instances.
-     * @return vector factory instance
-     */
-    public static RealFunction<Vector1D> getFactory() {
-        return FACTORY;
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

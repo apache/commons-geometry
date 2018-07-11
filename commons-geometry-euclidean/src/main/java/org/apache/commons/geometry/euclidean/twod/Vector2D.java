@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.util.RealFunction2N;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -55,13 +55,13 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
-    private static final long serialVersionUID = 1746839897232305304L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Factory for delegating instance creation. */
-    private static RealFunction2N<Vector2D> FACTORY = new RealFunction2N<Vector2D>() {
+    private static DoubleFunction2N<Vector2D> FACTORY = new DoubleFunction2N<Vector2D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -379,13 +379,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     public static Vector2D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new vector instances.
-     * @return vector factory instance
-     */
-    public static RealFunction2N<Vector2D> getFactory() {
-        return FACTORY;
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

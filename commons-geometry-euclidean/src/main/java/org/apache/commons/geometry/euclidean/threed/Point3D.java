@@ -17,8 +17,8 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.util.RealFunction3N;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -44,10 +44,10 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = 1313493323784566947L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static RealFunction3N<Point3D> FACTORY = new RealFunction3N<Point3D>() {
+    private static DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -192,13 +192,6 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      */
     public static Point3D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static RealFunction3N<Point3D> getFactory() {
-        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

@@ -14,18 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util;
-
-/** Represents a function that accepts a single real number and returns
- * a result.
- * @param <T> The function return type.
+/**
+ *
+ * <p>
+ * This package contains geometry utilities intended for internal use only.
+ * No guarantees are made for the stability of the contained APIs.
+ * </p>
  */
-@FunctionalInterface
-public interface RealFunction<T> {
-
-    /** Apply the function and return the result.
-     * @param n the function argument
-     * @return the function result
-     */
-    T apply(double n);
-}
+package org.apache.commons.geometry.core.internal;

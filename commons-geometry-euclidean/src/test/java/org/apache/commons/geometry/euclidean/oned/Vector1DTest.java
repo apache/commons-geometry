@@ -2,7 +2,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.RealFunction;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -334,16 +333,6 @@ public class Vector1DTest {
         checkVector(Vector1D.of(Vector1D.of(Double.NaN)), Double.NaN);
         checkVector(Vector1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction<Vector1D> factory = Vector1D.getFactory();
-
-        // assert
-        checkVector(factory.apply(1), 1);
-        checkVector(factory.apply(-1), -1);
     }
 
     @Test

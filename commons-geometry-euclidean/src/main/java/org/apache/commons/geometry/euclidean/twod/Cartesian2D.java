@@ -20,7 +20,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 
 /** This class represents a set of Cartesian coordinates in
  * two-dimensional Euclidean space.
@@ -28,7 +28,7 @@ import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 public abstract class Cartesian2D implements Spatial, Serializable {
 
     /** Serializable UID */
-    private static final long serialVersionUID = 2918583078965478552L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Abscissa (first coordinate) */
     private final double x;

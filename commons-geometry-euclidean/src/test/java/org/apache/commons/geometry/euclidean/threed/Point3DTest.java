@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -240,16 +239,6 @@ public class Point3DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Point3D.of(new double[] { 0.0, 0.0 });
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction3N<Point3D> factory = Point3D.getFactory();
-
-        // assert
-        checkPoint(factory.apply(1, 2, 3), 1, 2, 3);
-        checkPoint(factory.apply(-1, -2, -3), -1, -2, -3);
     }
 
     @Test

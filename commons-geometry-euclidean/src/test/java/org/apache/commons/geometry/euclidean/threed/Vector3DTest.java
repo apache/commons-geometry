@@ -20,7 +20,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -686,16 +685,6 @@ public class Vector3DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Vector3D.of(new double[] { 0.0, 0.0 });
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction3N<Vector3D> factory = Vector3D.getFactory();
-
-        // assert
-        checkVector(factory.apply(1, 2, 3), 1, 2, 3);
-        checkVector(factory.apply(-1, -2, -3), -1, -2, -3);
     }
 
     @Test

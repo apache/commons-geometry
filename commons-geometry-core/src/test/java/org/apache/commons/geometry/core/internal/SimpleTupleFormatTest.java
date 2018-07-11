@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util.internal;
+package org.apache.commons.geometry.core.internal;
 
-import org.apache.commons.geometry.core.util.RealFunction;
-import org.apache.commons.geometry.core.util.RealFunction2N;
-import org.apache.commons.geometry.core.util.RealFunction3N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,7 +26,7 @@ public class SimpleTupleFormatTest {
     private static final String OPEN_PAREN = "(";
     private static final String CLOSE_PAREN = ")";
 
-    private static RealFunction<Stub1D> FACTORY_1D = new RealFunction<Stub1D>() {
+    private static DoubleFunction1N<Stub1D> FACTORY_1D = new DoubleFunction1N<Stub1D>() {
 
         @Override
         public Stub1D apply(double v) {
@@ -40,7 +37,7 @@ public class SimpleTupleFormatTest {
         }
     };
 
-    private static RealFunction2N<Stub2D> FACTORY_2D = new RealFunction2N<Stub2D>() {
+    private static DoubleFunction2N<Stub2D> FACTORY_2D = new DoubleFunction2N<Stub2D>() {
 
         @Override
         public Stub2D apply(double v1, double v2) {
@@ -52,7 +49,7 @@ public class SimpleTupleFormatTest {
         }
     };
 
-    private static RealFunction3N<Stub3D> FACTORY_3D = new RealFunction3N<Stub3D>() {
+    private static DoubleFunction3N<Stub3D> FACTORY_3D = new DoubleFunction3N<Stub3D>() {
 
         @Override
         public Stub3D apply(double v1, double v2, double v3) {

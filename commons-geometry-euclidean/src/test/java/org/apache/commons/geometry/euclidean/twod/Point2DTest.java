@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.util.RealFunction2N;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -217,16 +216,6 @@ public class Point2DTest {
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
         Point2D.of(new double[] {0.0 });
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction2N<Point2D> factory = Point2D.getFactory();
-
-        // assert
-        checkPoint(factory.apply(1, 2), 1, 2);
-        checkPoint(factory.apply(-1, -2), -1, -2);
     }
 
     @Test

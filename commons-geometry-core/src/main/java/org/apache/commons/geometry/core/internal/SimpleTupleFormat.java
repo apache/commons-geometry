@@ -14,13 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util.internal;
+package org.apache.commons.geometry.core.internal;
 
 import java.text.ParsePosition;
-
-import org.apache.commons.geometry.core.util.RealFunction;
-import org.apache.commons.geometry.core.util.RealFunction2N;
-import org.apache.commons.geometry.core.util.RealFunction3N;
 
 /** Class for performing simple formatting and parsing of real number tuples.
  */
@@ -172,7 +168,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, RealFunction<T> factory) throws IllegalArgumentException {
+    public <T> T parse(String str, DoubleFunction1N<T> fn) throws IllegalArgumentException {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -180,7 +176,7 @@ public class SimpleTupleFormat {
         readSuffix(str, pos);
         endParse(str, pos);
 
-        return factory.apply(v);
+        return fn.apply(v);
     }
 
     /** Parse the given string as a 2-tuple and passes the tuple values to the
@@ -191,7 +187,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, RealFunction2N<T> factory) throws IllegalArgumentException {
+    public <T> T parse(String str, DoubleFunction2N<T> fn) throws IllegalArgumentException {
         final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
@@ -200,7 +196,7 @@ public class SimpleTupleFormat {
         readSuffix(str, pos);
         endParse(str, pos);
 
-        return factory.apply(v1, v2);
+        return fn.apply(v1, v2);
     }
 
     /** Parse the given string as a 3-tuple and passes the parsed values to the
@@ -211,7 +207,7 @@ public class SimpleTupleFormat {
      * @return object returned by {@code fn}
      * @throws IllegalArgumentException if the input string format is invalid
      */
-    public <T> T parse(String str, RealFunction3N<T> fn) throws IllegalArgumentException {
+    public <T> T parse(String str, DoubleFunction3N<T> fn) throws IllegalArgumentException {
         ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);

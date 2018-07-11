@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.util.RealFunction;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -46,10 +46,10 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         new Point1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 7556674948671647925L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static RealFunction<Point1D> FACTORY = new RealFunction<Point1D>() {
+    private static DoubleFunction1N<Point1D> FACTORY = new DoubleFunction1N<Point1D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -169,13 +169,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      */
     public static Point1D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static RealFunction<Point1D> getFactory() {
-        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

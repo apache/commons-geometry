@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util;
+package org.apache.commons.geometry.core.internal;
 
-/** Represents a function that accepts two real numbers and returns
+/** Represents a function that accepts two double values and returns
  * a result.
  * @param <T> The function return type.
  */
 @FunctionalInterface
-public interface RealFunction2N<T> {
+public interface DoubleFunction2N<T> {
 
     /** Apply the function and return the result.
      * @param n1 first function argument

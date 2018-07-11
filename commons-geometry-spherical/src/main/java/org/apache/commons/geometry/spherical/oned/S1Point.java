@@ -19,8 +19,8 @@ package org.apache.commons.geometry.spherical.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.util.RealFunction;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
@@ -35,10 +35,10 @@ public final class S1Point implements Point<S1Point>, Serializable {
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 20131218L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static RealFunction<S1Point> FACTORY = new RealFunction<S1Point>() {
+    private static DoubleFunction1N<S1Point> FACTORY = new DoubleFunction1N<S1Point>() {
 
         /** {@inheritDoc} */
         @Override
@@ -190,12 +190,5 @@ public final class S1Point implements Point<S1Point>, Serializable {
      */
     public static S1Point parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static RealFunction<S1Point> getFactory() {
-        return FACTORY;
     }
 }

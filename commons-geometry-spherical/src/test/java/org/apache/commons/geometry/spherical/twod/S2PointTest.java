@@ -18,7 +18,6 @@ package org.apache.commons.geometry.spherical.twod;
 
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.RealFunction2N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -95,16 +94,6 @@ public class S2PointTest {
     public void testParse_failure() {
         // act/assert
         S2Point.parse("abc");
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction2N<S2Point> factory = S2Point.getFactory();
-
-        // assert
-        checkPoint(factory.apply(0, 0), 0, 0);
-        checkPoint(factory.apply(1, 2), 1, 2);
     }
 
     private void checkPoint(S2Point p, double theta, double phi) {

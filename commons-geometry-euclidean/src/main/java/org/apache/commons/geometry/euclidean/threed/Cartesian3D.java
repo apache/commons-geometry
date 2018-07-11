@@ -20,7 +20,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 
 /** This class represents a Cartesian coordinate value in
  * three-dimensional Euclidean space.
@@ -28,7 +28,7 @@ import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 public abstract class Cartesian3D implements Spatial, Serializable {
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 6249091865814886817L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Abscissa (first coordinate value) */
     private final double x;

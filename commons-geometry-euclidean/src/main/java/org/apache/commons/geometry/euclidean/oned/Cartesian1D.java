@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 
 /** This class represents a Cartesian coordinate value in
  * one-dimensional Euclidean space.
@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
 public abstract class Cartesian1D implements Spatial, Serializable {
 
     /** Serializable UID. */
-    private static final long serialVersionUID = -1178039568877797126L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Abscissa (coordinate value). */
     private final double x;

@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.util.RealFunction2N;
-import org.apache.commons.geometry.core.util.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -43,10 +43,10 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 266938651998679754L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static RealFunction2N<Point2D> FACTORY = new RealFunction2N<Point2D>() {
+    private static DoubleFunction2N<Point2D> FACTORY = new DoubleFunction2N<Point2D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -180,13 +180,6 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      */
     public static Point2D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static RealFunction2N<Point2D> getFactory() {
-        return FACTORY;
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

@@ -3,7 +3,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.RealFunction2N;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -483,17 +482,6 @@ public class Vector2DTest {
         // act/assert
         Vector2D.of(new double[] {0.0 });
     }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        RealFunction2N<Vector2D> factory = Vector2D.getFactory();
-
-        // assert
-        checkVector(factory.apply(1, 2), 1, 2);
-        checkVector(factory.apply(-1, -2), -1, -2);
-    }
-
     @Test
     public void testLinearCombination1() {
         // arrange
