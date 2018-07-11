@@ -16,13 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
+public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
@@ -59,10 +61,20 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
-    private static final long serialVersionUID = 3695385854431542858L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
+
+    /** Factory for delegating instance creation. */
+    private static DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3D apply(double n1, double n2, double n3) {
+            return new Vector3D(n1, n2, n3);
+        }
+    };
 
     /** Simple constructor.
      * Build a vector from its coordinates
@@ -70,7 +82,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @param y ordinate
      * @param z height
      */
-    public Vector3D(double x, double y, double z) {
+    private Vector3D(double x, double y, double z) {
         super(x, y, z);
     }
 
@@ -370,12 +382,6 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "{" + getX() + "; " + getY() + "; " + getZ() + "}";
-    }
-
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -456,6 +462,16 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         double z = Math.sin(delta);
 
         return new Vector3D(x, y, z);
+    }
+
+    /** Parses the given string and returns a new vector instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return vector instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Vector3D parse(String str) throws IllegalArgumentException {
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

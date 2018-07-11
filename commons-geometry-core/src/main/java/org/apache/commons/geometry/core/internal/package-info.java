@@ -14,28 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core;
-
-/** Interface representing a generic element in a mathematical space.
+/**
+ *
+ * <p>
+ * This package contains geometry utilities intended for internal use only.
+ * No guarantees are made for the stability of the contained APIs.
+ * </p>
  */
-public interface Spatial {
-
-    /** Returns the number of dimensions in the space that this element
-     * belongs to.
-     * @return the number of dimensions in the element's space
-     */
-    int getDimension();
-
-    /** Returns true if any value in this element is NaN; otherwise
-     * returns false.
-     * @return true if any value in this element is NaN
-     */
-    boolean isNaN();
-
-    /** Returns true if any value in this element is infinite and none
-     * are NaN; otherwise, returns false.
-     * @return true if any value in this element is infinite and none
-     *      are NaN
-     */
-    boolean isInfinite();
-}
+package org.apache.commons.geometry.core.internal;

@@ -38,7 +38,7 @@ public class CharacterizationTest {
     public void testCharacterize_insideLeaf() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        SubLine sub = buildSubLine(new Point2D(0, -1), new Point2D(0, 1));
+        SubLine sub = buildSubLine(Point2D.of(0, -1), Point2D.of(0, 1));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -57,7 +57,7 @@ public class CharacterizationTest {
     public void testCharacterize_outsideLeaf() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.FALSE);
-        SubLine sub = buildSubLine(new Point2D(0, -1), new Point2D(0, 1));
+        SubLine sub = buildSubLine(Point2D.of(0, -1), Point2D.of(0, 1));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -76,9 +76,9 @@ public class CharacterizationTest {
     public void testCharacterize_onPlusSide() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(0, -1), new Point2D(0, -2));
+        SubLine sub = buildSubLine(Point2D.of(0, -1), Point2D.of(0, -2));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -97,9 +97,9 @@ public class CharacterizationTest {
     public void testCharacterize_onMinusSide() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(0, 1), new Point2D(0, 2));
+        SubLine sub = buildSubLine(Point2D.of(0, 1), Point2D.of(0, 2));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -118,9 +118,9 @@ public class CharacterizationTest {
     public void testCharacterize_onBothSides() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(0, -1), new Point2D(0, 1));
+        SubLine sub = buildSubLine(Point2D.of(0, -1), Point2D.of(0, 1));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -131,8 +131,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(0, 0), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 1), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, 0), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 1), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getInsideSplitters()));
         Iterator<BSPTree<Point2D>> insideSplitterIter = ch.getInsideSplitters().iterator();
@@ -143,8 +143,8 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(1, outside.getSegments().size());
-        assertVectorEquals(new Point2D(0, -1), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 0), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, -1), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 0), outside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getOutsideSplitters()));
         Iterator<BSPTree<Point2D>> outsideSplitterIter = ch.getOutsideSplitters().iterator();
@@ -155,10 +155,10 @@ public class CharacterizationTest {
     public void testCharacterize_multipleSplits_reunitedOnPlusSide() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
-        cut(tree.getMinus(), buildLine(new Point2D(-1, 0), new Point2D(0, 1)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
+        cut(tree.getMinus(), buildLine(Point2D.of(-1, 0), Point2D.of(0, 1)));
 
-        SubLine sub = buildSubLine(new Point2D(0, -2), new Point2D(0, 2));
+        SubLine sub = buildSubLine(Point2D.of(0, -2), Point2D.of(0, 2));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -169,8 +169,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(0, 1), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 2), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, 1), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 2), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(2, size(ch.getInsideSplitters()));
         Iterator<BSPTree<Point2D>> insideSplitterIter = ch.getInsideSplitters().iterator();
@@ -182,8 +182,8 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(1, outside.getSegments().size());
-        assertVectorEquals(new Point2D(0, -2), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 1), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, -2), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 1), outside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(2, size(ch.getOutsideSplitters()));
         Iterator<BSPTree<Point2D>> outsideSplitterIter = ch.getOutsideSplitters().iterator();
@@ -195,11 +195,11 @@ public class CharacterizationTest {
     public void testCharacterize_multipleSplits_reunitedOnMinusSide() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
-        cut(tree.getMinus(), buildLine(new Point2D(-1, 0), new Point2D(0, 1)));
-        cut(tree.getMinus().getPlus(), buildLine(new Point2D(-0.5, 0.5), new Point2D(0, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
+        cut(tree.getMinus(), buildLine(Point2D.of(-1, 0), Point2D.of(0, 1)));
+        cut(tree.getMinus().getPlus(), buildLine(Point2D.of(-0.5, 0.5), Point2D.of(0, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(0, -2), new Point2D(0, 2));
+        SubLine sub = buildSubLine(Point2D.of(0, -2), Point2D.of(0, 2));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -210,8 +210,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(0, 0), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 2), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, 0), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 2), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(2, size(ch.getInsideSplitters()));
         Iterator<BSPTree<Point2D>> insideSplitterIter = ch.getInsideSplitters().iterator();
@@ -223,8 +223,8 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(1, outside.getSegments().size());
-        assertVectorEquals(new Point2D(0, -2), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 0), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, -2), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 0), outside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getOutsideSplitters()));
         Iterator<BSPTree<Point2D>> outsideSplitterIter = ch.getOutsideSplitters().iterator();
@@ -235,9 +235,9 @@ public class CharacterizationTest {
     public void testCharacterize_onHyperplane_sameOrientation() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(0, 0), new Point2D(1, 0));
+        SubLine sub = buildSubLine(Point2D.of(0, 0), Point2D.of(1, 0));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -256,9 +256,9 @@ public class CharacterizationTest {
     public void testCharacterize_onHyperplane_oppositeOrientation() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
 
-        SubLine sub = buildSubLine(new Point2D(1, 0), new Point2D(0, 0));
+        SubLine sub = buildSubLine(Point2D.of(1, 0), Point2D.of(0, 0));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -277,10 +277,10 @@ public class CharacterizationTest {
     public void testCharacterize_onHyperplane_multipleSplits_sameOrientation() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
-        cut(tree.getMinus(), buildLine(new Point2D(-1, 0), new Point2D(0, 1)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
+        cut(tree.getMinus(), buildLine(Point2D.of(-1, 0), Point2D.of(0, 1)));
 
-        SubLine sub = buildSubLine(new Point2D(-2, 0), new Point2D(2, 0));
+        SubLine sub = buildSubLine(Point2D.of(-2, 0), Point2D.of(2, 0));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -291,8 +291,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(-2, 0), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(-1, 0), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(-2, 0), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(-1, 0), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getInsideSplitters()));
         Iterator<BSPTree<Point2D>> insideSplitterIter = ch.getInsideSplitters().iterator();
@@ -303,8 +303,8 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(1, outside.getSegments().size());
-        assertVectorEquals(new Point2D(-1, 0), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(2, 0), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(-1, 0), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(2, 0), outside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getOutsideSplitters()));
         Iterator<BSPTree<Point2D>> outsideSplitterIter = ch.getOutsideSplitters().iterator();
@@ -315,10 +315,10 @@ public class CharacterizationTest {
     public void testCharacterize_onHyperplane_multipleSplits_oppositeOrientation() {
         // arrange
         BSPTree<Point2D> tree = new BSPTree<>(Boolean.TRUE);
-        cut(tree, buildLine(new Point2D(0, 0), new Point2D(1, 0)));
-        cut(tree.getMinus(), buildLine(new Point2D(-1, 0), new Point2D(0, 1)));
+        cut(tree, buildLine(Point2D.of(0, 0), Point2D.of(1, 0)));
+        cut(tree.getMinus(), buildLine(Point2D.of(-1, 0), Point2D.of(0, 1)));
 
-        SubLine sub = buildSubLine(new Point2D(2, 0), new Point2D(-2, 0));
+        SubLine sub = buildSubLine(Point2D.of(2, 0), Point2D.of(-2, 0));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -329,8 +329,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(-1, 0), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(-2, 0), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(-1, 0), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(-2, 0), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getInsideSplitters()));
         Iterator<BSPTree<Point2D>> insideSplitterIter = ch.getInsideSplitters().iterator();
@@ -341,8 +341,8 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(1, outside.getSegments().size());
-        assertVectorEquals(new Point2D(2, 0), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(-1, 0), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(2, 0), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(-1, 0), outside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(1, size(ch.getOutsideSplitters()));
         Iterator<BSPTree<Point2D>> outsideSplitterIter = ch.getOutsideSplitters().iterator();
@@ -355,7 +355,7 @@ public class CharacterizationTest {
         PolygonsSet poly = new PolygonsSet(0, 1, 0, 1, TEST_TOLERANCE);
         BSPTree<Point2D> tree = poly.getTree(false);
 
-        SubLine sub = buildSubLine(new Point2D(2, 0), new Point2D(-2, 0));
+        SubLine sub = buildSubLine(Point2D.of(2, 0), Point2D.of(-2, 0));
 
         // act
         Characterization<Point2D> ch = new Characterization<>(tree, sub);
@@ -366,8 +366,8 @@ public class CharacterizationTest {
 
         SubLine inside = (SubLine) ch.insideTouching();
         Assert.assertEquals(1, inside.getSegments().size());
-        assertVectorEquals(new Point2D(1, 0), inside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(0, 0), inside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(1, 0), inside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(0, 0), inside.getSegments().get(0).getEnd());
 
         Assert.assertEquals(2, size(ch.getInsideSplitters()));
 
@@ -376,10 +376,10 @@ public class CharacterizationTest {
 
         SubLine outside = (SubLine) ch.outsideTouching();
         Assert.assertEquals(2, outside.getSegments().size());
-        assertVectorEquals(new Point2D(2, 0), outside.getSegments().get(0).getStart());
-        assertVectorEquals(new Point2D(1, 0), outside.getSegments().get(0).getEnd());
-        assertVectorEquals(new Point2D(0, 0), outside.getSegments().get(1).getStart());
-        assertVectorEquals(new Point2D(-2, 0), outside.getSegments().get(1).getEnd());
+        assertVectorEquals(Point2D.of(2, 0), outside.getSegments().get(0).getStart());
+        assertVectorEquals(Point2D.of(1, 0), outside.getSegments().get(0).getEnd());
+        assertVectorEquals(Point2D.of(0, 0), outside.getSegments().get(1).getStart());
+        assertVectorEquals(Point2D.of(-2, 0), outside.getSegments().get(1).getEnd());
 
         Assert.assertEquals(2, size(ch.getOutsideSplitters()));
     }

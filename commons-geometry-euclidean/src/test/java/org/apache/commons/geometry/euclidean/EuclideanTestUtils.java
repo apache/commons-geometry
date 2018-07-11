@@ -181,7 +181,7 @@ public class EuclideanTestUtils {
             @Override
             public OrientedPoint parseHyperplane()
                 throws IOException, ParseException {
-                return new OrientedPoint(new Point1D(getNumber()), getBoolean(), getNumber());
+                return new OrientedPoint(Point1D.of(getNumber()), getBoolean(), getNumber());
             }
 
         };
@@ -202,7 +202,7 @@ public class EuclideanTestUtils {
             @Override
             public Line parseHyperplane()
                 throws IOException, ParseException {
-                return new Line(new Point2D(getNumber(), getNumber()), getNumber(), getNumber());
+                return new Line(Point2D.of(getNumber(), getNumber()), getNumber(), getNumber());
             }
 
         };
@@ -223,8 +223,8 @@ public class EuclideanTestUtils {
             @Override
             public Plane parseHyperplane()
                 throws IOException, ParseException {
-                return new Plane(new Point3D(getNumber(), getNumber(), getNumber()),
-                                 new Vector3D(getNumber(), getNumber(), getNumber()),
+                return new Plane(Point3D.of(getNumber(), getNumber(), getNumber()),
+                                 Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  getNumber());
             }
 

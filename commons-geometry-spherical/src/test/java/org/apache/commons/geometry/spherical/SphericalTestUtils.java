@@ -89,7 +89,7 @@ public class SphericalTestUtils {
             @Override
             protected LimitAngle parseHyperplane()
                 throws IOException, ParseException {
-                return new LimitAngle(new S1Point(getNumber()), getBoolean(), getNumber());
+                return new LimitAngle(S1Point.of(getNumber()), getBoolean(), getNumber());
             }
 
         };
@@ -110,7 +110,7 @@ public class SphericalTestUtils {
             @Override
             public Circle parseHyperplane()
                 throws IOException, ParseException {
-                return new Circle(new Vector3D(getNumber(), getNumber(), getNumber()), getNumber());
+                return new Circle(Vector3D.of(getNumber(), getNumber(), getNumber()), getNumber());
             }
 
         };

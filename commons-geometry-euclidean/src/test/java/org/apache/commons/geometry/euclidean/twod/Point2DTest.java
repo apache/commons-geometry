@@ -156,7 +156,7 @@ public class Point2DTest {
     public void testToString() {
         // arrange
         Point2D p = Point2D.of(1, 2);
-        Pattern pattern = Pattern.compile("\\(1.{0,2}; 2.{0,2}\\)");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
         String str = p.toString();
@@ -164,6 +164,25 @@ public class Point2DTest {
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
                     pattern.matcher(str).matches());
+    }
+
+    @Test
+    public void testParse() {
+        // act/assert
+        checkPoint(Point2D.parse("(1, 2)"), 1, 2);
+        checkPoint(Point2D.parse("(-1, -2)"), -1, -2);
+
+        checkPoint(Point2D.parse("(0.01, -1e-3)"), 1e-2, -1e-3);
+
+        checkPoint(Point2D.parse("(NaN, -Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
+
+        checkPoint(Point2D.parse(Point2D.ZERO.toString()), 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        Point2D.parse("abc");
     }
 
     @Test

@@ -212,14 +212,14 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
     /** {@inheritDoc} */
     @Override
     public Point1D toSubSpace(final Point2D point) {
-        return new Point1D(LinearCombination.value(cos, point.getX(), sin, point.getY()));
+        return Point1D.of(LinearCombination.value(cos, point.getX(), sin, point.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2D toSpace(final Point1D point) {
         final double abscissa = point.getX();
-        return new Point2D(LinearCombination.value(abscissa, cos, -originOffset, sin),
+        return Point2D.of(LinearCombination.value(abscissa, cos, -originOffset, sin),
                             LinearCombination.value(abscissa, sin,  originOffset, cos));
     }
 
@@ -233,7 +233,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
         if (Math.abs(d) < tolerance) {
             return null;
         }
-        return new Point2D(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
+        return Point2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
                             LinearCombination.value(sin, other.originOffset, -other.sin, originOffset) / d);
     }
 
@@ -301,7 +301,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
     public Point2D getPointAt(final Point1D abscissa, final double offset) {
         final double x       = abscissa.getX();
         final double dOffset = offset - originOffset;
-        return new Point2D(LinearCombination.value(x, cos,  dOffset, sin),
+        return Point2D.of(LinearCombination.value(x, cos,  dOffset, sin),
                             LinearCombination.value(x, sin, -dOffset, cos));
     }
 
@@ -468,7 +468,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
         public Point2D apply(final Point2D point) {
             final double  x   = point.getX();
             final double  y   = point.getY();
-            return new Point2D(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
+            return Point2D.of(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
                                 LinearCombination.value(cYX, x, cYY, y, cY1, 1));
         }
 

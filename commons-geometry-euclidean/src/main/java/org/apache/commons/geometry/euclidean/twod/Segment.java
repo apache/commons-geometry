@@ -100,7 +100,7 @@ public class Segment {
             final double px = start.getX() + r * deltaX;
             final double py = start.getY() + r * deltaY;
 
-            final Point2D interPt = new Point2D(px, py);
+            final Point2D interPt = Point2D.of(px, py);
             return interPt.distance(p);
         }
     }

@@ -38,14 +38,14 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
     public void testConvergenceException() {
         final Collection<Point2D> points = new ArrayList<>();
 
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(1, 5));
-        points.add(new Point2D(0, 7));
-        points.add(new Point2D(1, 10));
-        points.add(new Point2D(1, 20));
-        points.add(new Point2D(20, 20));
-        points.add(new Point2D(20, 40));
-        points.add(new Point2D(40, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(1, 5));
+        points.add(Point2D.of(0, 7));
+        points.add(Point2D.of(1, 10));
+        points.add(Point2D.of(1, 20));
+        points.add(Point2D.of(20, 20));
+        points.add(Point2D.of(20, 40));
+        points.add(Point2D.of(40, 1));
 
         @SuppressWarnings("unused")
         final ConvexHull2D hull = new MonotoneChain(true, 2).generate(points);

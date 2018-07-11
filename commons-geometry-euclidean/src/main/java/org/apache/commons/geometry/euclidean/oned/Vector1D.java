@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -44,12 +46,22 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         new Vector1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 1582116020164328846L;
+    private static final long serialVersionUID = 20180710L;
+
+    /** Factory for delegating instance creation. */
+    private static DoubleFunction1N<Vector1D> FACTORY = new DoubleFunction1N<Vector1D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D apply(double n) {
+            return new Vector1D(n);
+        }
+    };
 
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
-    public Vector1D(double x) {
+    private Vector1D(double x) {
         super(x);
     }
 
@@ -217,12 +229,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "{" + getX() + "}";
-    }
-
     /** Returns a vector with the given coordinate value.
      * @param x vector coordinate
      * @return vector instance
@@ -237,6 +243,16 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     public static Vector1D of(Cartesian1D value) {
         return new Vector1D(value.getX());
+    }
+
+    /** Parses the given string and returns a new vector instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return vector instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Vector1D parse(String str) throws IllegalArgumentException {
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

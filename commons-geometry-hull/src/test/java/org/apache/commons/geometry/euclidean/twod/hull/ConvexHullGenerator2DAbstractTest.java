@@ -85,10 +85,10 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testAllIdentical() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(1, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(1, 1));
 
         final ConvexHull2D hull = generator.generate(points);
         Assert.assertTrue(hull.getVertices().length == 1);
@@ -110,11 +110,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testCollinearPoints() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(4, 1));
-        points.add(new Point2D(10, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(4, 1));
+        points.add(Point2D.of(10, 1));
 
         final ConvexHull2D hull = generator.generate(points);
         checkConvexHull(points, hull);
@@ -123,11 +123,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testCollinearPointsReverse() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(10, 1));
-        points.add(new Point2D(4, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(10, 1));
+        points.add(Point2D.of(4, 1));
 
         final ConvexHull2D hull = generator.generate(points);
         checkConvexHull(points, hull);
@@ -136,11 +136,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testCollinearPointsIncluded() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(4, 1));
-        points.add(new Point2D(10, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(4, 1));
+        points.add(Point2D.of(10, 1));
 
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
         checkConvexHull(points, hull, true);
@@ -149,11 +149,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testCollinearPointsIncludedReverse() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(10, 1));
-        points.add(new Point2D(4, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(10, 1));
+        points.add(Point2D.of(4, 1));
 
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
         checkConvexHull(points, hull, true);
@@ -162,11 +162,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testIdenticalPoints() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(4, 1));
-        points.add(new Point2D(1, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(4, 1));
+        points.add(Point2D.of(1, 1));
 
         final ConvexHull2D hull = generator.generate(points);
         checkConvexHull(points, hull);
@@ -175,11 +175,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testIdenticalPoints2() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(4, 1));
-        points.add(new Point2D(1, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(4, 1));
+        points.add(Point2D.of(1, 1));
 
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
         checkConvexHull(points, hull, true);
@@ -188,11 +188,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
     @Test
     public void testClosePoints() {
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(1, 1));
-        points.add(new Point2D(2, 2));
-        points.add(new Point2D(2, 4));
-        points.add(new Point2D(4, 1));
-        points.add(new Point2D(1.00001, 1));
+        points.add(Point2D.of(1, 1));
+        points.add(Point2D.of(2, 2));
+        points.add(Point2D.of(2, 4));
+        points.add(Point2D.of(4, 1));
+        points.add(Point2D.of(1.00001, 1));
 
         final ConvexHull2D hull = generator.generate(points);
         checkConvexHull(points, hull);
@@ -203,16 +203,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         // MATH-1135: check that collinear points on the hull are handled correctly
         //            when only a minimal hull shall be constructed
         final Collection<Point2D> points = new ArrayList<>();
-        points.add(new Point2D(7.3152, 34.7472));
-        points.add(new Point2D(6.400799999999997, 34.747199999999985));
-        points.add(new Point2D(5.486399999999997, 34.7472));
-        points.add(new Point2D(4.876799999999999, 34.7472));
-        points.add(new Point2D(4.876799999999999, 34.1376));
-        points.add(new Point2D(4.876799999999999, 30.48));
-        points.add(new Point2D(6.0959999999999965, 30.48));
-        points.add(new Point2D(6.0959999999999965, 34.1376));
-        points.add(new Point2D(7.315199999999996, 34.1376));
-        points.add(new Point2D(7.3152, 30.48));
+        points.add(Point2D.of(7.3152, 34.7472));
+        points.add(Point2D.of(6.400799999999997, 34.747199999999985));
+        points.add(Point2D.of(5.486399999999997, 34.7472));
+        points.add(Point2D.of(4.876799999999999, 34.7472));
+        points.add(Point2D.of(4.876799999999999, 34.1376));
+        points.add(Point2D.of(4.876799999999999, 30.48));
+        points.add(Point2D.of(6.0959999999999965, 30.48));
+        points.add(Point2D.of(6.0959999999999965, 34.1376));
+        points.add(Point2D.of(7.315199999999996, 34.1376));
+        points.add(Point2D.of(7.3152, 30.48));
 
         final ConvexHull2D hull = createConvexHullGenerator(false).generate(points);
         checkConvexHull(points, hull);
@@ -227,10 +227,10 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         List<Point2D> points = new ArrayList<>();
 
         // first case: 3 points are collinear
-        points.add(new Point2D(16.078200000000184, -36.52519999989808));
-        points.add(new Point2D(19.164300000000186, -36.52519999989808));
-        points.add(new Point2D(19.1643, -25.28136477910407));
-        points.add(new Point2D(19.1643, -17.678400000004157));
+        points.add(Point2D.of(16.078200000000184, -36.52519999989808));
+        points.add(Point2D.of(19.164300000000186, -36.52519999989808));
+        points.add(Point2D.of(19.1643, -25.28136477910407));
+        points.add(Point2D.of(19.1643, -17.678400000004157));
 
         ConvexHull2D hull = createConvexHullGenerator(false).generate(points);
         checkConvexHull(points, hull);
@@ -241,15 +241,15 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.clear();
 
         // second case: multiple points are collinear
-        points.add(new Point2D(0, -29.959696875));
-        points.add(new Point2D(0, -31.621809375));
-        points.add(new Point2D(0, -28.435696875));
-        points.add(new Point2D(0, -33.145809375));
-        points.add(new Point2D(3.048, -33.145809375));
-        points.add(new Point2D(3.048, -31.621809375));
-        points.add(new Point2D(3.048, -29.959696875));
-        points.add(new Point2D(4.572, -33.145809375));
-        points.add(new Point2D(4.572, -28.435696875));
+        points.add(Point2D.of(0, -29.959696875));
+        points.add(Point2D.of(0, -31.621809375));
+        points.add(Point2D.of(0, -28.435696875));
+        points.add(Point2D.of(0, -33.145809375));
+        points.add(Point2D.of(3.048, -33.145809375));
+        points.add(Point2D.of(3.048, -31.621809375));
+        points.add(Point2D.of(3.048, -29.959696875));
+        points.add(Point2D.of(4.572, -33.145809375));
+        points.add(Point2D.of(4.572, -28.435696875));
 
         hull = createConvexHullGenerator(false).generate(points);
         checkConvexHull(points, hull);
@@ -315,26 +315,26 @@ public abstract class ConvexHullGenerator2DAbstractTest {
                 { 11, -1 }, { 11, 0 }, { 11, 1 } };
 
         for (int[] line : data) {
-            points.add(new Point2D(line[0], line[1]));
+            points.add(Point2D.of(line[0], line[1]));
         }
 
         Point2D[] referenceHull = new Point2D[] {
-            new Point2D(-11.0, -1.0),
-            new Point2D(-10.0, -3.0),
-            new Point2D( -6.0, -7.0),
-            new Point2D( -3.0, -8.0),
-            new Point2D(  3.0, -8.0),
-            new Point2D(  6.0, -7.0),
-            new Point2D( 10.0, -3.0),
-            new Point2D( 11.0, -1.0),
-            new Point2D( 11.0,  1.0),
-            new Point2D( 10.0,  3.0),
-            new Point2D(  6.0,  7.0),
-            new Point2D(  3.0,  8.0),
-            new Point2D( -3.0,  8.0),
-            new Point2D( -6.0,  7.0),
-            new Point2D(-10.0,  3.0),
-            new Point2D(-11.0,  1.0),
+            Point2D.of(-11.0, -1.0),
+            Point2D.of(-10.0, -3.0),
+            Point2D.of( -6.0, -7.0),
+            Point2D.of( -3.0, -8.0),
+            Point2D.of(  3.0, -8.0),
+            Point2D.of(  6.0, -7.0),
+            Point2D.of( 10.0, -3.0),
+            Point2D.of( 11.0, -1.0),
+            Point2D.of( 11.0,  1.0),
+            Point2D.of( 10.0,  3.0),
+            Point2D.of(  6.0,  7.0),
+            Point2D.of(  3.0,  8.0),
+            Point2D.of( -3.0,  8.0),
+            Point2D.of( -6.0,  7.0),
+            Point2D.of(-10.0,  3.0),
+            Point2D.of(-11.0,  1.0),
         };
 
         ConvexHull2D convHull = generator.generate(points);
@@ -361,7 +361,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         List<Point2D> points = new ArrayList<>(size);
         // fill the cloud with a random distribution of points
         for (int i = 0; i < size; i++) {
-            points.add(new Point2D(random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0));
+            points.add(Point2D.of(random.nextDouble() * 2.0 - 1.0, random.nextDouble() * 2.0 - 1.0));
         }
         return points;
     }

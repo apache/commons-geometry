@@ -1,5 +1,7 @@
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.regex.Pattern;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,6 +68,20 @@ public class Cartesian2DTest {
         Assert.assertFalse(new StubCartesian2D(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
         Assert.assertFalse(new StubCartesian2D(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
         Assert.assertFalse(new StubCartesian2D(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        StubCartesian2D c = new StubCartesian2D(1, 2);
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
+
+        // act
+        String str = c.toString();
+
+        // assert
+        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
+                    pattern.matcher(str).matches());
     }
 
     private static class StubCartesian2D extends Cartesian2D {

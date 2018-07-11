@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -53,16 +55,26 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
-    private static final long serialVersionUID = 1746839897232305304L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
+
+    /** Factory for delegating instance creation. */
+    private static DoubleFunction2N<Vector2D> FACTORY = new DoubleFunction2N<Vector2D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D apply(double n1, double n2) {
+            return new Vector2D(n1, n2);
+        }
+    };
 
     /** Simple constructor.
      * @param x abscissa (first coordinate)
      * @param y ordinate (second coordinate)
      */
-    public Vector2D(double x, double y) {
+    private Vector2D(double x, double y) {
         super(x, y);
     }
 
@@ -77,7 +89,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Point2D asPoint() {
-        return new Point2D(getX(), getY());
+        return Point2D.of(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -308,12 +320,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "{" + getX() + "; " + getY() + "}";
-    }
-
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -363,6 +369,16 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 2");
         }
         return new Vector2D(v[0], v[1]);
+    }
+
+    /** Parses the given string and returns a new vector instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return vector instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Vector2D parse(String str) throws IllegalArgumentException {
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

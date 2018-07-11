@@ -152,12 +152,12 @@ public class PolyhedronsSet extends AbstractRegion<Point3D, Point2D> {
             // too thin box, build an empty polygons set
             return new BSPTree<>(Boolean.FALSE);
         }
-        final Plane pxMin = new Plane(new Point3D(xMin, 0,    0),   Vector3D.MINUS_X, tolerance);
-        final Plane pxMax = new Plane(new Point3D(xMax, 0,    0),   Vector3D.PLUS_X,  tolerance);
-        final Plane pyMin = new Plane(new Point3D(0,    yMin, 0),   Vector3D.MINUS_Y, tolerance);
-        final Plane pyMax = new Plane(new Point3D(0,    yMax, 0),   Vector3D.PLUS_Y,  tolerance);
-        final Plane pzMin = new Plane(new Point3D(0,    0,   zMin), Vector3D.MINUS_Z, tolerance);
-        final Plane pzMax = new Plane(new Point3D(0,    0,   zMax), Vector3D.PLUS_Z,  tolerance);
+        final Plane pxMin = new Plane(Point3D.of(xMin, 0,    0),   Vector3D.MINUS_X, tolerance);
+        final Plane pxMax = new Plane(Point3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  tolerance);
+        final Plane pyMin = new Plane(Point3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, tolerance);
+        final Plane pyMax = new Plane(Point3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  tolerance);
+        final Plane pzMin = new Plane(Point3D.of(0,    0,   zMin), Vector3D.MINUS_Z, tolerance);
+        final Plane pzMax = new Plane(Point3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  tolerance);
         final Region<Point3D> boundary =
         new RegionFactory<Point3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
@@ -614,8 +614,8 @@ public class PolyhedronsSet extends AbstractRegion<Point3D, Point2D> {
                 final Plane    oPlane = (Plane) original;
                 final Plane    tPlane = (Plane) transformed;
                 final Point3D p00    = oPlane.getOrigin();
-                final Point3D p10    = oPlane.toSpace(new Point2D(1.0, 0.0));
-                final Point3D p01    = oPlane.toSpace(new Point2D(0.0, 1.0));
+                final Point3D p10    = oPlane.toSpace(Point2D.of(1.0, 0.0));
+                final Point3D p01    = oPlane.toSpace(Point2D.of(0.0, 1.0));
                 final Point2D tP00   = tPlane.toSubSpace(apply(p00));
                 final Point2D tP10   = tPlane.toSubSpace(apply(p10));
                 final Point2D tP01   = tPlane.toSubSpace(apply(p01));

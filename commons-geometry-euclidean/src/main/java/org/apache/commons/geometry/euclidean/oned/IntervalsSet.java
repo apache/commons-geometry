@@ -105,14 +105,14 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
             }
             // the tree must be open on the negative infinity side
             final SubHyperplane<Point1D> upperCut =
-                new OrientedPoint(new Point1D(upper), true, tolerance).wholeHyperplane();
+                new OrientedPoint(Point1D.of(upper), true, tolerance).wholeHyperplane();
             return new BSPTree<>(upperCut,
                                new BSPTree<Point1D>(Boolean.FALSE),
                                new BSPTree<Point1D>(Boolean.TRUE),
                                null);
         }
         final SubHyperplane<Point1D> lowerCut =
-            new OrientedPoint(new Point1D(lower), false, tolerance).wholeHyperplane();
+            new OrientedPoint(Point1D.of(lower), false, tolerance).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
             return new BSPTree<>(lowerCut,
@@ -123,7 +123,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
 
         // the tree must be bounded on the two sides
         final SubHyperplane<Point1D> upperCut =
-            new OrientedPoint(new Point1D(upper), true, tolerance).wholeHyperplane();
+            new OrientedPoint(Point1D.of(upper), true, tolerance).wholeHyperplane();
         return new BSPTree<>(lowerCut,
                                         new BSPTree<Point1D>(Boolean.FALSE),
                                         new BSPTree<>(upperCut,
@@ -157,7 +157,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
             if (Double.isInfinite(size)) {
                 setBarycenter(Point1D.NaN);
             } else if (size > 0) {
-                setBarycenter(new Point1D(sum / size));
+                setBarycenter(Point1D.of(sum / size));
             } else {
                 setBarycenter(((OrientedPoint) getTree(false).getCut().getHyperplane()).getLocation());
             }
@@ -242,7 +242,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @return a new point for finite abscissa, null otherwise
      */
     private Point1D finiteOrNullPoint(final double x) {
-        return Double.isInfinite(x) ? null : new Point1D(x);
+        return Double.isInfinite(x) ? null : Point1D.of(x);
     }
 
     /** Build an ordered list of intervals representing the instance.

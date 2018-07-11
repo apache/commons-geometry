@@ -14,28 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core;
+package org.apache.commons.geometry.core.internal;
 
-/** Interface representing a generic element in a mathematical space.
+/** Represents a function that accepts a single double value and returns
+ * a result.
+ * @param <T> The function return type.
  */
-public interface Spatial {
+@FunctionalInterface
+public interface DoubleFunction1N<T> {
 
-    /** Returns the number of dimensions in the space that this element
-     * belongs to.
-     * @return the number of dimensions in the element's space
+    /** Apply the function and return the result.
+     * @param n the function argument
+     * @return the function result
      */
-    int getDimension();
-
-    /** Returns true if any value in this element is NaN; otherwise
-     * returns false.
-     * @return true if any value in this element is NaN
-     */
-    boolean isNaN();
-
-    /** Returns true if any value in this element is infinite and none
-     * are NaN; otherwise, returns false.
-     * @return true if any value in this element is infinite and none
-     *      are NaN
-     */
-    boolean isInfinite();
+    T apply(double n);
 }
