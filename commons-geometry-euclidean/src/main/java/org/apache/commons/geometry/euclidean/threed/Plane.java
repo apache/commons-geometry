@@ -275,7 +275,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
     public boolean isSimilarTo(final Plane plane) {
         final double angle = w.angle(plane.w);
         return ((angle < 1.0e-10) && (Math.abs(originOffset - plane.originOffset) < tolerance)) ||
-               ((angle > (Math.PI - 1.0e-10)) && (Math.abs(originOffset + plane.originOffset) < tolerance));
+               (((angle + 1.0e-10) > Math.PI) && (Math.abs(originOffset + plane.originOffset) < tolerance));
     }
 
     /** Rotate the plane around the specified point.

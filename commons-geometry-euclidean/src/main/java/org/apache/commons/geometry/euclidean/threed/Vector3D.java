@@ -387,7 +387,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @param v1 first vector
      * @param v2 second vector
      * @return the dot product
-     * @see {@link #dotProduct(Vector3D)}
+     * @see #dotProduct(Vector3D)
      */
     public static double dotProduct(Vector3D v1, Vector3D v2) {
         return v1.dotProduct(v2);
@@ -398,7 +398,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @param v1 first vector
      * @param v2 second vector
      * @return the angle between the vectors in radians
-     * @see {@link #angle(Vector3D)}
+     * @see #angle(Vector3D)
      */
     public static double angle(Vector3D v1, Vector3D v2) {
         return v1.angle(v2);
@@ -409,7 +409,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @param v1 first vector
      * @param v2 second vector
      * @return the computed cross product vector
-     * @see {@link #crossProduct(Vector3D)}
+     * @see #crossProduct(Vector3D)
      */
     public static Vector3D crossProduct(Vector3D v1, Vector3D v2) {
         return v1.crossProduct(v2);
@@ -451,8 +451,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @param delta elevation (&delta;) above (XY) plane, from -&pi;/2 to +&pi;/2
      * @see #getAlpha()
      * @see #getDelta()
-     * @param alpha
-     * @param delta
      * @return new vector instance with the given azimuthal coordinates
      */
     public static Vector3D fromSpherical(double alpha, double delta) {

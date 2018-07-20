@@ -22,7 +22,7 @@ import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.hull.ConvexHullGenerator;
 
 /**
- * Interface for convex hull generators in the two-dimensional euclidean space.
+ * Interface for convex hull generators in the two-dimensional Euclidean space.
  */
 public interface ConvexHullGenerator2D extends ConvexHullGenerator<Point2D> {
 

@@ -25,7 +25,6 @@ import org.apache.commons.geometry.core.Point;
  * This generator is used in the {@link WelzlEncloser Emo Welzl} algorithm
  * and its derivatives.
  * </p>
- * @param <S> Space type.
  * @param <P> Point type.
  * @see EnclosingBall
  */

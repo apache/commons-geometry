@@ -21,9 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Point;
 
 /** This class represents a ball enclosing some points.
- * @param <S> Space type.
  * @param <P> Point type.
- * @see Space
  * @see Point
  * @see Encloser
  */

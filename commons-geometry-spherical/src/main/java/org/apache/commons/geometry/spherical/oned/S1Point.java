@@ -64,13 +64,13 @@ public final class S1Point implements Point<S1Point>, Serializable {
 
     /** Get the azimuthal angle in radians \( \alpha \).
      * @return azimuthal angle \( \alpha \)
-     * @see #S1Point(double)
+     * @see S1Point#of(double)
      */
     public double getAlpha() {
         return alpha;
     }
 
-    /** Get the corresponding normalized vector in the 2D euclidean space.
+    /** Get the corresponding normalized vector in the 2D Euclidean space.
      * @return normalized vector
      */
     public Vector2D getVector() {

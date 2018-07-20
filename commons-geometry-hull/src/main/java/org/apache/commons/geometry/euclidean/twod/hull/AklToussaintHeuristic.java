@@ -121,30 +121,30 @@ public final class AklToussaintHeuristic {
     private static boolean insideQuadrilateral(final Point2D point,
                                                final List<Point2D> quadrilateralPoints) {
 
-        Vector2D p0 = point.asVector();
-        Vector2D p1 = quadrilateralPoints.get(0).asVector();
-        Vector2D p2 = quadrilateralPoints.get(1).asVector();
+        Vector2D v0 = point.asVector();
+        Vector2D v1 = quadrilateralPoints.get(0).asVector();
+        Vector2D v2 = quadrilateralPoints.get(1).asVector();
 
-        if (point.equals(p1) || point.equals(p2)) {
+        if (v0.equals(v1) || v0.equals(v2)) {
             return true;
         }
 
         // get the location of the point relative to the first two vertices
-        final double last = p0.crossProduct(p1, p2);
+        final double last = v0.crossProduct(v1, v2);
         final int size = quadrilateralPoints.size();
         // loop through the rest of the vertices
         for (int i = 1; i < size; i++) {
-            p1 = p2;
-            p2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1).asVector();
+            v1 = v2;
+            v2 = quadrilateralPoints.get((i + 1) == size ? 0 : i + 1).asVector();
 
-            if (p0.equals(p1) || p0.equals(p2)) {
+            if (v0.equals(v1) || v0.equals(v2)) {
                 return true;
             }
 
             // do side of line test: multiply the last location with this location
             // if they are the same sign then the operation will yield a positive result
             // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-            if (last * p0.crossProduct(p1, p2) < 0) {
+            if (last * v0.crossProduct(v1, v2) < 0) {
                 return false;
             }
         }

@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.Point;
  * partitioning is as cutters. Each partitioning node in a {@link
  * BSPTree BSP tree} has a cut {@link SubHyperplane sub-hyperplane}
  * which is either an hyperplane or a part of an hyperplane. In an
- * n-dimensions euclidean space, an hyperplane is an (n-1)-dimensions
- * hyperplane (for example a traditional plane in the 3D euclidean
+ * n-dimensions Euclidean space, an hyperplane is an (n-1)-dimensions
+ * hyperplane (for example a traditional plane in the 3D Euclidean
  * space). They can be more exotic objects in specific fields, for
  * example a circle on the surface of the unit sphere.</p>
 

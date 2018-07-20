@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor.Order;
 
 /** This class represent a Binary Space Partition tree.
 
@@ -239,7 +240,8 @@ public class BSPTree<P extends Point<P>> {
         if (cut == null) {
             visitor.visitLeafNode(this);
         } else {
-            switch (visitor.visitOrder(this)) {
+            Order order = visitor.visitOrder(this);
+            switch (order) {
             case PLUS_MINUS_SUB:
                 plus.visit(visitor);
                 minus.visit(visitor);
@@ -270,8 +272,11 @@ public class BSPTree<P extends Point<P>> {
                 minus.visit(visitor);
                 plus.visit(visitor);
                 break;
+            default:
+                // we shouldn't end up here since all possibilities are
+                // covered above
+                throw new IllegalStateException("Invalid node visit order: " + order);
             }
-
         }
     }
 

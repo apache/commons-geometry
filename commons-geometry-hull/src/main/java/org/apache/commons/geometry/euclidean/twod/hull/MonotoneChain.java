@@ -28,7 +28,7 @@ import org.apache.commons.numbers.core.Precision;
 
 /**
  * Implements Andrew's monotone chain method to generate the convex hull of a finite set of
- * points in the two-dimensional euclidean space.
+ * points in the two-dimensional Euclidean space.
  * <p>
  * The runtime complexity is O(n log n), with n being the number of input points. If the
  * point set is already sorted (by x-coordinate), the runtime complexity is O(n).

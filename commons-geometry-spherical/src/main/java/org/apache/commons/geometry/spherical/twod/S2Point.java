@@ -93,7 +93,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
 
     /** Get the azimuthal angle \( \theta \) in the x-y plane.
      * @return azimuthal angle \( \theta \) in the x-y plane
-     * @see #S2Point(double, double)
+     * @see S2Point#of(double, double)
      */
     public double getTheta() {
         return theta;
@@ -101,13 +101,13 @@ public final class S2Point implements Point<S2Point>, Serializable {
 
     /** Get the polar angle \( \varphi \).
      * @return polar angle \( \varphi \)
-     * @see #S2Point(double, double)
+     * @see S2Point#of(double, double)
      */
     public double getPhi() {
         return phi;
     }
 
-    /** Get the corresponding normalized vector in the 3D euclidean space.
+    /** Get the corresponding normalized vector in the 3D Euclidean space.
      * @return normalized vector
      */
     public Vector3D getVector() {

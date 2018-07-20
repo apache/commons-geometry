@@ -30,10 +30,10 @@ public enum RotationConvention {
      * </p>
      * <p>
      * This means that if we define rotation r is a 90 degrees rotation around
-     * the Z axis, the image of vector {@link Cartesian3D#PLUS_I} would be
-     * {@link Cartesian3D#PLUS_J}, the image of vector {@link Cartesian3D#PLUS_J}
-     * would be {@link Cartesian3D#MINUS_I}, the image of vector {@link Cartesian3D#PLUS_K}
-     * would be {@link Cartesian3D#PLUS_K}, and the image of vector with coordinates (1, 2, 3)
+     * the Z axis, the image of vector {@link Vector3D#PLUS_X} would be
+     * {@link Vector3D#PLUS_Y}, the image of vector {@link Vector3D#PLUS_Y}
+     * would be {@link Vector3D#MINUS_X}, the image of vector {@link Vector3D#PLUS_Z}
+     * would be {@link Vector3D#PLUS_Z}, and the image of vector with coordinates (1, 2, 3)
      * would be vector (-2, 1, 3). This means that the vector rotates counterclockwise.
      * </p>
      * <p>
@@ -57,10 +57,10 @@ public enum RotationConvention {
      * </p>
      * <p>
      * This means that if we define rotation r is a 90 degrees rotation around
-     * the Z axis, the image of vector {@link Cartesian3D#PLUS_I} would be
-     * {@link Cartesian3D#MINUS_J}, the image of vector {@link Cartesian3D#PLUS_J}
-     * would be {@link Cartesian3D#PLUS_I}, the image of vector {@link Cartesian3D#PLUS_K}
-     * would be {@link Cartesian3D#PLUS_K}, and the image of vector with coordinates (1, 2, 3)
+     * the Z axis, the image of vector {@link Vector3D#PLUS_X} would be
+     * {@link Vector3D#MINUS_Y}, the image of vector {@link Vector3D#PLUS_Y}
+     * would be {@link Vector3D#PLUS_X}, the image of vector {@link Vector3D#PLUS_Z}
+     * would be {@link Vector3D#PLUS_Z}, and the image of vector with coordinates (1, 2, 3)
      * would be vector (2, -1, 3). This means that the coordinates of the vector rotates
      * clockwise, because they are expressed with respect to a destination frame that is rotated
      * counterclockwise.
