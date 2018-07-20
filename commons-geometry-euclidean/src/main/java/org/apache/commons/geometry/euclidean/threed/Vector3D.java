@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -47,7 +48,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
     public static final Vector3D MINUS_Z = new Vector3D(0, 0, -1);
 
- // CHECKSTYLE: stop ConstantName
+    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
@@ -62,9 +63,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
     /** Serializable UID */
     private static final long serialVersionUID = 20180710L;
-
-    /** Error message when norms are zero. */
-    private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Factory for delegating instance creation. */
     private static DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
@@ -101,33 +99,49 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double getNorm1() {
-        return Math.abs(getX()) + Math.abs(getY()) + Math.abs(getZ());
+        return Vectors.norm1(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        // there are no cancellation problems here, so we use the straightforward formula
-        final double x = getX();
-        final double y = getY();
-        final double z = getZ();
-        return Math.sqrt ((x * x) + (y * y) + (z * z));
+        return Vectors.norm(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        // there are no cancellation problems here, so we use the straightforward formula
-        final double x = getX();
-        final double y = getY();
-        final double z = getZ();
-        return (x * x) + (y * y) + (z * z);
+        return Vectors.normSq(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormInf() {
-        return Math.max(Math.max(Math.abs(getX()), Math.abs(getY())), Math.abs(getZ()));
+        return Vectors.normInf(getX(), getY(), getZ());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitude() {
+        return getNorm();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitudeSq() {
+        return getNormSq();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D withMagnitude(double magnitude) {
+        final double invNorm = 1.0 / nonZeroNorm();
+
+        return new Vector3D(
+                    magnitude * getX() * invNorm,
+                    magnitude * getY() * invNorm,
+                    magnitude * getZ() * invNorm
+                );
     }
 
     /** Get the azimuth of the vector.
@@ -193,11 +207,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D normalize() throws IllegalStateException {
-        double s = getNorm();
-        if (s == 0) {
-            throw new IllegalStateException(ZERO_NORM_MSG);
-        }
-        return scalarMultiply(1 / s);
+        return scalarMultiply(1 / nonZeroNorm());
     }
 
     /** Get a vector orthogonal to the instance.
@@ -216,10 +226,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @exception IllegalStateException if the norm of the instance is zero
      */
     public Vector3D orthogonal() throws IllegalStateException {
-        double threshold = 0.6 * getNorm();
-        if (threshold == 0) {
-            throw new IllegalStateException(ZERO_NORM_MSG);
-        }
+        double threshold = 0.6 * nonZeroNorm();
 
         final double x = getX();
         final double y = getY();
@@ -247,10 +254,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @exception IllegalStateException if either vector has a zero norm
      */
     public double angle(Vector3D v) throws IllegalStateException {
-        double normProduct = getNorm() * v.getNorm();
-        if (normProduct == 0) {
-            throw new IllegalStateException(ZERO_NORM_MSG);
-        }
+        double normProduct = nonZeroNorm() * v.nonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -286,37 +290,41 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double distance1(Vector3D v) {
-        double dx = Math.abs(v.getX() - getX());
-        double dy = Math.abs(v.getY() - getY());
-        double dz = Math.abs(v.getZ() - getZ());
-
-        return dx + dy + dz;
+        return Vectors.norm1(
+                    getX() - v.getX(),
+                    getY() - v.getY(),
+                    getZ() - v.getZ()
+                );
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector3D v) {
-        return euclideanDistance(v);
+        return Vectors.norm(
+                getX() - v.getX(),
+                getY() - v.getY(),
+                getZ() - v.getZ()
+            );
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceInf(Vector3D v) {
-        double dx = Math.abs(v.getX() - getX());
-        double dy = Math.abs(v.getY() - getY());
-        double dz = Math.abs(v.getZ() - getZ());
-
-        return Math.max(Math.max(dx, dy), dz);
+        return Vectors.normInf(
+                getX() - v.getX(),
+                getY() - v.getY(),
+                getZ() - v.getZ()
+            );
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector3D v) {
-        double dx = v.getX() - getX();
-        double dy = v.getY() - getY();
-        double dz = v.getZ() - getZ();
-
-        return (dx * dx) + (dy * dy) + (dz * dz);
+        return Vectors.normSq(
+                getX() - v.getX(),
+                getY() - v.getY(),
+                getZ() - v.getZ()
+            );
     }
 
     /** {@inheritDoc}
@@ -380,6 +388,19 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
             return (getX() == rhs.getX()) && (getY() == rhs.getY()) && (getZ() == rhs.getZ());
         }
         return false;
+    }
+
+    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
+     * @return the non-zero norm value
+     * @throws IllegalStateException if the norm is zero
+     */
+    private double nonZeroNorm() throws IllegalStateException {
+        final double n = getNorm();
+        if (n == 0) {
+            throw new IllegalStateException("Norm is zero");
+        }
+
+        return n;
     }
 
     /** Computes the dot product between to vectors. This method simply

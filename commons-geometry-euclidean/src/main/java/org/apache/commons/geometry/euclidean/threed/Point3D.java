@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -75,7 +76,10 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public double distance(Point3D p) {
-        return euclideanDistance(p);
+        return Vectors.norm(
+                getX() - p.getX(),
+                getY() - p.getY(),
+                getZ() - p.getZ());
     }
 
     /** {@inheritDoc} */

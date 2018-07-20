@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -73,7 +74,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** {@inheritDoc} */
     @Override
     public double distance(Point2D p) {
-        return euclideanDistance(p);
+        return Vectors.norm(getX() - p.getX(), getY() - p.getY());
     }
 
     /** {@inheritDoc} */

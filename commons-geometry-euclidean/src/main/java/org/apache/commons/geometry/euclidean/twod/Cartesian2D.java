@@ -90,14 +90,4 @@ public abstract class Cartesian2D implements Spatial, Serializable {
     public String toString() {
         return SimpleTupleFormat.getDefault().format(getX(), getY());
     }
-
-    /** Returns the Euclidean distance from this value to the given value.
-     * @param other the set of coordinates to compute the distance to
-     * @return Euclidean distance
-     */
-    protected double euclideanDistance(Cartesian2D other) {
-        double dx = x - other.x;
-        double dy = y - other.y;
-        return Math.sqrt((dx * dx) + (dy * dy));
-    }
 }

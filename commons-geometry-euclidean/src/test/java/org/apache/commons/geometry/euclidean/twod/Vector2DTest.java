@@ -104,6 +104,51 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testMagnitude() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitude(), EPS);
+
+        Assert.assertEquals(5.0, Vector2D.of(3, 4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(3, -4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, 4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getMagnitude(), EPS);
+
+        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).getMagnitude(), EPS);
+    }
+
+    @Test
+    public void testMagnitudeSq() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitudeSq(), EPS);
+
+        Assert.assertEquals(25.0, Vector2D.of(3, 4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(3, -4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, 4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, -4).getMagnitudeSq(), EPS);
+
+        Assert.assertEquals(5.0, Vector2D.of(-1, -2).getMagnitudeSq(), EPS);
+    }
+
+    @Test
+    public void testWithMagnitude() {
+        // act/assert
+        checkVector(Vector2D.of(3, 4).withMagnitude(1.0), 0.6, 0.8);
+        checkVector(Vector2D.of(4, 3).withMagnitude(1.0), 0.8, 0.6);
+
+        checkVector(Vector2D.of(-3, 4).withMagnitude(0.5), -0.3, 0.4);
+        checkVector(Vector2D.of(3, -4).withMagnitude(2.0), 1.2, -1.6);
+        checkVector(Vector2D.of(-3, -4).withMagnitude(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
+
+        checkVector(Vector2D.of(0.5, 0.5).withMagnitude(2), Math.sqrt(2), Math.sqrt(2));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWithMagnitude_zeroNorm() {
+        // act/assert
+        Vector2D.ZERO.withMagnitude(1.0);
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Vector2D v1 = Vector2D.of(-1, 2);
@@ -353,7 +398,7 @@ public class Vector2DTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void testAngle_zeroNorm() {
         Vector2D.of(1, 1).angle(Vector2D.ZERO);
     }

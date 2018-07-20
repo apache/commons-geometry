@@ -32,4 +32,27 @@ public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends Eucli
      * @return point with the same coordinates as this vector
      */
     P asPoint();
+
+    /** Returns the magnitude (i.e. length) of the vector. This is
+     * the same value as returned by {@link #getNorm()}.
+     * @return the magnitude, or length, of the vector
+     * @see #getNorm()
+     */
+    double getMagnitude();
+
+    /** Returns the squared magnitude of the vector. This is the
+     * same value as returned by {@link #getNormSq()}.
+     * @return the squared magnitude of the vector
+     * @see #getMagnitude()
+     * @see #getNormSq()
+     */
+    double getMagnitudeSq();
+
+    /** Returns a vector with the same direction but with the given
+     * magnitude. This is equivalent to calling {@code vec.normalize().scalarMultiply(mag)}
+     * but without the intermediate vector.
+     * @param magnitude The vector magnitude
+     * @return a vector with the same direction as the current instance but the given magnitude
+     */
+    V withMagnitude(double magnitude);
 }

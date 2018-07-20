@@ -36,7 +36,6 @@ public interface Vector<V extends Vector<V>> extends Spatial {
 
     /** Get the L<sub>1</sub> norm for the vector. This is defined as the
      * sum of the absolute values of all vector components.
-     *
      * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
      * @return L<sub>1</sub> norm for the vector
      */
@@ -46,14 +45,14 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * This corresponds to the common notion of vector magnitude or length.
      * This is defined as the square root of the sum of the squares of all vector components.
      * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
-     * @return Euclidean norm for the vector
+     * @return L<sub>2</sub> norm for the vector
      */
     double getNorm();
 
     /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
      * for the vector. This is equal to the sum of the squares of all vector components.
      * @see #getNorm()
-     * @return square of the Euclidean norm for the vector
+     * @return square of the L<sub>2</sub> norm for the vector
      */
     double getNormSq();
 

@@ -74,6 +74,40 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testMagnitude() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector1D.ZERO.getMagnitude(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(3).getMagnitude(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(-3).getMagnitude(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testMagnitudeSq() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector1D.of(0).getMagnitudeSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(3).getMagnitudeSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(-3).getMagnitudeSq(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testWithMagnitude() {
+        // act/assert
+        checkVector(Vector1D.ONE.withMagnitude(0.0), 0.0);
+
+        checkVector(Vector1D.of(0.5).withMagnitude(2.0), 2.0);
+        checkVector(Vector1D.of(5).withMagnitude(3.0), 3.0);
+
+        checkVector(Vector1D.of(-0.5).withMagnitude(2.0), -2.0);
+        checkVector(Vector1D.of(-5).withMagnitude(3.0), -3.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWithMagnitude_zeroNorm() {
+        // act/assert
+        Vector1D.ZERO.withMagnitude(1.0);
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Vector1D v1 = Vector1D.of(1);

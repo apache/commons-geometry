@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -80,25 +81,45 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double getNorm1() {
-        return getNorm();
+        return Vectors.norm1(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        return Math.abs(getX());
+        return Vectors.norm(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        return getX() * getX();
+        return Vectors.normSq(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormInf() {
+        return Vectors.normInf(getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitude() {
         return getNorm();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitudeSq() {
+        return getNormSq();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D withMagnitude(double magnitude) {
+        final double invNorm = 1.0 / nonZeroNorm();
+
+        return new Vector1D(magnitude * getX() * invNorm);
     }
 
     /** {@inheritDoc} */
@@ -134,11 +155,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D normalize() throws IllegalStateException {
-        double s = getNorm();
-        if (s == 0) {
-            throw new IllegalStateException("Norm is zero");
-        }
-        return scalarMultiply(1.0 / s);
+        return scalarMultiply(1.0 / nonZeroNorm());
     }
 
     /** {@inheritDoc} */
@@ -227,6 +244,19 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
             return getX() == rhs.getX();
         }
         return false;
+    }
+
+    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
+     * @return the non-zero norm value
+     * @throws IllegalStateException if the norm is zero
+     */
+    private double nonZeroNorm() throws IllegalStateException {
+        final double n = getNorm();
+        if (n == 0) {
+            throw new IllegalStateException("Norm is zero");
+        }
+
+        return n;
     }
 
     /** Returns a vector with the given coordinate value.

@@ -14,27 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core;
-
-/** Class containing geometric constants.
+/**
+ *
+ * <p>
+ * This package contains geometry utility classes.
+ * </p>
  */
-public final class Geometry {
-
-    /** Alias for {@link Math#PI}, placed here for completeness. */
-    public static final double PI = Math.PI;
-
-    /** Constant value for {@code 2*pi}.
-     */
-    public static final double TWO_PI = 2.0 * Math.PI;
-
-    /** Constant value for {@code pi / 2}.
-     */
-    public static final double HALF_PI = 0.5 * Math.PI;
-
-    /** Constant value for {@code - pi / 2}.
-     */
-    public static final double MINUS_HALF_PI = - 0.5 * Math.PI;
-
-    /** Private constructor */
-    private Geometry() {}
-}
+package org.apache.commons.geometry.core.util;
