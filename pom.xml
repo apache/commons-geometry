@@ -30,7 +30,7 @@
   <name>Apache Commons Geometry</name>
 
   <inceptionYear>2016</inceptionYear>
-  <description>The Apache Commons Geometry project provides pure-Java implementation of pseudo-random generators.</description>
+  <description>The Apache Commons Geometry project provides geometric types and utilities.</description>
   <url>http://commons.apache.org/proper/commons-geometry/</url>
 
   <issueManagement>
