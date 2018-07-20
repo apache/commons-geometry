@@ -280,7 +280,7 @@ public class Vector1DTest {
     public void testToString() {
         // arrange
         Vector1D v = Vector1D.of(3);
-        Pattern pattern = Pattern.compile("\\{3.{0,2}\\}");
+        Pattern pattern = Pattern.compile("\\(3.{0,2}\\)");
 
         // act
         String str = v.toString();
@@ -288,6 +288,27 @@ public class Vector1DTest {
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
                     pattern.matcher(str).matches());
+    }
+
+    @Test
+    public void testParse() {
+        // act/assert
+        checkVector(Vector1D.parse("(1)"), 1);
+        checkVector(Vector1D.parse("(-1)"), -1);
+
+        checkVector(Vector1D.parse("(0.01)"), 1e-2);
+        checkVector(Vector1D.parse("(-1e-3)"), -1e-3);
+
+        checkVector(Vector1D.parse("(NaN)"), Double.NaN);
+
+        checkVector(Vector1D.parse(Vector1D.ZERO.toString()), 0);
+        checkVector(Vector1D.parse(Vector1D.ONE.toString()), 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_failure() {
+        // act/assert
+        Vector1D.parse("abc");
     }
 
     @Test

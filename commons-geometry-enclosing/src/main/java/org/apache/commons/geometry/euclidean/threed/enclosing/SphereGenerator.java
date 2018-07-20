@@ -117,7 +117,7 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
                         final BigFraction dy      = c3[0].subtract(centerY);
                         final BigFraction dz      = c4[0].subtract(centerZ);
                         final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy)).add(dz.multiply(dz));
-                        return new EnclosingBall<>(new Point3D(centerX.doubleValue(),
+                        return new EnclosingBall<>(Point3D.of(centerX.doubleValue(),
                                                                                      centerY.doubleValue(),
                                                                                      centerZ.doubleValue()),
                                                                         Math.sqrt(r2.doubleValue()),

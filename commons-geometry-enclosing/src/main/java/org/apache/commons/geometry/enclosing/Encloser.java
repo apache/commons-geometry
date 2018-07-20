@@ -19,7 +19,6 @@ package org.apache.commons.geometry.enclosing;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface for algorithms computing enclosing balls.
- * @param <S> Space type.
  * @param <P> Point type.
  * @see EnclosingBall
  */

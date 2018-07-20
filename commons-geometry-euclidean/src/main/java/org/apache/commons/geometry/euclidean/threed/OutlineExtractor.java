@@ -205,12 +205,12 @@ public class OutlineExtractor {
                     int previous         = closed ? (loop.length - 1) : 1;
                     Vector3D previous3D  = plane.toSpace(loop[previous]).asVector();
                     int current          = (previous + 1) % loop.length;
-                    Point2D pPoint       = new Point2D(previous3D.dotProduct(u),
+                    Point2D pPoint       = Point2D.of(previous3D.dotProduct(u),
                                                          previous3D.dotProduct(v));
                     while (current < loop.length) {
 
                         final Vector3D current3D = plane.toSpace(loop[current]).asVector();
-                        final Point2D  cPoint    = new Point2D(current3D.dotProduct(u),
+                        final Point2D  cPoint    = Point2D.of(current3D.dotProduct(u),
                                                                  current3D.dotProduct(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
                             new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, tolerance);

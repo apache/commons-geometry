@@ -23,7 +23,6 @@ import org.apache.commons.geometry.core.Point;
 /**
  * Interface for convex hull generators.
  *
- * @param <S> Type of the {@link Space}
  * @param <P> Type of the {@link Point}
  *
  * @see <a href="http://en.wikipedia.org/wiki/Convex_hull">Convex Hull (Wikipedia)</a>

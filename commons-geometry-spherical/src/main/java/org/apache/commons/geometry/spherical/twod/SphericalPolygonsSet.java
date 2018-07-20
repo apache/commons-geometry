@@ -103,7 +103,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
-     * org.apache.commons.geometry.partitioning.Region#checkPoint(org.apache.commons.geometry.Point)
+     * org.apache.commons.geometry.core.partitioning.Region#checkPoint(org.apache.commons.geometry.core.Point)
      * checkPoint} method will not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
@@ -161,11 +161,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         final S2Point[] array = new S2Point[n];
         final Rotation r0 = new Rotation(Vector3D.crossProduct(center, meridian),
                                          outsideRadius, RotationConvention.VECTOR_OPERATOR);
-        array[0] = new S2Point(r0.applyTo(center));
+        array[0] = S2Point.of(r0.applyTo(center));
 
         final Rotation r = new Rotation(center, Geometry.TWO_PI / n, RotationConvention.VECTOR_OPERATOR);
         for (int i = 1; i < n; ++i) {
-            array[i] = new S2Point(r.applyTo(array[i - 1].getVector()));
+            array[i] = S2Point.of(r.applyTo(array[i - 1].getVector()));
         }
 
         return array;
@@ -325,7 +325,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             if (tree.getCut() == null && (Boolean) tree.getAttribute()) {
                 // the instance covers the whole space
                 setSize(4 * Math.PI);
-                setBarycenter(new S2Point(0, 0));
+                setBarycenter(S2Point.of(0, 0));
             } else {
                 setSize(0);
                 setBarycenter(S2Point.NaN);
@@ -420,7 +420,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * <p>
      * This method is intended as a first test to quickly identify points
      * that are guaranteed to be outside of the region, hence performing a full
-     * {@link #checkPoint(org.apache.commons.geometry.Point) checkPoint}
+     * {@link #checkPoint(org.apache.commons.geometry.core.Point) checkPoint}
      * only if the point status remains undecided after the quick check. It is
      * is therefore mostly useful to speed up computation for small polygons with
      * complex shapes (say a country boundary on Earth), as the spherical cap will
@@ -455,7 +455,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * In the special cases of empty or whole sphere polygons, special
      * spherical caps are returned, with angular radius set to negative
      * or positive infinity so the {@link
-     * EnclosingBall#contains(org.apache.commons.geometry.Point) ball.contains(point)}
+     * EnclosingBall#contains(org.apache.commons.geometry.core.Point) ball.contains(point)}
      * method return always false or true.
      * </p>
      * <p>
@@ -478,13 +478,13 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(new S2Point(circle.getPole()).negate(),
+            return new EnclosingBall<>(S2Point.of(circle.getPole()).negate(),
                                                         0.5 * Math.PI);
         }
         if (isFull(root.getMinus()) && isEmpty(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(new S2Point(circle.getPole()),
+            return new EnclosingBall<>(S2Point.of(circle.getPole()),
                                                         0.5 * Math.PI);
         }
 
@@ -517,7 +517,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             EnclosingBall<S2Point> enclosingS2 =
                     new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
             for (Point3D outsidePoint : getOutsidePoints()) {
-                final S2Point outsideS2 = new S2Point(outsidePoint.asVector());
+                final S2Point outsideS2 = S2Point.of(outsidePoint.asVector());
                 final BoundaryProjection<S2Point> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
                     enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
@@ -529,11 +529,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
         final S2Point[] support = new S2Point[support3D.length];
         for (int i = 0; i < support3D.length; ++i) {
-            support[i] = new S2Point(support3D[i].asVector());
+            support[i] = S2Point.of(support3D[i].asVector());
         }
 
         final EnclosingBall<S2Point> enclosingS2 =
-                new EnclosingBall<>(new S2Point(enclosing3D.getCenter().asVector()),
+                new EnclosingBall<>(S2Point.of(enclosing3D.getCenter().asVector()),
                                                      Math.acos((1 + h * h - r * r) / (2 * h)),
                                                      support);
 

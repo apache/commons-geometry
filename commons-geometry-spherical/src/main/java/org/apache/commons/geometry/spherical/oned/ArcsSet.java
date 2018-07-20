@@ -36,11 +36,14 @@ import org.apache.commons.numbers.core.Precision;
  * Note that due to the wrapping around \(2 \pi\), barycenter is
  * ill-defined here. It was defined only in order to fulfill
  * the requirements of the {@link
- * org.apache.commons.geometry.partitioning.Region Region}
+ * org.apache.commons.geometry.core.partitioning.Region Region}
  * interface, but its use is discouraged.
  * </p>
  */
 public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterable<double[]> {
+
+    /** Message used for internal errors. */
+    private static final String INTERNAL_ERROR_MESSAGE = "Please file a bug report";
 
     /** Build an arcs set representing the whole circle.
      * @param tolerance tolerance below which close sub-arcs are merged together
@@ -98,7 +101,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
-     * org.apache.commons.geometry.partitioning.Region#checkPoint(org.apache.commons.geometry.Point)
+     * org.apache.commons.geometry.core.partitioning.Region#checkPoint(org.apache.commons.geometry.core.Point)
      * checkPoint} method will not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
@@ -135,12 +138,12 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         final double normalizedLower = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(lower);
         final double normalizedUpper = normalizedLower + (upper - lower);
         final SubHyperplane<S1Point> lowerCut =
-                new LimitAngle(new S1Point(normalizedLower), false, tolerance).wholeHyperplane();
+                new LimitAngle(S1Point.of(normalizedLower), false, tolerance).wholeHyperplane();
 
         if (normalizedUpper <= Geometry.TWO_PI) {
             // simple arc starting after 0 and ending before 2 \pi
             final SubHyperplane<S1Point> upperCut =
-                    new LimitAngle(new S1Point(normalizedUpper), true, tolerance).wholeHyperplane();
+                    new LimitAngle(S1Point.of(normalizedUpper), true, tolerance).wholeHyperplane();
             return new BSPTree<>(lowerCut,
                                          new BSPTree<S1Point>(Boolean.FALSE),
                                          new BSPTree<>(upperCut,
@@ -151,7 +154,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         } else {
             // arc wrapping around 2 \pi
             final SubHyperplane<S1Point> upperCut =
-                    new LimitAngle(new S1Point(normalizedUpper - Geometry.TWO_PI), true, tolerance).wholeHyperplane();
+                    new LimitAngle(S1Point.of(normalizedUpper - Geometry.TWO_PI), true, tolerance).wholeHyperplane();
             return new BSPTree<>(lowerCut,
                                          new BSPTree<>(upperCut,
                                                                new BSPTree<S1Point>(Boolean.FALSE),
@@ -459,7 +462,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
             if (Precision.equals(size, Geometry.TWO_PI, 0)) {
                 setBarycenter(S1Point.NaN);
             } else if (size >= Precision.SAFE_MIN) {
-                setBarycenter(new S1Point(sum / (2 * size)));
+                setBarycenter(S1Point.of(sum / (2 * size)));
             } else {
                 final LimitAngle limit = (LimitAngle) getTree(false).getCut().getHyperplane();
                 setBarycenter(limit.getLocation());
@@ -495,9 +498,9 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                         final double previousOffset = alpha - previous;
                         final double currentOffset  = a[0] - alpha;
                         if (previousOffset < currentOffset) {
-                            return new BoundaryProjection<>(point, new S1Point(previous), previousOffset);
+                            return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
                         } else {
-                            return new BoundaryProjection<>(point, new S1Point(a[0]), currentOffset);
+                            return new BoundaryProjection<>(point, S1Point.of(a[0]), currentOffset);
                         }
                     }
                 } else if (alpha <= a[1]) {
@@ -506,9 +509,9 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                     final double offset0 = a[0] - alpha;
                     final double offset1 = alpha - a[1];
                     if (offset0 < offset1) {
-                        return new BoundaryProjection<>(point, new S1Point(a[1]), offset1);
+                        return new BoundaryProjection<>(point, S1Point.of(a[1]), offset1);
                     } else {
-                        return new BoundaryProjection<>(point, new S1Point(a[0]), offset0);
+                        return new BoundaryProjection<>(point, S1Point.of(a[0]), offset0);
                     }
                 }
             }
@@ -529,18 +532,18 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 final double previousOffset = alpha - (previous - Geometry.TWO_PI);
                 final double currentOffset  = first - alpha;
                 if (previousOffset < currentOffset) {
-                    return new BoundaryProjection<>(point, new S1Point(previous), previousOffset);
+                    return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
                 } else {
-                    return new BoundaryProjection<>(point, new S1Point(first), currentOffset);
+                    return new BoundaryProjection<>(point, S1Point.of(first), currentOffset);
                 }
             } else {
                 // the test point is between last and 2\pi
                 final double previousOffset = alpha - previous;
                 final double currentOffset  = first + Geometry.TWO_PI - alpha;
                 if (previousOffset < currentOffset) {
-                    return new BoundaryProjection<>(point, new S1Point(previous), previousOffset);
+                    return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
                 } else {
-                    return new BoundaryProjection<>(point, new S1Point(first), currentOffset);
+                    return new BoundaryProjection<>(point, S1Point.of(first), currentOffset);
                 }
             }
 
@@ -652,7 +655,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 }
                 if (end == null) {
                     // this should never happen
-                    throw new IllegalStateException("Please file a bug report");
+                    throw new IllegalStateException(INTERNAL_ERROR_MESSAGE);
                 }
 
                 // we have identified the last arc
@@ -787,11 +790,11 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      */
     private void addArcLimit(final BSPTree<S1Point> tree, final double alpha, final boolean isStart) {
 
-        final LimitAngle limit = new LimitAngle(new S1Point(alpha), !isStart, getTolerance());
+        final LimitAngle limit = new LimitAngle(S1Point.of(alpha), !isStart, getTolerance());
         final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getTolerance());
         if (node.getCut() != null) {
             // this should never happen
-            throw new IllegalStateException("Please file a bug report");
+            throw new IllegalStateException(INTERNAL_ERROR_MESSAGE);
         }
 
         node.insertCut(limit);
@@ -929,7 +932,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     /** Specialized exception for inconsistent BSP tree state inconsistency.
      * <p>
      * This exception is thrown at {@link ArcsSet} construction time when the
-     * {@link org.apache.commons.geometry.partitioning.Region.Location inside/outside}
+     * {@link org.apache.commons.geometry.core.partitioning.Region.Location inside/outside}
      * state is not consistent at the 0, \(2 \pi \) crossing.
      * </p>
      */

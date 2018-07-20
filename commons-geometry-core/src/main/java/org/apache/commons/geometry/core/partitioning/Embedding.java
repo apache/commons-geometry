@@ -23,19 +23,15 @@ import org.apache.commons.geometry.core.Point;
  * <p>Sub-spaces are the lower dimensions subsets of a n-dimensions
  * space. The (n-1)-dimension sub-spaces are specific sub-spaces known
  * as {@link Hyperplane hyperplanes}. This interface can be used regardless
- * of the dimensions differences. As an example, {@link
- * org.apache.commons.geometry.euclidean.threed.Line Line} in 3D
- * implements Embedding&lt;{@link
- * org.apache.commons.geometry.euclidean.threed.Point3D Point3D}, {@link
- * org.apache.commons.geometry.euclidean.oned.Point1D Point1D}&gt;, i.e. it
- * maps directly dimensions 3 and 1.</p>
+ * of the dimensions differences. For example, a line in 3D Euclidean space
+ * can map directly from 3 dimensions to 1.</p>
 
- * <p>In the 3D euclidean space, hyperplanes are 2D planes, and the 1D
+ * <p>In the 3D Euclidean space, hyperplanes are 2D planes, and the 1D
  * sub-spaces are lines.</p>
 
  * <p>
  * Note that this interface is <em>not</em> intended to be implemented
- * by Apache Commons Math users, it is only intended to be implemented
+ * by Apache Commons Geometry users, it is only intended to be implemented
  * within the library itself. New methods may be added even for minor
  * versions, which breaks compatibility for external implementations.
  * </p>

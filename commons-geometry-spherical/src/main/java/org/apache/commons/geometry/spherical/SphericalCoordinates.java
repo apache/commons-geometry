@@ -110,7 +110,7 @@ public class SphericalCoordinates implements Serializable {
         this.phi   = phi;
 
         // Cartesian coordinates
-        this.v  = new Vector3D(r * cosTheta * sinPhi,
+        this.v  = Vector3D.of(r * cosTheta * sinPhi,
                                r * sinTheta * sinPhi,
                                r * cosPhi);
 
@@ -386,7 +386,7 @@ public class SphericalCoordinates implements Serializable {
          * @return replacement {@link SphericalCoordinates}
          */
         private Object readResolve() {
-            return new SphericalCoordinates(new Vector3D(x, y, z));
+            return new SphericalCoordinates(Vector3D.of(x, y, z));
         }
 
     }

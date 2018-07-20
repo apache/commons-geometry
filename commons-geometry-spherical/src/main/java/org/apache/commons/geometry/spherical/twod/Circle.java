@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -143,11 +142,11 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     }
 
     /** {@inheritDoc}
-     * @see #getPhase(Cartesian3D)
+     * @see #getPhase(Vector3D)
      */
     @Override
     public S1Point toSubSpace(final S2Point point) {
-        return new S1Point(getPhase(point.getVector()));
+        return S1Point.of(getPhase(point.getVector()));
     }
 
     /** Get the phase angle of a direction.
@@ -169,7 +168,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      */
     @Override
     public S2Point toSpace(final S1Point point) {
-        return new S2Point(getPointAt(point.getAlpha()));
+        return S2Point.of(getPointAt(point.getAlpha()));
     }
 
     /** Get a circle point from its phase around the circle.
@@ -252,7 +251,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     }
 
     /** {@inheritDoc}
-     * @see #getOffset(Cartesian3D)
+     * @see #getOffset(Vector3D)
      */
     @Override
     public double getOffset(final S2Point point) {
@@ -279,12 +278,12 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
         return pole.dotProduct(otherC.pole) >= 0.0;
     }
 
-    /** Get a {@link org.apache.commons.geometry.partitioning.Transform
+    /** Get a {@link org.apache.commons.geometry.core.partitioning.Transform
      * Transform} embedding a 3D rotation.
      * @param rotation rotation to use
      * @return a new transform that can be applied to either {@link
-     * Point Point}, {@link Circle Line} or {@link
-     * org.apache.commons.geometry.partitioning.SubHyperplane
+     * S2Point Point}, {@link Circle Line} or {@link
+     * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      */
     public static Transform<S2Point, S1Point> getTransform(final Rotation rotation) {
@@ -307,7 +306,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
         /** {@inheritDoc} */
         @Override
         public S2Point apply(final S2Point point) {
-            return new S2Point(rotation.applyTo(point.getVector()));
+            return S2Point.of(rotation.applyTo(point.getVector()));
         }
 
         /** {@inheritDoc} */

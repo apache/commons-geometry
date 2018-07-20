@@ -31,11 +31,11 @@ public class NestedLoopsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNestedLoops() throws Exception {
-        Point2D oneOne = new Point2D(1.0, 1.0);
-        Point2D oneNegativeOne = new Point2D(1.0, -1.0);
-        Point2D negativeOneNegativeOne = new Point2D(-1.0, -1.0);
-        Point2D negativeOneOne = new Point2D(-1.0, 1.0);
-        Point2D origin = new Point2D(0, 0);
+        Point2D oneOne = Point2D.of(1.0, 1.0);
+        Point2D oneNegativeOne = Point2D.of(1.0, -1.0);
+        Point2D negativeOneNegativeOne = Point2D.of(-1.0, -1.0);
+        Point2D negativeOneOne = Point2D.of(-1.0, 1.0);
+        Point2D origin = Point2D.of(0, 0);
 
         Point2D [] vertices = new Point2D[]{
                 oneOne,

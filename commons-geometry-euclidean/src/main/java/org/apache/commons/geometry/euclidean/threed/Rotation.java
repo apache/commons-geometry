@@ -68,8 +68,8 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * class does not push the user towards one specific definition and hence does not
  * provide methods like <code>projectVectorIntoDestinationFrame</code> or
  * <code>computeTransformedDirection</code>. It provides simpler and more generic
- * methods: {@link #applyTo(Vector3D) applyTo(Cartesian3D)} and {@link
- * #applyInverseTo(Vector3D) applyInverseTo(Cartesian3D)}.</p>
+ * methods: {@link #applyTo(Vector3D) applyTo(Vector3D)} and {@link
+ * #applyInverseTo(Vector3D) applyInverseTo(Vector3D)}.</p>
  *
  * <p>Since a rotation is basically a vectorial operator, several rotations can be
  * composed together and the composite operation <code>r = r<sub>1</sub> o
@@ -543,10 +543,10 @@ public class Rotation implements Serializable {
         final double sgn = convention == RotationConvention.VECTOR_OPERATOR ? +1 : -1;
         if (q0 < 0) {
             final double inverse = sgn / Math.sqrt(squaredSine);
-            return new Vector3D(q1 * inverse, q2 * inverse, q3 * inverse);
+            return Vector3D.of(q1 * inverse, q2 * inverse, q3 * inverse);
         }
         final double inverse = -sgn / Math.sqrt(squaredSine);
-        return new Vector3D(q1 * inverse, q2 * inverse, q3 * inverse);
+        return Vector3D.of(q1 * inverse, q2 * inverse, q3 * inverse);
     }
   }
 
@@ -1113,7 +1113,7 @@ public class Rotation implements Serializable {
 
     double s = q1 * x + q2 * y + q3 * z;
 
-    return new Vector3D(2 * (q0 * (x * q0 - (q2 * z - q3 * y)) + s * q1) - x,
+    return Vector3D.of(2 * (q0 * (x * q0 - (q2 * z - q3 * y)) + s * q1) - x,
                         2 * (q0 * (y * q0 - (q3 * x - q1 * z)) + s * q2) - y,
                         2 * (q0 * (z * q0 - (q1 * y - q2 * x)) + s * q3) - z);
 
@@ -1151,7 +1151,7 @@ public class Rotation implements Serializable {
     double s = q1 * x + q2 * y + q3 * z;
     double m0 = -q0;
 
-    return new Vector3D(2 * (m0 * (x * m0 - (q2 * z - q3 * y)) + s * q1) - x,
+    return Vector3D.of(2 * (m0 * (x * m0 - (q2 * z - q3 * y)) + s * q1) - x,
                         2 * (m0 * (y * m0 - (q3 * x - q1 * z)) + s * q2) - y,
                         2 * (m0 * (z * m0 - (q1 * y - q2 * x)) + s * q3) - z);
 

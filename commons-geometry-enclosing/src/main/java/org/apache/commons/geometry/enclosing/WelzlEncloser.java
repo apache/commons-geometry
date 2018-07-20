@@ -34,7 +34,6 @@ import org.apache.commons.geometry.core.Point;
  * Efficient Computation of Smallest Enclosing Balls in Three Dimensions</a> by Linus Källberg
  * to avoid performing local copies of data have been included.
  * </p>
- * @param <S> Space type.
  * @param <P> Point type.
  */
 public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {

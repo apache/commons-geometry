@@ -85,7 +85,7 @@ public class DiskGenerator implements SupportBallGenerator<Point2D> {
                     final BigFraction dx      = c2[0].subtract(centerX);
                     final BigFraction dy      = c3[0].subtract(centerY);
                     final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy));
-                    return new EnclosingBall<>(new Point2D(centerX.doubleValue(),
+                    return new EnclosingBall<>(Point2D.of(centerX.doubleValue(),
                                                                                  centerY.doubleValue()),
                                                                     Math.sqrt(r2.doubleValue()),
                                                                     vA, vB, vC);

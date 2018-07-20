@@ -91,8 +91,8 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
         final Circle circle  = (Circle) sub.getHyperplane();
         final List<Arc> arcs = ((ArcsSet) sub.getRemainingRegion()).asList();
         for (final Arc a : arcs) {
-            final Vertex start = new Vertex(circle.toSpace(new S1Point(a.getInf())));
-            final Vertex end   = new Vertex(circle.toSpace(new S1Point(a.getSup())));
+            final Vertex start = new Vertex(circle.toSpace(S1Point.of(a.getInf())));
+            final Vertex end   = new Vertex(circle.toSpace(S1Point.of(a.getSup())));
             start.bindWith(circle);
             end.bindWith(circle);
             final Edge edge;

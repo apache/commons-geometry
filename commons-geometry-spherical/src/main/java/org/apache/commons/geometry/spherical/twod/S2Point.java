@@ -16,7 +16,11 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** This class represents a point on the 2-sphere.
@@ -29,7 +33,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  * </p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class S2Point implements Point<S2Point> {
+public final class S2Point implements Point<S2Point>, Serializable {
 
     /** +I (coordinates: \( \theta = 0, \varphi = \pi/2 \)). */
     public static final S2Point PLUS_I = new S2Point(0, 0.5 * Math.PI, Vector3D.PLUS_X);
@@ -55,7 +59,17 @@ public class S2Point implements Point<S2Point> {
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 20131218L;
+    private static final long serialVersionUID = 20180710L;
+
+    /** Factory for delegating instance creation. */
+    private static DoubleFunction2N<S2Point> FACTORY = new DoubleFunction2N<S2Point>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public S2Point apply(double n1, double n2) {
+            return S2Point.of(n1, n2);
+        }
+    };
 
     /** Azimuthal angle \( \theta \) in the x-y plane. */
     private final double theta;
@@ -65,29 +79,6 @@ public class S2Point implements Point<S2Point> {
 
     /** Corresponding 3D normalized vector. */
     private final Vector3D vector;
-
-    /** Simple constructor.
-     * Build a vector from its spherical coordinates
-     * @param theta azimuthal angle \( \theta \) in the x-y plane
-     * @param phi polar angle \( \varphi \)
-     * @see #getTheta()
-     * @see #getPhi()
-     * @exception IllegalArgumentException if \( \varphi \) is not in the [\( 0; \pi \)] range
-     */
-    public S2Point(final double theta, final double phi)
-        throws IllegalArgumentException {
-        this(theta, phi, vector(theta, phi));
-    }
-
-    /** Simple constructor.
-     * Build a vector from its underlying 3D vector
-     * @param vector 3D vector
-     * @exception IllegalArgumentException if vector norm is zero
-     */
-    public S2Point(final Vector3D vector) throws IllegalArgumentException {
-        this(Math.atan2(vector.getY(), vector.getX()), Vector3D.PLUS_Z.angle(vector),
-             vector.normalize());
-    }
 
     /** Build a point from its internal components.
      * @param theta azimuthal angle \( \theta \) in the x-y plane
@@ -100,31 +91,9 @@ public class S2Point implements Point<S2Point> {
         this.vector = vector;
     }
 
-    /** Build the normalized vector corresponding to spherical coordinates.
-     * @param theta azimuthal angle \( \theta \) in the x-y plane
-     * @param phi polar angle \( \varphi \)
-     * @return normalized vector
-     * @exception IllegalArgumentException if \( \varphi \) is not in the [\( 0; \pi \)] range
-     */
-    private static Vector3D vector(final double theta, final double phi)
-       throws IllegalArgumentException {
-
-        if (phi < 0 || phi > Math.PI) {
-            throw new IllegalArgumentException(phi + " is out of [" + 0 + ", " + Math.PI + "] range");
-        }
-
-        final double cosTheta = Math.cos(theta);
-        final double sinTheta = Math.sin(theta);
-        final double cosPhi   = Math.cos(phi);
-        final double sinPhi   = Math.sin(phi);
-
-        return new Vector3D(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
-
-    }
-
     /** Get the azimuthal angle \( \theta \) in the x-y plane.
      * @return azimuthal angle \( \theta \) in the x-y plane
-     * @see #S2Point(double, double)
+     * @see S2Point#of(double, double)
      */
     public double getTheta() {
         return theta;
@@ -132,13 +101,13 @@ public class S2Point implements Point<S2Point> {
 
     /** Get the polar angle \( \varphi \).
      * @return polar angle \( \varphi \)
-     * @see #S2Point(double, double)
+     * @see S2Point#of(double, double)
      */
     public double getPhi() {
         return phi;
     }
 
-    /** Get the corresponding normalized vector in the 3D euclidean space.
+    /** Get the corresponding normalized vector in the 3D Euclidean space.
      * @return normalized vector
      */
     public Vector3D getVector() {
@@ -235,5 +204,65 @@ public class S2Point implements Point<S2Point> {
             return 542;
         }
         return 134 * (37 * Double.hashCode(theta) +  Double.hashCode(phi));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(getTheta(), getPhi());
+    }
+
+    /** Build a vector from its spherical coordinates
+     * @param theta azimuthal angle \( \theta \) in the x-y plane
+     * @param phi polar angle \( \varphi \)
+     * @return point instance with the given coordinates
+     * @see #getTheta()
+     * @see #getPhi()
+     * @exception IllegalArgumentException if \( \varphi \) is not in the [\( 0; \pi \)] range
+     */
+    public static S2Point of(final double theta, final double phi) {
+        return new S2Point(theta, phi, vector(theta, phi));
+    }
+
+    /** Build a point from its underlying 3D vector
+     * @param vector 3D vector
+     * @return point instance with the coordinates determined by the given 3D vector
+     * @exception IllegalArgumentException if vector norm is zero
+     */
+    public static S2Point of(final Vector3D vector) {
+        return new S2Point(Math.atan2(vector.getY(), vector.getX()),
+                Vector3D.PLUS_Z.angle(vector),
+                vector.normalize());
+    }
+
+    /** Build the normalized vector corresponding to spherical coordinates.
+     * @param theta azimuthal angle \( \theta \) in the x-y plane
+     * @param phi polar angle \( \varphi \)
+     * @return normalized vector
+     * @exception IllegalArgumentException if \( \varphi \) is not in the [\( 0; \pi \)] range
+     */
+    private static Vector3D vector(final double theta, final double phi)
+       throws IllegalArgumentException {
+
+        if (phi < 0 || phi > Math.PI) {
+            throw new IllegalArgumentException(phi + " is out of [" + 0 + ", " + Math.PI + "] range");
+        }
+
+        final double cosTheta = Math.cos(theta);
+        final double sinTheta = Math.sin(theta);
+        final double cosPhi   = Math.cos(phi);
+        final double sinPhi   = Math.sin(phi);
+
+        return Vector3D.of(cosTheta * sinPhi, sinTheta * sinPhi, cosPhi);
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static S2Point parse(String str) throws IllegalArgumentException {
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 }

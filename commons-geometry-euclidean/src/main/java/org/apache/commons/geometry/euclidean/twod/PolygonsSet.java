@@ -158,10 +158,10 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
             // too thin box, build an empty polygons set
             return null;
         }
-        final Point2D minMin = new Point2D(xMin, yMin);
-        final Point2D minMax = new Point2D(xMin, yMax);
-        final Point2D maxMin = new Point2D(xMax, yMin);
-        final Point2D maxMax = new Point2D(xMax, yMax);
+        final Point2D minMin = Point2D.of(xMin, yMin);
+        final Point2D minMax = Point2D.of(xMin, yMax);
+        final Point2D maxMin = Point2D.of(xMax, yMin);
+        final Point2D maxMax = Point2D.of(xMax, yMax);
         return new Line[] {
             new Line(minMin, maxMin, tolerance),
             new Line(maxMin, maxMax, tolerance),
@@ -579,7 +579,7 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
                 setBarycenter(Point2D.NaN);
             } else {
                 setSize(sum / 2);
-                setBarycenter(new Point2D(sumX / (3 * sum), sumY / (3 * sum)));
+                setBarycenter(Point2D.of(sumX / (3 * sum), sumY / (3 * sum)));
             }
 
         }
@@ -661,8 +661,8 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
                         final Line line = loop.get(0).getLine();
                         vertices[i++] = new Point2D[] {
                             null,
-                            line.toSpace(new Point1D(-Float.MAX_VALUE)),
-                            line.toSpace(new Point1D(+Float.MAX_VALUE))
+                            line.toSpace(Point1D.of(-Float.MAX_VALUE)),
+                            line.toSpace(Point1D.of(+Float.MAX_VALUE))
                         };
                     } else if (loop.get(0).getStart() == null) {
                         // open loop with at least one real point
@@ -675,7 +675,7 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
                                 double x = segment.getLine().toSubSpace(segment.getEnd()).getX();
                                 x -= Math.max(1.0, Math.abs(x / 2));
                                 array[j++] = null;
-                                array[j++] = segment.getLine().toSpace(new Point1D(x));
+                                array[j++] = segment.getLine().toSpace(Point1D.of(x));
                             }
 
                             if (j < (array.length - 1)) {
@@ -685,7 +685,7 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
                                 // last dummy point
                                 double x = segment.getLine().toSubSpace(segment.getStart()).getX();
                                 x += Math.max(1.0, Math.abs(x / 2));
-                                array[j++] = segment.getLine().toSpace(new Point1D(x));
+                                array[j++] = segment.getLine().toSpace(Point1D.of(x));
                             }
 
                         }
@@ -1047,9 +1047,9 @@ public class PolygonsSet extends AbstractRegion<Point2D, Point1D> {
 
                 // find the 2D points
                 final Point2D startV = Double.isInfinite(i.getInf()) ?
-                                        null : line.toSpace(new Point1D(i.getInf()));
+                                        null : line.toSpace(Point1D.of(i.getInf()));
                 final Point2D endV   = Double.isInfinite(i.getSup()) ?
-                                        null : line.toSpace(new Point1D(i.getSup()));
+                                        null : line.toSpace(Point1D.of(i.getSup()));
 
                 // recover the connectivity information
                 final BSPTree<Point2D> startN = selectClosest(startV, splitters);

@@ -24,7 +24,6 @@ import org.apache.commons.geometry.core.partitioning.Region;
 /**
  * This class represents a convex hull.
  *
- * @param <S> Space type.
  * @param <P> Point type.
  */
 public interface ConvexHull<P extends Point<P>> extends Serializable {

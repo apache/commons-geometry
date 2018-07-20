@@ -17,15 +17,18 @@
 
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Spatial;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 
 /** This class represents a set of Cartesian coordinates in
  * two-dimensional Euclidean space.
  */
-public abstract class Cartesian2D implements Spatial {
+public abstract class Cartesian2D implements Spatial, Serializable {
 
     /** Serializable UID */
-    private static final long serialVersionUID = 2918583078965478552L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Abscissa (first coordinate) */
     private final double x;
@@ -80,6 +83,12 @@ public abstract class Cartesian2D implements Spatial {
     @Override
     public boolean isInfinite() {
         return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(getX(), getY());
     }
 
     /** Returns the Euclidean distance from this value to the given value.

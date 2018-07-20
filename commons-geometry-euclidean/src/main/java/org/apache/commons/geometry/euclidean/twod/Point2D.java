@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -41,21 +43,31 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 266938651998679754L;
+    private static final long serialVersionUID = 20180710L;
+
+    /** Factory for delegating instance creation. */
+    private static DoubleFunction2N<Point2D> FACTORY = new DoubleFunction2N<Point2D>() {
+
+        /** {@inheritDoc} */
+        @Override
+        public Point2D apply(double n1, double n2) {
+            return new Point2D(n1, n2);
+        }
+    };
 
     /** Simple constructor.
      * Build a point from its coordinates
      * @param x abscissa
      * @param y ordinate
      */
-    public Point2D(double x, double y) {
+    private Point2D(double x, double y) {
         super(x, y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D asVector() {
-        return new Vector2D(getX(), getY());
+        return Vector2D.of(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -131,12 +143,6 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "(" + getX() + "; " + getY() + ")";
-    }
-
     /** Returns a point with the given coordinate values
      * @param x abscissa (first coordinate value)
      * @param y ordinate (second coordinate value)
@@ -164,6 +170,16 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 2");
         }
         return new Point2D(p[0], p[1]);
+    }
+
+    /** Parses the given string and returns a new point instance. The expected string
+     * format is the same as that returned by {@link #toString()}.
+     * @param str the string to parse
+     * @return point instance represented by the string
+     * @throws IllegalArgumentException if the given string has an invalid format
+     */
+    public static Point2D parse(String str) throws IllegalArgumentException {
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
