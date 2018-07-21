@@ -18,7 +18,7 @@ package org.apache.commons.geometry.core;
 
 /** Class containing geometric constants.
  */
-public class Geometry {
+public final class Geometry {
 
     /** Alias for {@link Math#PI}, placed here for completeness. */
     public static final double PI = Math.PI;

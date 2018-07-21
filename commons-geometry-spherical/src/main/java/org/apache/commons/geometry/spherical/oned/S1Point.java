@@ -55,7 +55,6 @@ public final class S1Point implements Point<S1Point>, Serializable {
 
     /** Build a point from its internal components.
      * @param azimuth azimuthal angle
-     * @param vector corresponding vector
      */
     private S1Point(final double azimuth) {
         this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);

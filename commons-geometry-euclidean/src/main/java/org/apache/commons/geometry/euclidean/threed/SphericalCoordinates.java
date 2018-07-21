@@ -30,10 +30,10 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * <p>Spherical coordinates for a point are defined by three values:
  * <ol>
- * 	<li><em>Radius</em> - The distance from the point to a fixed referenced point.</li>
- * 	<li><em>Azimuth angle</em> - The angle measured from a fixed reference direction in a plane to
+ *  <li><em>Radius</em> - The distance from the point to a fixed referenced point.</li>
+ *  <li><em>Azimuth angle</em> - The angle measured from a fixed reference direction in a plane to
  * the orthogonal projection of the point on that plane.</li>
- *	<li><em>Polar angle</em> - The angle measured from a fixed zenith direction to the point. The zenith
+ *  <li><em>Polar angle</em> - The angle measured from a fixed zenith direction to the point. The zenith
  *direction must be orthogonal to the reference plane.</li>
  * </ol>
  * This class follows the convention of using the origin as the reference point; the positive x-axis as the
@@ -45,20 +45,18 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * y = r sin(&theta;) sin(&Phi;)
  * z = r cos(&Phi;)
  *
- * r = &radic;(x<sup>2</sup>+y<sup>2</sup>+z<sup>2</sup>)
+ * r = &radic;(x^2 + y^2 + z^2)
  * &theta; = atan2(y, x)
  * &Phi; = acos(z/r)
  * </pre>
  * where <em>r</em> is the radius, <em>&theta;</em> is the azimuth angle, and <em>&Phi;</em> is the polar angle
  * of the spherical coordinates.
- * </p>
  *
  * <p>There are numerous, competing conventions for the symbols used to represent spherical coordinate values. For
  * example, the mathematical convention is to use <em>(r, &theta;, &Phi;)</em> to represent radius, azimuth angle, and
  * polar angle, whereas the physics convention flips the angle values and uses <em>(r, &Phi;, &theta;)</em>. As such,
  * this class avoids the use of these symbols altogether in favor of the less ambiguous formal names of the values,
- * e.g. {@code radius}, {@code azimuth}, and {@code polar}.
- * </p>
+ * e.g. {@code radius}, {@code azimuth}, and {@code polar}.</p>
  *
  * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
  * are normalized so that {@code radius} is in the range {@code [0, +Infinity)},
@@ -186,9 +184,9 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * </p>
      * <p>
      * <code>NaN</code> values are considered to globally affect the coordinates
-     * and be equal to each other - i.e, if either (or all) values of the
-     * coordinate set are equal to <code>Double.NaN</code>, the set is equal to
-     * {@link #NaN}.
+     * and be equal to each other - i.e, if any (or all) values of the
+     * coordinate set are equal to <code>Double.NaN</code>, the set as a whole
+     * is considered to equal NaN.
      * </p>
      *
      * @param other Object to test for equality to this
@@ -293,6 +291,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     /** Package private method to convert the given set of spherical coordinates to
      * Cartesian coordinates. The Cartesian coordinates are computed and passed to the given
      * factory instance. The factory's return value is returned.
+     * @param <T> Factory return type.
      * @param radius The spherical radius value.
      * @param azimuth The spherical azimuth angle in radians.
      * @param polar The spherical polar angle in radians.

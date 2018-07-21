@@ -42,11 +42,8 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     public static final Point2D NEGATIVE_INFINITY =
         new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20180710L;
-
     /** Package private factory for delegating instance creation. */
-    static DoubleFunction2N<Point2D> FACTORY = new DoubleFunction2N<Point2D>() {
+    static final DoubleFunction2N<Point2D> FACTORY = new DoubleFunction2N<Point2D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -54,6 +51,9 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
             return new Point2D(n1, n2);
         }
     };
+
+    /** Serializable UID. */
+    private static final long serialVersionUID = 20180710L;
 
     /** Simple constructor.
      * Build a point from its coordinates

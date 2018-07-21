@@ -47,7 +47,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
     public static final Vector3D MINUS_Z = new Vector3D(0, 0, -1);
 
- // CHECKSTYLE: stop ConstantName
+    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
@@ -60,14 +60,8 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     public static final Vector3D NEGATIVE_INFINITY =
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable UID */
-    private static final long serialVersionUID = 20180710L;
-
-    /** Error message when norms are zero. */
-    private static final String ZERO_NORM_MSG = "Norm is zero";
-
     /** Package private factory for delegating instance creation. */
-    static DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
+    static final DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -75,6 +69,12 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
             return new Vector3D(n1, n2, n3);
         }
     };
+
+    /** Serializable UID */
+    private static final long serialVersionUID = 20180710L;
+
+    /** Error message when norms are zero. */
+    private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Simple constructor.
      * Build a vector from its coordinates

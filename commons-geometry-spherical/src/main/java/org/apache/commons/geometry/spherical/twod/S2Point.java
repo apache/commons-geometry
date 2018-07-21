@@ -212,7 +212,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @see #getAzimuth()
      * @see #getPolar()
      */
-    public static S2Point of(final double azimuth, final double polar) throws IllegalArgumentException {
+    public static S2Point of(final double azimuth, final double polar) {
         return new S2Point(azimuth, polar, null);
     }
 

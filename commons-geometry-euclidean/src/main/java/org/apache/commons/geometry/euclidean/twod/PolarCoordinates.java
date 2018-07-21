@@ -39,11 +39,11 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * x = r * cos(&theta;)
  * y = r * sin(&theta;)
  *
- * r = &radic;(x<sup>2</sup> + y<sup>2</sup>)
+ * r = &radic;(x^2 + y^2)
  * &theta; = atan2(y, x)
  * </pre>
  * where <em>r</em> is the radius and <em>&theta;</em> is the azimuth of the polar coordinates.
- * </p>
+ *
  * <p>In order to ensure the uniqueness of coordinate sets, coordinate values
  * are normalized so that {@code radius} is in the range {@code [0, +Infinity)}
  * and {@code azimuth} is in the range {@code [0, 2pi)}.</p>
@@ -158,8 +158,8 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * <p>
      * <code>NaN</code> values are considered to globally affect the coordinates
      * and be equal to each other - i.e, if either (or all) values of the
-     * coordinate set are equal to <code>Double.NaN</code>, the set is equal to
-     * {@link #NaN}.
+     * coordinate set are equal to <code>Double.NaN</code>, the set as a whole is
+     * considered to equal <code>NaN</code>.
      * </p>
      *
      * @param other Object to test for equality to this

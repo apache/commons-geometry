@@ -43,11 +43,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     public static final Point3D NEGATIVE_INFINITY =
         new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20180710L;
-
     /** Package private factory for delegating instance creation. */
-    static DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
+    static final DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -55,6 +52,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
             return new Point3D(n1, n2, n3);
         }
     };
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 20180710L;
 
     /** Simple constructor.
      * Build a point from its coordinates
