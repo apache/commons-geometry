@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -55,18 +55,18 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
-    private static final long serialVersionUID = 1746839897232305304L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
 
-    /** Factory for delegating instance creation. */
-    private static Coordinates.Factory2D<Vector2D> FACTORY = new Coordinates.Factory2D<Vector2D>() {
+    /** Package private factory for delegating instance creation. */
+    static DoubleFunction2N<Vector2D> FACTORY = new DoubleFunction2N<Vector2D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Vector2D create(double a1, double a2) {
-            return new Vector2D(a1, a2);
+        public Vector2D apply(double n1, double n2) {
+            return new Vector2D(n1, n2);
         }
     };
 
@@ -320,12 +320,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getVectorFormat().format(getX(), getY());
-    }
-
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -383,7 +377,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector instance with coordinates equivalent to the given polar coordinates.
      */
     public static Vector2D ofPolar(final double radius, final double azimuth) {
-        return PolarCoordinates.toCartesian(radius, azimuth, getFactory());
+        return PolarCoordinates.toCartesian(radius, azimuth, Vector2D.FACTORY);
     }
 
     /** Parses the given string and returns a new vector instance. The expected string
@@ -393,14 +387,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Vector2D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getVectorFormat().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new vector instances.
-     * @return vector factory instance
-     */
-    public static Coordinates.Factory2D<Vector2D> getFactory() {
-        return FACTORY;
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

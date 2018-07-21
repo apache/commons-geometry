@@ -1,9 +1,10 @@
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class Cartesian2DTest {
 
@@ -94,6 +95,20 @@ public class Cartesian2DTest {
         // act/assert
         Assert.assertTrue(new StubCartesian2D(Double.NaN, Double.NaN).toPolar().isNaN());
         Assert.assertTrue(new StubCartesian2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).toPolar().isInfinite());
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        StubCartesian2D c = new StubCartesian2D(1, 2);
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
+
+        // act
+        String str = c.toString();
+
+        // assert
+        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
+                    pattern.matcher(str).matches());
     }
 
     private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {

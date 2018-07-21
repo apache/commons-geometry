@@ -19,8 +19,8 @@ package org.apache.commons.geometry.spherical.twod;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
@@ -56,13 +56,12 @@ public final class S2Point implements Point<S2Point>, Serializable {
     private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory2D<S2Point> FACTORY = new Coordinates.Factory2D<S2Point>() {
+    private static DoubleFunction2N<S2Point> FACTORY = new DoubleFunction2N<S2Point>() {
 
         /** {@inheritDoc} */
         @Override
-        public S2Point create(double a1, double a2) {
-            // use the factory method for full input validation
-            return S2Point.of(a1, a2);
+        public S2Point apply(double n1, double n2) {
+            return S2Point.of(n1, n2);
         }
     };
 
@@ -203,7 +202,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(getAzimuth(), getPolar());
+        return SimpleTupleFormat.getDefault().format(getAzimuth(), getPolar());
     }
 
     /** Build a vector from its spherical coordinates
@@ -235,13 +234,6 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static S2Point parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static Coordinates.Factory2D<S2Point> getFactory() {
-        return FACTORY;
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 }

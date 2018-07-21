@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -245,7 +244,7 @@ public class Point3DTest {
 
     @Test
     public void testOfSpherical() {
-     // arrange
+        // arrange
         double sqrt3 = Math.sqrt(3);
 
         // act/assert
@@ -262,16 +261,6 @@ public class Point3DTest {
 
         checkPoint(Point3D.ofSpherical(sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3)), 1, 1, 1);
         checkPoint(Point3D.ofSpherical(sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory3D<Point3D> factory = Point3D.getFactory();
-
-        // assert
-        checkPoint(factory.create(1, 2, 3), 1, 2, 3);
-        checkPoint(factory.create(-1, -2, -3), -1, -2, -3);
     }
 
     @Test

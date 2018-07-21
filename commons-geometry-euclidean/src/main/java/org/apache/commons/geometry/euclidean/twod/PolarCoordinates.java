@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">polar coordinates</a>
@@ -56,12 +56,12 @@ public final class PolarCoordinates implements Spatial, Serializable {
     private static final long serialVersionUID = 20180630L;
 
     /** Factory object for delegating instance creation. */
-    private static final Coordinates.Factory2D<PolarCoordinates> FACTORY = new Coordinates.Factory2D<PolarCoordinates>() {
+    private static final DoubleFunction2N<PolarCoordinates> FACTORY = new DoubleFunction2N<PolarCoordinates>() {
 
         /** {@inheritDoc} */
         @Override
-        public PolarCoordinates create(double a1, double a2) {
-            return new PolarCoordinates(a1, a2);
+        public PolarCoordinates apply(double n1, double n2) {
+            return new PolarCoordinates(n1, n2);
         }
     };
 
@@ -119,24 +119,13 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth));
     }
 
-    /** Convert this set of polar coordinates to Cartesian coordinates.
-     * The Cartesian coordinates are computed and passed to the given
-     * factory instance. The factory's return value is returned.
-     * @param factory Factory instance that will be passed the computed Cartesian coordinates
-     * @return the value returned by the given factory when passed Cartesian
-     *      coordinates equivalent to this set of polar coordinates.
-     */
-    public <T> T toCartesian(final Coordinates.Factory2D<T> factory) {
-        return toCartesian(radius, azimuth, factory);
-    }
-
     /** Convert this set of polar coordinates to a 2-dimensional
      * vector.
      * @return A 2-dimensional vector with an equivalent set of
      *      coordinates.
      */
     public Vector2D toVector() {
-        return toCartesian(Vector2D.getFactory());
+        return toCartesian(radius, azimuth, Vector2D.FACTORY);
     }
 
     /** Convert this set of polar coordinates to a 2-dimensional
@@ -145,7 +134,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
      *      coordinates.
      */
     public Point2D toPoint() {
-        return toCartesian(Point2D.getFactory());
+        return toCartesian(radius, azimuth, Point2D.FACTORY);
     }
 
     /** Get a hashCode for this set of polar coordinates.
@@ -199,7 +188,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(radius, azimuth);
+        return SimpleTupleFormat.getDefault().format(radius, azimuth);
     }
 
     /** Return a new instance with the given polar coordinate values.
@@ -233,7 +222,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * @throws IllegalArgumentException if the string format is invalid.
      */
     public static PolarCoordinates parse(String input) {
-        return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(input, FACTORY);
     }
 
     /** Normalize an azimuth value to be within the range {@code [0, 2pi)}.
@@ -254,8 +243,8 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return azimuth;
     }
 
-    /** Convert the given set of polar coordinates to Cartesian coordinates.
-     * The Cartesian coordinates are computed and passed to the given
+    /** Package private method to convert the given set of polar coordinates to
+     * Cartesian coordinates. The Cartesian coordinates are computed and passed to the given
      * factory instance. The factory's return value is returned.
      * @param radius Radius value
      * @param azimuth Azimuth value in radians
@@ -264,17 +253,10 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * @return the value returned by the factory when passed Cartesian
      *      coordinates equivalent to the given set of polar coordinates.
      */
-    public static <T> T toCartesian(final double radius, final double azimuth, final Coordinates.Factory2D<T> factory) {
+    static <T> T toCartesian(final double radius, final double azimuth, final DoubleFunction2N<T> factory) {
         final double x = radius * Math.cos(azimuth);
         final double y = radius * Math.sin(azimuth);
 
-        return factory.create(x, y);
-    }
-
-    /** Return a factory object for creating new {@link PolarCoordinates} instances.
-     * @return factory object for creating new instances.
-     */
-    public static Coordinates.Factory2D<PolarCoordinates> getFactory() {
-        return FACTORY;
+        return factory.apply(x, y);
     }
 }

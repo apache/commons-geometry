@@ -3,7 +3,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -421,7 +420,7 @@ public class Vector2DTest {
     public void testToString() {
         // arrange
         Vector2D v = Vector2D.of(1, 2);
-        Pattern pattern = Pattern.compile("\\{1.{0,2}, 2.{0,2}\\}");
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
         String str = v.toString();
@@ -434,12 +433,12 @@ public class Vector2DTest {
     @Test
     public void testParse() {
         // act/assert
-        checkVector(Vector2D.parse("{1, 2}"), 1, 2);
-        checkVector(Vector2D.parse("{-1, -2}"), -1, -2);
+        checkVector(Vector2D.parse("(1, 2)"), 1, 2);
+        checkVector(Vector2D.parse("(-1, -2)"), -1, -2);
 
-        checkVector(Vector2D.parse("{0.01, -1e-3}"), 1e-2, -1e-3);
+        checkVector(Vector2D.parse("(0.01, -1e-3)"), 1e-2, -1e-3);
 
-        checkVector(Vector2D.parse("{NaN, -Infinity}"), Double.NaN, Double.NEGATIVE_INFINITY);
+        checkVector(Vector2D.parse("(NaN, -Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY);
 
         checkVector(Vector2D.parse(Vector2D.ZERO.toString()), 0, 0);
         checkVector(Vector2D.parse(Vector2D.MINUS_X.toString()), -1, 0);
@@ -504,16 +503,6 @@ public class Vector2DTest {
         checkVector(Vector2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
         checkVector(Vector2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
         checkVector(Vector2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory2D<Vector2D> factory = Vector2D.getFactory();
-
-        // assert
-        checkVector(factory.create(1, 2), 1, 2);
-        checkVector(factory.create(-1, -2), -1, -2);
     }
 
     @Test

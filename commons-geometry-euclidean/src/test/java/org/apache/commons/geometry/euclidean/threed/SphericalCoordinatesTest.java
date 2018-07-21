@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -177,32 +177,10 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian_callback() {
-        // arrange
-        double sqrt3 = Math.sqrt(3);
-        Coordinates.Factory3D<Point3D> factory = Point3D.getFactory();
-
-        // act/assert
-        checkPoint(SphericalCoordinates.of(0, 0, 0).toCartesian(factory), 0, 0, 0);
-
-        checkPoint(SphericalCoordinates.of(1, 0, Geometry.HALF_PI).toCartesian(factory), 1, 0, 0);
-        checkPoint(SphericalCoordinates.of(1, Geometry.PI, Geometry.HALF_PI).toCartesian(factory), -1, 0, 0);
-
-        checkPoint(SphericalCoordinates.of(2, Geometry.HALF_PI, Geometry.HALF_PI).toCartesian(factory), 0, 2, 0);
-        checkPoint(SphericalCoordinates.of(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI).toCartesian(factory), 0, -2, 0);
-
-        checkPoint(SphericalCoordinates.of(3, 0, 0).toCartesian(factory), 0, 0, 3);
-        checkPoint(SphericalCoordinates.of(3, 0, Geometry.PI).toCartesian(factory), 0, 0, -3);
-
-        checkPoint(SphericalCoordinates.of(Math.sqrt(3), QUARTER_PI, Math.acos(1 / sqrt3)).toCartesian(factory), 1, 1, 1);
-        checkPoint(SphericalCoordinates.of(Math.sqrt(3), MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3)).toCartesian(factory), -1, -1, -1);
-    }
-
-    @Test
     public void testToCartesian_static() {
         // arrange
         double sqrt3 = Math.sqrt(3);
-        Coordinates.Factory3D<Point3D> factory = Point3D.getFactory();
+        DoubleFunction3N<Point3D> factory = Point3D.FACTORY;
 
         // act/assert
         checkPoint(SphericalCoordinates.toCartesian(0, 0, 0, factory), 0, 0, 0);
@@ -399,15 +377,6 @@ public class SphericalCoordinatesTest {
         Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NaN), Double.NaN, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
         Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory3D<SphericalCoordinates> factory = SphericalCoordinates.getFactory();
-
-        // assert
-        checkSpherical(factory.create(2, 0.5 + Geometry.TWO_PI, 0.1 + Geometry.PI), 2, 0.5, Geometry.PI - 0.1);
     }
 
     private void checkSpherical(SphericalCoordinates c, double radius, double azimuth, double polar) {

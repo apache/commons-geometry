@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -46,15 +46,15 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         new Point1D(Double.NEGATIVE_INFINITY);
 
     /** Serializable UID. */
-    private static final long serialVersionUID = 7556674948671647925L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Factory for delegating instance creation. */
-    private static Coordinates.Factory1D<Point1D> FACTORY = new Coordinates.Factory1D<Point1D>() {
+    private static DoubleFunction1N<Point1D> FACTORY = new DoubleFunction1N<Point1D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Point1D create(double a) {
-            return new Point1D(a);
+        public Point1D apply(double n) {
+            return new Point1D(n);
         }
     };
 
@@ -145,12 +145,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(getX());
-    }
-
     /** Returns a point with the given coordinate value.
      * @param x point coordinate
      * @return point instance
@@ -174,14 +168,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getPointFormat().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new point instances.
-     * @return point factory instance
-     */
-    public static Coordinates.Factory1D<Point1D> getFactory() {
-        return FACTORY;
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -61,18 +61,18 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Serializable UID */
-    private static final long serialVersionUID = 3695385854431542858L;
+    private static final long serialVersionUID = 20180710L;
 
     /** Error message when norms are zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
 
-    /** Factory for delegating instance creation. */
-    private static Coordinates.Factory3D<Vector3D> FACTORY = new Coordinates.Factory3D<Vector3D>() {
+    /** Package private factory for delegating instance creation. */
+    static DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
 
         /** {@inheritDoc} */
         @Override
-        public Vector3D create(double a1, double a2, double a3) {
-            return new Vector3D(a1, a2, a3);
+        public Vector3D apply(double n1, double n2, double n3) {
+            return new Vector3D(n1, n2, n3);
         }
     };
 
@@ -368,12 +368,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return SimpleCoordinateFormat.getVectorFormat().format(getX(), getY(), getZ());
-    }
-
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -455,14 +449,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Vector3D parse(String str) throws IllegalArgumentException {
-        return SimpleCoordinateFormat.getVectorFormat().parse(str, FACTORY);
-    }
-
-    /** Returns a factory object that can be used to created new vector instances.
-     * @return vector factory instance
-     */
-    public static Coordinates.Factory3D<Vector3D> getFactory() {
-        return FACTORY;
+        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

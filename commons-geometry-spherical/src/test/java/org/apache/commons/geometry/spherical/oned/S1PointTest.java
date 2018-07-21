@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -78,17 +77,6 @@ public class S1PointTest {
     public void testParse_failure() {
         // act/assert
         S1Point.parse("abc");
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory1D<S1Point> factory = S1Point.getFactory();
-
-        // assert
-        checkPoint(factory.create(0), 0);
-        checkPoint(factory.create(1), 1);
-        checkPoint(factory.create(Geometry.TWO_PI), 0);
     }
 
     private void checkPoint(S1Point p, double alpha) {

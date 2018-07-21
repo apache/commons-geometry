@@ -1,5 +1,7 @@
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -94,6 +96,20 @@ public class Cartesian3DTest {
         Assert.assertFalse(new StubCartesian3D(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
         Assert.assertFalse(new StubCartesian3D(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
         Assert.assertFalse(new StubCartesian3D(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        StubCartesian3D c = new StubCartesian3D(1, 2, 3);
+        Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
+
+        // act
+        String str = c.toString();
+
+        // assert
+        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
+                    pattern.matcher(str).matches());
     }
 
     private void checkSpherical(SphericalCoordinates c, double radius, double azimuth, double polar) {

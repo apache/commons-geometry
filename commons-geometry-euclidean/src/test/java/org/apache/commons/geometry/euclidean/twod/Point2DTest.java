@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -240,16 +239,6 @@ public class Point2DTest {
         checkPoint(Point2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
         checkPoint(Point2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
         checkPoint(Point2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
-
-        // assert
-        checkPoint(factory.create(1, 2), 1, 2);
-        checkPoint(factory.create(-1, -2), -1, -2);
     }
 
     @Test

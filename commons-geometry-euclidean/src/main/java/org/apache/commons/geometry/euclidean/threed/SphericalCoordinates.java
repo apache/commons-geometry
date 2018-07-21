@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.util.Coordinates;
-import org.apache.commons.geometry.core.util.SimpleCoordinateFormat;
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
+import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
@@ -73,12 +73,12 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     private static final long serialVersionUID = 20180623L;
 
     /** Factory object for delegating instance creation. */
-    private static final Coordinates.Factory3D<SphericalCoordinates> FACTORY = new Coordinates.Factory3D<SphericalCoordinates>() {
+    private static final DoubleFunction3N<SphericalCoordinates> FACTORY = new DoubleFunction3N<SphericalCoordinates>() {
 
         /** {@inheritDoc} */
         @Override
-        public SphericalCoordinates create(double a1, double a2, double a3) {
-            return new SphericalCoordinates(a1, a2, a3);
+        public SphericalCoordinates apply(double n1, double n2, double n3) {
+            return new SphericalCoordinates(n1, n2, n3);
         }
     };
 
@@ -150,23 +150,12 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth) || Double.isInfinite(polar));
     }
 
-    /** Convert this set of spherical coordinates to Cartesian coordinates.
-     * The Cartesian coordinates are computed and passed to the given
-     * factory instance. The factory's return value is returned.
-     * @param factory Factory instance that will be passed the computed Cartesian coordinates
-     * @return the value returned by the factory when passed Cartesian
-     *      coordinates equivalent to this set of spherical coordinates.
-     */
-    public <T> T toCartesian(final Coordinates.Factory3D<T> factory) {
-        return toCartesian(radius, azimuth, polar, factory);
-    }
-
     /** Convert this set of spherical coordinates to a 3 dimensional vector.
      * @return A 3-dimensional vector with an equivalent set of
      *      coordinates.
      */
     public Vector3D toVector() {
-        return toCartesian(Vector3D.getFactory());
+        return toCartesian(radius, azimuth, polar, Vector3D.FACTORY);
     }
 
     /** Convert this set of spherical coordinates to a 3 dimensional point.
@@ -174,7 +163,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     *      coordinates.
     */
     public Point3D toPoint() {
-        return toCartesian(Point3D.getFactory());
+        return toCartesian(radius, azimuth, polar, Point3D.FACTORY);
     }
 
     /** Get a hashCode for this set of spherical coordinates.
@@ -228,7 +217,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleCoordinateFormat.getPointFormat().format(radius, azimuth, polar);
+        return SimpleTupleFormat.getDefault().format(radius, azimuth, polar);
     }
 
     /** Return a new instance with the given spherical coordinate values. The values are normalized
@@ -270,7 +259,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * @throws IllegalArgumentException if the string format is invalid.
      */
     public static SphericalCoordinates parse(String input) {
-        return SimpleCoordinateFormat.getPointFormat().parse(input, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(input, FACTORY);
     }
 
     /** Normalize an azimuth value to be within the range {@code [0, 2pi)}. This
@@ -301,8 +290,8 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return polar;
     }
 
-    /** Convert the given set of spherical coordinates to Cartesian coordinates.
-     * The Cartesian coordinates are computed and passed to the given
+    /** Package private method to convert the given set of spherical coordinates to
+     * Cartesian coordinates. The Cartesian coordinates are computed and passed to the given
      * factory instance. The factory's return value is returned.
      * @param radius The spherical radius value.
      * @param azimuth The spherical azimuth angle in radians.
@@ -311,21 +300,14 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * @return the value returned by the factory when passed Cartesian
      *      coordinates equivalent to the given set of spherical coordinates.
      */
-    public static <T> T toCartesian(final double radius, final double azimuth, final double polar,
-            Coordinates.Factory3D<T> factory) {
+    static <T> T toCartesian(final double radius, final double azimuth, final double polar,
+            DoubleFunction3N<T> factory) {
         final double xyLength = radius * Math.sin(polar);
 
         final double x = xyLength * Math.cos(azimuth);
         final double y = xyLength * Math.sin(azimuth);
         final double z = radius * Math.cos(polar);
 
-        return factory.create(x, y, z);
-    }
-
-    /** Return a factory object for generating new {@link SphericalCoordinates} instances.
-     * @return factory object for generating new instances.
-     */
-    public static Coordinates.Factory3D<SphericalCoordinates> getFactory() {
-        return FACTORY;
+        return factory.apply(x, y, z);
     }
 }

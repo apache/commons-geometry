@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.util.Coordinates;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -255,30 +255,9 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToCartesian() {
-        // arrange
-        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
-        double sqrt2 = Math.sqrt(2);
-
-        // act/assert
-        checkPoint(PolarCoordinates.of(0, 0).toCartesian(factory), 0, 0);
-
-        checkPoint(PolarCoordinates.of(1, 0).toCartesian(factory), 1, 0);
-        checkPoint(PolarCoordinates.of(sqrt2, 0.25 * Geometry.PI).toCartesian(factory), 1, 1);
-        checkPoint(PolarCoordinates.of(1, Geometry.HALF_PI).toCartesian(factory), 0, 1);
-
-        checkPoint(PolarCoordinates.of(sqrt2, 0.75 * Geometry.PI).toCartesian(factory), -1, 1);
-        checkPoint(PolarCoordinates.of(1, Geometry.PI).toCartesian(factory), -1, 0);
-        checkPoint(PolarCoordinates.of(sqrt2, -0.75 * Geometry.PI).toCartesian(factory), -1, -1);
-
-        checkPoint(PolarCoordinates.of(1, Geometry.MINUS_HALF_PI).toCartesian(factory), 0, -1);
-        checkPoint(PolarCoordinates.of(sqrt2, -0.25 * Geometry.PI).toCartesian(factory), 1, -1);
-    }
-
-    @Test
     public void testToCartesian_static() {
         // arrange
-        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
+        DoubleFunction2N<Point2D> factory = Point2D.FACTORY;
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
@@ -299,7 +278,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static_NaNAndInfinite() {
         // arrange
-        Coordinates.Factory2D<Point2D> factory = Point2D.getFactory();
+        DoubleFunction2N<Point2D> factory = Point2D.FACTORY;
 
         // act/assert
         Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0, factory).isNaN());
@@ -364,15 +343,6 @@ public class PolarCoordinatesTest {
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NaN), Double.NaN, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
         Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
-    }
-
-    @Test
-    public void testGetFactory() {
-        // act
-        Coordinates.Factory2D<PolarCoordinates> factory = PolarCoordinates.getFactory();
-
-        // assert
-        checkPolar(factory.create(-1, Geometry.HALF_PI), 1, Geometry.THREE_HALVES_PI);
     }
 
     private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
