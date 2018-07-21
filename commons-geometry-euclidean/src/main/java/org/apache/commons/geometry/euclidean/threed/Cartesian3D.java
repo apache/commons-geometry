@@ -78,6 +78,13 @@ public abstract class Cartesian3D implements Spatial, Serializable {
         return new double[] { x, y, z };
     }
 
+    /** Return an equivalent set of coordinates in spherical form.
+     * @return an equivalent set of coordinates in spherical form.
+     */
+    public SphericalCoordinates toSpherical() {
+        return SphericalCoordinates.ofCartesian(x, y, z);
+    }
+
     /** {@inheritDoc} */
     @Override
     public int getDimension() {

@@ -375,7 +375,7 @@ public class SphericalPolygonsSetTest {
         SphericalPolygonsSet hexaWithHole =
                 (SphericalPolygonsSet) new RegionFactory<S2Point>().difference(hexa, hole);
 
-        for (double phi = center.getPhi() - alpha + 0.1; phi < center.getPhi() + alpha - 0.1; phi += 0.07) {
+        for (double phi = center.getPolar() - alpha + 0.1; phi < center.getPolar() + alpha - 0.1; phi += 0.07) {
             Location l = hexaWithHole.checkPoint(S2Point.of(Math.PI / 4, phi));
             if (phi < Math.PI / 6 || phi > Math.PI / 3) {
                 Assert.assertEquals(Location.INSIDE,  l);
@@ -428,7 +428,7 @@ public class SphericalPolygonsSetTest {
                             concentric.getSize(), 1.0e-10);
 
         // we expect lots of sign changes as we traverse all concentric rings
-        double phi = S2Point.of(center).getPhi();
+        double phi = S2Point.of(center).getPolar();
         Assert.assertEquals(+0.207, concentric.projectToBoundary(S2Point.of(-0.60,  phi)).getOffset(), 0.01);
         Assert.assertEquals(-0.048, concentric.projectToBoundary(S2Point.of(-0.21,  phi)).getOffset(), 0.01);
         Assert.assertEquals(+0.027, concentric.projectToBoundary(S2Point.of(-0.10,  phi)).getOffset(), 0.01);

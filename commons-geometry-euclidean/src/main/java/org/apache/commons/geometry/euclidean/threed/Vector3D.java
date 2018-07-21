@@ -47,7 +47,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
     public static final Vector3D MINUS_Z = new Vector3D(0, 0, -1);
 
- // CHECKSTYLE: stop ConstantName
+    // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector3D NaN = new Vector3D(Double.NaN, Double.NaN, Double.NaN);
     // CHECKSTYLE: resume ConstantName
@@ -60,14 +60,8 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     public static final Vector3D NEGATIVE_INFINITY =
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable UID */
-    private static final long serialVersionUID = 20180710L;
-
-    /** Error message when norms are zero. */
-    private static final String ZERO_NORM_MSG = "Norm is zero";
-
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
+    /** Package private factory for delegating instance creation. */
+    static final DoubleFunction3N<Vector3D> FACTORY = new DoubleFunction3N<Vector3D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -75,6 +69,12 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
             return new Vector3D(n1, n2, n3);
         }
     };
+
+    /** Serializable UID */
+    private static final long serialVersionUID = 20180710L;
+
+    /** Error message when norms are zero. */
+    private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Simple constructor.
      * Build a vector from its coordinates
@@ -128,20 +128,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     @Override
     public double getNormInf() {
         return Math.max(Math.max(Math.abs(getX()), Math.abs(getY())), Math.abs(getZ()));
-    }
-
-    /** Get the azimuth of the vector.
-     * @return azimuth (&alpha;) of the vector, between -&pi; and +&pi;
-     */
-    public double getAlpha() {
-        return Math.atan2(getY(), getX());
-    }
-
-    /** Get the elevation of the vector.
-     * @return elevation (&delta;) of the vector, between -&pi;/2 and +&pi;/2
-     */
-    public double getDelta() {
-        return Math.asin(getZ() / getNorm());
     }
 
     /** {@inheritDoc} */
@@ -445,21 +431,15 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return new Vector3D(v[0], v[1], v[2]);
     }
 
-    /** Builds a vector from its azimuthal coordinates
-     * @param alpha azimuth (&alpha;) around Z
-     *              (0 is +X, &pi;/2 is +Y, &pi; is -X and 3&pi;/2 is -Y)
-     * @param delta elevation (&delta;) above (XY) plane, from -&pi;/2 to +&pi;/2
-     * @see #getAlpha()
-     * @see #getDelta()
-     * @return new vector instance with the given azimuthal coordinates
+    /** Create a vector from a set of spherical coordinates.
+     * @param radius the spherical radius value
+     * @param azimuth the angle in the x-y plane measured in radians counter-clockwise from the
+     *      positive x axis.
+     * @param polar the angle with the positive z axis in radians.
+     * @return a vector instance with the given set of spherical coordinates
      */
-    public static Vector3D fromSpherical(double alpha, double delta) {
-        double cosDelta = Math.cos(delta);
-        double x = Math.cos(alpha) * cosDelta;
-        double y = Math.sin(alpha) * cosDelta;
-        double z = Math.sin(delta);
-
-        return new Vector3D(x, y, z);
+    public static Vector3D ofSpherical(double radius, double azimuth, double polar) {
+        return SphericalCoordinates.toCartesian(radius, azimuth, polar, FACTORY);
     }
 
     /** Parses the given string and returns a new vector instance. The expected string

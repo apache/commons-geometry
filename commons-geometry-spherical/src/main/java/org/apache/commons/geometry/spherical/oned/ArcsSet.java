@@ -435,7 +435,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @return limit angle
      */
     private double getAngle(final BSPTree<S1Point> node) {
-        return ((LimitAngle) node.getCut().getHyperplane()).getLocation().getAlpha();
+        return ((LimitAngle) node.getCut().getHyperplane()).getLocation().getAzimuth();
     }
 
     /** {@inheritDoc} */
@@ -475,7 +475,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     public BoundaryProjection<S1Point> projectToBoundary(final S1Point point) {
 
         // get position of test point
-        final double alpha = point.getAlpha();
+        final double alpha = point.getAzimuth();
 
         boolean wrapFirst = false;
         double first      = Double.NaN;
