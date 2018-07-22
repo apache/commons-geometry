@@ -29,23 +29,13 @@ public class S2PointTest {
     public void testS2Point() {
         for (int k = -2; k < 3; ++k) {
             S2Point p = S2Point.of(1.0 + k * Geometry.TWO_PI, 1.4);
-            Assert.assertEquals(1.0 + k * Geometry.TWO_PI, p.getTheta(), EPS);
-            Assert.assertEquals(1.4, p.getPhi(), EPS);
+            Assert.assertEquals(1.0, p.getAzimuth(), EPS);
+            Assert.assertEquals(1.4, p.getPolar(), EPS);
             Assert.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), EPS);
             Assert.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), EPS);
             Assert.assertEquals(Math.cos(1.4), p.getVector().getZ(), EPS);
             Assert.assertFalse(p.isNaN());
         }
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testNegativePolarAngle() {
-        S2Point.of(1.0, -1.0);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testTooLargePolarAngle() {
-        S2Point.of(1.0, 3.5);
     }
 
     @Test
@@ -69,7 +59,7 @@ public class S2PointTest {
     @Test
     public void testDistance() {
         S2Point a = S2Point.of(1.0, 0.5 * Math.PI);
-        S2Point b = S2Point.of(a.getTheta() + 0.5 * Math.PI, a.getPhi());
+        S2Point b = S2Point.of(a.getAzimuth() + 0.5 * Math.PI, a.getPolar());
         Assert.assertEquals(0.5 * Math.PI, a.distance(b), 1.0e-10);
         Assert.assertEquals(Math.PI, a.distance(a.negate()), 1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, S2Point.MINUS_I.distance(S2Point.MINUS_K), 1.0e-10);
@@ -97,7 +87,7 @@ public class S2PointTest {
     }
 
     private void checkPoint(S2Point p, double theta, double phi) {
-        Assert.assertEquals(theta, p.getTheta(), EPS);
-        Assert.assertEquals(phi, p.getPhi(), EPS);
+        Assert.assertEquals(theta, p.getAzimuth(), EPS);
+        Assert.assertEquals(phi, p.getPolar(), EPS);
     }
 }

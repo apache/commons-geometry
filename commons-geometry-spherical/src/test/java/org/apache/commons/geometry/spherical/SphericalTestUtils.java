@@ -46,7 +46,7 @@ public class SphericalTestUtils {
             protected void formatHyperplane(final Hyperplane<S1Point> hyperplane) {
                 final LimitAngle h = (LimitAngle) hyperplane;
                 getFormatter().format("%22.15e %b %22.15e",
-                                      h.getLocation().getAlpha(), h.isDirect(), h.getTolerance());
+                                      h.getLocation().getAzimuth(), h.isDirect(), h.getTolerance());
             }
 
         };

@@ -44,11 +44,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     public static final Point3D NEGATIVE_INFINITY =
         new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20180710L;
-
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
+    /** Package private factory for delegating instance creation. */
+    static final DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
 
         /** {@inheritDoc} */
         @Override
@@ -56,6 +53,9 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
             return new Point3D(n1, n2, n3);
         }
     };
+
+    /** Serializable version identifier. */
+    private static final long serialVersionUID = 20180710L;
 
     /** Simple constructor.
      * Build a point from its coordinates
@@ -186,6 +186,17 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 3");
         }
         return new Point3D(p[0], p[1], p[2]);
+    }
+
+    /** Create a point from a set of spherical coordinates.
+     * @param radius the spherical radius value
+     * @param azimuth the angle in the x-y plane measured in radians counter-clockwise from the
+     *      positive x axis.
+     * @param polar the angle with the positive z axis in radians.
+     * @return a point instance with the given set of spherical coordinates
+     */
+    public static Point3D ofSpherical(double radius, double azimuth, double polar) {
+        return SphericalCoordinates.toCartesian(radius, azimuth, polar, FACTORY);
     }
 
     /** Parses the given string and returns a new point instance. The expected string

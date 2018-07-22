@@ -21,17 +21,17 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class S1Point implements Point<S1Point>, Serializable {
 
-   // CHECKSTYLE: stop ConstantName
-    /** A vector with all coordinates set to NaN. */
-    public static final S1Point NaN = new S1Point(Double.NaN, Vector2D.NaN);
+    // CHECKSTYLE: stop ConstantName
+    /** A point with all coordinates set to NaN. */
+    public static final S1Point NaN = new S1Point(Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -43,31 +43,30 @@ public final class S1Point implements Point<S1Point>, Serializable {
         /** {@inheritDoc} */
         @Override
         public S1Point apply(double n) {
-            return S1Point.of(n);
+            return new S1Point(n);
         }
     };
 
-    /** Azimuthal angle in radians \( \alpha \). */
-    private final double alpha;
+    /** Azimuthal angle in radians. */
+    private final double azimuth;
 
     /** Corresponding 2D normalized vector. */
     private final Vector2D vector;
 
     /** Build a point from its internal components.
-     * @param alpha azimuthal angle \( \alpha \)
-     * @param vector corresponding vector
+     * @param azimuth azimuthal angle
      */
-    private S1Point(final double alpha, final Vector2D vector) {
-        this.alpha  = alpha;
-        this.vector = vector;
+    private S1Point(final double azimuth) {
+        this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);
+        this.vector = Double.isFinite(azimuth) ? Vector2D.ofPolar(1.0, azimuth) : Vector2D.NaN;
     }
 
-    /** Get the azimuthal angle in radians \( \alpha \).
-     * @return azimuthal angle \( \alpha \)
+    /** Get the azimuthal angle in radians.
+     * @return azimuthal angle
      * @see S1Point#of(double)
      */
-    public double getAlpha() {
-        return alpha;
+    public double getAzimuth() {
+        return azimuth;
     }
 
     /** Get the corresponding normalized vector in the 2D Euclidean space.
@@ -86,13 +85,13 @@ public final class S1Point implements Point<S1Point>, Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean isNaN() {
-        return Double.isNaN(alpha);
+        return Double.isNaN(azimuth);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        return !isNaN() && Double.isInfinite(alpha);
+        return !isNaN() && Double.isInfinite(azimuth);
     }
 
     /** {@inheritDoc} */
@@ -131,7 +130,6 @@ public final class S1Point implements Point<S1Point>, Serializable {
      */
     @Override
     public boolean equals(Object other) {
-
         if (this == other) {
             return true;
         }
@@ -142,11 +140,10 @@ public final class S1Point implements Point<S1Point>, Serializable {
                 return this.isNaN();
             }
 
-            return alpha == rhs.alpha;
+            return azimuth == rhs.azimuth;
         }
 
         return false;
-
     }
 
     /**
@@ -161,25 +158,22 @@ public final class S1Point implements Point<S1Point>, Serializable {
         if (isNaN()) {
             return 542;
         }
-        return 1759 * Double.hashCode(alpha);
+        return 1759 * Double.hashCode(azimuth);
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleTupleFormat.getDefault().format(getAlpha());
+        return SimpleTupleFormat.getDefault().format(getAzimuth());
     }
 
     /** Creates a new point instance from the given azimuthal coordinate value.
-     * @param alpha azimuthal angle in radians \( \alpha \)
+     * @param azimuth azimuthal angle in radians
      * @return point instance with the given azimuth coordinate value
-     * @see #getAlpha()
+     * @see #getAzimuth()
      */
-    public static S1Point of(double alpha) {
-        double normalizedAlpha = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha);
-        Vector2D vector = Vector2D.of(Math.cos(normalizedAlpha), Math.sin(normalizedAlpha));
-
-        return new S1Point(normalizedAlpha, vector);
+    public static S1Point of(double azimuth) {
+        return new S1Point(azimuth);
     }
 
     /** Parses the given string and returns a new point instance. The expected string

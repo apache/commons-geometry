@@ -1,10 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class Cartesian2DTest {
 
@@ -71,6 +87,33 @@ public class Cartesian2DTest {
     }
 
     @Test
+    public void testToPolar() {
+        // arrange
+        double sqrt2 = Math.sqrt(2.0);
+
+        // act/assert
+        checkPolar(new StubCartesian2D(0, 0).toPolar(), 0, 0);
+
+        checkPolar(new StubCartesian2D(1, 0).toPolar(), 1, 0);
+        checkPolar(new StubCartesian2D(-1, 0).toPolar(), 1, Geometry.PI);
+
+        checkPolar(new StubCartesian2D(0, 2).toPolar(), 2, Geometry.HALF_PI);
+        checkPolar(new StubCartesian2D(0, -2).toPolar(), 2, Geometry.THREE_HALVES_PI);
+
+        checkPolar(new StubCartesian2D(sqrt2, sqrt2).toPolar(), 2, 0.25 * Geometry.PI);
+        checkPolar(new StubCartesian2D(-sqrt2, sqrt2).toPolar(), 2, 0.75 * Geometry.PI);
+        checkPolar(new StubCartesian2D(sqrt2, -sqrt2).toPolar(), 2, 1.75 * Geometry.PI);
+        checkPolar(new StubCartesian2D(-sqrt2, -sqrt2).toPolar(), 2, 1.25 * Geometry.PI);
+    }
+
+    @Test
+    public void testToPolar_NaNAndInfinite() {
+        // act/assert
+        Assert.assertTrue(new StubCartesian2D(Double.NaN, Double.NaN).toPolar().isNaN());
+        Assert.assertTrue(new StubCartesian2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).toPolar().isInfinite());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         StubCartesian2D c = new StubCartesian2D(1, 2);
@@ -82,6 +125,11 @@ public class Cartesian2DTest {
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
                     pattern.matcher(str).matches());
+    }
+
+    private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
+        Assert.assertEquals(radius, polar.getRadius(), TEST_TOLERANCE);
+        Assert.assertEquals(azimuth, polar.getAzimuth(), TEST_TOLERANCE);
     }
 
     private static class StubCartesian2D extends Cartesian2D {

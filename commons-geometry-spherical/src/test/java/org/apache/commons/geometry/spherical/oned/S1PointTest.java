@@ -55,7 +55,7 @@ public class S1PointTest {
     @Test
     public void testDistance() {
         S1Point a = S1Point.of(1.0);
-        S1Point b = S1Point.of(a.getAlpha() + 0.5 * Math.PI);
+        S1Point b = S1Point.of(a.getAzimuth() + 0.5 * Math.PI);
         Assert.assertEquals(0.5 * Math.PI, a.distance(b), 1.0e-10);
     }
 
@@ -80,7 +80,7 @@ public class S1PointTest {
     }
 
     private void checkPoint(S1Point p, double alpha) {
-        Assert.assertEquals(alpha, p.getAlpha(), EPS);
+        Assert.assertEquals(alpha, p.getAzimuth(), EPS);
     }
 
 }
