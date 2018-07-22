@@ -521,15 +521,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector2D.of(Point2D.of(0, 1)), 0, 1);
-        checkVector(Vector2D.of(Point2D.of(-1, -2)), -1, -2);
-        checkVector(Vector2D.of(Point2D.of(Math.PI, Double.NaN)), Math.PI, Double.NaN);
-        checkVector(Vector2D.of(Point2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
         checkVector(Vector2D.of(new double[] { 0, 1 }), 0, 1);

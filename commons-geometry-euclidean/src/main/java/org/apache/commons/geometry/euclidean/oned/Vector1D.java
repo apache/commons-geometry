@@ -267,14 +267,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return new Vector1D(x);
     }
 
-    /** Returns a vector instance with the given coordinate value.
-     * @param value vector coordinate
-     * @return vector instance
-     */
-    public static Vector1D of(Cartesian1D value) {
-        return new Vector1D(value.getX());
-    }
-
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse

@@ -432,14 +432,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return new Vector3D(x, y, z);
     }
 
-    /** Returns a vector instance with the given coordinate values.
-     * @param value vector coordinates
-     * @return vector instance
-     */
-    public static Vector3D of(Cartesian3D value) {
-        return new Vector3D(value.getX(), value.getY(), value.getZ());
-    }
-
     /** Creates a vector from the coordinates in the given 3-element array.
      * @param v coordinates array
      * @return new vector

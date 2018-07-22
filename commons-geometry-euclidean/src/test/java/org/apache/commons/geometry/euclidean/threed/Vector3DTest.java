@@ -709,17 +709,6 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector3D.of(Point3D.of(1, 2, 3)), 1, 2, 3);
-        checkVector(Vector3D.of(Point3D.of(-1, -2, -3)), -1, -2, -3);
-        checkVector(Vector3D.of(Point3D.of(Math.PI, Double.NaN, Double.POSITIVE_INFINITY)),
-                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.of(Point3D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E)),
-                   Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
         checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);

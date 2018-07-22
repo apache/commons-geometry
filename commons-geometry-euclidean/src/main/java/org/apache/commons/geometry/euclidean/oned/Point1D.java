@@ -68,7 +68,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public Vector1D asVector() {
-        return Vector1D.of(this);
+        return Vector1D.of(getX());
     }
 
     /** {@inheritDoc} */

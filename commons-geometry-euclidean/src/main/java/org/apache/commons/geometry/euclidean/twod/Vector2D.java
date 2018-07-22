@@ -368,14 +368,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return new Vector2D(x, y);
     }
 
-    /** Returns a vector instance with the given coordinate values.
-     * @param value vector coordinates
-     * @return vector instance
-     */
-    public static Vector2D of(Cartesian2D value) {
-        return new Vector2D(value.getX(), value.getY());
-    }
-
     /** Creates a vector from the coordinates in the given 2-element array.
      * @param v coordinates array
      * @return new vector

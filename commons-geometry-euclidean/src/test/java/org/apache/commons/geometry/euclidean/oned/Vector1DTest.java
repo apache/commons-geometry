@@ -374,18 +374,6 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector1D.of(Vector1D.of(0)), 0.0);
-        checkVector(Vector1D.of(Vector1D.of(-1)), -1.0);
-        checkVector(Vector1D.of(Vector1D.of(1)), 1.0);
-        checkVector(Vector1D.of(Vector1D.of(Math.PI)), Math.PI);
-        checkVector(Vector1D.of(Vector1D.of(Double.NaN)), Double.NaN);
-        checkVector(Vector1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
-        checkVector(Vector1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
-    }
-
-    @Test
     public void testLinearCombination() {
         // act/assert
         checkVector(Vector1D.linearCombination(2, Vector1D.of(3)), 6);
