@@ -33,6 +33,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** Unit vector (coordinates: 1). */
     public static final Vector1D ONE  = new Vector1D(1.0);
 
+    /** Negation of unit vector (coordinates: -1). */
+    public static final Vector1D MINUS_ONE = new Vector1D(-1.0);
+
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector1D NaN = new Vector1D(Double.NaN);
@@ -48,6 +51,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
+
+    /** Error message when a norm is zero. */
+    private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Factory for delegating instance creation. */
     private static DoubleFunction1N<Vector1D> FACTORY = new DoubleFunction1N<Vector1D>() {
@@ -117,9 +123,14 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / nonZeroNorm();
-
-        return new Vector1D(magnitude * getX() * invNorm);
+        final double x = getX();
+        if (x > 0.0) {
+            return new Vector1D(magnitude);
+        }
+        else if (x < 0.0) {
+            return new Vector1D(-magnitude);
+        }
+        throw new IllegalStateException(ZERO_NORM_MSG);
     }
 
     /** {@inheritDoc} */
@@ -155,7 +166,14 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D normalize() throws IllegalStateException {
-        return scalarMultiply(1.0 / nonZeroNorm());
+        final double x = getX();
+        if (x > 0.0) {
+            return ONE;
+        }
+        else if (x < 0.0) {
+            return MINUS_ONE;
+        }
+        throw new IllegalStateException(ZERO_NORM_MSG);
     }
 
     /** {@inheritDoc} */
@@ -167,26 +185,25 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double distance1(Vector1D v) {
-        return distance(v);
+        return Vectors.norm1(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector1D v) {
-        return Math.abs(v.getX() - getX());
+        return Vectors.norm(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceInf(Vector1D v) {
-        return distance(v);
+        return Vectors.normInf(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector1D v) {
-        final double dx = v.getX() - getX();
-        return dx * dx;
+        return Vectors.normSq(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
@@ -244,19 +261,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
             return getX() == rhs.getX();
         }
         return false;
-    }
-
-    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
-     * @return the non-zero norm value
-     * @throws IllegalStateException if the norm is zero
-     */
-    private double nonZeroNorm() throws IllegalStateException {
-        final double n = getNorm();
-        if (n == 0) {
-            throw new IllegalStateException("Norm is zero");
-        }
-
-        return n;
     }
 
     /** Returns a vector with the given coordinate value.

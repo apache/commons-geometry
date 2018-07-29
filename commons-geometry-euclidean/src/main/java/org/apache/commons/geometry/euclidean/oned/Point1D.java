@@ -32,6 +32,9 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** Unit (coordinates: 1). */
     public static final Point1D ONE  = new Point1D(1.0);
 
+    /** Negative unit (coordinates: 1). */
+    public static final Point1D MINUS_ONE  = new Point1D(-1.0);
+
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Point1D NaN = new Point1D(Double.NaN);

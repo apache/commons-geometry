@@ -31,6 +31,7 @@ public class Vector1DTest {
         // act/assert
         checkVector(Vector1D.ZERO, 0.0);
         checkVector(Vector1D.ONE, 1.0);
+        checkVector(Vector1D.MINUS_ONE, -1.0);
         checkVector(Vector1D.NaN, Double.NaN);
         checkVector(Vector1D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);

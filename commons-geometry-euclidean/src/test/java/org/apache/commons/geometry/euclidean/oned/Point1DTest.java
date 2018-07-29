@@ -32,6 +32,7 @@ public class Point1DTest {
         // act/assert
         checkPoint(Point1D.ZERO, 0.0);
         checkPoint(Point1D.ONE, 1.0);
+        checkPoint(Point1D.MINUS_ONE, -1.0);
         checkPoint(Point1D.NaN, Double.NaN);
         checkPoint(Point1D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         checkPoint(Point1D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);

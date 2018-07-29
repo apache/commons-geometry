@@ -135,7 +135,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / nonZeroNorm();
+        final double invNorm = 1.0 / getNonZeroNorm();
 
         return new Vector2D(
                     magnitude * getX() * invNorm,
@@ -176,7 +176,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D normalize() throws IllegalStateException {
-        return scalarMultiply(1.0 / nonZeroNorm());
+        return scalarMultiply(1.0 / getNonZeroNorm());
     }
 
     /** {@inheritDoc} */
@@ -228,7 +228,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @exception IllegalStateException if either vector has a zero norm
      */
     public double angle(Vector2D v) throws IllegalArgumentException {
-        double normProduct = nonZeroNorm() * v.nonZeroNorm();
+        double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -328,7 +328,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return the non-zero norm value
      * @throws IllegalStateException if the norm is zero
      */
-    private double nonZeroNorm() throws IllegalStateException {
+    private double getNonZeroNorm() throws IllegalStateException {
         final double n = getNorm();
         if (n == 0) {
             throw new IllegalStateException("Norm is zero");
