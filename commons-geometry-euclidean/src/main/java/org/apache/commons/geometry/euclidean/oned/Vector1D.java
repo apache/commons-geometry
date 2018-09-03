@@ -16,9 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in one-dimensional Euclidean space.
@@ -50,9 +52,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
-
-    /** Error message when a norm is zero. */
-    private static final String ZERO_NORM_MSG = "Norm is zero";
 
     /** Simple constructor.
      * @param x abscissa (coordinate value)
@@ -125,7 +124,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         else if (x < 0.0) {
             return new Vector1D(-magnitude);
         }
-        throw new IllegalStateException(ZERO_NORM_MSG);
+        throw new ZeroNormException();
     }
 
     /** {@inheritDoc} */
@@ -168,7 +167,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         else if (x < 0.0) {
             return MINUS_ONE;
         }
-        throw new IllegalStateException(ZERO_NORM_MSG);
+        throw new ZeroNormException();
     }
 
     /** {@inheritDoc} */
@@ -205,6 +204,44 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     @Override
     public double dotProduct(Vector1D v) {
         return getX() * v.getX();
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method simply returns the current instance.</p>
+     */
+    @Override
+    public Vector1D project(final Vector1D base) throws IllegalStateException {
+        if (base.getX() == 0) {
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
+        }
+        return this;
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
+     */
+    @Override
+    public Vector1D reject(final Vector1D base) throws IllegalStateException {
+        if (base.getX() == 0) {
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
+        }
+        return Vector1D.ZERO;
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method returns 0 if the vector x values have
+     * the same sign and {@code pi} if they are opposite.</p>
+     */
+    @Override
+    public double angle(final Vector1D v) throws IllegalStateException {
+        final double sig1 = Math.signum(getX());
+        final double sig2 = Math.signum(v.getX());
+
+        if (sig1 == 0 || sig2 == 0) {
+            throw new ZeroNormException();
+        }
+        // the angle is 0 if the x value signs are the same and pi if not
+        return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
 
     /**

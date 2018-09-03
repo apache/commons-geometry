@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -289,6 +290,102 @@ public class Vector1DTest {
 
         Assert.assertEquals(6.0, v1.dotProduct(v3), TEST_TOLERANCE);
         Assert.assertEquals(6.0, v3.dotProduct(v1), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testProject() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+        Vector1D v3 = Vector1D.of(4);
+
+        // act/assert
+        checkVector(Vector1D.ZERO.project(v1), 0);
+        checkVector(Vector1D.ZERO.project(v2), 0);
+        checkVector(Vector1D.ZERO.project(v3), 0);
+
+        checkVector(v1.project(v1), 2);
+        checkVector(v1.project(v2), 2);
+        checkVector(v1.project(v3), 2);
+
+        checkVector(v2.project(v1), -3);
+        checkVector(v2.project(v2), -3);
+        checkVector(v2.project(v3), -3);
+
+        checkVector(v3.project(v1), 4);
+        checkVector(v3.project(v2), 4);
+        checkVector(v3.project(v3), 4);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector1D.of(2.0).project(Vector1D.ZERO);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+
+        // act/assert
+        checkVector(Vector1D.ZERO.reject(v1), 0);
+        checkVector(Vector1D.ZERO.reject(v2), 0);
+
+        checkVector(v1.reject(v1), 0);
+        checkVector(v1.reject(v2), 0);
+
+        checkVector(v2.reject(v1), 0);
+        checkVector(v2.reject(v2), 0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector1D.of(2.0).reject(Vector1D.ZERO);
+    }
+
+    @Test
+    public void testAngle() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+        Vector1D v3 = Vector1D.of(4);
+        Vector1D v4 = Vector1D.of(-5);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v1.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v1.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v1.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(Geometry.PI, v2.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v2.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v2.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v2.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(0.0, v3.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v3.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v3.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v3.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(Geometry.PI, v4.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v4.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v4.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v4.angle(v4), TEST_TOLERANCE);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAngle_firstVectorZero() {
+        // act/assert
+        Vector1D.ZERO.angle(Vector1D.of(1.0));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAngle_secondVectorZero() {
+        // act/assert
+        Vector1D.of(1.0).angle(Vector1D.ZERO);
     }
 
     @Test

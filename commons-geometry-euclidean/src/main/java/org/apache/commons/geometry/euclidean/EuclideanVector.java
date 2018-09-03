@@ -37,9 +37,11 @@ public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends Eucli
      * {@code V = (1 - t)*A + t*B}, where {@code A} is the current vector and {@code B}
      * is the given vector. This means that if {@code t = 0}, a vector equal to the current
      * vector will be returned. If {@code t = 1}, a vector equal to the argument will be returned.
+     * The {@code t} parameter is not constrained to the range {@code [0, 1]}, meaning that
+     * linear extrapolation can also be performed with this method.
      * @param v other vector
      * @param t interpolation parameter
-     * @return interpolated vector
+     * @return interpolated or extrapolated vector
      */
     V lerp(V v, double t);
 }

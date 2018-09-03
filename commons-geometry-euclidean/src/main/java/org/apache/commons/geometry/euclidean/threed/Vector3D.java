@@ -16,16 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.MultiDimensionalVector;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D>, MultiDimensionalVector<Vector3D> {
+public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
@@ -389,7 +389,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     private double getNonZeroNorm() throws IllegalStateException {
         final double n = getNorm();
         if (n == 0) {
-            throw new IllegalStateException("Norm is zero");
+            throw new ZeroNormException();
         }
 
         return n;
@@ -411,7 +411,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
         final double baseMagSq = base.getNormSq();
         if (baseMagSq == 0.0) {
-            throw new IllegalStateException("Invalid base vector: norm is zero");
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
         }
 
         final double scale = aDotB / baseMagSq;

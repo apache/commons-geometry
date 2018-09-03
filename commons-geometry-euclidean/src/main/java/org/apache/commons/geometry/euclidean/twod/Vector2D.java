@@ -16,16 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.MultiDimensionalVector;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D>, MultiDimensionalVector<Vector2D> {
+public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO   = new Vector2D(0, 0);
@@ -335,7 +335,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     private double getNonZeroNorm() throws IllegalStateException {
         final double n = getNorm();
         if (n == 0) {
-            throw new IllegalStateException("Norm is zero");
+            throw new ZeroNormException();
         }
 
         return n;
@@ -357,7 +357,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
         final double baseMagSq = base.getNormSq();
         if (baseMagSq == 0.0) {
-            throw new IllegalStateException("Invalid base vector: norm is zero");
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
         }
 
         final double scale = aDotB / baseMagSq;

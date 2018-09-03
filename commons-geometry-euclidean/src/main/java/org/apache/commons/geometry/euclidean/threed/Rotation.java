@@ -94,7 +94,7 @@ public class Rotation implements Serializable {
   public static final Rotation IDENTITY = new Rotation(1.0, 0.0, 0.0, 0.0, false);
 
   /** Serializable version identifier */
-  private static final long serialVersionUID = -2153622329907944313L;
+  private static final long serialVersionUID = 20180903L;
 
   /** Error message for Cardan angle singularities */
   private static final String CARDAN_SINGULARITY_MSG = "Cardan angles singularity";

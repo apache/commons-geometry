@@ -45,9 +45,11 @@ public interface EuclideanPoint<P extends EuclideanPoint<P, V>, V extends Euclid
      * {@code P = (1 - t)*A + t*B}, where {@code A} is the current point and {@code B}
      * is the given point. This means that if {@code t = 0}, a point equal to the current
      * point will be returned. If {@code t = 1}, a point equal to the argument will be returned.
+     * The {@code t} parameter is not constrained to the range {@code [0, 1]}, meaning that
+     * linear extrapolation can also be performed with this method.
      * @param p other point
      * @param t interpolation parameter
-     * @return interpolated point
+     * @return interpolated or extrapolated point
      */
     P lerp(P p, double t);
 }
