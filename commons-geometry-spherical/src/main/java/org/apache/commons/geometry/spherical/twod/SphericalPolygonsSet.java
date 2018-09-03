@@ -161,11 +161,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         final S2Point[] array = new S2Point[n];
         final Rotation r0 = new Rotation(Vector3D.crossProduct(center, meridian),
                                          outsideRadius, RotationConvention.VECTOR_OPERATOR);
-        array[0] = S2Point.of(r0.applyTo(center));
+        array[0] = S2Point.ofVector(r0.applyTo(center));
 
         final Rotation r = new Rotation(center, Geometry.TWO_PI / n, RotationConvention.VECTOR_OPERATOR);
         for (int i = 1; i < n; ++i) {
-            array[i] = S2Point.of(r.applyTo(array[i - 1].getVector()));
+            array[i] = S2Point.ofVector(r.applyTo(array[i - 1].getVector()));
         }
 
         return array;
@@ -478,13 +478,13 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(S2Point.of(circle.getPole()).negate(),
+            return new EnclosingBall<>(S2Point.ofVector(circle.getPole()).negate(),
                                                         0.5 * Math.PI);
         }
         if (isFull(root.getMinus()) && isEmpty(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(S2Point.of(circle.getPole()),
+            return new EnclosingBall<>(S2Point.ofVector(circle.getPole()),
                                                         0.5 * Math.PI);
         }
 
@@ -517,7 +517,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             EnclosingBall<S2Point> enclosingS2 =
                     new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
             for (Point3D outsidePoint : getOutsidePoints()) {
-                final S2Point outsideS2 = S2Point.of(outsidePoint.asVector());
+                final S2Point outsideS2 = S2Point.ofVector(outsidePoint.asVector());
                 final BoundaryProjection<S2Point> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
                     enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
@@ -529,11 +529,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
         final S2Point[] support = new S2Point[support3D.length];
         for (int i = 0; i < support3D.length; ++i) {
-            support[i] = S2Point.of(support3D[i].asVector());
+            support[i] = S2Point.ofVector(support3D[i].asVector());
         }
 
         final EnclosingBall<S2Point> enclosingS2 =
-                new EnclosingBall<>(S2Point.of(enclosing3D.getCenter().asVector()),
+                new EnclosingBall<>(S2Point.ofVector(enclosing3D.getCenter().asVector()),
                                                      Math.acos((1 + h * h - r * r) / (2 * h)),
                                                      support);
 

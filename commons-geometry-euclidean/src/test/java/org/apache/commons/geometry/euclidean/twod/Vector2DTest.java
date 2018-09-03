@@ -730,16 +730,16 @@ public class Vector2DTest {
     @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector2D.of(new double[] { 0, 1 }), 0, 1);
-        checkVector(Vector2D.of(new double[] { -1, -2 }), -1, -2);
-        checkVector(Vector2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkVector(Vector2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkVector(Vector2D.ofArray(new double[] { 0, 1 }), 0, 1);
+        checkVector(Vector2D.ofArray(new double[] { -1, -2 }), -1, -2);
+        checkVector(Vector2D.ofArray(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
+        checkVector(Vector2D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector2D.of(new double[] {0.0 });
+        Vector2D.ofArray(new double[] {0.0 });
     }
 
     @Test

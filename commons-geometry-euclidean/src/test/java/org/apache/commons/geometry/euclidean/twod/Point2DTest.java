@@ -248,27 +248,18 @@ public class Point2DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkPoint(Point2D.of(Vector2D.of(0, 1)), 0, 1);
-        checkPoint(Point2D.of(Vector2D.of(-1, -2)), -1, -2);
-        checkPoint(Point2D.of(Vector2D.of(Math.PI, Double.NaN)), Math.PI, Double.NaN);
-        checkPoint(Point2D.of(Vector2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkPoint(Point2D.of(new double[] { 0, 1 }), 0, 1);
-        checkPoint(Point2D.of(new double[] { -1, -2 }), -1, -2);
-        checkPoint(Point2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkPoint(Point2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkPoint(Point2D.ofArray(new double[] { 0, 1 }), 0, 1);
+        checkPoint(Point2D.ofArray(new double[] { -1, -2 }), -1, -2);
+        checkPoint(Point2D.ofArray(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
+        checkPoint(Point2D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Point2D.of(new double[] {0.0 });
+        Point2D.ofArray(new double[] {0.0 });
     }
 
     @Test

@@ -160,7 +160,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
         if (summedBarycenter.getNormSq() == 0) {
             return S2Point.NaN;
         } else {
-            return S2Point.of(summedBarycenter);
+            return S2Point.ofVector(summedBarycenter);
         }
     }
 

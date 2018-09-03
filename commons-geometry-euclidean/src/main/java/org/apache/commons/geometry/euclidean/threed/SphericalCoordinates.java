@@ -70,16 +70,6 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20180623L;
 
-    /** Factory object for delegating instance creation. */
-    private static final DoubleFunction3N<SphericalCoordinates> FACTORY = new DoubleFunction3N<SphericalCoordinates>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public SphericalCoordinates apply(double n1, double n2, double n3) {
-            return new SphericalCoordinates(n1, n2, n3);
-        }
-    };
-
     /** Radius value. */
     private final double radius;
 
@@ -153,7 +143,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      *      coordinates.
      */
     public Vector3D toVector() {
-        return toCartesian(radius, azimuth, polar, Vector3D.FACTORY);
+        return toCartesian(radius, azimuth, polar, Vector3D::of);
     }
 
     /** Convert this set of spherical coordinates to a 3 dimensional point.
@@ -161,7 +151,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
     *      coordinates.
     */
     public Point3D toPoint() {
-        return toCartesian(radius, azimuth, polar, Point3D.FACTORY);
+        return toCartesian(radius, azimuth, polar, Point3D::of);
     }
 
     /** Get a hashCode for this set of spherical coordinates.
@@ -257,7 +247,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * @throws IllegalArgumentException if the string format is invalid.
      */
     public static SphericalCoordinates parse(String input) {
-        return SimpleTupleFormat.getDefault().parse(input, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(input, SphericalCoordinates::new);
     }
 
     /** Normalize an azimuth value to be within the range {@code [0, 2pi)}. This

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -50,16 +49,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
-
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction1N<Point1D> FACTORY = new DoubleFunction1N<Point1D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Point1D apply(double n) {
-            return new Point1D(n);
-        }
-    };
 
     /** Simple constructor.
      * @param x abscissa (coordinate value)
@@ -162,14 +151,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         return new Point1D(x);
     }
 
-    /** Returns a point instance with the given coordinate value.
-     * @param value point coordinate
-     * @return point instance
-     */
-    public static Point1D of(Cartesian1D value) {
-        return new Point1D(value.getX());
-    }
-
     /** Parses the given string and returns a new point instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -177,7 +158,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, Point1D::new);
     }
 
     /** Linearly interpolates between the two given points. This methods simply

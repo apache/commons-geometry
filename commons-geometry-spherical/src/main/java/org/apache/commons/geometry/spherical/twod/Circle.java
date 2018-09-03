@@ -168,7 +168,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      */
     @Override
     public S2Point toSpace(final S1Point point) {
-        return S2Point.of(getPointAt(point.getAzimuth()));
+        return S2Point.ofVector(getPointAt(point.getAzimuth()));
     }
 
     /** Get a circle point from its phase around the circle.
@@ -306,7 +306,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
         /** {@inheritDoc} */
         @Override
         public S2Point apply(final S2Point point) {
-            return S2Point.of(rotation.applyTo(point.getVector()));
+            return S2Point.ofVector(rotation.applyTo(point.getVector()));
         }
 
         /** {@inheritDoc} */

@@ -958,18 +958,18 @@ public class Vector3DTest {
     @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
-        checkVector(Vector3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
-        checkVector(Vector3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+        checkVector(Vector3D.ofArray(new double[] { 1, 2, 3 }), 1, 2, 3);
+        checkVector(Vector3D.ofArray(new double[] { -1, -2, -3 }), -1, -2, -3);
+        checkVector(Vector3D.ofArray(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
                 Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+        checkVector(Vector3D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector3D.of(new double[] { 0.0, 0.0 });
+        Vector3D.ofArray(new double[] { 0.0, 0.0 });
     }
 
     @Test

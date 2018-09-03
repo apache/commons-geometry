@@ -269,18 +269,6 @@ public class Point1DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkPoint(Point1D.of(Vector1D.of(0)), 0.0);
-        checkPoint(Point1D.of(Vector1D.of(-1)), -1.0);
-        checkPoint(Point1D.of(Vector1D.of(1)), 1.0);
-        checkPoint(Point1D.of(Vector1D.of(Math.PI)), Math.PI);
-        checkPoint(Point1D.of(Vector1D.of(Double.NaN)), Double.NaN);
-        checkPoint(Point1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
-        checkPoint(Point1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
-    }
-
-    @Test
     public void testVectorCombination() {
         // act/assert
         checkPoint(Point1D.vectorCombination(2, Point1D.of(3)), 6);

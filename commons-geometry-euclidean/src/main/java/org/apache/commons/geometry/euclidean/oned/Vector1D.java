@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
@@ -55,16 +54,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** Error message when a norm is zero. */
     private static final String ZERO_NORM_MSG = "Norm is zero";
 
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction1N<Vector1D> FACTORY = new DoubleFunction1N<Vector1D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector1D apply(double n) {
-            return new Vector1D(n);
-        }
-    };
-
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
@@ -75,7 +64,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Point1D asPoint() {
-        return Point1D.of(this);
+        return Point1D.of(getX());
     }
 
     /** {@inheritDoc} */
@@ -284,7 +273,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Vector1D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 
     /** Linearly interpolates between the two given vectors. This methods simply

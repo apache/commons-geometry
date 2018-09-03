@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
@@ -42,16 +41,6 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
     /** A point with all coordinates set to negative infinity. */
     public static final Point2D NEGATIVE_INFINITY =
         new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-
-    /** Package private factory for delegating instance creation. */
-    static final DoubleFunction2N<Point2D> FACTORY = new DoubleFunction2N<Point2D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Point2D apply(double n1, double n2) {
-            return new Point2D(n1, n2);
-        }
-    };
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
@@ -159,20 +148,12 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
         return new Point2D(x, y);
     }
 
-    /** Returns a point with the given coordinates.
-     * @param value coordinate values
-     * @return point instance
-     */
-    public static Point2D of(Cartesian2D value) {
-        return new Point2D(value.getX(), value.getY());
-    }
-
     /** Returns a point with the coordinates from the given 2-element array.
      * @param p coordinates array
      * @return new point
      * @exception IllegalArgumentException if the array does not have 2 elements
      */
-    public static Point2D of(double[] p) {
+    public static Point2D ofArray(double[] p) {
         if (p.length != 2) {
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 2");
         }
@@ -185,7 +166,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @return point instance with coordinates equivalent to the given polar coordinates.
      */
     public static Point2D ofPolar(final double radius, final double azimuth) {
-        return PolarCoordinates.toCartesian(radius, azimuth, FACTORY);
+        return PolarCoordinates.toCartesian(radius, azimuth, Point2D::new);
     }
 
     /** Parses the given string and returns a new point instance. The expected string
@@ -195,7 +176,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point2D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, Point2D::new);
     }
 
     /** Linearly interpolates between the two given points. This methods simply

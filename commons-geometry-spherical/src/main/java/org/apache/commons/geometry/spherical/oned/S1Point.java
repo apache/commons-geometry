@@ -19,7 +19,6 @@ package org.apache.commons.geometry.spherical.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -36,16 +35,6 @@ public final class S1Point implements Point<S1Point>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
-
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction1N<S1Point> FACTORY = new DoubleFunction1N<S1Point>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public S1Point apply(double n) {
-            return new S1Point(n);
-        }
-    };
 
     /** Azimuthal angle in radians. */
     private final double azimuth;
@@ -183,6 +172,6 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static S1Point parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, S1Point::new);
     }
 }

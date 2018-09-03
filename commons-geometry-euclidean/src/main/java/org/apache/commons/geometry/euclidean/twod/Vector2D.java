@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.MultiDimensionalVector;
-import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
@@ -55,16 +54,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector2D NEGATIVE_INFINITY =
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-
-    /** Package private factory for delegating instance creation. */
-    static final DoubleFunction2N<Vector2D> FACTORY = new DoubleFunction2N<Vector2D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector2D apply(double n1, double n2) {
-            return new Vector2D(n1, n2);
-        }
-    };
 
     /** Serializable UID */
     private static final long serialVersionUID = 20180710L;
@@ -441,7 +430,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return new vector
      * @exception IllegalArgumentException if the array does not have 2 elements
      */
-    public static Vector2D of(double[] v) {
+    public static Vector2D ofArray(double[] v) {
         if (v.length != 2) {
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 2");
         }
@@ -454,7 +443,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector instance with coordinates equivalent to the given polar coordinates.
      */
     public static Vector2D ofPolar(final double radius, final double azimuth) {
-        return PolarCoordinates.toCartesian(radius, azimuth, Vector2D.FACTORY);
+        return PolarCoordinates.toCartesian(radius, azimuth, Vector2D::new);
     }
 
     /** Parses the given string and returns a new vector instance. The expected string
@@ -464,7 +453,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Vector2D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
     }
 
     /** Linearly interpolates between the two given vectors. This methods simply
