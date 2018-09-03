@@ -20,6 +20,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -613,6 +614,112 @@ public class Vector3DTest {
 
         Assert.assertEquals(18, Vector3D.dotProduct(v1, v3), EPS);
         Assert.assertEquals(18, Vector3D.dotProduct(v3, v1), EPS);
+    }
+
+    @Test
+    public void testProject() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+
+        // act/assert
+        checkVector(v1.project(Vector3D.PLUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.MINUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.PLUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.MINUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.PLUS_Z), 0.0, 0.0, 4.0);
+        checkVector(v1.project(Vector3D.MINUS_Z), 0.0, 0.0, 4.0);
+
+        checkVector(v2.project(Vector3D.PLUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.MINUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.PLUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.MINUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.PLUS_Z), 0.0, 0.0, -7.0);
+        checkVector(v2.project(Vector3D.MINUS_Z), 0.0, 0.0, -7.0);
+
+        checkVector(v1.project(Vector3D.of(1.0, 1.0, 1.0)), 3.0, 3.0, 3.0);
+        checkVector(v1.project(Vector3D.of(-1.0, -1.0, -1.0)), 3.0, 3.0, 3.0);
+
+        checkVector(v2.project(Vector3D.of(1.0, 1.0, 1.0)), -6.0, -6.0, -6.0);
+        checkVector(v2.project(Vector3D.of(-1.0, -1.0, -1.0)), -6.0, -6.0, -6.0);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+
+        // act/assert
+        checkVector(v1.reject(Vector3D.PLUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.MINUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.PLUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.MINUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.PLUS_Z), 2.0, 3.0, 0.0);
+        checkVector(v1.reject(Vector3D.MINUS_Z), 2.0, 3.0, 0.0);
+
+        checkVector(v2.reject(Vector3D.PLUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.MINUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.PLUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.MINUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.PLUS_Z), -5.0, -6.0, 0.0);
+        checkVector(v2.reject(Vector3D.MINUS_Z), -5.0, -6.0, 0.0);
+
+        checkVector(v1.reject(Vector3D.of(1.0, 1.0, 1.0)), -1.0, 0.0, 1.0);
+        checkVector(v1.reject(Vector3D.of(-1.0, -1.0, -1.0)), -1.0, 0.0, 1.0);
+
+        checkVector(v2.reject(Vector3D.of(1.0, 1.0, 1.0)), 1.0, 0.0, -1.0);
+        checkVector(v2.reject(Vector3D.of(-1.0, -1.0, -1.0)), 1.0, 0.0, -1.0);
+    }
+
+    @Test
+    public void testProjectAndReject_areComplementary() {
+        // arrange
+        double eps = 1e-12;
+
+        // act/assert
+        checkProjectAndRejectFullSphere(Vector3D.of(1.0, 0.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 1.0, 0.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 0.0, 1.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(1.0, 1.0, 1.0), 3.0, eps);
+
+        checkProjectAndRejectFullSphere(Vector3D.of(-2.0, 0.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, -2.0, 0.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 0.0, -2.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(-2.0, -2.0, -2.0), 3.0, eps);
+    }
+
+    private void checkProjectAndRejectFullSphere(Vector3D vec, double baseMag, double eps) {
+        for (double polar = 0.0; polar <= Geometry.PI; polar += 0.5) {
+            for (double azimuth = 0.0; azimuth <= Geometry.TWO_PI; azimuth += 0.5) {
+                Vector3D base = Vector3D.ofSpherical(baseMag, azimuth, polar);
+
+                Vector3D proj = vec.project(base);
+                Vector3D rej = vec.reject(base);
+
+                // ensure that the projection and rejection sum to the original vector
+                EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
+
+                double angle = base.angle(vec);
+
+                // check the angle between the projection and the base; this will
+                // be undefined when the angle between the original vector and the
+                // base is pi/2 (which means that the projection is the zero vector)
+                if (angle < Geometry.HALF_PI) {
+                    Assert.assertEquals(0.0, proj.angle(base), eps);
+                }
+                else if (angle > Geometry.HALF_PI) {
+                    Assert.assertEquals(Geometry.PI, proj.angle(base), eps);
+                }
+
+                // check the angle between the rejection and the base; this should
+                // always be pi/2 except for when the angle between the original vector
+                // and the base is 0 or pi, in which case the rejection is the zero vector.
+                if (angle > 0.0 && angle < Geometry.PI) {
+                    Assert.assertEquals(Geometry.HALF_PI, rej.angle(base), eps);
+                }
+            }
+        }
     }
 
     @Test

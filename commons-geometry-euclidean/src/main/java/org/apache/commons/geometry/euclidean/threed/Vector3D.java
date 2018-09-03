@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.MultiDimensionalVector;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
@@ -25,7 +26,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
+public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D>, MultiDimensionalVector<Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
@@ -229,16 +230,14 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return new Vector3D(inverse * y, -inverse * x, 0);
     }
 
-    /** Compute the angular separation between two vectors.
+    /** {@inheritDoc}
      * <p>This method computes the angular separation between two
      * vectors using the dot product for well separated vectors and the
      * cross product for almost aligned vectors. This allows to have a
      * good accuracy in all cases, even for vectors very close to each
      * other.</p>
-     * @param v other vector
-     * @return angular separation between this instance and v
-     * @exception IllegalStateException if either vector has a zero norm
      */
+    @Override
     public double angle(Vector3D v) throws IllegalStateException {
         double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
 
@@ -324,6 +323,50 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     @Override
     public double dotProduct(Vector3D v) {
         return LinearCombination.value(getX(), v.getX(), getY(), v.getY(), getZ(), v.getZ());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D project(Vector3D base) throws IllegalStateException {
+        return getComponent(base, false);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D reject(Vector3D base) throws IllegalStateException {
+        return getComponent(base, true);
+    }
+
+    /** Returns a component of the current instance relative to the given base
+     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
+     * the projection is returned.
+     * @param base The base vector
+     * @param reject If true, the rejection of this instance from {@code base} is
+     *      returned. If false, the projection of this instance onto {@code base}
+     *      is returned.
+     * @return The projection or rejection of this instance relative to {@code base},
+     *      depending on the value of {@code reject}.
+     * @throws IllegalStateException if {@code base} has a zero norm
+     */
+    private Vector3D getComponent(Vector3D base, boolean reject) throws IllegalStateException {
+        final double aDotB = dotProduct(base);
+
+        final double baseMagSq = base.getNormSq();
+        if (baseMagSq == 0.0) {
+            throw new IllegalStateException("Invalid base vector: norm is zero");
+        }
+
+        final double scale = aDotB / baseMagSq;
+
+        final double projX = scale * base.getX();
+        final double projY = scale * base.getY();
+        final double projZ = scale * base.getZ();
+
+        if (reject) {
+            return new Vector3D(getX() - projX, getY() - projY, getZ() - projZ);
+        }
+
+        return new Vector3D(projX, projY, projZ);
     }
 
     /**

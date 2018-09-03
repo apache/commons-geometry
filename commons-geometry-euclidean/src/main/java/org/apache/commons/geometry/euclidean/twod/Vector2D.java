@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.MultiDimensionalVector;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.util.Vectors;
@@ -25,7 +26,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
+public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D>, MultiDimensionalVector<Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO   = new Vector2D(0, 0);
@@ -215,19 +216,58 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return LinearCombination.value(getX(), v.getX(), getY(), v.getY());
     }
 
-    /** Compute the angular separation in radians between this vector
-     * and the given vector.
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D project(Vector2D base) throws IllegalStateException {
+        return getComponent(base, false);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D reject(Vector2D base) throws IllegalStateException {
+        return getComponent(base, true);
+    }
+
+    /** Returns a component of the current instance relative to the given base
+     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
+     * the projection is returned.
+     * @param base The base vector
+     * @param reject If true, the rejection of this instance from {@code base} is
+     *      returned. If false, the projection of this instance onto {@code base}
+     *      is returned.
+     * @return The projection or rejection of this instance relative to {@code base},
+     *      depending on the value of {@code reject}.
+     * @throws IllegalStateException if {@code base} has a zero norm
+     */
+    private Vector2D getComponent(Vector2D base, boolean reject) throws IllegalStateException {
+        final double aDotB = dotProduct(base);
+
+        final double baseMagSq = base.getNormSq();
+        if (baseMagSq == 0.0) {
+            throw new IllegalStateException("Invalid base vector: norm is zero");
+        }
+
+        final double scale = aDotB / baseMagSq;
+
+        final double projX = scale * base.getX();
+        final double projY = scale * base.getY();
+
+        if (reject) {
+            return new Vector2D(getX() - projX, getY() - projY);
+        }
+
+        return new Vector2D(projX, projY);
+    }
+
+    /** {@inheritDoc}
      * <p>This method computes the angular separation between the two
      * vectors using the dot product for well separated vectors and the
      * cross product for almost aligned vectors. This allows to have a
      * good accuracy in all cases, even for vectors very close to each
      * other.</p>
-     *
-     * @param v vector to compute the angle with
-     * @return angular separation between this vector and v in radians
-     * @exception IllegalStateException if either vector has a zero norm
      */
-    public double angle(Vector2D v) throws IllegalArgumentException {
+    @Override
+    public double angle(Vector2D v) throws IllegalStateException {
         double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
 
         double dot = dotProduct(v);

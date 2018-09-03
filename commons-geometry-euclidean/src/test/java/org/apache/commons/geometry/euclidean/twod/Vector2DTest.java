@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -433,6 +434,106 @@ public class Vector2DTest {
         Assert.assertEquals(0.0, p3.crossProduct(p1, p2), EPS);
         Assert.assertEquals(1.0, p4.crossProduct(p1, p2), EPS);
         Assert.assertEquals(-1.0, p5.crossProduct(p1, p2), EPS);
+    }
+
+    @Test
+    public void testProject() {
+        // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.ZERO.project(v1), 0.0, 0.0);
+
+        checkVector(v1.project(v1), 3.0, 4.0);
+        checkVector(v1.project(v1.negate()), 3.0, 4.0);
+
+        checkVector(v1.project(Vector2D.PLUS_X), 3.0, 0.0);
+        checkVector(v1.project(Vector2D.MINUS_X), 3.0, 0.0);
+
+        checkVector(v1.project(Vector2D.PLUS_Y), 0.0, 4.0);
+        checkVector(v1.project(Vector2D.MINUS_Y), 0.0, 4.0);
+
+        checkVector(v2.project(v1), (19.0 / 25.0) * 3.0, (19.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector2D.of(1.0, 1.0).project(Vector2D.ZERO);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.ZERO.reject(v1), 0.0, 0.0);
+
+        checkVector(v1.reject(v1), 0.0, 0.0);
+        checkVector(v1.reject(v1.negate()), 0.0, 0.0);
+
+        checkVector(v1.reject(Vector2D.PLUS_X), 0.0, 4.0);
+        checkVector(v1.reject(Vector2D.MINUS_X), 0.0, 4.0);
+
+        checkVector(v1.reject(Vector2D.PLUS_Y), 3.0, 0.0);
+        checkVector(v1.reject(Vector2D.MINUS_Y), 3.0, 0.0);
+
+        checkVector(v2.reject(v1), (-32.0 / 25.0), (6.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector2D.of(1.0, 1.0).reject(Vector2D.ZERO);
+    }
+
+    @Test
+    public void testProjectAndReject_areComplementary() {
+        // arrange
+        double eps = 1e-12;
+
+        // act/assert
+        checkProjectAndRejectFullCircle(Vector2D.of(1.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(0.0, 1.0), 2.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(1.0, 1.0), 3.0, eps);
+
+        checkProjectAndRejectFullCircle(Vector2D.of(-2.0, 0.0), 4.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(0.0, -2.0), 5.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(-2.0, -2.0), 6.0, eps);
+    }
+
+    private void checkProjectAndRejectFullCircle(Vector2D vec, double baseMag, double eps) {
+        for (double theta = 0.0; theta <= Geometry.TWO_PI; theta += 0.5) {
+            Vector2D base = Vector2D.ofPolar(baseMag, theta);
+
+            Vector2D proj = vec.project(base);
+            Vector2D rej = vec.reject(base);
+
+            // ensure that the projection and rejection sum to the original vector
+            EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
+
+            double angle = base.angle(vec);
+
+            // check the angle between the projection and the base; this will
+            // be undefined when the angle between the original vector and the
+            // base is pi/2 (which means that the projection is the zero vector)
+            if (angle < Geometry.HALF_PI) {
+                Assert.assertEquals(0.0, proj.angle(base), eps);
+            }
+            else if (angle > Geometry.HALF_PI) {
+                Assert.assertEquals(Geometry.PI, proj.angle(base), eps);
+            }
+
+            // check the angle between the rejection and the base; this should
+            // always be pi/2 except for when the angle between the original vector
+            // and the base is 0 or pi, in which case the rejection is the zero vector.
+            if (angle > 0.0 && angle < Geometry.PI) {
+                Assert.assertEquals(Geometry.HALF_PI, rej.angle(base), eps);
+            }
+        }
     }
 
     @Test
