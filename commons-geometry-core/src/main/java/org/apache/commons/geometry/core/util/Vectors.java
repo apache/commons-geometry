@@ -20,6 +20,9 @@ package org.apache.commons.geometry.core.util;
  */
 public final class Vectors {
 
+    /** Private constructor. */
+    private Vectors() {}
+
     /** Get the L<sub>1</sub> norm for the vector with the given components.
      * This is defined as the sum of the absolute values of all vector components.
      * @param x vector component
@@ -33,7 +36,7 @@ public final class Vectors {
     /** Get the L<sub>1</sub> norm for the vector with the given components.
      * This is defined as the sum of the absolute values of all vector components.
      * @param x1 first vector component
-     * @param x2 second vector compoent
+     * @param x2 second vector component
      * @return L<sub>1</sub> norm for the vector with the given components
      * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
      */
@@ -44,8 +47,8 @@ public final class Vectors {
     /** Get the L<sub>1</sub> norm for the vector with the given components.
      * This is defined as the sum of the absolute values of all vector components.
      * @param x1 first vector component
-     * @param x2 second vector compoent
-     * @param x2 third vector component
+     * @param x2 second vector component
+     * @param x3 third vector component
      * @return L<sub>1</sub> norm for the vector with the given components
      * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
      */
@@ -157,7 +160,4 @@ public final class Vectors {
     public static double normInf(final double x1, final double x2, final double x3) {
         return Math.max(Math.max(Math.abs(x1), Math.abs(x2)), Math.abs(x3));
     }
-
-    /** Private constructor. */
-    private Vectors() {}
 }

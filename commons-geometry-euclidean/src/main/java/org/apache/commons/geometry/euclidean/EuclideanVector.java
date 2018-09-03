@@ -41,5 +41,5 @@ public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends Eucli
      * @param t interpolation parameter
      * @return interpolated vector
      */
-    V lerp(V p, double t);
+    V lerp(V v, double t);
 }

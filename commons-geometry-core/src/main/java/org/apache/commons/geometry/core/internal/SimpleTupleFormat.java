@@ -93,7 +93,7 @@ public class SimpleTupleFormat {
      * @return 1-tuple string
      */
     public String format(double a) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
             sb.append(prefix);
@@ -114,16 +114,16 @@ public class SimpleTupleFormat {
      * @return 2-tuple string
      */
     public String format(double a1, double a2) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
             sb.append(prefix);
         }
 
-        sb.append(a1);
-        sb.append(separator);
-        sb.append(SPACE);
-        sb.append(a2);
+        sb.append(a1)
+            .append(separator)
+            .append(SPACE)
+            .append(a2);
 
         if (suffix != null) {
             sb.append(suffix);
@@ -139,19 +139,19 @@ public class SimpleTupleFormat {
      * @return 3-tuple string
      */
     public String format(double a1, double a2, double a3) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if (prefix != null) {
             sb.append(prefix);
         }
 
-        sb.append(a1);
-        sb.append(separator);
-        sb.append(SPACE);
-        sb.append(a2);
-        sb.append(separator);
-        sb.append(SPACE);
-        sb.append(a3);
+        sb.append(a1)
+            .append(separator)
+            .append(SPACE)
+            .append(a2)
+            .append(separator)
+            .append(SPACE)
+            .append(a3);
 
         if (suffix != null) {
             sb.append(suffix);
@@ -208,7 +208,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException if the input string format is invalid
      */
     public <T> T parse(String str, DoubleFunction3N<T> fn) throws IllegalArgumentException {
-        ParsePosition pos = new ParsePosition(0);
+        final ParsePosition pos = new ParsePosition(0);
 
         readPrefix(str, pos);
         final double v1 = readTupleValue(str, pos);
@@ -257,9 +257,9 @@ public class SimpleTupleFormat {
             }
         }
 
-        String substr = str.substring(startIdx, endIdx);
+        final String substr = str.substring(startIdx, endIdx);
         try {
-            double value = Double.parseDouble(substr);
+            final double value = Double.parseDouble(substr);
 
             // advance the position and move past any terminating separator
             pos.setIndex(endIdx);
@@ -388,7 +388,7 @@ public class SimpleTupleFormat {
      * @throws IllegalArgumentException the exception signaling a parse failure
      */
     private void fail(String msg, String str, ParsePosition pos, Throwable cause) throws IllegalArgumentException {
-        String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s", str, pos.getIndex(), msg);
+        final String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s", str, pos.getIndex(), msg);
 
         throw new TupleParseException(fullMsg, cause);
     }

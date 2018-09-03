@@ -29,7 +29,7 @@ public interface MultiDimensionalVector<V extends MultiDimensionalVector<V>> ext
      * <code>
      *      <strong>v</strong> = <strong>v<sub>projection</sub></strong> + <strong>v<sub>rejection</sub></strong>
      * </code>
-     * @param base
+     * @param base base vector
      * @return the vector projection of the instance onto {@code base}
      * @exception IllegalStateException if the norm of the base vector is zero
      * @see #reject(MultiDimensionalVector)
@@ -44,7 +44,7 @@ public interface MultiDimensionalVector<V extends MultiDimensionalVector<V>> ext
      * <code>
      *      <strong>v</strong> = <strong>v<sub>projection</sub></strong> + <strong>v<sub>rejection</sub></strong>
      * </code>
-     * @param base
+     * @param base base vector
      * @return the vector rejection of the instance from {@code base}
      * @exception IllegalStateException if the norm of the base vector is zero
      * @see #project(MultiDimensionalVector)
