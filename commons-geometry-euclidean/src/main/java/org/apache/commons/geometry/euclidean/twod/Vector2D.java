@@ -228,37 +228,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return getComponent(base, true);
     }
 
-    /** Returns a component of the current instance relative to the given base
-     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
-     * the projection is returned.
-     * @param base The base vector
-     * @param reject If true, the rejection of this instance from {@code base} is
-     *      returned. If false, the projection of this instance onto {@code base}
-     *      is returned.
-     * @return The projection or rejection of this instance relative to {@code base},
-     *      depending on the value of {@code reject}.
-     * @throws IllegalStateException if {@code base} has a zero norm
-     */
-    private Vector2D getComponent(Vector2D base, boolean reject) throws IllegalStateException {
-        final double aDotB = dotProduct(base);
-
-        final double baseMagSq = base.getNormSq();
-        if (baseMagSq == 0.0) {
-            throw new IllegalStateException("Invalid base vector: norm is zero");
-        }
-
-        final double scale = aDotB / baseMagSq;
-
-        final double projX = scale * base.getX();
-        final double projY = scale * base.getY();
-
-        if (reject) {
-            return new Vector2D(getX() - projX, getY() - projY);
-        }
-
-        return new Vector2D(projX, projY);
-    }
-
     /** {@inheritDoc}
      * <p>This method computes the angular separation between the two
      * vectors using the dot product for well separated vectors and the
@@ -377,6 +346,37 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return n;
     }
 
+    /** Returns a component of the current instance relative to the given base
+     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
+     * the projection is returned.
+     * @param base The base vector
+     * @param reject If true, the rejection of this instance from {@code base} is
+     *      returned. If false, the projection of this instance onto {@code base}
+     *      is returned.
+     * @return The projection or rejection of this instance relative to {@code base},
+     *      depending on the value of {@code reject}.
+     * @throws IllegalStateException if {@code base} has a zero norm
+     */
+    private Vector2D getComponent(Vector2D base, boolean reject) throws IllegalStateException {
+        final double aDotB = dotProduct(base);
+
+        final double baseMagSq = base.getNormSq();
+        if (baseMagSq == 0.0) {
+            throw new IllegalStateException("Invalid base vector: norm is zero");
+        }
+
+        final double scale = aDotB / baseMagSq;
+
+        final double projX = scale * base.getX();
+        final double projY = scale * base.getY();
+
+        if (reject) {
+            return new Vector2D(getX() - projX, getY() - projY);
+        }
+
+        return new Vector2D(projX, projY);
+    }
+
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -386,6 +386,28 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     public static double dotProduct(Vector2D v1, Vector2D v2) {
         return v1.dotProduct(v2);
+    }
+
+    /** Projects the given vector onto {@code base}. This method simply
+     * calls {@code v.project(base)}.
+     * @param v vector to project
+     * @param base the base vector to project onto
+     * @return the projected vector
+     * @see #project(Vector2D)
+     */
+    public static Vector2D project(Vector2D v, Vector2D base) {
+        return v.project(base);
+    }
+
+    /** Returns the vector rejection of {@code v} from {@code base}. This
+     * method simply calls {@code v.reject(base)}.
+     * @param v vector to reject
+     * @param base the base vector to reject from
+     * @return the vector rejection
+     * @see #reject(Vector2D)
+     */
+    public static Vector2D reject(Vector2D v, Vector2D base) {
+        return v.reject(base);
     }
 
     /** Computes the angle in radians between two vectors. This method

@@ -464,6 +464,33 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testProject_static() {
+     // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.project(Vector2D.ZERO, v1), 0.0, 0.0);
+
+        checkVector(Vector2D.project(v1, v1), 3.0, 4.0);
+        checkVector(Vector2D.project(v1, v1.negate()), 3.0, 4.0);
+
+        checkVector(Vector2D.project(v1, Vector2D.PLUS_X), 3.0, 0.0);
+        checkVector(Vector2D.project(v1, Vector2D.MINUS_X), 3.0, 0.0);
+
+        checkVector(Vector2D.project(v1, Vector2D.PLUS_Y), 0.0, 4.0);
+        checkVector(Vector2D.project(v1, Vector2D.MINUS_Y), 0.0, 4.0);
+
+        checkVector(Vector2D.project(v2, v1), (19.0 / 25.0) * 3.0, (19.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm_static() {
+        // act/assert
+        Vector2D.project(Vector2D.of(1.0, 1.0), Vector2D.ZERO);
+    }
+
+    @Test
     public void testReject() {
         // arrange
         Vector2D v1 = Vector2D.of(3.0, 4.0);
@@ -488,6 +515,33 @@ public class Vector2DTest {
     public void testReject_baseHasZeroNorm() {
         // act/assert
         Vector2D.of(1.0, 1.0).reject(Vector2D.ZERO);
+    }
+
+    @Test
+    public void testReject_static() {
+        // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.ZERO.reject(v1), 0.0, 0.0);
+
+        checkVector(Vector2D.reject(v1, v1), 0.0, 0.0);
+        checkVector(Vector2D.reject(v1, v1.negate()), 0.0, 0.0);
+
+        checkVector(Vector2D.reject(v1, Vector2D.PLUS_X), 0.0, 4.0);
+        checkVector(Vector2D.reject(v1, Vector2D.MINUS_X), 0.0, 4.0);
+
+        checkVector(Vector2D.reject(v1, Vector2D.PLUS_Y), 3.0, 0.0);
+        checkVector(Vector2D.reject(v1, Vector2D.MINUS_Y), 3.0, 0.0);
+
+        checkVector(Vector2D.reject(v2, v1), (-32.0 / 25.0), (6.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm_static() {
+        // act/assert
+        Vector2D.reject(Vector2D.of(1.0, 1.0), Vector2D.ZERO);
     }
 
     @Test

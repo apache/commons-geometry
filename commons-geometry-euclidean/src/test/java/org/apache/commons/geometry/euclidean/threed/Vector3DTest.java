@@ -623,6 +623,8 @@ public class Vector3DTest {
         Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
+        checkVector(Vector3D.ZERO.project(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+
         checkVector(v1.project(Vector3D.PLUS_X), 2.0, 0.0, 0.0);
         checkVector(v1.project(Vector3D.MINUS_X), 2.0, 0.0, 0.0);
         checkVector(v1.project(Vector3D.PLUS_Y), 0.0, 3.0, 0.0);
@@ -644,6 +646,48 @@ public class Vector3DTest {
         checkVector(v2.project(Vector3D.of(-1.0, -1.0, -1.0)), -6.0, -6.0, -6.0);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector3D.of(1.0, 1.0, 1.0).project(Vector3D.ZERO);
+    }
+
+    @Test
+    public void testProject_static() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+
+        // act/assert
+        checkVector(Vector3D.project(Vector3D.ZERO, Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+
+        checkVector(Vector3D.project(v1, Vector3D.PLUS_X), 2.0, 0.0, 0.0);
+        checkVector(Vector3D.project(v1, Vector3D.MINUS_X), 2.0, 0.0, 0.0);
+        checkVector(Vector3D.project(v1, Vector3D.PLUS_Y), 0.0, 3.0, 0.0);
+        checkVector(Vector3D.project(v1, Vector3D.MINUS_Y), 0.0, 3.0, 0.0);
+        checkVector(Vector3D.project(v1, Vector3D.PLUS_Z), 0.0, 0.0, 4.0);
+        checkVector(Vector3D.project(v1, Vector3D.MINUS_Z), 0.0, 0.0, 4.0);
+
+        checkVector(Vector3D.project(v2, Vector3D.PLUS_X), -5.0, 0.0, 0.0);
+        checkVector(Vector3D.project(v2, Vector3D.MINUS_X), -5.0, 0.0, 0.0);
+        checkVector(Vector3D.project(v2, Vector3D.PLUS_Y), 0.0, -6.0, 0.0);
+        checkVector(Vector3D.project(v2, Vector3D.MINUS_Y), 0.0, -6.0, 0.0);
+        checkVector(Vector3D.project(v2, Vector3D.PLUS_Z), 0.0, 0.0, -7.0);
+        checkVector(Vector3D.project(v2, Vector3D.MINUS_Z), 0.0, 0.0, -7.0);
+
+        checkVector(Vector3D.project(v1, Vector3D.of(1.0, 1.0, 1.0)), 3.0, 3.0, 3.0);
+        checkVector(Vector3D.project(v1, Vector3D.of(-1.0, -1.0, -1.0)), 3.0, 3.0, 3.0);
+
+        checkVector(Vector3D.project(v2, Vector3D.of(1.0, 1.0, 1.0)), -6.0, -6.0, -6.0);
+        checkVector(Vector3D.project(v2, Vector3D.of(-1.0, -1.0, -1.0)), -6.0, -6.0, -6.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm_static() {
+        // act/assert
+        Vector3D.project(Vector3D.of(1.0, 1.0, 1.0), Vector3D.ZERO);
+    }
+
     @Test
     public void testReject() {
         // arrange
@@ -651,6 +695,8 @@ public class Vector3DTest {
         Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
+        checkVector(Vector3D.ZERO.reject(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+
         checkVector(v1.reject(Vector3D.PLUS_X), 0.0, 3.0, 4.0);
         checkVector(v1.reject(Vector3D.MINUS_X), 0.0, 3.0, 4.0);
         checkVector(v1.reject(Vector3D.PLUS_Y), 2.0, 0.0, 4.0);
@@ -670,6 +716,48 @@ public class Vector3DTest {
 
         checkVector(v2.reject(Vector3D.of(1.0, 1.0, 1.0)), 1.0, 0.0, -1.0);
         checkVector(v2.reject(Vector3D.of(-1.0, -1.0, -1.0)), 1.0, 0.0, -1.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector3D.of(1.0, 1.0, 1.0).reject(Vector3D.ZERO);
+    }
+
+    @Test
+    public void testReject_static() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+
+        // act/assert
+        checkVector(Vector3D.reject(Vector3D.ZERO, Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+
+        checkVector(Vector3D.reject(v1, Vector3D.PLUS_X), 0.0, 3.0, 4.0);
+        checkVector(Vector3D.reject(v1, Vector3D.MINUS_X), 0.0, 3.0, 4.0);
+        checkVector(Vector3D.reject(v1, Vector3D.PLUS_Y), 2.0, 0.0, 4.0);
+        checkVector(Vector3D.reject(v1, Vector3D.MINUS_Y), 2.0, 0.0, 4.0);
+        checkVector(Vector3D.reject(v1, Vector3D.PLUS_Z), 2.0, 3.0, 0.0);
+        checkVector(Vector3D.reject(v1, Vector3D.MINUS_Z), 2.0, 3.0, 0.0);
+
+        checkVector(Vector3D.reject(v2, Vector3D.PLUS_X), 0.0, -6.0, -7.0);
+        checkVector(Vector3D.reject(v2, Vector3D.MINUS_X), 0.0, -6.0, -7.0);
+        checkVector(Vector3D.reject(v2, Vector3D.PLUS_Y), -5.0, 0.0, -7.0);
+        checkVector(Vector3D.reject(v2, Vector3D.MINUS_Y), -5.0, 0.0, -7.0);
+        checkVector(Vector3D.reject(v2, Vector3D.PLUS_Z), -5.0, -6.0, 0.0);
+        checkVector(Vector3D.reject(v2, Vector3D.MINUS_Z), -5.0, -6.0, 0.0);
+
+        checkVector(Vector3D.reject(v1, Vector3D.of(1.0, 1.0, 1.0)), -1.0, 0.0, 1.0);
+        checkVector(Vector3D.reject(v1, Vector3D.of(-1.0, -1.0, -1.0)), -1.0, 0.0, 1.0);
+
+        checkVector(Vector3D.reject(v2, Vector3D.of(1.0, 1.0, 1.0)), 1.0, 0.0, -1.0);
+        checkVector(Vector3D.reject(v2, Vector3D.of(-1.0, -1.0, -1.0)), 1.0, 0.0, -1.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm_static() {
+        // act/assert
+        Vector3D.reject(Vector3D.of(1.0, 1.0, 1.0), Vector3D.ZERO);
     }
 
     @Test

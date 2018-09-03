@@ -337,38 +337,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return getComponent(base, true);
     }
 
-    /** Returns a component of the current instance relative to the given base
-     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
-     * the projection is returned.
-     * @param base The base vector
-     * @param reject If true, the rejection of this instance from {@code base} is
-     *      returned. If false, the projection of this instance onto {@code base}
-     *      is returned.
-     * @return The projection or rejection of this instance relative to {@code base},
-     *      depending on the value of {@code reject}.
-     * @throws IllegalStateException if {@code base} has a zero norm
-     */
-    private Vector3D getComponent(Vector3D base, boolean reject) throws IllegalStateException {
-        final double aDotB = dotProduct(base);
-
-        final double baseMagSq = base.getNormSq();
-        if (baseMagSq == 0.0) {
-            throw new IllegalStateException("Invalid base vector: norm is zero");
-        }
-
-        final double scale = aDotB / baseMagSq;
-
-        final double projX = scale * base.getX();
-        final double projY = scale * base.getY();
-        final double projZ = scale * base.getZ();
-
-        if (reject) {
-            return new Vector3D(getX() - projX, getY() - projY, getZ() - projZ);
-        }
-
-        return new Vector3D(projX, projY, projZ);
-    }
-
     /**
      * Get a hashCode for the vector.
      * <p>All NaN values have the same hash code.</p>
@@ -432,6 +400,38 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return n;
     }
 
+    /** Returns a component of the current instance relative to the given base
+     * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
+     * the projection is returned.
+     * @param base The base vector
+     * @param reject If true, the rejection of this instance from {@code base} is
+     *      returned. If false, the projection of this instance onto {@code base}
+     *      is returned.
+     * @return The projection or rejection of this instance relative to {@code base},
+     *      depending on the value of {@code reject}.
+     * @throws IllegalStateException if {@code base} has a zero norm
+     */
+    private Vector3D getComponent(Vector3D base, boolean reject) throws IllegalStateException {
+        final double aDotB = dotProduct(base);
+
+        final double baseMagSq = base.getNormSq();
+        if (baseMagSq == 0.0) {
+            throw new IllegalStateException("Invalid base vector: norm is zero");
+        }
+
+        final double scale = aDotB / baseMagSq;
+
+        final double projX = scale * base.getX();
+        final double projY = scale * base.getY();
+        final double projZ = scale * base.getZ();
+
+        if (reject) {
+            return new Vector3D(getX() - projX, getY() - projY, getZ() - projZ);
+        }
+
+        return new Vector3D(projX, projY, projZ);
+    }
+
     /** Computes the dot product between to vectors. This method simply
      * calls {@code v1.dotProduct(v2)}.
      * @param v1 first vector
@@ -452,6 +452,28 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      */
     public static double angle(Vector3D v1, Vector3D v2) {
         return v1.angle(v2);
+    }
+
+    /** Projects the given vector onto {@code base}. This method simply
+     * calls {@code v.project(base)}.
+     * @param v vector to project
+     * @param base the base vector to project onto
+     * @return the projected vector
+     * @see #project(Vector3D)
+     */
+    public static Vector3D project(Vector3D v, Vector3D base) {
+        return v.project(base);
+    }
+
+    /** Returns the vector rejection of {@code v} from {@code base}. This
+     * method simply calls {@code v.reject(base)}.
+     * @param v vector to reject
+     * @param base the base vector to reject from
+     * @return the vector rejection
+     * @see #reject(Vector3D)
+     */
+    public static Vector3D reject(Vector3D v, Vector3D base) {
+        return v.reject(base);
     }
 
     /** Computes the cross product between two vectors. This method simply
