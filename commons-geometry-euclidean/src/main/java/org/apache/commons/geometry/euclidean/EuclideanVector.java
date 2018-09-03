@@ -32,4 +32,14 @@ public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends Eucli
      * @return point with the same coordinates as this vector
      */
     P asPoint();
+
+    /** Linearly interpolates between this vector and the given vector using the equation
+     * {@code V = (1 - t)*A + t*B}, where {@code A} is the current vector and {@code B}
+     * is the given vector. This means that if {@code t = 0}, a vector equal to the current
+     * vector will be returned. If {@code t = 1}, a vector equal to the argument will be returned.
+     * @param v other vector
+     * @param t interpolation parameter
+     * @return interpolated vector
+     */
+    V lerp(V p, double t);
 }

@@ -40,4 +40,14 @@ public interface EuclideanPoint<P extends EuclideanPoint<P, V>, V extends Euclid
      * @return vector representing the displacement <em>from</em> this point <em>to</em> the given point
      */
     V vectorTo(P p);
+
+    /** Linearly interpolates between this point and the given point using the equation
+     * {@code P = (1 - t)*A + t*B}, where {@code A} is the current point and {@code B}
+     * is the given point. This means that if {@code t = 0}, a point equal to the current
+     * point will be returned. If {@code t = 1}, a point equal to the argument will be returned.
+     * @param p other point
+     * @param t interpolation parameter
+     * @return interpolated point
+     */
+    P lerp(P p, double t);
 }

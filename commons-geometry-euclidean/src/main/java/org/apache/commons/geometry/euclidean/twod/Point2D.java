@@ -91,6 +91,12 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
 
     /** {@inheritDoc} */
     @Override
+    public Point2D lerp(Point2D p, double t) {
+        return vectorCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Point2D add(Vector2D v) {
         return new Point2D(getX() + v.getX(), getY() + v.getY());
     }
@@ -190,6 +196,18 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      */
     public static Point2D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given points. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first point
+     * @param b second point
+     * @param t interpolation parameter
+     * @return the interpolated point
+     * @see #lerp(Point2D, double)
+     */
+    public static Point2D lerp(Point2D a, Point2D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

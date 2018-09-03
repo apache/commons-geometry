@@ -811,6 +811,58 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -5, 2);
+        Vector3D v2 = Vector3D.of(-4, 0, 2);
+        Vector3D v3 = Vector3D.of(10, -4, 0);
+
+        // act/assert
+        checkVector(v1.lerp(v1, 0), 1, -5, 2);
+        checkVector(v1.lerp(v1, 1), 1, -5, 2);
+
+        checkVector(v1.lerp(v2, -0.25), 2.25, -6.25, 2);
+        checkVector(v1.lerp(v2, 0), 1, -5, 2);
+        checkVector(v1.lerp(v2, 0.25), -0.25, -3.75, 2);
+        checkVector(v1.lerp(v2, 0.5), -1.5, -2.5, 2);
+        checkVector(v1.lerp(v2, 0.75), -2.75, -1.25, 2);
+        checkVector(v1.lerp(v2, 1), -4, 0, 2);
+        checkVector(v1.lerp(v2, 1.25), -5.25, 1.25, 2);
+
+        checkVector(v1.lerp(v3, 0), 1, -5, 2);
+        checkVector(v1.lerp(v3, 0.25), 3.25, -4.75, 1.5);
+        checkVector(v1.lerp(v3, 0.5), 5.5, -4.5, 1);
+        checkVector(v1.lerp(v3, 0.75), 7.75, -4.25, 0.5);
+        checkVector(v1.lerp(v3, 1), 10, -4, 0);
+    }
+
+    @Test
+    public void testLerp_static() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -5, 2);
+        Vector3D v2 = Vector3D.of(-4, 0, 2);
+        Vector3D v3 = Vector3D.of(10, -4, 0);
+
+        // act/assert
+        checkVector(Vector3D.lerp(v1, v1, 0), 1, -5, 2);
+        checkVector(Vector3D.lerp(v1, v1, 1), 1, -5, 2);
+
+        checkVector(Vector3D.lerp(v1, v2, -0.25), 2.25, -6.25, 2);
+        checkVector(Vector3D.lerp(v1, v2, 0), 1, -5, 2);
+        checkVector(Vector3D.lerp(v1, v2, 0.25), -0.25, -3.75, 2);
+        checkVector(Vector3D.lerp(v1, v2, 0.5), -1.5, -2.5, 2);
+        checkVector(Vector3D.lerp(v1, v2, 0.75), -2.75, -1.25, 2);
+        checkVector(Vector3D.lerp(v1, v2, 1), -4, 0, 2);
+        checkVector(Vector3D.lerp(v1, v2, 1.25), -5.25, 1.25, 2);
+
+        checkVector(Vector3D.lerp(v1, v3, 0), 1, -5, 2);
+        checkVector(Vector3D.lerp(v1, v3, 0.25), 3.25, -4.75, 1.5);
+        checkVector(Vector3D.lerp(v1, v3, 0.5), 5.5, -4.5, 1);
+        checkVector(Vector3D.lerp(v1, v3, 0.75), 7.75, -4.25, 0.5);
+        checkVector(Vector3D.lerp(v1, v3, 1), 10, -4, 0);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         double delta = 10 * Precision.EPSILON;

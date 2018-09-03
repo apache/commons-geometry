@@ -80,6 +80,12 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
+    public Vector1D lerp(Vector1D p, double t) {
+        return linearCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector1D getZero() {
         return ZERO;
     }
@@ -279,6 +285,18 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     public static Vector1D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given vectors. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first vector
+     * @param b second vector
+     * @param t interpolation parameter
+     * @return the interpolated vector
+     * @see #lerp(Vector1D, double)
+     */
+    public static Vector1D lerp(Vector1D a, Vector1D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

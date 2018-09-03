@@ -118,6 +118,58 @@ public class Point1DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Point1D p1 = Point1D.of(1);
+        Point1D p2 = Point1D.of(-4);
+        Point1D p3 = Point1D.of(10);
+
+        // act/assert
+        checkPoint(p1.lerp(p1, 0), 1);
+        checkPoint(p1.lerp(p1, 1), 1);
+
+        checkPoint(p1.lerp(p2, -0.25), 2.25);
+        checkPoint(p1.lerp(p2, 0), 1);
+        checkPoint(p1.lerp(p2, 0.25), -0.25);
+        checkPoint(p1.lerp(p2, 0.5), -1.5);
+        checkPoint(p1.lerp(p2, 0.75), -2.75);
+        checkPoint(p1.lerp(p2, 1), -4);
+        checkPoint(p1.lerp(p2, 1.25), -5.25);
+
+        checkPoint(p1.lerp(p3, 0), 1);
+        checkPoint(p1.lerp(p3, 0.25), 3.25);
+        checkPoint(p1.lerp(p3, 0.5), 5.5);
+        checkPoint(p1.lerp(p3, 0.75), 7.75);
+        checkPoint(p1.lerp(p3, 1), 10);
+    }
+
+    @Test
+    public void testLerp_static() {
+        // arrange
+        Point1D p1 = Point1D.of(1);
+        Point1D p2 = Point1D.of(-4);
+        Point1D p3 = Point1D.of(10);
+
+        // act/assert
+        checkPoint(Point1D.lerp(p1, p1, 0), 1);
+        checkPoint(Point1D.lerp(p1, p1, 1), 1);
+
+        checkPoint(Point1D.lerp(p1, p2, -0.25), 2.25);
+        checkPoint(Point1D.lerp(p1, p2, 0), 1);
+        checkPoint(Point1D.lerp(p1, p2, 0.25), -0.25);
+        checkPoint(Point1D.lerp(p1, p2, 0.5), -1.5);
+        checkPoint(Point1D.lerp(p1, p2, 0.75), -2.75);
+        checkPoint(Point1D.lerp(p1, p2, 1), -4);
+        checkPoint(Point1D.lerp(p1, p2, 1.25), -5.25);
+
+        checkPoint(Point1D.lerp(p1, p3, 0), 1);
+        checkPoint(Point1D.lerp(p1, p3, 0.25), 3.25);
+        checkPoint(Point1D.lerp(p1, p3, 0.5), 5.5);
+        checkPoint(Point1D.lerp(p1, p3, 0.75), 7.75);
+        checkPoint(Point1D.lerp(p1, p3, 1), 10);
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Point1D p1 = Point1D.of(2.0);

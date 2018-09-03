@@ -94,6 +94,12 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
 
     /** {@inheritDoc} */
     @Override
+    public Point1D lerp(Point1D p, double t) {
+        return vectorCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Point1D add(Vector1D v) {
         return new Point1D(getX() + v.getX());
     }
@@ -172,6 +178,18 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      */
     public static Point1D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given points. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first point
+     * @param b second point
+     * @param t interpolation parameter
+     * @return the interpolated point
+     * @see #lerp(Point1D, double)
+     */
+    public static Point1D lerp(Point1D a, Point1D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

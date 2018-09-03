@@ -103,6 +103,58 @@ public class Point3DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Point3D p1 = Point3D.of(1, -5, 2);
+        Point3D p2 = Point3D.of(-4, 0, 2);
+        Point3D p3 = Point3D.of(10, -4, 0);
+
+        // act/assert
+        checkPoint(p1.lerp(p1, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p1, 1), 1, -5, 2);
+
+        checkPoint(p1.lerp(p2, -0.25), 2.25, -6.25, 2);
+        checkPoint(p1.lerp(p2, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p2, 0.25), -0.25, -3.75, 2);
+        checkPoint(p1.lerp(p2, 0.5), -1.5, -2.5, 2);
+        checkPoint(p1.lerp(p2, 0.75), -2.75, -1.25, 2);
+        checkPoint(p1.lerp(p2, 1), -4, 0, 2);
+        checkPoint(p1.lerp(p2, 1.25), -5.25, 1.25, 2);
+
+        checkPoint(p1.lerp(p3, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p3, 0.25), 3.25, -4.75, 1.5);
+        checkPoint(p1.lerp(p3, 0.5), 5.5, -4.5, 1);
+        checkPoint(p1.lerp(p3, 0.75), 7.75, -4.25, 0.5);
+        checkPoint(p1.lerp(p3, 1), 10, -4, 0);
+    }
+
+    @Test
+    public void testLerp_static() {
+        // arrange
+        Point3D p1 = Point3D.of(1, -5, 2);
+        Point3D p2 = Point3D.of(-4, 0, 2);
+        Point3D p3 = Point3D.of(10, -4, 0);
+
+        // act/assert
+        checkPoint(Point3D.lerp(p1, p1, 0), 1, -5, 2);
+        checkPoint(Point3D.lerp(p1, p1, 1), 1, -5, 2);
+
+        checkPoint(Point3D.lerp(p1, p2, -0.25), 2.25, -6.25, 2);
+        checkPoint(Point3D.lerp(p1, p2, 0), 1, -5, 2);
+        checkPoint(Point3D.lerp(p1, p2, 0.25), -0.25, -3.75, 2);
+        checkPoint(Point3D.lerp(p1, p2, 0.5), -1.5, -2.5, 2);
+        checkPoint(Point3D.lerp(p1, p2, 0.75), -2.75, -1.25, 2);
+        checkPoint(Point3D.lerp(p1, p2, 1), -4, 0, 2);
+        checkPoint(Point3D.lerp(p1, p2, 1.25), -5.25, 1.25, 2);
+
+        checkPoint(Point3D.lerp(p1, p3, 0), 1, -5, 2);
+        checkPoint(Point3D.lerp(p1, p3, 0.25), 3.25, -4.75, 1.5);
+        checkPoint(Point3D.lerp(p1, p3, 0.5), 5.5, -4.5, 1);
+        checkPoint(Point3D.lerp(p1, p3, 0.75), 7.75, -4.25, 0.5);
+        checkPoint(Point3D.lerp(p1, p3, 1), 10, -4, 0);
+    }
+
+    @Test
     public void testAdd() {
         // act/assert
         Point3D p1 = Point3D.of(1, 2, 3);

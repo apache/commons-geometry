@@ -591,6 +591,58 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Vector2D v1 = Vector2D.of(1, -5);
+        Vector2D v2 = Vector2D.of(-4, 0);
+        Vector2D v3 = Vector2D.of(10, -4);
+
+        // act/assert
+        checkVector(v1.lerp(v1, 0), 1, -5);
+        checkVector(v1.lerp(v1, 1), 1, -5);
+
+        checkVector(v1.lerp(v2, -0.25), 2.25, -6.25);
+        checkVector(v1.lerp(v2, 0), 1, -5);
+        checkVector(v1.lerp(v2, 0.25), -0.25, -3.75);
+        checkVector(v1.lerp(v2, 0.5), -1.5, -2.5);
+        checkVector(v1.lerp(v2, 0.75), -2.75, -1.25);
+        checkVector(v1.lerp(v2, 1), -4, 0);
+        checkVector(v1.lerp(v2, 1.25), -5.25, 1.25);
+
+        checkVector(v1.lerp(v3, 0), 1, -5);
+        checkVector(v1.lerp(v3, 0.25), 3.25, -4.75);
+        checkVector(v1.lerp(v3, 0.5), 5.5, -4.5);
+        checkVector(v1.lerp(v3, 0.75), 7.75, -4.25);
+        checkVector(v1.lerp(v3, 1), 10, -4);
+    }
+
+    @Test
+    public void testLerp_static() {
+        // arrange
+        Vector2D v1 = Vector2D.of(1, -5);
+        Vector2D v2 = Vector2D.of(-4, 0);
+        Vector2D v3 = Vector2D.of(10, -4);
+
+        // act/assert
+        checkVector(Vector2D.lerp(v1, v1, 0), 1, -5);
+        checkVector(Vector2D.lerp(v1, v1, 1), 1, -5);
+
+        checkVector(Vector2D.lerp(v1, v2, -0.25), 2.25, -6.25);
+        checkVector(Vector2D.lerp(v1, v2, 0), 1, -5);
+        checkVector(Vector2D.lerp(v1, v2, 0.25), -0.25, -3.75);
+        checkVector(Vector2D.lerp(v1, v2, 0.5), -1.5, -2.5);
+        checkVector(Vector2D.lerp(v1, v2, 0.75), -2.75, -1.25);
+        checkVector(Vector2D.lerp(v1, v2, 1), -4, 0);
+        checkVector(Vector2D.lerp(v1, v2, 1.25), -5.25, 1.25);
+
+        checkVector(Vector2D.lerp(v1, v3, 0), 1, -5);
+        checkVector(Vector2D.lerp(v1, v3, 0.25), 3.25, -4.75);
+        checkVector(Vector2D.lerp(v1, v3, 0.5), 5.5, -4.5);
+        checkVector(Vector2D.lerp(v1, v3, 0.75), 7.75, -4.25);
+        checkVector(Vector2D.lerp(v1, v3, 1), 10, -4);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Vector2D u = Vector2D.of(1, 1);

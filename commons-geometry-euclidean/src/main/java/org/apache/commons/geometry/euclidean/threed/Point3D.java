@@ -100,6 +100,12 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
 
     /** {@inheritDoc} */
     @Override
+    public Point3D lerp(Point3D p, double t) {
+        return vectorCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Point3D add(Vector3D v) {
         return new Point3D(
                     getX() + v.getX(),
@@ -207,6 +213,18 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      */
     public static Point3D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given points. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first point
+     * @param b second point
+     * @param t interpolation parameter
+     * @return the interpolated point
+     * @see #lerp(Point3D, double)
+     */
+    public static Point3D lerp(Point3D a, Point3D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

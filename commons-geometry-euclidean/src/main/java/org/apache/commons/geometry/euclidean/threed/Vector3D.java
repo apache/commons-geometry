@@ -99,6 +99,12 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
+    public Vector3D lerp(Vector3D p, double t) {
+        return linearCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double getNorm1() {
         return Vectors.norm1(getX(), getY(), getZ());
     }
@@ -528,6 +534,18 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      */
     public static Vector3D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given vectors. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first vector
+     * @param b second vector
+     * @param t interpolation parameter
+     * @return the interpolated vector
+     * @see #lerp(Vector3D, double)
+     */
+    public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

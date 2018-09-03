@@ -93,6 +93,12 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
+    public Vector2D lerp(Vector2D p, double t) {
+        return linearCombination(1.0 - t, this, t, p);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector2D getZero() {
         return ZERO;
     }
@@ -459,6 +465,18 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     public static Vector2D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    }
+
+    /** Linearly interpolates between the two given vectors. This methods simply
+     * calls {@code a.lerp(b, t)}.
+     * @param a first vector
+     * @param b second vector
+     * @param t interpolation parameter
+     * @return the interpolated vector
+     * @see #lerp(Vector2D, double)
+     */
+    public static Vector2D lerp(Vector2D a, Vector2D b, double t) {
+        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
