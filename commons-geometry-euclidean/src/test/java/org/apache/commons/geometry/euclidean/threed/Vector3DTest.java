@@ -51,6 +51,19 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testNonZeroConstants_areUnitVectorInstances() {
+        // act/assert
+        Assert.assertSame(Vector3D.PLUS_X.normalize(), Vector3D.PLUS_X);
+        Assert.assertSame(Vector3D.MINUS_X.normalize(), Vector3D.MINUS_X);
+
+        Assert.assertSame(Vector3D.PLUS_Y.normalize(), Vector3D.PLUS_Y);
+        Assert.assertSame(Vector3D.MINUS_Y.normalize(), Vector3D.MINUS_Y);
+
+        Assert.assertSame(Vector3D.PLUS_Z.normalize(), Vector3D.PLUS_Z);
+        Assert.assertSame(Vector3D.MINUS_Z.normalize(), Vector3D.MINUS_Z);
+    }
+
+    @Test
     public void testZero() {
         // act
         Vector3D zero = Vector3D.of(1, 2, 3).getZero();
@@ -131,6 +144,8 @@ public class Vector3DTest {
         double normZ = z / len;
 
         // act/assert
+        checkVector(Vector3D.of(x, y, z).withMagnitude(0.0), 0.0, 0.0, 0.0);
+
         checkVector(Vector3D.of(x, y, z).withMagnitude(1.0), normX, normY, normZ);
         checkVector(Vector3D.of(x, y, -z).withMagnitude(1.0), normX, normY, -normZ);
         checkVector(Vector3D.of(x, -y, z).withMagnitude(1.0), normX, -normY, normZ);
@@ -142,12 +157,36 @@ public class Vector3DTest {
 
         checkVector(Vector3D.of(x, y, z).withMagnitude(0.5), 0.5 * normX, 0.5 * normY, 0.5 * normZ);
         checkVector(Vector3D.of(x, y, z).withMagnitude(3), 3 * normX, 3 * normY, 3 * normZ);
+
+        checkVector(Vector3D.of(x, y, z).withMagnitude(-0.5), -0.5 * normX, -0.5 * normY, -0.5 * normZ);
+        checkVector(Vector3D.of(x, y, z).withMagnitude(-3), -3 * normX, -3 * normY, -3 * normZ);
+
+        for (double mag = -10.0; mag <= 10.0; ++mag)
+        {
+            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withMagnitude(mag).getMagnitude(), EPS);
+        }
     }
 
     @Test(expected = IllegalStateException.class)
     public void testWithMagnitude_zeroNorm() {
         // act/assert
         Vector3D.ZERO.withMagnitude(1.0);
+    }
+
+    @Test
+    public void testWithMagnitude_unitVectors() {
+        // arrange
+        Vector3D v = Vector3D.of(2.0, -3.0, 4.0).normalize();
+
+        // act/assert
+        checkVector(Vector3D.PLUS_X.withMagnitude(2.5), 2.5, 0.0, 0.0);
+        checkVector(Vector3D.MINUS_Y.withMagnitude(3.14), 0.0, -3.14, 0.0);
+        checkVector(Vector3D.PLUS_Z.withMagnitude(-1.1), 0.0, 0.0, -1.1);
+
+        for (double mag = -10.0; mag <= 10.0; ++mag)
+        {
+            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), EPS);
+        }
     }
 
     @Test
@@ -247,13 +286,24 @@ public class Vector3DTest {
         checkVector(Vector3D.of(2, 2, 2).normalize(), invSqrt3, invSqrt3, invSqrt3);
         checkVector(Vector3D.of(-2, -2, -2).normalize(), -invSqrt3, -invSqrt3, -invSqrt3);
 
-        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().getNorm(), 1.0e-12);
+        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().getNorm(), EPS);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testNormalize_zeroNorm() {
         // act/assert
         Vector3D.ZERO.normalize();
+    }
+
+    @Test
+    public void testNormalize_isIdempotent() {
+        // arrange
+        double invSqrt3 = 1 / Math.sqrt(3);
+        Vector3D v = Vector3D.of(2, 2, 2).normalize();
+
+        // act/assert
+        Assert.assertSame(v, v.normalize());
+        checkVector(v.normalize(), invSqrt3, invSqrt3, invSqrt3);
     }
 
     @Test
@@ -275,6 +325,31 @@ public class Vector3DTest {
     public void testOrthogonal_zeroNorm() {
         // act/assert
         Vector3D.ZERO.orthogonal();
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector3D.PLUS_X.orthogonal(Vector3D.of(-1.0, 0.1, 0.0)), 0.0, 1.0, 0.0);
+        checkVector(Vector3D.PLUS_Y.orthogonal(Vector3D.of(2.0, 2.0, 2.0)), invSqrt2, 0.0, invSqrt2);
+        checkVector(Vector3D.PLUS_Z.orthogonal(Vector3D.of(3.0, 3.0, -3.0)), invSqrt2, invSqrt2, 0.0);
+
+        checkVector(Vector3D.of(invSqrt2, invSqrt2, 0.0).orthogonal(Vector3D.of(1.0, 1.0, 0.2)), 0.0, 0.0, 1.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testOrthogonal_givenDirection_zeroNorm() {
+        // act/assert
+        Vector3D.ZERO.orthogonal(Vector3D.PLUS_X);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testOrthogonal_givenDirection_directionIsCollinear() {
+        // act/assert
+        Vector3D.PLUS_X.orthogonal(Vector3D.of(-2.0, 0.0, 0.0));
     }
 
     @Test
@@ -956,7 +1031,7 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testOf_arrayArg() {
+    public void testOfArray() {
         // act/assert
         checkVector(Vector3D.ofArray(new double[] { 1, 2, 3 }), 1, 2, 3);
         checkVector(Vector3D.ofArray(new double[] { -1, -2, -3 }), -1, -2, -3);
@@ -967,7 +1042,7 @@ public class Vector3DTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testOf_arrayArg_invalidDimensions() {
+    public void testOfArray_invalidDimensions() {
         // act/assert
         Vector3D.ofArray(new double[] { 0.0, 0.0 });
     }
@@ -991,6 +1066,21 @@ public class Vector3DTest {
 
         checkVector(Vector3D.ofSpherical(sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3)), 1, 1, 1);
         checkVector(Vector3D.ofSpherical(sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
+    }
+
+    @Test
+    public void testNormalize_static() {
+        // arrange
+        double invSqrt3 = 1.0 / Math.sqrt(3.0);
+
+        // act/assert
+        checkVector(Vector3D.normalize(2.0, -2.0, 2.0), invSqrt3, -invSqrt3, invSqrt3);
+        checkVector(Vector3D.normalize(-4.0, 4.0, -4.0), -invSqrt3, invSqrt3, -invSqrt3);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testNormalize_static_zeroNorm() {
+        Vector3D.normalize(0.0, 0.0, 0.0);
     }
 
     @Test
