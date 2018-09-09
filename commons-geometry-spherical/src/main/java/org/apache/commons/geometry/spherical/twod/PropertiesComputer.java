@@ -110,8 +110,8 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
             final Vector3D previousPole = e.getCircle().getPole();
             final Vector3D nextPole     = e.getEnd().getOutgoing().getCircle().getPole();
             final Vector3D point        = e.getEnd().getLocation().getVector();
-            double alpha = Math.atan2(Vector3D.dotProduct(nextPole, Vector3D.crossProduct(point, previousPole)),
-                                          -Vector3D.dotProduct(nextPole, previousPole));
+            double alpha = Math.atan2(nextPole.dotProduct(point.crossProduct(previousPole)),
+                                          - nextPole.dotProduct(previousPole));
             if (alpha < 0) {
                 alpha += Geometry.TWO_PI;
             }

@@ -372,50 +372,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return new Vector2D(projX, projY);
     }
 
-    /** Computes the dot product between to vectors. This method simply
-     * calls {@code v1.dotProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the dot product
-     * @see #dotProduct(Vector2D)
-     */
-    public static double dotProduct(Vector2D v1, Vector2D v2) {
-        return v1.dotProduct(v2);
-    }
-
-    /** Projects the given vector onto {@code base}. This method simply
-     * calls {@code v.project(base)}.
-     * @param v vector to project
-     * @param base the base vector to project onto
-     * @return the projected vector
-     * @see #project(Vector2D)
-     */
-    public static Vector2D project(Vector2D v, Vector2D base) {
-        return v.project(base);
-    }
-
-    /** Returns the vector rejection of {@code v} from {@code base}. This
-     * method simply calls {@code v.reject(base)}.
-     * @param v vector to reject
-     * @param base the base vector to reject from
-     * @return the vector rejection
-     * @see #reject(Vector2D)
-     */
-    public static Vector2D reject(Vector2D v, Vector2D base) {
-        return v.reject(base);
-    }
-
-    /** Computes the angle in radians between two vectors. This method
-     * simply calls {@code v1.angle(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the angle between the vectors in radians
-     * @see #angle(Vector2D)
-     */
-    public static double angle(Vector2D v1, Vector2D v2) {
-        return v1.angle(v2);
-    }
-
     /** Returns a vector with the given coordinate values.
      * @param x abscissa (first coordinate value)
      * @param y abscissa (second coordinate value)
@@ -454,18 +410,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     public static Vector2D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
-    }
-
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector2D, double)
-     */
-    public static Vector2D lerp(Vector2D a, Vector2D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

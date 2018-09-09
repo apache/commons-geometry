@@ -415,32 +415,6 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testLerp_static() {
-        // arrange
-        Vector1D v1 = Vector1D.of(1);
-        Vector1D v2 = Vector1D.of(-4);
-        Vector1D v3 = Vector1D.of(10);
-
-        // act/assert
-        checkVector(Vector1D.lerp(v1, v1, 0), 1);
-        checkVector(Vector1D.lerp(v1, v1, 1), 1);
-
-        checkVector(Vector1D.lerp(v1, v2, -0.25), 2.25);
-        checkVector(Vector1D.lerp(v1, v2, 0), 1);
-        checkVector(Vector1D.lerp(v1, v2, 0.25), -0.25);
-        checkVector(Vector1D.lerp(v1, v2, 0.5), -1.5);
-        checkVector(Vector1D.lerp(v1, v2, 0.75), -2.75);
-        checkVector(Vector1D.lerp(v1, v2, 1), -4);
-        checkVector(Vector1D.lerp(v1, v2, 1.25), -5.25);
-
-        checkVector(Vector1D.lerp(v1, v3, 0), 1);
-        checkVector(Vector1D.lerp(v1, v3, 0.25), 3.25);
-        checkVector(Vector1D.lerp(v1, v3, 0.5), 5.5);
-        checkVector(Vector1D.lerp(v1, v3, 0.75), 7.75);
-        checkVector(Vector1D.lerp(v1, v3, 1), 10);
-    }
-
-    @Test
     public void testHashCode() {
         // arrange
         Vector1D u = Vector1D.of(1);

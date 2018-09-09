@@ -427,61 +427,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         return new Vector3D(projX, projY, projZ);
     }
 
-    /** Computes the dot product between to vectors. This method simply
-     * calls {@code v1.dotProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the dot product
-     * @see #dotProduct(Vector3D)
-     */
-    public static double dotProduct(Vector3D v1, Vector3D v2) {
-        return v1.dotProduct(v2);
-    }
-
-    /** Computes the angle in radians between two vectors. This method
-     * simply calls {@code v1.angle(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the angle between the vectors in radians
-     * @see #angle(Vector3D)
-     */
-    public static double angle(Vector3D v1, Vector3D v2) {
-        return v1.angle(v2);
-    }
-
-    /** Projects the given vector onto {@code base}. This method simply
-     * calls {@code v.project(base)}.
-     * @param v vector to project
-     * @param base the base vector to project onto
-     * @return the projected vector
-     * @see #project(Vector3D)
-     */
-    public static Vector3D project(Vector3D v, Vector3D base) {
-        return v.project(base);
-    }
-
-    /** Returns the vector rejection of {@code v} from {@code base}. This
-     * method simply calls {@code v.reject(base)}.
-     * @param v vector to reject
-     * @param base the base vector to reject from
-     * @return the vector rejection
-     * @see #reject(Vector3D)
-     */
-    public static Vector3D reject(Vector3D v, Vector3D base) {
-        return v.reject(base);
-    }
-
-    /** Computes the cross product between two vectors. This method simply
-     * calls {@code v1.crossProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the computed cross product vector
-     * @see #crossProduct(Vector3D)
-     */
-    public static Vector3D crossProduct(Vector3D v1, Vector3D v2) {
-        return v1.crossProduct(v2);
-    }
-
     /** Returns a vector with the given coordinate values.
      * @param x abscissa (first coordinate value)
      * @param y abscissa (second coordinate value)
@@ -523,18 +468,6 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      */
     public static Vector3D parse(String str) throws IllegalArgumentException {
         return SimpleTupleFormat.getDefault().parse(str, Vector3D::new);
-    }
-
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector3D, double)
-     */
-    public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

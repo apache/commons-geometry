@@ -159,7 +159,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
                                                           final double outsideRadius, final int n) {
         final S2Point[] array = new S2Point[n];
-        final Rotation r0 = new Rotation(Vector3D.crossProduct(center, meridian),
+        final Rotation r0 = new Rotation(center.crossProduct(meridian),
                                          outsideRadius, RotationConvention.VECTOR_OPERATOR);
         array[0] = S2Point.ofVector(r0.applyTo(center));
 
@@ -223,7 +223,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
             // create the edge and store it
             edges.add(new Edge(start, end,
-                               Vector3D.angle(start.getLocation().getVector(),
+                               start.getLocation().getVector().angle(
                                               end.getLocation().getVector()),
                                circle));
 

@@ -126,7 +126,7 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
             for (final Edge edge : nodeToEdgesList.get(node)) {
                 if (edge != previous && edge.getStart().getIncoming() == null) {
                     final Vector3D edgeStart = edge.getStart().getLocation().getVector();
-                    final double gap         = Vector3D.angle(point.getVector(), edgeStart);
+                    final double gap         = point.getVector().angle(edgeStart);
                     if (gap <= closest) {
                         closest   = gap;
                         following = edge;
@@ -137,7 +137,7 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
         if (following == null) {
             final Vector3D previousStart = previous.getStart().getLocation().getVector();
-            if (Vector3D.angle(point.getVector(), previousStart) <= tolerance) {
+            if (point.getVector().angle(previousStart) <= tolerance) {
                 // the edge connects back to itself
                 return previous;
             }

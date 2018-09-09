@@ -313,18 +313,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector1D, double)
-     */
-    public static Vector1D lerp(Vector1D a, Vector1D b, double t) {
-        return a.lerp(b, t);
-    }
-
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
