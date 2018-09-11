@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.internal.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a point in two-dimensional Euclidean space.

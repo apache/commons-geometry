@@ -17,6 +17,7 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -235,7 +236,7 @@ public class RotationTest {
     try {
         new Rotation(u1, u2, Vector3D.ZERO, v2);
         Assert.fail("an exception should have been thrown");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalNormException e) {
       // expected behavior
     }
 

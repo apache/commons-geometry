@@ -20,6 +20,8 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
@@ -144,10 +146,17 @@ public class Vector3DTest {
         checkVector(Vector3D.of(x, y, z).withMagnitude(3), 3 * normX, 3 * normY, 3 * normZ);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testWithMagnitude_zeroNorm() {
+    @Test
+    public void testWithMagnitude_illegalNorm() {
         // act/assert
-        Vector3D.ZERO.withMagnitude(1.0);
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.withMagnitude(2.0),
+                IllegalNormException.class);
     }
 
     @Test
@@ -250,10 +259,17 @@ public class Vector3DTest {
         Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().getNorm(), 1.0e-12);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNormalize_zeroNorm() {
+    @Test
+    public void testNormalize_illegalNorm() {
         // act/assert
-        Vector3D.ZERO.normalize();
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.normalize(),
+                IllegalNormException.class);
     }
 
     @Test
@@ -271,10 +287,17 @@ public class Vector3DTest {
         Assert.assertEquals(0.0, v4.dotProduct(v4.orthogonal()), EPS);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testOrthogonal_zeroNorm() {
+    @Test
+    public void testOrthogonal_illegalNorm() {
         // act/assert
-        Vector3D.ZERO.orthogonal();
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
     }
 
     @Test
@@ -299,10 +322,29 @@ public class Vector3DTest {
         Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_Z), tolerance);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testAngle_zeroNorm() {
+    @Test
+    public void testAngle_illegalNorm() {
+        // arrange
+        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+
         // act/assert
-        Vector3D.ZERO.angle(Vector3D.PLUS_X);
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.angle(v),
+                IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector3D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
@@ -592,10 +634,20 @@ public class Vector3DTest {
         checkVector(v2.project(Vector3D.of(-1.0, -1.0, -1.0)), -6.0, -6.0, -6.0);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testProject_baseHasZeroNorm() {
+    @Test
+    public void testProject_baseHasIllegalNorm() {
+        // arrange
+        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+
         // act/assert
-        Vector3D.of(1.0, 1.0, 1.0).project(Vector3D.ZERO);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector3D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
@@ -628,10 +680,20 @@ public class Vector3DTest {
         checkVector(v2.reject(Vector3D.of(-1.0, -1.0, -1.0)), 1.0, 0.0, -1.0);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testReject_baseHasZeroNorm() {
+    @Test
+    public void testReject_baseHasIllegalNorm() {
+        // arrange
+        Vector3D v = Vector3D.of(1.0, 1.0, 1.0);
+
         // act/assert
-        Vector3D.of(1.0, 1.0, 1.0).reject(Vector3D.ZERO);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector3D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test

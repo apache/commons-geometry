@@ -45,6 +45,38 @@ public class GeometryTestUtils {
         Assert.assertTrue(msg, value < 0);
     }
 
+    /** Asserts that the given Runnable throws an exception of the given type.
+     * @param r the Runnable instance
+     * @param exceptionType the expected exception type
+     */
+    public static void assertThrows(Runnable r, Class<?> exceptionType) {
+        assertThrows(r, exceptionType, null);
+    }
+
+    /** Asserts that the given Runnable throws an exception of the given type. If
+     * {@code message} is not null, the exception message is asserted to equal the
+     * given value.
+     * @param r the Runnable instance
+     * @param exceptionType the expected exception type
+     * @param message the expected exception message; ignored if null
+     */
+    public static void assertThrows(Runnable r, Class<?> exceptionType, String message) {
+        try {
+            r.run();
+            Assert.fail("Operation should have thrown an exception");
+        }
+        catch (Exception exc) {
+            Class<?> actualType = exc.getClass();
+
+            Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
+                    exceptionType.isAssignableFrom(actualType));
+
+            if (message != null) {
+                Assert.assertEquals(message, exc.getMessage());
+            }
+        }
+    }
+
     /**
      * Serializes and then recovers an object from a byte array. Returns the deserialized object.
      *

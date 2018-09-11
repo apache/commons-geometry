@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.core;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
+
 /** Interface representing a vector in a vector space. The most common
  * use of this interface is to represent displacement vectors in an affine
  * space.
@@ -120,9 +122,9 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Get a normalized vector aligned with the instance. The returned
      * vector has a magnitude of 1.
      * @return a new normalized vector
-     * @exception IllegalStateException if the norm is zero
+     * @exception IllegalNormException if the norm is zero, NaN, or infinite
      */
-    V normalize() throws IllegalStateException;
+    V normalize() throws IllegalNormException;
 
     /** Multiply the instance by a scalar.
      * @param a scalar
@@ -180,10 +182,10 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * </code>
      * @param base base vector
      * @return the vector projection of the instance onto {@code base}
-     * @exception IllegalStateException if the norm of the base vector is zero
+     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #reject(Vector)
      */
-    V project(V base) throws IllegalStateException;
+    V project(V base) throws IllegalNormException;
 
     /** Get the rejection of the instance from the given base vector. The returned
      * vector is orthogonal to {@code base}. This operation can be interpreted as
@@ -195,15 +197,15 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * </code>
      * @param base base vector
      * @return the vector rejection of the instance from {@code base}
-     * @exception IllegalStateException if the norm of the base vector is zero
+     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #project(Vector)
      */
-    V reject(V base) throws IllegalStateException;
+    V reject(V base) throws IllegalNormException;
 
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
      * @return angular separation between this instance and v in radians
-     * @exception IllegalStateException if either vector has a zero norm
+     * @exception IllegalNormException if either vector has a zero, NaN, or infinite norm
      */
-    double angle(V v) throws IllegalStateException;
+    double angle(V v) throws IllegalNormException;
 }

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.io.Serializable;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /**
@@ -264,54 +265,48 @@ public class Rotation implements Serializable {
    * @param u2 second vector of the origin pair
    * @param v1 desired image of u1 by the rotation
    * @param v2 desired image of u2 by the rotation
-   * @exception IllegalArgumentException if the norm of one of the vectors is zero,
-   * or if one of the pair is degenerated (i.e. the vectors of the pair are collinear)
+   * @exception IllegalNormException if the norm of one of the vectors is zero, NaN, infinite,
+   *    or if one of the pair is degenerated (i.e. the vectors of the pair are collinear)
    */
   public Rotation(Vector3D u1, Vector3D u2, Vector3D v1, Vector3D v2)
-      throws IllegalArgumentException {
+      throws IllegalNormException {
 
-      try {
-          // build orthonormalized base from u1, u2
-          // this fails when vectors are null or collinear, which is forbidden to define a rotation
-          final Vector3D u3 = u1.crossProduct(u2).normalize();
-          u2 = u3.crossProduct(u1).normalize();
-          u1 = u1.normalize();
+      // build orthonormalized base from u1, u2
+      // this fails when vectors are null or collinear, which is forbidden to define a rotation
+      final Vector3D u3 = u1.crossProduct(u2).normalize();
+      u2 = u3.crossProduct(u1).normalize();
+      u1 = u1.normalize();
 
-          // build an orthonormalized base from v1, v2
-          // this fails when vectors are null or collinear, which is forbidden to define a rotation
-          final Vector3D v3 = v1.crossProduct(v2).normalize();
-          v2 = v3.crossProduct(v1).normalize();
-          v1 = v1.normalize();
+      // build an orthonormalized base from v1, v2
+      // this fails when vectors are null or collinear, which is forbidden to define a rotation
+      final Vector3D v3 = v1.crossProduct(v2).normalize();
+      v2 = v3.crossProduct(v1).normalize();
+      v1 = v1.normalize();
 
-          // buid a matrix transforming the first base into the second one
-          final double[][] m = new double[][] {
-              {
-                  LinearCombination.value(u1.getX(), v1.getX(), u2.getX(), v2.getX(), u3.getX(), v3.getX()),
-                  LinearCombination.value(u1.getY(), v1.getX(), u2.getY(), v2.getX(), u3.getY(), v3.getX()),
-                  LinearCombination.value(u1.getZ(), v1.getX(), u2.getZ(), v2.getX(), u3.getZ(), v3.getX())
-              },
-              {
-                  LinearCombination.value(u1.getX(), v1.getY(), u2.getX(), v2.getY(), u3.getX(), v3.getY()),
-                  LinearCombination.value(u1.getY(), v1.getY(), u2.getY(), v2.getY(), u3.getY(), v3.getY()),
-                  LinearCombination.value(u1.getZ(), v1.getY(), u2.getZ(), v2.getY(), u3.getZ(), v3.getY())
-              },
-              {
-                  LinearCombination.value(u1.getX(), v1.getZ(), u2.getX(), v2.getZ(), u3.getX(), v3.getZ()),
-                  LinearCombination.value(u1.getY(), v1.getZ(), u2.getY(), v2.getZ(), u3.getY(), v3.getZ()),
-                  LinearCombination.value(u1.getZ(), v1.getZ(), u2.getZ(), v2.getZ(), u3.getZ(), v3.getZ())
-              }
-          };
+      // buid a matrix transforming the first base into the second one
+      final double[][] m = new double[][] {
+          {
+              LinearCombination.value(u1.getX(), v1.getX(), u2.getX(), v2.getX(), u3.getX(), v3.getX()),
+              LinearCombination.value(u1.getY(), v1.getX(), u2.getY(), v2.getX(), u3.getY(), v3.getX()),
+              LinearCombination.value(u1.getZ(), v1.getX(), u2.getZ(), v2.getX(), u3.getZ(), v3.getX())
+          },
+          {
+              LinearCombination.value(u1.getX(), v1.getY(), u2.getX(), v2.getY(), u3.getX(), v3.getY()),
+              LinearCombination.value(u1.getY(), v1.getY(), u2.getY(), v2.getY(), u3.getY(), v3.getY()),
+              LinearCombination.value(u1.getZ(), v1.getY(), u2.getZ(), v2.getY(), u3.getZ(), v3.getY())
+          },
+          {
+              LinearCombination.value(u1.getX(), v1.getZ(), u2.getX(), v2.getZ(), u3.getX(), v3.getZ()),
+              LinearCombination.value(u1.getY(), v1.getZ(), u2.getY(), v2.getZ(), u3.getY(), v3.getZ()),
+              LinearCombination.value(u1.getZ(), v1.getZ(), u2.getZ(), v2.getZ(), u3.getZ(), v3.getZ())
+          }
+      };
 
-          double[] quat = mat2quat(m);
-          q0 = quat[0];
-          q1 = quat[1];
-          q2 = quat[2];
-          q3 = quat[3];
-
-      } catch (IllegalStateException exc) {
-          throw new IllegalArgumentException("Invalid rotation vector pairs", exc);
-      }
-
+      double[] quat = mat2quat(m);
+      q0 = quat[0];
+      q1 = quat[1];
+      q2 = quat[2];
+      q3 = quat[3];
   }
 
   /** Build one of the rotations that transform one vector into another one.

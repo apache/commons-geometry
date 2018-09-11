@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.internal;
+package org.apache.commons.geometry.euclidean.internal;
+
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /** This class consists exclusively of static vector utility methods.
  */
@@ -22,6 +24,23 @@ public final class Vectors {
 
     /** Private constructor. */
     private Vectors() {}
+
+
+    /** Throws an {@link IllegalNormException} if the  given norm value
+     * is not finite (ie, NaN or infinite) or zero. The argument is returned
+     * to allow this method to be called in-line.
+     * @param norm vector norm value
+     * @return the validated norm value
+     * @throws IllegalNormException if the given norm value is NaN, infinite,
+     *  or zero
+     */
+    public static double checkFiniteNonZeroNorm(final double norm) throws IllegalNormException {
+        if (!Double.isFinite(norm) || norm == 0.0) {
+            throw new IllegalNormException(norm);
+        }
+
+        return norm;
+    }
 
     /** Get the L<sub>1</sub> norm for the vector with the given components.
      * This is defined as the sum of the absolute values of all vector components.
