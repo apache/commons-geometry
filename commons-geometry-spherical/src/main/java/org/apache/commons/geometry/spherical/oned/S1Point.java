@@ -171,7 +171,7 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static S1Point parse(String str) throws IllegalArgumentException {
+    public static S1Point parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, S1Point::new);
     }
 }

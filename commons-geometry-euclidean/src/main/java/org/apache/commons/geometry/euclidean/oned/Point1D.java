@@ -157,7 +157,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point1D parse(String str) throws IllegalArgumentException {
+    public static Point1D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point1D::new);
     }
 

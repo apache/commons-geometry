@@ -175,7 +175,7 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point2D parse(String str) throws IllegalArgumentException {
+    public static Point2D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point2D::new);
     }
 

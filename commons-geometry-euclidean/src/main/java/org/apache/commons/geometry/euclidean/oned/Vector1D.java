@@ -159,7 +159,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() throws IllegalStateException {
+    public Vector1D normalize() {
         final double x = getX();
         if (x > 0.0) {
             return ONE;
@@ -210,7 +210,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the current instance.</p>
      */
     @Override
-    public Vector1D project(final Vector1D base) throws IllegalStateException {
+    public Vector1D project(final Vector1D base) {
         if (base.getX() == 0) {
             throw new ZeroNormException(ZeroNormException.INVALID_BASE);
         }
@@ -221,7 +221,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
      */
     @Override
-    public Vector1D reject(final Vector1D base) throws IllegalStateException {
+    public Vector1D reject(final Vector1D base) {
         if (base.getX() == 0) {
             throw new ZeroNormException(ZeroNormException.INVALID_BASE);
         }
@@ -233,7 +233,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * the same sign and {@code pi} if they are opposite.</p>
      */
     @Override
-    public double angle(final Vector1D v) throws IllegalStateException {
+    public double angle(final Vector1D v) {
         final double sig1 = Math.signum(getX());
         final double sig2 = Math.signum(v.getX());
 
@@ -309,7 +309,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector1D parse(String str) throws IllegalArgumentException {
+    public static Vector1D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 

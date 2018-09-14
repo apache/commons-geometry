@@ -116,7 +116,7 @@ class NestedLoops {
      * @exception IllegalArgumentException if an outline has crossing
      * boundary loops or open boundary loops
      */
-    public void add(final Point2D[] bLoop) throws IllegalArgumentException {
+    public void add(final Point2D[] bLoop) {
         add(new NestedLoops(bLoop, tolerance));
     }
 
@@ -125,7 +125,7 @@ class NestedLoops {
      * @exception IllegalArgumentException if an outline has boundary
      * loops that cross each other
      */
-    private void add(final NestedLoops node) throws IllegalArgumentException {
+    private void add(final NestedLoops node) {
 
         // check if we can go deeper in the tree
         for (final NestedLoops child : surrounded) {

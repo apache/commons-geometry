@@ -188,7 +188,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D normalize() throws IllegalStateException {
+    public Vector3D normalize() {
         return scalarMultiply(1.0 / getNonZeroNorm());
     }
 
@@ -207,7 +207,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @return a new normalized vector orthogonal to the instance
      * @exception IllegalStateException if the norm of the instance is zero
      */
-    public Vector3D orthogonal() throws IllegalStateException {
+    public Vector3D orthogonal() {
         double threshold = 0.6 * getNonZeroNorm();
 
         final double x = getX();
@@ -233,7 +233,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * other.</p>
      */
     @Override
-    public double angle(Vector3D v) throws IllegalStateException {
+    public double angle(Vector3D v) {
         double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
 
         double dot = dotProduct(v);
@@ -322,13 +322,13 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D project(Vector3D base) throws IllegalStateException {
+    public Vector3D project(Vector3D base) {
         return getComponent(base, false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D reject(Vector3D base) throws IllegalStateException {
+    public Vector3D reject(Vector3D base) {
         return getComponent(base, true);
     }
 
@@ -386,7 +386,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @return the non-zero norm value
      * @throws IllegalStateException if the norm is zero
      */
-    private double getNonZeroNorm() throws IllegalStateException {
+    private double getNonZeroNorm() {
         final double n = getNorm();
         if (n == 0) {
             throw new ZeroNormException();
@@ -406,7 +406,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      *      depending on the value of {@code reject}.
      * @throws IllegalStateException if {@code base} has a zero norm
      */
-    private Vector3D getComponent(Vector3D base, boolean reject) throws IllegalStateException {
+    private Vector3D getComponent(Vector3D base, boolean reject) {
         final double aDotB = dotProduct(base);
 
         final double baseMagSq = base.getNormSq();
@@ -466,7 +466,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector3D parse(String str) throws IllegalArgumentException {
+    public static Vector3D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector3D::new);
     }
 

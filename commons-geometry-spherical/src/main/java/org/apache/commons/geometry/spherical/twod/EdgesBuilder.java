@@ -155,7 +155,7 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
      * @return boundary edges
      * @exception IllegalStateException if there is not a single other edge
      */
-    public List<Edge> getEdges() throws IllegalStateException {
+    public List<Edge> getEdges() {
 
         // connect the edges
         for (final Edge previous : edgeToNode.keySet()) {
