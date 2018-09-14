@@ -18,6 +18,8 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.euclidean.threed.Rotation.CardanSingularityException;
+import org.apache.commons.geometry.euclidean.threed.Rotation.EulerSingularityException;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,7 +65,7 @@ public class RotationTest {
     try {
       new Rotation(Vector3D.of(0, 0, 0), 2 * Math.PI / 3);
       Assert.fail("an exception should have been thrown");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalNormException e) {
     }
 
     r = new Rotation(Vector3D.PLUS_Z, 1.5 * Math.PI);
@@ -93,7 +95,7 @@ public class RotationTest {
     try {
       new Rotation(Vector3D.of(0, 0, 0), 2 * Math.PI / 3, RotationConvention.VECTOR_OPERATOR);
       Assert.fail("an exception should have been thrown");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalNormException e) {
     }
 
     r = new Rotation(Vector3D.PLUS_Z, 1.5 * Math.PI, RotationConvention.VECTOR_OPERATOR);
@@ -126,7 +128,7 @@ public class RotationTest {
     try {
       new Rotation(Vector3D.of(0, 0, 0), 2 * Math.PI / 3, RotationConvention.FRAME_TRANSFORM);
       Assert.fail("an exception should have been thrown");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalNormException e) {
     }
 
     r = new Rotation(Vector3D.PLUS_Z, 1.5 * Math.PI, RotationConvention.FRAME_TRANSFORM);
@@ -196,7 +198,7 @@ public class RotationTest {
     try {
         new Rotation(u, Vector3D.ZERO);
         Assert.fail("an exception should have been thrown");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalNormException e) {
         // expected behavior
     }
 
@@ -494,7 +496,7 @@ public class RotationTest {
                   try {
                       r.getAngles(CardanOrders[i], convention);
                       Assert.fail("an exception should have been caught");
-                  } catch (IllegalStateException cese) {
+                  } catch (CardanSingularityException cese) {
                       // expected behavior
                   }
               }
@@ -512,7 +514,7 @@ public class RotationTest {
                   try {
                       r.getAngles(EulerOrders[i], convention);
                       Assert.fail("an exception should have been caught");
-                  } catch (IllegalStateException cese) {
+                  } catch (EulerSingularityException cese) {
                       // expected behavior
                   }
               }

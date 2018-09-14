@@ -334,7 +334,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
     private double getFiniteNonZeroNorm() {
-        return Vectors.checkFiniteNonZeroNorm(getNorm());
+        return Vectors.ensureFiniteNonZeroNorm(getNorm());
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -351,7 +351,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     private Vector2D getComponent(Vector2D base, boolean reject) {
         final double aDotB = dotProduct(base);
 
-        final double baseMag = Vectors.checkFiniteNonZeroNorm(base.getNorm());
+        final double baseMag = Vectors.ensureFiniteNonZeroNorm(base.getNorm());
 
         final double scale = aDotB / (baseMag * baseMag);
 

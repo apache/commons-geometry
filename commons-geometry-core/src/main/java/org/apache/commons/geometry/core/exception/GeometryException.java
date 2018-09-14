@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.core.exception;
 
-/** Base class for geometry exceptions.
+/** Base class for geometry exceptions. The semantics of this class
+ * are intended to be similar to {@link java.lang.ArithmeticException}
+ * but for geometric operations.
  */
 public class GeometryException extends RuntimeException {
 

@@ -358,7 +358,7 @@ public class ArcsSetTest {
 
     }
 
-    @Test(expected=ArcsSet.InconsistentStateAt2PiWrapping.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testInconsistentState() {
         SubLimitAngle l1 = new LimitAngle(S1Point.of(1.0), false, 1.0e-10).wholeHyperplane();
         SubLimitAngle l2 = new LimitAngle(S1Point.of(2.0), true,  1.0e-10).wholeHyperplane();

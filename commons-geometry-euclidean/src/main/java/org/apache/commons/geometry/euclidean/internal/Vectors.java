@@ -25,17 +25,27 @@ public final class Vectors {
     /** Private constructor. */
     private Vectors() {}
 
+    /** Returns true if the given value is finite (ie, not NaN or inifinite)
+     * and not equal to zero.
+     * @param value the value to test
+     * @return true if {@code value} is not NaN, infinite, or zero; otherwise
+     *      false
+     */
+    public static boolean isFiniteNonZero(final double value) {
+        return Double.isFinite(value) && value != 0.0;
+    }
+
 
     /** Throws an {@link IllegalNormException} if the  given norm value
      * is not finite (ie, NaN or infinite) or zero. The argument is returned
-     * to allow this method to be called in-line.
+     * to allow this method to be called inline.
      * @param norm vector norm value
      * @return the validated norm value
      * @throws IllegalNormException if the given norm value is NaN, infinite,
      *  or zero
      */
-    public static double checkFiniteNonZeroNorm(final double norm) throws IllegalNormException {
-        if (!Double.isFinite(norm) || norm == 0.0) {
+    public static double ensureFiniteNonZeroNorm(final double norm) throws IllegalNormException {
+        if (!isFiniteNonZero(norm)) {
             throw new IllegalNormException(norm);
         }
 

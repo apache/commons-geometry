@@ -116,7 +116,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D withMagnitude(double magnitude) {
-        Vectors.checkFiniteNonZeroNorm(getNorm());
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
 
         return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
     }
@@ -154,7 +154,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D normalize() {
-        Vectors.checkFiniteNonZeroNorm(getNorm());
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
 
         return (getX() > 0.0) ? ONE : MINUS_ONE;
     }
@@ -200,7 +200,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     @Override
     public Vector1D project(final Vector1D base) {
-        Vectors.checkFiniteNonZeroNorm(base.getNorm());
+        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
 
         return this;
     }
@@ -210,7 +210,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     @Override
     public Vector1D reject(final Vector1D base) {
-        Vectors.checkFiniteNonZeroNorm(base.getNorm());
+        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
 
         return Vector1D.ZERO;
     }
@@ -221,8 +221,8 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      */
     @Override
     public double angle(final Vector1D v) {
-        Vectors.checkFiniteNonZeroNorm(getNorm());
-        Vectors.checkFiniteNonZeroNorm(v.getNorm());
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
+        Vectors.ensureFiniteNonZeroNorm(v.getNorm());
 
         final double sig1 = Math.signum(getX());
         final double sig2 = Math.signum(v.getX());

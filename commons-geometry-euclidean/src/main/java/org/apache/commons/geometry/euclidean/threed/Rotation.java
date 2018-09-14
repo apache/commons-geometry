@@ -19,7 +19,9 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.io.Serializable;
 
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /**
@@ -97,12 +99,6 @@ public class Rotation implements Serializable {
   /** Serializable version identifier */
   private static final long serialVersionUID = 20180903L;
 
-  /** Error message for Cardan angle singularities */
-  private static final String CARDAN_SINGULARITY_MSG = "Cardan angles singularity";
-
-  /** Error message for Euler angle singularities */
-  private static final String EULER_SINGULARITY_MSG = "Euler angles singularity";
-
   /** Scalar coordinate of the quaternion. */
   private final double q0;
 
@@ -172,14 +168,14 @@ public class Rotation implements Serializable {
    * @param axis axis around which to rotate
    * @param angle rotation angle
    * @param convention convention to use for the semantics of the angle
-   * @exception IllegalArgumentException if the axis norm is zero
+   * @exception IllegalNormException if the axis norm is zero, NaN, or infinite
    */
   public Rotation(final Vector3D axis, final double angle, final RotationConvention convention)
-      throws IllegalArgumentException {
+      throws IllegalNormException {
 
     double norm = axis.getNorm();
-    if (norm == 0) {
-      throw new IllegalArgumentException("Zero norm for rotation axis");
+    if (!Vectors.isFiniteNonZero(norm)) {
+      throw new IllegalNormException("Illegal norm for rotation axis: " + norm);
     }
 
     double halfAngle = convention == RotationConvention.VECTOR_OPERATOR ? -0.5 * angle : +0.5 * angle;
@@ -320,13 +316,13 @@ public class Rotation implements Serializable {
 
    * @param u origin vector
    * @param v desired image of u by the rotation
-   * @exception IllegalArgumentException if the norm of one of the vectors is zero
+   * @exception IllegalNormException if the norm of one of the vectors is zero, NaN, or infinite
    */
   public Rotation(Vector3D u, Vector3D v) {
 
     double normProduct = u.getNorm() * v.getNorm();
-    if (normProduct == 0) {
-        throw new IllegalArgumentException("Zero norm for rotation defining vector");
+    if (!Vectors.isFiniteNonZero(normProduct)) {
+        throw new IllegalNormException("Illegal norm for rotation defining vector: " + normProduct);
     }
 
     double dot = u.dotProduct(v);
@@ -568,13 +564,13 @@ public class Rotation implements Serializable {
 
    * @param order rotation order to use
    * @return an array of three angles, in the order specified by the set
-   * @exception IllegalStateException if the rotation is
+   * @exception AngleSetSingularityException if the rotation is
    * singular with respect to the angles set specified
    * @deprecated as of 3.6, replaced with {@link #getAngles(RotationOrder, RotationConvention)}
    */
   @Deprecated
   public double[] getAngles(RotationOrder order)
-      throws IllegalStateException {
+      throws AngleSetSingularityException {
       return getAngles(order, RotationConvention.VECTOR_OPERATOR);
   }
 
@@ -611,11 +607,11 @@ public class Rotation implements Serializable {
    * @param order rotation order to use
    * @param convention convention to use for the semantics of the angle
    * @return an array of three angles, in the order specified by the set
-   * @exception IllegalStateException if the rotation is
-   * singular with respect to the angles set specified
+   * @exception AngleSetSingularityException if the rotation is
+   * singular with respect to the angle set specified
    */
   public double[] getAngles(RotationOrder order, RotationConvention convention)
-      throws IllegalStateException {
+      throws AngleSetSingularityException {
 
       if (convention == RotationConvention.VECTOR_OPERATOR) {
           if (order == RotationOrder.XYZ) {
@@ -628,7 +624,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if  ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-(v1.getY()), v1.getZ()),
@@ -646,7 +642,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getZ(), v1.getY()),
@@ -664,7 +660,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getX(), v1.getZ()),
@@ -682,7 +678,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-(v1.getZ()), v1.getX()),
@@ -700,7 +696,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-(v1.getX()), v1.getY()),
@@ -718,7 +714,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getY(), v1.getX()),
@@ -736,7 +732,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getY(), -v1.getZ()),
@@ -754,7 +750,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getZ(), v1.getY()),
@@ -772,7 +768,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getX(), v1.getZ()),
@@ -790,7 +786,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getZ(), -v1.getX()),
@@ -808,7 +804,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getX(), -v1.getY()),
@@ -826,7 +822,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v1.getY(), v1.getX()),
@@ -846,7 +842,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-v2.getY(), v2.getZ()),
@@ -864,7 +860,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getZ(), v2.getY()),
@@ -882,7 +878,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getX(), v2.getZ()),
@@ -900,7 +896,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-v2.getZ(), v2.getX()),
@@ -918,7 +914,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(-v2.getX(), v2.getY()),
@@ -936,7 +932,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if  ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(CARDAN_SINGULARITY_MSG);
+                  throw new CardanSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getY(), v2.getX()),
@@ -954,7 +950,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getY(), -v2.getZ()),
@@ -972,7 +968,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_X);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_X);
               if ((v2.getX() < -0.9999999999) || (v2.getX() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getZ(), v2.getY()),
@@ -990,7 +986,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getX(), v2.getZ()),
@@ -1008,7 +1004,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Y);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Y);
               if ((v2.getY() < -0.9999999999) || (v2.getY() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getZ(), -v2.getX()),
@@ -1026,7 +1022,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getX(), -v2.getY()),
@@ -1044,7 +1040,7 @@ public class Rotation implements Serializable {
               Vector3D v1 = applyTo(Vector3D.PLUS_Z);
               Vector3D v2 = applyInverseTo(Vector3D.PLUS_Z);
               if ((v2.getZ() < -0.9999999999) || (v2.getZ() > 0.9999999999)) {
-                  throw new IllegalStateException(EULER_SINGULARITY_MSG);
+                  throw new EulerSingularityException();
               }
               return new double[] {
                   Math.atan2(v2.getY(), v2.getX()),
@@ -1411,4 +1407,48 @@ public class Rotation implements Serializable {
       return r1.composeInverseInternal(r2).getAngle();
   }
 
+  /** Exception thrown when an angle set encounters a singularity.
+   */
+  public static class AngleSetSingularityException extends GeometryException {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 20180913L;
+
+    /** Simple constructor with an error message.
+     * @param msg error message
+     */
+    public AngleSetSingularityException(String msg) {
+      super(msg);
+    }
+  }
+
+  /** Exception thrown when a Cardan angles singularity is encountered.
+   */
+  public static class CardanSingularityException extends AngleSetSingularityException {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 20180913L;
+
+    /**
+     * Simple constructor.
+     */
+    public CardanSingularityException() {
+      super("Cardan angles singularity");
+    }
+  }
+
+  /** Exception thrown when an Euler angles singularity is encountered.
+   */
+  public static class EulerSingularityException extends AngleSetSingularityException {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 20180913L;
+
+    /**
+     * Simple constructor.
+     */
+    public EulerSingularityException() {
+      super("Euler angles singularity");
+    }
+  }
 }

@@ -17,7 +17,7 @@
 /**
  *
  * <p>
- * This package contains exception types used by this library.
+ * This package contains specialized exception types used by this library.
  * </p>
  */
 package org.apache.commons.geometry.core.exception;

@@ -19,16 +19,22 @@ package org.apache.commons.geometry.core.exception;
 /** Exception thrown when an illegal vector norm value is encountered
  * in an operation.
  */
-public class IllegalNormException extends GeometryValueException {
+public class IllegalNormException extends GeometryException {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180909L;
 
-    /**
-     * Simple constructor accepting the illegal norm value.
+    /** Simple constructor accepting the illegal norm value.
      * @param norm the illegal norm value
      */
     public IllegalNormException(double norm) {
         super("Illegal norm: " + norm);
+    }
+
+    /** Constructor accepting an error message.
+     * @param msg the error message
+     */
+    public IllegalNormException(String msg) {
+        super(msg);
     }
 }

@@ -14,17 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.exception;
+package org.apache.commons.geometry.core.internal;
 
-public class GeometryStateException extends GeometryException {
+/** Exception thrown when something that should not happen does happen.
+ * This class is not intended to be part of the public API and should
+ * never be seen by the user when algorithms are functioning correctly.
+ */
+public class GeometryInternalError extends IllegalStateException {
+
+    /** Error message used for exceptions of this type. */
+    private static final String ERROR_MSG = "An internal geometry error occurred. This most often indicates an " +
+            "error in the algorithm implementation than in the calling code or data. Please file a bug report " +
+            "with the developers.";
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 20180909L;
+    private static final long serialVersionUID = 20180913L;
 
-    /** Simple constructor with error message.
-     * @param msg exception message string
+    /** Simple constructor with a default error message.
      */
-    public GeometryStateException(String msg) {
-        super(msg);
+    public GeometryInternalError() {
+        super(ERROR_MSG);
     }
 }

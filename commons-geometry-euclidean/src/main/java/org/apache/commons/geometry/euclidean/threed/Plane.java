@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.oned.Point1D;
 import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -141,10 +142,8 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @exception IllegalArgumentException if the normal norm is too close to zero
      */
     private void setNormal(final Vector3D normal) {
-        final double norm = normal.getNorm();
-        if (norm < 1.0e-10) {
-            throw new IllegalArgumentException("Norm is zero");
-        }
+        final double norm = Vectors.ensureFiniteNonZeroNorm(normal.getNorm());
+
         w = Vector3D.linearCombination(1.0 / norm, normal);
     }
 
