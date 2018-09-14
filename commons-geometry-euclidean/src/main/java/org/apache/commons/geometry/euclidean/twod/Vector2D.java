@@ -171,7 +171,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D normalize() throws IllegalNormException {
+    public Vector2D normalize() {
         return scalarMultiply(1.0 / getFiniteNonZeroNorm());
     }
 
@@ -213,13 +213,13 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D project(Vector2D base) throws IllegalNormException {
+    public Vector2D project(Vector2D base) {
         return getComponent(base, false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D reject(Vector2D base) throws IllegalNormException {
+    public Vector2D reject(Vector2D base) {
         return getComponent(base, true);
     }
 
@@ -231,7 +231,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * other.</p>
      */
     @Override
-    public double angle(Vector2D v) throws IllegalNormException {
+    public double angle(Vector2D v) {
         double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
 
         double dot = dotProduct(v);
@@ -333,7 +333,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return the finite, non-zero norm value
      * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
-    private double getFiniteNonZeroNorm() throws IllegalNormException {
+    private double getFiniteNonZeroNorm() {
         return Vectors.checkFiniteNonZeroNorm(getNorm());
     }
 
@@ -348,7 +348,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      *      depending on the value of {@code reject}.
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector2D getComponent(Vector2D base, boolean reject) throws IllegalNormException {
+    private Vector2D getComponent(Vector2D base, boolean reject) {
         final double aDotB = dotProduct(base);
 
         final double baseMag = Vectors.checkFiniteNonZeroNorm(base.getNorm());
@@ -401,7 +401,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector2D parse(String str) throws IllegalArgumentException {
+    public static Vector2D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
     }
 

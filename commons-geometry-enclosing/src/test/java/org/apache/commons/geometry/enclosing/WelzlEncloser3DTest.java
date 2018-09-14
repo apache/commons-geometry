@@ -100,7 +100,7 @@ public class WelzlEncloser3DTest {
     }
 
     @Test
-    public void testLargeSamples() throws IOException {
+    public void testLargeSamples() {
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
                                                                  0x35ddecfc78131e1dl);
         final UnitSphereSampler sr = new UnitSphereSampler(3, random);

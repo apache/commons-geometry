@@ -154,7 +154,7 @@ public class ConvexHull2D implements ConvexHull<Point2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Region<Point2D> createRegion() throws IllegalStateException {
+    public Region<Point2D> createRegion() {
         if (vertices.length < 3) {
             throw new IllegalStateException("Region generation requires at least 3 vertices but found only " + vertices.length);
         }

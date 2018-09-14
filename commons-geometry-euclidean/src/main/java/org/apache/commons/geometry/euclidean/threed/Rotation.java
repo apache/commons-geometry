@@ -164,7 +164,7 @@ public class Rotation implements Serializable {
    * @deprecated as of 3.6, replaced with {@link #Rotation(Vector3D, double, RotationConvention)}
    */
   @Deprecated
-  public Rotation(Vector3D axis, double angle) throws IllegalArgumentException {
+  public Rotation(Vector3D axis, double angle) {
       this(axis, angle, RotationConvention.VECTOR_OPERATOR);
   }
 
@@ -322,7 +322,7 @@ public class Rotation implements Serializable {
    * @param v desired image of u by the rotation
    * @exception IllegalArgumentException if the norm of one of the vectors is zero
    */
-  public Rotation(Vector3D u, Vector3D v) throws IllegalArgumentException {
+  public Rotation(Vector3D u, Vector3D v) {
 
     double normProduct = u.getNorm() * v.getNorm();
     if (normProduct == 0) {

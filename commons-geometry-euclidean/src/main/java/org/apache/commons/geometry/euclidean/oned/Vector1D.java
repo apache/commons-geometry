@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -154,7 +153,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() throws IllegalNormException {
+    public Vector1D normalize() {
         Vectors.checkFiniteNonZeroNorm(getNorm());
 
         return (getX() > 0.0) ? ONE : MINUS_ONE;
@@ -200,7 +199,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the current instance.</p>
      */
     @Override
-    public Vector1D project(final Vector1D base) throws IllegalNormException {
+    public Vector1D project(final Vector1D base) {
         Vectors.checkFiniteNonZeroNorm(base.getNorm());
 
         return this;
@@ -210,7 +209,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
      */
     @Override
-    public Vector1D reject(final Vector1D base) throws IllegalNormException {
+    public Vector1D reject(final Vector1D base) {
         Vectors.checkFiniteNonZeroNorm(base.getNorm());
 
         return Vector1D.ZERO;
@@ -221,7 +220,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * the same sign and {@code pi} if they are opposite.</p>
      */
     @Override
-    public double angle(final Vector1D v) throws IllegalNormException {
+    public double angle(final Vector1D v) {
         Vectors.checkFiniteNonZeroNorm(getNorm());
         Vectors.checkFiniteNonZeroNorm(v.getNorm());
 
@@ -297,7 +296,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector1D parse(String str) throws IllegalArgumentException {
+    public static Vector1D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 

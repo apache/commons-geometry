@@ -314,7 +314,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * a clean non-ambiguous boundary
      */
     @Override
-    protected void computeGeometricalProperties() throws IllegalStateException {
+    protected void computeGeometricalProperties() {
 
         final BSPTree<S2Point> tree = getTree(true);
 
@@ -366,7 +366,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @see Vertex
      * @see Edge
      */
-    public List<Vertex> getBoundaryLoops() throws IllegalStateException {
+    public List<Vertex> getBoundaryLoops() {
 
         if (loops == null) {
             if (getTree(false).getCut() == null) {

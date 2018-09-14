@@ -192,7 +192,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point3D parse(String str) throws IllegalArgumentException {
+    public static Point3D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point3D::new);
     }
 

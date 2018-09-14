@@ -69,7 +69,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param p2 second point belonging to the line (this can be any point, different from p1)
      * @exception IllegalArgumentException if the points are equal
      */
-    public void reset(final Point3D p1, final Point3D p2) throws IllegalArgumentException {
+    public void reset(final Point3D p1, final Point3D p2) {
         final Vector3D delta = p2.subtract(p1);
         final double norm2 = delta.getNormSq();
         if (norm2 == 0.0) {

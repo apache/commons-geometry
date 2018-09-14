@@ -116,7 +116,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param normal normal direction to the plane
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public void reset(final Point3D p, final Vector3D normal) throws IllegalArgumentException {
+    public void reset(final Point3D p, final Vector3D normal) {
         setNormal(normal);
         originOffset = -p.asVector().dotProduct(w);
         setFrame();
@@ -140,7 +140,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param normal normal direction to the plane (will be copied)
      * @exception IllegalArgumentException if the normal norm is too close to zero
      */
-    private void setNormal(final Vector3D normal) throws IllegalArgumentException {
+    private void setNormal(final Vector3D normal) {
         final double norm = normal.getNorm();
         if (norm < 1.0e-10) {
             throw new IllegalArgumentException("Norm is zero");
