@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.internal.GeometryInternalError;
 
 /** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
  * <p>
@@ -98,7 +99,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             ball = moveToFrontBall(extreme, extreme.size(), support);
             if (ball.getRadius() < savedBall.getRadius()) {
                 // this should never happen
-                throw new IllegalStateException("Please file a bug report");
+                throw new GeometryInternalError();
             }
 
             // it was an interesting point, move it to the front

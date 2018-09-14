@@ -19,6 +19,8 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -159,10 +161,17 @@ public class Vector2DTest {
         checkVector(Vector2D.of(0.5, 0.5).withMagnitude(2), Math.sqrt(2), Math.sqrt(2));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testWithMagnitude_zeroNorm() {
+    @Test
+    public void testWithMagnitude_illegalNorm() {
         // act/assert
-        Vector2D.ZERO.withMagnitude(1.0);
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.withMagnitude(2.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.withMagnitude(2.0),
+                IllegalNormException.class);
     }
 
     @Test
@@ -243,9 +252,17 @@ public class Vector2DTest {
         checkVector(Vector2D.of(-1, 2).normalize(), -1.0/Math.sqrt(5), 2.0/Math.sqrt(5));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testNormalize_zeroNorm() {
-        Vector2D.ZERO.normalize();
+    @Test
+    public void testNormalize_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
+                IllegalNormException.class);
     }
 
     @Test
@@ -376,9 +393,29 @@ public class Vector2DTest {
     }
 
 
-    @Test(expected = IllegalStateException.class)
-    public void testAngle_zeroNorm() {
-        Vector2D.of(1, 1).angle(Vector2D.ZERO);
+    @Test
+    public void testAngle_illegalNorm() {
+        // arrange
+        Vector2D v = Vector2D.of(1.0, 1.0);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.angle(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.angle(v),
+                IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.angle(Vector2D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
@@ -418,10 +455,20 @@ public class Vector2DTest {
         checkVector(v2.project(v1), (19.0 / 25.0) * 3.0, (19.0 / 25.0) * 4.0);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testProject_baseHasZeroNorm() {
+    @Test
+    public void testProject_baseHasIllegalNorm() {
+        // arrange
+        Vector2D v = Vector2D.of(1.0, 1.0);
+
         // act/assert
-        Vector2D.of(1.0, 1.0).project(Vector2D.ZERO);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.project(Vector2D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
@@ -445,10 +492,20 @@ public class Vector2DTest {
         checkVector(v2.reject(v1), (-32.0 / 25.0), (6.0 / 25.0) * 4.0);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testReject_baseHasZeroNorm() {
+    @Test
+    public void testReject_baseHasIllegalNorm() {
+        // arrange
+        Vector2D v = Vector2D.of(1.0, 1.0);
+
         // act/assert
-        Vector2D.of(1.0, 1.0).reject(Vector2D.ZERO);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.reject(Vector2D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test

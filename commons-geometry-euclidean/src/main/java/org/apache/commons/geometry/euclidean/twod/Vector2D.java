@@ -16,10 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.internal.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
-import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in two-dimensional Euclidean space.
@@ -131,7 +131,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / getNonZeroNorm();
+        final double invNorm = 1.0 / getFiniteNonZeroNorm();
 
         return new Vector2D(
                     magnitude * getX() * invNorm,
@@ -172,7 +172,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D normalize() {
-        return scalarMultiply(1.0 / getNonZeroNorm());
+        return scalarMultiply(1.0 / getFiniteNonZeroNorm());
     }
 
     /** {@inheritDoc} */
@@ -232,7 +232,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     @Override
     public double angle(Vector2D v) {
-        double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
+        double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -328,17 +328,13 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return false;
     }
 
-    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
-     * @return the non-zero norm value
-     * @throws IllegalStateException if the norm is zero
+    /** Returns the vector norm, throwing an IllegalNormException if the norm is zero,
+     * NaN, or infinite.
+     * @return the finite, non-zero norm value
+     * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
-    private double getNonZeroNorm() {
-        final double n = getNorm();
-        if (n == 0) {
-            throw new ZeroNormException();
-        }
-
-        return n;
+    private double getFiniteNonZeroNorm() {
+        return Vectors.ensureFiniteNonZeroNorm(getNorm());
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -350,17 +346,14 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      *      is returned.
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalStateException if {@code base} has a zero norm
+     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
     private Vector2D getComponent(Vector2D base, boolean reject) {
         final double aDotB = dotProduct(base);
 
-        final double baseMagSq = base.getNormSq();
-        if (baseMagSq == 0.0) {
-            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
-        }
+        final double baseMag = Vectors.ensureFiniteNonZeroNorm(base.getNorm());
 
-        final double scale = aDotB / baseMagSq;
+        final double scale = aDotB / (baseMag * baseMag);
 
         final double projX = scale * base.getX();
         final double projY = scale * base.getY();
