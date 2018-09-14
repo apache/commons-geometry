@@ -63,8 +63,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param tolerance tolerance below which close sub-arcs are merged together
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    public ArcsSet(final double lower, final double upper, final double tolerance)
-        throws IllegalArgumentException {
+    public ArcsSet(final double lower, final double upper, final double tolerance) {
         super(buildTree(lower, upper, tolerance), tolerance);
     }
 
@@ -80,8 +79,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final BSPTree<S1Point> tree, final double tolerance)
-        throws IllegalArgumentException {
+    public ArcsSet(final BSPTree<S1Point> tree, final double tolerance) {
         super(tree, tolerance);
         check2PiConsistency();
     }
@@ -108,8 +106,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final double tolerance)
-        throws IllegalArgumentException {
+    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final double tolerance) {
         super(boundary, tolerance);
         check2PiConsistency();
     }
@@ -122,8 +119,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if lower is greater than upper
      */
     private static BSPTree<S1Point> buildTree(final double lower, final double upper,
-                                               final double tolerance)
-        throws IllegalArgumentException {
+                                               final double tolerance) {
 
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
             // the tree must cover the whole circle
@@ -168,7 +164,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     * @exception IllegalArgumentException if the tree leaf nodes are not
     * consistent across the \( 0, 2 \pi \) crossing
     */
-    private void check2PiConsistency() throws IllegalArgumentException {
+    private void check2PiConsistency() {
 
         // start search at the tree root
         BSPTree<S1Point> root = getTree(false);

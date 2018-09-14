@@ -124,7 +124,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @return a new normalized vector
      * @exception IllegalNormException if the norm is zero, NaN, or infinite
      */
-    V normalize() throws IllegalNormException;
+    V normalize();
 
     /** Multiply the instance by a scalar.
      * @param a scalar
@@ -185,7 +185,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #reject(Vector)
      */
-    V project(V base) throws IllegalNormException;
+    V project(V base);
 
     /** Get the rejection of the instance from the given base vector. The returned
      * vector is orthogonal to {@code base}. This operation can be interpreted as
@@ -200,12 +200,12 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #project(Vector)
      */
-    V reject(V base) throws IllegalNormException;
+    V reject(V base);
 
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
      * @return angular separation between this instance and v in radians
      * @exception IllegalNormException if either vector has a zero, NaN, or infinite norm
      */
-    double angle(V v) throws IllegalNormException;
+    double angle(V v);
 }
