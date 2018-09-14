@@ -103,6 +103,32 @@ public class Point3DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Point3D p1 = Point3D.of(1, -5, 2);
+        Point3D p2 = Point3D.of(-4, 0, 2);
+        Point3D p3 = Point3D.of(10, -4, 0);
+
+        // act/assert
+        checkPoint(p1.lerp(p1, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p1, 1), 1, -5, 2);
+
+        checkPoint(p1.lerp(p2, -0.25), 2.25, -6.25, 2);
+        checkPoint(p1.lerp(p2, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p2, 0.25), -0.25, -3.75, 2);
+        checkPoint(p1.lerp(p2, 0.5), -1.5, -2.5, 2);
+        checkPoint(p1.lerp(p2, 0.75), -2.75, -1.25, 2);
+        checkPoint(p1.lerp(p2, 1), -4, 0, 2);
+        checkPoint(p1.lerp(p2, 1.25), -5.25, 1.25, 2);
+
+        checkPoint(p1.lerp(p3, 0), 1, -5, 2);
+        checkPoint(p1.lerp(p3, 0.25), 3.25, -4.75, 1.5);
+        checkPoint(p1.lerp(p3, 0.5), 5.5, -4.5, 1);
+        checkPoint(p1.lerp(p3, 0.75), 7.75, -4.25, 0.5);
+        checkPoint(p1.lerp(p3, 1), 10, -4, 0);
+    }
+
+    @Test
     public void testAdd() {
         // act/assert
         Point3D p1 = Point3D.of(1, 2, 3);
@@ -215,31 +241,20 @@ public class Point3DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkPoint(Point3D.of(Vector3D.of(1, 2, 3)), 1, 2, 3);
-        checkPoint(Point3D.of(Vector3D.of(-1, -2, -3)), -1, -2, -3);
-        checkPoint(Point3D.of(Vector3D.of(Math.PI, Double.NaN, Double.POSITIVE_INFINITY)),
-                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkPoint(Point3D.of(Vector3D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E)),
-                   Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkPoint(Point3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
-        checkPoint(Point3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
-        checkPoint(Point3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+        checkPoint(Point3D.ofArray(new double[] { 1, 2, 3 }), 1, 2, 3);
+        checkPoint(Point3D.ofArray(new double[] { -1, -2, -3 }), -1, -2, -3);
+        checkPoint(Point3D.ofArray(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
                 Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkPoint(Point3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+        checkPoint(Point3D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Point3D.of(new double[] { 0.0, 0.0 });
+        Point3D.ofArray(new double[] { 0.0, 0.0 });
     }
 
     @Test

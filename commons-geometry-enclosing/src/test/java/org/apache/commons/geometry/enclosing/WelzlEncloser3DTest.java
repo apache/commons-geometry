@@ -100,7 +100,7 @@ public class WelzlEncloser3DTest {
     }
 
     @Test
-    public void testLargeSamples() throws IOException {
+    public void testLargeSamples() {
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
                                                                  0x35ddecfc78131e1dl);
         final UnitSphereSampler sr = new UnitSphereSampler(3, random);
@@ -109,13 +109,13 @@ public class WelzlEncloser3DTest {
             // define the reference sphere we want to compute
             double d = 25 * random.nextDouble();
             double refRadius = 10 * random.nextDouble();
-            Point3D refCenter = Point3D.vectorCombination(d, Point3D.of(sr.nextVector()));
+            Point3D refCenter = Point3D.vectorCombination(d, Point3D.ofArray(sr.nextVector()));
             // set up a large sample inside the reference sphere
             int nbPoints = random.nextInt(1000);
             List<Point3D> points = new ArrayList<>();
             for (int i = 0; i < nbPoints; ++i) {
                 double r = refRadius * random.nextDouble();
-                points.add(Point3D.vectorCombination(1.0, refCenter, r, Point3D.of(sr.nextVector())));
+                points.add(Point3D.vectorCombination(1.0, refCenter, r, Point3D.ofArray(sr.nextVector())));
             }
 
             // test we find a sphere at most as large as the one used for random drawings

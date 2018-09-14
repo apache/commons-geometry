@@ -19,7 +19,6 @@ package org.apache.commons.geometry.spherical.twod;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -54,16 +53,6 @@ public final class S2Point implements Point<S2Point>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
-
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction2N<S2Point> FACTORY = new DoubleFunction2N<S2Point>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public S2Point apply(double n1, double n2) {
-            return S2Point.of(n1, n2);
-        }
-    };
 
     /** Azimuthal angle in the x-y plane. */
     private final double azimuth;
@@ -221,7 +210,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance with the coordinates determined by the given 3D vector
      * @exception IllegalStateException if vector norm is zero
      */
-    public static S2Point of(final Vector3D vector) {
+    public static S2Point ofVector(final Vector3D vector) {
         SphericalCoordinates coords = vector.toSpherical();
 
         return new S2Point(coords.getAzimuth(), coords.getPolar(), vector.normalize());
@@ -233,7 +222,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static S2Point parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    public static S2Point parse(String str) {
+        return SimpleTupleFormat.getDefault().parse(str, S2Point::of);
     }
 }

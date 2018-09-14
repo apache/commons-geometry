@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -31,6 +30,9 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
 
     /** Unit (coordinates: 1). */
     public static final Point1D ONE  = new Point1D(1.0);
+
+    /** Negative unit (coordinates: 1). */
+    public static final Point1D MINUS_ONE  = new Point1D(-1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -48,16 +50,6 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction1N<Point1D> FACTORY = new DoubleFunction1N<Point1D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Point1D apply(double n) {
-            return new Point1D(n);
-        }
-    };
-
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
@@ -68,7 +60,7 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     /** {@inheritDoc} */
     @Override
     public Vector1D asVector() {
-        return Vector1D.of(this);
+        return Vector1D.of(getX());
     }
 
     /** {@inheritDoc} */
@@ -87,6 +79,12 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
     @Override
     public Vector1D vectorTo(Point1D p) {
         return p.subtract(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point1D lerp(Point1D p, double t) {
+        return vectorCombination(1.0 - t, this, t, p);
     }
 
     /** {@inheritDoc} */
@@ -153,22 +151,14 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
         return new Point1D(x);
     }
 
-    /** Returns a point instance with the given coordinate value.
-     * @param value point coordinate
-     * @return point instance
-     */
-    public static Point1D of(Cartesian1D value) {
-        return new Point1D(value.getX());
-    }
-
     /** Parses the given string and returns a new point instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point1D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    public static Point1D parse(String str) {
+        return SimpleTupleFormat.getDefault().parse(str, Point1D::new);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

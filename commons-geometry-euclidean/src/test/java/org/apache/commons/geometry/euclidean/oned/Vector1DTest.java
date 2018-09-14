@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,6 +32,7 @@ public class Vector1DTest {
         // act/assert
         checkVector(Vector1D.ZERO, 0.0);
         checkVector(Vector1D.ONE, 1.0);
+        checkVector(Vector1D.MINUS_ONE, -1.0);
         checkVector(Vector1D.NaN, Double.NaN);
         checkVector(Vector1D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -87,6 +89,40 @@ public class Vector1DTest {
         Assert.assertEquals(0.0, Vector1D.ZERO.getNormInf(), TEST_TOLERANCE);
         Assert.assertEquals(3.0, Vector1D.of(3).getNormInf(), TEST_TOLERANCE);
         Assert.assertEquals(3.0, Vector1D.of(-3).getNormInf(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testMagnitude() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector1D.ZERO.getMagnitude(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(3).getMagnitude(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(-3).getMagnitude(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testMagnitudeSq() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector1D.of(0).getMagnitudeSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(3).getMagnitudeSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(-3).getMagnitudeSq(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testWithMagnitude() {
+        // act/assert
+        checkVector(Vector1D.ONE.withMagnitude(0.0), 0.0);
+
+        checkVector(Vector1D.of(0.5).withMagnitude(2.0), 2.0);
+        checkVector(Vector1D.of(5).withMagnitude(3.0), 3.0);
+
+        checkVector(Vector1D.of(-0.5).withMagnitude(2.0), -2.0);
+        checkVector(Vector1D.of(-5).withMagnitude(3.0), -3.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWithMagnitude_zeroNorm() {
+        // act/assert
+        Vector1D.ZERO.withMagnitude(1.0);
     }
 
     @Test
@@ -257,6 +293,128 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testProject() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+        Vector1D v3 = Vector1D.of(4);
+
+        // act/assert
+        checkVector(Vector1D.ZERO.project(v1), 0);
+        checkVector(Vector1D.ZERO.project(v2), 0);
+        checkVector(Vector1D.ZERO.project(v3), 0);
+
+        checkVector(v1.project(v1), 2);
+        checkVector(v1.project(v2), 2);
+        checkVector(v1.project(v3), 2);
+
+        checkVector(v2.project(v1), -3);
+        checkVector(v2.project(v2), -3);
+        checkVector(v2.project(v3), -3);
+
+        checkVector(v3.project(v1), 4);
+        checkVector(v3.project(v2), 4);
+        checkVector(v3.project(v3), 4);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector1D.of(2.0).project(Vector1D.ZERO);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+
+        // act/assert
+        checkVector(Vector1D.ZERO.reject(v1), 0);
+        checkVector(Vector1D.ZERO.reject(v2), 0);
+
+        checkVector(v1.reject(v1), 0);
+        checkVector(v1.reject(v2), 0);
+
+        checkVector(v2.reject(v1), 0);
+        checkVector(v2.reject(v2), 0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector1D.of(2.0).reject(Vector1D.ZERO);
+    }
+
+    @Test
+    public void testAngle() {
+        // arrange
+        Vector1D v1 = Vector1D.of(2);
+        Vector1D v2 = Vector1D.of(-3);
+        Vector1D v3 = Vector1D.of(4);
+        Vector1D v4 = Vector1D.of(-5);
+
+        // act/assert
+        Assert.assertEquals(0.0, v1.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v1.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v1.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v1.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(Geometry.PI, v2.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v2.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v2.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v2.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(0.0, v3.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v3.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v3.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v3.angle(v4), TEST_TOLERANCE);
+
+        Assert.assertEquals(Geometry.PI, v4.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v4.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(Geometry.PI, v4.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, v4.angle(v4), TEST_TOLERANCE);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAngle_firstVectorZero() {
+        // act/assert
+        Vector1D.ZERO.angle(Vector1D.of(1.0));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAngle_secondVectorZero() {
+        // act/assert
+        Vector1D.of(1.0).angle(Vector1D.ZERO);
+    }
+
+    @Test
+    public void testLerp() {
+        // arrange
+        Vector1D v1 = Vector1D.of(1);
+        Vector1D v2 = Vector1D.of(-4);
+        Vector1D v3 = Vector1D.of(10);
+
+        // act/assert
+        checkVector(v1.lerp(v1, 0), 1);
+        checkVector(v1.lerp(v1, 1), 1);
+
+        checkVector(v1.lerp(v2, -0.25), 2.25);
+        checkVector(v1.lerp(v2, 0), 1);
+        checkVector(v1.lerp(v2, 0.25), -0.25);
+        checkVector(v1.lerp(v2, 0.5), -1.5);
+        checkVector(v1.lerp(v2, 0.75), -2.75);
+        checkVector(v1.lerp(v2, 1), -4);
+        checkVector(v1.lerp(v2, 1.25), -5.25);
+
+        checkVector(v1.lerp(v3, 0), 1);
+        checkVector(v1.lerp(v3, 0.25), 3.25);
+        checkVector(v1.lerp(v3, 0.5), 5.5);
+        checkVector(v1.lerp(v3, 0.75), 7.75);
+        checkVector(v1.lerp(v3, 1), 10);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Vector1D u = Vector1D.of(1);
@@ -337,18 +495,6 @@ public class Vector1DTest {
         checkVector(Vector1D.of(Double.NaN), Double.NaN);
         checkVector(Vector1D.of(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.of(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY);
-    }
-
-    @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector1D.of(Vector1D.of(0)), 0.0);
-        checkVector(Vector1D.of(Vector1D.of(-1)), -1.0);
-        checkVector(Vector1D.of(Vector1D.of(1)), 1.0);
-        checkVector(Vector1D.of(Vector1D.of(Math.PI)), Math.PI);
-        checkVector(Vector1D.of(Vector1D.of(Double.NaN)), Double.NaN);
-        checkVector(Vector1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
-        checkVector(Vector1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
     }
 
     @Test

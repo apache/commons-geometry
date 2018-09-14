@@ -32,6 +32,7 @@ public class Point1DTest {
         // act/assert
         checkPoint(Point1D.ZERO, 0.0);
         checkPoint(Point1D.ONE, 1.0);
+        checkPoint(Point1D.MINUS_ONE, -1.0);
         checkPoint(Point1D.NaN, Double.NaN);
         checkPoint(Point1D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         checkPoint(Point1D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -114,6 +115,32 @@ public class Point1DTest {
 
         checkVector(p2.vectorTo(p3), 14.0);
         checkVector(p3.vectorTo(p2), -14.0);
+    }
+
+    @Test
+    public void testLerp() {
+        // arrange
+        Point1D p1 = Point1D.of(1);
+        Point1D p2 = Point1D.of(-4);
+        Point1D p3 = Point1D.of(10);
+
+        // act/assert
+        checkPoint(p1.lerp(p1, 0), 1);
+        checkPoint(p1.lerp(p1, 1), 1);
+
+        checkPoint(p1.lerp(p2, -0.25), 2.25);
+        checkPoint(p1.lerp(p2, 0), 1);
+        checkPoint(p1.lerp(p2, 0.25), -0.25);
+        checkPoint(p1.lerp(p2, 0.5), -1.5);
+        checkPoint(p1.lerp(p2, 0.75), -2.75);
+        checkPoint(p1.lerp(p2, 1), -4);
+        checkPoint(p1.lerp(p2, 1.25), -5.25);
+
+        checkPoint(p1.lerp(p3, 0), 1);
+        checkPoint(p1.lerp(p3, 0.25), 3.25);
+        checkPoint(p1.lerp(p3, 0.5), 5.5);
+        checkPoint(p1.lerp(p3, 0.75), 7.75);
+        checkPoint(p1.lerp(p3, 1), 10);
     }
 
     @Test
@@ -213,18 +240,6 @@ public class Point1DTest {
         checkPoint(Point1D.of(Double.NaN), Double.NaN);
         checkPoint(Point1D.of(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY);
         checkPoint(Point1D.of(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY);
-    }
-
-    @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkPoint(Point1D.of(Vector1D.of(0)), 0.0);
-        checkPoint(Point1D.of(Vector1D.of(-1)), -1.0);
-        checkPoint(Point1D.of(Vector1D.of(1)), 1.0);
-        checkPoint(Point1D.of(Vector1D.of(Math.PI)), Math.PI);
-        checkPoint(Point1D.of(Vector1D.of(Double.NaN)), Double.NaN);
-        checkPoint(Point1D.of(Vector1D.of(Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY);
-        checkPoint(Point1D.of(Vector1D.of(Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY);
     }
 
     @Test

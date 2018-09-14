@@ -108,17 +108,4 @@ public abstract class Cartesian3D implements Spatial, Serializable {
     public String toString() {
         return SimpleTupleFormat.getDefault().format(getX(), getY(), getZ());
     }
-
-    /** Returns the Euclidean distance from this set of coordinates to the given coordinates.
-     * @param other coordinates to compute the distance to.
-     * @return Euclidean distance value
-     */
-    protected double euclideanDistance(Cartesian3D other) {
-        // there are no cancellation problems here, so we use the straightforward formula
-        final double dx = x - other.x;
-        final double dy = y - other.y;
-        final double dz = z - other.z;
-
-        return Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
-    }
 }

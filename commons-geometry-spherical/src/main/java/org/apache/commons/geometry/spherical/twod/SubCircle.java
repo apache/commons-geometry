@@ -19,7 +19,6 @@ package org.apache.commons.geometry.spherical.twod;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
@@ -50,7 +49,7 @@ public class SubCircle extends AbstractSubHyperplane<S2Point, S1Point> {
 
         final Circle thisCircle   = (Circle) getHyperplane();
         final Circle otherCircle  = (Circle) hyperplane;
-        final double angle = Vector3D.angle(thisCircle.getPole(), otherCircle.getPole());
+        final double angle = thisCircle.getPole().angle(otherCircle.getPole());
 
         if (angle < thisCircle.getTolerance() || angle > Math.PI - thisCircle.getTolerance()) {
             // the two circles are aligned or opposite

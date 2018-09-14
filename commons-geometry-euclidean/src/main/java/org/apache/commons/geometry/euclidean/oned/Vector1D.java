@@ -16,9 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in one-dimensional Euclidean space.
@@ -31,6 +33,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** Unit vector (coordinates: 1). */
     public static final Vector1D ONE  = new Vector1D(1.0);
+
+    /** Negation of unit vector (coordinates: -1). */
+    public static final Vector1D MINUS_ONE = new Vector1D(-1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -48,16 +53,6 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
-    /** Factory for delegating instance creation. */
-    private static DoubleFunction1N<Vector1D> FACTORY = new DoubleFunction1N<Vector1D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector1D apply(double n) {
-            return new Vector1D(n);
-        }
-    };
-
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
@@ -68,7 +63,13 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Point1D asPoint() {
-        return Point1D.of(this);
+        return Point1D.of(getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D lerp(Vector1D p, double t) {
+        return linearCombination(1.0 - t, this, t, p);
     }
 
     /** {@inheritDoc} */
@@ -80,25 +81,50 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double getNorm1() {
-        return getNorm();
+        return Vectors.norm1(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        return Math.abs(getX());
+        return Vectors.norm(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        return getX() * getX();
+        return Vectors.normSq(getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormInf() {
+        return Vectors.normInf(getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitude() {
         return getNorm();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMagnitudeSq() {
+        return getNormSq();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D withMagnitude(double magnitude) {
+        final double x = getX();
+        if (x > 0.0) {
+            return new Vector1D(magnitude);
+        }
+        else if (x < 0.0) {
+            return new Vector1D(-magnitude);
+        }
+        throw new ZeroNormException();
     }
 
     /** {@inheritDoc} */
@@ -133,12 +159,15 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() throws IllegalStateException {
-        double s = getNorm();
-        if (s == 0) {
-            throw new IllegalStateException("Norm is zero");
+    public Vector1D normalize() {
+        final double x = getX();
+        if (x > 0.0) {
+            return ONE;
         }
-        return scalarMultiply(1.0 / s);
+        else if (x < 0.0) {
+            return MINUS_ONE;
+        }
+        throw new ZeroNormException();
     }
 
     /** {@inheritDoc} */
@@ -150,32 +179,69 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public double distance1(Vector1D v) {
-        return distance(v);
+        return Vectors.norm1(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector1D v) {
-        return Math.abs(v.getX() - getX());
+        return Vectors.norm(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceInf(Vector1D v) {
-        return distance(v);
+        return Vectors.normInf(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector1D v) {
-        final double dx = v.getX() - getX();
-        return dx * dx;
+        return Vectors.normSq(getX() - v.getX());
     }
 
     /** {@inheritDoc} */
     @Override
     public double dotProduct(Vector1D v) {
         return getX() * v.getX();
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method simply returns the current instance.</p>
+     */
+    @Override
+    public Vector1D project(final Vector1D base) {
+        if (base.getX() == 0) {
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
+        }
+        return this;
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
+     */
+    @Override
+    public Vector1D reject(final Vector1D base) {
+        if (base.getX() == 0) {
+            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
+        }
+        return Vector1D.ZERO;
+    }
+
+    /** {@inheritDoc}
+     * <p>For the one-dimensional case, this method returns 0 if the vector x values have
+     * the same sign and {@code pi} if they are opposite.</p>
+     */
+    @Override
+    public double angle(final Vector1D v) {
+        final double sig1 = Math.signum(getX());
+        final double sig2 = Math.signum(v.getX());
+
+        if (sig1 == 0 || sig2 == 0) {
+            throw new ZeroNormException();
+        }
+        // the angle is 0 if the x value signs are the same and pi if not
+        return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
 
     /**
@@ -237,22 +303,14 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return new Vector1D(x);
     }
 
-    /** Returns a vector instance with the given coordinate value.
-     * @param value vector coordinate
-     * @return vector instance
-     */
-    public static Vector1D of(Cartesian1D value) {
-        return new Vector1D(value.getX());
-    }
-
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector1D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    public static Vector1D parse(String str) {
+        return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

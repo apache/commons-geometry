@@ -55,16 +55,6 @@ public final class PolarCoordinates implements Spatial, Serializable {
     /** Serializable version UID */
     private static final long serialVersionUID = 20180630L;
 
-    /** Factory object for delegating instance creation. */
-    private static final DoubleFunction2N<PolarCoordinates> FACTORY = new DoubleFunction2N<PolarCoordinates>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public PolarCoordinates apply(double n1, double n2) {
-            return new PolarCoordinates(n1, n2);
-        }
-    };
-
     /** Radius value */
     private final double radius;
 
@@ -125,7 +115,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
      *      coordinates.
      */
     public Vector2D toVector() {
-        return toCartesian(radius, azimuth, Vector2D.FACTORY);
+        return toCartesian(radius, azimuth, Vector2D::of);
     }
 
     /** Convert this set of polar coordinates to a 2-dimensional
@@ -134,7 +124,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
      *      coordinates.
      */
     public Point2D toPoint() {
-        return toCartesian(radius, azimuth, Point2D.FACTORY);
+        return toCartesian(radius, azimuth, Point2D::of);
     }
 
     /** Get a hashCode for this set of polar coordinates.
@@ -222,7 +212,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * @throws IllegalArgumentException if the string format is invalid.
      */
     public static PolarCoordinates parse(String input) {
-        return SimpleTupleFormat.getDefault().parse(input, FACTORY);
+        return SimpleTupleFormat.getDefault().parse(input, PolarCoordinates::new);
     }
 
     /** Normalize an azimuth value to be within the range {@code [0, 2pi)}.

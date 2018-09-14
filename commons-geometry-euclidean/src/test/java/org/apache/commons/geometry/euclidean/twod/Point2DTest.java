@@ -94,6 +94,32 @@ public class Point2DTest {
     }
 
     @Test
+    public void testLerp() {
+        // arrange
+        Point2D p1 = Point2D.of(1, -5);
+        Point2D p2 = Point2D.of(-4, 0);
+        Point2D p3 = Point2D.of(10, -4);
+
+        // act/assert
+        checkPoint(p1.lerp(p1, 0), 1, -5);
+        checkPoint(p1.lerp(p1, 1), 1, -5);
+
+        checkPoint(p1.lerp(p2, -0.25), 2.25, -6.25);
+        checkPoint(p1.lerp(p2, 0), 1, -5);
+        checkPoint(p1.lerp(p2, 0.25), -0.25, -3.75);
+        checkPoint(p1.lerp(p2, 0.5), -1.5, -2.5);
+        checkPoint(p1.lerp(p2, 0.75), -2.75, -1.25);
+        checkPoint(p1.lerp(p2, 1), -4, 0);
+        checkPoint(p1.lerp(p2, 1.25), -5.25, 1.25);
+
+        checkPoint(p1.lerp(p3, 0), 1, -5);
+        checkPoint(p1.lerp(p3, 0.25), 3.25, -4.75);
+        checkPoint(p1.lerp(p3, 0.5), 5.5, -4.5);
+        checkPoint(p1.lerp(p3, 0.75), 7.75, -4.25);
+        checkPoint(p1.lerp(p3, 1), 10, -4);
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Point2D p1 = Point2D.of(1, 1);
@@ -196,27 +222,18 @@ public class Point2DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkPoint(Point2D.of(Vector2D.of(0, 1)), 0, 1);
-        checkPoint(Point2D.of(Vector2D.of(-1, -2)), -1, -2);
-        checkPoint(Point2D.of(Vector2D.of(Math.PI, Double.NaN)), Math.PI, Double.NaN);
-        checkPoint(Point2D.of(Vector2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkPoint(Point2D.of(new double[] { 0, 1 }), 0, 1);
-        checkPoint(Point2D.of(new double[] { -1, -2 }), -1, -2);
-        checkPoint(Point2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkPoint(Point2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkPoint(Point2D.ofArray(new double[] { 0, 1 }), 0, 1);
+        checkPoint(Point2D.ofArray(new double[] { -1, -2 }), -1, -2);
+        checkPoint(Point2D.ofArray(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
+        checkPoint(Point2D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Point2D.of(new double[] {0.0 });
+        Point2D.ofArray(new double[] {0.0 });
     }
 
     @Test

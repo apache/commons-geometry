@@ -58,7 +58,7 @@ public class SubLine {
      * @param segment single segment forming the sub-line
      * @exception IllegalArgumentException if the segment endpoints are equal
      */
-    public SubLine(final Segment segment) throws IllegalArgumentException {
+    public SubLine(final Segment segment) {
         this(segment.getLine(),
              buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getTolerance()));
     }

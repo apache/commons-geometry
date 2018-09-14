@@ -257,7 +257,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static() {
         // arrange
-        DoubleFunction2N<Point2D> factory = Point2D.FACTORY;
+        DoubleFunction2N<Point2D> factory = Point2D::of;
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
@@ -278,7 +278,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static_NaNAndInfinite() {
         // arrange
-        DoubleFunction2N<Point2D> factory = Point2D.FACTORY;
+        DoubleFunction2N<Point2D> factory = Point2D::of;
 
         // act/assert
         Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0, factory).isNaN());

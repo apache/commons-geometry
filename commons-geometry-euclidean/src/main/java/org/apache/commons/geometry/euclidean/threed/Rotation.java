@@ -94,7 +94,7 @@ public class Rotation implements Serializable {
   public static final Rotation IDENTITY = new Rotation(1.0, 0.0, 0.0, 0.0, false);
 
   /** Serializable version identifier */
-  private static final long serialVersionUID = -2153622329907944313L;
+  private static final long serialVersionUID = 20180903L;
 
   /** Error message for Cardan angle singularities */
   private static final String CARDAN_SINGULARITY_MSG = "Cardan angles singularity";
@@ -163,7 +163,7 @@ public class Rotation implements Serializable {
    * @deprecated as of 3.6, replaced with {@link #Rotation(Vector3D, double, RotationConvention)}
    */
   @Deprecated
-  public Rotation(Vector3D axis, double angle) throws IllegalArgumentException {
+  public Rotation(Vector3D axis, double angle) {
       this(axis, angle, RotationConvention.VECTOR_OPERATOR);
   }
 
@@ -327,7 +327,7 @@ public class Rotation implements Serializable {
    * @param v desired image of u by the rotation
    * @exception IllegalArgumentException if the norm of one of the vectors is zero
    */
-  public Rotation(Vector3D u, Vector3D v) throws IllegalArgumentException {
+  public Rotation(Vector3D u, Vector3D v) {
 
     double normProduct = u.getNorm() * v.getNorm();
     if (normProduct == 0) {

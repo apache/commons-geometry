@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -117,6 +118,51 @@ public class Vector2DTest {
         Assert.assertEquals(2.0, Vector2D.of(-1, -2).getNormInf(), EPS);
 
         Assert.assertEquals(100.0, Vector2D.of(100, -99).getNormInf(), EPS);
+    }
+
+    @Test
+    public void testMagnitude() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitude(), EPS);
+
+        Assert.assertEquals(5.0, Vector2D.of(3, 4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(3, -4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, 4).getMagnitude(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getMagnitude(), EPS);
+
+        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).getMagnitude(), EPS);
+    }
+
+    @Test
+    public void testMagnitudeSq() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitudeSq(), EPS);
+
+        Assert.assertEquals(25.0, Vector2D.of(3, 4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(3, -4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, 4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, -4).getMagnitudeSq(), EPS);
+
+        Assert.assertEquals(5.0, Vector2D.of(-1, -2).getMagnitudeSq(), EPS);
+    }
+
+    @Test
+    public void testWithMagnitude() {
+        // act/assert
+        checkVector(Vector2D.of(3, 4).withMagnitude(1.0), 0.6, 0.8);
+        checkVector(Vector2D.of(4, 3).withMagnitude(1.0), 0.8, 0.6);
+
+        checkVector(Vector2D.of(-3, 4).withMagnitude(0.5), -0.3, 0.4);
+        checkVector(Vector2D.of(3, -4).withMagnitude(2.0), 1.2, -1.6);
+        checkVector(Vector2D.of(-3, -4).withMagnitude(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
+
+        checkVector(Vector2D.of(0.5, 0.5).withMagnitude(2), Math.sqrt(2), Math.sqrt(2));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWithMagnitude_zeroNorm() {
+        // act/assert
+        Vector2D.ZERO.withMagnitude(1.0);
     }
 
     @Test
@@ -315,30 +361,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testDotProduct_static() {
-        // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
-
-        // act/assert
-        Assert.assertEquals(2, Vector2D.dotProduct(v1, v1), EPS);
-        Assert.assertEquals(41, Vector2D.dotProduct(v2, v2), EPS);
-        Assert.assertEquals(1, Vector2D.dotProduct(v3, v3), EPS);
-
-        Assert.assertEquals(9, Vector2D.dotProduct(v1, v2), EPS);
-        Assert.assertEquals(9, Vector2D.dotProduct(v2, v1), EPS);
-
-        Assert.assertEquals(-1, Vector2D.dotProduct(v1, v3), EPS);
-        Assert.assertEquals(-1, Vector2D.dotProduct(v3, v1), EPS);
-
-        Assert.assertEquals(1, Vector2D.dotProduct(Vector2D.PLUS_X, Vector2D.PLUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.dotProduct(Vector2D.PLUS_X, Vector2D.PLUS_Y), EPS);
-        Assert.assertEquals(-1, Vector2D.dotProduct(Vector2D.PLUS_X, Vector2D.MINUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.dotProduct(Vector2D.PLUS_X, Vector2D.MINUS_Y), EPS);
-    }
-
-    @Test
     public void testAngle() {
         // act/assert
         Assert.assertEquals(0, Vector2D.PLUS_X.angle(Vector2D.PLUS_X), EPS);
@@ -353,23 +375,8 @@ public class Vector2DTest {
         Assert.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
 
-    @Test
-    public void testAngle_static() {
-        // act/assert
-        Assert.assertEquals(0, Vector2D.angle(Vector2D.PLUS_X, Vector2D.PLUS_X), EPS);
 
-        Assert.assertEquals(Geometry.PI, Vector2D.angle(Vector2D.PLUS_X, Vector2D.MINUS_X), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, Vector2D.angle(Vector2D.PLUS_X, Vector2D.PLUS_Y), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, Vector2D.angle(Vector2D.PLUS_X, Vector2D.MINUS_Y), EPS);
-
-        Assert.assertEquals(Geometry.PI / 4, Vector2D.angle(Vector2D.of(1, 1), Vector2D.of(1, 0)), EPS);
-        Assert.assertEquals(Geometry.PI / 4, Vector2D.angle(Vector2D.of(1, 0), Vector2D.of(1, 1)), EPS);
-
-        Assert.assertEquals(0.004999958333958323, Vector2D.angle(Vector2D.of(20.0, 0.0), Vector2D.of(20.0, 0.1)), EPS);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void testAngle_zeroNorm() {
         Vector2D.of(1, 1).angle(Vector2D.ZERO);
     }
@@ -388,6 +395,132 @@ public class Vector2DTest {
         Assert.assertEquals(0.0, p3.crossProduct(p1, p2), EPS);
         Assert.assertEquals(1.0, p4.crossProduct(p1, p2), EPS);
         Assert.assertEquals(-1.0, p5.crossProduct(p1, p2), EPS);
+    }
+
+    @Test
+    public void testProject() {
+        // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.ZERO.project(v1), 0.0, 0.0);
+
+        checkVector(v1.project(v1), 3.0, 4.0);
+        checkVector(v1.project(v1.negate()), 3.0, 4.0);
+
+        checkVector(v1.project(Vector2D.PLUS_X), 3.0, 0.0);
+        checkVector(v1.project(Vector2D.MINUS_X), 3.0, 0.0);
+
+        checkVector(v1.project(Vector2D.PLUS_Y), 0.0, 4.0);
+        checkVector(v1.project(Vector2D.MINUS_Y), 0.0, 4.0);
+
+        checkVector(v2.project(v1), (19.0 / 25.0) * 3.0, (19.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector2D.of(1.0, 1.0).project(Vector2D.ZERO);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector2D v1 = Vector2D.of(3.0, 4.0);
+        Vector2D v2 = Vector2D.of(1.0, 4.0);
+
+        // act/assert
+        checkVector(Vector2D.ZERO.reject(v1), 0.0, 0.0);
+
+        checkVector(v1.reject(v1), 0.0, 0.0);
+        checkVector(v1.reject(v1.negate()), 0.0, 0.0);
+
+        checkVector(v1.reject(Vector2D.PLUS_X), 0.0, 4.0);
+        checkVector(v1.reject(Vector2D.MINUS_X), 0.0, 4.0);
+
+        checkVector(v1.reject(Vector2D.PLUS_Y), 3.0, 0.0);
+        checkVector(v1.reject(Vector2D.MINUS_Y), 3.0, 0.0);
+
+        checkVector(v2.reject(v1), (-32.0 / 25.0), (6.0 / 25.0) * 4.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector2D.of(1.0, 1.0).reject(Vector2D.ZERO);
+    }
+
+    @Test
+    public void testProjectAndReject_areComplementary() {
+        // arrange
+        double eps = 1e-12;
+
+        // act/assert
+        checkProjectAndRejectFullCircle(Vector2D.of(1.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(0.0, 1.0), 2.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(1.0, 1.0), 3.0, eps);
+
+        checkProjectAndRejectFullCircle(Vector2D.of(-2.0, 0.0), 4.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(0.0, -2.0), 5.0, eps);
+        checkProjectAndRejectFullCircle(Vector2D.of(-2.0, -2.0), 6.0, eps);
+    }
+
+    private void checkProjectAndRejectFullCircle(Vector2D vec, double baseMag, double eps) {
+        for (double theta = 0.0; theta <= Geometry.TWO_PI; theta += 0.5) {
+            Vector2D base = Vector2D.ofPolar(baseMag, theta);
+
+            Vector2D proj = vec.project(base);
+            Vector2D rej = vec.reject(base);
+
+            // ensure that the projection and rejection sum to the original vector
+            EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
+
+            double angle = base.angle(vec);
+
+            // check the angle between the projection and the base; this will
+            // be undefined when the angle between the original vector and the
+            // base is pi/2 (which means that the projection is the zero vector)
+            if (angle < Geometry.HALF_PI) {
+                Assert.assertEquals(0.0, proj.angle(base), eps);
+            }
+            else if (angle > Geometry.HALF_PI) {
+                Assert.assertEquals(Geometry.PI, proj.angle(base), eps);
+            }
+
+            // check the angle between the rejection and the base; this should
+            // always be pi/2 except for when the angle between the original vector
+            // and the base is 0 or pi, in which case the rejection is the zero vector.
+            if (angle > 0.0 && angle < Geometry.PI) {
+                Assert.assertEquals(Geometry.HALF_PI, rej.angle(base), eps);
+            }
+        }
+    }
+
+    @Test
+    public void testLerp() {
+        // arrange
+        Vector2D v1 = Vector2D.of(1, -5);
+        Vector2D v2 = Vector2D.of(-4, 0);
+        Vector2D v3 = Vector2D.of(10, -4);
+
+        // act/assert
+        checkVector(v1.lerp(v1, 0), 1, -5);
+        checkVector(v1.lerp(v1, 1), 1, -5);
+
+        checkVector(v1.lerp(v2, -0.25), 2.25, -6.25);
+        checkVector(v1.lerp(v2, 0), 1, -5);
+        checkVector(v1.lerp(v2, 0.25), -0.25, -3.75);
+        checkVector(v1.lerp(v2, 0.5), -1.5, -2.5);
+        checkVector(v1.lerp(v2, 0.75), -2.75, -1.25);
+        checkVector(v1.lerp(v2, 1), -4, 0);
+        checkVector(v1.lerp(v2, 1.25), -5.25, 1.25);
+
+        checkVector(v1.lerp(v3, 0), 1, -5);
+        checkVector(v1.lerp(v3, 0.25), 3.25, -4.75);
+        checkVector(v1.lerp(v3, 0.5), 5.5, -4.5);
+        checkVector(v1.lerp(v3, 0.75), 7.75, -4.25);
+        checkVector(v1.lerp(v3, 1), 10, -4);
     }
 
     @Test
@@ -476,27 +609,18 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector2D.of(Point2D.of(0, 1)), 0, 1);
-        checkVector(Vector2D.of(Point2D.of(-1, -2)), -1, -2);
-        checkVector(Vector2D.of(Point2D.of(Math.PI, Double.NaN)), Math.PI, Double.NaN);
-        checkVector(Vector2D.of(Point2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector2D.of(new double[] { 0, 1 }), 0, 1);
-        checkVector(Vector2D.of(new double[] { -1, -2 }), -1, -2);
-        checkVector(Vector2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkVector(Vector2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkVector(Vector2D.ofArray(new double[] { 0, 1 }), 0, 1);
+        checkVector(Vector2D.ofArray(new double[] { -1, -2 }), -1, -2);
+        checkVector(Vector2D.ofArray(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
+        checkVector(Vector2D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector2D.of(new double[] {0.0 });
+        Vector2D.ofArray(new double[] {0.0 });
     }
 
     @Test

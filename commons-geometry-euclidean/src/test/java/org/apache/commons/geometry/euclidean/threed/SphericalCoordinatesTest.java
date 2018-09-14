@@ -180,7 +180,7 @@ public class SphericalCoordinatesTest {
     public void testToCartesian_static() {
         // arrange
         double sqrt3 = Math.sqrt(3);
-        DoubleFunction3N<Point3D> factory = Point3D.FACTORY;
+        DoubleFunction3N<Point3D> factory = Point3D::of;
 
         // act/assert
         checkPoint(SphericalCoordinates.toCartesian(0, 0, 0, factory), 0, 0, 0);

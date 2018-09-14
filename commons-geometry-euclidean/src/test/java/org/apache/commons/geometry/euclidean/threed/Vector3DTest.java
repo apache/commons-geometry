@@ -20,6 +20,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -87,7 +88,7 @@ public class Vector3DTest {
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm(), 0);
+        Assert.assertEquals(0.0, Vector3D.ZERO.getNormSq(), 0);
         Assert.assertEquals(29, Vector3D.of(2, 3, 4).getNormSq(), EPS);
         Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getNormSq(), EPS);
     }
@@ -98,6 +99,55 @@ public class Vector3DTest {
         Assert.assertEquals(0.0, Vector3D.ZERO.getNormInf(), 0);
         Assert.assertEquals(4, Vector3D.of(2, 3, 4).getNormInf(), EPS);
         Assert.assertEquals(4, Vector3D.of(-2, -3, -4).getNormInf(), EPS);
+    }
+
+    @Test
+    public void testMagnitude() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getMagnitude(), 0);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).getMagnitude(), EPS);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).getMagnitude(), EPS);
+    }
+
+    @Test
+    public void testMagnitudeSq() {
+        // act/assert
+        Assert.assertEquals(0.0, Vector3D.ZERO.getMagnitudeSq(), 0);
+        Assert.assertEquals(29, Vector3D.of(2, 3, 4).getMagnitudeSq(), EPS);
+        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getMagnitudeSq(), EPS);
+    }
+
+    @Test
+    public void testWithMagnitude() {
+        // arrange
+        double x = 2;
+        double y = 3;
+        double z = 4;
+
+        double len = Math.sqrt((x * x) + (y * y) + (z * z));
+
+        double normX = x / len;
+        double normY = y / len;
+        double normZ = z / len;
+
+        // act/assert
+        checkVector(Vector3D.of(x, y, z).withMagnitude(1.0), normX, normY, normZ);
+        checkVector(Vector3D.of(x, y, -z).withMagnitude(1.0), normX, normY, -normZ);
+        checkVector(Vector3D.of(x, -y, z).withMagnitude(1.0), normX, -normY, normZ);
+        checkVector(Vector3D.of(x, -y, -z).withMagnitude(1.0), normX, -normY, -normZ);
+        checkVector(Vector3D.of(-x, y, z).withMagnitude(1.0), -normX, normY, normZ);
+        checkVector(Vector3D.of(-x, y, -z).withMagnitude(1.0), -normX, normY, -normZ);
+        checkVector(Vector3D.of(-x, -y, z).withMagnitude(1.0), -normX, -normY, normZ);
+        checkVector(Vector3D.of(-x, -y, -z).withMagnitude(1.0), -normX, -normY, -normZ);
+
+        checkVector(Vector3D.of(x, y, z).withMagnitude(0.5), 0.5 * normX, 0.5 * normY, 0.5 * normZ);
+        checkVector(Vector3D.of(x, y, z).withMagnitude(3), 3 * normX, 3 * normY, 3 * normZ);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWithMagnitude_zeroNorm() {
+        // act/assert
+        Vector3D.ZERO.withMagnitude(1.0);
     }
 
     @Test
@@ -266,28 +316,6 @@ public class Vector3DTest {
 
         // act/assert
         Assert.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
-  }
-
-    @Test
-    public void testAngle_static() {
-        // arrange
-        double tolerance = 1e-10;
-
-        Vector3D v1 = Vector3D.of(1, 2, 3);
-        Vector3D v2 = Vector3D.of(4, 5, 6);
-
-        // act/assert
-        Assert.assertEquals(0.22572612855273393616, Vector3D.angle(v1, v2), tolerance);
-        Assert.assertEquals(7.98595620686106654517199e-8, Vector3D.angle(v1, Vector3D.of(2, 4, 6.000001)), tolerance);
-        Assert.assertEquals(3.14159257373023116985197793156, Vector3D.angle(v1, Vector3D.of(-2, -4, -6.000001)), tolerance);
-
-        Assert.assertEquals(0.0, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_X), tolerance);
-        Assert.assertEquals(Geometry.PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_X), tolerance);
-
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_Y), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_Y), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.PLUS_Z), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.angle(Vector3D.PLUS_X, Vector3D.MINUS_Z), tolerance);
     }
 
     @Test
@@ -369,21 +397,6 @@ public class Vector3DTest {
         Vector3D big1   = Vector3D.linearCombination(scale, v1);
         Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
         checkVector(big1.crossProduct(small2), -1, 2, 1);
-    }
-
-    @Test
-    public void testCrossProduct_static() {
-        // act/assert
-        checkVector(Vector3D.crossProduct(Vector3D.PLUS_X, Vector3D.PLUS_Y), 0, 0, 1);
-        checkVector(Vector3D.crossProduct(Vector3D.PLUS_X, Vector3D.MINUS_Y), 0, 0, -1);
-
-        checkVector(Vector3D.crossProduct(Vector3D.MINUS_X, Vector3D.MINUS_Y), 0, 0, 1);
-        checkVector(Vector3D.crossProduct(Vector3D.MINUS_X, Vector3D.PLUS_Y), 0, 0, -1);
-
-        checkVector(Vector3D.crossProduct(Vector3D.of(2, 1, -4), Vector3D.of(3, 1, -1)), 3, -10, -1);
-
-        double invSqrt6 = 1 / Math.sqrt(6);
-        checkVector(Vector3D.crossProduct(Vector3D.of(1, 1, 1), Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
     }
 
     @Test
@@ -550,20 +563,151 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testDotProduct_static() {
+    public void testProject() {
         // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 5, -6);
-        Vector3D v3 = Vector3D.of(7, 8, 9);
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
-        Assert.assertEquals(14, Vector3D.dotProduct(v1, v1), EPS);
+        checkVector(Vector3D.ZERO.project(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
 
-        Assert.assertEquals(-32, Vector3D.dotProduct(v1, v2), EPS);
-        Assert.assertEquals(-32, Vector3D.dotProduct(v2, v1), EPS);
+        checkVector(v1.project(Vector3D.PLUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.MINUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.PLUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.MINUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.PLUS_Z), 0.0, 0.0, 4.0);
+        checkVector(v1.project(Vector3D.MINUS_Z), 0.0, 0.0, 4.0);
 
-        Assert.assertEquals(18, Vector3D.dotProduct(v1, v3), EPS);
-        Assert.assertEquals(18, Vector3D.dotProduct(v3, v1), EPS);
+        checkVector(v2.project(Vector3D.PLUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.MINUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.PLUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.MINUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.PLUS_Z), 0.0, 0.0, -7.0);
+        checkVector(v2.project(Vector3D.MINUS_Z), 0.0, 0.0, -7.0);
+
+        checkVector(v1.project(Vector3D.of(1.0, 1.0, 1.0)), 3.0, 3.0, 3.0);
+        checkVector(v1.project(Vector3D.of(-1.0, -1.0, -1.0)), 3.0, 3.0, 3.0);
+
+        checkVector(v2.project(Vector3D.of(1.0, 1.0, 1.0)), -6.0, -6.0, -6.0);
+        checkVector(v2.project(Vector3D.of(-1.0, -1.0, -1.0)), -6.0, -6.0, -6.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testProject_baseHasZeroNorm() {
+        // act/assert
+        Vector3D.of(1.0, 1.0, 1.0).project(Vector3D.ZERO);
+    }
+
+    @Test
+    public void testReject() {
+        // arrange
+        Vector3D v1 = Vector3D.of(2.0, 3.0, 4.0);
+        Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
+
+        // act/assert
+        checkVector(Vector3D.ZERO.reject(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+
+        checkVector(v1.reject(Vector3D.PLUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.MINUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.PLUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.MINUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.PLUS_Z), 2.0, 3.0, 0.0);
+        checkVector(v1.reject(Vector3D.MINUS_Z), 2.0, 3.0, 0.0);
+
+        checkVector(v2.reject(Vector3D.PLUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.MINUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.PLUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.MINUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.PLUS_Z), -5.0, -6.0, 0.0);
+        checkVector(v2.reject(Vector3D.MINUS_Z), -5.0, -6.0, 0.0);
+
+        checkVector(v1.reject(Vector3D.of(1.0, 1.0, 1.0)), -1.0, 0.0, 1.0);
+        checkVector(v1.reject(Vector3D.of(-1.0, -1.0, -1.0)), -1.0, 0.0, 1.0);
+
+        checkVector(v2.reject(Vector3D.of(1.0, 1.0, 1.0)), 1.0, 0.0, -1.0);
+        checkVector(v2.reject(Vector3D.of(-1.0, -1.0, -1.0)), 1.0, 0.0, -1.0);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testReject_baseHasZeroNorm() {
+        // act/assert
+        Vector3D.of(1.0, 1.0, 1.0).reject(Vector3D.ZERO);
+    }
+
+    @Test
+    public void testProjectAndReject_areComplementary() {
+        // arrange
+        double eps = 1e-12;
+
+        // act/assert
+        checkProjectAndRejectFullSphere(Vector3D.of(1.0, 0.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 1.0, 0.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 0.0, 1.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(1.0, 1.0, 1.0), 3.0, eps);
+
+        checkProjectAndRejectFullSphere(Vector3D.of(-2.0, 0.0, 0.0), 1.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, -2.0, 0.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(0.0, 0.0, -2.0), 2.0, eps);
+        checkProjectAndRejectFullSphere(Vector3D.of(-2.0, -2.0, -2.0), 3.0, eps);
+    }
+
+    private void checkProjectAndRejectFullSphere(Vector3D vec, double baseMag, double eps) {
+        for (double polar = 0.0; polar <= Geometry.PI; polar += 0.5) {
+            for (double azimuth = 0.0; azimuth <= Geometry.TWO_PI; azimuth += 0.5) {
+                Vector3D base = Vector3D.ofSpherical(baseMag, azimuth, polar);
+
+                Vector3D proj = vec.project(base);
+                Vector3D rej = vec.reject(base);
+
+                // ensure that the projection and rejection sum to the original vector
+                EuclideanTestUtils.assertCoordinatesEqual(vec, proj.add(rej), eps);
+
+                double angle = base.angle(vec);
+
+                // check the angle between the projection and the base; this will
+                // be undefined when the angle between the original vector and the
+                // base is pi/2 (which means that the projection is the zero vector)
+                if (angle < Geometry.HALF_PI) {
+                    Assert.assertEquals(0.0, proj.angle(base), eps);
+                }
+                else if (angle > Geometry.HALF_PI) {
+                    Assert.assertEquals(Geometry.PI, proj.angle(base), eps);
+                }
+
+                // check the angle between the rejection and the base; this should
+                // always be pi/2 except for when the angle between the original vector
+                // and the base is 0 or pi, in which case the rejection is the zero vector.
+                if (angle > 0.0 && angle < Geometry.PI) {
+                    Assert.assertEquals(Geometry.HALF_PI, rej.angle(base), eps);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testLerp() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1, -5, 2);
+        Vector3D v2 = Vector3D.of(-4, 0, 2);
+        Vector3D v3 = Vector3D.of(10, -4, 0);
+
+        // act/assert
+        checkVector(v1.lerp(v1, 0), 1, -5, 2);
+        checkVector(v1.lerp(v1, 1), 1, -5, 2);
+
+        checkVector(v1.lerp(v2, -0.25), 2.25, -6.25, 2);
+        checkVector(v1.lerp(v2, 0), 1, -5, 2);
+        checkVector(v1.lerp(v2, 0.25), -0.25, -3.75, 2);
+        checkVector(v1.lerp(v2, 0.5), -1.5, -2.5, 2);
+        checkVector(v1.lerp(v2, 0.75), -2.75, -1.25, 2);
+        checkVector(v1.lerp(v2, 1), -4, 0, 2);
+        checkVector(v1.lerp(v2, 1.25), -5.25, 1.25, 2);
+
+        checkVector(v1.lerp(v3, 0), 1, -5, 2);
+        checkVector(v1.lerp(v3, 0.25), 3.25, -4.75, 1.5);
+        checkVector(v1.lerp(v3, 0.5), 5.5, -4.5, 1);
+        checkVector(v1.lerp(v3, 0.75), 7.75, -4.25, 0.5);
+        checkVector(v1.lerp(v3, 1), 10, -4, 0);
     }
 
     @Test
@@ -660,31 +804,20 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testOf_coordinateArg() {
-        // act/assert
-        checkVector(Vector3D.of(Point3D.of(1, 2, 3)), 1, 2, 3);
-        checkVector(Vector3D.of(Point3D.of(-1, -2, -3)), -1, -2, -3);
-        checkVector(Vector3D.of(Point3D.of(Math.PI, Double.NaN, Double.POSITIVE_INFINITY)),
-                Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.of(Point3D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E)),
-                   Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
-    }
-
-    @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
-        checkVector(Vector3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
-        checkVector(Vector3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+        checkVector(Vector3D.ofArray(new double[] { 1, 2, 3 }), 1, 2, 3);
+        checkVector(Vector3D.ofArray(new double[] { -1, -2, -3 }), -1, -2, -3);
+        checkVector(Vector3D.ofArray(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
                 Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+        checkVector(Vector3D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector3D.of(new double[] { 0.0, 0.0 });
+        Vector3D.ofArray(new double[] { 0.0, 0.0 });
     }
 
     @Test

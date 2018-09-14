@@ -17,8 +17,8 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.internal.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -43,16 +43,6 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     public static final Point3D NEGATIVE_INFINITY =
         new Point3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Package private factory for delegating instance creation. */
-    static final DoubleFunction3N<Point3D> FACTORY = new DoubleFunction3N<Point3D>() {
-
-        /** {@inheritDoc} */
-        @Override
-        public Point3D apply(double n1, double n2, double n3) {
-            return new Point3D(n1, n2, n3);
-        }
-    };
-
     /** Serializable version identifier. */
     private static final long serialVersionUID = 20180710L;
 
@@ -75,7 +65,10 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     /** {@inheritDoc} */
     @Override
     public double distance(Point3D p) {
-        return euclideanDistance(p);
+        return Vectors.norm(
+                getX() - p.getX(),
+                getY() - p.getY(),
+                getZ() - p.getZ());
     }
 
     /** {@inheritDoc} */
@@ -92,6 +85,12 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
     @Override
     public Vector3D vectorTo(Point3D p) {
         return p.subtract(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point3D lerp(Point3D p, double t) {
+        return vectorCombination(1.0 - t, this, t, p);
     }
 
     /** {@inheritDoc} */
@@ -164,20 +163,12 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         return new Point3D(x, y, z);
     }
 
-    /** Returns a point with the given coordinates.
-     * @param value coordinate values
-     * @return point instance
-     */
-    public static Point3D of(Cartesian3D value) {
-        return new Point3D(value.getX(), value.getY(), value.getZ());
-    }
-
     /** Creates a point from the coordinates in the given 3-element array.
      * @param p coordinates array
      * @return new point
      * @exception IllegalArgumentException if the array does not have 3 elements
      */
-    public static Point3D of(double[] p) {
+    public static Point3D ofArray(double[] p) {
         if (p.length != 3) {
             throw new IllegalArgumentException("Dimension mismatch: " + p.length + " != 3");
         }
@@ -192,7 +183,7 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return a point instance with the given set of spherical coordinates
      */
     public static Point3D ofSpherical(double radius, double azimuth, double polar) {
-        return SphericalCoordinates.toCartesian(radius, azimuth, polar, FACTORY);
+        return SphericalCoordinates.toCartesian(radius, azimuth, polar, Point3D::new);
     }
 
     /** Parses the given string and returns a new point instance. The expected string
@@ -201,8 +192,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point3D parse(String str) throws IllegalArgumentException {
-        return SimpleTupleFormat.getDefault().parse(str, FACTORY);
+    public static Point3D parse(String str) {
+        return SimpleTupleFormat.getDefault().parse(str, Point3D::new);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate
