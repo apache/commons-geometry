@@ -222,7 +222,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static S2Point parse(String str) throws IllegalArgumentException {
+    public static S2Point parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, S2Point::of);
     }
 }

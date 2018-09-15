@@ -478,7 +478,7 @@ public class SphericalPolygonsSetTest {
                 ++count;
                 for (int i = 0; i < Math.ceil(v.getOutgoing().getLength() / step); ++i) {
                     Vector3D p = v.getOutgoing().getPointAt(i * step);
-                    Assert.assertTrue(Vector3D.angle(p, enclosingCenter) <= enclosing.getRadius());
+                    Assert.assertTrue(p.angle(enclosingCenter) <= enclosing.getRadius());
                 }
             }
         }
@@ -500,7 +500,7 @@ public class SphericalPolygonsSetTest {
                 ++count;
                 for (int i = 0; i < Math.ceil(v.getOutgoing().getLength() / step); ++i) {
                     Vector3D p = v.getOutgoing().getPointAt(i * step);
-                    Assert.assertTrue(Vector3D.angle(p, continentalCenter) <= continentalInscribed.getRadius());
+                    Assert.assertTrue(p.angle(continentalCenter) <= continentalInscribed.getRadius());
                 }
             }
         }
@@ -515,7 +515,7 @@ public class SphericalPolygonsSetTest {
                 ++count;
                 for (int i = 0; i < Math.ceil(v.getOutgoing().getLength() / step); ++i) {
                     Vector3D p = v.getOutgoing().getPointAt(i * step);
-                    Assert.assertTrue(Vector3D.angle(p, corsicaCenter) <= corsicaInscribed.getRadius());
+                    Assert.assertTrue(p.angle(corsicaCenter) <= corsicaInscribed.getRadius());
                 }
             }
         }

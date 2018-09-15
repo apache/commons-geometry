@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a point in two-dimensional Euclidean space.
@@ -175,20 +175,8 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point2D parse(String str) throws IllegalArgumentException {
+    public static Point2D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point2D::new);
-    }
-
-    /** Linearly interpolates between the two given points. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first point
-     * @param b second point
-     * @param t interpolation parameter
-     * @return the interpolated point
-     * @see #lerp(Point2D, double)
-     */
-    public static Point2D lerp(Point2D a, Point2D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

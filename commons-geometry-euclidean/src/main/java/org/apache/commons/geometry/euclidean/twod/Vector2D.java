@@ -16,10 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
-import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in two-dimensional Euclidean space.
@@ -131,7 +131,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / getNonZeroNorm();
+        final double invNorm = 1.0 / getFiniteNonZeroNorm();
 
         return new Vector2D(
                     magnitude * getX() * invNorm,
@@ -171,8 +171,8 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D normalize() throws IllegalStateException {
-        return scalarMultiply(1.0 / getNonZeroNorm());
+    public Vector2D normalize() {
+        return scalarMultiply(1.0 / getFiniteNonZeroNorm());
     }
 
     /** {@inheritDoc} */
@@ -213,13 +213,13 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D project(Vector2D base) throws IllegalStateException {
+    public Vector2D project(Vector2D base) {
         return getComponent(base, false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D reject(Vector2D base) throws IllegalStateException {
+    public Vector2D reject(Vector2D base) {
         return getComponent(base, true);
     }
 
@@ -231,8 +231,8 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * other.</p>
      */
     @Override
-    public double angle(Vector2D v) throws IllegalStateException {
-        double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
+    public double angle(Vector2D v) {
+        double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -328,17 +328,13 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return false;
     }
 
-    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
-     * @return the non-zero norm value
-     * @throws IllegalStateException if the norm is zero
+    /** Returns the vector norm, throwing an IllegalNormException if the norm is zero,
+     * NaN, or infinite.
+     * @return the finite, non-zero norm value
+     * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
-    private double getNonZeroNorm() throws IllegalStateException {
-        final double n = getNorm();
-        if (n == 0) {
-            throw new ZeroNormException();
-        }
-
-        return n;
+    private double getFiniteNonZeroNorm() {
+        return Vectors.ensureFiniteNonZeroNorm(getNorm());
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -350,17 +346,14 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      *      is returned.
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalStateException if {@code base} has a zero norm
+     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector2D getComponent(Vector2D base, boolean reject) throws IllegalStateException {
+    private Vector2D getComponent(Vector2D base, boolean reject) {
         final double aDotB = dotProduct(base);
 
-        final double baseMagSq = base.getNormSq();
-        if (baseMagSq == 0.0) {
-            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
-        }
+        final double baseMag = Vectors.ensureFiniteNonZeroNorm(base.getNorm());
 
-        final double scale = aDotB / baseMagSq;
+        final double scale = aDotB / (baseMag * baseMag);
 
         final double projX = scale * base.getX();
         final double projY = scale * base.getY();
@@ -370,50 +363,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         }
 
         return new Vector2D(projX, projY);
-    }
-
-    /** Computes the dot product between to vectors. This method simply
-     * calls {@code v1.dotProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the dot product
-     * @see #dotProduct(Vector2D)
-     */
-    public static double dotProduct(Vector2D v1, Vector2D v2) {
-        return v1.dotProduct(v2);
-    }
-
-    /** Projects the given vector onto {@code base}. This method simply
-     * calls {@code v.project(base)}.
-     * @param v vector to project
-     * @param base the base vector to project onto
-     * @return the projected vector
-     * @see #project(Vector2D)
-     */
-    public static Vector2D project(Vector2D v, Vector2D base) {
-        return v.project(base);
-    }
-
-    /** Returns the vector rejection of {@code v} from {@code base}. This
-     * method simply calls {@code v.reject(base)}.
-     * @param v vector to reject
-     * @param base the base vector to reject from
-     * @return the vector rejection
-     * @see #reject(Vector2D)
-     */
-    public static Vector2D reject(Vector2D v, Vector2D base) {
-        return v.reject(base);
-    }
-
-    /** Computes the angle in radians between two vectors. This method
-     * simply calls {@code v1.angle(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the angle between the vectors in radians
-     * @see #angle(Vector2D)
-     */
-    public static double angle(Vector2D v1, Vector2D v2) {
-        return v1.angle(v2);
     }
 
     /** Returns a vector with the given coordinate values.
@@ -452,20 +401,8 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector2D parse(String str) throws IllegalArgumentException {
+    public static Vector2D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
-    }
-
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector2D, double)
-     */
-    public static Vector2D lerp(Vector2D a, Vector2D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

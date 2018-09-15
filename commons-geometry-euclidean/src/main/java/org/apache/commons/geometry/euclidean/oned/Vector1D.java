@@ -18,9 +18,8 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
-import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in one-dimensional Euclidean space.
@@ -117,14 +116,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D withMagnitude(double magnitude) {
-        final double x = getX();
-        if (x > 0.0) {
-            return new Vector1D(magnitude);
-        }
-        else if (x < 0.0) {
-            return new Vector1D(-magnitude);
-        }
-        throw new ZeroNormException();
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
+
+        return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
     }
 
     /** {@inheritDoc} */
@@ -159,15 +153,10 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() throws IllegalStateException {
-        final double x = getX();
-        if (x > 0.0) {
-            return ONE;
-        }
-        else if (x < 0.0) {
-            return MINUS_ONE;
-        }
-        throw new ZeroNormException();
+    public Vector1D normalize() {
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
+
+        return (getX() > 0.0) ? ONE : MINUS_ONE;
     }
 
     /** {@inheritDoc} */
@@ -210,10 +199,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the current instance.</p>
      */
     @Override
-    public Vector1D project(final Vector1D base) throws IllegalStateException {
-        if (base.getX() == 0) {
-            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
-        }
+    public Vector1D project(final Vector1D base) {
+        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
+
         return this;
     }
 
@@ -221,10 +209,9 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
      */
     @Override
-    public Vector1D reject(final Vector1D base) throws IllegalStateException {
-        if (base.getX() == 0) {
-            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
-        }
+    public Vector1D reject(final Vector1D base) {
+        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
+
         return Vector1D.ZERO;
     }
 
@@ -233,13 +220,13 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * the same sign and {@code pi} if they are opposite.</p>
      */
     @Override
-    public double angle(final Vector1D v) throws IllegalStateException {
+    public double angle(final Vector1D v) {
+        Vectors.ensureFiniteNonZeroNorm(getNorm());
+        Vectors.ensureFiniteNonZeroNorm(v.getNorm());
+
         final double sig1 = Math.signum(getX());
         final double sig2 = Math.signum(v.getX());
 
-        if (sig1 == 0 || sig2 == 0) {
-            throw new ZeroNormException();
-        }
         // the angle is 0 if the x value signs are the same and pi if not
         return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
@@ -309,20 +296,8 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector1D parse(String str) throws IllegalArgumentException {
+    public static Vector1D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
-    }
-
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector1D, double)
-     */
-    public static Vector1D lerp(Vector1D a, Vector1D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.

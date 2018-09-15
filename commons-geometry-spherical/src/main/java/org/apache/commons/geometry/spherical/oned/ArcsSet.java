@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.core.partitioning.AbstractRegion;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
@@ -41,9 +42,6 @@ import org.apache.commons.numbers.core.Precision;
  * </p>
  */
 public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterable<double[]> {
-
-    /** Message used for internal errors. */
-    private static final String INTERNAL_ERROR_MESSAGE = "Please file a bug report";
 
     /** Build an arcs set representing the whole circle.
      * @param tolerance tolerance below which close sub-arcs are merged together
@@ -65,8 +63,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param tolerance tolerance below which close sub-arcs are merged together
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    public ArcsSet(final double lower, final double upper, final double tolerance)
-        throws IllegalArgumentException {
+    public ArcsSet(final double lower, final double upper, final double tolerance) {
         super(buildTree(lower, upper, tolerance), tolerance);
     }
 
@@ -79,11 +76,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>
      * @param tree inside/outside BSP tree representing the arcs set
      * @param tolerance tolerance below which close sub-arcs are merged together
-     * @exception InconsistentStateAt2PiWrapping if the tree leaf nodes are not
+     * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final BSPTree<S1Point> tree, final double tolerance)
-        throws InconsistentStateAt2PiWrapping {
+    public ArcsSet(final BSPTree<S1Point> tree, final double tolerance) {
         super(tree, tolerance);
         check2PiConsistency();
     }
@@ -107,11 +103,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * space.</p>
      * @param boundary collection of boundary elements
      * @param tolerance tolerance below which close sub-arcs are merged together
-     * @exception InconsistentStateAt2PiWrapping if the tree leaf nodes are not
+     * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final double tolerance)
-        throws InconsistentStateAt2PiWrapping {
+    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final double tolerance) {
         super(boundary, tolerance);
         check2PiConsistency();
     }
@@ -124,8 +119,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if lower is greater than upper
      */
     private static BSPTree<S1Point> buildTree(final double lower, final double upper,
-                                               final double tolerance)
-        throws IllegalArgumentException {
+                                               final double tolerance) {
 
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
             // the tree must cover the whole circle
@@ -167,10 +161,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     }
 
     /** Check consistency.
-    * @exception InconsistentStateAt2PiWrapping if the tree leaf nodes are not
+    * @exception IllegalArgumentException if the tree leaf nodes are not
     * consistent across the \( 0, 2 \pi \) crossing
     */
-    private void check2PiConsistency() throws InconsistentStateAt2PiWrapping {
+    private void check2PiConsistency() {
 
         // start search at the tree root
         BSPTree<S1Point> root = getTree(false);
@@ -185,7 +179,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         final Boolean stateAfter = (Boolean) getLastLeaf(root).getAttribute();
 
         if (stateBefore ^ stateAfter) {
-            throw new InconsistentStateAt2PiWrapping();
+            throw new IllegalArgumentException("Inconsistent state at 2\\u03c0 wrapping");
         }
 
     }
@@ -655,7 +649,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 }
                 if (end == null) {
                     // this should never happen
-                    throw new IllegalStateException(INTERNAL_ERROR_MESSAGE);
+                    throw new GeometryInternalError();
                 }
 
                 // we have identified the last arc
@@ -794,7 +788,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getTolerance());
         if (node.getCut() != null) {
             // this should never happen
-            throw new IllegalStateException(INTERNAL_ERROR_MESSAGE);
+            throw new GeometryInternalError();
         }
 
         node.insertCut(limit);
@@ -926,27 +920,5 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 return Side.HYPER;
             }
         }
-
     }
-
-    /** Specialized exception for inconsistent BSP tree state inconsistency.
-     * <p>
-     * This exception is thrown at {@link ArcsSet} construction time when the
-     * {@link org.apache.commons.geometry.core.partitioning.Region.Location inside/outside}
-     * state is not consistent at the 0, \(2 \pi \) crossing.
-     * </p>
-     */
-    public static class InconsistentStateAt2PiWrapping extends IllegalArgumentException {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20140107L;
-
-        /** Simple constructor.
-         */
-        public InconsistentStateAt2PiWrapping() {
-            super("Inconsistent state at 2\\u03c0 wrapping");
-        }
-
-    }
-
 }

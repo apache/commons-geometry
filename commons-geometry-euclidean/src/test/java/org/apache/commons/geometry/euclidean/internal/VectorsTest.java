@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.util;
+package org.apache.commons.geometry.euclidean.internal;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,6 +25,41 @@ import org.junit.Test;
 public class VectorsTest {
 
     private static final double EPS = Math.ulp(1d);
+
+    @Test
+    public void testIsFiniteNonZero() {
+        // act/assert
+        Assert.assertTrue(Vectors.isFiniteNonZero(1e-20));
+        Assert.assertTrue(Vectors.isFiniteNonZero(1e20));
+        Assert.assertTrue(Vectors.isFiniteNonZero(-1e-20));
+        Assert.assertTrue(Vectors.isFiniteNonZero(-1e20));
+
+        Assert.assertFalse(Vectors.isFiniteNonZero(0.0));
+        Assert.assertFalse(Vectors.isFiniteNonZero(Double.NaN));
+        Assert.assertFalse(Vectors.isFiniteNonZero(Double.POSITIVE_INFINITY));
+        Assert.assertFalse(Vectors.isFiniteNonZero(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
+    public void testEnsureFiniteNonZeroNorm() {
+        // act/assert
+        Assert.assertEquals(1.0, Vectors.ensureFiniteNonZeroNorm(1.0), EPS);
+        Assert.assertEquals(23.12, Vectors.ensureFiniteNonZeroNorm(23.12), EPS);
+        Assert.assertEquals(2e-12, Vectors.ensureFiniteNonZeroNorm(2e-12), EPS);
+
+        Assert.assertEquals(-1.0, Vectors.ensureFiniteNonZeroNorm(-1.0), EPS);
+        Assert.assertEquals(-23.12, Vectors.ensureFiniteNonZeroNorm(-23.12), EPS);
+        Assert.assertEquals(-2e-12, Vectors.ensureFiniteNonZeroNorm(-2e-12), EPS);
+
+        GeometryTestUtils.assertThrows(() -> Vectors.ensureFiniteNonZeroNorm(0.0),
+                IllegalNormException.class, "Illegal norm: 0.0");
+        GeometryTestUtils.assertThrows(() -> Vectors.ensureFiniteNonZeroNorm(Double.NaN),
+                IllegalNormException.class, "Illegal norm: NaN");
+        GeometryTestUtils.assertThrows(() -> Vectors.ensureFiniteNonZeroNorm(Double.POSITIVE_INFINITY),
+                IllegalNormException.class, "Illegal norm: Infinity");
+        GeometryTestUtils.assertThrows(() -> Vectors.ensureFiniteNonZeroNorm(Double.NEGATIVE_INFINITY),
+                IllegalNormException.class, "Illegal norm: -Infinity");
+    }
 
     @Test
     public void testNorm1_oneD() {

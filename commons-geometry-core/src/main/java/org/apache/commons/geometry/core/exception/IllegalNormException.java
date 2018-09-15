@@ -14,10 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- * <p>
- * This package contains geometry utility classes.
- * </p>
+package org.apache.commons.geometry.core.exception;
+
+/** Exception thrown when an illegal vector norm value is encountered
+ * in an operation.
  */
-package org.apache.commons.geometry.core.util;
+public class IllegalNormException extends GeometryException {
+
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 20180909L;
+
+    /** Simple constructor accepting the illegal norm value.
+     * @param norm the illegal norm value
+     */
+    public IllegalNormException(double norm) {
+        super("Illegal norm: " + norm);
+    }
+
+    /** Constructor accepting an error message.
+     * @param msg the error message
+     */
+    public IllegalNormException(String msg) {
+        super(msg);
+    }
+}

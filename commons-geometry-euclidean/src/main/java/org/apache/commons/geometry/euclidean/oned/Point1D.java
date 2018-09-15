@@ -157,20 +157,8 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point1D parse(String str) throws IllegalArgumentException {
+    public static Point1D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point1D::new);
-    }
-
-    /** Linearly interpolates between the two given points. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first point
-     * @param b second point
-     * @param t interpolation parameter
-     * @return the interpolated point
-     * @see #lerp(Point1D, double)
-     */
-    public static Point1D lerp(Point1D a, Point1D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

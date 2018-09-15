@@ -18,8 +18,8 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanPoint;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a point in three-dimensional Euclidean space.
@@ -199,20 +199,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point3D parse(String str) throws IllegalArgumentException {
+    public static Point3D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point3D::new);
-    }
-
-    /** Linearly interpolates between the two given points. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first point
-     * @param b second point
-     * @param t interpolation parameter
-     * @return the interpolated point
-     * @see #lerp(Point3D, double)
-     */
-    public static Point3D lerp(Point3D a, Point3D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a point with coordinates calculated by multiplying each input coordinate

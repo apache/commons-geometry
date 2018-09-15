@@ -120,32 +120,6 @@ public class Point2DTest {
     }
 
     @Test
-    public void testLerp_static() {
-        // arrange
-        Point2D p1 = Point2D.of(1, -5);
-        Point2D p2 = Point2D.of(-4, 0);
-        Point2D p3 = Point2D.of(10, -4);
-
-        // act/assert
-        checkPoint(Point2D.lerp(p1, p1, 0), 1, -5);
-        checkPoint(Point2D.lerp(p1, p1, 1), 1, -5);
-
-        checkPoint(Point2D.lerp(p1, p2, -0.25), 2.25, -6.25);
-        checkPoint(Point2D.lerp(p1, p2, 0), 1, -5);
-        checkPoint(Point2D.lerp(p1, p2, 0.25), -0.25, -3.75);
-        checkPoint(Point2D.lerp(p1, p2, 0.5), -1.5, -2.5);
-        checkPoint(Point2D.lerp(p1, p2, 0.75), -2.75, -1.25);
-        checkPoint(Point2D.lerp(p1, p2, 1), -4, 0);
-        checkPoint(Point2D.lerp(p1, p2, 1.25), -5.25, 1.25);
-
-        checkPoint(Point2D.lerp(p1, p3, 0), 1, -5);
-        checkPoint(Point2D.lerp(p1, p3, 0.25), 3.25, -4.75);
-        checkPoint(Point2D.lerp(p1, p3, 0.5), 5.5, -4.5);
-        checkPoint(Point2D.lerp(p1, p3, 0.75), 7.75, -4.25);
-        checkPoint(Point2D.lerp(p1, p3, 1), 10, -4);
-    }
-
-    @Test
     public void testAdd() {
         // arrange
         Point2D p1 = Point2D.of(1, 1);

@@ -16,11 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.core.util.Vectors;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
-import org.apache.commons.geometry.euclidean.internal.ZeroNormException;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in three-dimensional Euclidean space.
@@ -132,7 +133,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector3D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / getNonZeroNorm();
+        final double invNorm = 1.0 / getFiniteNonZeroNorm();
 
         return new Vector3D(
                     magnitude * getX() * invNorm,
@@ -189,7 +190,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D normalize() throws IllegalStateException {
+    public Vector3D normalize() {
         return normalize(getX(), getY(), getZ());
     }
 
@@ -206,10 +207,11 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      *   Vector3D j = Vector3D.crossProduct(k, i);
      * </code></pre>
      * @return a new normalized vector orthogonal to the instance
-     * @exception IllegalStateException if the norm of the instance is zero
+     * @exception IllegalNormException if the norm of the instance is zero, NaN,
+     *  or infinite
      */
-    public Vector3D orthogonal() throws IllegalStateException {
-        double threshold = 0.6 * getNonZeroNorm();
+    public Vector3D orthogonal() {
+        double threshold = 0.6 * getFiniteNonZeroNorm();
 
         final double x = getX();
         final double y = getY();
@@ -232,10 +234,10 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @param dir the direction to use for generating the orthogonal vector
      * @return unit vector orthogonal to the current vector and pointing in the direction of
      *      {@code dir} that does not lie along the current vector
-     * @throws IllegalStateException if the norm of the current vector is zero or the given
-     *      vector is collinear with this vector.
+     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
+     *      or the given vector is collinear with this vector.
      */
-    public Vector3D orthogonal(Vector3D dir) throws IllegalStateException {
+    public Vector3D orthogonal(Vector3D dir) {
         return dir.getComponent(this, true, Vector3D::normalize);
     }
 
@@ -247,8 +249,8 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * other.</p>
      */
     @Override
-    public double angle(Vector3D v) throws IllegalStateException {
-        double normProduct = getNonZeroNorm() * v.getNonZeroNorm();
+    public double angle(Vector3D v) {
+        double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -336,13 +338,13 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D project(Vector3D base) throws IllegalStateException {
+    public Vector3D project(Vector3D base) {
         return getComponent(base, false, Vector3D::new);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D reject(Vector3D base) throws IllegalStateException {
+    public Vector3D reject(Vector3D base) {
         return getComponent(base, true, Vector3D::new);
     }
 
@@ -396,17 +398,13 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         return false;
     }
 
-    /** Returns the vector norm, throwing an IllegalStateException if the norm is zero.
-     * @return the non-zero norm value
-     * @throws IllegalStateException if the norm is zero
+    /** Returns the vector norm, throwing an IllegalNormException if the norm is zero,
+     * NaN, or infinite.
+     * @return the finite, non-zero norm value
+     * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
-    private double getNonZeroNorm() throws IllegalStateException {
-        final double n = getNorm();
-        if (n == 0) {
-            throw new ZeroNormException();
-        }
-
-        return n;
+    private double getFiniteNonZeroNorm() {
+        return Vectors.ensureFiniteNonZeroNorm(getNorm());
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -419,15 +417,18 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @param factory factory function used to build the final vector
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalStateException if {@code base} has a zero norm
+     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector3D getComponent(Vector3D base, boolean reject, DoubleFunction3N<Vector3D> factory) throws IllegalStateException {
+    private Vector3D getComponent(Vector3D base, boolean reject, DoubleFunction3N<Vector3D> factory) {
         final double aDotB = dotProduct(base);
 
-        final double baseMagSq = base.getNormSq();
-        if (baseMagSq == 0.0) {
-            throw new ZeroNormException(ZeroNormException.INVALID_BASE);
-        }
+        // We need to check the norm value here to ensure that it's legal. However, we don't
+        // want to incur the cost or floating point error of getting the actual norm and then
+        // multiplying it again to get the square norm. So, we'll just check the squared norm
+        // directly. This will produce the same result as checking the actual norm since
+        // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
+        // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
+        final double baseMagSq = Vectors.ensureFiniteNonZeroNorm(base.getNormSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -440,61 +441,6 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         }
 
         return factory.apply(projX, projY, projZ);
-    }
-
-    /** Computes the dot product between to vectors. This method simply
-     * calls {@code v1.dotProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the dot product
-     * @see #dotProduct(Vector3D)
-     */
-    public static double dotProduct(Vector3D v1, Vector3D v2) {
-        return v1.dotProduct(v2);
-    }
-
-    /** Computes the angle in radians between two vectors. This method
-     * simply calls {@code v1.angle(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the angle between the vectors in radians
-     * @see #angle(Vector3D)
-     */
-    public static double angle(Vector3D v1, Vector3D v2) {
-        return v1.angle(v2);
-    }
-
-    /** Projects the given vector onto {@code base}. This method simply
-     * calls {@code v.project(base)}.
-     * @param v vector to project
-     * @param base the base vector to project onto
-     * @return the projected vector
-     * @see #project(Vector3D)
-     */
-    public static Vector3D project(Vector3D v, Vector3D base) {
-        return v.project(base);
-    }
-
-    /** Returns the vector rejection of {@code v} from {@code base}. This
-     * method simply calls {@code v.reject(base)}.
-     * @param v vector to reject
-     * @param base the base vector to reject from
-     * @return the vector rejection
-     * @see #reject(Vector3D)
-     */
-    public static Vector3D reject(Vector3D v, Vector3D base) {
-        return v.reject(base);
-    }
-
-    /** Computes the cross product between two vectors. This method simply
-     * calls {@code v1.crossProduct(v2)}.
-     * @param v1 first vector
-     * @param v2 second vector
-     * @return the computed cross product vector
-     * @see #crossProduct(Vector3D)
-     */
-    public static Vector3D crossProduct(Vector3D v1, Vector3D v2) {
-        return v1.crossProduct(v2);
     }
 
     /** Returns a vector with the given coordinate values.
@@ -535,13 +481,10 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @param y abscissa (second coordinate value)
      * @param z height (third coordinate value)
      * @return normalized vector instance
-     * @throws IllegalStateException if the norm of the given values is zero
+     * @throws IllegalNormException if the norm of the given values is zero
      */
-    public static Vector3D normalize(final double x, final double y, final double z) throws IllegalStateException {
-        final double norm = Vectors.norm(x, y, z);
-        if (norm == 0.0) {
-            throw new ZeroNormException();
-        }
+    public static Vector3D normalize(final double x, final double y, final double z) {
+        final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y, z));
         final double invNorm = 1.0 / norm;
 
         return new UnitVector(x * invNorm, y * invNorm, z * invNorm);
@@ -553,20 +496,8 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector3D parse(String str) throws IllegalArgumentException {
+    public static Vector3D parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector3D::new);
-    }
-
-    /** Linearly interpolates between the two given vectors. This methods simply
-     * calls {@code a.lerp(b, t)}.
-     * @param a first vector
-     * @param b second vector
-     * @param t interpolation parameter
-     * @return the interpolated vector
-     * @see #lerp(Vector3D, double)
-     */
-    public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
-        return a.lerp(b, t);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
