@@ -53,8 +53,17 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testNonZeroConstants_areUnitVectorInstances() {
+    public void testConstants_normalize() {
         // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+
         Assert.assertSame(Vector3D.PLUS_X.normalize(), Vector3D.PLUS_X);
         Assert.assertSame(Vector3D.MINUS_X.normalize(), Vector3D.MINUS_X);
 
@@ -392,7 +401,9 @@ public class Vector3DTest {
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.MINUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.of(1.0, 1.0, 1.0).orthogonal(Vector3D.of(-2.0, -2.0, -2.0)),
+        GeometryTestUtils.assertThrows(() -> Vector3D.of(1.0, 1.0, 1.0).orthogonal(Vector3D.of(2.0, 2.0, 2.0)),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.of(-1.01, -1.01, -1.01).orthogonal(Vector3D.of(20.1, 20.1, 20.1)),
                 IllegalNormException.class);
     }
 

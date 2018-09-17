@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -25,16 +26,16 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in one-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Vector1D> {
+public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Vector1D> {
 
     /** Zero vector (coordinates: 0). */
     public static final Vector1D ZERO = new Vector1D(0.0);
 
     /** Unit vector (coordinates: 1). */
-    public static final Vector1D ONE  = new Vector1D(1.0);
+    public static final Vector1D ONE  = new UnitVector(1.0);
 
     /** Negation of unit vector (coordinates: -1). */
-    public static final Vector1D MINUS_ONE = new Vector1D(-1.0);
+    public static final Vector1D MINUS_ONE = new UnitVector(-1.0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -154,9 +155,7 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector1D normalize() {
-        Vectors.ensureFiniteNonZeroNorm(getNorm());
-
-        return (getX() > 0.0) ? ONE : MINUS_ONE;
+        return normalize(getX());
     }
 
     /** {@inheritDoc} */
@@ -290,6 +289,17 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
         return new Vector1D(x);
     }
 
+    /** Returns a normalized vector derived from the given value.
+     * @param x abscissa (first coordinate value)
+     * @return normalized vector instance
+     * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+     */
+    public static Vector1D normalize(final double x) {
+        Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x));
+
+        return (x > 0.0) ? ONE : MINUS_ONE;
+    }
+
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -379,5 +389,34 @@ public final class Vector1D extends Cartesian1D implements EuclideanVector<Point
             double a3, Cartesian1D c3, double a4, Cartesian1D c4) {
         return new Vector1D(
                 LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()));
+    }
+
+    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
+     * operations.
+     */
+    private static final class UnitVector extends Vector1D {
+
+        /** Serializable version identifier */
+        private static final long serialVersionUID = 20180903L;
+
+        /** Simple constructor. Callers are responsible for ensuring that the given
+         * values represent a normalized vector.
+         * @param x abscissa (first coordinate value)
+         */
+        private UnitVector(final double x) {
+            super(x);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D normalize() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D withMagnitude(final double mag) {
+            return scalarMultiply(mag);
+        }
     }
 }
