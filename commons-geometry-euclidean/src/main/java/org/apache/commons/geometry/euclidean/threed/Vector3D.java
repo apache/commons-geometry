@@ -120,19 +120,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double getMagnitude() {
-        return getNorm();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getMagnitudeSq() {
-        return getNormSq();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector3D withMagnitude(double magnitude) {
+    public Vector3D withNorm(double magnitude) {
         final double invNorm = 1.0 / getFiniteNonZeroNorm();
 
         return new Vector3D(
@@ -613,7 +601,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
         /** {@inheritDoc} */
         @Override
-        public Vector3D withMagnitude(final double mag) {
+        public Vector3D withNorm(final double mag) {
             return scalarMultiply(mag);
         }
     }

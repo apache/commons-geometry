@@ -110,19 +110,7 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double getMagnitude() {
-        return getNorm();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getMagnitudeSq() {
-        return getNormSq();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D withMagnitude(double magnitude) {
+    public Vector2D withNorm(double magnitude) {
         final double invNorm = 1.0 / getFiniteNonZeroNorm();
 
         return new Vector2D(
@@ -519,7 +507,7 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
 
         /** {@inheritDoc} */
         @Override
-        public Vector2D withMagnitude(final double mag) {
+        public Vector2D withNorm(final double mag) {
             return scalarMultiply(mag);
         }
     }

@@ -110,58 +110,42 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testMagnitude() {
+    public void testWithNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector1D.ZERO.getMagnitude(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(3).getMagnitude(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(-3).getMagnitude(), TEST_TOLERANCE);
+        checkVector(Vector1D.ONE.withNorm(0.0), 0.0);
+
+        checkVector(Vector1D.of(0.5).withNorm(2.0), 2.0);
+        checkVector(Vector1D.of(5).withNorm(3.0), 3.0);
+
+        checkVector(Vector1D.of(-0.5).withNorm(2.0), -2.0);
+        checkVector(Vector1D.of(-5).withNorm(3.0), -3.0);
     }
 
     @Test
-    public void testMagnitudeSq() {
+    public void testWithNorm_illegalNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector1D.of(0).getMagnitudeSq(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, Vector1D.of(3).getMagnitudeSq(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, Vector1D.of(-3).getMagnitudeSq(), TEST_TOLERANCE);
-    }
-
-    @Test
-    public void testWithMagnitude() {
-        // act/assert
-        checkVector(Vector1D.ONE.withMagnitude(0.0), 0.0);
-
-        checkVector(Vector1D.of(0.5).withMagnitude(2.0), 2.0);
-        checkVector(Vector1D.of(5).withMagnitude(3.0), 3.0);
-
-        checkVector(Vector1D.of(-0.5).withMagnitude(2.0), -2.0);
-        checkVector(Vector1D.of(-5).withMagnitude(3.0), -3.0);
-    }
-
-    @Test
-    public void testWithMagnitude_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
     }
 
     @Test
-    public void testWithMagnitude_unitVectors() {
+    public void testWithNorm_unitVectors() {
         // arrange
         Vector1D v = Vector1D.of(2.0).normalize();
 
         // act/assert
-        checkVector(Vector1D.ONE.withMagnitude(2.5), 2.5);
-        checkVector(Vector1D.MINUS_ONE.withMagnitude(3.14), -3.14);
+        checkVector(Vector1D.ONE.withNorm(2.5), 2.5);
+        checkVector(Vector1D.MINUS_ONE.withNorm(3.14), -3.14);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), TEST_TOLERANCE);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), TEST_TOLERANCE);
         }
     }
 

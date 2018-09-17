@@ -128,70 +128,44 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testMagnitude() {
+    public void testWithNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitude(), EPS);
+        checkVector(Vector2D.of(3, 4).withNorm(1.0), 0.6, 0.8);
+        checkVector(Vector2D.of(4, 3).withNorm(1.0), 0.8, 0.6);
 
-        Assert.assertEquals(5.0, Vector2D.of(3, 4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(3, -4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, 4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getMagnitude(), EPS);
+        checkVector(Vector2D.of(-3, 4).withNorm(0.5), -0.3, 0.4);
+        checkVector(Vector2D.of(3, -4).withNorm(2.0), 1.2, -1.6);
+        checkVector(Vector2D.of(-3, -4).withNorm(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
 
-        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).getMagnitude(), EPS);
+        checkVector(Vector2D.of(0.5, 0.5).withNorm(2), Math.sqrt(2), Math.sqrt(2));
     }
 
     @Test
-    public void testMagnitudeSq() {
+    public void testWithNorm_illegalNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitudeSq(), EPS);
-
-        Assert.assertEquals(25.0, Vector2D.of(3, 4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(3, -4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, 4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, -4).getMagnitudeSq(), EPS);
-
-        Assert.assertEquals(5.0, Vector2D.of(-1, -2).getMagnitudeSq(), EPS);
-    }
-
-    @Test
-    public void testWithMagnitude() {
-        // act/assert
-        checkVector(Vector2D.of(3, 4).withMagnitude(1.0), 0.6, 0.8);
-        checkVector(Vector2D.of(4, 3).withMagnitude(1.0), 0.8, 0.6);
-
-        checkVector(Vector2D.of(-3, 4).withMagnitude(0.5), -0.3, 0.4);
-        checkVector(Vector2D.of(3, -4).withMagnitude(2.0), 1.2, -1.6);
-        checkVector(Vector2D.of(-3, -4).withMagnitude(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
-
-        checkVector(Vector2D.of(0.5, 0.5).withMagnitude(2), Math.sqrt(2), Math.sqrt(2));
-    }
-
-    @Test
-    public void testWithMagnitude_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
     }
 
     @Test
-    public void testWithMagnitude_unitVectors() {
+    public void testWithNorm_unitVectors() {
         // arrange
         double eps = 1e-14;
         Vector2D v = Vector2D.of(2.0, -3.0).normalize();
 
         // act/assert
-        checkVector(Vector2D.PLUS_X.withMagnitude(2.5), 2.5, 0.0);
-        checkVector(Vector2D.MINUS_Y.withMagnitude(3.14), 0.0, -3.14);
+        checkVector(Vector2D.PLUS_X.withNorm(2.5), 2.5, 0.0);
+        checkVector(Vector2D.MINUS_Y.withNorm(3.14), 0.0, -3.14);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), eps);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), eps);
         }
     }
 

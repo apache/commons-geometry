@@ -126,23 +126,7 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testMagnitude() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getMagnitude(), 0);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).getMagnitude(), EPS);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).getMagnitude(), EPS);
-    }
-
-    @Test
-    public void testMagnitudeSq() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getMagnitudeSq(), 0);
-        Assert.assertEquals(29, Vector3D.of(2, 3, 4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getMagnitudeSq(), EPS);
-    }
-
-    @Test
-    public void testWithMagnitude() {
+    public void testWithNorm() {
         // arrange
         double x = 2;
         double y = 3;
@@ -155,55 +139,55 @@ public class Vector3DTest {
         double normZ = z / len;
 
         // act/assert
-        checkVector(Vector3D.of(x, y, z).withMagnitude(0.0), 0.0, 0.0, 0.0);
+        checkVector(Vector3D.of(x, y, z).withNorm(0.0), 0.0, 0.0, 0.0);
 
-        checkVector(Vector3D.of(x, y, z).withMagnitude(1.0), normX, normY, normZ);
-        checkVector(Vector3D.of(x, y, -z).withMagnitude(1.0), normX, normY, -normZ);
-        checkVector(Vector3D.of(x, -y, z).withMagnitude(1.0), normX, -normY, normZ);
-        checkVector(Vector3D.of(x, -y, -z).withMagnitude(1.0), normX, -normY, -normZ);
-        checkVector(Vector3D.of(-x, y, z).withMagnitude(1.0), -normX, normY, normZ);
-        checkVector(Vector3D.of(-x, y, -z).withMagnitude(1.0), -normX, normY, -normZ);
-        checkVector(Vector3D.of(-x, -y, z).withMagnitude(1.0), -normX, -normY, normZ);
-        checkVector(Vector3D.of(-x, -y, -z).withMagnitude(1.0), -normX, -normY, -normZ);
+        checkVector(Vector3D.of(x, y, z).withNorm(1.0), normX, normY, normZ);
+        checkVector(Vector3D.of(x, y, -z).withNorm(1.0), normX, normY, -normZ);
+        checkVector(Vector3D.of(x, -y, z).withNorm(1.0), normX, -normY, normZ);
+        checkVector(Vector3D.of(x, -y, -z).withNorm(1.0), normX, -normY, -normZ);
+        checkVector(Vector3D.of(-x, y, z).withNorm(1.0), -normX, normY, normZ);
+        checkVector(Vector3D.of(-x, y, -z).withNorm(1.0), -normX, normY, -normZ);
+        checkVector(Vector3D.of(-x, -y, z).withNorm(1.0), -normX, -normY, normZ);
+        checkVector(Vector3D.of(-x, -y, -z).withNorm(1.0), -normX, -normY, -normZ);
 
-        checkVector(Vector3D.of(x, y, z).withMagnitude(0.5), 0.5 * normX, 0.5 * normY, 0.5 * normZ);
-        checkVector(Vector3D.of(x, y, z).withMagnitude(3), 3 * normX, 3 * normY, 3 * normZ);
+        checkVector(Vector3D.of(x, y, z).withNorm(0.5), 0.5 * normX, 0.5 * normY, 0.5 * normZ);
+        checkVector(Vector3D.of(x, y, z).withNorm(3), 3 * normX, 3 * normY, 3 * normZ);
 
-        checkVector(Vector3D.of(x, y, z).withMagnitude(-0.5), -0.5 * normX, -0.5 * normY, -0.5 * normZ);
-        checkVector(Vector3D.of(x, y, z).withMagnitude(-3), -3 * normX, -3 * normY, -3 * normZ);
+        checkVector(Vector3D.of(x, y, z).withNorm(-0.5), -0.5 * normX, -0.5 * normY, -0.5 * normZ);
+        checkVector(Vector3D.of(x, y, z).withNorm(-3), -3 * normX, -3 * normY, -3 * normZ);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withMagnitude(mag).getMagnitude(), EPS);
+            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).getNorm(), EPS);
         }
     }
 
     @Test
-    public void testWithMagnitude_illegalNorm() {
+    public void testWithNorm_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
     }
 
     @Test
-    public void testWithMagnitude_unitVectors() {
+    public void testWithNorm_unitVectors() {
         // arrange
         Vector3D v = Vector3D.of(2.0, -3.0, 4.0).normalize();
 
         // act/assert
-        checkVector(Vector3D.PLUS_X.withMagnitude(2.5), 2.5, 0.0, 0.0);
-        checkVector(Vector3D.MINUS_Y.withMagnitude(3.14), 0.0, -3.14, 0.0);
-        checkVector(Vector3D.PLUS_Z.withMagnitude(-1.1), 0.0, 0.0, -1.1);
+        checkVector(Vector3D.PLUS_X.withNorm(2.5), 2.5, 0.0, 0.0);
+        checkVector(Vector3D.MINUS_Y.withNorm(3.14), 0.0, -3.14, 0.0);
+        checkVector(Vector3D.PLUS_Z.withNorm(-1.1), 0.0, 0.0, -1.1);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), EPS);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), EPS);
         }
     }
 

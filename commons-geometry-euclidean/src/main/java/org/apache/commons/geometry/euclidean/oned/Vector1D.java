@@ -104,19 +104,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double getMagnitude() {
-        return getNorm();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getMagnitudeSq() {
-        return getNormSq();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D withMagnitude(double magnitude) {
+    public Vector1D withNorm(double magnitude) {
         Vectors.ensureFiniteNonZeroNorm(getNorm());
 
         return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
@@ -415,7 +403,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D withMagnitude(final double mag) {
+        public Vector1D withNorm(final double mag) {
             return scalarMultiply(mag);
         }
     }
