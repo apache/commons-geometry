@@ -83,6 +83,12 @@ public final class Point1D extends Cartesian1D implements EuclideanPoint<Point1D
 
     /** {@inheritDoc} */
     @Override
+    public Vector1D directionTo(Point1D p) {
+        return Vector1D.normalize(p.getX() - getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Point1D lerp(Point1D p, double t) {
         return vectorCombination(1.0 - t, this, t, p);
     }

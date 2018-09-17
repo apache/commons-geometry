@@ -425,7 +425,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         // We need to check the norm value here to ensure that it's legal. However, we don't
         // want to incur the cost or floating point error of getting the actual norm and then
         // multiplying it again to get the square norm. So, we'll just check the squared norm
-        // directly. This will produce the same result as checking the actual norm since
+        // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
         final double baseMagSq = Vectors.ensureFiniteNonZeroNorm(base.getNormSq());
@@ -478,10 +478,10 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** Returns a normalized vector derived from the given values.
      * @param x abscissa (first coordinate value)
-     * @param y abscissa (second coordinate value)
+     * @param y ordinate (second coordinate value)
      * @param z height (third coordinate value)
      * @return normalized vector instance
-     * @throws IllegalNormException if the norm of the given values is zero
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
      */
     public static Vector3D normalize(final double x, final double y, final double z) {
         final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y, z));
@@ -598,7 +598,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         /** Simple constructor. Callers are responsible for ensuring that the given
          * values represent a normalized vector.
          * @param x abscissa (first coordinate value)
-         * @param y abscissa (second coordinate value)
+         * @param y ordinate (second coordinate value)
          * @param z height (third coordinate value)
          */
         private UnitVector(final double x, final double y, final double z) {

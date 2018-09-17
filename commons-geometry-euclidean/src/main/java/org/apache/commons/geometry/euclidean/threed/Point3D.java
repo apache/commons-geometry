@@ -87,6 +87,8 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
         return p.subtract(this);
     }
 
+    /** {@inheritDoc} */
+    @Override
     public Vector3D directionTo(Point3D p) {
         return Vector3D.normalize(
                 p.getX() - getX(),

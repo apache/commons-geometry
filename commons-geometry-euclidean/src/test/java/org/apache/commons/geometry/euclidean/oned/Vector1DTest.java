@@ -41,6 +41,22 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testConstants_normalize() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+
+        Assert.assertSame(Vector1D.ONE.normalize(), Vector1D.ONE);
+        Assert.assertSame(Vector1D.MINUS_ONE.normalize(), Vector1D.MINUS_ONE);
+    }
+
+    @Test
     public void testAsPoint() {
         // act/assert
         checkPoint(Vector1D.of(0.0).asPoint(), 0.0);
@@ -135,6 +151,21 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testWithMagnitude_unitVectors() {
+        // arrange
+        Vector1D v = Vector1D.of(2.0).normalize();
+
+        // act/assert
+        checkVector(Vector1D.ONE.withMagnitude(2.5), 2.5);
+        checkVector(Vector1D.MINUS_ONE.withMagnitude(3.14), -3.14);
+
+        for (double mag = -10.0; mag <= 10.0; ++mag)
+        {
+            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), TEST_TOLERANCE);
+        }
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Vector1D v1 = Vector1D.of(1);
@@ -208,14 +239,24 @@ public class Vector1DTest {
     @Test
     public void testNormalize_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.normalize(),
+        GeometryTestUtils.assertThrows(() -> Vector1D.of(0.0).normalize(),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.normalize(),
+        GeometryTestUtils.assertThrows(() -> Vector1D.of(Double.NaN).normalize(),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.normalize(),
+        GeometryTestUtils.assertThrows(() -> Vector1D.of(Double.POSITIVE_INFINITY).normalize(),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.normalize(),
+        GeometryTestUtils.assertThrows(() -> Vector1D.of(Double.NEGATIVE_INFINITY).normalize(),
                 IllegalNormException.class);
+    }
+
+    @Test
+    public void testNormalize_isIdempotent() {
+        // arrange
+        Vector1D v = Vector1D.of(2).normalize();
+
+        // act/assert
+        Assert.assertSame(v, v.normalize());
+        checkVector(v.normalize(), 1.0);
     }
 
     @Test
@@ -538,6 +579,25 @@ public class Vector1DTest {
         checkVector(Vector1D.of(Double.NaN), Double.NaN);
         checkVector(Vector1D.of(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.of(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testNormalize_static() {
+        // act/assert
+        checkVector(Vector1D.normalize(2.0), 1);
+        checkVector(Vector1D.normalize(-4.0), -1);
+    }
+
+    @Test
+    public void testNormalize_static_illegalNorm() {
+        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(0.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NEGATIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.POSITIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test

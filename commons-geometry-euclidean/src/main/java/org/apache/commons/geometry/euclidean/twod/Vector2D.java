@@ -25,22 +25,22 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
+public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO   = new Vector2D(0, 0);
 
     /** Unit vector pointing in the direction of the positive x-axis. */
-    public static final Vector2D PLUS_X = new Vector2D(1, 0);
+    public static final Vector2D PLUS_X = new UnitVector(1, 0);
 
     /** Unit vector pointing in the direction of the negative x-axis. */
-    public static final Vector2D MINUS_X = new Vector2D(-1, 0);
+    public static final Vector2D MINUS_X = new UnitVector(-1, 0);
 
     /** Unit vector pointing in the direction of the positive y-axis. */
-    public static final Vector2D PLUS_Y = new Vector2D(0, 1);
+    public static final Vector2D PLUS_Y = new UnitVector(0, 1);
 
     /** Unit vector pointing in the direction of the negative y-axis. */
-    public static final Vector2D MINUS_Y = new Vector2D(0, -1);
+    public static final Vector2D MINUS_Y = new UnitVector(0, -1);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -64,14 +64,6 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
      */
     private Vector2D(double x, double y) {
         super(x, y);
-    }
-
-    /** Get the vector coordinates as a dimension 2 array.
-     * @return vector coordinates
-     */
-    @Override
-    public double[] toArray() {
-        return new double[] { getX(), getY() };
     }
 
     /** {@inheritDoc} */
@@ -172,7 +164,7 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector2D normalize() {
-        return scalarMultiply(1.0 / getFiniteNonZeroNorm());
+        return normalize(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -395,6 +387,19 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return PolarCoordinates.toCartesian(radius, azimuth, Vector2D::new);
     }
 
+    /** Returns a normalized vector derived from the given values.
+     * @param x abscissa (first coordinate value)
+     * @param y ordinate (second coordinate value)
+     * @return normalized vector instance
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
+     */
+    public static Vector2D normalize(final double x, final double y) {
+        final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y));
+        final double invNorm = 1.0 / norm;
+
+        return new UnitVector(x * invNorm, y * invNorm);
+    }
+
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -487,5 +492,35 @@ public final class Vector2D extends Cartesian2D implements EuclideanVector<Point
         return new Vector2D(
                 LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
                 LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()));
+    }
+
+    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
+     * operations.
+     */
+    private static final class UnitVector extends Vector2D {
+
+        /** Serializable version identifier */
+        private static final long serialVersionUID = 20180903L;
+
+        /** Simple constructor. Callers are responsible for ensuring that the given
+         * values represent a normalized vector.
+         * @param x abscissa (first coordinate value)
+         * @param y abscissa (second coordinate value)
+         */
+        private UnitVector(final double x, final double y) {
+            super(x, y);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D normalize() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D withMagnitude(final double mag) {
+            return scalarMultiply(mag);
+        }
     }
 }
