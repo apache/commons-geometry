@@ -19,6 +19,8 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -115,6 +117,39 @@ public class Point1DTest {
 
         checkVector(p2.vectorTo(p3), 14.0);
         checkVector(p3.vectorTo(p2), -14.0);
+    }
+
+    @Test
+    public void testDirectionTo() {
+        // act/assert
+        Point1D p1 = Point1D.of(1);
+        Point1D p2 = Point1D.of(5);
+        Point1D p3 = Point1D.of(-2);
+
+        // act/assert
+        checkVector(p1.directionTo(p2), 1);
+        checkVector(p2.directionTo(p1), -1);
+
+        checkVector(p1.directionTo(p3), -1);
+        checkVector(p3.directionTo(p1), 1);
+    }
+
+    @Test
+    public void testDirectionTo_illegalNorm() {
+        // arrange
+        Point1D p = Point1D.of(2);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Point1D.ZERO.directionTo(Point1D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Point1D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Point1D.NEGATIVE_INFINITY.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Point1D.POSITIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test

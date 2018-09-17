@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.AffinePoint;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /** Represents a point in a Euclidean space of any dimension.
  *
@@ -40,6 +41,17 @@ public interface EuclideanPoint<P extends EuclideanPoint<P, V>, V extends Euclid
      * @return vector representing the displacement <em>from</em> this point <em>to</em> the given point
      */
     V vectorTo(P p);
+
+    /** Returns the unit vector representing the direction of displacement from this
+     * point to the given point. This is exactly equivalent to {@code p.subtract(thisPoint).normalize()}
+     * but without the intermediate vector instance.
+     * @param p the point the returned vector will be directed toward
+     * @return unit vector representing the direction of displacement <em>from</em> this point
+     *      <em>to</em> the given point
+     * @throws IllegalNormException if the norm of the vector pointing from this point to {@code p}
+     *      is zero, NaN, or infinite
+     */
+    V directionTo(P p);
 
     /** Linearly interpolates between this point and the given point using the equation
      * {@code P = (1 - t)*A + t*B}, where {@code A} is the current point and {@code B}

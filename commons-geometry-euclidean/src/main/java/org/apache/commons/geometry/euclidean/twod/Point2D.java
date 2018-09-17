@@ -80,6 +80,15 @@ public final class Point2D extends Cartesian2D implements EuclideanPoint<Point2D
 
     /** {@inheritDoc} */
     @Override
+    public Vector2D directionTo(Point2D p) {
+        return Vector2D.normalize(
+                    p.getX() - getX(),
+                    p.getY() - getY()
+                );
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Point2D lerp(Point2D p, double t) {
         return vectorCombination(1.0 - t, this, t, p);
     }

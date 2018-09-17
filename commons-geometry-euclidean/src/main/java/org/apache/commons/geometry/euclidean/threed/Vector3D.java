@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -25,28 +27,28 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public final class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
+public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
 
     /** First canonical vector (coordinates: 1, 0, 0). */
-    public static final Vector3D PLUS_X = new Vector3D(1, 0, 0);
+    public static final Vector3D PLUS_X = new UnitVector(1, 0, 0);
 
     /** Opposite of the first canonical vector (coordinates: -1, 0, 0). */
-    public static final Vector3D MINUS_X = new Vector3D(-1, 0, 0);
+    public static final Vector3D MINUS_X = new UnitVector(-1, 0, 0);
 
     /** Second canonical vector (coordinates: 0, 1, 0). */
-    public static final Vector3D PLUS_Y = new Vector3D(0, 1, 0);
+    public static final Vector3D PLUS_Y = new UnitVector(0, 1, 0);
 
     /** Opposite of the second canonical vector (coordinates: 0, -1, 0). */
-    public static final Vector3D MINUS_Y = new Vector3D(0, -1, 0);
+    public static final Vector3D MINUS_Y = new UnitVector(0, -1, 0);
 
     /** Third canonical vector (coordinates: 0, 0, 1). */
-    public static final Vector3D PLUS_Z = new Vector3D(0, 0, 1);
+    public static final Vector3D PLUS_Z = new UnitVector(0, 0, 1);
 
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
-    public static final Vector3D MINUS_Z = new Vector3D(0, 0, -1);
+    public static final Vector3D MINUS_Z = new UnitVector(0, 0, -1);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -61,8 +63,8 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     public static final Vector3D NEGATIVE_INFINITY =
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable UID */
-    private static final long serialVersionUID = 20180710L;
+    /** Serializable version identifier */
+    private static final long serialVersionUID = 20180903L;
 
     /** Simple constructor.
      * Build a vector from its coordinates
@@ -189,7 +191,7 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D normalize() {
-        return scalarMultiply(1.0 / getFiniteNonZeroNorm());
+        return normalize(getX(), getY(), getZ());
     }
 
     /** Get a vector orthogonal to the instance.
@@ -224,6 +226,19 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
         }
         double inverse  = 1 / Math.sqrt(x * x + y * y);
         return new Vector3D(inverse * y, -inverse * x, 0);
+    }
+
+    /** Returns a unit vector orthogonal to the current vector and pointing in the direction
+     * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
+     * except that no intermediate vector object is produced.
+     * @param dir the direction to use for generating the orthogonal vector
+     * @return unit vector orthogonal to the current vector and pointing in the direction of
+     *      {@code dir} that does not lie along the current vector
+     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
+     *      or the given vector is collinear with this vector.
+     */
+    public Vector3D orthogonal(Vector3D dir) {
+        return dir.getComponent(this, true, Vector3D::normalize);
     }
 
     /** {@inheritDoc}
@@ -324,13 +339,13 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
     /** {@inheritDoc} */
     @Override
     public Vector3D project(Vector3D base) {
-        return getComponent(base, false);
+        return getComponent(base, false, Vector3D::new);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D reject(Vector3D base) {
-        return getComponent(base, true);
+        return getComponent(base, true, Vector3D::new);
     }
 
     /**
@@ -399,26 +414,33 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      * @param reject If true, the rejection of this instance from {@code base} is
      *      returned. If false, the projection of this instance onto {@code base}
      *      is returned.
+     * @param factory factory function used to build the final vector
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector3D getComponent(Vector3D base, boolean reject) {
+    private Vector3D getComponent(Vector3D base, boolean reject, DoubleFunction3N<Vector3D> factory) {
         final double aDotB = dotProduct(base);
 
-        final double baseMag = Vectors.ensureFiniteNonZeroNorm(base.getNorm());
+        // We need to check the norm value here to ensure that it's legal. However, we don't
+        // want to incur the cost or floating point error of getting the actual norm and then
+        // multiplying it again to get the square norm. So, we'll just check the squared norm
+        // directly. This will produce the same error result as checking the actual norm since
+        // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
+        // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
+        final double baseMagSq = Vectors.ensureFiniteNonZeroNorm(base.getNormSq());
 
-        final double scale = aDotB / (baseMag * baseMag);
+        final double scale = aDotB / baseMagSq;
 
         final double projX = scale * base.getX();
         final double projY = scale * base.getY();
         final double projZ = scale * base.getZ();
 
         if (reject) {
-            return new Vector3D(getX() - projX, getY() - projY, getZ() - projZ);
+            return factory.apply(getX() - projX, getY() - projY, getZ() - projZ);
         }
 
-        return new Vector3D(projX, projY, projZ);
+        return factory.apply(projX, projY, projZ);
     }
 
     /** Returns a vector with the given coordinate values.
@@ -452,6 +474,20 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
      */
     public static Vector3D ofSpherical(double radius, double azimuth, double polar) {
         return SphericalCoordinates.toCartesian(radius, azimuth, polar, Vector3D::new);
+    }
+
+    /** Returns a normalized vector derived from the given values.
+     * @param x abscissa (first coordinate value)
+     * @param y ordinate (second coordinate value)
+     * @param z height (third coordinate value)
+     * @return normalized vector instance
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
+     */
+    public static Vector3D normalize(final double x, final double y, final double z) {
+        final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y, z));
+        final double invNorm = 1.0 / norm;
+
+        return new UnitVector(x * invNorm, y * invNorm, z * invNorm);
     }
 
     /** Parses the given string and returns a new vector instance. The expected string
@@ -549,5 +585,36 @@ public final class Vector3D extends Cartesian3D implements EuclideanVector<Point
                 LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
                 LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()),
                 LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ(), a4, c4.getZ()));
+    }
+
+    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
+     * operations.
+     */
+    private static final class UnitVector extends Vector3D {
+
+        /** Serializable version identifier */
+        private static final long serialVersionUID = 20180903L;
+
+        /** Simple constructor. Callers are responsible for ensuring that the given
+         * values represent a normalized vector.
+         * @param x abscissa (first coordinate value)
+         * @param y ordinate (second coordinate value)
+         * @param z height (third coordinate value)
+         */
+        private UnitVector(final double x, final double y, final double z) {
+            super(x, y, z);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3D normalize() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector3D withMagnitude(final double mag) {
+            return scalarMultiply(mag);
+        }
     }
 }

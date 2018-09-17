@@ -44,17 +44,22 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testToArray() {
-        // arrange
-        Vector2D v = Vector2D.of(1, 2);
+    public void testConstants_normalize() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.normalize(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
+                IllegalNormException.class);
 
-        // act
-        double[] arr = v.toArray();
+        Assert.assertSame(Vector2D.PLUS_X.normalize(), Vector2D.PLUS_X);
+        Assert.assertSame(Vector2D.MINUS_X.normalize(), Vector2D.MINUS_X);
 
-        // assert
-        Assert.assertEquals(2, arr.length);
-        Assert.assertEquals(1, arr[0], EPS);
-        Assert.assertEquals(2, arr[1], EPS);
+        Assert.assertSame(Vector2D.PLUS_Y.normalize(), Vector2D.PLUS_Y);
+        Assert.assertSame(Vector2D.MINUS_Y.normalize(), Vector2D.MINUS_Y);
     }
 
     @Test
@@ -175,6 +180,22 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testWithMagnitude_unitVectors() {
+        // arrange
+        double eps = 1e-14;
+        Vector2D v = Vector2D.of(2.0, -3.0).normalize();
+
+        // act/assert
+        checkVector(Vector2D.PLUS_X.withMagnitude(2.5), 2.5, 0.0);
+        checkVector(Vector2D.MINUS_Y.withMagnitude(3.14), 0.0, -3.14);
+
+        for (int i = -10; i <= 10; i++) {
+            final double mag = i;
+            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), eps);
+        }
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Vector2D v1 = Vector2D.of(-1, 2);
@@ -249,7 +270,7 @@ public class Vector2DTest {
         checkVector(Vector2D.of(-100, 0).normalize(), -1, 0);
         checkVector(Vector2D.of(0, 100).normalize(), 0, 1);
         checkVector(Vector2D.of(0, -100).normalize(), 0, -1);
-        checkVector(Vector2D.of(-1, 2).normalize(), -1.0/Math.sqrt(5), 2.0/Math.sqrt(5));
+        checkVector(Vector2D.of(-1, 2).normalize(), -1.0 / Math.sqrt(5), 2.0 / Math.sqrt(5));
     }
 
     @Test
@@ -263,6 +284,17 @@ public class Vector2DTest {
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
+    }
+
+    @Test
+    public void testNormalize_isIdempotent() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2);
+        Vector2D v = Vector2D.of(2, 2).normalize();
+
+        // act/assert
+        Assert.assertSame(v, v.normalize());
+        checkVector(v.normalize(), invSqrt2, invSqrt2);
     }
 
     @Test
@@ -700,6 +732,28 @@ public class Vector2DTest {
         checkVector(Vector2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
         checkVector(Vector2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
         checkVector(Vector2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
+    }
+
+    @Test
+    public void testNormalize_static() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.normalize(2.0, -2.0), invSqrt2, -invSqrt2);
+        checkVector(Vector2D.normalize(-4.0, 4.0), -invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testNormalize_static_illegalNorm() {
+        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(0.0, 0.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(Double.NaN, 1.0),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(1.0, Double.NEGATIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(1.0, Double.POSITIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
