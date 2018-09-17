@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.Vector;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /** Represents a vector in a Euclidean space of any dimension.
  *
@@ -44,4 +45,12 @@ public interface EuclideanVector<P extends EuclideanPoint<P, V>, V extends Eucli
      * @return interpolated or extrapolated vector
      */
     V lerp(V v, double t);
+
+    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
+     * is not real (ie, NaN or infinite) or zero. Obtaining a vector norm value and ensuring
+     * that it meets this criteria is such a common operation that it is given its own method.
+     * @return the vector norm value, guaranteed to be real and non-zero
+     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
+     */
+    double getRealNonZeroNorm();
 }

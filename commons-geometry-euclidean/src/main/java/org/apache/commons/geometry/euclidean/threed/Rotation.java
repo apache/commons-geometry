@@ -21,7 +21,6 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /**
@@ -173,10 +172,7 @@ public class Rotation implements Serializable {
   public Rotation(final Vector3D axis, final double angle, final RotationConvention convention)
       throws IllegalNormException {
 
-    double norm = axis.getNorm();
-    if (!Vectors.isFiniteNonZero(norm)) {
-      throw new IllegalNormException("Illegal norm for rotation axis: " + norm);
-    }
+    double norm = axis.getRealNonZeroNorm();
 
     double halfAngle = convention == RotationConvention.VECTOR_OPERATOR ? -0.5 * angle : +0.5 * angle;
     double coeff = Math.sin(halfAngle) / norm;
@@ -320,10 +316,7 @@ public class Rotation implements Serializable {
    */
   public Rotation(Vector3D u, Vector3D v) {
 
-    double normProduct = u.getNorm() * v.getNorm();
-    if (!Vectors.isFiniteNonZero(normProduct)) {
-        throw new IllegalNormException("Illegal norm for rotation defining vector: " + normProduct);
-    }
+    double normProduct = u.getRealNonZeroNorm() * v.getRealNonZeroNorm();
 
     double dot = u.dotProduct(v);
 

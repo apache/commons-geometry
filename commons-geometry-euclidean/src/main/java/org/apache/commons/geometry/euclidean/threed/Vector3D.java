@@ -121,13 +121,19 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector3D withNorm(double magnitude) {
-        final double invNorm = 1.0 / getFiniteNonZeroNorm();
+        final double invNorm = 1.0 / getRealNonZeroNorm();
 
         return new Vector3D(
                     magnitude * getX() * invNorm,
                     magnitude * getY() * invNorm,
                     magnitude * getZ() * invNorm
                 );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getRealNonZeroNorm() {
+        return Vectors.ensureRealNonZeroNorm(getNorm());
     }
 
     /** {@inheritDoc} */
@@ -199,7 +205,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      *  or infinite
      */
     public Vector3D orthogonal() {
-        double threshold = 0.6 * getFiniteNonZeroNorm();
+        double threshold = 0.6 * getRealNonZeroNorm();
 
         final double x = getX();
         final double y = getY();
@@ -238,7 +244,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      */
     @Override
     public double angle(Vector3D v) {
-        double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
+        double normProduct = getRealNonZeroNorm() * v.getRealNonZeroNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -386,15 +392,6 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         return false;
     }
 
-    /** Returns the vector norm, throwing an IllegalNormException if the norm is zero,
-     * NaN, or infinite.
-     * @return the finite, non-zero norm value
-     * @throws IllegalNormException if the norm is zero, NaN, or infinite
-     */
-    private double getFiniteNonZeroNorm() {
-        return Vectors.ensureFiniteNonZeroNorm(getNorm());
-    }
-
     /** Returns a component of the current instance relative to the given base
      * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
      * the projection is returned.
@@ -416,7 +413,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
-        final double baseMagSq = Vectors.ensureFiniteNonZeroNorm(base.getNormSq());
+        final double baseMagSq = Vectors.ensureRealNonZeroNorm(base.getNormSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -472,7 +469,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
      */
     public static Vector3D normalize(final double x, final double y, final double z) {
-        final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y, z));
+        final double norm = Vectors.ensureRealNonZeroNorm(Vectors.norm(x, y, z));
         final double invNorm = 1.0 / norm;
 
         return new UnitVector(x * invNorm, y * invNorm, z * invNorm);

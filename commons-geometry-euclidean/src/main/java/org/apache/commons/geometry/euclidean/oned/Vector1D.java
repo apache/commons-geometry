@@ -105,9 +105,15 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector1D withNorm(double magnitude) {
-        Vectors.ensureFiniteNonZeroNorm(getNorm());
+        getRealNonZeroNorm(); // validate our norm value
 
         return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getRealNonZeroNorm() {
+        return Vectors.ensureRealNonZeroNorm(getNorm());
     }
 
     /** {@inheritDoc} */
@@ -187,7 +193,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      */
     @Override
     public Vector1D project(final Vector1D base) {
-        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
+        base.getRealNonZeroNorm(); // validate the base norm
 
         return this;
     }
@@ -197,7 +203,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      */
     @Override
     public Vector1D reject(final Vector1D base) {
-        Vectors.ensureFiniteNonZeroNorm(base.getNorm());
+        base.getRealNonZeroNorm(); // validate the base norm
 
         return Vector1D.ZERO;
     }
@@ -208,8 +214,9 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      */
     @Override
     public double angle(final Vector1D v) {
-        Vectors.ensureFiniteNonZeroNorm(getNorm());
-        Vectors.ensureFiniteNonZeroNorm(v.getNorm());
+        // validate the norm values
+        getRealNonZeroNorm();
+        v.getRealNonZeroNorm();
 
         final double sig1 = Math.signum(getX());
         final double sig2 = Math.signum(v.getX());
@@ -283,7 +290,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
      */
     public static Vector1D normalize(final double x) {
-        Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x));
+        Vectors.ensureRealNonZeroNorm(Vectors.norm(x));
 
         return (x > 0.0) ? ONE : MINUS_ONE;
     }

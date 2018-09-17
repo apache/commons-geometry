@@ -192,6 +192,27 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testGetRealNonZeroNorm() {
+        // act/assert
+        Assert.assertEquals(1.0, Vector3D.PLUS_X.getNorm(), EPS);
+        Assert.assertEquals(Math.sqrt(50), Vector3D.of(3, 4, 5).getNorm(), EPS);
+        Assert.assertEquals(Math.sqrt(50), Vector3D.of(-3, -4, -5).getNorm(), EPS);
+    }
+
+    @Test
+    public void testGetRealNonZeroNorm_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.getRealNonZeroNorm(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.getRealNonZeroNorm(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.getRealNonZeroNorm(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.getRealNonZeroNorm(),
+                IllegalNormException.class);
+    }
+
+    @Test
     public void testAdd() {
         // arrange
         Vector3D v1 = Vector3D.of(1, 2, 3);
