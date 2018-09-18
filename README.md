@@ -43,9 +43,14 @@
 Apache Commons Geometry
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry-parent.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-parent)
-[![Coverage Status](https://coveralls.io/repos/apache/commons-geometry-parent/badge.svg?branch=master)](https://coveralls.io/r/apache/commons-geometry-parent)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-parent/)
+[![Build Status](https://travis-ci.org/apache/commons-geometry.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-parent)
+[![Coverage Status](https://coveralls.io/repos/github/apache/commons-geometry/badge.svg?branch=master)](https://coveralls.io/github/apache/commons-geometry?branch=master)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-bsp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-bsp/)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/)
+#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/)
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 The Apache Commons Geometry project provides geometric types and utilities.
@@ -66,7 +71,7 @@ Alternatively you can pull it from the central Maven repositories:
 ```xml
 <dependency>
   <groupId>org.apache.commons</groupId>
-  <artifactId>commons-geometry-parent</artifactId>
+  <artifactId>commons-geometry</artifactId>
   <version>1.0</version>
 </dependency>
 ```

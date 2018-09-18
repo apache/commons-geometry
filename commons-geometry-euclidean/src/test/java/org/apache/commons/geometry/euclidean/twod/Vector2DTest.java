@@ -163,8 +163,8 @@ public class Vector2DTest {
         checkVector(Vector2D.PLUS_X.withNorm(2.5), 2.5, 0.0);
         checkVector(Vector2D.MINUS_Y.withNorm(3.14), 0.0, -3.14);
 
-        for (double mag = -10.0; mag <= 10.0; ++mag)
-        {
+        for (int i = -10; i <= 10; i++) {
+            final double mag = i;
             Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), eps);
         }
     }
