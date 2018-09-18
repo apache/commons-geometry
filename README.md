@@ -45,12 +45,13 @@ Apache Commons Geometry
 
 [![Build Status](https://travis-ci.org/apache/commons-geometry.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-parent)
 [![Coverage Status](https://coveralls.io/repos/github/apache/commons-geometry/badge.svg?branch=master)](https://coveralls.io/github/apache/commons-geometry?branch=master)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-bsp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-bsp/)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/)
-#[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/)
+<!---
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-enclosing/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-euclidean/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-hull/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-spherical/)
+--->
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 The Apache Commons Geometry project provides geometric types and utilities.
