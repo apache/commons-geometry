@@ -198,7 +198,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * <pre><code>
      *   Vector3D k = u.normalize();
      *   Vector3D i = k.orthogonal();
-     *   Vector3D j = Vector3D.crossProduct(k, i);
+     *   Vector3D j = k.crossProduct(i);
      * </code></pre>
      * @return a new normalized vector orthogonal to the instance
      * @exception IllegalNormException if the norm of the instance is zero, NaN,

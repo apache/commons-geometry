@@ -405,6 +405,101 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testOrthogonal() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.PLUS_X.orthogonal(), 0.0, 1.0);
+        checkVector(Vector2D.of(1.0, 1.0).orthogonal(), -invSqrt2, invSqrt2);
+
+        checkVector(Vector2D.PLUS_Y.orthogonal(), -1.0, 0.0);
+        checkVector(Vector2D.of(-1.0, 1.0).orthogonal(), -invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.MINUS_X.orthogonal(), 0.0, -1.0);
+        checkVector(Vector2D.of(-1.0, -1.0).orthogonal(), invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.MINUS_Y.orthogonal(), 1.0, 0.0);
+        checkVector(Vector2D.of(1.0, -1.0).orthogonal(), invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testOrthogonal_fullCircle() {
+        for (double az = 0.0; az<=Geometry.TWO_PI; az += 0.25) {
+            // arrange
+            Vector2D v = Vector2D.ofPolar(Math.PI, az);
+
+            //act
+            Vector2D ortho = v.orthogonal();
+
+            // assert
+            Assert.assertEquals(1.0, ortho.getNorm(), EPS);
+            Assert.assertEquals(0.0, v.dotProduct(ortho), EPS);
+        }
+    }
+
+    @Test
+    public void testOrthogonal_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.PLUS_X.orthogonal(Vector2D.of(-1.0, 0.1)), 0.0, 1.0);
+        checkVector(Vector2D.PLUS_Y.orthogonal(Vector2D.of(2.0, 2.0)), 1.0, 0.0);
+
+        checkVector(Vector2D.of(2.9, 2.9).orthogonal(Vector2D.of(1.0, 0.22)), invSqrt2, -invSqrt2);
+        checkVector(Vector2D.of(2.9, 2.9).orthogonal(Vector2D.of(0.22, 1.0)), -invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection_directionIsCollinear() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.MINUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.of(1.0, 1.0).orthogonal(Vector2D.of(2.0, 2.0)),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.of(-1.01, -1.01).orthogonal(Vector2D.of(20.1, 20.1)),
+                IllegalNormException.class);
+    }
+
+    @Test
     public void testAngle() {
         // act/assert
         Assert.assertEquals(0, Vector2D.PLUS_X.angle(Vector2D.PLUS_X), EPS);

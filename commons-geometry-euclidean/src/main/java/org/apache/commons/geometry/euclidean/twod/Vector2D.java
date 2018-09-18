@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -200,13 +201,38 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector2D project(Vector2D base) {
-        return getComponent(base, false);
+        return getComponent(base, false, Vector2D::new);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D reject(Vector2D base) {
-        return getComponent(base, true);
+        return getComponent(base, true, Vector2D::new);
+    }
+
+    /** Returns a unit vector orthogonal to the current vector by rotating the
+     * vector {@code pi/2} radians counterclockwise around the origin. For example,
+     * if this method is called on the vector representing the positive x-axis, then
+     * a vector representing the positive y-axis is returned.
+     * @return a unit vector orthogonal to the current instance
+     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
+     *  or infinite
+     */
+    public Vector2D orthogonal() {
+        return normalize(-getY(), getX());
+    }
+
+    /** Returns a unit vector orthogonal to the current vector and pointing in the direction
+     * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
+     * except that no intermediate vector object is produced.
+     * @param dir the direction to use for generating the orthogonal vector
+     * @return unit vector orthogonal to the current vector and pointing in the direction of
+     *      {@code dir} that does not lie along the current vector
+     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
+     *      or the given vector is collinear with this vector.
+     */
+    public Vector2D orthogonal(Vector2D dir) {
+        return dir.getComponent(this, true, Vector2D::normalize);
     }
 
     /** {@inheritDoc}
@@ -321,25 +347,32 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
      * @param reject If true, the rejection of this instance from {@code base} is
      *      returned. If false, the projection of this instance onto {@code base}
      *      is returned.
+     * @param factory factory function used to build the final vector
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector2D getComponent(Vector2D base, boolean reject) {
+    private Vector2D getComponent(Vector2D base, boolean reject, DoubleFunction2N<Vector2D> factory) {
         final double aDotB = dotProduct(base);
 
-        final double baseMag = Vectors.ensureRealNonZeroNorm(base.getNorm());
+        // We need to check the norm value here to ensure that it's legal. However, we don't
+        // want to incur the cost or floating point error of getting the actual norm and then
+        // multiplying it again to get the square norm. So, we'll just check the squared norm
+        // directly. This will produce the same error result as checking the actual norm since
+        // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
+        // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
+        final double baseMagSq = Vectors.ensureRealNonZeroNorm(base.getNormSq());
 
-        final double scale = aDotB / (baseMag * baseMag);
+        final double scale = aDotB / baseMagSq;
 
         final double projX = scale * base.getX();
         final double projY = scale * base.getY();
 
         if (reject) {
-            return new Vector2D(getX() - projX, getY() - projY);
+            return factory.apply(getX() - projX, getY() - projY);
         }
 
-        return new Vector2D(projX, projY);
+        return factory.apply(projX, projY);
     }
 
     /** Returns a vector with the given coordinate values.
