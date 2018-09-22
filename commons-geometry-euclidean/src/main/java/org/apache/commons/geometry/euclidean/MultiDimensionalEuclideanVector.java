@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /**
@@ -38,7 +37,7 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @param base base vector
      * @return the vector projection of the instance onto {@code base}
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
-     * @see #reject(Vector)
+     * @see #reject(MultiDimensionalEuclideanVector)
      */
     V project(V base);
 
@@ -53,7 +52,7 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @param base base vector
      * @return the vector rejection of the instance from {@code base}
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
-     * @see #project(Vector)
+     * @see #project(MultiDimensionalEuclideanVector)
      */
     V reject(V base);
 
@@ -62,7 +61,7 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @throws IllegalNormException if the norm of the current instance is zero, NaN,
      *  or infinite
      */
-    public V orthogonal();
+    V orthogonal();
 
     /** Get a unit vector orthogonal to the current vector and pointing in the direction
      * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
@@ -73,5 +72,5 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
      *      or the given vector is collinear with this vector.
      */
-    public V orthogonal(V dir);
+    V orthogonal(V dir);
 }

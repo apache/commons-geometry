@@ -290,7 +290,7 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
      *   Vector3D k = u.normalize();
      *   Vector3D i = k.orthogonal();
      *   Vector3D j = k.crossProduct(i);
-     * </code></pre></p>
+     * </code></pre>
      * @return a unit vector orthogonal to the instance
      * @throws IllegalNormException if the norm of the instance is zero, NaN,
      *  or infinite
