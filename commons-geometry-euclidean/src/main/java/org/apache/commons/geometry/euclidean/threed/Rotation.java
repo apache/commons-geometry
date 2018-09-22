@@ -173,10 +173,7 @@ public class Rotation implements Serializable {
   public Rotation(final Vector3D axis, final double angle, final RotationConvention convention)
       throws IllegalNormException {
 
-    double norm = axis.getNorm();
-    if (!Vectors.isFiniteNonZero(norm)) {
-      throw new IllegalNormException("Illegal norm for rotation axis: " + norm);
-    }
+    double norm = Vectors.checkedNorm(axis);
 
     double halfAngle = convention == RotationConvention.VECTOR_OPERATOR ? -0.5 * angle : +0.5 * angle;
     double coeff = Math.sin(halfAngle) / norm;
@@ -320,10 +317,7 @@ public class Rotation implements Serializable {
    */
   public Rotation(Vector3D u, Vector3D v) {
 
-    double normProduct = u.getNorm() * v.getNorm();
-    if (!Vectors.isFiniteNonZero(normProduct)) {
-        throw new IllegalNormException("Illegal norm for rotation defining vector: " + normProduct);
-    }
+    double normProduct = Vectors.checkedNorm(u) * Vectors.checkedNorm(v);
 
     double dot = u.dotProduct(v);
 

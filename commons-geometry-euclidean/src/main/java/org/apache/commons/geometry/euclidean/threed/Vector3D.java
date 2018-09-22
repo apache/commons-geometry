@@ -20,14 +20,14 @@ package org.apache.commons.geometry.euclidean.threed;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Vector3D> {
+public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVector<Point3D, Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
@@ -120,20 +120,8 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double getMagnitude() {
-        return getNorm();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getMagnitudeSq() {
-        return getNormSq();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector3D withMagnitude(double magnitude) {
-        final double invNorm = 1.0 / getFiniteNonZeroNorm();
+    public Vector3D withNorm(double magnitude) {
+        final double invNorm = 1.0 / getCheckedNorm();
 
         return new Vector3D(
                     magnitude * getX() * invNorm,
@@ -192,89 +180,6 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public Vector3D normalize() {
         return normalize(getX(), getY(), getZ());
-    }
-
-    /** Get a vector orthogonal to the instance.
-     * <p>There are an infinite number of normalized vectors orthogonal
-     * to the instance. This method picks up one of them almost
-     * arbitrarily. It is useful when one needs to compute a reference
-     * frame with one of the axes in a predefined direction. The
-     * following example shows how to build a frame having the k axis
-     * aligned with the known vector u :
-     * <pre><code>
-     *   Vector3D k = u.normalize();
-     *   Vector3D i = k.orthogonal();
-     *   Vector3D j = Vector3D.crossProduct(k, i);
-     * </code></pre>
-     * @return a new normalized vector orthogonal to the instance
-     * @exception IllegalNormException if the norm of the instance is zero, NaN,
-     *  or infinite
-     */
-    public Vector3D orthogonal() {
-        double threshold = 0.6 * getFiniteNonZeroNorm();
-
-        final double x = getX();
-        final double y = getY();
-        final double z = getZ();
-
-        if (Math.abs(x) <= threshold) {
-            double inverse  = 1 / Math.sqrt(y * y + z * z);
-            return new Vector3D(0, inverse * z, -inverse * y);
-        } else if (Math.abs(y) <= threshold) {
-            double inverse  = 1 / Math.sqrt(x * x + z * z);
-            return new Vector3D(-inverse * z, 0, inverse * x);
-        }
-        double inverse  = 1 / Math.sqrt(x * x + y * y);
-        return new Vector3D(inverse * y, -inverse * x, 0);
-    }
-
-    /** Returns a unit vector orthogonal to the current vector and pointing in the direction
-     * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
-     * except that no intermediate vector object is produced.
-     * @param dir the direction to use for generating the orthogonal vector
-     * @return unit vector orthogonal to the current vector and pointing in the direction of
-     *      {@code dir} that does not lie along the current vector
-     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
-     *      or the given vector is collinear with this vector.
-     */
-    public Vector3D orthogonal(Vector3D dir) {
-        return dir.getComponent(this, true, Vector3D::normalize);
-    }
-
-    /** {@inheritDoc}
-     * <p>This method computes the angular separation between two
-     * vectors using the dot product for well separated vectors and the
-     * cross product for almost aligned vectors. This allows to have a
-     * good accuracy in all cases, even for vectors very close to each
-     * other.</p>
-     */
-    @Override
-    public double angle(Vector3D v) {
-        double normProduct = getFiniteNonZeroNorm() * v.getFiniteNonZeroNorm();
-
-        double dot = dotProduct(v);
-        double threshold = normProduct * 0.9999;
-        if ((dot < -threshold) || (dot > threshold)) {
-            // the vectors are almost aligned, compute using the sine
-            Vector3D cross = crossProduct(v);
-            if (dot >= 0) {
-                return Math.asin(cross.getNorm() / normProduct);
-            }
-            return Math.PI - Math.asin(cross.getNorm() / normProduct);
-        }
-
-        // the vectors are sufficiently separated to use the cosine
-        return Math.acos(dot / normProduct);
-    }
-
-    /** Compute the cross-product of the instance with another vector.
-     * @param v other vector
-     * @return the cross product this ^ v as a new Cartesian3D
-     */
-    public Vector3D crossProduct(final Vector3D v) {
-        return new Vector3D(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
-                            LinearCombination.value(getZ(), v.getX(), -getX(), v.getZ()),
-                            LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
     }
 
     /** {@inheritDoc} */
@@ -336,6 +241,32 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         return LinearCombination.value(getX(), v.getX(), getY(), v.getY(), getZ(), v.getZ());
     }
 
+    /** {@inheritDoc}
+     * <p>This method computes the angular separation between two
+     * vectors using the dot product for well separated vectors and the
+     * cross product for almost aligned vectors. This allows to have a
+     * good accuracy in all cases, even for vectors very close to each
+     * other.</p>
+     */
+    @Override
+    public double angle(Vector3D v) {
+        double normProduct = getCheckedNorm() * v.getCheckedNorm();
+
+        double dot = dotProduct(v);
+        double threshold = normProduct * 0.9999;
+        if ((dot < -threshold) || (dot > threshold)) {
+            // the vectors are almost aligned, compute using the sine
+            Vector3D cross = crossProduct(v);
+            if (dot >= 0) {
+                return Math.asin(cross.getNorm() / normProduct);
+            }
+            return Math.PI - Math.asin(cross.getNorm() / normProduct);
+        }
+
+        // the vectors are sufficiently separated to use the cosine
+        return Math.acos(dot / normProduct);
+    }
+
     /** {@inheritDoc} */
     @Override
     public Vector3D project(Vector3D base) {
@@ -346,6 +277,57 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
     @Override
     public Vector3D reject(Vector3D base) {
         return getComponent(base, true, Vector3D::new);
+    }
+
+    /** {@inheritDoc}
+     * <p>There are an infinite number of normalized vectors orthogonal
+     * to the instance. This method picks up one of them almost
+     * arbitrarily. It is useful when one needs to compute a reference
+     * frame with one of the axes in a predefined direction. The
+     * following example shows how to build a frame having the k axis
+     * aligned with the known vector u :
+     * <pre><code>
+     *   Vector3D k = u.normalize();
+     *   Vector3D i = k.orthogonal();
+     *   Vector3D j = k.crossProduct(i);
+     * </code></pre>
+     * @return a unit vector orthogonal to the instance
+     * @throws IllegalNormException if the norm of the instance is zero, NaN,
+     *  or infinite
+     */
+    @Override
+    public Vector3D orthogonal() {
+        double threshold = 0.6 * getCheckedNorm();
+
+        final double x = getX();
+        final double y = getY();
+        final double z = getZ();
+
+        if (Math.abs(x) <= threshold) {
+            double inverse  = 1 / Math.sqrt(y * y + z * z);
+            return new Vector3D(0, inverse * z, -inverse * y);
+        } else if (Math.abs(y) <= threshold) {
+            double inverse  = 1 / Math.sqrt(x * x + z * z);
+            return new Vector3D(-inverse * z, 0, inverse * x);
+        }
+        double inverse  = 1 / Math.sqrt(x * x + y * y);
+        return new Vector3D(inverse * y, -inverse * x, 0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D orthogonal(Vector3D dir) {
+        return dir.getComponent(this, true, Vector3D::normalize);
+    }
+
+    /** Compute the cross-product of the instance with another vector.
+     * @param v other vector
+     * @return the cross product this ^ v as a new Cartesian3D
+     */
+    public Vector3D crossProduct(final Vector3D v) {
+        return new Vector3D(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
+                            LinearCombination.value(getZ(), v.getX(), -getX(), v.getZ()),
+                            LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
     }
 
     /**
@@ -398,15 +380,6 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         return false;
     }
 
-    /** Returns the vector norm, throwing an IllegalNormException if the norm is zero,
-     * NaN, or infinite.
-     * @return the finite, non-zero norm value
-     * @throws IllegalNormException if the norm is zero, NaN, or infinite
-     */
-    private double getFiniteNonZeroNorm() {
-        return Vectors.ensureFiniteNonZeroNorm(getNorm());
-    }
-
     /** Returns a component of the current instance relative to the given base
      * vector. If {@code reject} is true, the vector rejection is returned; otherwise,
      * the projection is returned.
@@ -428,7 +401,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
-        final double baseMagSq = Vectors.ensureFiniteNonZeroNorm(base.getNormSq());
+        final double baseMagSq = Vectors.checkedNorm(base.getNormSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -441,6 +414,15 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
         }
 
         return factory.apply(projX, projY, projZ);
+    }
+
+    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
+     * is not real (ie, NaN or infinite) or zero.
+     * @return the vector norm value, guaranteed to be real and non-zero
+     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
+     */
+    private double getCheckedNorm() {
+        return Vectors.checkedNorm(getNorm());
     }
 
     /** Returns a vector with the given coordinate values.
@@ -484,7 +466,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
      */
     public static Vector3D normalize(final double x, final double y, final double z) {
-        final double norm = Vectors.ensureFiniteNonZeroNorm(Vectors.norm(x, y, z));
+        final double norm = Vectors.checkedNorm(Vectors.norm(x, y, z));
         final double invNorm = 1.0 / norm;
 
         return new UnitVector(x * invNorm, y * invNorm, z * invNorm);
@@ -613,7 +595,7 @@ public class Vector3D extends Cartesian3D implements EuclideanVector<Point3D, Ve
 
         /** {@inheritDoc} */
         @Override
-        public Vector3D withMagnitude(final double mag) {
+        public Vector3D withNorm(final double mag) {
             return scalarMultiply(mag);
         }
     }

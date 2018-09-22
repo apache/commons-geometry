@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -139,10 +140,10 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
 
     /** Set the normal vactor.
      * @param normal normal direction to the plane (will be copied)
-     * @exception IllegalArgumentException if the normal norm is too close to zero
+     * @exception IllegalNormException if the normal norm zero, NaN, or infinite
      */
     private void setNormal(final Vector3D normal) {
-        final double norm = Vectors.ensureFiniteNonZeroNorm(normal.getNorm());
+        final double norm = Vectors.checkedNorm(normal);
 
         w = Vector3D.linearCombination(1.0 / norm, normal);
     }

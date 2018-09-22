@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.exception.IllegalNormException;
  */
 public interface EuclideanPoint<P extends EuclideanPoint<P, V>, V extends EuclideanVector<P, V>> extends AffinePoint<P, V> {
 
-    /** Returns a vector with the same coordinates as this point.
+    /** Get a vector with the same coordinates as this point.
      * This is equivalent to the expression {@code v = P - Z} where
      * {@code P} is this point, {@code Z} is the zero point. and
      * {@code v} is the returned vector.

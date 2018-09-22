@@ -128,70 +128,44 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testMagnitude() {
+    public void testWithNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitude(), EPS);
+        checkVector(Vector2D.of(3, 4).withNorm(1.0), 0.6, 0.8);
+        checkVector(Vector2D.of(4, 3).withNorm(1.0), 0.8, 0.6);
 
-        Assert.assertEquals(5.0, Vector2D.of(3, 4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(3, -4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, 4).getMagnitude(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getMagnitude(), EPS);
+        checkVector(Vector2D.of(-3, 4).withNorm(0.5), -0.3, 0.4);
+        checkVector(Vector2D.of(3, -4).withNorm(2.0), 1.2, -1.6);
+        checkVector(Vector2D.of(-3, -4).withNorm(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
 
-        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).getMagnitude(), EPS);
+        checkVector(Vector2D.of(0.5, 0.5).withNorm(2), Math.sqrt(2), Math.sqrt(2));
     }
 
     @Test
-    public void testMagnitudeSq() {
+    public void testWithNorm_illegalNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getMagnitudeSq(), EPS);
-
-        Assert.assertEquals(25.0, Vector2D.of(3, 4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(3, -4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, 4).getMagnitudeSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, -4).getMagnitudeSq(), EPS);
-
-        Assert.assertEquals(5.0, Vector2D.of(-1, -2).getMagnitudeSq(), EPS);
-    }
-
-    @Test
-    public void testWithMagnitude() {
-        // act/assert
-        checkVector(Vector2D.of(3, 4).withMagnitude(1.0), 0.6, 0.8);
-        checkVector(Vector2D.of(4, 3).withMagnitude(1.0), 0.8, 0.6);
-
-        checkVector(Vector2D.of(-3, 4).withMagnitude(0.5), -0.3, 0.4);
-        checkVector(Vector2D.of(3, -4).withMagnitude(2.0), 1.2, -1.6);
-        checkVector(Vector2D.of(-3, -4).withMagnitude(3.0), -1.8, 3.0 * Math.sin(Math.atan2(-4, -3)));
-
-        checkVector(Vector2D.of(0.5, 0.5).withMagnitude(2), Math.sqrt(2), Math.sqrt(2));
-    }
-
-    @Test
-    public void testWithMagnitude_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.withMagnitude(2.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.withNorm(2.0),
                 IllegalNormException.class);
     }
 
     @Test
-    public void testWithMagnitude_unitVectors() {
+    public void testWithNorm_unitVectors() {
         // arrange
         double eps = 1e-14;
         Vector2D v = Vector2D.of(2.0, -3.0).normalize();
 
         // act/assert
-        checkVector(Vector2D.PLUS_X.withMagnitude(2.5), 2.5, 0.0);
-        checkVector(Vector2D.MINUS_Y.withMagnitude(3.14), 0.0, -3.14);
+        checkVector(Vector2D.PLUS_X.withNorm(2.5), 2.5, 0.0);
+        checkVector(Vector2D.MINUS_Y.withNorm(3.14), 0.0, -3.14);
 
         for (int i = -10; i <= 10; i++) {
             final double mag = i;
-            Assert.assertEquals(Math.abs(mag), v.withMagnitude(mag).getMagnitude(), eps);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), eps);
         }
     }
 
@@ -407,6 +381,101 @@ public class Vector2DTest {
         Assert.assertEquals(0, Vector2D.PLUS_X.dotProduct(Vector2D.PLUS_Y), EPS);
         Assert.assertEquals(-1, Vector2D.PLUS_X.dotProduct(Vector2D.MINUS_X), EPS);
         Assert.assertEquals(0, Vector2D.PLUS_X.dotProduct(Vector2D.MINUS_Y), EPS);
+    }
+
+    @Test
+    public void testOrthogonal() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.PLUS_X.orthogonal(), 0.0, 1.0);
+        checkVector(Vector2D.of(1.0, 1.0).orthogonal(), -invSqrt2, invSqrt2);
+
+        checkVector(Vector2D.PLUS_Y.orthogonal(), -1.0, 0.0);
+        checkVector(Vector2D.of(-1.0, 1.0).orthogonal(), -invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.MINUS_X.orthogonal(), 0.0, -1.0);
+        checkVector(Vector2D.of(-1.0, -1.0).orthogonal(), invSqrt2, -invSqrt2);
+
+        checkVector(Vector2D.MINUS_Y.orthogonal(), 1.0, 0.0);
+        checkVector(Vector2D.of(1.0, -1.0).orthogonal(), invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testOrthogonal_fullCircle() {
+        for (double az = 0.0; az<=Geometry.TWO_PI; az += 0.25) {
+            // arrange
+            Vector2D v = Vector2D.ofPolar(Math.PI, az);
+
+            //act
+            Vector2D ortho = v.orthogonal();
+
+            // assert
+            Assert.assertEquals(1.0, ortho.getNorm(), EPS);
+            Assert.assertEquals(0.0, v.dotProduct(ortho), EPS);
+        }
+    }
+
+    @Test
+    public void testOrthogonal_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.orthogonal(),
+                IllegalNormException.class);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection() {
+        // arrange
+        double invSqrt2 = 1.0 / Math.sqrt(2.0);
+
+        // act/assert
+        checkVector(Vector2D.PLUS_X.orthogonal(Vector2D.of(-1.0, 0.1)), 0.0, 1.0);
+        checkVector(Vector2D.PLUS_Y.orthogonal(Vector2D.of(2.0, 2.0)), 1.0, 0.0);
+
+        checkVector(Vector2D.of(2.9, 2.9).orthogonal(Vector2D.of(1.0, 0.22)), invSqrt2, -invSqrt2);
+        checkVector(Vector2D.of(2.9, 2.9).orthogonal(Vector2D.of(0.22, 1.0)), -invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.NEGATIVE_INFINITY),
+                IllegalNormException.class);
+    }
+
+    @Test
+    public void testOrthogonal_givenDirection_directionIsCollinear() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.PLUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.PLUS_X.orthogonal(Vector2D.MINUS_X),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.of(1.0, 1.0).orthogonal(Vector2D.of(2.0, 2.0)),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.of(-1.01, -1.01).orthogonal(Vector2D.of(20.1, 20.1)),
+                IllegalNormException.class);
     }
 
     @Test

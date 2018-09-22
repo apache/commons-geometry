@@ -44,8 +44,8 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     double getNorm1();
 
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector.
-     * This corresponds to the common notion of vector magnitude or length.
-     * This is defined as the square root of the sum of the squares of all vector components.
+     * This corresponds to the common notion of vector magnitude or length and
+     * is defined as the square root of the sum of the squares of all vector components.
      * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
      * @return L<sub>2</sub> norm for the vector
      */
@@ -65,28 +65,13 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      */
     double getNormInf();
 
-    /** Returns the magnitude (i.e. length) of the vector. This is
-     * the same value as returned by {@link #getNorm()}.
-     * @return the magnitude, or length, of the vector
-     * @see #getNorm()
-     */
-    double getMagnitude();
-
-    /** Returns the squared magnitude of the vector. This is the
-     * same value as returned by {@link #getNormSq()}.
-     * @return the squared magnitude of the vector
-     * @see #getMagnitude()
-     * @see #getNormSq()
-     */
-    double getMagnitudeSq();
-
     /** Returns a vector with the same direction but with the given
-     * magnitude. This is equivalent to calling {@code vec.normalize().scalarMultiply(mag)}
+     * norm. This is equivalent to calling {@code vec.normalize().scalarMultiply(mag)}
      * but without the intermediate vector.
-     * @param magnitude The vector magnitude
-     * @return a vector with the same direction as the current instance but the given magnitude
+     * @param norm The vector norm
+     * @return a vector with the same direction as the current instance but the given norm
      */
-    V withMagnitude(double magnitude);
+    V withNorm(double norm);
 
     /** Add a vector to the instance.
      * @param v vector to add
@@ -173,34 +158,6 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @return the dot product this &middot; v
      */
     double dotProduct(V v);
-
-    /** Get the projection of the instance onto the given base vector. The returned
-     * vector is parallel to {@code base}. Vector projection and rejection onto
-     * a given base are related by the equation
-     * <code>
-     *      <strong>v</strong> = <strong>v<sub>projection</sub></strong> + <strong>v<sub>rejection</sub></strong>
-     * </code>
-     * @param base base vector
-     * @return the vector projection of the instance onto {@code base}
-     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
-     * @see #reject(Vector)
-     */
-    V project(V base);
-
-    /** Get the rejection of the instance from the given base vector. The returned
-     * vector is orthogonal to {@code base}. This operation can be interpreted as
-     * returning the orthogonal projection of the instance onto the hyperplane
-     * orthogonal to {@code base}. Vector projection and rejection onto
-     * a given base are related by the equation
-     * <code>
-     *      <strong>v</strong> = <strong>v<sub>projection</sub></strong> + <strong>v<sub>rejection</sub></strong>
-     * </code>
-     * @param base base vector
-     * @return the vector rejection of the instance from {@code base}
-     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
-     * @see #project(Vector)
-     */
-    V reject(V base);
 
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector

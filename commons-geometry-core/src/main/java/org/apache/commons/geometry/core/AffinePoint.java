@@ -30,13 +30,13 @@ package org.apache.commons.geometry.core;
  */
 public interface AffinePoint<P extends AffinePoint<P, V>, V extends Vector<V>> extends Point<P> {
 
-    /** Returns the displacement vector from this point to p.
+    /** Get the displacement vector from this point to p.
      * @param p second point
      * @return The displacement vector from this point to p.
      */
     V subtract(P p);
 
-    /** Returns the point resulting from adding the given displacement
+    /** Get the point resulting from adding the given displacement
      * vector to this point.
      * @param v displacement vector
      * @return point resulting from displacing this point by v
