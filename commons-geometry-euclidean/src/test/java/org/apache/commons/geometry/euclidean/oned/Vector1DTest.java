@@ -150,27 +150,6 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testGetRealNonZeroNorm() {
-        // act/assert
-        Assert.assertEquals(1.0, Vector1D.ONE.getNorm(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(3).getNorm(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(-3).getNorm(), TEST_TOLERANCE);
-    }
-
-    @Test
-    public void testGetRealNonZeroNorm_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NaN.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.POSITIVE_INFINITY.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.getRealNonZeroNorm(),
-                IllegalNormException.class);
-    }
-
-    @Test
     public void testAdd() {
         // arrange
         Vector1D v1 = Vector1D.of(1);

@@ -170,27 +170,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testGetRealNonZeroNorm() {
-        // act/assert
-        Assert.assertEquals(1.0, Vector2D.PLUS_X.getNorm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(3, 4).getNorm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getNorm(), EPS);
-    }
-
-    @Test
-    public void testGetRealNonZeroNorm_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NaN.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.POSITIVE_INFINITY.getRealNonZeroNorm(),
-                IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.getRealNonZeroNorm(),
-                IllegalNormException.class);
-    }
-
-    @Test
     public void testAdd() {
         // arrange
         Vector2D v1 = Vector2D.of(-1, 2);

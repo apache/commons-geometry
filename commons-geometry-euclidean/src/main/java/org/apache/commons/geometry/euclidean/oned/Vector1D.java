@@ -105,15 +105,9 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector1D withNorm(double magnitude) {
-        getRealNonZeroNorm(); // validate our norm value
+        getCheckedNorm(); // validate our norm value
 
         return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getRealNonZeroNorm() {
-        return Vectors.ensureRealNonZeroNorm(getNorm());
     }
 
     /** {@inheritDoc} */
@@ -193,7 +187,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      */
     @Override
     public Vector1D project(final Vector1D base) {
-        base.getRealNonZeroNorm(); // validate the base norm
+        base.getCheckedNorm(); // validate the base norm
 
         return this;
     }
@@ -203,7 +197,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      */
     @Override
     public Vector1D reject(final Vector1D base) {
-        base.getRealNonZeroNorm(); // validate the base norm
+        base.getCheckedNorm(); // validate the base norm
 
         return Vector1D.ZERO;
     }
@@ -215,8 +209,8 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     @Override
     public double angle(final Vector1D v) {
         // validate the norm values
-        getRealNonZeroNorm();
-        v.getRealNonZeroNorm();
+        getCheckedNorm();
+        v.getCheckedNorm();
 
         final double sig1 = Math.signum(getX());
         final double sig2 = Math.signum(v.getX());
@@ -276,6 +270,15 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
         return false;
     }
 
+    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
+     * is not real (ie, NaN or infinite) or zero.
+     * @return the vector norm value, guaranteed to be real and non-zero
+     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
+     */
+    private double getCheckedNorm() {
+        return Vectors.checkedNorm(getNorm());
+    }
+
     /** Returns a vector with the given coordinate value.
      * @param x vector coordinate
      * @return vector instance
@@ -290,7 +293,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
      * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
      */
     public static Vector1D normalize(final double x) {
-        Vectors.ensureRealNonZeroNorm(Vectors.norm(x));
+        Vectors.checkedNorm(Vectors.norm(x));
 
         return (x > 0.0) ? ONE : MINUS_ONE;
     }

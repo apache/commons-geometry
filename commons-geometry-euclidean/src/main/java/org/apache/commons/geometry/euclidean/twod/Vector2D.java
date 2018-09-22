@@ -112,18 +112,12 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
     /** {@inheritDoc} */
     @Override
     public Vector2D withNorm(double magnitude) {
-        final double invNorm = 1.0 / getRealNonZeroNorm();
+        final double invNorm = 1.0 / getCheckedNorm();
 
         return new Vector2D(
                     magnitude * getX() * invNorm,
                     magnitude * getY() * invNorm
                 );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getRealNonZeroNorm() {
-        return Vectors.ensureRealNonZeroNorm(getNorm());
     }
 
     /** {@inheritDoc} */
@@ -244,7 +238,7 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
      */
     @Override
     public double angle(Vector2D v) {
-        double normProduct = getRealNonZeroNorm() * v.getRealNonZeroNorm();
+        double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
         double dot = dotProduct(v);
         double threshold = normProduct * 0.9999;
@@ -361,7 +355,7 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
         // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
-        final double baseMagSq = Vectors.ensureRealNonZeroNorm(base.getNormSq());
+        final double baseMagSq = Vectors.checkedNorm(base.getNormSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -373,6 +367,15 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
         }
 
         return factory.apply(projX, projY);
+    }
+
+    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
+     * is not real (ie, NaN or infinite) or zero.
+     * @return the vector norm value, guaranteed to be real and non-zero
+     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
+     */
+    private double getCheckedNorm() {
+        return Vectors.checkedNorm(getNorm());
     }
 
     /** Returns a vector with the given coordinate values.
@@ -412,7 +415,7 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
      */
     public static Vector2D normalize(final double x, final double y) {
-        final double norm = Vectors.ensureRealNonZeroNorm(Vectors.norm(x, y));
+        final double norm = Vectors.checkedNorm(Vectors.norm(x, y));
         final double invNorm = 1.0 / norm;
 
         return new UnitVector(x * invNorm, y * invNorm);

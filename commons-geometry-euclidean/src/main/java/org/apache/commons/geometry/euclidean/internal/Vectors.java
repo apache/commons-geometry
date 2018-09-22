@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.internal;
 
+import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /** This class consists exclusively of static vector utility methods.
@@ -44,12 +45,23 @@ public final class Vectors {
      * @throws IllegalNormException if the given norm value is NaN, infinite,
      *  or zero
      */
-    public static double ensureRealNonZeroNorm(final double norm) throws IllegalNormException {
+    public static double checkedNorm(final double norm) throws IllegalNormException {
         if (!isRealNonZero(norm)) {
             throw new IllegalNormException(norm);
         }
 
         return norm;
+    }
+
+    /** Returns the vector's norm value, throwing an {@link IllegalNormException} if the value
+     * is not real (ie, not NaN or infinite) or zero.
+     * @param vec vector to obtain the real, non-zero norm of
+     * @return the validated norm value
+     * @throws IllegalNormException if the vector norm value is NaN, infinite,
+     *  or zero
+     */
+    public static double checkedNorm(final Vector<?> vec) {
+        return checkedNorm(vec.getNorm());
     }
 
     /** Get the L<sub>1</sub> norm for the vector with the given components.
