@@ -19,14 +19,14 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
-import org.apache.commons.geometry.euclidean.EuclideanVector;
+import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents a vector in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Vector2D> {
+public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVector<Point2D, Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO   = new Vector2D(0, 0);
@@ -192,43 +192,6 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
         return LinearCombination.value(getX(), v.getX(), getY(), v.getY());
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D project(Vector2D base) {
-        return getComponent(base, false, Vector2D::new);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D reject(Vector2D base) {
-        return getComponent(base, true, Vector2D::new);
-    }
-
-    /** Returns a unit vector orthogonal to the current vector by rotating the
-     * vector {@code pi/2} radians counterclockwise around the origin. For example,
-     * if this method is called on the vector representing the positive x-axis, then
-     * a vector representing the positive y-axis is returned.
-     * @return a unit vector orthogonal to the current instance
-     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
-     *  or infinite
-     */
-    public Vector2D orthogonal() {
-        return normalize(-getY(), getX());
-    }
-
-    /** Returns a unit vector orthogonal to the current vector and pointing in the direction
-     * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
-     * except that no intermediate vector object is produced.
-     * @param dir the direction to use for generating the orthogonal vector
-     * @return unit vector orthogonal to the current vector and pointing in the direction of
-     *      {@code dir} that does not lie along the current vector
-     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
-     *      or the given vector is collinear with this vector.
-     */
-    public Vector2D orthogonal(Vector2D dir) {
-        return dir.getComponent(this, true, Vector2D::normalize);
-    }
-
     /** {@inheritDoc}
      * <p>This method computes the angular separation between the two
      * vectors using the dot product for well separated vectors and the
@@ -253,6 +216,38 @@ public class Vector2D extends Cartesian2D implements EuclideanVector<Point2D, Ve
 
         // the vectors are sufficiently separated to use the cosine
         return Math.acos(dot / normProduct);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D project(Vector2D base) {
+        return getComponent(base, false, Vector2D::new);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D reject(Vector2D base) {
+        return getComponent(base, true, Vector2D::new);
+    }
+
+    /** {@inheritDoc}
+     * The returned vector is computed by rotating the current instance {@code pi/2} radians
+     * counterclockwise around the origin and normalizing. For example, if this method is
+     * called on a vector pointing along the positive x-axis, then a unit vector representing
+     * the positive y-axis is returned.
+     * @return a unit vector orthogonal to the current instance
+     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
+     *  or infinite
+     */
+    @Override
+    public Vector2D orthogonal() {
+        return normalize(-getY(), getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D orthogonal(Vector2D dir) {
+        return dir.getComponent(this, true, Vector2D::normalize);
     }
 
     /**

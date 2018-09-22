@@ -183,26 +183,6 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     }
 
     /** {@inheritDoc}
-     * <p>For the one-dimensional case, this method simply returns the current instance.</p>
-     */
-    @Override
-    public Vector1D project(final Vector1D base) {
-        base.getCheckedNorm(); // validate the base norm
-
-        return this;
-    }
-
-    /** {@inheritDoc}
-     * <p>For the one-dimensional case, this method simply returns the zero vector.</p>
-     */
-    @Override
-    public Vector1D reject(final Vector1D base) {
-        base.getCheckedNorm(); // validate the base norm
-
-        return Vector1D.ZERO;
-    }
-
-    /** {@inheritDoc}
      * <p>For the one-dimensional case, this method returns 0 if the vector x values have
      * the same sign and {@code pi} if they are opposite.</p>
      */
