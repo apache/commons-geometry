@@ -87,12 +87,6 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm1() {
-        return Vectors.norm1(getX(), getY());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getNorm() {
         return Vectors.norm(getX(), getY());
     }
@@ -101,12 +95,6 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
     @Override
     public double getNormSq() {
         return Vectors.normSq(getX(), getY());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getNormInf() {
-        return Vectors.normInf(getX(), getY());
     }
 
     /** {@inheritDoc} */
@@ -164,20 +152,8 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
 
     /** {@inheritDoc} */
     @Override
-    public double distance1(Vector2D v) {
-        return Vectors.norm1(getX() - v.getX(), getY() - v.getY());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double distance(Vector2D v) {
         return Vectors.norm(getX() - v.getX(), getY() - v.getY());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double distanceInf(Vector2D v) {
-        return Vectors.normInf(getX() - v.getX(), getY() - v.getY());
     }
 
     /** {@inheritDoc} */

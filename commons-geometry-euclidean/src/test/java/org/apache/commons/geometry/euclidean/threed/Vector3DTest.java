@@ -94,14 +94,6 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testNorm1() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm1(), EPS);
-        Assert.assertEquals(9.0, Vector3D.of(2, -3, 4).getNorm1(), EPS);
-        Assert.assertEquals(9.0, Vector3D.of(-2, 3, -4).getNorm1(), EPS);
-    }
-
-    @Test
     public void testNorm() {
         // act/assert
         Assert.assertEquals(0.0, Vector3D.ZERO.getNorm(), 0);
@@ -115,14 +107,6 @@ public class Vector3DTest {
         Assert.assertEquals(0.0, Vector3D.ZERO.getNormSq(), 0);
         Assert.assertEquals(29, Vector3D.of(2, 3, 4).getNormSq(), EPS);
         Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getNormSq(), EPS);
-    }
-
-    @Test
-    public void testNormInf() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getNormInf(), 0);
-        Assert.assertEquals(4, Vector3D.of(2, 3, 4).getNormInf(), EPS);
-        Assert.assertEquals(4, Vector3D.of(-2, -3, -4).getNormInf(), EPS);
     }
 
     @Test
@@ -553,26 +537,6 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testDistance1() {
-        // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 2, 0);
-        Vector3D v3 = Vector3D.of(5, -6, -7);
-
-        // act/assert
-        Assert.assertEquals(0.0, v1.distance1(v1), EPS);
-        Assert.assertEquals(0.0, v2.distance1(v2), EPS);
-
-        Assert.assertEquals(12.0, v1.distance1(v2), EPS);
-        Assert.assertEquals(12.0, v2.distance1(v1), EPS);
-
-        Assert.assertEquals(v1.subtract(v2).getNorm1(), v1.distance1(v2), EPS);
-
-        Assert.assertEquals(18, v1.distance1(v3), EPS);
-        Assert.assertEquals(18, v3.distance1(v1), EPS);
-    }
-
-    @Test
     public void testDistance() {
         // arrange
         Vector3D v1 = Vector3D.of(1, -2, 3);
@@ -611,26 +575,6 @@ public class Vector3DTest {
         Assert.assertEquals(132, v1.distanceSq(v3), EPS);
         Assert.assertEquals(132, v3.distanceSq(v1), EPS);
   }
-
-    @Test
-    public void testDistanceInf() {
-        // arrange
-        Vector3D v1 = Vector3D.of(1, -2, 3);
-        Vector3D v2 = Vector3D.of(-4, 2, 0);
-        Vector3D v3 = Vector3D.of(5, -6, -7);
-
-        // act/assert
-        Assert.assertEquals(0.0, v1.distanceInf(v1), EPS);
-        Assert.assertEquals(0.0, v2.distanceInf(v2), EPS);
-
-        Assert.assertEquals(5, v1.distanceInf(v2), EPS);
-        Assert.assertEquals(5, v2.distanceInf(v1), EPS);
-
-        Assert.assertEquals(v1.subtract(v2).getNormInf(), v1.distanceInf(v2), EPS);
-
-        Assert.assertEquals(10, v1.distanceInf(v3), EPS);
-        Assert.assertEquals(10, v3.distanceInf(v1), EPS);
-    }
 
     @Test
     public void testDotProduct() {

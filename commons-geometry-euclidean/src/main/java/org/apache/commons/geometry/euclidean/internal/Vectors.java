@@ -36,7 +36,6 @@ public final class Vectors {
         return Double.isFinite(value) && value != 0.0;
     }
 
-
     /** Throws an {@link IllegalNormException} if the given norm value
      * is not real (ie, not NaN or infinite) or zero. The argument is returned
      * to allow this method to be called inline.
@@ -62,39 +61,6 @@ public final class Vectors {
      */
     public static double checkedNorm(final Vector<?> vec) {
         return checkedNorm(vec.getNorm());
-    }
-
-    /** Get the L<sub>1</sub> norm for the vector with the given components.
-     * This is defined as the sum of the absolute values of all vector components.
-     * @param x vector component
-     * @return L<sub>1</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
-     */
-    public static double norm1(final double x) {
-        return Math.abs(x);
-    }
-
-    /** Get the L<sub>1</sub> norm for the vector with the given components.
-     * This is defined as the sum of the absolute values of all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @return L<sub>1</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
-     */
-    public static double norm1(final double x1, final double x2) {
-        return Math.abs(x1) + Math.abs(x2);
-    }
-
-    /** Get the L<sub>1</sub> norm for the vector with the given components.
-     * This is defined as the sum of the absolute values of all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @param x3 third vector component
-     * @return L<sub>1</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
-     */
-    public static double norm1(final double x1, final double x2, final double x3) {
-        return Math.abs(x1) + Math.abs(x2) + Math.abs(x3);
     }
 
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector
@@ -167,38 +133,5 @@ public final class Vectors {
      */
     public static double normSq(final double x1, final double x2, final double x3) {
         return (x1 * x1) + (x2 * x2) + (x3 * x3);
-    }
-
-    /** Get the L<sub>&infin;</sub> norm for the vector with the given components. This is defined
-     * as the maximum of the absolute values of all vector components.
-     * @param x vector component
-     * @return L<sub>&infin;</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L-Infinity-Norm.html">L<sub>&infin;</sub> Norm</a>
-     */
-    public static double normInf(final double x) {
-        return Math.abs(x);
-    }
-
-    /** Get the L<sub>&infin;</sub> norm for the vector with the given components. This is defined
-     * as the maximum of the absolute values of all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @return L<sub>&infin;</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L-Infinity-Norm.html">L<sub>&infin;</sub> Norm</a>
-     */
-    public static double normInf(final double x1, final double x2) {
-        return Math.max(Math.abs(x1), Math.abs(x2));
-    }
-
-    /** Get the L<sub>&infin;</sub> norm for the vector with the given components. This is defined
-     * as the maximum of the absolute values of all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @param x3 third vector component
-     * @return L<sub>&infin;</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L-Infinity-Norm.html">L<sub>&infin;</sub> Norm</a>
-     */
-    public static double normInf(final double x1, final double x2, final double x3) {
-        return Math.max(Math.max(Math.abs(x1), Math.abs(x2)), Math.abs(x3));
     }
 }
