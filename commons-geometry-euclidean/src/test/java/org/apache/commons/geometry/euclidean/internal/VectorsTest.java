@@ -85,44 +85,6 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNorm1_oneD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.norm1(0.0), EPS);
-
-        Assert.assertEquals(2.0, Vectors.norm1(-2.0), EPS);
-        Assert.assertEquals(1.0, Vectors.norm1(-1.0), EPS);
-
-        Assert.assertEquals(1.0, Vectors.norm1(1.0), EPS);
-        Assert.assertEquals(2.0, Vectors.norm1(2.0), EPS);
-    }
-
-    @Test
-    public void testNorm1_twoD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.norm1(0.0, 0.0), EPS);
-
-        Assert.assertEquals(3.0, Vectors.norm1(1.0, 2.0), EPS);
-        Assert.assertEquals(7.0, Vectors.norm1(3.0, -4.0), EPS);
-        Assert.assertEquals(11.0, Vectors.norm1(-5.0, 6.0), EPS);
-        Assert.assertEquals(16.0, Vectors.norm1(-7.0, -9.0), EPS);
-    }
-
-    @Test
-    public void testNorm1_threeD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.norm1(0.0, 0.0, 0.0), EPS);
-
-        Assert.assertEquals(6.0, Vectors.norm1(1.0, 2.0, 3.0), EPS);
-        Assert.assertEquals(15.0, Vectors.norm1(4.0, 5.0, -6.0), EPS);
-        Assert.assertEquals(24.0, Vectors.norm1(7.0, -8.0, 9.0), EPS);
-        Assert.assertEquals(33.0, Vectors.norm1(10.0, -11.0, -12.0), EPS);
-        Assert.assertEquals(42.0, Vectors.norm1(-13.0, 14.0, 15.0), EPS);
-        Assert.assertEquals(51.0, Vectors.norm1(-16.0, 17.0, -18.0), EPS);
-        Assert.assertEquals(60.0, Vectors.norm1(-19.0, -20.0, 21.0), EPS);
-        Assert.assertEquals(69.0, Vectors.norm1(-22.0, -23.0, -24.0), EPS);
-    }
-
-    @Test
     public void testNorm_oneD() {
         // act/assert
         Assert.assertEquals(0.0, Vectors.norm(0.0), EPS);
@@ -196,43 +158,5 @@ public class VectorsTest {
         Assert.assertEquals(869.0, Vectors.normSq(-16.0, 17.0, -18.0), EPS);
         Assert.assertEquals(1202.0, Vectors.normSq(-19.0, -20.0, 21.0), EPS);
         Assert.assertEquals(1589.0, Vectors.normSq(-22.0, -23.0, -24.0), EPS);
-    }
-
-    @Test
-    public void testNormInf_oneD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.normInf(0.0), EPS);
-
-        Assert.assertEquals(2.0, Vectors.normInf(-2.0), EPS);
-        Assert.assertEquals(1.0, Vectors.normInf(-1.0), EPS);
-
-        Assert.assertEquals(1.0, Vectors.normInf(1.0), EPS);
-        Assert.assertEquals(2.0, Vectors.normInf(2.0), EPS);
-    }
-
-    @Test
-    public void testNormInf_twoD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.normInf(0.0, 0.0), EPS);
-
-        Assert.assertEquals(2.0, Vectors.normInf(2.0, 1.0), EPS);
-        Assert.assertEquals(4.0, Vectors.normInf(3.0, -4.0), EPS);
-        Assert.assertEquals(6.0, Vectors.normInf(-6.0, 5.0), EPS);
-        Assert.assertEquals(9.0, Vectors.normInf(-7.0, -9.0), EPS);
-    }
-
-    @Test
-    public void testNormInf_threeD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.normInf(0.0, 0.0, 0.0), EPS);
-
-        Assert.assertEquals(3.0, Vectors.normInf(1.0, 3.0, 2.0), EPS);
-        Assert.assertEquals(6.0, Vectors.normInf(6.0, 5.0, -4.0), EPS);
-        Assert.assertEquals(9.0, Vectors.normInf(7.0, -9.0, 8.0), EPS);
-        Assert.assertEquals(12.0, Vectors.normInf(10.0, -11.0, -12.0), EPS);
-        Assert.assertEquals(15.0, Vectors.normInf(-13.0, 14.0, 15.0), EPS);
-        Assert.assertEquals(18.0, Vectors.normInf(-16.0, 17.0, -18.0), EPS);
-        Assert.assertEquals(21.0, Vectors.normInf(-21.0, -19.0, 20.0), EPS);
-        Assert.assertEquals(24.0, Vectors.normInf(-22.0, -23.0, -24.0), EPS);
     }
 }

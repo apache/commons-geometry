@@ -96,12 +96,6 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm1() {
-        return Vectors.norm1(getX(), getY(), getZ());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getNorm() {
         return Vectors.norm(getX(), getY(), getZ());
     }
@@ -110,12 +104,6 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public double getNormSq() {
         return Vectors.normSq(getX(), getY(), getZ());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getNormInf() {
-        return Vectors.normInf(getX(), getY(), getZ());
     }
 
     /** {@inheritDoc} */
@@ -190,28 +178,8 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
 
     /** {@inheritDoc} */
     @Override
-    public double distance1(Vector3D v) {
-        return Vectors.norm1(
-                    getX() - v.getX(),
-                    getY() - v.getY(),
-                    getZ() - v.getZ()
-                );
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double distance(Vector3D v) {
         return Vectors.norm(
-                getX() - v.getX(),
-                getY() - v.getY(),
-                getZ() - v.getZ()
-            );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double distanceInf(Vector3D v) {
-        return Vectors.normInf(
                 getX() - v.getX(),
                 getY() - v.getY(),
                 getZ() - v.getZ()

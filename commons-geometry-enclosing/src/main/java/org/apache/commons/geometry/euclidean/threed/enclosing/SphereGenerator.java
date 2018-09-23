@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
+import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.Point3D;
 import org.apache.commons.geometry.euclidean.twod.Point2D;
@@ -53,7 +54,7 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
 
                         // delegate to 2D disk generator
                         final Plane p = new Plane(vA, vB, vC,
-                                                  1.0e-10 * (vA.asVector().getNorm1() + vB.asVector().getNorm1() + vC.asVector().getNorm1()));
+                                                  1.0e-10 * (norm1(vA) + norm1(vB) + norm1(vC)));
                         final EnclosingBall<Point2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
                                                                                 p.toSubSpace(vB),
@@ -149,4 +150,13 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
                 add(c2[3].multiply(c3[2]).multiply(c1[1].subtract(c1[0])));
     }
 
+    /** Compute the L<sub>1</sub> vector norm for the given set of coordinates.
+     * This is defined as the sum of the absolute values of all components.
+     * @param coord set of coordinates
+     * @return L<sub>1</sub> vector norm for the given set of coordinates
+     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
+     */
+    private double norm1(final Cartesian3D coord) {
+        return Math.abs(coord.getX()) + Math.abs(coord.getY()) + Math.abs(coord.getZ());
+    }
 }

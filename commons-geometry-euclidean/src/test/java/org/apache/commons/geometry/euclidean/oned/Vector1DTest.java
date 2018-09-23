@@ -78,14 +78,6 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNorm1() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector1D.ZERO.getNorm1(), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, Vector1D.of(6).getNorm1(), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, Vector1D.of(-6).getNorm1(), TEST_TOLERANCE);
-    }
-
-    @Test
     public void testNorm() {
         // act/assert
         Assert.assertEquals(0.0, Vector1D.ZERO.getNorm(), TEST_TOLERANCE);
@@ -99,14 +91,6 @@ public class Vector1DTest {
         Assert.assertEquals(0.0, Vector1D.of(0).getNormSq(), TEST_TOLERANCE);
         Assert.assertEquals(9.0, Vector1D.of(3).getNormSq(), TEST_TOLERANCE);
         Assert.assertEquals(9.0, Vector1D.of(-3).getNormSq(), TEST_TOLERANCE);
-    }
-
-    @Test
-    public void testNormInf() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector1D.ZERO.getNormInf(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(3).getNormInf(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(-3).getNormInf(), TEST_TOLERANCE);
     }
 
     @Test
@@ -261,22 +245,6 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testDistance1() {
-        // arrange
-        Vector1D v1 = Vector1D.of(1);
-        Vector1D v2 = Vector1D.of(-4);
-
-        // act/assert
-        Assert.assertEquals(0.0, v1.distance1(v1), TEST_TOLERANCE);
-
-        Assert.assertEquals(5.0, v1.distance1(v2), TEST_TOLERANCE);
-        Assert.assertEquals(5.0, v2.distance1(v1), TEST_TOLERANCE);
-        Assert.assertEquals(v1.subtract(v2).getNorm1(), v1.distance1(v2), TEST_TOLERANCE);
-
-        Assert.assertEquals(0.0, Vector1D.of(-1).distance1(Vector1D.of(-1)), TEST_TOLERANCE);
-    }
-
-    @Test
     public void testDistance() {
         // arrange
         Vector1D v1 = Vector1D.of(1);
@@ -290,20 +258,6 @@ public class Vector1DTest {
         Assert.assertEquals(v1.subtract(v2).getNorm(), v1.distance(v2), TEST_TOLERANCE);
 
         Assert.assertEquals(0.0, Vector1D.of(-1).distance(Vector1D.of(-1)), TEST_TOLERANCE);
-    }
-
-    @Test
-    public void testDistanceInf() {
-        // arrange
-        Vector1D v1 = Vector1D.of(1);
-        Vector1D v2 = Vector1D.of(-4);
-
-        // act/assert
-        Assert.assertEquals(0.0, Vector1D.of(-1).distanceInf(Vector1D.of(-1)), TEST_TOLERANCE);
-        Assert.assertEquals(5.0, v1.distanceInf(v2), TEST_TOLERANCE);
-        Assert.assertEquals(5.0, v2.distanceInf(v1), TEST_TOLERANCE);
-
-        Assert.assertEquals(v1.subtract(v2).getNormInf(), v1.distanceInf(v2), TEST_TOLERANCE);
     }
 
     @Test

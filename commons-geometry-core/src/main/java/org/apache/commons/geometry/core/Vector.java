@@ -36,13 +36,6 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      */
     V getZero();
 
-    /** Get the L<sub>1</sub> norm for the vector. This is defined as the
-     * sum of the absolute values of all vector components.
-     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
-     * @return L<sub>1</sub> norm for the vector
-     */
-    double getNorm1();
-
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector.
      * This corresponds to the common notion of vector magnitude or length and
      * is defined as the square root of the sum of the squares of all vector components.
@@ -57,13 +50,6 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @return square of the L<sub>2</sub> norm for the vector
      */
     double getNormSq();
-
-    /** Get the L<sub>&infin;</sub> norm for the vector. This is defined as the
-     * maximum of the absolute values of all vector components.
-     * @see <a href="http://mathworld.wolfram.com/L-Infinity-Norm.html">L<sub>&infin;</sub> Norm</a>
-     * @return L<sub>&infin;</sub> norm for the vector
-     */
-    double getNormInf();
 
     /** Returns a vector with the same direction but with the given
      * norm. This is equivalent to calling {@code vec.normalize().scalarMultiply(mag)}
@@ -117,31 +103,11 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      */
     V scalarMultiply(double a);
 
-    /** Compute the distance between the instance and another vector according to the L<sub>1</sub> norm.
-     * <p>Calling this method is equivalent to calling:
-     * <code>q.subtract(p).getNorm1()</code> except that no intermediate
-     * vector is built</p>
-     * @see #getNorm1()
-     * @param v second vector
-     * @return the distance between the instance and p according to the L<sub>1</sub> norm
-     */
-    double distance1(V v);
-
     /** Compute the distance between the instance and another vector.
      * @param v second vector
      * @return the distance between the instance and v
      */
     double distance(V v);
-
-    /** Compute the distance between the instance and another vector according to the L<sub>&infin;</sub> norm.
-     * <p>Calling this method is equivalent to calling:
-     * <code>q.subtract(p).getNormInf()</code> except that no intermediate
-     * vector is built</p>
-     * @see #getNormInf()
-     * @param v second vector
-     * @return the distance between the instance and p according to the L<sub>&infin;</sub> norm
-     */
-    double distanceInf(V v);
 
     /** Compute the square of the distance between the instance and another vector.
      * <p>Calling this method is equivalent to calling:

@@ -80,12 +80,6 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm1() {
-        return Vectors.norm1(getX());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getNorm() {
         return Vectors.norm(getX());
     }
@@ -94,12 +88,6 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     @Override
     public double getNormSq() {
         return Vectors.normSq(getX());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getNormInf() {
-        return Vectors.normInf(getX());
     }
 
     /** {@inheritDoc} */
@@ -154,20 +142,8 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
 
     /** {@inheritDoc} */
     @Override
-    public double distance1(Vector1D v) {
-        return Vectors.norm1(getX() - v.getX());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double distance(Vector1D v) {
         return Vectors.norm(getX() - v.getX());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double distanceInf(Vector1D v) {
-        return Vectors.normInf(getX() - v.getX());
     }
 
     /** {@inheritDoc} */

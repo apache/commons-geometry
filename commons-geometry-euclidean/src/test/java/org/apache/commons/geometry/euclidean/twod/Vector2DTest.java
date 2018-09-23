@@ -78,17 +78,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testNorm1() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getNorm1(), EPS);
-
-        Assert.assertEquals(3.0, Vector2D.of(1, 2).getNorm1(), EPS);
-        Assert.assertEquals(3.0, Vector2D.of(1, -2).getNorm1(), EPS);
-        Assert.assertEquals(3.0, Vector2D.of(-1, 2).getNorm1(), EPS);
-        Assert.assertEquals(3.0, Vector2D.of(-1, -2).getNorm1(), EPS);
-    }
-
-    @Test
     public void testNorm() {
         // act/assert
         Assert.assertEquals(0.0, Vector2D.of(0, 0).getNorm(), EPS);
@@ -112,19 +101,6 @@ public class Vector2DTest {
         Assert.assertEquals(25.0, Vector2D.of(-3, -4).getNormSq(), EPS);
 
         Assert.assertEquals(5.0, Vector2D.of(-1, -2).getNormSq(), EPS);
-    }
-
-    @Test
-    public void testNormInf() {
-        // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getNormInf(), EPS);
-
-        Assert.assertEquals(2.0, Vector2D.of(1, 2).getNormInf(), EPS);
-        Assert.assertEquals(2.0, Vector2D.of(1, -2).getNormInf(), EPS);
-        Assert.assertEquals(2.0, Vector2D.of(-1, 2).getNormInf(), EPS);
-        Assert.assertEquals(2.0, Vector2D.of(-1, -2).getNormInf(), EPS);
-
-        Assert.assertEquals(100.0, Vector2D.of(100, -99).getNormInf(), EPS);
     }
 
     @Test
@@ -292,23 +268,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testDistance1() {
-        // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
-
-        // act/assert
-        Assert.assertEquals(0, v1.distance1(v1), EPS);
-
-        Assert.assertEquals(7, v1.distance1(v2), EPS);
-        Assert.assertEquals(7, v2.distance1(v1), EPS);
-
-        Assert.assertEquals(3, v1.distance1(v3), EPS);
-        Assert.assertEquals(3, v3.distance1(v1), EPS);
-    }
-
-    @Test
     public void testDistance() {
         // arrange
         Vector2D v1 = Vector2D.of(1, 1);
@@ -340,23 +299,6 @@ public class Vector2DTest {
 
         Assert.assertEquals(5, v1.distanceSq(v3), EPS);
         Assert.assertEquals(5, v3.distanceSq(v1), EPS);
-    }
-
-    @Test
-    public void testDistanceInf() {
-        // arrange
-        Vector2D v1 = Vector2D.of(1, 1);
-        Vector2D v2 = Vector2D.of(4, 5);
-        Vector2D v3 = Vector2D.of(-1, 0);
-
-        // act/assert
-        Assert.assertEquals(0, v1.distanceInf(v1), EPS);
-
-        Assert.assertEquals(4, v1.distanceInf(v2), EPS);
-        Assert.assertEquals(4, v2.distanceInf(v1), EPS);
-
-        Assert.assertEquals(2, v1.distanceInf(v3), EPS);
-        Assert.assertEquals(2, v3.distanceInf(v1), EPS);
     }
 
     @Test
