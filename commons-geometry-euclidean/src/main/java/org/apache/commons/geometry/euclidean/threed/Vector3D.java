@@ -221,7 +221,7 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
         double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
         double dot = dotProduct(v);
-        double threshold = normProduct * 0.9999;
+        double threshold = normProduct * 0.99;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
             Vector3D cross = crossProduct(v);
@@ -553,6 +553,12 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
          */
         private UnitVector(final double x, final double y, final double z) {
             super(x, y, z);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public double getNorm() {
+            return 1;
         }
 
         /** {@inheritDoc} */

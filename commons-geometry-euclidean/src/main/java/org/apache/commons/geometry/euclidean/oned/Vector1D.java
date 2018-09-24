@@ -363,6 +363,12 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
 
         /** {@inheritDoc} */
         @Override
+        public double getNorm() {
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector1D normalize() {
             return this;
         }

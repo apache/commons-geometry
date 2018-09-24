@@ -505,6 +505,12 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
 
         /** {@inheritDoc} */
         @Override
+        public double getNorm() {
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector2D normalize() {
             return this;
         }
