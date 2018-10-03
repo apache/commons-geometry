@@ -183,6 +183,21 @@ public class Point3DTest {
     }
 
     @Test
+    public void testApply() {
+        // arrange
+        AffineTransform3D transform = AffineTransform3D.identity()
+                .scale(2)
+                .translate(1, 2, 3);
+
+        Point3D p1 = Point3D.of(1, 2, 3);
+        Point3D p2 = Point3D.of(-4, -5, -6);
+
+        // act/assert
+        checkPoint(p1.apply(transform), 3, 6, 9);
+        checkPoint(p2.apply(transform), -7, -8, -9);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         double delta = 10 * Precision.EPSILON;

@@ -298,6 +298,16 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
                             LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
     }
 
+    /** Apply the given transform to this vector, returning the result as a
+     * new vector instance.
+     * @param transform the transform to apply
+     * @return a new, transformed vector
+     * @see AffineTransform3D#applyTo(Vector3D)
+     */
+    public Vector3D apply(AffineTransform3D transform) {
+        return transform.applyTo(this);
+    }
+
     /**
      * Get a hashCode for the vector.
      * <p>All NaN values have the same hash code.</p>
