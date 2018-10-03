@@ -808,6 +808,21 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testApply() {
+        // arrange
+        AffineTransform3D transform = AffineTransform3D.identity()
+                .scale(2)
+                .translate(1, 2, 3);
+
+        Vector3D v1 = Vector3D.of(1, 2, 3);
+        Vector3D v2 = Vector3D.of(-4, -5, -6);
+
+        // act/assert
+        checkVector(v1.apply(transform), 3, 6, 9);
+        checkVector(v2.apply(transform), -7, -8, -9);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         double delta = 10 * Precision.EPSILON;

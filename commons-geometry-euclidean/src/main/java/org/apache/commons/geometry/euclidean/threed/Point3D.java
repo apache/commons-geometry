@@ -112,6 +112,16 @@ public final class Point3D extends Cartesian3D implements EuclideanPoint<Point3D
                 );
     }
 
+    /** Apply the given transform to this point, returning the result as a
+     * new point instance.
+     * @param transform the transform to apply
+     * @return a new, transformed point
+     * @see AffineTransform3D#applyTo(Point3D)
+     */
+    public Point3D apply(AffineTransform3D transform) {
+        return transform.applyTo(this);
+    }
+
     /**
      * Get a hashCode for the point.
      * <p>All NaN values have the same hash code.</p>
