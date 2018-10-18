@@ -21,10 +21,10 @@ package org.apache.commons.geometry.euclidean.twod;
 public class Segment {
 
     /** Start point of the segment. */
-    private final Point2D start;
+    private final Vector2D start;
 
     /** End point of the segment. */
-    private final Point2D end;
+    private final Vector2D end;
 
     /** Line containing the segment. */
     private final Line     line;
@@ -34,7 +34,7 @@ public class Segment {
      * @param end end point of the segment
      * @param line line containing the segment
      */
-    public Segment(final Point2D start, final Point2D end, final Line line) {
+    public Segment(final Vector2D start, final Vector2D end, final Line line) {
         this.start  = start;
         this.end    = end;
         this.line   = line;
@@ -43,14 +43,14 @@ public class Segment {
     /** Get the start point of the segment.
      * @return start point of the segment
      */
-    public Point2D getStart() {
+    public Vector2D getStart() {
         return start;
     }
 
     /** Get the end point of the segment.
      * @return end point of the segment
      */
-    public Point2D getEnd() {
+    public Vector2D getEnd() {
         return end;
     }
 
@@ -75,7 +75,7 @@ public class Segment {
      * @param p to check
      * @return distance between the instance and the point
      */
-    public double distance(final Point2D p) {
+    public double distance(final Vector2D p) {
         final double deltaX = end.getX() - start.getX();
         final double deltaY = end.getY() - start.getY();
 
@@ -100,7 +100,7 @@ public class Segment {
             final double px = start.getX() + r * deltaX;
             final double py = start.getY() + r * deltaY;
 
-            final Point2D interPt = Point2D.of(px, py);
+            final Vector2D interPt = Vector2D.of(px, py);
             return interPt.distance(p);
         }
     }

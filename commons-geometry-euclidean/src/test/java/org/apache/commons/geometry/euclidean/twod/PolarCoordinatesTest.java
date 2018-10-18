@@ -235,29 +235,9 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToPoint() {
-        // arrange
-        double sqrt2 = Math.sqrt(2);
-
-        // act/assert
-        checkPoint(PolarCoordinates.of(0, 0).toPoint(), 0, 0);
-
-        checkPoint(PolarCoordinates.of(1, 0).toPoint(), 1, 0);
-        checkPoint(PolarCoordinates.of(sqrt2, 0.25 * Geometry.PI).toPoint(), 1, 1);
-        checkPoint(PolarCoordinates.of(1, Geometry.HALF_PI).toPoint(), 0, 1);
-
-        checkPoint(PolarCoordinates.of(sqrt2, 0.75 * Geometry.PI).toPoint(), -1, 1);
-        checkPoint(PolarCoordinates.of(1, Geometry.PI).toPoint(), -1, 0);
-        checkPoint(PolarCoordinates.of(sqrt2, -0.75 * Geometry.PI).toPoint(), -1, -1);
-
-        checkPoint(PolarCoordinates.of(1, Geometry.MINUS_HALF_PI).toPoint(), 0, -1);
-        checkPoint(PolarCoordinates.of(sqrt2, -0.25 * Geometry.PI).toPoint(), 1, -1);
-    }
-
-    @Test
     public void testToCartesian_static() {
         // arrange
-        DoubleFunction2N<Point2D> factory = Point2D::of;
+        DoubleFunction2N<Vector2D> factory = Vector2D::of;
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
@@ -278,7 +258,7 @@ public class PolarCoordinatesTest {
     @Test
     public void testToCartesian_static_NaNAndInfinite() {
         // arrange
-        DoubleFunction2N<Point2D> factory = Point2D::of;
+        DoubleFunction2N<Vector2D> factory = Vector2D::of;
 
         // act/assert
         Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0, factory).isNaN());
@@ -355,7 +335,7 @@ public class PolarCoordinatesTest {
         Assert.assertEquals(y, v.getY(), EPS);
     }
 
-    private void checkPoint(Point2D p, double x, double y) {
+    private void checkPoint(Vector2D p, double x, double y) {
         Assert.assertEquals(x, p.getX(), EPS);
         Assert.assertEquals(y, p.getY(), EPS);
     }

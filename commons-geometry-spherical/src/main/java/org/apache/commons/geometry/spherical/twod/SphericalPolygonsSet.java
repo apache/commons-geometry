@@ -30,7 +30,6 @@ import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
-import org.apache.commons.geometry.euclidean.threed.Point3D;
 import org.apache.commons.geometry.euclidean.threed.Rotation;
 import org.apache.commons.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -489,7 +488,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
 
         // gather some inside points, to be used by the encloser
-        final List<Point3D> points = getInsidePoints();
+        final List<Vector3D> points = getInsidePoints();
 
         // extract points from the boundary loops, to be used by the encloser as well
         final List<Vertex> boundary = getBoundaryLoops();
@@ -497,27 +496,27 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             int count = 0;
             for (Vertex v = loopStart; count == 0 || v != loopStart; v = v.getOutgoing().getEnd()) {
                 ++count;
-                points.add(v.getLocation().getVector().asPoint());
+                points.add(v.getLocation().getVector());
             }
         }
 
         // find the smallest enclosing 3D sphere
         final SphereGenerator generator = new SphereGenerator();
-        final WelzlEncloser<Point3D> encloser =
+        final WelzlEncloser<Vector3D> encloser =
                 new WelzlEncloser<>(getTolerance(), generator);
-        EnclosingBall<Point3D> enclosing3D = encloser.enclose(points);
-        final Point3D[] support3D = enclosing3D.getSupport();
+        EnclosingBall<Vector3D> enclosing3D = encloser.enclose(points);
+        final Vector3D[] support3D = enclosing3D.getSupport();
 
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
-        final double h = enclosing3D.getCenter().asVector().getNorm();
+        final double h = enclosing3D.getCenter().getNorm();
         if (h < getTolerance()) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells
             EnclosingBall<S2Point> enclosingS2 =
                     new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
-            for (Point3D outsidePoint : getOutsidePoints()) {
-                final S2Point outsideS2 = S2Point.ofVector(outsidePoint.asVector());
+            for (Vector3D outsidePoint : getOutsidePoints()) {
+                final S2Point outsideS2 = S2Point.ofVector(outsidePoint);
                 final BoundaryProjection<S2Point> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
                     enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
@@ -529,11 +528,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
         final S2Point[] support = new S2Point[support3D.length];
         for (int i = 0; i < support3D.length; ++i) {
-            support[i] = S2Point.ofVector(support3D[i].asVector());
+            support[i] = S2Point.ofVector(support3D[i]);
         }
 
         final EnclosingBall<S2Point> enclosingS2 =
-                new EnclosingBall<>(S2Point.ofVector(enclosing3D.getCenter().asVector()),
+                new EnclosingBall<>(S2Point.ofVector(enclosing3D.getCenter()),
                                                      Math.acos((1 + h * h - r * r) / (2 * h)),
                                                      support);
 
@@ -544,7 +543,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     /** Gather some inside points.
      * @return list of points known to be strictly in all inside convex cells
      */
-    private List<Point3D> getInsidePoints() {
+    private List<Vector3D> getInsidePoints() {
         final PropertiesComputer pc = new PropertiesComputer(getTolerance());
         getTree(true).visit(pc);
         return pc.getConvexCellsInsidePoints();
@@ -553,7 +552,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     /** Gather some outside points.
      * @return list of points known to be strictly in all outside convex cells
      */
-    private List<Point3D> getOutsidePoints() {
+    private List<Vector3D> getOutsidePoints() {
         final SphericalPolygonsSet complement =
                 (SphericalPolygonsSet) new RegionFactory<S2Point>().getComplement(this);
         final PropertiesComputer pc = new PropertiesComputer(getTolerance());

@@ -18,14 +18,17 @@ package org.apache.commons.geometry.core;
 
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 
-/** Interface representing a vector in a vector space. The most common
- * use of this interface is to represent displacement vectors in an affine
- * space.
+/** Interface representing a vector in a vector space or displacement vectors
+ * in an affine space.
+ *
+ * <p>This interface uses self-referencing generic parameters to ensure
+ * that implementations are only used with instances of their own type.
+ * This removes the need for casting inside of methods in order to access
+ * implementation-specific data, such as coordinate values.
+ * </p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Vector_space">Vector space</a>
  * @see <a href="https://en.wikipedia.org/wiki/Affine_space">Affine space</a>
- *
- * @see AffinePoint
  *
  * @param <V> Vector implementation type
  */

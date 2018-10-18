@@ -118,15 +118,6 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return toCartesian(radius, azimuth, Vector2D::of);
     }
 
-    /** Convert this set of polar coordinates to a 2-dimensional
-     * point.
-     * @return A 2-dimensional point with an equivalent set of
-     *      coordinates.
-     */
-    public Point2D toPoint() {
-        return toCartesian(radius, azimuth, Point2D::of);
-    }
-
     /** Get a hashCode for this set of polar coordinates.
      * <p>All NaN values have the same hash code.</p>
      *

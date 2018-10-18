@@ -29,7 +29,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
 /** This class represents a 1D region: a set of intervals.
  */
-public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements Iterable<double[]> {
+public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements Iterable<double[]> {
 
     /** Build an intervals set representing the whole real line.
      * @param tolerance tolerance below which points are considered identical.
@@ -59,7 +59,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param tree inside/outside BSP tree representing the intervals set
      * @param tolerance tolerance below which points are considered identical.
      */
-    public IntervalsSet(final BSPTree<Point1D> tree, final double tolerance) {
+    public IntervalsSet(final BSPTree<Vector1D> tree, final double tolerance) {
         super(tree, tolerance);
     }
 
@@ -83,7 +83,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param boundary collection of boundary elements
      * @param tolerance tolerance below which points are considered identical.
      */
-    public IntervalsSet(final Collection<SubHyperplane<Point1D>> boundary,
+    public IntervalsSet(final Collection<SubHyperplane<Vector1D>> boundary,
                         final double tolerance) {
         super(boundary, tolerance);
     }
@@ -96,7 +96,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param tolerance tolerance below which points are considered identical.
      * @return the built tree
      */
-    private static BSPTree<Point1D> buildTree(final double lower, final double upper,
+    private static BSPTree<Vector1D> buildTree(final double lower, final double upper,
                                                   final double tolerance) {
         if (Double.isInfinite(lower) && (lower < 0)) {
             if (Double.isInfinite(upper) && (upper > 0)) {
@@ -104,31 +104,31 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
                 return new BSPTree<>(Boolean.TRUE);
             }
             // the tree must be open on the negative infinity side
-            final SubHyperplane<Point1D> upperCut =
-                new OrientedPoint(Point1D.of(upper), true, tolerance).wholeHyperplane();
+            final SubHyperplane<Vector1D> upperCut =
+                new OrientedPoint(Vector1D.of(upper), true, tolerance).wholeHyperplane();
             return new BSPTree<>(upperCut,
-                               new BSPTree<Point1D>(Boolean.FALSE),
-                               new BSPTree<Point1D>(Boolean.TRUE),
+                               new BSPTree<Vector1D>(Boolean.FALSE),
+                               new BSPTree<Vector1D>(Boolean.TRUE),
                                null);
         }
-        final SubHyperplane<Point1D> lowerCut =
-            new OrientedPoint(Point1D.of(lower), false, tolerance).wholeHyperplane();
+        final SubHyperplane<Vector1D> lowerCut =
+            new OrientedPoint(Vector1D.of(lower), false, tolerance).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
             return new BSPTree<>(lowerCut,
-                                            new BSPTree<Point1D>(Boolean.FALSE),
-                                            new BSPTree<Point1D>(Boolean.TRUE),
+                                            new BSPTree<Vector1D>(Boolean.FALSE),
+                                            new BSPTree<Vector1D>(Boolean.TRUE),
                                             null);
         }
 
         // the tree must be bounded on the two sides
-        final SubHyperplane<Point1D> upperCut =
-            new OrientedPoint(Point1D.of(upper), true, tolerance).wholeHyperplane();
+        final SubHyperplane<Vector1D> upperCut =
+            new OrientedPoint(Vector1D.of(upper), true, tolerance).wholeHyperplane();
         return new BSPTree<>(lowerCut,
-                                        new BSPTree<Point1D>(Boolean.FALSE),
+                                        new BSPTree<Vector1D>(Boolean.FALSE),
                                         new BSPTree<>(upperCut,
-                                                                 new BSPTree<Point1D>(Boolean.FALSE),
-                                                                 new BSPTree<Point1D>(Boolean.TRUE),
+                                                                 new BSPTree<Vector1D>(Boolean.FALSE),
+                                                                 new BSPTree<Vector1D>(Boolean.TRUE),
                                                                  null),
                                         null);
 
@@ -136,7 +136,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
 
     /** {@inheritDoc} */
     @Override
-    public IntervalsSet buildNew(final BSPTree<Point1D> tree) {
+    public IntervalsSet buildNew(final BSPTree<Vector1D> tree) {
         return new IntervalsSet(tree, getTolerance());
     }
 
@@ -144,7 +144,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
     @Override
     protected void computeGeometricalProperties() {
         if (getTree(false).getCut() == null) {
-            setBarycenter(Point1D.NaN);
+            setBarycenter(Vector1D.NaN);
             setSize(((Boolean) getTree(false).getAttribute()) ? Double.POSITIVE_INFINITY : 0);
         } else {
             double size = 0.0;
@@ -155,9 +155,9 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
             }
             setSize(size);
             if (Double.isInfinite(size)) {
-                setBarycenter(Point1D.NaN);
+                setBarycenter(Vector1D.NaN);
             } else if (size > 0) {
-                setBarycenter(Point1D.of(sum / size));
+                setBarycenter(Vector1D.of(sum / size));
             } else {
                 setBarycenter(((OrientedPoint) getTree(false).getCut().getHyperplane()).getLocation());
             }
@@ -171,7 +171,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * instance is empty)
      */
     public double getInf() {
-        BSPTree<Point1D> node = getTree(false);
+        BSPTree<Vector1D> node = getTree(false);
         double  inf  = Double.POSITIVE_INFINITY;
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
@@ -188,7 +188,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * instance is empty)
      */
     public double getSup() {
-        BSPTree<Point1D> node = getTree(false);
+        BSPTree<Vector1D> node = getTree(false);
         double  sup  = Double.NEGATIVE_INFINITY;
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
@@ -201,7 +201,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
     /** {@inheritDoc}
      */
     @Override
-    public BoundaryProjection<Point1D> projectToBoundary(final Point1D point) {
+    public BoundaryProjection<Vector1D> projectToBoundary(final Vector1D point) {
 
         // get position of test point
         final double x = point.getX();
@@ -241,8 +241,8 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param x abscissa of the point
      * @return a new point for finite abscissa, null otherwise
      */
-    private Point1D finiteOrNullPoint(final double x) {
-        return Double.isInfinite(x) ? null : Point1D.of(x);
+    private Vector1D finiteOrNullPoint(final double x) {
+        return Double.isInfinite(x) ? null : Vector1D.of(x);
     }
 
     /** Build an ordered list of intervals representing the instance.
@@ -270,15 +270,15 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param root tree root
      * @return first leaf node
      */
-    private BSPTree<Point1D> getFirstLeaf(final BSPTree<Point1D> root) {
+    private BSPTree<Vector1D> getFirstLeaf(final BSPTree<Vector1D> root) {
 
         if (root.getCut() == null) {
             return root;
         }
 
         // find the smallest internal node
-        BSPTree<Point1D> smallest = null;
-        for (BSPTree<Point1D> n = root; n != null; n = previousInternalNode(n)) {
+        BSPTree<Vector1D> smallest = null;
+        for (BSPTree<Vector1D> n = root; n != null; n = previousInternalNode(n)) {
             smallest = n;
         }
 
@@ -290,10 +290,10 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @return smallest internal node,
      * or null if there are no internal nodes (i.e. the set is either empty or covers the real line)
      */
-    private BSPTree<Point1D> getFirstIntervalBoundary() {
+    private BSPTree<Vector1D> getFirstIntervalBoundary() {
 
         // start search at the tree root
-        BSPTree<Point1D> node = getTree(false);
+        BSPTree<Vector1D> node = getTree(false);
         if (node.getCut() == null) {
             return null;
         }
@@ -314,7 +314,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node to check
      * @return true if the node corresponds to the start abscissa of an interval
      */
-    private boolean isIntervalStart(final BSPTree<Point1D> node) {
+    private boolean isIntervalStart(final BSPTree<Vector1D> node) {
 
         if ((Boolean) leafBefore(node).getAttribute()) {
             // it has an inside cell before it, it may end an interval but not start it
@@ -336,7 +336,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node to check
      * @return true if the node corresponds to the end abscissa of an interval
      */
-    private boolean isIntervalEnd(final BSPTree<Point1D> node) {
+    private boolean isIntervalEnd(final BSPTree<Vector1D> node) {
 
         if (!(Boolean) leafBefore(node).getAttribute()) {
             // it has an outside cell before it, it may start an interval but not end it
@@ -359,7 +359,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @return next internal node in ascending order, or null
      * if this is the last internal node
      */
-    private BSPTree<Point1D> nextInternalNode(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> nextInternalNode(BSPTree<Vector1D> node) {
 
         if (childAfter(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -379,7 +379,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @return previous internal node in ascending order, or null
      * if this is the first internal node
      */
-    private BSPTree<Point1D> previousInternalNode(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> previousInternalNode(BSPTree<Vector1D> node) {
 
         if (childBefore(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -398,7 +398,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node at which the sub-tree starts
      * @return leaf node just before the internal node
      */
-    private BSPTree<Point1D> leafBefore(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> leafBefore(BSPTree<Vector1D> node) {
 
         node = childBefore(node);
         while (node.getCut() != null) {
@@ -413,7 +413,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node at which the sub-tree starts
      * @return leaf node just after the internal node
      */
-    private BSPTree<Point1D> leafAfter(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> leafAfter(BSPTree<Vector1D> node) {
 
         node = childAfter(node);
         while (node.getCut() != null) {
@@ -428,8 +428,8 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node child node considered
      * @return true is the node has a parent end is before it in ascending order
      */
-    private boolean isBeforeParent(final BSPTree<Point1D> node) {
-        final BSPTree<Point1D> parent = node.getParent();
+    private boolean isBeforeParent(final BSPTree<Vector1D> node) {
+        final BSPTree<Vector1D> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -441,8 +441,8 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node child node considered
      * @return true is the node has a parent end is after it in ascending order
      */
-    private boolean isAfterParent(final BSPTree<Point1D> node) {
-        final BSPTree<Point1D> parent = node.getParent();
+    private boolean isAfterParent(final BSPTree<Vector1D> node) {
+        final BSPTree<Vector1D> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -454,7 +454,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node at which the sub-tree starts
      * @return child node just before the internal node
      */
-    private BSPTree<Point1D> childBefore(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> childBefore(BSPTree<Vector1D> node) {
         if (isDirect(node)) {
             // smaller abscissas are on minus side, larger abscissas are on plus side
             return node.getMinus();
@@ -468,7 +468,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node at which the sub-tree starts
      * @return child node just after the internal node
      */
-    private BSPTree<Point1D> childAfter(BSPTree<Point1D> node) {
+    private BSPTree<Vector1D> childAfter(BSPTree<Vector1D> node) {
         if (isDirect(node)) {
             // smaller abscissas are on minus side, larger abscissas are on plus side
             return node.getPlus();
@@ -482,7 +482,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node to check
      * @return true if the oriented point is direct
      */
-    private boolean isDirect(final BSPTree<Point1D> node) {
+    private boolean isDirect(final BSPTree<Vector1D> node) {
         return ((OrientedPoint) node.getCut().getHyperplane()).isDirect();
     }
 
@@ -490,7 +490,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
      * @param node internal node to check
      * @return abscissa
      */
-    private double getAngle(final BSPTree<Point1D> node) {
+    private double getAngle(final BSPTree<Vector1D> node) {
         return ((OrientedPoint) node.getCut().getHyperplane()).getLocation().getX();
     }
 
@@ -511,7 +511,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
     private class SubIntervalsIterator implements Iterator<double[]> {
 
         /** Current node. */
-        private BSPTree<Point1D> current;
+        private BSPTree<Vector1D> current;
 
         /** Sub-interval no yet returned. */
         private double[] pending;
@@ -548,7 +548,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
         private void selectPending() {
 
             // look for the start of the interval
-            BSPTree<Point1D> start = current;
+            BSPTree<Vector1D> start = current;
             while (start != null && !isIntervalStart(start)) {
                 start = nextInternalNode(start);
             }
@@ -561,7 +561,7 @@ public class IntervalsSet extends AbstractRegion<Point1D, Point1D> implements It
             }
 
             // look for the end of the interval
-            BSPTree<Point1D> end = start;
+            BSPTree<Vector1D> end = start;
             while (end != null && !isIntervalEnd(end)) {
                 end = nextInternalNode(end);
             }

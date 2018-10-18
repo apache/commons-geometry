@@ -27,7 +27,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVector<Point3D, Vector3D> {
+public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
@@ -66,6 +66,15 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180903L;
 
+    /** Abscissa (first coordinate value) */
+    private final double x;
+
+    /** Ordinate (second coordinate value) */
+    private final double y;
+
+    /** Height (third coordinate value)*/
+    private final double z;
+
     /** Simple constructor.
      * Build a vector from its coordinates
      * @param x abscissa
@@ -73,7 +82,62 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
      * @param z height
      */
     private Vector3D(double x, double y, double z) {
-        super(x, y, z);
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    /** Returns the abscissa (first coordinate) value of the instance.
+     * @return the abscisaa
+     */
+    public double getX() {
+        return x;
+    }
+
+    /** Returns the ordinate (second coordinate) value of the instance.
+     * @return the ordinate
+     */
+    public double getY() {
+        return y;
+    }
+
+    /** Returns the height (third coordinate) value of the instance.
+     * @return the height
+     */
+    public double getZ() {
+        return z;
+    }
+
+    /** Get the coordinates for this instance as a dimension 3 array.
+     * @return the coordinates for this instance
+     */
+    public double[] toArray() {
+        return new double[] { x, y, z };
+    }
+
+    /** Return an equivalent set of coordinates in spherical form.
+     * @return an equivalent set of coordinates in spherical form.
+     */
+    public SphericalCoordinates toSpherical() {
+        return SphericalCoordinates.ofCartesian(x, y, z);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int getDimension() {
+        return 3;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isNaN() {
+        return Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInfinite() {
+        return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y) || Double.isInfinite(z));
     }
 
     /** {@inheritDoc} */
@@ -84,8 +148,17 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
 
     /** {@inheritDoc} */
     @Override
-    public Point3D asPoint() {
-        return Point3D.of(getX(), getY(), getZ());
+    public Vector3D vectorTo(Vector3D v) {
+        return v.subtract(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D directionTo(Vector3D v) {
+        return normalize(
+                v.x - x,
+                v.y - y,
+                v.z - z);
     }
 
     /** {@inheritDoc} */
@@ -97,13 +170,13 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        return Vectors.norm(getX(), getY(), getZ());
+        return Vectors.norm(x, y, z);
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        return Vectors.normSq(getX(), getY(), getZ());
+        return Vectors.normSq(x, y, z);
     }
 
     /** {@inheritDoc} */
@@ -112,9 +185,9 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
         final double invNorm = 1.0 / getCheckedNorm();
 
         return new Vector3D(
-                    magnitude * getX() * invNorm,
-                    magnitude * getY() * invNorm,
-                    magnitude * getZ() * invNorm
+                    magnitude * x * invNorm,
+                    magnitude * y * invNorm,
+                    magnitude * z * invNorm
                 );
     }
 
@@ -122,9 +195,9 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public Vector3D add(Vector3D v) {
         return new Vector3D(
-                    getX() + v.getX(),
-                    getY() + v.getY(),
-                    getZ() + v.getZ()
+                    x + v.x,
+                    y + v.y,
+                    z + v.z
                 );
     }
 
@@ -132,9 +205,9 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public Vector3D add(double factor, Vector3D v) {
         return new Vector3D(
-                    getX() + (factor * v.getX()),
-                    getY() + (factor * v.getY()),
-                    getZ() + (factor * v.getZ())
+                    x + (factor * v.x),
+                    y + (factor * v.y),
+                    z + (factor * v.z)
                 );
     }
 
@@ -142,9 +215,9 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public Vector3D subtract(Vector3D v) {
         return new Vector3D(
-                    getX() - v.getX(),
-                    getY() - v.getY(),
-                    getZ() - v.getZ()
+                    x - v.x,
+                    y - v.y,
+                    z - v.z
                 );
     }
 
@@ -152,37 +225,37 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public Vector3D subtract(double factor, Vector3D v) {
         return new Vector3D(
-                    getX() - (factor * v.getX()),
-                    getY() - (factor * v.getY()),
-                    getZ() - (factor * v.getZ())
+                    x - (factor * v.x),
+                    y - (factor * v.y),
+                    z - (factor * v.z)
                 );
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D negate() {
-        return new Vector3D(-getX(), -getY(), -getZ());
+        return new Vector3D(-x, -y, -z);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D normalize() {
-        return normalize(getX(), getY(), getZ());
+        return normalize(x, y, z);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D scalarMultiply(double a) {
-        return new Vector3D(a * getX(), a * getY(), a * getZ());
+        return new Vector3D(a * x, a * y, a * z);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector3D v) {
         return Vectors.norm(
-                getX() - v.getX(),
-                getY() - v.getY(),
-                getZ() - v.getZ()
+                x - v.x,
+                y - v.y,
+                z - v.z
             );
     }
 
@@ -190,9 +263,9 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     @Override
     public double distanceSq(Vector3D v) {
         return Vectors.normSq(
-                getX() - v.getX(),
-                getY() - v.getY(),
-                getZ() - v.getZ()
+                x - v.x,
+                y - v.y,
+                z - v.z
             );
     }
 
@@ -206,7 +279,7 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
      */
     @Override
     public double dotProduct(Vector3D v) {
-        return LinearCombination.value(getX(), v.getX(), getY(), v.getY(), getZ(), v.getZ());
+        return LinearCombination.value(x, v.x, y, v.y, z, v.z);
     }
 
     /** {@inheritDoc}
@@ -267,10 +340,6 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     public Vector3D orthogonal() {
         double threshold = 0.6 * getCheckedNorm();
 
-        final double x = getX();
-        final double y = getY();
-        final double z = getZ();
-
         if (Math.abs(x) <= threshold) {
             double inverse  = 1 / Math.sqrt(y * y + z * z);
             return new Vector3D(0, inverse * z, -inverse * y);
@@ -290,12 +359,12 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
 
     /** Compute the cross-product of the instance with another vector.
      * @param v other vector
-     * @return the cross product this ^ v as a new Cartesian3D
+     * @return the cross product this ^ v as a new Vector3D
      */
     public Vector3D crossProduct(final Vector3D v) {
-        return new Vector3D(LinearCombination.value(getY(), v.getZ(), -getZ(), v.getY()),
-                            LinearCombination.value(getZ(), v.getX(), -getX(), v.getZ()),
-                            LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
+        return new Vector3D(LinearCombination.value(y, v.z, -z, v.y),
+                            LinearCombination.value(z, v.x, -x, v.z),
+                            LinearCombination.value(x, v.y, -y, v.x));
     }
 
     /**
@@ -309,7 +378,7 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
         if (isNaN()) {
             return 642;
         }
-        return 643 * (164 * Double.hashCode(getX()) +  3 * Double.hashCode(getY()) +  Double.hashCode(getZ()));
+        return 643 * (164 * Double.hashCode(x) +  3 * Double.hashCode(y) +  Double.hashCode(z));
     }
 
     /**
@@ -343,9 +412,15 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
                 return this.isNaN();
             }
 
-            return (getX() == rhs.getX()) && (getY() == rhs.getY()) && (getZ() == rhs.getZ());
+            return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(x, y, z);
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -373,24 +448,15 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
 
         final double scale = aDotB / baseMagSq;
 
-        final double projX = scale * base.getX();
-        final double projY = scale * base.getY();
-        final double projZ = scale * base.getZ();
+        final double projX = scale * base.x;
+        final double projY = scale * base.y;
+        final double projZ = scale * base.z;
 
         if (reject) {
-            return factory.apply(getX() - projX, getY() - projY, getZ() - projZ);
+            return factory.apply(x - projX, y - projY, z - projZ);
         }
 
         return factory.apply(projX, projY, projZ);
-    }
-
-    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
-     * is not real (ie, NaN or infinite) or zero.
-     * @return the vector norm value, guaranteed to be real and non-zero
-     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
-     */
-    private double getCheckedNorm() {
-        return Vectors.checkedNorm(getNorm());
     }
 
     /** Returns a vector with the given coordinate values.
@@ -453,88 +519,80 @@ public class Vector3D extends Cartesian3D implements MultiDimensionalEuclideanVe
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a scale factor for first coordinate
      * @param c first coordinate
      * @return vector with coordinates calculated by {@code a * c}
      */
-    public static Vector3D linearCombination(double a, Cartesian3D c) {
-        return new Vector3D(a * c.getX(), a * c.getY(), a * c.getZ());
+    public static Vector3D linearCombination(double a, Vector3D c) {
+        return new Vector3D(a * c.x, a * c.y, a * c.z);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2)}
+     * @param v2 second coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2) {
+    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY()),
-                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ()));
+                LinearCombination.value(a1, v1.x, a2, v2.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y),
+                LinearCombination.value(a1, v1.z, a2, v2.z));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3)}
+     * @param v3 third coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
-            double a3, Cartesian3D c3) {
+    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2,
+            double a3, Vector3D v3) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()),
-                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y),
+                LinearCombination.value(a1, v1.z, a2, v2.z, a3, v3.z));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
+     * @param v3 third coordinate
      * @param a4 scale factor for fourth coordinate
-     * @param c4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3) + (a4 * c4)}
+     * @param v4 fourth coordinate
+     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector3D linearCombination(double a1, Cartesian3D c1, double a2, Cartesian3D c2,
-            double a3, Cartesian3D c3, double a4, Cartesian3D c4) {
+    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2,
+            double a3, Vector3D v3, double a4, Vector3D v4) {
         return new Vector3D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()),
-                LinearCombination.value(a1, c1.getZ(), a2, c2.getZ(), a3, c3.getZ(), a4, c4.getZ()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y),
+                LinearCombination.value(a1, v1.z, a2, v2.z, a3, v3.z, a4, v4.z));
     }
 
     /** Private class used to represent unit vectors. This allows optimizations to be performed for certain

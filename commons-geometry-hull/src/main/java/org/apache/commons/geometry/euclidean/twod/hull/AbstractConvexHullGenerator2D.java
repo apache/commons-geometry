@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.util.Collection;
 
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
  * Abstract base class for convex hull generators in the two-dimensional Euclidean space.
@@ -80,9 +80,9 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
     /** {@inheritDoc} */
     @Override
-    public ConvexHull2D generate(final Collection<Point2D> points)
+    public ConvexHull2D generate(final Collection<Vector2D> points)
             throws IllegalStateException {
-        Collection<Point2D> hullVertices = null;
+        Collection<Vector2D> hullVertices = null;
         if (points.size() < 2) {
             hullVertices = points;
         } else {
@@ -90,7 +90,7 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
         }
 
         try {
-            return new ConvexHull2D(hullVertices.toArray(new Point2D[hullVertices.size()]),
+            return new ConvexHull2D(hullVertices.toArray(new Vector2D[hullVertices.size()]),
                                     tolerance);
         } catch (IllegalArgumentException e) {
             // the hull vertices may not form a convex hull if the tolerance value is to large
@@ -103,6 +103,6 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      * @param points the set of input points
      * @return the convex hull vertices in CCW winding
      */
-    protected abstract Collection<Point2D> findHullVertices(Collection<Point2D> points);
+    protected abstract Collection<Vector2D> findHullVertices(Collection<Vector2D> points);
 
 }

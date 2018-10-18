@@ -21,27 +21,27 @@ import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 
 /** This class represents a sub-hyperplane for {@link Plane}.
  */
-public class SubPlane extends AbstractSubHyperplane<Point3D, Point2D> {
+public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubPlane(final Hyperplane<Point3D> hyperplane,
-                    final Region<Point2D> remainingRegion) {
+    public SubPlane(final Hyperplane<Vector3D> hyperplane,
+                    final Region<Vector2D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Point3D, Point2D> buildNew(final Hyperplane<Point3D> hyperplane,
-                                                                       final Region<Point2D> remainingRegion) {
+    protected AbstractSubHyperplane<Vector3D, Vector2D> buildNew(final Hyperplane<Vector3D> hyperplane,
+                                                                       final Region<Vector2D> remainingRegion) {
         return new SubPlane(hyperplane, remainingRegion);
     }
 
@@ -52,7 +52,7 @@ public class SubPlane extends AbstractSubHyperplane<Point3D, Point2D> {
      * instance on the minus side of the instance
      */
     @Override
-    public SplitSubHyperplane<Point3D> split(Hyperplane<Point3D> hyperplane) {
+    public SplitSubHyperplane<Vector3D> split(Hyperplane<Vector3D> hyperplane) {
 
         final Plane otherPlane = (Plane) hyperplane;
         final Plane thisPlane  = (Plane) getHyperplane();
@@ -72,28 +72,28 @@ public class SubPlane extends AbstractSubHyperplane<Point3D, Point2D> {
         }
 
         // the hyperplanes do intersect
-        Point2D p = thisPlane.toSubSpace(inter.toSpace(Point1D.ZERO));
-        Point2D q = thisPlane.toSubSpace(inter.toSpace(Point1D.ONE));
+        Vector2D p = thisPlane.toSubSpace(inter.toSpace(Vector1D.ZERO));
+        Vector2D q = thisPlane.toSubSpace(inter.toSpace(Vector1D.ONE));
         Vector3D crossP = inter.getDirection().crossProduct(thisPlane.getNormal());
         if (crossP.dotProduct(otherPlane.getNormal()) < 0) {
-            final Point2D tmp = p;
+            final Vector2D tmp = p;
             p           = q;
             q           = tmp;
         }
-        final SubHyperplane<Point2D> l2DMinus =
+        final SubHyperplane<Vector2D> l2DMinus =
             new org.apache.commons.geometry.euclidean.twod.Line(p, q, tolerance).wholeHyperplane();
-        final SubHyperplane<Point2D> l2DPlus =
+        final SubHyperplane<Vector2D> l2DPlus =
             new org.apache.commons.geometry.euclidean.twod.Line(q, p, tolerance).wholeHyperplane();
 
-        final BSPTree<Point2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
-        final BSPTree<Point2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
-                                               new BSPTree<Point2D>(Boolean.FALSE) :
-                                               new BSPTree<>(l2DPlus, new BSPTree<Point2D>(Boolean.FALSE),
+        final BSPTree<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
+        final BSPTree<Vector2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
+                                               new BSPTree<Vector2D>(Boolean.FALSE) :
+                                               new BSPTree<>(l2DPlus, new BSPTree<Vector2D>(Boolean.FALSE),
                                                                         splitTree.getPlus(), null);
 
-        final BSPTree<Point2D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
-                                               new BSPTree<Point2D>(Boolean.FALSE) :
-                                                   new BSPTree<>(l2DMinus, new BSPTree<Point2D>(Boolean.FALSE),
+        final BSPTree<Vector2D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
+                                               new BSPTree<Vector2D>(Boolean.FALSE) :
+                                                   new BSPTree<>(l2DMinus, new BSPTree<Vector2D>(Boolean.FALSE),
                                                                             splitTree.getMinus(), null);
 
         return new SplitSubHyperplane<>(new SubPlane(thisPlane.copySelf(), new PolygonsSet(plusTree, tolerance)),

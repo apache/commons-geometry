@@ -146,14 +146,6 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return toCartesian(radius, azimuth, polar, Vector3D::of);
     }
 
-    /** Convert this set of spherical coordinates to a 3 dimensional point.
-    * @return A 3-dimensional point with an equivalent set of
-    *      coordinates.
-    */
-    public Point3D toPoint() {
-        return toCartesian(radius, azimuth, polar, Point3D::of);
-    }
-
     /** Get a hashCode for this set of spherical coordinates.
      * <p>All NaN values have the same hash code.</p>
      *

@@ -63,13 +63,92 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testToPoint() {
+    public void testCoordinates() {
+        // arrange
+        Vector2D v = Vector2D.of(1, 2);
+
         // act/assert
-        checkPoint(Vector2D.of(1, 2).asPoint(), 1, 2);
-        checkPoint(Vector2D.of(-1, -2).asPoint(), -1, -2);
-        checkPoint(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).asPoint(), Double.NaN, Double.POSITIVE_INFINITY);
-        checkPoint(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).asPoint(), Double.NEGATIVE_INFINITY, Double.NaN);
+        Assert.assertEquals(1.0, v.getX(), EPS);
+        Assert.assertEquals(2.0, v.getY(), EPS);
     }
+
+    @Test
+    public void testToArray() {
+        // arrange
+        Vector2D oneTwo = Vector2D.of(1, 2);
+
+        // act
+        double[] array = oneTwo.toArray();
+
+        // assert
+        Assert.assertEquals(2, array.length);
+        Assert.assertEquals(1.0, array[0], EPS);
+        Assert.assertEquals(2.0, array[1], EPS);
+    }
+
+    @Test
+    public void testDimension() {
+        // arrange
+        Vector2D v = Vector2D.of(1, 2);
+
+        // act/assert
+        Assert.assertEquals(2, v.getDimension());
+    }
+
+    @Test
+    public void testNaN() {
+        // act/assert
+        Assert.assertTrue(Vector2D.of(0, Double.NaN).isNaN());
+        Assert.assertTrue(Vector2D.of(Double.NaN, 0).isNaN());
+
+        Assert.assertFalse(Vector2D.of(1, 1).isNaN());
+        Assert.assertFalse(Vector2D.of(1, Double.NEGATIVE_INFINITY).isNaN());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 1).isNaN());
+    }
+
+    @Test
+    public void testInfinite() {
+        // act/assert
+        Assert.assertTrue(Vector2D.of(0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assert.assertTrue(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assert.assertTrue(Vector2D.of(0, Double.POSITIVE_INFINITY).isInfinite());
+        Assert.assertTrue(Vector2D.of(Double.POSITIVE_INFINITY, 0).isInfinite());
+
+        Assert.assertFalse(Vector2D.of(1, 1).isInfinite());
+        Assert.assertFalse(Vector2D.of(0, Double.NaN).isInfinite());
+        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
+    public void testToPolar() {
+        // arrange
+        double sqrt2 = Math.sqrt(2.0);
+
+        // act/assert
+        checkPolar(Vector2D.of(0, 0).toPolar(), 0, 0);
+
+        checkPolar(Vector2D.of(1, 0).toPolar(), 1, 0);
+        checkPolar(Vector2D.of(-1, 0).toPolar(), 1, Geometry.PI);
+
+        checkPolar(Vector2D.of(0, 2).toPolar(), 2, Geometry.HALF_PI);
+        checkPolar(Vector2D.of(0, -2).toPolar(), 2, Geometry.THREE_HALVES_PI);
+
+        checkPolar(Vector2D.of(sqrt2, sqrt2).toPolar(), 2, 0.25 * Geometry.PI);
+        checkPolar(Vector2D.of(-sqrt2, sqrt2).toPolar(), 2, 0.75 * Geometry.PI);
+        checkPolar(Vector2D.of(sqrt2, -sqrt2).toPolar(), 2, 1.75 * Geometry.PI);
+        checkPolar(Vector2D.of(-sqrt2, -sqrt2).toPolar(), 2, 1.25 * Geometry.PI);
+    }
+
+    @Test
+    public void testToPolar_NaNAndInfinite() {
+        // act/assert
+        Assert.assertTrue(Vector2D.of(Double.NaN, Double.NaN).toPolar().isNaN());
+        Assert.assertTrue(Vector2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).toPolar().isInfinite());
+    }
+
 
     @Test
     public void testGetZero() {
@@ -598,6 +677,57 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testVectorTo() {
+        // arrange
+        Vector2D p1 = Vector2D.of(1, 1);
+        Vector2D p2 = Vector2D.of(4, 5);
+        Vector2D p3 = Vector2D.of(-1, 0);
+
+        // act/assert
+        checkVector(p1.vectorTo(p1), 0, 0);
+        checkVector(p1.vectorTo(p2), 3, 4);
+        checkVector(p2.vectorTo(p1), -3, -4);
+
+        checkVector(p1.vectorTo(p3), -2, -1);
+        checkVector(p3.vectorTo(p1), 2, 1);
+    }
+
+    @Test
+    public void testDirectionTo() {
+        // act/assert
+        double invSqrt2 = 1.0 / Math.sqrt(2);
+
+        Vector2D p1 = Vector2D.of(1, 1);
+        Vector2D p2 = Vector2D.of(1, 5);
+        Vector2D p3 = Vector2D.of(-2, -2);
+
+        // act/assert
+        checkVector(p1.directionTo(p2), 0, 1);
+        checkVector(p2.directionTo(p1), 0, -1);
+
+        checkVector(p1.directionTo(p3), -invSqrt2, -invSqrt2);
+        checkVector(p3.directionTo(p1), invSqrt2, invSqrt2);
+    }
+
+    @Test
+    public void testDirectionTo_illegalNorm() {
+        // arrange
+        Vector2D p = Vector2D.of(1, 2);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector2D.ZERO.directionTo(Vector2D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector2D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector2D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+    }
+
+    @Test
     public void testLerp() {
         // arrange
         Vector2D v1 = Vector2D.of(1, -5);
@@ -827,8 +957,8 @@ public class Vector2DTest {
         Assert.assertEquals(y, v.getY(), eps);
     }
 
-    private void checkPoint(Point2D p, double x, double y) {
-        Assert.assertEquals(x, p.getX(), EPS);
-        Assert.assertEquals(y, p.getY(), EPS);
+    private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
+        Assert.assertEquals(radius, polar.getRadius(), EPS);
+        Assert.assertEquals(azimuth, polar.getAzimuth(), EPS);
     }
 }

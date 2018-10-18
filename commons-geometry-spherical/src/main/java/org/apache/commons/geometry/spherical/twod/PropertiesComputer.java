@@ -23,7 +23,6 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
-import org.apache.commons.geometry.euclidean.threed.Point3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Visitor computing geometrical properties.
@@ -40,7 +39,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
     private Vector3D summedBarycenter;
 
     /** List of points strictly inside convex cells. */
-    private final List<Point3D> convexCellsInsidePoints;
+    private final List<Vector3D> convexCellsInsidePoints;
 
     /** Simple constructor.
      * @param tolerance below which points are consider to be identical
@@ -85,7 +84,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
 
             // compute the geometrical properties of the convex cell
             final double area  = convexCellArea(boundary.get(0));
-            final Point3D barycenter = convexCellBarycenter(boundary.get(0));
+            final Vector3D barycenter = convexCellBarycenter(boundary.get(0));
             convexCellsInsidePoints.add(barycenter);
 
             // add the cell contribution to the global properties
@@ -132,7 +131,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
      * @param start start vertex of the convex cell boundary
      * @return barycenter
      */
-    private Point3D convexCellBarycenter(final Vertex start) {
+    private Vector3D convexCellBarycenter(final Vertex start) {
 
         int n = 0;
         Vector3D sumB = Vector3D.ZERO;
@@ -143,7 +142,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
             n++;
         }
 
-        return sumB.normalize().asPoint();
+        return sumB.normalize();
 
     }
 
@@ -168,7 +167,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
     /** Get the points strictly inside convex cells.
      * @return points strictly inside convex cells
      */
-    public List<Point3D> getConvexCellsInsidePoints() {
+    public List<Vector3D> getConvexCellsInsidePoints() {
         return convexCellsInsidePoints;
     }
 

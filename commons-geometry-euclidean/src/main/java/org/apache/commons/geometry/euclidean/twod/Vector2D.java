@@ -26,7 +26,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /** This class represents a vector in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVector<Point2D, Vector2D> {
+public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
     public static final Vector2D ZERO   = new Vector2D(0, 0);
@@ -59,18 +59,80 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
     /** Serializable UID */
     private static final long serialVersionUID = 20180710L;
 
+    /** Abscissa (first coordinate) */
+    private final double x;
+
+    /** Ordinate (second coordinate) */
+    private final double y;
+
     /** Simple constructor.
      * @param x abscissa (first coordinate)
      * @param y ordinate (second coordinate)
      */
     private Vector2D(double x, double y) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
+    }
+
+    /** Returns the abscissa (first coordinate value) of the instance.
+     * @return the abscissa
+     */
+    public double getX() {
+        return x;
+    }
+
+    /** Returns the ordinate (second coordinate value) of the instance.
+     * @return the ordinate
+     */
+    public double getY() {
+        return y;
+    }
+
+    /** Return an equivalent set of coordinates in polar form.
+     * @return An equivalent set of coordinates in polar form.
+     */
+    public PolarCoordinates toPolar() {
+        return PolarCoordinates.ofCartesian(x, y);
+    }
+
+    /** Get the coordinates for this instance as a dimension 2 array.
+     * @return coordinates for this instance
+     */
+    public double[] toArray() {
+        return new double[] { x, y };
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point2D asPoint() {
-        return Point2D.of(getX(), getY());
+    public int getDimension() {
+        return 2;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isNaN() {
+        return Double.isNaN(x) || Double.isNaN(y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInfinite() {
+        return !isNaN() && (Double.isInfinite(x) || Double.isInfinite(y));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D vectorTo(Vector2D v) {
+        return v.subtract(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D directionTo(Vector2D v) {
+        return normalize(
+                    v.x - x,
+                    v.y - y
+                );
     }
 
     /** {@inheritDoc} */
@@ -88,13 +150,13 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        return Vectors.norm(getX(), getY());
+        return Vectors.norm(x, y);
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        return Vectors.normSq(getX(), getY());
+        return Vectors.normSq(x, y);
     }
 
     /** {@inheritDoc} */
@@ -103,69 +165,69 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
         final double invNorm = 1.0 / getCheckedNorm();
 
         return new Vector2D(
-                    magnitude * getX() * invNorm,
-                    magnitude * getY() * invNorm
+                    magnitude * x * invNorm,
+                    magnitude * y * invNorm
                 );
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D add(Vector2D v) {
-        return new Vector2D(getX() + v.getX(), getY() + v.getY());
+        return new Vector2D(x + v.x, y + v.y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D add(double factor, Vector2D v) {
-        return new Vector2D(getX() + (factor * v.getX()), getY() + (factor * v.getY()));
+        return new Vector2D(x + (factor * v.x), y + (factor * v.y));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(Vector2D v) {
-        return new Vector2D(getX() - v.getX(), getY() - v.getY());
+        return new Vector2D(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D subtract(double factor, Vector2D v) {
-        return new Vector2D(getX() - (factor * v.getX()), getY() - (factor * v.getY()));
+        return new Vector2D(x - (factor * v.x), y - (factor * v.y));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D negate() {
-        return new Vector2D(-getX(), -getY());
+        return new Vector2D(-x, -y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D normalize() {
-        return normalize(getX(), getY());
+        return normalize(x, y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D scalarMultiply(double a) {
-        return new Vector2D(a * getX(), a * getY());
+        return new Vector2D(a * x, a * y);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector2D v) {
-        return Vectors.norm(getX() - v.getX(), getY() - v.getY());
+        return Vectors.norm(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector2D v) {
-        return Vectors.normSq(getX() - v.getX(), getY() - v.getY());
+        return Vectors.normSq(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
     public double dotProduct(Vector2D v) {
-        return LinearCombination.value(getX(), v.getX(), getY(), v.getY());
+        return LinearCombination.value(x, v.x, y, v.y);
     }
 
     /** {@inheritDoc}
@@ -183,7 +245,7 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
         double threshold = normProduct * 0.9999;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
-            final double n = Math.abs(LinearCombination.value(getX(), v.getY(), -getY(), v.getX()));
+            final double n = Math.abs(LinearCombination.value(x, v.y, -y, v.x));
             if (dot >= 0) {
                 return Math.asin(n / normProduct);
             }
@@ -217,7 +279,7 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
      */
     @Override
     public Vector2D orthogonal() {
-        return normalize(-getY(), getX());
+        return normalize(-y, x);
     }
 
     /** {@inheritDoc} */
@@ -247,10 +309,10 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
      * @see <a href="http://mathworld.wolfram.com/CrossProduct.html">Cross product (Mathworld)</a>
      */
     public double crossProduct(final Vector2D p1, final Vector2D p2) {
-        final double x1 = p2.getX() - p1.getX();
-        final double y1 = getY() - p1.getY();
-        final double x2 = getX() - p1.getX();
-        final double y2 = p2.getY() - p1.getY();
+        final double x1 = p2.x - p1.x;
+        final double y1 = y - p1.y;
+        final double x2 = x - p1.x;
+        final double y2 = p2.y - p1.y;
         return LinearCombination.value(x1, y1, -x2, y2);
     }
 
@@ -266,7 +328,7 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
         if (isNaN()) {
             return 542;
         }
-        return 122 * (76 * Double.hashCode(getX()) +  Double.hashCode(getY()));
+        return 122 * (76 * Double.hashCode(x) +  Double.hashCode(y));
     }
 
     /**
@@ -300,9 +362,15 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
                 return this.isNaN();
             }
 
-            return (getX() == rhs.getX()) && (getY() == rhs.getY());
+            return (x == rhs.x) && (y == rhs.y);
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(x, y);
     }
 
     /** Returns a component of the current instance relative to the given base
@@ -330,23 +398,14 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
 
         final double scale = aDotB / baseMagSq;
 
-        final double projX = scale * base.getX();
-        final double projY = scale * base.getY();
+        final double projX = scale * base.x;
+        final double projY = scale * base.y;
 
         if (reject) {
-            return factory.apply(getX() - projX, getY() - projY);
+            return factory.apply(x - projX, y - projY);
         }
 
         return factory.apply(projX, projY);
-    }
-
-    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
-     * is not real (ie, NaN or infinite) or zero.
-     * @return the vector norm value, guaranteed to be real and non-zero
-     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
-     */
-    private double getCheckedNorm() {
-        return Vectors.checkedNorm(getNorm());
     }
 
     /** Returns a vector with the given coordinate values.
@@ -405,85 +464,77 @@ public class Vector2D extends Cartesian2D implements MultiDimensionalEuclideanVe
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a scale factor for first coordinate
      * @param c first coordinate
      * @return vector with coordinates calculated by {@code a * c}
      */
-    public static Vector2D linearCombination(double a, Cartesian2D c) {
-        return new Vector2D(a * c.getX(), a * c.getY());
+    public static Vector2D linearCombination(double a, Vector2D c) {
+        return new Vector2D(a * c.x, a * c.y);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2)}
+     * @param v2 second coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2) {
+    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY()));
+                LinearCombination.value(a1, v1.x, a2, v2.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3)}
+     * @param v3 third coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
-            double a3, Cartesian2D c3) {
+    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2,
+            double a3, Vector2D v3) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
+     * @param v3 third coordinate
      * @param a4 scale factor for fourth coordinate
-     * @param c4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3) + (a4 * c4)}
+     * @param v4 fourth coordinate
+     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector2D linearCombination(double a1, Cartesian2D c1, double a2, Cartesian2D c2,
-            double a3, Cartesian2D c3, double a4, Cartesian2D c4) {
+    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2,
+            double a3, Vector2D v3, double a4, Vector2D v4) {
         return new Vector2D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()),
-                LinearCombination.value(a1, c1.getY(), a2, c2.getY(), a3, c3.getY(), a4, c4.getY()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
+                LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y));
     }
 
     /** Private class used to represent unit vectors. This allows optimizations to be performed for certain

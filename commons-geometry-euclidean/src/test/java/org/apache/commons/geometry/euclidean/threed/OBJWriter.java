@@ -31,8 +31,8 @@ import java.util.TreeMap;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class creates simple OBJ files from {@link PolyhedronsSet} instances.
  * The output files can be opened in a 3D viewer for visual debugging of 3D
@@ -76,10 +76,10 @@ public class OBJWriter {
      * @param vertices
      * @throws IOException
      */
-    private static void writeVertices(Writer writer, List<Point3D> vertices) throws IOException {
+    private static void writeVertices(Writer writer, List<Vector3D> vertices) throws IOException {
         DecimalFormat df = new DecimalFormat("0.######");
 
-        for (Point3D v : vertices) {
+        for (Vector3D v : vertices) {
             writer.write("v ");
             writer.write(df.format(v.getX()));
             writer.write(" ");
@@ -112,7 +112,7 @@ public class OBJWriter {
      * other, then the vertices are considered equal. This helps to avoid
      * writing duplicate vertices in the OBJ output.
      */
-    private static class VertexComparator implements Comparator<Point3D> {
+    private static class VertexComparator implements Comparator<Vector3D> {
 
         /** Geometric tolerance value */
         private double tolerance;
@@ -126,7 +126,7 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public int compare(Point3D a, Point3D b) {
+        public int compare(Vector3D a, Vector3D b) {
             int result = compareDoubles(a.getX(), b.getX());
             if (result == 0) {
                 result = compareDoubles(a.getY(), b.getY());
@@ -159,16 +159,16 @@ public class OBJWriter {
     /** Class for converting a 3D BSPTree into a list of vertices
      * and face vertex indices.
      */
-    private static class MeshBuilder implements BSPTreeVisitor<Point3D> {
+    private static class MeshBuilder implements BSPTreeVisitor<Vector3D> {
 
         /** Geometric tolerance */
         private final double tolerance;
 
         /** Map of vertices to their index in the vertices list */
-        private Map<Point3D, Integer> vertexIndexMap;
+        private Map<Vector3D, Integer> vertexIndexMap;
 
         /** List of unique vertices in the BSPTree boundary */
-        private List<Point3D> vertices;
+        private List<Vector3D> vertices;
 
         /**
          * List of face vertex indices. Each face will have 3 indices. Indices
@@ -189,7 +189,7 @@ public class OBJWriter {
         /** Returns the list of unique vertices found in the BSPTree.
          * @return
          */
-        public List<Point3D> getVertices() {
+        public List<Vector3D> getVertices() {
             return vertices;
         }
 
@@ -203,15 +203,15 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(BSPTree<Point3D> node) {
+        public Order visitOrder(BSPTree<Vector3D> node) {
             return Order.SUB_MINUS_PLUS;
         }
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
-        public void visitInternalNode(BSPTree<Point3D> node) {
-            BoundaryAttribute<Point3D> attr = (BoundaryAttribute<Point3D>) node.getAttribute();
+        public void visitInternalNode(BSPTree<Vector3D> node) {
+            BoundaryAttribute<Vector3D> attr = (BoundaryAttribute<Vector3D>) node.getAttribute();
 
             if (attr.getPlusOutside() != null) {
                 addBoundary((SubPlane) attr.getPlusOutside());
@@ -223,7 +223,7 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(BSPTree<Point3D> node) {
+        public void visitLeafNode(BSPTree<Vector3D> node) {
             // do nothing
         }
 
@@ -238,8 +238,8 @@ public class OBJWriter {
             TriangleExtractor triExtractor = new TriangleExtractor(tolerance);
             poly.getTree(true).visit(triExtractor);
 
-            Point3D v1, v2, v3;
-            for (Point2D[] tri : triExtractor.getTriangles()) {
+            Vector3D v1, v2, v3;
+            for (Vector2D[] tri : triExtractor.getTriangles()) {
                 v1 = plane.toSpace(tri[0]);
                 v2 = plane.toSpace(tri[1]);
                 v3 = plane.toSpace(tri[2]);
@@ -258,7 +258,7 @@ public class OBJWriter {
          * @param vertex
          * @return
          */
-        private int getVertexIndex(Point3D vertex) {
+        private int getVertexIndex(Vector3D vertex) {
             Integer idx = vertexIndexMap.get(vertex);
             if (idx == null) {
                 idx = vertices.size();
@@ -272,13 +272,13 @@ public class OBJWriter {
 
     /** Visitor for extracting a collection of triangles from a 2D BSPTree.
      */
-    private static class TriangleExtractor implements BSPTreeVisitor<Point2D> {
+    private static class TriangleExtractor implements BSPTreeVisitor<Vector2D> {
 
         /** Geometric tolerance */
         private double tolerance;
 
         /** List of extracted triangles */
-        private List<Point2D[]> triangles = new ArrayList<>();
+        private List<Vector2D[]> triangles = new ArrayList<>();
 
         /** Creates a new instance with the given geometric tolerance.
          * @param tolerance
@@ -290,30 +290,30 @@ public class OBJWriter {
         /** Returns the list of extracted triangles.
          * @return
          */
-        public List<Point2D[]> getTriangles() {
+        public List<Vector2D[]> getTriangles() {
             return triangles;
         }
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(BSPTree<Point2D> node) {
+        public Order visitOrder(BSPTree<Vector2D> node) {
             return Order.SUB_MINUS_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitInternalNode(BSPTree<Point2D> node) {
+        public void visitInternalNode(BSPTree<Vector2D> node) {
             // do nothing
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(BSPTree<Point2D> node) {
+        public void visitLeafNode(BSPTree<Vector2D> node) {
             if ((Boolean) node.getAttribute()) {
                 PolygonsSet convexPoly = new PolygonsSet(node.pruneAroundConvexCell(Boolean.TRUE,
                         Boolean.FALSE, null), tolerance);
 
-                for (Point2D[] loop : convexPoly.getVertices()) {
+                for (Vector2D[] loop : convexPoly.getVertices()) {
                     if (loop.length > 0 && loop[0] != null) { // skip unclosed loops
                         addTriangles(loop);
                     }
@@ -325,10 +325,10 @@ public class OBJWriter {
          * triangles and adds them to the internal list.
          * @param vertices
          */
-        private void addTriangles(Point2D[] vertices) {
+        private void addTriangles(Vector2D[] vertices) {
             // use a triangle fan to add the convex region
             for (int i=2; i<vertices.length; ++i) {
-                triangles.add(new Point2D[] { vertices[0], vertices[i-1], vertices[i] });
+                triangles.add(new Vector2D[] { vertices[0], vertices[i-1], vertices[i] });
             }
         }
     }

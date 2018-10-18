@@ -135,27 +135,6 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testToPoint() {
-        // arrange
-        double sqrt3 = Math.sqrt(3);
-
-        // act/assert
-        checkPoint(SphericalCoordinates.of(0, 0, 0).toPoint(), 0, 0, 0);
-
-        checkPoint(SphericalCoordinates.of(1, 0, Geometry.HALF_PI).toPoint(), 1, 0, 0);
-        checkPoint(SphericalCoordinates.of(1, Geometry.PI, Geometry.HALF_PI).toPoint(), -1, 0, 0);
-
-        checkPoint(SphericalCoordinates.of(2, Geometry.HALF_PI, Geometry.HALF_PI).toPoint(), 0, 2, 0);
-        checkPoint(SphericalCoordinates.of(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI).toPoint(), 0, -2, 0);
-
-        checkPoint(SphericalCoordinates.of(3, 0, 0).toPoint(), 0, 0, 3);
-        checkPoint(SphericalCoordinates.of(3, 0, Geometry.PI).toPoint(), 0, 0, -3);
-
-        checkPoint(SphericalCoordinates.of(Math.sqrt(3), QUARTER_PI, Math.acos(1 / sqrt3)).toPoint(), 1, 1, 1);
-        checkPoint(SphericalCoordinates.of(Math.sqrt(3), MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3)).toPoint(), -1, -1, -1);
-    }
-
-    @Test
     public void testToVector() {
         // arrange
         double sqrt3 = Math.sqrt(3);
@@ -180,7 +159,7 @@ public class SphericalCoordinatesTest {
     public void testToCartesian_static() {
         // arrange
         double sqrt3 = Math.sqrt(3);
-        DoubleFunction3N<Point3D> factory = Point3D::of;
+        DoubleFunction3N<Vector3D> factory = Vector3D::of;
 
         // act/assert
         checkPoint(SphericalCoordinates.toCartesian(0, 0, 0, factory), 0, 0, 0);
@@ -385,7 +364,7 @@ public class SphericalCoordinatesTest {
         Assert.assertEquals(polar, c.getPolar(), EPS);
     }
 
-    private void checkPoint(Point3D p, double x, double y, double z) {
+    private void checkPoint(Vector3D p, double x, double y, double z) {
         Assert.assertEquals(x, p.getX(), EPS);
         Assert.assertEquals(y, p.getY(), EPS);
         Assert.assertEquals(z, p.getZ(), EPS);

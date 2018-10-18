@@ -23,10 +23,10 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class OrientedPoint implements Hyperplane<Point1D> {
+public class OrientedPoint implements Hyperplane<Vector1D> {
 
     /** Point location. */
-    private final Point1D location;
+    private final Vector1D location;
 
     /** Orientation. */
     private boolean direct;
@@ -40,7 +40,7 @@ public class OrientedPoint implements Hyperplane<Point1D> {
      * abscissas greater than {@code location}
      * @param tolerance tolerance below which points are considered to belong to the hyperplane
      */
-    public OrientedPoint(final Point1D location, final boolean direct, final double tolerance) {
+    public OrientedPoint(final Vector1D location, final boolean direct, final double tolerance) {
         this.location  = location;
         this.direct    = direct;
         this.tolerance = tolerance;
@@ -58,7 +58,7 @@ public class OrientedPoint implements Hyperplane<Point1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getOffset(final Point1D point) {
+    public double getOffset(final Vector1D point) {
         final double delta = point.getX() - location.getX();
         return direct ? delta : -delta;
     }
@@ -90,13 +90,13 @@ public class OrientedPoint implements Hyperplane<Point1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Point1D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Vector1D> other) {
         return !(direct ^ ((OrientedPoint) other).direct);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point1D project(Point1D point) {
+    public Vector1D project(Vector1D point) {
         return location;
     }
 
@@ -109,7 +109,7 @@ public class OrientedPoint implements Hyperplane<Point1D> {
     /** Get the hyperplane location on the real line.
      * @return the hyperplane location
      */
-    public Point1D getLocation() {
+    public Vector1D getLocation() {
         return location;
     }
 

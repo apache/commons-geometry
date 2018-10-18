@@ -20,31 +20,31 @@ import java.util.List;
 
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.fraction.BigFraction;
 
 /** Class generating an enclosing ball from its support points.
  */
-public class DiskGenerator implements SupportBallGenerator<Point2D> {
+public class DiskGenerator implements SupportBallGenerator<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public EnclosingBall<Point2D> ballOnSupport(final List<Point2D> support) {
+    public EnclosingBall<Vector2D> ballOnSupport(final List<Vector2D> support) {
 
         if (support.size() < 1) {
-            return new EnclosingBall<>(Point2D.ZERO, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Vector2D.ZERO, Double.NEGATIVE_INFINITY);
         } else {
-            final Point2D vA = support.get(0);
+            final Vector2D vA = support.get(0);
             if (support.size() < 2) {
                 return new EnclosingBall<>(vA, 0, vA);
             } else {
-                final Point2D vB = support.get(1);
+                final Vector2D vB = support.get(1);
                 if (support.size() < 3) {
-                    return new EnclosingBall<>(Point2D.vectorCombination(0.5, vA, 0.5, vB),
+                    return new EnclosingBall<>(Vector2D.linearCombination(0.5, vA, 0.5, vB),
                                                                     0.5 * vA.distance(vB),
                                                                     vA, vB);
                 } else {
-                    final Point2D vC = support.get(2);
+                    final Vector2D vC = support.get(2);
                     // a disk is 2D can be defined as:
                     // (1)   (x - x_0)^2 + (y - y_0)^2 = r^2
                     // which can be written:
@@ -85,7 +85,7 @@ public class DiskGenerator implements SupportBallGenerator<Point2D> {
                     final BigFraction dx      = c2[0].subtract(centerX);
                     final BigFraction dy      = c3[0].subtract(centerY);
                     final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy));
-                    return new EnclosingBall<>(Point2D.of(centerX.doubleValue(),
+                    return new EnclosingBall<>(Vector2D.of(centerX.doubleValue(),
                                                                                  centerY.doubleValue()),
                                                                     Math.sqrt(r2.doubleValue()),
                                                                     vA, vB, vC);

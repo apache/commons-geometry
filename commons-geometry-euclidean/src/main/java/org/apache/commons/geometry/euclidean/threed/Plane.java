@@ -20,19 +20,19 @@ import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 
 /** The class represent planes in a three dimensional space.
  */
-public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
+public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D> {
 
     /** Offset of the origin with respect to the plane. */
     private double originOffset;
 
     /** Origin of the plane frame. */
-    private Point3D origin;
+    private Vector3D origin;
 
     /** First vector of the plane frame (in plane). */
     private Vector3D u;
@@ -65,11 +65,11 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public Plane(final Point3D p, final Vector3D normal, final double tolerance)
+    public Plane(final Vector3D p, final Vector3D normal, final double tolerance)
         throws IllegalArgumentException {
         setNormal(normal);
         this.tolerance = tolerance;
-        this.originOffset = -p.asVector().dotProduct(w);
+        this.originOffset = -p.dotProduct(w);
         setFrame();
     }
 
@@ -82,7 +82,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the points do not constitute a plane
      */
-    public Plane(final Point3D p1, final Point3D p2, final Point3D p3, final double tolerance)
+    public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3, final double tolerance)
         throws IllegalArgumentException {
         this(p1, p2.subtract(p1).crossProduct(p3.subtract(p1)), tolerance);
     }
@@ -118,9 +118,9 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param normal normal direction to the plane
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public void reset(final Point3D p, final Vector3D normal) {
+    public void reset(final Vector3D p, final Vector3D normal) {
         setNormal(normal);
-        originOffset = -p.asVector().dotProduct(w);
+        originOffset = -p.dotProduct(w);
         setFrame();
     }
 
@@ -151,7 +151,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
     /** Reset the plane frame.
      */
     private void setFrame() {
-        origin = Vector3D.linearCombination(-originOffset, w).asPoint();
+        origin = Vector3D.linearCombination(-originOffset, w);
         u = w.orthogonal();
         v = w.crossProduct(u);
     }
@@ -162,7 +162,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @return the origin point of the plane frame (point closest to the
      * 3D-space origin)
      */
-    public Point3D getOrigin() {
+    public Vector3D getOrigin() {
         return origin;
     }
 
@@ -204,7 +204,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Point3D project(Point3D point) {
+    public Vector3D project(Vector3D point) {
         return toSpace(toSubSpace(point));
     }
 
@@ -234,24 +234,24 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
     }
 
     /** Transform a 3D space point into an in-plane point.
-     * @param point point of the space (must be a {@link Point3D} instance)
+     * @param point point of the space (must be a {@link Vector3D} instance)
      * @return in-plane point
      * @see #toSpace
      */
     @Override
-    public Point2D toSubSpace(final Point3D point) {
-        Vector3D vec = point.asVector();
-        return Point2D.of(vec.dotProduct(u), vec.dotProduct(v));
+    public Vector2D toSubSpace(final Vector3D point) {
+        Vector3D vec = point;
+        return Vector2D.of(vec.dotProduct(u), vec.dotProduct(v));
     }
 
     /** Transform an in-plane point into a 3D space point.
-     * @param point in-plane point (must be a {@link Point2D} instance)
+     * @param point in-plane point (must be a {@link Vector2D} instance)
      * @return 3D space point
      * @see #toSubSpace
      */
     @Override
-    public Point3D toSpace(final Point2D point) {
-        return Point3D.vectorCombination(point.getX(), u, point.getY(), v, -originOffset, w);
+    public Vector3D toSpace(final Vector2D point) {
+        return Vector3D.linearCombination(point.getX(), u, point.getY(), v, -originOffset, w);
     }
 
     /** Get one point from the 3D-space.
@@ -261,8 +261,8 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @return one point in the 3D-space, with given coordinates and offset
      * relative to the plane
      */
-    public Point3D getPointAt(final Point2D inPlane, final double offset) {
-        return Point3D.vectorCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
+    public Vector3D getPointAt(final Vector2D inPlane, final double offset) {
+        return Vector3D.linearCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
     }
 
     /** Check if the instance is similar to another plane.
@@ -284,7 +284,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param rotation vectorial rotation operator
      * @return a new plane
      */
-    public Plane rotate(final Point3D center, final Rotation rotation) {
+    public Plane rotate(final Vector3D center, final Rotation rotation) {
 
         final Vector3D delta = origin.subtract(center);
         final Plane plane = new Plane(center.add(rotation.applyTo(delta)),
@@ -320,15 +320,15 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @return intersection point between between the line and the
      * instance (null if the line is parallel to the instance)
      */
-    public Point3D intersection(final Line line) {
+    public Vector3D intersection(final Line line) {
         final Vector3D direction = line.getDirection();
         final double   dot       = w.dotProduct(direction);
         if (Math.abs(dot) < 1.0e-10) {
             return null;
         }
-        final Point3D point = line.toSpace(Point1D.ZERO);
-        final double   k     = -(originOffset + w.dotProduct(point.asVector())) / dot;
-        return Point3D.vectorCombination(1.0, point, k, direction);
+        final Vector3D point = line.toSpace(Vector1D.ZERO);
+        final double   k     = -(originOffset + w.dotProduct(point)) / dot;
+        return Vector3D.linearCombination(1.0, point, k, direction);
     }
 
     /** Build the line shared by the instance and another plane.
@@ -341,7 +341,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
         if (direction.getNorm() < tolerance) {
             return null;
         }
-        final Point3D point = intersection(this, other, new Plane(direction, tolerance));
+        final Vector3D point = intersection(this, other, new Plane(direction, tolerance));
         return new Line(point, point.add(direction), tolerance);
     }
 
@@ -351,7 +351,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param plane3 third plane2
      * @return intersection point of three planes, null if some planes are parallel
      */
-    public static Point3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
+    public static Vector3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
 
         // coefficients of the three planes linear equations
         final double a1 = plane1.w.getX();
@@ -380,7 +380,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
         }
 
         final double r = 1.0 / determinant;
-        return Point3D.of(
+        return Vector3D.of(
                             (-a23 * d1 - (c1 * b3 - c3 * b1) * d2 - (c2 * b1 - c1 * b2) * d3) * r,
                             (-b23 * d1 - (c3 * a1 - c1 * a3) * d2 - (c1 * a2 - c2 * a1) * d3) * r,
                             (-c23 * d1 - (b1 * a3 - b3 * a1) * d2 - (b2 * a1 - b1 * a2) * d3) * r);
@@ -408,7 +408,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @param p point to check
      * @return true if p belongs to the plane
      */
-    public boolean contains(final Point3D p) {
+    public boolean contains(final Vector3D p) {
         return Math.abs(getOffset(p)) < tolerance;
     }
 
@@ -435,8 +435,8 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * @return offset of the point
      */
     @Override
-    public double getOffset(final Point3D point) {
-        return point.asVector().dotProduct(w) + originOffset;
+    public double getOffset(final Vector3D point) {
+        return point.dotProduct(w) + originOffset;
     }
 
     /** Check if the instance has the same orientation as another hyperplane.
@@ -445,7 +445,7 @@ public class Plane implements Hyperplane<Point3D>, Embedding<Point3D, Point2D> {
      * the same orientation
      */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Point3D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Vector3D> other) {
         return (((Plane) other).w).dotProduct(w) > 0.0;
     }
 

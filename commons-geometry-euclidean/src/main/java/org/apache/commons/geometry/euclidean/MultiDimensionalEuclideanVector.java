@@ -19,14 +19,15 @@ package org.apache.commons.geometry.euclidean;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /**
- * Euclidean vector extension interface with methods applicable to spaces of
- * two or more dimensions.
+ * Abstract base class for Euclidean vectors with two or more dimensions.
  *
- * @param <P> Point implementation type
  * @param <V> Vector implementation type
  */
-public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>, V extends MultiDimensionalEuclideanVector<P, V>>
-        extends EuclideanVector<P, V> {
+public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensionalEuclideanVector<V>>
+        extends EuclideanVector<V> {
+
+    /** Serializable version identifer */
+    private static final long serialVersionUID = 20181017L;
 
     /** Get the projection of the instance onto the given base vector. The returned
      * vector is parallel to {@code base}. Vector projection and rejection onto
@@ -39,7 +40,7 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #reject(MultiDimensionalEuclideanVector)
      */
-    V project(V base);
+    public abstract V project(V base);
 
     /** Get the rejection of the instance from the given base vector. The returned
      * vector is orthogonal to {@code base}. This operation can be interpreted as
@@ -54,14 +55,14 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
      * @see #project(MultiDimensionalEuclideanVector)
      */
-    V reject(V base);
+    public abstract V reject(V base);
 
     /** Get a unit vector orthogonal to the instance.
      * @return a unit vector orthogonal to the current instance
      * @throws IllegalNormException if the norm of the current instance is zero, NaN,
      *  or infinite
      */
-    V orthogonal();
+    public abstract V orthogonal();
 
     /** Get a unit vector orthogonal to the current vector and pointing in the direction
      * of {@code dir}. This method is equivalent to calling {@code dir.reject(vec).normalize()}
@@ -72,5 +73,5 @@ public interface MultiDimensionalEuclideanVector<P extends EuclideanPoint<P, V>,
      * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
      *      or the given vector is collinear with this vector.
      */
-    V orthogonal(V dir);
+    public abstract V orthogonal(V dir);
 }
