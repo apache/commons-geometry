@@ -132,8 +132,8 @@ public class CircleTest {
         UnitSphereSampler sphRandom = new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                                                    0xbfd34e92231bbcfel));
         for (int i = 0; i < 100; ++i) {
-            Circle c1 = new Circle(Vector3D.ofArray(sphRandom.nextVector()), 1.0e-10);
-            Circle c2 = new Circle(Vector3D.ofArray(sphRandom.nextVector()), 1.0e-10);
+            Circle c1 = new Circle(Vector3D.of(sphRandom.nextVector()), 1.0e-10);
+            Circle c2 = new Circle(Vector3D.of(sphRandom.nextVector()), 1.0e-10);
             checkArcIsInside(c1, c2);
             checkArcIsInside(c2, c1);
         }
@@ -157,16 +157,16 @@ public class CircleTest {
         UnitSphereSampler sphRandom = new UnitSphereSampler(3, random);
         for (int i = 0; i < 100; ++i) {
 
-            Rotation r = new Rotation(Vector3D.ofArray(sphRandom.nextVector()),
+            Rotation r = new Rotation(Vector3D.of(sphRandom.nextVector()),
                                       Math.PI * random.nextDouble(),
                                       RotationConvention.VECTOR_OPERATOR);
             Transform<S2Point, S1Point> t = Circle.getTransform(r);
 
-            S2Point  p = S2Point.ofVector(Vector3D.ofArray(sphRandom.nextVector()));
+            S2Point  p = S2Point.ofVector(Vector3D.of(sphRandom.nextVector()));
             S2Point tp = t.apply(p);
             Assert.assertEquals(0.0, r.applyTo(p.getVector()).distance(tp.getVector()), 1.0e-10);
 
-            Circle  c = new Circle(Vector3D.ofArray(sphRandom.nextVector()), 1.0e-10);
+            Circle  c = new Circle(Vector3D.of(sphRandom.nextVector()), 1.0e-10);
             Circle tc = (Circle) t.apply(c);
             Assert.assertEquals(0.0, r.applyTo(c.getPole()).distance(tc.getPole()),   1.0e-10);
             Assert.assertEquals(0.0, r.applyTo(c.getXAxis()).distance(tc.getXAxis()), 1.0e-10);

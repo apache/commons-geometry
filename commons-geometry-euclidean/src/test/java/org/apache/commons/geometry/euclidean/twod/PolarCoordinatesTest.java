@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -96,23 +95,43 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testOfCartesian() {
+    public void testFromCartesian_coordinates() {
         // arrange
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
-        checkPolar(PolarCoordinates.ofCartesian(0, 0), 0, 0);
+        checkPolar(PolarCoordinates.fromCartesian(0, 0), 0, 0);
 
-        checkPolar(PolarCoordinates.ofCartesian(1, 0), 1, 0);
-        checkPolar(PolarCoordinates.ofCartesian(1, 1), sqrt2, 0.25 * Geometry.PI);
-        checkPolar(PolarCoordinates.ofCartesian(0, 1), 1, Geometry.HALF_PI);
+        checkPolar(PolarCoordinates.fromCartesian(1, 0), 1, 0);
+        checkPolar(PolarCoordinates.fromCartesian(1, 1), sqrt2, 0.25 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(0, 1), 1, Geometry.HALF_PI);
 
-        checkPolar(PolarCoordinates.ofCartesian(-1, 1), sqrt2, 0.75 * Geometry.PI);
-        checkPolar(PolarCoordinates.ofCartesian(-1, 0), 1, Geometry.PI);
-        checkPolar(PolarCoordinates.ofCartesian(-1, -1), sqrt2, 1.25 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, 1), sqrt2, 0.75 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, 0), 1, Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(-1, -1), sqrt2, 1.25 * Geometry.PI);
 
-        checkPolar(PolarCoordinates.ofCartesian(0, -1), 1, 1.5 * Geometry.PI);
-        checkPolar(PolarCoordinates.ofCartesian(1, -1), sqrt2, 1.75 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(0, -1), 1, 1.5 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(1, -1), sqrt2, 1.75 * Geometry.PI);
+    }
+
+    @Test
+    public void testFromCartesian_vector() {
+        // arrange
+        double sqrt2 = Math.sqrt(2);
+
+        // act/assert
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 0)), 0, 0);
+
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, 0)), 1, 0);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, 1)), sqrt2, 0.25 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, 1)), 1, Geometry.HALF_PI);
+
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 1)), sqrt2, 0.75 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, 0)), 1, Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(-1, -1)), sqrt2, 1.25 * Geometry.PI);
+
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(0, -1)), 1, 1.5 * Geometry.PI);
+        checkPolar(PolarCoordinates.fromCartesian(Vector2D.of(1, -1)), sqrt2, 1.75 * Geometry.PI);
     }
 
     @Test
@@ -215,62 +234,58 @@ public class PolarCoordinatesTest {
     }
 
     @Test
-    public void testToVector() {
+    public void testToCartesian() {
         // arrange
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
-        checkVector(PolarCoordinates.of(0, 0).toVector(), 0, 0);
+        checkVector(PolarCoordinates.of(0, 0).toCartesian(), 0, 0);
 
-        checkVector(PolarCoordinates.of(1, 0).toVector(), 1, 0);
-        checkVector(PolarCoordinates.of(sqrt2, 0.25 * Geometry.PI).toVector(), 1, 1);
-        checkVector(PolarCoordinates.of(1, Geometry.HALF_PI).toVector(), 0, 1);
+        checkVector(PolarCoordinates.of(1, 0).toCartesian(), 1, 0);
+        checkVector(PolarCoordinates.of(sqrt2, 0.25 * Geometry.PI).toCartesian(), 1, 1);
+        checkVector(PolarCoordinates.of(1, Geometry.HALF_PI).toCartesian(), 0, 1);
 
-        checkVector(PolarCoordinates.of(sqrt2, 0.75 * Geometry.PI).toVector(), -1, 1);
-        checkVector(PolarCoordinates.of(1, Geometry.PI).toVector(), -1, 0);
-        checkVector(PolarCoordinates.of(sqrt2, -0.75 * Geometry.PI).toVector(), -1, -1);
+        checkVector(PolarCoordinates.of(sqrt2, 0.75 * Geometry.PI).toCartesian(), -1, 1);
+        checkVector(PolarCoordinates.of(1, Geometry.PI).toCartesian(), -1, 0);
+        checkVector(PolarCoordinates.of(sqrt2, -0.75 * Geometry.PI).toCartesian(), -1, -1);
 
-        checkVector(PolarCoordinates.of(1, Geometry.MINUS_HALF_PI).toVector(), 0, -1);
-        checkVector(PolarCoordinates.of(sqrt2, -0.25 * Geometry.PI).toVector(), 1, -1);
+        checkVector(PolarCoordinates.of(1, Geometry.MINUS_HALF_PI).toCartesian(), 0, -1);
+        checkVector(PolarCoordinates.of(sqrt2, -0.25 * Geometry.PI).toCartesian(), 1, -1);
     }
 
     @Test
     public void testToCartesian_static() {
         // arrange
-        DoubleFunction2N<Vector2D> factory = Vector2D::of;
         double sqrt2 = Math.sqrt(2);
 
         // act/assert
-        checkPoint(PolarCoordinates.toCartesian(0, 0, factory), 0, 0);
+        checkVector(PolarCoordinates.toCartesian(0, 0), 0, 0);
 
-        checkPoint(PolarCoordinates.toCartesian(1, 0, factory), 1, 0);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.25 * Geometry.PI, factory), 1, 1);
-        checkPoint(PolarCoordinates.toCartesian(1, Geometry.HALF_PI, factory), 0, 1);
+        checkPoint(PolarCoordinates.toCartesian(1, 0), 1, 0);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.25 * Geometry.PI), 1, 1);
+        checkPoint(PolarCoordinates.toCartesian(1, Geometry.HALF_PI), 0, 1);
 
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.75 * Geometry.PI, factory), -1, 1);
-        checkPoint(PolarCoordinates.toCartesian(1, Geometry.PI, factory), -1, 0);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.75 * Geometry.PI, factory), -1, -1);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, 0.75 * Geometry.PI), -1, 1);
+        checkPoint(PolarCoordinates.toCartesian(1, Geometry.PI), -1, 0);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.75 * Geometry.PI), -1, -1);
 
-        checkPoint(PolarCoordinates.toCartesian(1, Geometry.MINUS_HALF_PI, factory), 0, -1);
-        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.25 * Geometry.PI, factory), 1, -1);
+        checkPoint(PolarCoordinates.toCartesian(1, Geometry.MINUS_HALF_PI), 0, -1);
+        checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.25 * Geometry.PI), 1, -1);
     }
 
     @Test
     public void testToCartesian_static_NaNAndInfinite() {
-        // arrange
-        DoubleFunction2N<Vector2D> factory = Vector2D::of;
-
         // act/assert
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0, factory).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NaN, factory).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NaN, 0).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NaN).isNaN());
 
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, 0, factory).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.POSITIVE_INFINITY, factory).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, factory).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, 0).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.POSITIVE_INFINITY).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY).isNaN());
 
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, 0, factory).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NEGATIVE_INFINITY, factory).isNaN());
-        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, factory).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, 0).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(0, Double.NEGATIVE_INFINITY).isNaN());
+        Assert.assertTrue(PolarCoordinates.toCartesian(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY).isNaN());
     }
 
     @Test

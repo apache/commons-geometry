@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
-/** This class represents a vector in two-dimensional Euclidean space.
+/** This class represents vectors and points in two-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
 public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
@@ -86,13 +86,6 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      */
     public double getY() {
         return y;
-    }
-
-    /** Return an equivalent set of coordinates in polar form.
-     * @return An equivalent set of coordinates in polar form.
-     */
-    public PolarCoordinates toPolar() {
-        return PolarCoordinates.ofCartesian(x, y);
     }
 
     /** Get the coordinates for this instance as a dimension 2 array.
@@ -422,20 +415,11 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return new vector
      * @exception IllegalArgumentException if the array does not have 2 elements
      */
-    public static Vector2D ofArray(double[] v) {
+    public static Vector2D of(double[] v) {
         if (v.length != 2) {
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 2");
         }
         return new Vector2D(v[0], v[1]);
-    }
-
-    /** Return a vector with coordinates equivalent to the given set of polar coordinates.
-     * @param radius The polar coordinate radius value.
-     * @param azimuth The polar coordinate azimuth angle in radians.
-     * @return vector instance with coordinates equivalent to the given polar coordinates.
-     */
-    public static Vector2D ofPolar(final double radius, final double azimuth) {
-        return PolarCoordinates.toCartesian(radius, azimuth, Vector2D::new);
     }
 
     /** Returns a normalized vector derived from the given values.

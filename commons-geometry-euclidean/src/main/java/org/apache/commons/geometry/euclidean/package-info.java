@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * This package is the top-level package for Euclidean geometry components.
+ * This is the top-level package for Euclidean geometry components.
  *
  * <h2>Definition</h2>
  * <p>
@@ -31,7 +32,7 @@
  *
  * <h2>Points and Vectors</h2>
  * <p>
- * As mentioned above, points and vectors are separate, distinct entities:
+ * As alluded to above, points and vectors are separate, distinct entities:
  * points represent locations in a space and vectors represent displacements.
  * This difference is the reason that commons-geometry has separate
  * {@link org.apache.commons.geometry.core.Point Point} and
@@ -54,6 +55,20 @@
  * "https://casual-effects.com/g3d/G3D10/G3D-base.lib/include/G3D-base/Vector3.h">G3D</a>,
  * and <a href=
  * "https://threejs.org/docs/index.html#api/en/math/Vector3">Three.js</a>.
+ * </p>
+ *
+ * <h2>Coordinate Systems</h2>
+ * <p>
+ * In general, geometric concepts are independent of the coordinate system
+ * used to represent them. For example, in 2-dimensional Euclidean space, the
+ * fact that two points may be subtracted to yield a displacement vector holds
+ * true regardless of whether the points are represented using Cartesian coordinates
+ * or polar coordinates. From this point of view, all coordinate systems can
+ * be considered equal. However, this library does <em>not</em> treat all systems
+ * equal. In order to keep the API lightweight and simple, all coordinates are
+ * assumed to be
+ * <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system">Cartesian</a>
+ * unless explicitly noted otherwise.
  * </p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidean

@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
-/** This class represents a vector in one-dimensional Euclidean space.
+/** This class represents vectors and points in one-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
 public class Vector1D extends EuclideanVector<Vector1D> {

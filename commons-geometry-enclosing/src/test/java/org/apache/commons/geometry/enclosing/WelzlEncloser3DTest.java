@@ -108,13 +108,13 @@ public class WelzlEncloser3DTest {
             // define the reference sphere we want to compute
             double d = 25 * random.nextDouble();
             double refRadius = 10 * random.nextDouble();
-            Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.ofArray(sr.nextVector()));
+            Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
             // set up a large sample inside the reference sphere
             int nbPoints = random.nextInt(1000);
             List<Vector3D> points = new ArrayList<>();
             for (int i = 0; i < nbPoints; ++i) {
                 double r = refRadius * random.nextDouble();
-                points.add(Vector3D.linearCombination(1.0, refCenter, r, Vector3D.ofArray(sr.nextVector())));
+                points.add(Vector3D.linearCombination(1.0, refCenter, r, Vector3D.of(sr.nextVector())));
             }
 
             // test we find a sphere at most as large as the one used for random drawings

@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -114,24 +113,45 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
-    public void testOfCartesian() {
+    public void testFromCartesian_coordinates() {
         // arrange
         double sqrt3 = Math.sqrt(3);
 
         // act/assert
-        checkSpherical(SphericalCoordinates.ofCartesian(0, 0, 0), 0, 0, 0);
+        checkSpherical(SphericalCoordinates.fromCartesian(0, 0, 0), 0, 0, 0);
 
-        checkSpherical(SphericalCoordinates.ofCartesian(0.1, 0, 0), 0.1, 0, Geometry.HALF_PI);
-        checkSpherical(SphericalCoordinates.ofCartesian(-0.1, 0, 0), 0.1, Geometry.PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(0.1, 0, 0), 0.1, 0, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(-0.1, 0, 0), 0.1, Geometry.PI, Geometry.HALF_PI);
 
-        checkSpherical(SphericalCoordinates.ofCartesian(0, 0.1, 0), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkSpherical(SphericalCoordinates.ofCartesian(0, -0.1, 0), 0.1, Geometry.THREE_HALVES_PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(0, 0.1, 0), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(0, -0.1, 0), 0.1, Geometry.THREE_HALVES_PI, Geometry.HALF_PI);
 
-        checkSpherical(SphericalCoordinates.ofCartesian(0, 0, 0.1), 0.1, 0, 0);
-        checkSpherical(SphericalCoordinates.ofCartesian(0, 0, -0.1), 0.1, 0, Geometry.PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(0, 0, 0.1), 0.1, 0, 0);
+        checkSpherical(SphericalCoordinates.fromCartesian(0, 0, -0.1), 0.1, 0, Geometry.PI);
 
-        checkSpherical(SphericalCoordinates.ofCartesian(1, 1, 1), sqrt3, QUARTER_PI, Math.acos(1 / sqrt3));
-        checkSpherical(SphericalCoordinates.ofCartesian(-1, -1, -1), sqrt3, 1.25 * Geometry.PI, Math.acos(-1 / sqrt3));
+        checkSpherical(SphericalCoordinates.fromCartesian(1, 1, 1), sqrt3, QUARTER_PI, Math.acos(1 / sqrt3));
+        checkSpherical(SphericalCoordinates.fromCartesian(-1, -1, -1), sqrt3, 1.25 * Geometry.PI, Math.acos(-1 / sqrt3));
+    }
+
+    @Test
+    public void testFromCartesian_vector() {
+        // arrange
+        double sqrt3 = Math.sqrt(3);
+
+        // act/assert
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, 0, 0)), 0, 0, 0);
+
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0.1, 0, 0)), 0.1, 0, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(-0.1, 0, 0)), 0.1, Geometry.PI, Geometry.HALF_PI);
+
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, 0.1, 0)), 0.1, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, -0.1, 0)), 0.1, Geometry.THREE_HALVES_PI, Geometry.HALF_PI);
+
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, 0, 0.1)), 0.1, 0, 0);
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(0, 0, -0.1)), 0.1, 0, Geometry.PI);
+
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(1, 1, 1)), sqrt3, QUARTER_PI, Math.acos(1 / sqrt3));
+        checkSpherical(SphericalCoordinates.fromCartesian(Vector3D.of(-1, -1, -1)), sqrt3, 1.25 * Geometry.PI, Math.acos(-1 / sqrt3));
     }
 
     @Test
@@ -159,22 +179,21 @@ public class SphericalCoordinatesTest {
     public void testToCartesian_static() {
         // arrange
         double sqrt3 = Math.sqrt(3);
-        DoubleFunction3N<Vector3D> factory = Vector3D::of;
 
         // act/assert
-        checkPoint(SphericalCoordinates.toCartesian(0, 0, 0, factory), 0, 0, 0);
+        checkVector(SphericalCoordinates.toCartesian(0, 0, 0), 0, 0, 0);
 
-        checkPoint(SphericalCoordinates.toCartesian(1, 0, Geometry.HALF_PI, factory), 1, 0, 0);
-        checkPoint(SphericalCoordinates.toCartesian(1, Geometry.PI, Geometry.HALF_PI, factory), -1, 0, 0);
+        checkVector(SphericalCoordinates.toCartesian(1, 0, Geometry.HALF_PI), 1, 0, 0);
+        checkVector(SphericalCoordinates.toCartesian(1, Geometry.PI, Geometry.HALF_PI), -1, 0, 0);
 
-        checkPoint(SphericalCoordinates.toCartesian(2, Geometry.HALF_PI, Geometry.HALF_PI, factory), 0, 2, 0);
-        checkPoint(SphericalCoordinates.toCartesian(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI, factory), 0, -2, 0);
+        checkVector(SphericalCoordinates.toCartesian(2, Geometry.HALF_PI, Geometry.HALF_PI), 0, 2, 0);
+        checkVector(SphericalCoordinates.toCartesian(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI), 0, -2, 0);
 
-        checkPoint(SphericalCoordinates.toCartesian(3, 0, 0, factory), 0, 0, 3);
-        checkPoint(SphericalCoordinates.toCartesian(3, 0, Geometry.PI, factory), 0, 0, -3);
+        checkVector(SphericalCoordinates.toCartesian(3, 0, 0), 0, 0, 3);
+        checkVector(SphericalCoordinates.toCartesian(3, 0, Geometry.PI), 0, 0, -3);
 
-        checkPoint(SphericalCoordinates.toCartesian(Math.sqrt(3), QUARTER_PI, Math.acos(1 / sqrt3), factory), 1, 1, 1);
-        checkPoint(SphericalCoordinates.toCartesian(Math.sqrt(3), MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3), factory), -1, -1, -1);
+        checkVector(SphericalCoordinates.toCartesian(Math.sqrt(3), QUARTER_PI, Math.acos(1 / sqrt3)), 1, 1, 1);
+        checkVector(SphericalCoordinates.toCartesian(Math.sqrt(3), MINUS_THREE_QUARTER_PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
     }
 
     @Test
@@ -362,12 +381,6 @@ public class SphericalCoordinatesTest {
         Assert.assertEquals(radius, c.getRadius(), EPS);
         Assert.assertEquals(azimuth, c.getAzimuth(), EPS);
         Assert.assertEquals(polar, c.getPolar(), EPS);
-    }
-
-    private void checkPoint(Vector3D p, double x, double y, double z) {
-        Assert.assertEquals(x, p.getX(), EPS);
-        Assert.assertEquals(y, p.getY(), EPS);
-        Assert.assertEquals(z, p.getZ(), EPS);
     }
 
     private void checkVector(Vector3D v, double x, double y, double z) {

@@ -24,7 +24,7 @@ import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
-/** This class represents a vector in three-dimensional Euclidean space.
+/** This class represents vectors and points in three-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
 public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
@@ -113,13 +113,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      */
     public double[] toArray() {
         return new double[] { x, y, z };
-    }
-
-    /** Return an equivalent set of coordinates in spherical form.
-     * @return an equivalent set of coordinates in spherical form.
-     */
-    public SphericalCoordinates toSpherical() {
-        return SphericalCoordinates.ofCartesian(x, y, z);
     }
 
     /** {@inheritDoc} */
@@ -474,22 +467,11 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return new vector
      * @exception IllegalArgumentException if the array does not have 3 elements
      */
-    public static Vector3D ofArray(double[] v) {
+    public static Vector3D of(double[] v) {
         if (v.length != 3) {
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 3");
         }
         return new Vector3D(v[0], v[1], v[2]);
-    }
-
-    /** Create a vector from a set of spherical coordinates.
-     * @param radius the spherical radius value
-     * @param azimuth the angle in the x-y plane measured in radians counter-clockwise from the
-     *      positive x axis.
-     * @param polar the angle with the positive z axis in radians.
-     * @return a vector instance with the given set of spherical coordinates
-     */
-    public static Vector3D ofSpherical(double radius, double azimuth, double polar) {
-        return SphericalCoordinates.toCartesian(radius, azimuth, polar, Vector3D::new);
     }
 
     /** Returns a normalized vector derived from the given values.

@@ -123,34 +123,6 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testToPolar() {
-        // arrange
-        double sqrt2 = Math.sqrt(2.0);
-
-        // act/assert
-        checkPolar(Vector2D.of(0, 0).toPolar(), 0, 0);
-
-        checkPolar(Vector2D.of(1, 0).toPolar(), 1, 0);
-        checkPolar(Vector2D.of(-1, 0).toPolar(), 1, Geometry.PI);
-
-        checkPolar(Vector2D.of(0, 2).toPolar(), 2, Geometry.HALF_PI);
-        checkPolar(Vector2D.of(0, -2).toPolar(), 2, Geometry.THREE_HALVES_PI);
-
-        checkPolar(Vector2D.of(sqrt2, sqrt2).toPolar(), 2, 0.25 * Geometry.PI);
-        checkPolar(Vector2D.of(-sqrt2, sqrt2).toPolar(), 2, 0.75 * Geometry.PI);
-        checkPolar(Vector2D.of(sqrt2, -sqrt2).toPolar(), 2, 1.75 * Geometry.PI);
-        checkPolar(Vector2D.of(-sqrt2, -sqrt2).toPolar(), 2, 1.25 * Geometry.PI);
-    }
-
-    @Test
-    public void testToPolar_NaNAndInfinite() {
-        // act/assert
-        Assert.assertTrue(Vector2D.of(Double.NaN, Double.NaN).toPolar().isNaN());
-        Assert.assertTrue(Vector2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).toPolar().isInfinite());
-    }
-
-
-    @Test
     public void testGetZero() {
         // act/assert
         checkVector(Vector2D.of(1.0, 1.0).getZero(), 0, 0);
@@ -427,7 +399,7 @@ public class Vector2DTest {
     public void testOrthogonal_fullCircle() {
         for (double az = 0.0; az<=Geometry.TWO_PI; az += 0.25) {
             // arrange
-            Vector2D v = Vector2D.ofPolar(Math.PI, az);
+            Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
 
             //act
             Vector2D ortho = v.orthogonal();
@@ -647,7 +619,7 @@ public class Vector2DTest {
 
     private void checkProjectAndRejectFullCircle(Vector2D vec, double baseMag, double eps) {
         for (double theta = 0.0; theta <= Geometry.TWO_PI; theta += 0.5) {
-            Vector2D base = Vector2D.ofPolar(baseMag, theta);
+            Vector2D base = PolarCoordinates.toCartesian(baseMag, theta);
 
             Vector2D proj = vec.project(base);
             Vector2D rej = vec.reject(base);
@@ -841,38 +813,16 @@ public class Vector2DTest {
     @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector2D.ofArray(new double[] { 0, 1 }), 0, 1);
-        checkVector(Vector2D.ofArray(new double[] { -1, -2 }), -1, -2);
-        checkVector(Vector2D.ofArray(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkVector(Vector2D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkVector(Vector2D.of(new double[] { 0, 1 }), 0, 1);
+        checkVector(Vector2D.of(new double[] { -1, -2 }), -1, -2);
+        checkVector(Vector2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
+        checkVector(Vector2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector2D.ofArray(new double[] {0.0 });
-    }
-
-    @Test
-    public void testOfPolar() {
-        // arrange
-        double eps = 1e-15;
-        double sqrt2 = Math.sqrt(2.0);
-
-        // act/assert
-        checkVector(Vector2D.ofPolar(0, 0), 0, 0, eps);
-        checkVector(Vector2D.ofPolar(1, 0), 1, 0, eps);
-
-        checkVector(Vector2D.ofPolar(2, Geometry.PI), -2, 0, eps);
-        checkVector(Vector2D.ofPolar(-2, Geometry.PI), 2, 0, eps);
-
-        checkVector(Vector2D.ofPolar(2, Geometry.HALF_PI), 0, 2, eps);
-        checkVector(Vector2D.ofPolar(-2, Geometry.HALF_PI), 0, -2, eps);
-
-        checkVector(Vector2D.ofPolar(2, 0.25 * Geometry.PI), sqrt2, sqrt2, eps);
-        checkVector(Vector2D.ofPolar(2, 0.75 * Geometry.PI), -sqrt2, sqrt2, eps);
-        checkVector(Vector2D.ofPolar(2, -0.25 * Geometry.PI), sqrt2, - sqrt2, eps);
-        checkVector(Vector2D.ofPolar(2, -0.75 * Geometry.PI), -sqrt2, - sqrt2, eps);
+        Vector2D.of(new double[] {0.0 });
     }
 
     @Test
@@ -955,10 +905,5 @@ public class Vector2DTest {
     private void checkVector(Vector2D v, double x, double y, double eps) {
         Assert.assertEquals(x, v.getX(), eps);
         Assert.assertEquals(y, v.getY(), eps);
-    }
-
-    private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {
-        Assert.assertEquals(radius, polar.getRadius(), EPS);
-        Assert.assertEquals(azimuth, polar.getAzimuth(), EPS);
     }
 }

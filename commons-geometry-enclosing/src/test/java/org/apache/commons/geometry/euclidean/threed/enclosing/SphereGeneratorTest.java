@@ -139,10 +139,10 @@ public class SphereGeneratorTest {
         for (int i = 0; i < 100; ++i) {
             double d = 25 * random.nextDouble();
             double refRadius = 10 * random.nextDouble();
-            Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.ofArray(sr.nextVector()));
+            Vector3D refCenter = Vector3D.linearCombination(d, Vector3D.of(sr.nextVector()));
             List<Vector3D> support = new ArrayList<>();
             for (int j = 0; j < 5; ++j) {
-                support.add(Vector3D.linearCombination(1.0, refCenter, refRadius, Vector3D.ofArray(sr.nextVector())));
+                support.add(Vector3D.linearCombination(1.0, refCenter, refRadius, Vector3D.of(sr.nextVector())));
             }
             EnclosingBall<Vector3D> sphere = new SphereGenerator().ballOnSupport(support);
             Assert.assertEquals(0.0, refCenter.distance(sphere.getCenter()), 4e-7 * refRadius);

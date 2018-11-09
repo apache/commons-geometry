@@ -106,10 +106,10 @@ public class DiskGeneratorTest {
         for (int i = 0; i < 500; ++i) {
             double d = 25 * random.nextDouble();
             double refRadius = 10 * random.nextDouble();
-            Vector2D refCenter = Vector2D.linearCombination(d, Vector2D.ofArray(sr.nextVector()));
+            Vector2D refCenter = Vector2D.linearCombination(d, Vector2D.of(sr.nextVector()));
             List<Vector2D> support = new ArrayList<>();
             for (int j = 0; j < 3; ++j) {
-                support.add(Vector2D.linearCombination(1.0, refCenter, refRadius, Vector2D.ofArray(sr.nextVector())));
+                support.add(Vector2D.linearCombination(1.0, refCenter, refRadius, Vector2D.of(sr.nextVector())));
             }
             EnclosingBall<Vector2D> disk = new DiskGenerator().ballOnSupport(support);
             Assert.assertEquals(0.0, refCenter.distance(disk.getCenter()), 3e-9 * refRadius);
