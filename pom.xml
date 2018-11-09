@@ -264,7 +264,6 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>${commons.rat.version}</version>
         <configuration>
         <!--
           Needed for command-line access, e.g mvn apache-rat:rat and mvn apache-rat:check
@@ -325,6 +324,8 @@
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
             <exclude>dist-archive/**</exclude>
+            <exclude>${geometry.parent.dir}/commons-geometry-euclidean/src/test/resources/**/*.bsp</exclude>
+            <exclude>${geometry.parent.dir}/commons-geometry-euclidean/src/test/resources/**/*.ply</exclude>
           </excludes>
         </configuration>
       </plugin>
