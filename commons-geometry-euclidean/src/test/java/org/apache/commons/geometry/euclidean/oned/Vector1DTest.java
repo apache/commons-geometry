@@ -57,14 +57,39 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testAsPoint() {
+    public void testCoordinates() {
         // act/assert
-        checkPoint(Vector1D.of(0.0).asPoint(), 0.0);
-        checkPoint(Vector1D.of(1.0).asPoint(), 1.0);
-        checkPoint(Vector1D.of(-1.0).asPoint(), -1.0);
-        checkPoint(Vector1D.of(Double.NaN).asPoint(), Double.NaN);
-        checkPoint(Vector1D.of(Double.NEGATIVE_INFINITY).asPoint(), Double.NEGATIVE_INFINITY);
-        checkPoint(Vector1D.of(Double.POSITIVE_INFINITY).asPoint(), Double.POSITIVE_INFINITY);
+        Assert.assertEquals(-1, Vector1D.of(-1).getX(), 0.0);
+        Assert.assertEquals(0, Vector1D.of(0).getX(), 0.0);
+        Assert.assertEquals(1, Vector1D.of(1).getX(), 0.0);
+    }
+
+    @Test
+    public void testDimension() {
+        // arrange
+        Vector1D v = Vector1D.of(2);
+
+        // act/assert
+        Assert.assertEquals(1, v.getDimension());
+    }
+
+    @Test
+    public void testNaN() {
+        // act/assert
+        Assert.assertTrue(Vector1D.of(Double.NaN).isNaN());
+
+        Assert.assertFalse(Vector1D.of(1).isNaN());
+        Assert.assertFalse(Vector1D.of(Double.NEGATIVE_INFINITY).isNaN());
+    }
+
+    @Test
+    public void testInfinite() {
+        // act/assert
+        Assert.assertTrue(Vector1D.of(Double.NEGATIVE_INFINITY).isInfinite());
+        Assert.assertTrue(Vector1D.of(Double.POSITIVE_INFINITY).isInfinite());
+
+        Assert.assertFalse(Vector1D.of(1).isInfinite());
+        Assert.assertFalse(Vector1D.of(Double.NaN).isInfinite());
     }
 
     @Test
@@ -74,7 +99,7 @@ public class Vector1DTest {
 
         // assert
         checkVector(zero, 0.0);
-        checkPoint(Point1D.ONE.add(zero), 1.0);
+        checkVector(Vector1D.ONE.add(zero), 1.0);
     }
 
     @Test
@@ -343,6 +368,61 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testVectorTo() {
+        // arrange
+        Vector1D v1 = Vector1D.of(1);
+        Vector1D v2 = Vector1D.of(-4);
+        Vector1D v3 = Vector1D.of(10);
+
+        // act/assert
+        checkVector(v1.vectorTo(v1), 0.0);
+        checkVector(v2.vectorTo(v2), 0.0);
+        checkVector(v3.vectorTo(v3), 0.0);
+
+        checkVector(v1.vectorTo(v2), -5.0);
+        checkVector(v2.vectorTo(v1), 5.0);
+
+        checkVector(v1.vectorTo(v3), 9.0);
+        checkVector(v3.vectorTo(v1), -9.0);
+
+        checkVector(v2.vectorTo(v3), 14.0);
+        checkVector(v3.vectorTo(v2), -14.0);
+    }
+
+    @Test
+    public void testDirectionTo() {
+        // act/assert
+        Vector1D v1 = Vector1D.of(1);
+        Vector1D v2 = Vector1D.of(5);
+        Vector1D v3 = Vector1D.of(-2);
+
+        // act/assert
+        checkVector(v1.directionTo(v2), 1);
+        checkVector(v2.directionTo(v1), -1);
+
+        checkVector(v1.directionTo(v3), -1);
+        checkVector(v3.directionTo(v1), 1);
+    }
+
+    @Test
+    public void testDirectionTo_illegalNorm() {
+        // arrange
+        Vector1D v = Vector1D.of(2);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector1D.ZERO.directionTo(Vector1D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.directionTo(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.directionTo(Vector1D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.directionTo(v),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> v.directionTo(Vector1D.POSITIVE_INFINITY),
+                IllegalNormException.class);
+    }
+
+    @Test
     public void testLerp() {
         // arrange
         Vector1D v1 = Vector1D.of(1);
@@ -514,10 +594,6 @@ public class Vector1DTest {
                 5, Vector1D.of(7),
                 11, Vector1D.of(13),
                 -17, Vector1D.of(19)), -139);
-    }
-
-    private void checkPoint(Point1D p, double x) {
-        Assert.assertEquals(x, p.getX(), TEST_TOLERANCE);
     }
 
     private void checkVector(Vector1D v, double x) {

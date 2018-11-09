@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,19 +28,19 @@ public class SubLineTest {
 
     @Test
     public void testEndPoints() {
-        Point2D p1 = Point2D.of(-1, -7);
-        Point2D p2 = Point2D.of(7, -1);
+        Vector2D p1 = Vector2D.of(-1, -7);
+        Vector2D p2 = Vector2D.of(7, -1);
         Segment segment = new Segment(p1, p2, new Line(p1, p2, 1.0e-10));
         SubLine sub = new SubLine(segment);
         List<Segment> segments = sub.getSegments();
         Assert.assertEquals(1, segments.size());
-        Assert.assertEquals(0.0, Point2D.of(-1, -7).distance(segments.get(0).getStart()), 1.0e-10);
-        Assert.assertEquals(0.0, Point2D.of( 7, -1).distance(segments.get(0).getEnd()), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(-1, -7).distance(segments.get(0).getStart()), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of( 7, -1).distance(segments.get(0).getEnd()), 1.0e-10);
     }
 
     @Test
     public void testNoEndPoints() {
-        SubLine wholeLine = new Line(Point2D.of(-1, 7), Point2D.of(7, 1), 1.0e-10).wholeHyperplane();
+        SubLine wholeLine = new Line(Vector2D.of(-1, 7), Vector2D.of(7, 1), 1.0e-10).wholeHyperplane();
         List<Segment> segments = wholeLine.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
@@ -55,16 +55,16 @@ public class SubLineTest {
 
     @Test
     public void testNoSegments() {
-        SubLine empty = new SubLine(new Line(Point2D.of(-1, -7), Point2D.of(7, -1), 1.0e-10),
-                                    new RegionFactory<Point1D>().getComplement(new IntervalsSet(1.0e-10)));
+        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), 1.0e-10),
+                                    new RegionFactory<Vector1D>().getComplement(new IntervalsSet(1.0e-10)));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testSeveralSegments() {
-        SubLine twoSubs = new SubLine(new Line(Point2D.of(-1, -7), Point2D.of(7, -1), 1.0e-10),
-                                    new RegionFactory<Point1D>().union(new IntervalsSet(1, 2, 1.0e-10),
+        SubLine twoSubs = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), 1.0e-10),
+                                    new RegionFactory<Vector1D>().union(new IntervalsSet(1, 2, 1.0e-10),
                                                                            new IntervalsSet(3, 4, 1.0e-10)));
         List<Segment> segments = twoSubs.getSegments();
         Assert.assertEquals(2, segments.size());
@@ -72,7 +72,7 @@ public class SubLineTest {
 
     @Test
     public void testHalfInfiniteNeg() {
-        SubLine empty = new SubLine(new Line(Point2D.of(-1, -7), Point2D.of(7, -1), 1.0e-10),
+        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), 1.0e-10),
                                     new IntervalsSet(Double.NEGATIVE_INFINITY, 0.0, 1.0e-10));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
@@ -80,16 +80,16 @@ public class SubLineTest {
                           segments.get(0).getStart().getX() < 0);
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getY()) &&
                           segments.get(0).getStart().getY() < 0);
-        Assert.assertEquals(0.0, Point2D.of(3, -4).distance(segments.get(0).getEnd()), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(3, -4).distance(segments.get(0).getEnd()), 1.0e-10);
     }
 
     @Test
     public void testHalfInfinitePos() {
-        SubLine empty = new SubLine(new Line(Point2D.of(-1, -7), Point2D.of(7, -1), 1.0e-10),
+        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), 1.0e-10),
                                     new IntervalsSet(0.0, Double.POSITIVE_INFINITY, 1.0e-10));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
-        Assert.assertEquals(0.0, Point2D.of(3, -4).distance(segments.get(0).getStart()), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(3, -4).distance(segments.get(0).getStart()), 1.0e-10);
         Assert.assertTrue(Double.isInfinite(segments.get(0).getEnd().getX()) &&
                           segments.get(0).getEnd().getX() > 0);
         Assert.assertTrue(Double.isInfinite(segments.get(0).getEnd().getY()) &&
@@ -98,56 +98,56 @@ public class SubLineTest {
 
     @Test
     public void testIntersectionInsideInside() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(3, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 2), 1.0e-10);
-        Assert.assertEquals(0.0, Point2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
-        Assert.assertEquals(0.0, Point2D.of(2, 1).distance(sub1.intersection(sub2, false)), 1.0e-12);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 2), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
+        Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, false)), 1.0e-12);
     }
 
     @Test
     public void testIntersectionInsideBoundary() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(3, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 1), 1.0e-10);
-        Assert.assertEquals(0.0, Point2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 1), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionInsideOutside() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(3, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 0.5), 1.0e-10);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), 1.0e-10);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryBoundary() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(2, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 1), 1.0e-10);
-        Assert.assertEquals(0.0, Point2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(2, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 1), 1.0e-10);
+        Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)),  1.0e-12);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryOutside() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(2, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 0.5), 1.0e-10);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(2, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), 1.0e-10);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionOutsideOutside() {
-        SubLine sub1 = new SubLine(Point2D.of(1, 1), Point2D.of(1.5, 1), 1.0e-10);
-        SubLine sub2 = new SubLine(Point2D.of(2, 0), Point2D.of(2, 0.5), 1.0e-10);
+        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(1.5, 1), 1.0e-10);
+        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), 1.0e-10);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionParallel() {
-        final SubLine sub1 = new SubLine(Point2D.of(0, 1), Point2D.of(0, 2), 1.0e-10);
-        final SubLine sub2 = new SubLine(Point2D.of(66, 3), Point2D.of(66, 4), 1.0e-10);
+        final SubLine sub1 = new SubLine(Vector2D.of(0, 1), Vector2D.of(0, 2), 1.0e-10);
+        final SubLine sub2 = new SubLine(Vector2D.of(66, 3), Vector2D.of(66, 4), 1.0e-10);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }

@@ -75,6 +75,72 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testCoordinates() {
+        // arrange
+        Vector3D c = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        Assert.assertEquals(1.0, c.getX(), EPS);
+        Assert.assertEquals(2.0, c.getY(), EPS);
+        Assert.assertEquals(3.0, c.getZ(), EPS);
+    }
+
+    @Test
+    public void testToArray() {
+        // arrange
+        Vector3D c = Vector3D.of(1, 2, 3);
+
+        // act
+        double[] arr = c.toArray();
+
+        // assert
+        Assert.assertEquals(3, arr.length);
+        Assert.assertEquals(1.0, arr[0], EPS);
+        Assert.assertEquals(2.0, arr[1], EPS);
+        Assert.assertEquals(3.0, arr[2], EPS);
+    }
+
+    @Test
+    public void testDimension() {
+        // arrange
+        Vector3D c = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        Assert.assertEquals(3, c.getDimension());
+    }
+
+    @Test
+    public void testNaN() {
+        // act/assert
+        Assert.assertTrue(Vector3D.of(0, 0, Double.NaN).isNaN());
+        Assert.assertTrue(Vector3D.of(0, Double.NaN, 0).isNaN());
+        Assert.assertTrue(Vector3D.of(Double.NaN, 0, 0).isNaN());
+
+        Assert.assertFalse(Vector3D.of(1, 1, 1).isNaN());
+        Assert.assertFalse(Vector3D.of(1, 1, Double.NEGATIVE_INFINITY).isNaN());
+        Assert.assertFalse(Vector3D.of(1, Double.POSITIVE_INFINITY, 1).isNaN());
+        Assert.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 1, 1).isNaN());
+    }
+
+    @Test
+    public void testInfinite() {
+        // act/assert
+        Assert.assertTrue(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assert.assertTrue(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isInfinite());
+        Assert.assertTrue(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isInfinite());
+        Assert.assertTrue(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isInfinite());
+        Assert.assertTrue(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isInfinite());
+        Assert.assertTrue(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isInfinite());
+
+        Assert.assertFalse(Vector3D.of(1, 1, 1).isInfinite());
+        Assert.assertFalse(Vector3D.of(0, 0, Double.NaN).isInfinite());
+        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isInfinite());
+        Assert.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isInfinite());
+        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isInfinite());
+        Assert.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
     public void testZero() {
         // act
         Vector3D zero = Vector3D.of(1, 2, 3).getZero();
@@ -82,15 +148,6 @@ public class Vector3DTest {
         // assert
         checkVector(zero, 0, 0, 0);
         Assert.assertEquals(0, zero.getNorm(), EPS);
-    }
-
-    @Test
-    public void testAsPoint() {
-        // act/assert
-        checkPoint(Vector3D.of(1, 2, 3).asPoint(), 1, 2, 3);
-        checkPoint(Vector3D.of(-1, -2, -3).asPoint(), -1, -2, -3);
-        checkPoint(Vector3D.of(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).asPoint(),
-                Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test
@@ -751,7 +808,7 @@ public class Vector3DTest {
     private void checkProjectAndRejectFullSphere(Vector3D vec, double baseMag, double eps) {
         for (double polar = 0.0; polar <= Geometry.PI; polar += 0.5) {
             for (double azimuth = 0.0; azimuth <= Geometry.TWO_PI; azimuth += 0.5) {
-                Vector3D base = Vector3D.ofSpherical(baseMag, azimuth, polar);
+                Vector3D base = SphericalCoordinates.toCartesian(baseMag, azimuth, polar);
 
                 Vector3D proj = vec.project(base);
                 Vector3D rej = vec.reject(base);
@@ -779,6 +836,60 @@ public class Vector3DTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testVectorTo() {
+        // act/assert
+        Vector3D p1 = Vector3D.of(1, 2, 3);
+        Vector3D p2 = Vector3D.of(4, 5, 6);
+        Vector3D p3 = Vector3D.of(-7, -8, -9);
+
+        // act/assert
+        checkVector(p1.vectorTo(p1), 0, 0, 0);
+        checkVector(p2.vectorTo(p2), 0, 0, 0);
+        checkVector(p3.vectorTo(p3), 0, 0, 0);
+
+        checkVector(p1.vectorTo(p2), 3, 3, 3);
+        checkVector(p2.vectorTo(p1), -3, -3, -3);
+
+        checkVector(p1.vectorTo(p3), -8, -10, -12);
+        checkVector(p3.vectorTo(p1), 8, 10, 12);
+    }
+
+    @Test
+    public void testDirectionTo() {
+        // act/assert
+        double invSqrt3 = 1.0 / Math.sqrt(3);
+
+        Vector3D p1 = Vector3D.of(1, 1, 1);
+        Vector3D p2 = Vector3D.of(1, 5, 1);
+        Vector3D p3 = Vector3D.of(-2, -2, -2);
+
+        // act/assert
+        checkVector(p1.directionTo(p2), 0, 1, 0);
+        checkVector(p2.directionTo(p1), 0, -1, 0);
+
+        checkVector(p1.directionTo(p3), -invSqrt3, -invSqrt3, -invSqrt3);
+        checkVector(p3.directionTo(p1), invSqrt3, invSqrt3, invSqrt3);
+    }
+
+    @Test
+    public void testDirectionTo_illegalNorm() {
+        // arrange
+        Vector3D p = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.directionTo(Vector3D.ZERO),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector3D.NaN),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.directionTo(p),
+                IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> p.directionTo(Vector3D.POSITIVE_INFINITY),
+                IllegalNormException.class);
     }
 
     @Test
@@ -901,41 +1012,20 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testOfArray() {
+    public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector3D.ofArray(new double[] { 1, 2, 3 }), 1, 2, 3);
-        checkVector(Vector3D.ofArray(new double[] { -1, -2, -3 }), -1, -2, -3);
-        checkVector(Vector3D.ofArray(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+        checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
+        checkVector(Vector3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
+        checkVector(Vector3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
                 Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.ofArray(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+        checkVector(Vector3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testOfArray_invalidDimensions() {
+    public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector3D.ofArray(new double[] { 0.0, 0.0 });
-    }
-
-    @Test
-    public void testOfSpherical() {
-        // arrange
-        double sqrt3 = Math.sqrt(3);
-
-        // act/assert
-        checkVector(Vector3D.ofSpherical(0, 0, 0), 0, 0, 0);
-
-        checkVector(Vector3D.ofSpherical(1, 0, Geometry.HALF_PI), 1, 0, 0);
-        checkVector(Vector3D.ofSpherical(1, Geometry.PI, Geometry.HALF_PI), -1, 0, 0);
-
-        checkVector(Vector3D.ofSpherical(2, Geometry.HALF_PI, Geometry.HALF_PI), 0, 2, 0);
-        checkVector(Vector3D.ofSpherical(2, Geometry.MINUS_HALF_PI, Geometry.HALF_PI), 0, -2, 0);
-
-        checkVector(Vector3D.ofSpherical(3, 0, 0), 0, 0, 3);
-        checkVector(Vector3D.ofSpherical(3, 0, Geometry.PI), 0, 0, -3);
-
-        checkVector(Vector3D.ofSpherical(sqrt3, 0.25 * Geometry.PI, Math.acos(1 / sqrt3)), 1, 1, 1);
-        checkVector(Vector3D.ofSpherical(sqrt3, -0.75 * Geometry.PI, Math.acos(-1 / sqrt3)), -1, -1, -1);
+        Vector3D.of(new double[] { 0.0, 0.0 });
     }
 
     @Test
@@ -1015,11 +1105,5 @@ public class Vector3DTest {
         Assert.assertEquals(x, v.getX(), EPS);
         Assert.assertEquals(y, v.getY(), EPS);
         Assert.assertEquals(z, v.getZ(), EPS);
-    }
-
-    private void checkPoint(Point3D p, double x, double y, double z) {
-        Assert.assertEquals(x, p.getX(), EPS);
-        Assert.assertEquals(y, p.getY(), EPS);
-        Assert.assertEquals(z, p.getZ(), EPS);
     }
 }

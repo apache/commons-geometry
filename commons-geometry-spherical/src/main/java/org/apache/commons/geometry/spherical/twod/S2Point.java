@@ -71,7 +71,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
     private S2Point(final double azimuth, final double polar, final Vector3D vector) {
         this.azimuth = SphericalCoordinates.normalizeAzimuth(azimuth);
         this.polar = SphericalCoordinates.normalizePolar(polar);
-        this.vector = (vector != null) ? vector : Vector3D.ofSpherical(1.0, azimuth, polar);
+        this.vector = (vector != null) ? vector : SphericalCoordinates.toCartesian(1.0, azimuth, polar);
     }
 
     /** Get the azimuthal angle in the x-y plane in radians.
@@ -211,7 +211,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @exception IllegalStateException if vector norm is zero
      */
     public static S2Point ofVector(final Vector3D vector) {
-        SphericalCoordinates coords = vector.toSpherical();
+        SphericalCoordinates coords = SphericalCoordinates.fromCartesian(vector);
 
         return new S2Point(coords.getAzimuth(), coords.getPolar(), vector.normalize());
     }

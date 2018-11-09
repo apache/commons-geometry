@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
@@ -50,7 +50,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * left half plane is the set of points with negative offsets and the
  * right half plane is the set of points with positive offsets.</p>
  */
-public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
+public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D> {
     /** Angle with respect to the abscissa axis. */
     private double angle;
 
@@ -75,7 +75,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param p2 second point
      * @param tolerance tolerance below which points are considered identical
      */
-    public Line(final Point2D p1, final Point2D p2, final double tolerance) {
+    public Line(final Vector2D p1, final Vector2D p2, final double tolerance) {
         reset(p1, p2);
         this.tolerance = tolerance;
     }
@@ -85,7 +85,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param angle angle of the line with respect to abscissa axis
      * @param tolerance tolerance below which points are considered identical
      */
-    public Line(final Point2D p, final double angle, final double tolerance) {
+    public Line(final Vector2D p, final double angle, final double tolerance) {
         reset(p, angle);
         this.tolerance = tolerance;
     }
@@ -132,7 +132,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param p1 first point
      * @param p2 second point
      */
-    public void reset(final Point2D p1, final Point2D p2) {
+    public void reset(final Vector2D p1, final Vector2D p2) {
         unlinkReverse();
         final double dx = p2.getX() - p1.getX();
         final double dy = p2.getY() - p1.getY();
@@ -154,7 +154,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param p point belonging to the line
      * @param alpha angle of the line with respect to abscissa axis
      */
-    public void reset(final Point2D p, final double alpha) {
+    public void reset(final Vector2D p, final double alpha) {
         unlinkReverse();
         this.angle   = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha);
         cos          = Math.cos(this.angle);
@@ -190,8 +190,8 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * instance.</p>
      * <p>
      * As long as neither the instance nor its reverse are modified
-     * (i.e. as long as none of the {@link #reset(Point2D, Point2D)},
-     * {@link #reset(Point2D, double)}, {@link #revertSelf()},
+     * (i.e. as long as none of the {@link #reset(Vector2D, Vector2D)},
+     * {@link #reset(Vector2D, double)}, {@link #revertSelf()},
      * {@link #setAngle(double)} or {@link #setOriginOffset(double)}
      * methods are called), then the line and its reverse remain linked
      * together so that {@code line.getReverse().getReverse() == line}.
@@ -211,15 +211,15 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Point1D toSubSpace(final Point2D point) {
-        return Point1D.of(LinearCombination.value(cos, point.getX(), sin, point.getY()));
+    public Vector1D toSubSpace(final Vector2D point) {
+        return Vector1D.of(LinearCombination.value(cos, point.getX(), sin, point.getY()));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point2D toSpace(final Point1D point) {
+    public Vector2D toSpace(final Vector1D point) {
         final double abscissa = point.getX();
-        return Point2D.of(LinearCombination.value(abscissa, cos, -originOffset, sin),
+        return Vector2D.of(LinearCombination.value(abscissa, cos, -originOffset, sin),
                             LinearCombination.value(abscissa, sin,  originOffset, cos));
     }
 
@@ -228,18 +228,18 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @return intersection point of the instance and the other line
      * or null if there are no intersection points
      */
-    public Point2D intersection(final Line other) {
+    public Vector2D intersection(final Line other) {
         final double d = LinearCombination.value(sin, other.cos, -other.sin, cos);
         if (Math.abs(d) < tolerance) {
             return null;
         }
-        return Point2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
+        return Vector2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
                             LinearCombination.value(sin, other.originOffset, -other.sin, originOffset) / d);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point2D project(Point2D point) {
+    public Vector2D project(Vector2D point) {
         return toSpace(toSubSpace(point));
     }
 
@@ -281,13 +281,13 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getOffset(final Point2D point) {
+    public double getOffset(final Vector2D point) {
         return LinearCombination.value(sin, point.getX(), -cos, point.getY(), 1.0, originOffset);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Point2D> other) {
+    public boolean sameOrientationAs(final Hyperplane<Vector2D> other) {
         final Line otherL = (Line) other;
         return LinearCombination.value(sin, otherL.sin, cos, otherL.cos) >= 0.0;
     }
@@ -298,10 +298,10 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @return one point in the plane, with given abscissa and offset
      * relative to the line
      */
-    public Point2D getPointAt(final Point1D abscissa, final double offset) {
+    public Vector2D getPointAt(final Vector1D abscissa, final double offset) {
         final double x       = abscissa.getX();
         final double dOffset = offset - originOffset;
-        return Point2D.of(LinearCombination.value(x, cos,  dOffset, sin),
+        return Vector2D.of(LinearCombination.value(x, cos,  dOffset, sin),
                             LinearCombination.value(x, sin, -dOffset, cos));
     }
 
@@ -309,7 +309,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param p point to check
      * @return true if p belongs to the line
      */
-    public boolean contains(final Point2D p) {
+    public boolean contains(final Vector2D p) {
         return Math.abs(getOffset(p)) < tolerance;
     }
 
@@ -321,7 +321,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param p to check
      * @return distance between the instance and the point
      */
-    public double distance(final Point2D p) {
+    public double distance(final Vector2D p) {
         return Math.abs(getOffset(p));
     }
 
@@ -337,7 +337,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
     /** Translate the line to force it passing by a point.
      * @param p point by which the line should pass
      */
-    public void translateToPoint(final Point2D p) {
+    public void translateToPoint(final Vector2D p) {
         originOffset = LinearCombination.value(cos, p.getY(), -sin, p.getX());
     }
 
@@ -382,12 +382,12 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * @param cX1 transform addendum for output abscissa
      * @param cY1 transform addendum for output ordinate
      * @return a new transform that can be applied to either {@link
-     * Point2D}, {@link Line Line} or {@link
+     * Vector2D}, {@link Line Line} or {@link
      * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      * @exception IllegalArgumentException if the transform is non invertible
      */
-    public static Transform<Point2D, Point1D> getTransform(final double cXX,
+    public static Transform<Vector2D, Vector1D> getTransform(final double cXX,
                                                                    final double cYX,
                                                                    final double cXY,
                                                                    final double cYY,
@@ -404,7 +404,7 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
      * applied to a large number of lines (for example to a large
      * polygon)./<p>
      */
-    private static class LineTransform implements Transform<Point2D, Point1D> {
+    private static class LineTransform implements Transform<Vector2D, Vector1D> {
 
         /** Transform factor between input abscissa and output abscissa. */
         private final double cXX;
@@ -465,16 +465,16 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
 
         /** {@inheritDoc} */
         @Override
-        public Point2D apply(final Point2D point) {
+        public Vector2D apply(final Vector2D point) {
             final double  x   = point.getX();
             final double  y   = point.getY();
-            return Point2D.of(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
+            return Vector2D.of(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
                                 LinearCombination.value(cYX, x, cYY, y, cY1, 1));
         }
 
         /** {@inheritDoc} */
         @Override
-        public Line apply(final Hyperplane<Point2D> hyperplane) {
+        public Line apply(final Hyperplane<Vector2D> hyperplane) {
             final Line   line    = (Line) hyperplane;
             final double rOffset = LinearCombination.value(c1X, line.cos, c1Y, line.sin, c11, line.originOffset);
             final double rCos    = LinearCombination.value(cXX, line.cos, cXY, line.sin);
@@ -487,13 +487,13 @@ public class Line implements Hyperplane<Point2D>, Embedding<Point2D, Point1D> {
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Point1D> apply(final SubHyperplane<Point1D> sub,
-                                                final Hyperplane<Point2D> original,
-                                                final Hyperplane<Point2D> transformed) {
+        public SubHyperplane<Vector1D> apply(final SubHyperplane<Vector1D> sub,
+                                                final Hyperplane<Vector2D> original,
+                                                final Hyperplane<Vector2D> transformed) {
             final OrientedPoint op     = (OrientedPoint) sub.getHyperplane();
             final Line originalLine    = (Line) original;
             final Line transformedLine = (Line) transformed;
-            final Point1D newLoc =
+            final Vector1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
             return new OrientedPoint(newLoc, op.isDirect(), originalLine.tolerance).wholeHyperplane();
         }

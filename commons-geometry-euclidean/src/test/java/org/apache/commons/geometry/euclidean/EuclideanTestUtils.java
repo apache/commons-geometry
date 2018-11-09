@@ -27,22 +27,18 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
 import org.apache.commons.geometry.core.partitioning.TreePrinter;
-import org.apache.commons.geometry.euclidean.oned.Cartesian1D;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
 import org.apache.commons.geometry.euclidean.oned.SubOrientedPoint;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
-import org.apache.commons.geometry.euclidean.threed.Point3D;
 import org.apache.commons.geometry.euclidean.threed.PolyhedronsSet;
 import org.apache.commons.geometry.euclidean.threed.SubPlane;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.twod.Cartesian2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 
 /** Class containing various euclidean-related test utilities.
@@ -55,7 +51,7 @@ public class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Cartesian1D expected, Cartesian1D actual, double tolerance) {
+    public static void assertCoordinatesEqual(Vector1D expected, Vector1D actual, double tolerance) {
         String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
     }
@@ -66,7 +62,7 @@ public class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Cartesian2D expected, Cartesian2D actual, double tolerance) {
+    public static void assertCoordinatesEqual(Vector2D expected, Vector2D actual, double tolerance) {
         String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
@@ -78,7 +74,7 @@ public class EuclideanTestUtils {
      * @param actual
      * @param tolerance
      */
-    public static void assertCoordinatesEqual(Cartesian3D expected, Cartesian3D actual, double tolerance) {
+    public static void assertCoordinatesEqual(Vector3D expected, Vector3D actual, double tolerance) {
         String msg = "Expected coordinates to equal " + expected + " but was " + actual + ";";
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
@@ -108,11 +104,11 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final IntervalsSet intervalsSet) {
-        final TreeDumper<Point1D> visitor = new TreeDumper<Point1D>("IntervalsSet", intervalsSet.getTolerance()) {
+        final TreeDumper<Vector1D> visitor = new TreeDumper<Vector1D>("IntervalsSet", intervalsSet.getTolerance()) {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Point1D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane<Vector1D> hyperplane) {
                 final OrientedPoint h = (OrientedPoint) hyperplane;
                 getFormatter().format("%22.15e %b %22.15e",
                                       h.getLocation().getX(), h.isDirect(), h.getTolerance());
@@ -128,13 +124,13 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final PolygonsSet polygonsSet) {
-        final TreeDumper<Point2D> visitor = new TreeDumper<Point2D>("PolygonsSet", polygonsSet.getTolerance()) {
+        final TreeDumper<Vector2D> visitor = new TreeDumper<Vector2D>("PolygonsSet", polygonsSet.getTolerance()) {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Point2D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane<Vector2D> hyperplane) {
                 final Line h = (Line) hyperplane;
-                final Point2D p = h.toSpace(Point1D.ZERO);
+                final Vector2D p = h.toSpace(Vector1D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e %22.15e",
                                       p.getX(), p.getY(), h.getAngle(), h.getTolerance());
             }
@@ -149,13 +145,13 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final PolyhedronsSet polyhedronsSet) {
-        final TreeDumper<Point3D> visitor = new TreeDumper<Point3D>("PolyhedronsSet", polyhedronsSet.getTolerance()) {
+        final TreeDumper<Vector3D> visitor = new TreeDumper<Vector3D>("PolyhedronsSet", polyhedronsSet.getTolerance()) {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Point3D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane<Vector3D> hyperplane) {
                 final Plane h = (Plane) hyperplane;
-                final Point3D p = h.toSpace(Point2D.ZERO);
+                final Vector3D p = h.toSpace(Vector2D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e %22.15e %22.15e %22.15e %22.15e",
                                       p.getX(), p.getY(), p.getZ(),
                                       h.getNormal().getX(), h.getNormal().getY(), h.getNormal().getZ(),
@@ -175,13 +171,13 @@ public class EuclideanTestUtils {
      */
     public static IntervalsSet parseIntervalsSet(final String s)
         throws IOException, ParseException {
-        final TreeBuilder<Point1D> builder = new TreeBuilder<Point1D>("IntervalsSet", s) {
+        final TreeBuilder<Vector1D> builder = new TreeBuilder<Vector1D>("IntervalsSet", s) {
 
             /** {@inheritDoc} */
             @Override
             public OrientedPoint parseHyperplane()
                 throws IOException, ParseException {
-                return new OrientedPoint(Point1D.of(getNumber()), getBoolean(), getNumber());
+                return new OrientedPoint(Vector1D.of(getNumber()), getBoolean(), getNumber());
             }
 
         };
@@ -196,13 +192,13 @@ public class EuclideanTestUtils {
      */
     public static PolygonsSet parsePolygonsSet(final String s)
         throws IOException, ParseException {
-        final TreeBuilder<Point2D> builder = new TreeBuilder<Point2D>("PolygonsSet", s) {
+        final TreeBuilder<Vector2D> builder = new TreeBuilder<Vector2D>("PolygonsSet", s) {
 
             /** {@inheritDoc} */
             @Override
             public Line parseHyperplane()
                 throws IOException, ParseException {
-                return new Line(Point2D.of(getNumber(), getNumber()), getNumber(), getNumber());
+                return new Line(Vector2D.of(getNumber(), getNumber()), getNumber(), getNumber());
             }
 
         };
@@ -217,13 +213,13 @@ public class EuclideanTestUtils {
      */
     public static PolyhedronsSet parsePolyhedronsSet(final String s)
         throws IOException, ParseException {
-        final TreeBuilder<Point3D> builder = new TreeBuilder<Point3D>("PolyhedronsSet", s) {
+        final TreeBuilder<Vector3D> builder = new TreeBuilder<Vector3D>("PolyhedronsSet", s) {
 
             /** {@inheritDoc} */
             @Override
             public Plane parseHyperplane()
                 throws IOException, ParseException {
-                return new Plane(Point3D.of(getNumber(), getNumber(), getNumber()),
+                return new Plane(Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  getNumber());
             }
@@ -238,7 +234,7 @@ public class EuclideanTestUtils {
      * the console. This is intended for quick debugging of small trees.
      * @param tree
      */
-    public static void printTree1D(BSPTree<Point1D> tree) {
+    public static void printTree1D(BSPTree<Vector1D> tree) {
         TreePrinter1D printer = new TreePrinter1D();
         System.out.println(printer.writeAsString(tree));
     }
@@ -247,7 +243,7 @@ public class EuclideanTestUtils {
      * the console. This is intended for quick debugging of small trees.
      * @param tree
      */
-    public static void printTree2D(BSPTree<Point2D> tree) {
+    public static void printTree2D(BSPTree<Vector2D> tree) {
         TreePrinter2D printer = new TreePrinter2D();
         System.out.println(printer.writeAsString(tree));
     }
@@ -256,7 +252,7 @@ public class EuclideanTestUtils {
      * the console. This is intended for quick debugging of small trees.
      * @param tree
      */
-    public static void printTree3D(BSPTree<Point3D> tree) {
+    public static void printTree3D(BSPTree<Vector3D> tree) {
         TreePrinter3D printer = new TreePrinter3D();
         System.out.println(printer.writeAsString(tree));
     }
@@ -264,11 +260,11 @@ public class EuclideanTestUtils {
 
     /** Class for creating string representations of 1D {@link BSPTree}s.
      */
-    public static class TreePrinter1D extends TreePrinter<Point1D> {
+    public static class TreePrinter1D extends TreePrinter<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Point1D> node) {
+        protected void writeInternalNode(BSPTree<Vector1D> node) {
             SubOrientedPoint cut = (SubOrientedPoint) node.getCut();
 
             OrientedPoint hyper = (OrientedPoint) cut.getHyperplane();
@@ -304,16 +300,16 @@ public class EuclideanTestUtils {
 
     /** Class for creating string representations of 2D {@link BSPTree}s.
      */
-    public static class TreePrinter2D extends TreePrinter<Point2D> {
+    public static class TreePrinter2D extends TreePrinter<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Point2D> node) {
+        protected void writeInternalNode(BSPTree<Vector2D> node) {
             SubLine cut = (SubLine) node.getCut();
             Line line = (Line) cut.getHyperplane();
             IntervalsSet remainingRegion = (IntervalsSet) cut.getRemainingRegion();
 
-            write("cut = { angle: " + Math.toDegrees(line.getAngle()) + ", origin: " + line.toSpace(Point1D.ZERO) + "}");
+            write("cut = { angle: " + Math.toDegrees(line.getAngle()) + ", origin: " + line.toSpace(Vector1D.ZERO) + "}");
             write(", remainingRegion: [");
 
             boolean isFirst = true;
@@ -333,11 +329,11 @@ public class EuclideanTestUtils {
 
     /** Class for creating string representations of 3D {@link BSPTree}s.
      */
-    public static class TreePrinter3D extends TreePrinter<Point3D> {
+    public static class TreePrinter3D extends TreePrinter<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Point3D> node) {
+        protected void writeInternalNode(BSPTree<Vector3D> node) {
             SubPlane cut = (SubPlane) node.getCut();
             Plane plane = (Plane) cut.getHyperplane();
             PolygonsSet polygon = (PolygonsSet) cut.getRemainingRegion();
@@ -346,10 +342,10 @@ public class EuclideanTestUtils {
             write(", remainingRegion = [");
 
             boolean isFirst = true;
-            for (Point2D[] loop : polygon.getVertices()) {
+            for (Vector2D[] loop : polygon.getVertices()) {
                 // convert to 3-space for easier debugging
-                List<Point3D> loop3 = new ArrayList<>();
-                for (Point2D vertex : loop) {
+                List<Vector3D> loop3 = new ArrayList<>();
+                for (Vector2D vertex : loop) {
                     if (vertex != null) {
                         loop3.add(plane.toSpace(vertex));
                     }

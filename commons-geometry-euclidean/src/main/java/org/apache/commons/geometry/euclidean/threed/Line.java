@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
 
 /** The class represent lines in a three dimensional space.
@@ -30,13 +30,13 @@ import org.apache.commons.numbers.core.Precision;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>0
  */
-public class Line implements Embedding<Point3D, Point1D> {
+public class Line implements Embedding<Vector3D, Vector1D> {
 
     /** Line direction. */
     private Vector3D direction;
 
     /** Line point closest to the origin. */
-    private Point3D zero;
+    private Vector3D zero;
 
     /** Tolerance below which points are considered identical. */
     private final double tolerance;
@@ -47,7 +47,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the points are equal
      */
-    public Line(final Point3D p1, final Point3D p2, final double tolerance)
+    public Line(final Vector3D p1, final Vector3D p2, final double tolerance)
         throws IllegalArgumentException {
         reset(p1, p2);
         this.tolerance = tolerance;
@@ -69,14 +69,14 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param p2 second point belonging to the line (this can be any point, different from p1)
      * @exception IllegalArgumentException if the points are equal
      */
-    public void reset(final Point3D p1, final Point3D p2) {
+    public void reset(final Vector3D p1, final Vector3D p2) {
         final Vector3D delta = p2.subtract(p1);
         final double norm2 = delta.getNormSq();
         if (norm2 == 0.0) {
             throw new IllegalArgumentException("Points are equal");
         }
         this.direction = Vector3D.linearCombination(1.0 / Math.sqrt(norm2), delta);
-        this.zero = Point3D.vectorCombination(1.0, p1, -p1.asVector().dotProduct(delta) / norm2, delta);
+        this.zero = Vector3D.linearCombination(1.0, p1, -p1.dotProduct(delta) / norm2, delta);
     }
 
     /** Get the tolerance below which points are considered identical.
@@ -105,7 +105,7 @@ public class Line implements Embedding<Point3D, Point1D> {
     /** Get the line point closest to the origin.
      * @return line point closest to the origin
      */
-    public Point3D getOrigin() {
+    public Vector3D getOrigin() {
         return zero;
     }
 
@@ -116,7 +116,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param point point to check
      * @return abscissa of the point
      */
-    public double getAbscissa(final Point3D point) {
+    public double getAbscissa(final Vector3D point) {
         return point.subtract(zero).dotProduct(direction);
     }
 
@@ -124,8 +124,8 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param abscissa desired abscissa for the point
      * @return one point belonging to the line, at specified abscissa
      */
-    public Point3D pointAt(final double abscissa) {
-        return Point3D.vectorCombination(1.0, zero, abscissa, direction);
+    public Vector3D pointAt(final double abscissa) {
+        return Vector3D.linearCombination(1.0, zero, abscissa, direction);
     }
 
     /** Transform a space point into a sub-space point.
@@ -134,8 +134,8 @@ public class Line implements Embedding<Point3D, Point1D> {
      * the specified space point
      */
     @Override
-    public Point1D toSubSpace(final Point3D point) {
-        return Point1D.of(getAbscissa(point));
+    public Vector1D toSubSpace(final Vector3D point) {
+        return Vector1D.of(getAbscissa(point));
     }
 
     /** Transform a sub-space point into a space point.
@@ -144,7 +144,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * specified sub-space point
      */
     @Override
-    public Point3D toSpace(final Point1D point) {
+    public Vector3D toSpace(final Vector1D point) {
         return pointAt(point.getX());
     }
 
@@ -164,7 +164,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param p point to check
      * @return true if p belongs to the line
      */
-    public boolean contains(final Point3D p) {
+    public boolean contains(final Vector3D p) {
         return distance(p) < tolerance;
     }
 
@@ -172,7 +172,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param p to check
      * @return distance between the instance and the point
      */
-    public double distance(final Point3D p) {
+    public double distance(final Vector3D p) {
         final Vector3D d = p.subtract(zero);
         final Vector3D n = Vector3D.linearCombination(1.0, d, -d.dotProduct(direction), direction);
         return n.getNorm();
@@ -202,7 +202,7 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @param line line to check against the instance
      * @return point of the instance closest to another line
      */
-    public Point3D closestPoint(final Line line) {
+    public Vector3D closestPoint(final Line line) {
 
         final double cos = direction.dotProduct(line.direction);
         final double n = 1 - cos * cos;
@@ -215,7 +215,7 @@ public class Line implements Embedding<Point3D, Point1D> {
         final double a        = delta0.dotProduct(direction);
         final double b        = delta0.dotProduct(line.direction);
 
-        return Point3D.vectorCombination(1, zero, (a - b * cos) / n, direction);
+        return Vector3D.linearCombination(1, zero, (a - b * cos) / n, direction);
 
     }
 
@@ -224,8 +224,8 @@ public class Line implements Embedding<Point3D, Point1D> {
      * @return intersection point of the instance and the other line
      * or null if there are no intersection points
      */
-    public Point3D intersection(final Line line) {
-        final Point3D closest = closestPoint(line);
+    public Vector3D intersection(final Line line) {
+        final Vector3D closest = closestPoint(line);
         return line.contains(closest) ? closest : null;
     }
 

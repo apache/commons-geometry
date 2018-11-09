@@ -42,7 +42,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x852fd2a0ed8d2f6dl));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             Assert.assertEquals(Location.INSIDE, full.checkPoint(S2Point.ofVector(v)));
         }
         Assert.assertEquals(4 * Math.PI, new SphericalPolygonsSet(0.01, new S2Point[0]).getSize(), 1.0e-10);
@@ -60,7 +60,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x76d9205d6167b6ddl));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             Assert.assertEquals(Location.OUTSIDE, empty.checkPoint(S2Point.ofVector(v)));
         }
         Assert.assertEquals(0, empty.getSize(), 1.0e-10);
@@ -79,7 +79,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x6b9d4a6ad90d7b0bl));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             if (v.getZ() < -sinTol) {
                 Assert.assertEquals(Location.INSIDE, south.checkPoint(S2Point.ofVector(v)));
             } else if (v.getZ() > sinTol) {
@@ -115,7 +115,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x9c9802fde3cbcf25l));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() > sinTol) && (v.getY() > sinTol) && (v.getZ() > sinTol)) {
                 Assert.assertEquals(Location.INSIDE, octant.checkPoint(S2Point.ofVector(v)));
             } else if ((v.getX() < -sinTol) || (v.getY() < -sinTol) || (v.getZ() < -sinTol)) {
@@ -180,7 +180,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0xb8fc5acc91044308l));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() > sinTol) && (v.getY() > sinTol) && (v.getZ() > sinTol)) {
                 Assert.assertEquals(Location.INSIDE, octant.checkPoint(S2Point.ofVector(v)));
             } else if ((v.getX() < -sinTol) || (v.getY() < -sinTol) || (v.getZ() < -sinTol)) {
@@ -206,7 +206,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x9c9802fde3cbcf25l));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             if (((v.getX() < -sinTol) || (v.getY() < -sinTol)) && (v.getZ() > sinTol)) {
                 Assert.assertEquals(Location.INSIDE, threeOctants.checkPoint(S2Point.ofVector(v)));
             } else if (((v.getX() > sinTol) && (v.getY() > sinTol)) || (v.getZ() < -sinTol)) {
@@ -340,7 +340,7 @@ public class SphericalPolygonsSetTest {
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0xcc5ce49949e0d3ecl));
         for (int i = 0; i < 1000; ++i) {
-            Vector3D v = Vector3D.ofArray(random.nextVector());
+            Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() < -sinTol) && (v.getY() < -sinTol) && (v.getZ() < -sinTol)) {
                 Assert.assertEquals(Location.INSIDE, polygon.checkPoint(S2Point.ofVector(v)));
             } else if ((v.getX() < sinTol) && (v.getY() < sinTol) && (v.getZ() < sinTol)) {

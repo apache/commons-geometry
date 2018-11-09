@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
@@ -109,22 +108,12 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth));
     }
 
-    /** Convert this set of polar coordinates to a 2-dimensional
-     * vector.
+    /** Convert this set of polar coordinates to Cartesian coordinates.
      * @return A 2-dimensional vector with an equivalent set of
-     *      coordinates.
+     *      coordinates in Cartesian form
      */
-    public Vector2D toVector() {
-        return toCartesian(radius, azimuth, Vector2D::of);
-    }
-
-    /** Convert this set of polar coordinates to a 2-dimensional
-     * point.
-     * @return A 2-dimensional point with an equivalent set of
-     *      coordinates.
-     */
-    public Point2D toPoint() {
-        return toCartesian(radius, azimuth, Point2D::of);
+    public Vector2D toCartesian() {
+        return toCartesian(radius, azimuth);
     }
 
     /** Get a hashCode for this set of polar coordinates.
@@ -197,11 +186,32 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * @param y Y coordinate value
      * @return polar coordinates equivalent to the given Cartesian coordinates
      */
-    public static PolarCoordinates ofCartesian(final double x, final double y) {
+    public static PolarCoordinates fromCartesian(final double x, final double y) {
         final double azimuth = Math.atan2(y, x);
         final double radius = Math.hypot(x, y);
 
         return new PolarCoordinates(radius, azimuth);
+    }
+
+    /** Convert the given Cartesian coordinates to polar form.
+     * @param vec vector containing Cartesian coordinates
+     * @return polar coordinates equivalent to the given Cartesian coordinates
+     */
+    public static PolarCoordinates fromCartesian(final Vector2D vec) {
+        return fromCartesian(vec.getX(), vec.getY());
+    }
+
+    /** Convert the given polar coordinates to Cartesian form.
+     * @param radius Radius value.
+     * @param azimuth Azimuth angle in radians.
+     * @return A 2-dimensional vector with an equivalent set of
+     *      coordinates in Cartesian form
+     */
+    public static Vector2D toCartesian(final double radius, final double azimuth) {
+        final double x = radius * Math.cos(azimuth);
+        final double y = radius * Math.sin(azimuth);
+
+        return Vector2D.of(x, y);
     }
 
     /** Parse the given string and return a new polar coordinates instance. The parsed
@@ -231,22 +241,5 @@ public final class PolarCoordinates implements Spatial, Serializable {
         }
 
         return azimuth;
-    }
-
-    /** Package private method to convert the given set of polar coordinates to
-     * Cartesian coordinates. The Cartesian coordinates are computed and passed to the given
-     * factory instance. The factory's return value is returned.
-     * @param radius Radius value
-     * @param azimuth Azimuth value in radians
-     * @param factory Factory instance that will be passed the computed Cartesian coordinates
-     * @param <T> Type returned by the factory
-     * @return the value returned by the factory when passed Cartesian
-     *      coordinates equivalent to the given set of polar coordinates.
-     */
-    static <T> T toCartesian(final double radius, final double azimuth, final DoubleFunction2N<T> factory) {
-        final double x = radius * Math.cos(azimuth);
-        final double y = radius * Math.sin(azimuth);
-
-        return factory.apply(x, y);
     }
 }

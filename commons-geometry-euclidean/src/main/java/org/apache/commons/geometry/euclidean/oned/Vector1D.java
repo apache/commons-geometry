@@ -23,10 +23,10 @@ import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
-/** This class represents a vector in one-dimensional Euclidean space.
+/** This class represents vectors and points in one-dimensional Euclidean space.
  * Instances of this class are guaranteed to be immutable.
  */
-public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Vector1D> {
+public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** Zero vector (coordinates: 0). */
     public static final Vector1D ZERO = new Vector1D(0.0);
@@ -53,17 +53,52 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
+    /** Abscissa (coordinate value). */
+    private final double x;
+
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
     private Vector1D(double x) {
-        super(x);
+        this.x = x;
+    }
+
+    /**
+     * Returns the abscissa (coordinate value) of the instance.
+     * @return the abscissa value
+     */
+    public double getX() {
+        return x;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Point1D asPoint() {
-        return Point1D.of(getX());
+    public int getDimension() {
+        return 1;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isNaN() {
+        return Double.isNaN(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInfinite() {
+        return !isNaN() && Double.isInfinite(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D vectorTo(Vector1D v) {
+        return v.subtract(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D directionTo(Vector1D v) {
+        return normalize(v.x - x);
     }
 
     /** {@inheritDoc} */
@@ -81,81 +116,80 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     /** {@inheritDoc} */
     @Override
     public double getNorm() {
-        return Vectors.norm(getX());
+        return Vectors.norm(x);
     }
 
     /** {@inheritDoc} */
     @Override
     public double getNormSq() {
-        return Vectors.normSq(getX());
+        return Vectors.normSq(x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D withNorm(double magnitude) {
         getCheckedNorm(); // validate our norm value
-
-        return (getX() > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
+        return (x > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D add(Vector1D v) {
-        return new Vector1D(getX() + v.getX());
+        return new Vector1D(x + v.x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D add(double factor, Vector1D v) {
-        return new Vector1D(getX() + (factor * v.getX()));
+        return new Vector1D(x + (factor * v.x));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D subtract(Vector1D v) {
-        return new Vector1D(getX() - v.getX());
+        return new Vector1D(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D subtract(double factor, Vector1D v) {
-        return new Vector1D(getX() - (factor * v.getX()));
+        return new Vector1D(x - (factor * v.x));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D negate() {
-        return new Vector1D(-getX());
+        return new Vector1D(-x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D normalize() {
-        return normalize(getX());
+        return normalize(x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D scalarMultiply(double a) {
-        return new Vector1D(a * getX());
+        return new Vector1D(a * x);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distance(Vector1D v) {
-        return Vectors.norm(getX() - v.getX());
+        return Vectors.norm(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
     public double distanceSq(Vector1D v) {
-        return Vectors.normSq(getX() - v.getX());
+        return Vectors.normSq(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
     public double dotProduct(Vector1D v) {
-        return getX() * v.getX();
+        return x * v.x;
     }
 
     /** {@inheritDoc}
@@ -168,8 +202,8 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
         getCheckedNorm();
         v.getCheckedNorm();
 
-        final double sig1 = Math.signum(getX());
-        final double sig2 = Math.signum(v.getX());
+        final double sig1 = Math.signum(x);
+        final double sig2 = Math.signum(v.x);
 
         // the angle is 0 if the x value signs are the same and pi if not
         return (sig1 == sig2) ? 0.0 : Geometry.PI;
@@ -186,7 +220,7 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
         if (isNaN()) {
             return 857;
         }
-        return 403 * Double.hashCode(getX());
+        return 403 * Double.hashCode(x);
     }
 
     /**
@@ -221,18 +255,15 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
                 return this.isNaN();
             }
 
-            return getX() == rhs.getX();
+            return x == rhs.x;
         }
         return false;
     }
 
-    /** Returns the vector norm value, throwing an {@link IllegalNormException} if the value
-     * is not real (ie, NaN or infinite) or zero.
-     * @return the vector norm value, guaranteed to be real and non-zero
-     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
-     */
-    private double getCheckedNorm() {
-        return Vectors.checkedNorm(getNorm());
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return SimpleTupleFormat.getDefault().format(x);
     }
 
     /** Returns a vector with the given coordinate value.
@@ -267,82 +298,74 @@ public class Vector1D extends Cartesian1D implements EuclideanVector<Point1D, Ve
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a scale factor for first coordinate
      * @param c first coordinate
      * @return vector with coordinates calculated by {@code a * c}
      */
-    public static Vector1D linearCombination(double a, Cartesian1D c) {
-        return new Vector1D(a * c.getX());
+    public static Vector1D linearCombination(double a, Vector1D c) {
+        return new Vector1D(a * c.x);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2)}
+     * @param v2 second coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector1D linearCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2) {
+    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2) {
         return new Vector1D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX()));
+                LinearCombination.value(a1, v1.x, a2, v2.x));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3)}
+     * @param v3 third coordinate
+     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector1D linearCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
-            double a3, Cartesian1D c3) {
+    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2,
+            double a3, Vector1D v3) {
         return new Vector1D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x));
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
-     * corresponding scale factors. All inputs are interpreted as vectors. If points
-     * are to be passed, they should be viewed as representing the vector from the
-     * zero point to the given point.
+     * corresponding scale factors.
      * </p>
      *
      * @param a1 scale factor for first coordinate
-     * @param c1 first coordinate
+     * @param v1 first coordinate
      * @param a2 scale factor for second coordinate
-     * @param c2 second coordinate
+     * @param v2 second coordinate
      * @param a3 scale factor for third coordinate
-     * @param c3 third coordinate
+     * @param v3 third coordinate
      * @param a4 scale factor for fourth coordinate
-     * @param c4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * c1) + (a2 * c2) + (a3 * c3) + (a4 * c4)}
+     * @param v4 fourth coordinate
+     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector1D linearCombination(double a1, Cartesian1D c1, double a2, Cartesian1D c2,
-            double a3, Cartesian1D c3, double a4, Cartesian1D c4) {
+    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2,
+            double a3, Vector1D v3, double a4, Vector1D v4) {
         return new Vector1D(
-                LinearCombination.value(a1, c1.getX(), a2, c2.getX(), a3, c3.getX(), a4, c4.getX()));
+                LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x));
     }
 
     /** Private class used to represent unit vectors. This allows optimizations to be performed for certain

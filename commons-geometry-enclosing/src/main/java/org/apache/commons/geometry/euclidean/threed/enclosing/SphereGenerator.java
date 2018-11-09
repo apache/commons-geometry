@@ -21,41 +21,40 @@ import java.util.List;
 
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
-import org.apache.commons.geometry.euclidean.threed.Cartesian3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
-import org.apache.commons.geometry.euclidean.threed.Point3D;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
 import org.apache.commons.numbers.fraction.BigFraction;
 
 /** Class generating an enclosing ball from its support points.
  */
-public class SphereGenerator implements SupportBallGenerator<Point3D> {
+public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public EnclosingBall<Point3D> ballOnSupport(final List<Point3D> support) {
+    public EnclosingBall<Vector3D> ballOnSupport(final List<Vector3D> support) {
 
         if (support.size() < 1) {
-            return new EnclosingBall<>(Point3D.ZERO, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Vector3D.ZERO, Double.NEGATIVE_INFINITY);
         } else {
-            final Point3D vA = support.get(0);
+            final Vector3D vA = support.get(0);
             if (support.size() < 2) {
                 return new EnclosingBall<>(vA, 0, vA);
             } else {
-                final Point3D vB = support.get(1);
+                final Vector3D vB = support.get(1);
                 if (support.size() < 3) {
-                    return new EnclosingBall<>(Point3D.vectorCombination(0.5, vA, 0.5, vB),
+                    return new EnclosingBall<>(Vector3D.linearCombination(0.5, vA, 0.5, vB),
                                                                     0.5 * vA.distance(vB),
                                                                     vA, vB);
                 } else {
-                    final Point3D vC = support.get(2);
+                    final Vector3D vC = support.get(2);
                     if (support.size() < 4) {
 
                         // delegate to 2D disk generator
                         final Plane p = new Plane(vA, vB, vC,
                                                   1.0e-10 * (norm1(vA) + norm1(vB) + norm1(vC)));
-                        final EnclosingBall<Point2D> disk =
+                        final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
                                                                                 p.toSubSpace(vB),
                                                                                 p.toSubSpace(vC)));
@@ -65,7 +64,7 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
                                                                         disk.getRadius(), vA, vB, vC);
 
                     } else {
-                        final Point3D vD = support.get(3);
+                        final Vector3D vD = support.get(3);
                         // a sphere is 3D can be defined as:
                         // (1)   (x - x_0)^2 + (y - y_0)^2 + (z - z_0)^2 = r^2
                         // which can be written:
@@ -118,7 +117,7 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
                         final BigFraction dy      = c3[0].subtract(centerY);
                         final BigFraction dz      = c4[0].subtract(centerZ);
                         final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy)).add(dz.multiply(dz));
-                        return new EnclosingBall<>(Point3D.of(centerX.doubleValue(),
+                        return new EnclosingBall<>(Vector3D.of(centerX.doubleValue(),
                                                                                      centerY.doubleValue(),
                                                                                      centerZ.doubleValue()),
                                                                         Math.sqrt(r2.doubleValue()),
@@ -156,7 +155,7 @@ public class SphereGenerator implements SupportBallGenerator<Point3D> {
      * @return L<sub>1</sub> vector norm for the given set of coordinates
      * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
      */
-    private double norm1(final Cartesian3D coord) {
+    private double norm1(final Vector3D coord) {
         return Math.abs(coord.getX()) + Math.abs(coord.getY()) + Math.abs(coord.getZ());
     }
 }

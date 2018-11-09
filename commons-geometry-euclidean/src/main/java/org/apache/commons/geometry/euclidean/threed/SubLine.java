@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.Point1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** This class represents a subset of a {@link Line}.
  */
@@ -49,7 +49,7 @@ public class SubLine {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the points are equal
      */
-    public SubLine(final Point3D start, final Point3D end, final double tolerance)
+    public SubLine(final Vector3D start, final Vector3D end, final double tolerance)
         throws IllegalArgumentException {
         this(new Line(start, end, tolerance), buildIntervalSet(start, end, tolerance));
     }
@@ -83,8 +83,8 @@ public class SubLine {
         final List<Segment> segments = new ArrayList<>(list.size());
 
         for (final Interval interval : list) {
-            final Point3D start = line.toSpace(Point1D.of(interval.getInf()));
-            final Point3D end   = line.toSpace(Point1D.of(interval.getSup()));
+            final Vector3D start = line.toSpace(Vector1D.of(interval.getInf()));
+            final Vector3D end   = line.toSpace(Vector1D.of(interval.getSup()));
             segments.add(new Segment(start, end, line));
         }
 
@@ -106,10 +106,10 @@ public class SubLine {
      * occurring on endpoints lead to null being returned
      * @return the intersection point if there is one, null if the sub-lines don't intersect
      */
-    public Point3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+    public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
 
         // compute the intersection on infinite line
-        Point3D v1D = line.intersection(subLine.line);
+        Vector3D v1D = line.intersection(subLine.line);
         if (v1D == null) {
             return null;
         }
@@ -135,7 +135,7 @@ public class SubLine {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if the points are equal
      */
-    private static IntervalsSet buildIntervalSet(final Point3D start, final Point3D end, final double tolerance)
+    private static IntervalsSet buildIntervalSet(final Vector3D start, final Vector3D end, final double tolerance)
         throws IllegalArgumentException {
         final Line line = new Line(start, end, tolerance);
         return new IntervalsSet(line.toSubSpace(start).getX(),

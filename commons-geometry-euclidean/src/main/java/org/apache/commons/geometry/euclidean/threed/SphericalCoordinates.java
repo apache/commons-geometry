@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -138,20 +137,12 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth) || Double.isInfinite(polar));
     }
 
-    /** Convert this set of spherical coordinates to a 3 dimensional vector.
+    /** Convert this set of spherical coordinates to a Cartesian form.
      * @return A 3-dimensional vector with an equivalent set of
-     *      coordinates.
+     *      Cartesian coordinates.
      */
     public Vector3D toVector() {
-        return toCartesian(radius, azimuth, polar, Vector3D::of);
-    }
-
-    /** Convert this set of spherical coordinates to a 3 dimensional point.
-    * @return A 3-dimensional point with an equivalent set of
-    *      coordinates.
-    */
-    public Point3D toPoint() {
-        return toCartesian(radius, azimuth, polar, Point3D::of);
+        return toCartesian(radius, azimuth, polar);
     }
 
     /** Get a hashCode for this set of spherical coordinates.
@@ -229,7 +220,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * @param z Z coordinate value
      * @return a set of spherical coordinates equivalent to the given Cartesian coordinates
      */
-    public static SphericalCoordinates ofCartesian(final double x, final double y, final double z) {
+    public static SphericalCoordinates fromCartesian(final double x, final double y, final double z) {
         final double radius = Math.sqrt((x*x) + (y*y) + (z*z));
         final double azimuth = Math.atan2(y, x);
 
@@ -237,6 +228,31 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         final double polar = (radius > 0.0) ? Math.acos(z / radius) : 0.0;
 
         return new SphericalCoordinates(radius, azimuth, polar);
+    }
+
+    /** Convert the given set of Cartesian coordinates to spherical coordinates.
+     * @param vec vector containing Cartesian coordinates to convert
+     * @return a set of spherical coordinates equivalent to the given Cartesian coordinates
+     */
+    public static SphericalCoordinates fromCartesian(final Vector3D vec) {
+        return fromCartesian(vec.getX(), vec.getY(), vec.getZ());
+    }
+
+    /** Convert the given set of spherical coordinates to Cartesian coordinates.
+     * @param radius The spherical radius value.
+     * @param azimuth The spherical azimuth angle in radians.
+     * @param polar The spherical polar angle in radians.
+     * @return A 3-dimensional vector with an equivalent set of
+     *      Cartesian coordinates.
+     */
+    public static Vector3D toCartesian(final double radius, final double azimuth, final double polar) {
+        final double xyLength = radius * Math.sin(polar);
+
+        final double x = xyLength * Math.cos(azimuth);
+        final double y = xyLength * Math.sin(azimuth);
+        final double z = radius * Math.cos(polar);
+
+        return Vector3D.of(x, y, z);
     }
 
     /** Parse the given string and return a new {@link SphericalCoordinates} instance. The parsed
@@ -276,27 +292,5 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         }
 
         return polar;
-    }
-
-    /** Package private method to convert the given set of spherical coordinates to
-     * Cartesian coordinates. The Cartesian coordinates are computed and passed to the given
-     * factory instance. The factory's return value is returned.
-     * @param <T> Factory return type.
-     * @param radius The spherical radius value.
-     * @param azimuth The spherical azimuth angle in radians.
-     * @param polar The spherical polar angle in radians.
-     * @param factory Factory instance that will be passed the
-     * @return the value returned by the factory when passed Cartesian
-     *      coordinates equivalent to the given set of spherical coordinates.
-     */
-    static <T> T toCartesian(final double radius, final double azimuth, final double polar,
-            DoubleFunction3N<T> factory) {
-        final double xyLength = radius * Math.sin(polar);
-
-        final double x = xyLength * Math.cos(azimuth);
-        final double y = xyLength * Math.sin(azimuth);
-        final double z = radius * Math.cos(polar);
-
-        return factory.apply(x, y, z);
     }
 }

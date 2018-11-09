@@ -47,7 +47,7 @@ public final class S1Point implements Point<S1Point>, Serializable {
      */
     private S1Point(final double azimuth) {
         this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);
-        this.vector = Double.isFinite(azimuth) ? Vector2D.ofPolar(1.0, azimuth) : Vector2D.NaN;
+        this.vector = Double.isFinite(azimuth) ? PolarCoordinates.toCartesian(1.0, azimuth) : Vector2D.NaN;
     }
 
     /** Get the azimuthal angle in radians.

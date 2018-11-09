@@ -29,7 +29,7 @@ public class VectorsTest {
     private static final double EPS = Math.ulp(1d);
 
     @Test
-    public void testIsFiniteNonZero() {
+    public void testIsRealNonZero() {
         // act/assert
         Assert.assertTrue(Vectors.isRealNonZero(1e-20));
         Assert.assertTrue(Vectors.isRealNonZero(1e20));
@@ -37,6 +37,7 @@ public class VectorsTest {
         Assert.assertTrue(Vectors.isRealNonZero(-1e20));
 
         Assert.assertFalse(Vectors.isRealNonZero(0.0));
+        Assert.assertFalse(Vectors.isRealNonZero(-0.0));
         Assert.assertFalse(Vectors.isRealNonZero(Double.NaN));
         Assert.assertFalse(Vectors.isRealNonZero(Double.POSITIVE_INFINITY));
         Assert.assertFalse(Vectors.isRealNonZero(Double.NEGATIVE_INFINITY));

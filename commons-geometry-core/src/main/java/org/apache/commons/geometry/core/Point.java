@@ -17,12 +17,20 @@
 package org.apache.commons.geometry.core;
 
 /** Interface representing a point in a mathematical space.
- * Implementations of this interface are sufficient to define a
+ *
+ * <p>Implementations of this interface are sufficient to define a
  * space since they define both the structure of the points making up
  * the space and the operations permitted on them. The only mathematical
  * requirement at this level is that the represented space have a defined
  * distance metric, meaning an operation that can compute the distance
  * between two points (ie, the space must be a metric space).
+ * </p>
+ *
+ * <p>This interface uses self-referencing generic parameters to ensure
+ * that implementations are only used with instances of their own type.
+ * This removes the need for casting inside of methods in order to access
+ * implementation-specific data, such as coordinate values.
+ * </p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Metric_space">Metric space</a>
  *

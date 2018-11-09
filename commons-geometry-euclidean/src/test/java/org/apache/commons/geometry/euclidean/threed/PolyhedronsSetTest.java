@@ -33,9 +33,9 @@ import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.Point2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -55,44 +55,44 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
         Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertTrue(polySet.isFull());
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
-                Point3D.of(-100, -100, -100),
-                Point3D.of(0, 0, 0),
-                Point3D.of(100, 100, 100),
-                Point3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
 
     @Test
     public void testEmptyRegion() {
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree<Point3D>(Boolean.FALSE), TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree<Vector3D>(Boolean.FALSE), TEST_TOLERANCE);
 
         // assert
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(0.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertTrue(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
-                Point3D.of(-100, -100, -100),
-                Point3D.of(0, 0, 0),
-                Point3D.of(100, 100, 100),
-                Point3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
 
     @Test
     public void testHalfSpace() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.add(new SubPlane(new Plane(Point3D.ZERO, Vector3D.PLUS_Y, TEST_TOLERANCE),
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.add(new SubPlane(new Plane(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_TOLERANCE),
                 new PolygonsSet(TEST_TOLERANCE)));
 
         // act
@@ -102,49 +102,49 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getBoundarySize());
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
-                Point3D.of(-100, -100, -100));
-        checkPoints(Region.Location.BOUNDARY, polySet, Point3D.of(0, 0, 0));
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100));
+        checkPoints(Region.Location.BOUNDARY, polySet, Vector3D.of(0, 0, 0));
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(100, 100, 100),
-                Point3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
 
     @Test
     public void testInvertedRegion() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = createBoxBoundaries(Point3D.ZERO, 1.0, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE);
         PolyhedronsSet box = new PolyhedronsSet(boundaries, TEST_TOLERANCE);;
 
         // act
-        PolyhedronsSet polySet = (PolyhedronsSet) new RegionFactory<Point3D>().getComplement(box);
+        PolyhedronsSet polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(box);
 
         // assert
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
         Assert.assertEquals(6, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
-                Point3D.of(-100, -100, -100),
-                Point3D.of(100, 100, 100),
-                Point3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(0, 0, 0));
+                Vector3D.of(0, 0, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_noBoundaries_treeRepresentsWholeSpace() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -153,7 +153,7 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
         Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertTrue(polySet.isFull());
     }
@@ -161,7 +161,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_unitBox() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = createBoxBoundaries(Point3D.ZERO, 1.0, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE);
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -170,63 +170,63 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(1.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(6.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.ZERO, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(1, 0, 0),
-                Point3D.of(0, -1, 0),
-                Point3D.of(0, 1, 0),
-                Point3D.of(0, 0, -1),
-                Point3D.of(0, 0, 1),
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, -1, 0),
+                Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, -1),
+                Vector3D.of(0, 0, 1),
 
-                Point3D.of(1, 1, 1),
-                Point3D.of(1, 1, -1),
-                Point3D.of(1, -1, 1),
-                Point3D.of(1, -1, -1),
-                Point3D.of(-1, 1, 1),
-                Point3D.of(-1, 1, -1),
-                Point3D.of(-1, -1, 1),
-                Point3D.of(-1, -1, -1));
+                Vector3D.of(1, 1, 1),
+                Vector3D.of(1, 1, -1),
+                Vector3D.of(1, -1, 1),
+                Vector3D.of(1, -1, -1),
+                Vector3D.of(-1, 1, 1),
+                Vector3D.of(-1, 1, -1),
+                Vector3D.of(-1, -1, 1),
+                Vector3D.of(-1, -1, -1));
 
         checkPoints(Region.Location.BOUNDARY, polySet,
-                Point3D.of(0.5, 0, 0),
-                Point3D.of(-0.5, 0, 0),
-                Point3D.of(0, 0.5, 0),
-                Point3D.of(0, -0.5, 0),
-                Point3D.of(0, 0, 0.5),
-                Point3D.of(0, 0, -0.5),
+                Vector3D.of(0.5, 0, 0),
+                Vector3D.of(-0.5, 0, 0),
+                Vector3D.of(0, 0.5, 0),
+                Vector3D.of(0, -0.5, 0),
+                Vector3D.of(0, 0, 0.5),
+                Vector3D.of(0, 0, -0.5),
 
-                Point3D.of(0.5, 0.5, 0.5),
-                Point3D.of(0.5, 0.5, -0.5),
-                Point3D.of(0.5, -0.5, 0.5),
-                Point3D.of(0.5, -0.5, -0.5),
-                Point3D.of(-0.5, 0.5, 0.5),
-                Point3D.of(-0.5, 0.5, -0.5),
-                Point3D.of(-0.5, -0.5, 0.5),
-                Point3D.of(-0.5, -0.5, -0.5));
+                Vector3D.of(0.5, 0.5, 0.5),
+                Vector3D.of(0.5, 0.5, -0.5),
+                Vector3D.of(0.5, -0.5, 0.5),
+                Vector3D.of(0.5, -0.5, -0.5),
+                Vector3D.of(-0.5, 0.5, 0.5),
+                Vector3D.of(-0.5, 0.5, -0.5),
+                Vector3D.of(-0.5, -0.5, 0.5),
+                Vector3D.of(-0.5, -0.5, -0.5));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
+                Vector3D.of(0, 0, 0),
 
-                Point3D.of(0.4, 0.4, 0.4),
-                Point3D.of(0.4, 0.4, -0.4),
-                Point3D.of(0.4, -0.4, 0.4),
-                Point3D.of(0.4, -0.4, -0.4),
-                Point3D.of(-0.4, 0.4, 0.4),
-                Point3D.of(-0.4, 0.4, -0.4),
-                Point3D.of(-0.4, -0.4, 0.4),
-                Point3D.of(-0.4, -0.4, -0.4));
+                Vector3D.of(0.4, 0.4, 0.4),
+                Vector3D.of(0.4, 0.4, -0.4),
+                Vector3D.of(0.4, -0.4, 0.4),
+                Vector3D.of(0.4, -0.4, -0.4),
+                Vector3D.of(-0.4, 0.4, 0.4),
+                Vector3D.of(-0.4, 0.4, -0.4),
+                Vector3D.of(-0.4, -0.4, 0.4),
+                Vector3D.of(-0.4, -0.4, -0.4));
     }
 
     @Test
     public void testCreateFromBoundaries_twoBoxes_disjoint() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Point3D.ZERO, 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Point3D.of(2, 0, 0), 1.0, TEST_TOLERANCE));
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.addAll(createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(2, 0, 0), 1.0, TEST_TOLERANCE));
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -235,26 +235,26 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(1, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(1, 0, 0),
-                Point3D.of(3, 0, 0));
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(3, 0, 0));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
-                Point3D.of(2, 0, 0));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(2, 0, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedSide() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Point3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Point3D.of(1, 0, 0), 1.0, TEST_TOLERANCE));
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 0, 0), 1.0, TEST_TOLERANCE));
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -263,26 +263,26 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(10.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(0.5, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(2, 0, 0));
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(2, 0, 0));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
-                Point3D.of(1, 0, 0));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 0, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_twoBoxes_separationLessThanTolerance() {
         // arrange
         double tolerance = 1e-6;
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Point3D.of(0, 0, 0), 1.0, tolerance));
-        boundaries.addAll(createBoxBoundaries(Point3D.of(1 + 1e-7, 0, 0), 1.0, tolerance));
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, tolerance));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1 + 1e-7, 0, 0), 1.0, tolerance));
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, tolerance);
@@ -291,25 +291,25 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(tolerance, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(2.0, polySet.getSize(), tolerance);
         Assert.assertEquals(10.0, polySet.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(0.5 + 5e-8, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5e-8, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(2, 0, 0));
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(2, 0, 0));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
-                Point3D.of(1, 0, 0));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 0, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedEdge() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Point3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Point3D.of(1, 1, 0), 1.0, TEST_TOLERANCE));
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 0), 1.0, TEST_TOLERANCE));
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -318,27 +318,27 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(0.5, 0.5, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(1, 0, 0),
-                Point3D.of(0, 1, 0),
-                Point3D.of(2, 1, 0));
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 0),
+                Vector3D.of(2, 1, 0));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
-                Point3D.of(1, 1, 0));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 1, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedPoint() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Point3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Point3D.of(1, 1, 1), 1.0, TEST_TOLERANCE));
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 1), 1.0, TEST_TOLERANCE));
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
@@ -347,19 +347,19 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
         Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(0.5, 0.5, 0.5), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-1, 0, 0),
-                Point3D.of(1, 0, 0),
-                Point3D.of(0, 1, 1),
-                Point3D.of(2, 1, 1));
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 1),
+                Vector3D.of(2, 1, 1));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(0, 0, 0),
-                Point3D.of(1, 1, 1));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 1, 1));
     }
 
     @Test
@@ -370,7 +370,7 @@ public class PolyhedronsSetTest {
         // assert
         Assert.assertEquals(1.0, tree.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_TOLERANCE);
 
         for (double x = -0.25; x < 1.25; x += 0.1) {
             boolean xOK = (x >= 0.0) && (x <= 1.0);
@@ -380,25 +380,25 @@ public class PolyhedronsSetTest {
                     boolean zOK = (z >= 0.0) && (z <= 1.0);
                     Region.Location expected =
                         (xOK && yOK && zOK) ? Region.Location.INSIDE : Region.Location.OUTSIDE;
-                    Assert.assertEquals(expected, tree.checkPoint(Point3D.of(x, y, z)));
+                    Assert.assertEquals(expected, tree.checkPoint(Vector3D.of(x, y, z)));
                 }
             }
         }
-        checkPoints(Region.Location.BOUNDARY, tree, new Point3D[] {
-            Point3D.of(0.0, 0.5, 0.5),
-            Point3D.of(1.0, 0.5, 0.5),
-            Point3D.of(0.5, 0.0, 0.5),
-            Point3D.of(0.5, 1.0, 0.5),
-            Point3D.of(0.5, 0.5, 0.0),
-            Point3D.of(0.5, 0.5, 1.0)
+        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
+            Vector3D.of(0.0, 0.5, 0.5),
+            Vector3D.of(1.0, 0.5, 0.5),
+            Vector3D.of(0.5, 0.0, 0.5),
+            Vector3D.of(0.5, 1.0, 0.5),
+            Vector3D.of(0.5, 0.5, 0.0),
+            Vector3D.of(0.5, 0.5, 1.0)
         });
-        checkPoints(Region.Location.OUTSIDE, tree, new Point3D[] {
-            Point3D.of(0.0, 1.2, 1.2),
-            Point3D.of(1.0, 1.2, 1.2),
-            Point3D.of(1.2, 0.0, 1.2),
-            Point3D.of(1.2, 1.0, 1.2),
-            Point3D.of(1.2, 1.2, 0.0),
-            Point3D.of(1.2, 1.2, 1.0)
+        checkPoints(Region.Location.OUTSIDE, tree, new Vector3D[] {
+            Vector3D.of(0.0, 1.2, 1.2),
+            Vector3D.of(1.0, 1.2, 1.2),
+            Vector3D.of(1.2, 0.0, 1.2),
+            Vector3D.of(1.2, 1.0, 1.2),
+            Vector3D.of(1.2, 1.2, 0.0),
+            Vector3D.of(1.2, 1.2, 1.0)
         });
     }
 
@@ -408,13 +408,13 @@ public class PolyhedronsSetTest {
         PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, 1.0e-10);
 
         // act
-        tree = (PolyhedronsSet) new RegionFactory<Point3D>().getComplement(tree);
+        tree = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(tree);
 
         // assert
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
         Assert.assertEquals(6.0, tree.getBoundarySize(), 1.0e-10);
 
-        Point3D barycenter = tree.getBarycenter();
+        Vector3D barycenter = tree.getBarycenter();
         Assert.assertTrue(Double.isNaN(barycenter.getX()));
         Assert.assertTrue(Double.isNaN(barycenter.getY()));
         Assert.assertTrue(Double.isNaN(barycenter.getZ()));
@@ -427,39 +427,39 @@ public class PolyhedronsSetTest {
                     boolean zOK = (z < 0.0) || (z > 1.0);
                     Region.Location expected =
                         (xOK || yOK || zOK) ? Region.Location.INSIDE : Region.Location.OUTSIDE;
-                    Assert.assertEquals(expected, tree.checkPoint(Point3D.of(x, y, z)));
+                    Assert.assertEquals(expected, tree.checkPoint(Vector3D.of(x, y, z)));
                 }
             }
         }
-        checkPoints(Region.Location.BOUNDARY, tree, new Point3D[] {
-            Point3D.of(0.0, 0.5, 0.5),
-            Point3D.of(1.0, 0.5, 0.5),
-            Point3D.of(0.5, 0.0, 0.5),
-            Point3D.of(0.5, 1.0, 0.5),
-            Point3D.of(0.5, 0.5, 0.0),
-            Point3D.of(0.5, 0.5, 1.0)
+        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
+            Vector3D.of(0.0, 0.5, 0.5),
+            Vector3D.of(1.0, 0.5, 0.5),
+            Vector3D.of(0.5, 0.0, 0.5),
+            Vector3D.of(0.5, 1.0, 0.5),
+            Vector3D.of(0.5, 0.5, 0.0),
+            Vector3D.of(0.5, 0.5, 1.0)
         });
-        checkPoints(Region.Location.INSIDE, tree, new Point3D[] {
-            Point3D.of(0.0, 1.2, 1.2),
-            Point3D.of(1.0, 1.2, 1.2),
-            Point3D.of(1.2, 0.0, 1.2),
-            Point3D.of(1.2, 1.0, 1.2),
-            Point3D.of(1.2, 1.2, 0.0),
-            Point3D.of(1.2, 1.2, 1.0)
+        checkPoints(Region.Location.INSIDE, tree, new Vector3D[] {
+            Vector3D.of(0.0, 1.2, 1.2),
+            Vector3D.of(1.0, 1.2, 1.2),
+            Vector3D.of(1.2, 0.0, 1.2),
+            Vector3D.of(1.2, 1.0, 1.2),
+            Vector3D.of(1.2, 1.2, 0.0),
+            Vector3D.of(1.2, 1.2, 1.0)
         });
     }
 
     @Test
     public void testTetrahedron() {
         // arrange
-        Point3D vertex1 = Point3D.of(1, 2, 3);
-        Point3D vertex2 = Point3D.of(2, 2, 4);
-        Point3D vertex3 = Point3D.of(2, 3, 3);
-        Point3D vertex4 = Point3D.of(1, 3, 4);
+        Vector3D vertex1 = Vector3D.of(1, 2, 3);
+        Vector3D vertex2 = Vector3D.of(2, 2, 4);
+        Vector3D vertex3 = Vector3D.of(2, 3, 3);
+        Vector3D vertex4 = Vector3D.of(1, 3, 4);
 
         // act
         PolyhedronsSet tree =
-            (PolyhedronsSet) new RegionFactory<Point3D>().buildConvex(
+            (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
                 new Plane(vertex3, vertex2, vertex1, TEST_TOLERANCE),
                 new Plane(vertex2, vertex3, vertex4, TEST_TOLERANCE),
                 new Plane(vertex4, vertex3, vertex1, TEST_TOLERANCE),
@@ -468,21 +468,21 @@ public class PolyhedronsSetTest {
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_TOLERANCE);
 
         double third = 1.0 / 3.0;
-        checkPoints(Region.Location.BOUNDARY, tree, new Point3D[] {
+        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
             vertex1, vertex2, vertex3, vertex4,
-            Point3D.vectorCombination(third, vertex1, third, vertex2, third, vertex3),
-            Point3D.vectorCombination(third, vertex2, third, vertex3, third, vertex4),
-            Point3D.vectorCombination(third, vertex3, third, vertex4, third, vertex1),
-            Point3D.vectorCombination(third, vertex4, third, vertex1, third, vertex2)
+            Vector3D.linearCombination(third, vertex1, third, vertex2, third, vertex3),
+            Vector3D.linearCombination(third, vertex2, third, vertex3, third, vertex4),
+            Vector3D.linearCombination(third, vertex3, third, vertex4, third, vertex1),
+            Vector3D.linearCombination(third, vertex4, third, vertex1, third, vertex2)
         });
-        checkPoints(Region.Location.OUTSIDE, tree, new Point3D[] {
-            Point3D.of(1, 2, 4),
-            Point3D.of(2, 2, 3),
-            Point3D.of(2, 3, 4),
-            Point3D.of(1, 3, 3)
+        checkPoints(Region.Location.OUTSIDE, tree, new Vector3D[] {
+            Vector3D.of(1, 2, 4),
+            Vector3D.of(2, 2, 3),
+            Vector3D.of(2, 3, 4),
+            Vector3D.of(1, 3, 3)
         });
     }
 
@@ -494,93 +494,93 @@ public class PolyhedronsSetTest {
         double radius = 1.0;
 
         // act
-        PolyhedronsSet polySet = createSphere(Point3D.of(1, 2, 3), radius, 8, 16);
+        PolyhedronsSet polySet = createSphere(Vector3D.of(1, 2, 3), radius, 8, 16);
 
         // assert
         Assert.assertEquals(sphereVolume(radius), polySet.getSize(), approximationTolerance);
         Assert.assertEquals(sphereSurface(radius), polySet.getBoundarySize(), approximationTolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(1, 2, 3), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), polySet.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
         checkPoints(Region.Location.OUTSIDE, polySet,
-                Point3D.of(-0.1, 2, 3),
-                Point3D.of(2.1, 2, 3),
-                Point3D.of(1, 0.9, 3),
-                Point3D.of(1, 3.1, 3),
-                Point3D.of(1, 2, 1.9),
-                Point3D.of(1, 2, 4.1),
-                Point3D.of(1.6, 2.6, 3.6));
+                Vector3D.of(-0.1, 2, 3),
+                Vector3D.of(2.1, 2, 3),
+                Vector3D.of(1, 0.9, 3),
+                Vector3D.of(1, 3.1, 3),
+                Vector3D.of(1, 2, 1.9),
+                Vector3D.of(1, 2, 4.1),
+                Vector3D.of(1.6, 2.6, 3.6));
 
         checkPoints(Region.Location.INSIDE, polySet,
-                Point3D.of(1, 2, 3),
-                Point3D.of(0.1, 2, 3),
-                Point3D.of(1.9, 2, 3),
-                Point3D.of(1, 2.1, 3),
-                Point3D.of(1, 2.9, 3),
-                Point3D.of(1, 2, 2.1),
-                Point3D.of(1, 2, 3.9),
-                Point3D.of(1.5, 2.5, 3.5));
+                Vector3D.of(1, 2, 3),
+                Vector3D.of(0.1, 2, 3),
+                Vector3D.of(1.9, 2, 3),
+                Vector3D.of(1, 2.1, 3),
+                Vector3D.of(1, 2.9, 3),
+                Vector3D.of(1, 2, 2.1),
+                Vector3D.of(1, 2, 3.9),
+                Vector3D.of(1.5, 2.5, 3.5));
     }
 
     @Test
     public void testIsometry() {
         // arrange
-        Point3D vertex1 = Point3D.of(1.1, 2.2, 3.3);
-        Point3D vertex2 = Point3D.of(2.0, 2.4, 4.2);
-        Point3D vertex3 = Point3D.of(2.8, 3.3, 3.7);
-        Point3D vertex4 = Point3D.of(1.0, 3.6, 4.5);
+        Vector3D vertex1 = Vector3D.of(1.1, 2.2, 3.3);
+        Vector3D vertex2 = Vector3D.of(2.0, 2.4, 4.2);
+        Vector3D vertex3 = Vector3D.of(2.8, 3.3, 3.7);
+        Vector3D vertex4 = Vector3D.of(1.0, 3.6, 4.5);
 
         // act
         PolyhedronsSet tree =
-            (PolyhedronsSet) new RegionFactory<Point3D>().buildConvex(
+            (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
                 new Plane(vertex3, vertex2, vertex1, TEST_TOLERANCE),
                 new Plane(vertex2, vertex3, vertex4, TEST_TOLERANCE),
                 new Plane(vertex4, vertex3, vertex1, TEST_TOLERANCE),
                 new Plane(vertex1, vertex2, vertex4, TEST_TOLERANCE));
 
         // assert
-        Point3D barycenter = tree.getBarycenter();
+        Vector3D barycenter = tree.getBarycenter();
         Vector3D s = Vector3D.of(10.2, 4.3, -6.7);
-        Point3D c = Point3D.of(-0.2, 2.1, -3.2);
+        Vector3D c = Vector3D.of(-0.2, 2.1, -3.2);
         Rotation r = new Rotation(Vector3D.of(6.2, -4.4, 2.1), 0.12, RotationConvention.VECTOR_OPERATOR);
 
         tree = tree.rotate(c, r).translate(s);
 
-        Point3D newB =
-                Point3D.vectorCombination(1.0, s,
+        Vector3D newB =
+                Vector3D.linearCombination(1.0, s,
                          1.0, c,
                          1.0, r.applyTo(barycenter.subtract(c)));
         Assert.assertEquals(0.0,
                             newB.subtract(tree.getBarycenter()).getNorm(),
                             TEST_TOLERANCE);
 
-        final Point3D[] expectedV = new Point3D[] {
-                Point3D.vectorCombination(1.0, s,
+        final Vector3D[] expectedV = new Vector3D[] {
+                Vector3D.linearCombination(1.0, s,
                          1.0, c,
                          1.0, r.applyTo(vertex1.subtract(c))),
-                            Point3D.vectorCombination(1.0, s,
+                            Vector3D.linearCombination(1.0, s,
                                       1.0, c,
                                       1.0, r.applyTo(vertex2.subtract(c))),
-                                        Point3D.vectorCombination(1.0, s,
+                                        Vector3D.linearCombination(1.0, s,
                                                    1.0, c,
                                                    1.0, r.applyTo(vertex3.subtract(c))),
-                                                    Point3D.vectorCombination(1.0, s,
+                                                    Vector3D.linearCombination(1.0, s,
                                                                 1.0, c,
                                                                 1.0, r.applyTo(vertex4.subtract(c)))
         };
-        tree.getTree(true).visit(new BSPTreeVisitor<Point3D>() {
+        tree.getTree(true).visit(new BSPTreeVisitor<Vector3D>() {
 
             @Override
-            public Order visitOrder(BSPTree<Point3D> node) {
+            public Order visitOrder(BSPTree<Vector3D> node) {
                 return Order.MINUS_SUB_PLUS;
             }
 
             @Override
-            public void visitInternalNode(BSPTree<Point3D> node) {
+            public void visitInternalNode(BSPTree<Vector3D> node) {
                 @SuppressWarnings("unchecked")
-                BoundaryAttribute<Point3D> attribute =
-                    (BoundaryAttribute<Point3D>) node.getAttribute();
+                BoundaryAttribute<Vector3D> attribute =
+                    (BoundaryAttribute<Vector3D>) node.getAttribute();
                 if (attribute.getPlusOutside() != null) {
                     checkFacet((SubPlane) attribute.getPlusOutside());
                 }
@@ -590,16 +590,16 @@ public class PolyhedronsSetTest {
             }
 
             @Override
-            public void visitLeafNode(BSPTree<Point3D> node) {
+            public void visitLeafNode(BSPTree<Vector3D> node) {
             }
 
             private void checkFacet(SubPlane facet) {
                 Plane plane = (Plane) facet.getHyperplane();
-                Point2D[][] vertices =
+                Vector2D[][] vertices =
                     ((PolygonsSet) facet.getRemainingRegion()).getVertices();
                 Assert.assertEquals(1, vertices.length);
                 for (int i = 0; i < vertices[0].length; ++i) {
-                    Point3D v = plane.toSpace(vertices[0][i]);
+                    Vector3D v = plane.toSpace(vertices[0][i]);
                     double d = Double.POSITIVE_INFINITY;
                     for (int k = 0; k < expectedV.length; ++k) {
                         d = Math.min(d, v.subtract(expectedV[k]).getNorm());
@@ -626,7 +626,7 @@ public class PolyhedronsSetTest {
             new PolyhedronsSet(x - l, x + l, y - w, y + w, z - w, z + w, TEST_TOLERANCE);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
         Assert.assertEquals(8 * l * w * w, tree.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(8 * w * (2 * l + w), tree.getBoundarySize(), TEST_TOLERANCE);
     }
@@ -645,13 +645,13 @@ public class PolyhedronsSetTest {
             new PolyhedronsSet(x - w, x + w, y - l, y + l, z - w, z + w, TEST_TOLERANCE);
         PolyhedronsSet zBeam =
             new PolyhedronsSet(x - w, x + w, y - w, y + w, z - l, z + l, TEST_TOLERANCE);
-        RegionFactory<Point3D> factory = new RegionFactory<>();
+        RegionFactory<Vector3D> factory = new RegionFactory<>();
 
         // act
         PolyhedronsSet tree = (PolyhedronsSet) factory.union(xBeam, factory.union(yBeam, zBeam));
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
         Assert.assertEquals(8 * w * w * (3 * l - 2 * w), tree.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(24 * w * (2 * l - w), tree.getBoundarySize(), TEST_TOLERANCE);
     }
@@ -677,19 +677,19 @@ public class PolyhedronsSetTest {
             1, 5, 6, 1, 6, 2,
             2, 6, 7, 2, 7, 3,
             4, 0, 3, 4, 3, 7};
-        ArrayList<SubHyperplane<Point3D>> subHyperplaneList = new ArrayList<>();
+        ArrayList<SubHyperplane<Vector3D>> subHyperplaneList = new ArrayList<>();
         for (int idx = 0; idx < indices.length; idx += 3) {
             int idxA = indices[idx] * 3;
             int idxB = indices[idx + 1] * 3;
             int idxC = indices[idx + 2] * 3;
-            Point3D v_1 = Point3D.of(coords[idxA], coords[idxA + 1], coords[idxA + 2]);
-            Point3D v_2 = Point3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
-            Point3D v_3 = Point3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
-            Point3D[] vertices = {v_1, v_2, v_3};
+            Vector3D v_1 = Vector3D.of(coords[idxA], coords[idxA + 1], coords[idxA + 2]);
+            Vector3D v_2 = Vector3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
+            Vector3D v_3 = Vector3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
+            Vector3D[] vertices = {v_1, v_2, v_3};
             Plane polyPlane = new Plane(v_1, v_2, v_3, TEST_TOLERANCE);
-            ArrayList<SubHyperplane<Point2D>> lines = new ArrayList<>();
+            ArrayList<SubHyperplane<Vector2D>> lines = new ArrayList<>();
 
-            Point2D[] projPts = new Point2D[vertices.length];
+            Vector2D[] projPts = new Vector2D[vertices.length];
             for (int ptIdx = 0; ptIdx < projPts.length; ptIdx++) {
                 projPts[ptIdx] = polyPlane.toSubSpace(vertices[ptIdx]);
             }
@@ -699,7 +699,7 @@ public class PolyhedronsSetTest {
                 lineInPlane = new SubLine(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_TOLERANCE);
                 lines.add(lineInPlane);
             }
-            Region<Point2D> polyRegion = new PolygonsSet(lines, TEST_TOLERANCE);
+            Region<Vector2D> polyRegion = new PolygonsSet(lines, TEST_TOLERANCE);
             SubPlane polygon = new SubPlane(polyPlane, polyRegion);
             subHyperplaneList.add(polygon);
         }
@@ -726,10 +726,10 @@ public class PolyhedronsSetTest {
         // the following is a wrong usage of the constructor.
         // as explained in the javadoc, the failure is NOT detected at construction
         // time but occurs later on
-        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree<Point3D>(), TEST_TOLERANCE);
+        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree<Vector3D>(), TEST_TOLERANCE);
         Assert.assertNotNull(ps);
         try {
-            ps.checkPoint(Point3D.ZERO);
+            ps.checkPoint(Vector3D.ZERO);
             Assert.fail("an exception should have been thrown");
         } catch (NullPointerException npe) {
             // this is expected
@@ -741,18 +741,18 @@ public class PolyhedronsSetTest {
         // arrange
         double tol=1e-8;
 
-        Point3D[] verts=new Point3D[8];
+        Vector3D[] verts=new Vector3D[8];
         double xmin=-1,xmax=1;
         double ymin=-1,ymax=1;
         double zmin=-1,zmax=1;
-        verts[0]=Point3D.of(xmin,ymin,zmin);
-        verts[1]=Point3D.of(xmax,ymin,zmin);
-        verts[2]=Point3D.of(xmax,ymax,zmin);
-        verts[3]=Point3D.of(xmin,ymax,zmin);
-        verts[4]=Point3D.of(xmin,ymin,zmax);
-        verts[5]=Point3D.of(xmax,ymin,zmax);
-        verts[6]=Point3D.of(xmax,ymax,zmax);
-        verts[7]=Point3D.of(xmin,ymax,zmax);
+        verts[0]=Vector3D.of(xmin,ymin,zmin);
+        verts[1]=Vector3D.of(xmax,ymin,zmin);
+        verts[2]=Vector3D.of(xmax,ymax,zmin);
+        verts[3]=Vector3D.of(xmin,ymax,zmin);
+        verts[4]=Vector3D.of(xmin,ymin,zmax);
+        verts[5]=Vector3D.of(xmax,ymin,zmax);
+        verts[6]=Vector3D.of(xmax,ymax,zmax);
+        verts[7]=Vector3D.of(xmin,ymax,zmax);
         //
         int[][] faces=new int[12][];
         faces[0]=new int[]{3,1,0};  // bottom (-z)
@@ -780,7 +780,7 @@ public class PolyhedronsSetTest {
 
         Assert.assertEquals(8.0, parsed.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(24.0, parsed.getBoundarySize(), TEST_TOLERANCE);
-        Assert.assertTrue(new RegionFactory<Point3D>().difference(polyset, parsed).isEmpty());
+        Assert.assertTrue(new RegionFactory<Vector3D>().difference(polyset, parsed).isEmpty());
     }
 
     @Test
@@ -815,7 +815,7 @@ public class PolyhedronsSetTest {
 
     @Test
     public void testCreateFromBRep_wrongNumberOfPoints() throws IOException, ParseException {
-        checkError(Arrays.asList(Point3D.ZERO, Point3D.of(1, 0, 0), Point3D.of(0, 1, 0), Point3D.of(0, 0, 1)),
+        checkError(Arrays.asList(Vector3D.ZERO, Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)),
                    Arrays.asList(new int[] { 0, 1, 2 }, new int[] {2, 3}),
                    "");
     }
@@ -831,7 +831,7 @@ public class PolyhedronsSetTest {
         }
     }
 
-    private void checkError(final List<Point3D> vertices, final List<int[]> facets,
+    private void checkError(final List<Vector3D> vertices, final List<int[]> facets,
                             final String expected) {
         try {
             new PolyhedronsSet(vertices, facets, TEST_TOLERANCE);
@@ -846,48 +846,48 @@ public class PolyhedronsSetTest {
     @Test
     public void testFirstIntersection() {
         // arrange
-        List<SubHyperplane<Point3D>> boundaries = createBoxBoundaries(Point3D.ZERO, 2.0, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 2.0, TEST_TOLERANCE);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
 
-        Line xPlus = new Line(Point3D.ZERO, Point3D.of(1, 0, 0), TEST_TOLERANCE);
-        Line xMinus = new Line(Point3D.ZERO, Point3D.of(-1, 0, 0), TEST_TOLERANCE);
+        Line xPlus = new Line(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_TOLERANCE);
+        Line xMinus = new Line(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_TOLERANCE);
 
-        Line yPlus = new Line(Point3D.ZERO, Point3D.of(0, 1, 0), TEST_TOLERANCE);
-        Line yMinus = new Line(Point3D.ZERO, Point3D.of(0, -1, 0), TEST_TOLERANCE);
+        Line yPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 1, 0), TEST_TOLERANCE);
+        Line yMinus = new Line(Vector3D.ZERO, Vector3D.of(0, -1, 0), TEST_TOLERANCE);
 
-        Line zPlus = new Line(Point3D.ZERO, Point3D.of(0, 0, 1), TEST_TOLERANCE);
-        Line zMinus = new Line(Point3D.ZERO, Point3D.of(0, 0, -1), TEST_TOLERANCE);
+        Line zPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_TOLERANCE);
+        Line zMinus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, -1), TEST_TOLERANCE);
 
         // act/assert
-        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Point3D.of(-1.1, 0, 0), xPlus));
-        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Point3D.of(-1, 0, 0), xPlus));
-        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Point3D.of(-0.9, 0, 0), xPlus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(1.1, 0, 0), xPlus));
+        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Vector3D.of(-1.1, 0, 0), xPlus));
+        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Vector3D.of(-1, 0, 0), xPlus));
+        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Vector3D.of(-0.9, 0, 0), xPlus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(1.1, 0, 0), xPlus));
 
-        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Point3D.of(1.1, 0, 0), xMinus));
-        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Point3D.of(1, 0, 0), xMinus));
-        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Point3D.of(0.9, 0, 0), xMinus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(-1.1, 0, 0), xMinus));
+        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Vector3D.of(1.1, 0, 0), xMinus));
+        assertSubPlaneNormal(Vector3D.of(1, 0, 0), polySet.firstIntersection(Vector3D.of(1, 0, 0), xMinus));
+        assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Vector3D.of(0.9, 0, 0), xMinus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(-1.1, 0, 0), xMinus));
 
-        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Point3D.of(0, -1.1, 0), yPlus));
-        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Point3D.of(0, -1, 0), yPlus));
-        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Point3D.of(0, -0.9, 0), yPlus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(0, 1.1, 0), yPlus));
+        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Vector3D.of(0, -1.1, 0), yPlus));
+        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Vector3D.of(0, -1, 0), yPlus));
+        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Vector3D.of(0, -0.9, 0), yPlus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(0, 1.1, 0), yPlus));
 
-        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Point3D.of(0, 1.1, 0), yMinus));
-        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Point3D.of(0, 1, 0), yMinus));
-        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Point3D.of(0, 0.9, 0), yMinus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(0, -1.1, 0), yMinus));
+        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Vector3D.of(0, 1.1, 0), yMinus));
+        assertSubPlaneNormal(Vector3D.of(0, 1, 0), polySet.firstIntersection(Vector3D.of(0, 1, 0), yMinus));
+        assertSubPlaneNormal(Vector3D.of(0, -1, 0), polySet.firstIntersection(Vector3D.of(0, 0.9, 0), yMinus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(0, -1.1, 0), yMinus));
 
-        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Point3D.of(0, 0, -1.1), zPlus));
-        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Point3D.of(0, 0, -1), zPlus));
-        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Point3D.of(0, 0, -0.9), zPlus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(0, 0, 1.1), zPlus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Vector3D.of(0, 0, -1.1), zPlus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Vector3D.of(0, 0, -1), zPlus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Vector3D.of(0, 0, -0.9), zPlus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(0, 0, 1.1), zPlus));
 
-        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Point3D.of(0, 0, 1.1), zMinus));
-        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Point3D.of(0, 0, 1), zMinus));
-        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Point3D.of(0, 0, 0.9), zMinus));
-        Assert.assertEquals(null, polySet.firstIntersection(Point3D.of(0, 0, -1.1), zMinus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Vector3D.of(0, 0, 1.1), zMinus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, 1), polySet.firstIntersection(Vector3D.of(0, 0, 1), zMinus));
+        assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Vector3D.of(0, 0, 0.9), zMinus));
+        Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(0, 0, -1.1), zMinus));
     }
 
     // Issue 1211
@@ -901,14 +901,14 @@ public class PolyhedronsSetTest {
         // act/assert
         int nrays = 1000;
         for (int i = 0; i < nrays; i++) {
-            Point3D origin    = Point3D.ZERO;
+            Vector3D origin    = Vector3D.ZERO;
             Vector3D direction = Vector3D.of(2 * random.nextDouble() - 1,
                                               2 * random.nextDouble() - 1,
                                               2 * random.nextDouble() - 1).normalize();
             Line line = new Line(origin, origin.add(direction), polyset.getTolerance());
-            SubHyperplane<Point3D> plane = polyset.firstIntersection(origin, line);
+            SubHyperplane<Vector3D> plane = polyset.firstIntersection(origin, line);
             if (plane != null) {
-                Point3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
+                Vector3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
                 double dotProduct = direction.dotProduct(intersectionPoint.subtract(origin));
                 Assert.assertTrue(dotProduct > 0);
             }
@@ -922,10 +922,10 @@ public class PolyhedronsSetTest {
         double size = 1.0;
         double radius = size * 0.5;
         PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
-        PolyhedronsSet sphere = createSphere(Point3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().union(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().union(box, sphere);
 
         // OBJWriter.write("union.obj", result);
 
@@ -938,20 +938,20 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, 0.5, 0.5),
-                Point3D.of(1.1, 0.5, 0.5),
-                Point3D.of(0.5, -0.1, 0.5),
-                Point3D.of(0.5, 1.1, 0.5),
-                Point3D.of(0.5, 0.5, -0.1),
-                Point3D.of(0.5, 0.5, 1.6));
+                Vector3D.of(-0.1, 0.5, 0.5),
+                Vector3D.of(1.1, 0.5, 0.5),
+                Vector3D.of(0.5, -0.1, 0.5),
+                Vector3D.of(0.5, 1.1, 0.5),
+                Vector3D.of(0.5, 0.5, -0.1),
+                Vector3D.of(0.5, 0.5, 1.6));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.5, 0.5),
-                Point3D.of(0.9, 0.5, 0.5),
-                Point3D.of(0.5, 0.1, 0.5),
-                Point3D.of(0.5, 0.9, 0.5),
-                Point3D.of(0.5, 0.5, 0.1),
-                Point3D.of(0.5, 0.5, 1.4));
+                Vector3D.of(0.1, 0.5, 0.5),
+                Vector3D.of(0.9, 0.5, 0.5),
+                Vector3D.of(0.5, 0.1, 0.5),
+                Vector3D.of(0.5, 0.9, 0.5),
+                Vector3D.of(0.5, 0.5, 0.1),
+                Vector3D.of(0.5, 0.5, 1.4));
     }
 
     @Test
@@ -960,34 +960,34 @@ public class PolyhedronsSetTest {
         double tolerance = 0.2;
         double radius = 1.0;
 
-        PolyhedronsSet sphere = createSphere(Point3D.ZERO, radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().union(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().union(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-1.1, 0, 0),
-                Point3D.of(1.1, 0, 0),
-                Point3D.of(0, -1.1, 0),
-                Point3D.of(0, 1.1, 0),
-                Point3D.of(0, 0, -1.1),
-                Point3D.of(0, 0, 1.1));
+                Vector3D.of(-1.1, 0, 0),
+                Vector3D.of(1.1, 0, 0),
+                Vector3D.of(0, -1.1, 0),
+                Vector3D.of(0, 1.1, 0),
+                Vector3D.of(0, 0, -1.1),
+                Vector3D.of(0, 0, 1.1));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(-0.9, 0, 0),
-                Point3D.of(0.9, 0, 0),
-                Point3D.of(0, -0.9, 0),
-                Point3D.of(0, 0.9, 0),
-                Point3D.of(0, 0, -0.9),
-                Point3D.of(0, 0, 0.9),
-                Point3D.ZERO);
+                Vector3D.of(-0.9, 0, 0),
+                Vector3D.of(0.9, 0, 0),
+                Vector3D.of(0, -0.9, 0),
+                Vector3D.of(0, 0.9, 0),
+                Vector3D.of(0, 0, -0.9),
+                Vector3D.of(0, 0, 0.9),
+                Vector3D.ZERO);
     }
 
     @Test
@@ -997,10 +997,10 @@ public class PolyhedronsSetTest {
         double size = 1.0;
         double radius = size * 0.5;
         PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
-        PolyhedronsSet sphere = createSphere(Point3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().intersection(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().intersection(box, sphere);
 
         // OBJWriter.write("intersection.obj", result);
 
@@ -1012,20 +1012,20 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, 0.5, 1.0),
-                Point3D.of(1.1, 0.5, 1.0),
-                Point3D.of(0.5, -0.1, 1.0),
-                Point3D.of(0.5, 1.1, 1.0),
-                Point3D.of(0.5, 0.5, 0.4),
-                Point3D.of(0.5, 0.5, 1.1));
+                Vector3D.of(-0.1, 0.5, 1.0),
+                Vector3D.of(1.1, 0.5, 1.0),
+                Vector3D.of(0.5, -0.1, 1.0),
+                Vector3D.of(0.5, 1.1, 1.0),
+                Vector3D.of(0.5, 0.5, 0.4),
+                Vector3D.of(0.5, 0.5, 1.1));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.5, 0.9),
-                Point3D.of(0.9, 0.5, 0.9),
-                Point3D.of(0.5, 0.1, 0.9),
-                Point3D.of(0.5, 0.9, 0.9),
-                Point3D.of(0.5, 0.5, 0.6),
-                Point3D.of(0.5, 0.5, 0.9));
+                Vector3D.of(0.1, 0.5, 0.9),
+                Vector3D.of(0.9, 0.5, 0.9),
+                Vector3D.of(0.5, 0.1, 0.9),
+                Vector3D.of(0.5, 0.9, 0.9),
+                Vector3D.of(0.5, 0.5, 0.6),
+                Vector3D.of(0.5, 0.5, 0.9));
     }
 
     @Test
@@ -1034,34 +1034,34 @@ public class PolyhedronsSetTest {
         double tolerance = 0.2;
         double radius = 1.0;
 
-        PolyhedronsSet sphere = createSphere(Point3D.ZERO, radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().intersection(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().intersection(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-1.1, 0, 0),
-                Point3D.of(1.1, 0, 0),
-                Point3D.of(0, -1.1, 0),
-                Point3D.of(0, 1.1, 0),
-                Point3D.of(0, 0, -1.1),
-                Point3D.of(0, 0, 1.1));
+                Vector3D.of(-1.1, 0, 0),
+                Vector3D.of(1.1, 0, 0),
+                Vector3D.of(0, -1.1, 0),
+                Vector3D.of(0, 1.1, 0),
+                Vector3D.of(0, 0, -1.1),
+                Vector3D.of(0, 0, 1.1));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(-0.9, 0, 0),
-                Point3D.of(0.9, 0, 0),
-                Point3D.of(0, -0.9, 0),
-                Point3D.of(0, 0.9, 0),
-                Point3D.of(0, 0, -0.9),
-                Point3D.of(0, 0, 0.9),
-                Point3D.ZERO);
+                Vector3D.of(-0.9, 0, 0),
+                Vector3D.of(0.9, 0, 0),
+                Vector3D.of(0, -0.9, 0),
+                Vector3D.of(0, 0.9, 0),
+                Vector3D.of(0, 0, -0.9),
+                Vector3D.of(0, 0, 0.9),
+                Vector3D.ZERO);
     }
 
     @Test
@@ -1078,7 +1078,7 @@ public class PolyhedronsSetTest {
                 0.5, size + 0.5, TEST_TOLERANCE);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().xor(box1, box2);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(box1, box2);
 
         // OBJWriter.write("xor_twoCubes.obj", result);
 
@@ -1090,21 +1090,21 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, -0.1, -0.1),
-                Point3D.of(0.75, 0.75, 0.75),
-                Point3D.of(1.6, 1.6, 1.6));
+                Vector3D.of(-0.1, -0.1, -0.1),
+                Vector3D.of(0.75, 0.75, 0.75),
+                Vector3D.of(1.6, 1.6, 1.6));
 
         checkPoints(Region.Location.BOUNDARY, result,
-                Point3D.of(0, 0, 0),
-                Point3D.of(0.5, 0.5, 0.5),
-                Point3D.of(1, 1, 1),
-                Point3D.of(1.5, 1.5, 1.5));
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(0.5, 0.5, 0.5),
+                Vector3D.of(1, 1, 1),
+                Vector3D.of(1.5, 1.5, 1.5));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.1, 0.1),
-                Point3D.of(0.4, 0.4, 0.4),
-                Point3D.of(1.1, 1.1, 1.1),
-                Point3D.of(1.4, 1.4, 1.4));
+                Vector3D.of(0.1, 0.1, 0.1),
+                Vector3D.of(0.4, 0.4, 0.4),
+                Vector3D.of(1.1, 1.1, 1.1),
+                Vector3D.of(1.4, 1.4, 1.4));
     }
 
     @Test
@@ -1114,10 +1114,10 @@ public class PolyhedronsSetTest {
         double size = 1.0;
         double radius = size * 0.5;
         PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
-        PolyhedronsSet sphere = createSphere(Point3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().xor(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(box, sphere);
 
         // OBJWriter.write("xor_cubeAndSphere.obj", result);
 
@@ -1130,21 +1130,21 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, 0.5, 0.5),
-                Point3D.of(1.1, 0.5, 0.5),
-                Point3D.of(0.5, -0.1, 0.5),
-                Point3D.of(0.5, 1.1, 0.5),
-                Point3D.of(0.5, 0.5, -0.1),
-                Point3D.of(0.5, 0.5, 1.6),
-                Point3D.of(0.5, 0.5, 0.9));
+                Vector3D.of(-0.1, 0.5, 0.5),
+                Vector3D.of(1.1, 0.5, 0.5),
+                Vector3D.of(0.5, -0.1, 0.5),
+                Vector3D.of(0.5, 1.1, 0.5),
+                Vector3D.of(0.5, 0.5, -0.1),
+                Vector3D.of(0.5, 0.5, 1.6),
+                Vector3D.of(0.5, 0.5, 0.9));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.5, 0.5),
-                Point3D.of(0.9, 0.5, 0.5),
-                Point3D.of(0.5, 0.1, 0.5),
-                Point3D.of(0.5, 0.9, 0.5),
-                Point3D.of(0.5, 0.5, 0.1),
-                Point3D.of(0.5, 0.5, 1.4));
+                Vector3D.of(0.1, 0.5, 0.5),
+                Vector3D.of(0.9, 0.5, 0.5),
+                Vector3D.of(0.5, 0.1, 0.5),
+                Vector3D.of(0.5, 0.9, 0.5),
+                Vector3D.of(0.5, 0.5, 0.1),
+                Vector3D.of(0.5, 0.5, 1.4));
     }
 
     @Test
@@ -1152,32 +1152,32 @@ public class PolyhedronsSetTest {
         // arrange
         double radius = 1.0;
 
-        PolyhedronsSet sphere = createSphere(Point3D.ZERO, radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().xor(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(0.0, result.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-1.1, 0, 0),
-                Point3D.of(1.1, 0, 0),
-                Point3D.of(0, -1.1, 0),
-                Point3D.of(0, 1.1, 0),
-                Point3D.of(0, 0, -1.1),
-                Point3D.of(0, 0, 1.1),
-                Point3D.of(-0.9, 0, 0),
-                Point3D.of(0.9, 0, 0),
-                Point3D.of(0, -0.9, 0),
-                Point3D.of(0, 0.9, 0),
-                Point3D.of(0, 0, -0.9),
-                Point3D.of(0, 0, 0.9),
-                Point3D.ZERO);
+                Vector3D.of(-1.1, 0, 0),
+                Vector3D.of(1.1, 0, 0),
+                Vector3D.of(0, -1.1, 0),
+                Vector3D.of(0, 1.1, 0),
+                Vector3D.of(0, 0, -1.1),
+                Vector3D.of(0, 0, 1.1),
+                Vector3D.of(-0.9, 0, 0),
+                Vector3D.of(0.9, 0, 0),
+                Vector3D.of(0, -0.9, 0),
+                Vector3D.of(0, 0.9, 0),
+                Vector3D.of(0, 0, -0.9),
+                Vector3D.of(0, 0, 0.9),
+                Vector3D.ZERO);
     }
 
     @Test
@@ -1187,10 +1187,10 @@ public class PolyhedronsSetTest {
         double size = 1.0;
         double radius = size * 0.5;
         PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
-        PolyhedronsSet sphere = createSphere(Point3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().difference(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().difference(box, sphere);
 
         // OBJWriter.write("difference.obj", result);
 
@@ -1202,20 +1202,20 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, 0.5, 1.0),
-                Point3D.of(1.1, 0.5, 1.0),
-                Point3D.of(0.5, -0.1, 1.0),
-                Point3D.of(0.5, 1.1, 1.0),
-                Point3D.of(0.5, 0.5, -0.1),
-                Point3D.of(0.5, 0.5, 0.6));
+                Vector3D.of(-0.1, 0.5, 1.0),
+                Vector3D.of(1.1, 0.5, 1.0),
+                Vector3D.of(0.5, -0.1, 1.0),
+                Vector3D.of(0.5, 1.1, 1.0),
+                Vector3D.of(0.5, 0.5, -0.1),
+                Vector3D.of(0.5, 0.5, 0.6));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.5, 0.4),
-                Point3D.of(0.9, 0.5, 0.4),
-                Point3D.of(0.5, 0.1, 0.4),
-                Point3D.of(0.5, 0.9, 0.4),
-                Point3D.of(0.5, 0.5, 0.1),
-                Point3D.of(0.5, 0.5, 0.4));
+                Vector3D.of(0.1, 0.5, 0.4),
+                Vector3D.of(0.9, 0.5, 0.4),
+                Vector3D.of(0.5, 0.1, 0.4),
+                Vector3D.of(0.5, 0.9, 0.4),
+                Vector3D.of(0.5, 0.5, 0.1),
+                Vector3D.of(0.5, 0.5, 0.4));
     }
 
     @Test
@@ -1223,32 +1223,32 @@ public class PolyhedronsSetTest {
         // arrange
         double radius = 1.0;
 
-        PolyhedronsSet sphere = createSphere(Point3D.ZERO, radius, 8, 16);
+        PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Point3D>().difference(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().difference(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(0.0, result.getSize(), TEST_TOLERANCE);
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Point3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-1.1, 0, 0),
-                Point3D.of(1.1, 0, 0),
-                Point3D.of(0, -1.1, 0),
-                Point3D.of(0, 1.1, 0),
-                Point3D.of(0, 0, -1.1),
-                Point3D.of(0, 0, 1.1),
-                Point3D.of(-0.9, 0, 0),
-                Point3D.of(0.9, 0, 0),
-                Point3D.of(0, -0.9, 0),
-                Point3D.of(0, 0.9, 0),
-                Point3D.of(0, 0, -0.9),
-                Point3D.of(0, 0, 0.9),
-                Point3D.ZERO);
+                Vector3D.of(-1.1, 0, 0),
+                Vector3D.of(1.1, 0, 0),
+                Vector3D.of(0, -1.1, 0),
+                Vector3D.of(0, 1.1, 0),
+                Vector3D.of(0, 0, -1.1),
+                Vector3D.of(0, 0, 1.1),
+                Vector3D.of(-0.9, 0, 0),
+                Vector3D.of(0.9, 0, 0),
+                Vector3D.of(0, -0.9, 0),
+                Vector3D.of(0, 0.9, 0),
+                Vector3D.of(0, 0, -0.9),
+                Vector3D.of(0, 0, 0.9),
+                Vector3D.ZERO);
     }
 
     @Test
@@ -1258,11 +1258,11 @@ public class PolyhedronsSetTest {
         double size = 1.0;
         double radius = size * 0.5;
         PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
-        PolyhedronsSet sphereToAdd = createSphere(Point3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
-        PolyhedronsSet sphereToRemove1 = createSphere(Point3D.of(size * 0.5, 0, size * 0.5), radius, 8, 16);
-        PolyhedronsSet sphereToRemove2 = createSphere(Point3D.of(size * 0.5, 1, size * 0.5), radius, 8, 16);
+        PolyhedronsSet sphereToAdd = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        PolyhedronsSet sphereToRemove1 = createSphere(Vector3D.of(size * 0.5, 0, size * 0.5), radius, 8, 16);
+        PolyhedronsSet sphereToRemove2 = createSphere(Vector3D.of(size * 0.5, 1, size * 0.5), radius, 8, 16);
 
-        RegionFactory<Point3D> factory = new RegionFactory<Point3D>();
+        RegionFactory<Vector3D> factory = new RegionFactory<Vector3D>();
 
         // act
         PolyhedronsSet result = (PolyhedronsSet) factory.union(box, sphereToAdd);
@@ -1280,20 +1280,20 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isFull());
 
         checkPoints(Region.Location.OUTSIDE, result,
-                Point3D.of(-0.1, 0.5, 0.5),
-                Point3D.of(1.1, 0.5, 0.5),
-                Point3D.of(0.5, 0.4, 0.5),
-                Point3D.of(0.5, 0.6, 0.5),
-                Point3D.of(0.5, 0.5, -0.1),
-                Point3D.of(0.5, 0.5, 1.6));
+                Vector3D.of(-0.1, 0.5, 0.5),
+                Vector3D.of(1.1, 0.5, 0.5),
+                Vector3D.of(0.5, 0.4, 0.5),
+                Vector3D.of(0.5, 0.6, 0.5),
+                Vector3D.of(0.5, 0.5, -0.1),
+                Vector3D.of(0.5, 0.5, 1.6));
 
         checkPoints(Region.Location.INSIDE, result,
-                Point3D.of(0.1, 0.5, 0.1),
-                Point3D.of(0.9, 0.5, 0.1),
-                Point3D.of(0.5, 0.4, 0.1),
-                Point3D.of(0.5, 0.6, 0.1),
-                Point3D.of(0.5, 0.5, 0.1),
-                Point3D.of(0.5, 0.5, 1.4));
+                Vector3D.of(0.1, 0.5, 0.1),
+                Vector3D.of(0.9, 0.5, 0.1),
+                Vector3D.of(0.5, 0.4, 0.1),
+                Vector3D.of(0.5, 0.6, 0.1),
+                Vector3D.of(0.5, 0.5, 0.1),
+                Vector3D.of(0.5, 0.5, 1.4));
     }
 
     @Test
@@ -1302,32 +1302,32 @@ public class PolyhedronsSetTest {
         PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_TOLERANCE);
 
         // act/assert
-        checkProjectToBoundary(polySet, Point3D.of(0.4, 0.5, 0.5),
-                Point3D.of(0, 0.5, 0.5), -0.4);
-        checkProjectToBoundary(polySet, Point3D.of(1.5, 0.5, 0.5),
-                Point3D.of(1, 0.5, 0.5), 0.5);
-        checkProjectToBoundary(polySet, Point3D.of(2, 2, 2),
-                Point3D.of(1, 1, 1), Math.sqrt(3));
+        checkProjectToBoundary(polySet, Vector3D.of(0.4, 0.5, 0.5),
+                Vector3D.of(0, 0.5, 0.5), -0.4);
+        checkProjectToBoundary(polySet, Vector3D.of(1.5, 0.5, 0.5),
+                Vector3D.of(1, 0.5, 0.5), 0.5);
+        checkProjectToBoundary(polySet, Vector3D.of(2, 2, 2),
+                Vector3D.of(1, 1, 1), Math.sqrt(3));
     }
 
     @Test
     public void testProjectToBoundary_invertedRegion() {
         // arrange
         PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_TOLERANCE);
-        polySet = (PolyhedronsSet) new RegionFactory<Point3D>().getComplement(polySet);
+        polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(polySet);
 
         // act/assert
-        checkProjectToBoundary(polySet, Point3D.of(0.4, 0.5, 0.5),
-                Point3D.of(0, 0.5, 0.5), 0.4);
-        checkProjectToBoundary(polySet, Point3D.of(1.5, 0.5, 0.5),
-                Point3D.of(1, 0.5, 0.5), -0.5);
-        checkProjectToBoundary(polySet, Point3D.of(2, 2, 2),
-                Point3D.of(1, 1, 1), -Math.sqrt(3));
+        checkProjectToBoundary(polySet, Vector3D.of(0.4, 0.5, 0.5),
+                Vector3D.of(0, 0.5, 0.5), 0.4);
+        checkProjectToBoundary(polySet, Vector3D.of(1.5, 0.5, 0.5),
+                Vector3D.of(1, 0.5, 0.5), -0.5);
+        checkProjectToBoundary(polySet, Vector3D.of(2, 2, 2),
+                Vector3D.of(1, 1, 1), -Math.sqrt(3));
     }
 
-    private void checkProjectToBoundary(PolyhedronsSet poly, Point3D toProject,
-            Point3D expectedPoint, double expectedOffset) {
-        BoundaryProjection<Point3D> proj = poly.projectToBoundary(toProject);
+    private void checkProjectToBoundary(PolyhedronsSet poly, Vector3D toProject,
+            Vector3D expectedPoint, double expectedOffset) {
+        BoundaryProjection<Vector3D> proj = poly.projectToBoundary(toProject);
 
         EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_TOLERANCE);
         EuclideanTestUtils.assertCoordinatesEqual(expectedPoint, proj.getProjected(), TEST_TOLERANCE);
@@ -1345,14 +1345,14 @@ public class PolyhedronsSetTest {
         }
     }
 
-    private void checkPoints(Region.Location expected, PolyhedronsSet poly, Point3D ... points) {
+    private void checkPoints(Region.Location expected, PolyhedronsSet poly, Vector3D ... points) {
         for (int i = 0; i < points.length; ++i) {
             Assert.assertEquals("Incorrect location for " + points[i], expected, poly.checkPoint(points[i]));
         }
     }
 
-    private List<SubHyperplane<Point3D>> createBoxBoundaries(Point3D center, double size, double tolerance) {
-        List<SubHyperplane<Point3D>> boundaries = new ArrayList<>();
+    private List<SubHyperplane<Vector3D>> createBoxBoundaries(Vector3D center, double size, double tolerance) {
+        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
 
         double offset = size * 0.5;
 
@@ -1408,8 +1408,8 @@ public class PolyhedronsSetTest {
         return boundaries;
     }
 
-    private SubPlane createSubPlane(Plane plane, Point3D...points) {
-        Point2D[] points2d = new Point2D[points.length];
+    private SubPlane createSubPlane(Plane plane, Vector3D...points) {
+        Vector2D[] points2d = new Vector2D[points.length];
         for (int i=0; i<points.length; ++i) {
             points2d[i] = plane.toSubSpace(points[i]);
         }
@@ -1419,12 +1419,12 @@ public class PolyhedronsSetTest {
         return new SubPlane(plane, polygon);
     }
 
-    private PolyhedronsSet createSphere(Point3D center, double radius, int stacks, int slices) {
+    private PolyhedronsSet createSphere(Vector3D center, double radius, int stacks, int slices) {
         List<Plane> planes = new ArrayList<>();
 
         // add top and bottom planes (+/- z)
-        Point3D topZ = Point3D.of(center.getX(), center.getY(), center.getZ() + radius);
-        Point3D bottomZ = Point3D.of(center.getX(), center.getY(), center.getZ() - radius);
+        Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
+        Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
 
         planes.add(new Plane(topZ, Vector3D.PLUS_Z, TEST_TOLERANCE));
         planes.add(new Plane(bottomZ, Vector3D.MINUS_Z, TEST_TOLERANCE));
@@ -1440,7 +1440,7 @@ public class PolyhedronsSetTest {
         double stackRadius;
         double stackHeight;
         double x, y;
-        Point3D pt;
+        Vector3D pt;
         Vector3D norm;
 
         vAngle = -0.5 * vDelta;
@@ -1464,10 +1464,10 @@ public class PolyhedronsSetTest {
             }
         }
 
-        return (PolyhedronsSet) new RegionFactory<Point3D>().buildConvex(planes.toArray(new Plane[0]));
+        return (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(planes.toArray(new Plane[0]));
     }
 
-    private void assertSubPlaneNormal(Vector3D expectedNormal, SubHyperplane<Point3D> sub) {
+    private void assertSubPlaneNormal(Vector3D expectedNormal, SubHyperplane<Vector3D> sub) {
         Vector3D norm = ((Plane) sub.getHyperplane()).getNormal();
         EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, norm, TEST_TOLERANCE);
     }

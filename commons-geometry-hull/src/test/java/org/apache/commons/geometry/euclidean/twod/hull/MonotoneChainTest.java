@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.geometry.euclidean.twod.Point2D;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 
 /**
@@ -36,16 +36,16 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     @Test(expected=IllegalStateException.class)
     public void testConvergenceException() {
-        final Collection<Point2D> points = new ArrayList<>();
+        final Collection<Vector2D> points = new ArrayList<>();
 
-        points.add(Point2D.of(1, 1));
-        points.add(Point2D.of(1, 5));
-        points.add(Point2D.of(0, 7));
-        points.add(Point2D.of(1, 10));
-        points.add(Point2D.of(1, 20));
-        points.add(Point2D.of(20, 20));
-        points.add(Point2D.of(20, 40));
-        points.add(Point2D.of(40, 1));
+        points.add(Vector2D.of(1, 1));
+        points.add(Vector2D.of(1, 5));
+        points.add(Vector2D.of(0, 7));
+        points.add(Vector2D.of(1, 10));
+        points.add(Vector2D.of(1, 20));
+        points.add(Vector2D.of(20, 20));
+        points.add(Vector2D.of(20, 40));
+        points.add(Vector2D.of(40, 1));
 
         @SuppressWarnings("unused")
         final ConvexHull2D hull = new MonotoneChain(true, 2).generate(points);

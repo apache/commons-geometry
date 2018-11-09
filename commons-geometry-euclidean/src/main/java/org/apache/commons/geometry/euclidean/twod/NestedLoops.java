@@ -43,13 +43,13 @@ import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 class NestedLoops {
 
     /** Boundary loop. */
-    private Point2D[] loop;
+    private Vector2D[] loop;
 
     /** Surrounded loops. */
     private List<NestedLoops> surrounded;
 
     /** Polygon enclosing a finite region. */
-    private Region<Point2D> polygon;
+    private Region<Vector2D> polygon;
 
     /** Indicator for original loop orientation. */
     private boolean originalIsClockwise;
@@ -75,7 +75,7 @@ class NestedLoops {
      * @param tolerance tolerance below which points are considered identical
      * @exception IllegalArgumentException if an outline has an open boundary loop
      */
-    private NestedLoops(final Point2D[] loop, final double tolerance)
+    private NestedLoops(final Vector2D[] loop, final double tolerance)
         throws IllegalArgumentException {
 
         if (loop[0] == null) {
@@ -87,10 +87,10 @@ class NestedLoops {
         this.tolerance  = tolerance;
 
         // build the polygon defined by the loop
-        final ArrayList<SubHyperplane<Point2D>> edges = new ArrayList<>();
-        Point2D current = loop[loop.length - 1];
+        final ArrayList<SubHyperplane<Vector2D>> edges = new ArrayList<>();
+        Vector2D current = loop[loop.length - 1];
         for (int i = 0; i < loop.length; ++i) {
-            final Point2D previous = current;
+            final Vector2D previous = current;
             current = loop[i];
             final Line   line   = new Line(previous, current, tolerance);
             final IntervalsSet region =
@@ -103,7 +103,7 @@ class NestedLoops {
 
         // ensure the polygon encloses a finite region of the plane
         if (Double.isInfinite(polygon.getSize())) {
-            polygon = new RegionFactory<Point2D>().getComplement(polygon);
+            polygon = new RegionFactory<Vector2D>().getComplement(polygon);
             originalIsClockwise = false;
         } else {
             originalIsClockwise = true;
@@ -116,7 +116,7 @@ class NestedLoops {
      * @exception IllegalArgumentException if an outline has crossing
      * boundary loops or open boundary loops
      */
-    public void add(final Point2D[] bLoop) {
+    public void add(final Vector2D[] bLoop) {
         add(new NestedLoops(bLoop, tolerance));
     }
 
@@ -145,7 +145,7 @@ class NestedLoops {
         }
 
         // we should be separate from the remaining children
-        RegionFactory<Point2D> factory = new RegionFactory<>();
+        RegionFactory<Vector2D> factory = new RegionFactory<>();
         for (final NestedLoops child : surrounded) {
             if (!factory.intersection(node.polygon, child.polygon).isEmpty()) {
                 throw new IllegalArgumentException("Some outline boundary loops cross each other");
@@ -158,7 +158,7 @@ class NestedLoops {
 
     /** Correct the orientation of the loops contained in the tree.
      * <p>This is this method that really inverts the loops that where
-     * provided through the {@link #add(Point2D[]) add} method if
+     * provided through the {@link #add(Vector2D[]) add} method if
      * they are mis-oriented</p>
      */
     public void correctOrientation() {
@@ -178,7 +178,7 @@ class NestedLoops {
             int min = -1;
             int max = loop.length;
             while (++min < --max) {
-                final Point2D tmp = loop[min];
+                final Vector2D tmp = loop[min];
                 loop[min] = loop[max];
                 loop[max] = tmp;
             }
