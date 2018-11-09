@@ -324,8 +324,6 @@
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
             <exclude>dist-archive/**</exclude>
-            <exclude>${geometry.parent.dir}/commons-geometry-euclidean/src/test/resources/**/*.bsp</exclude>
-            <exclude>${geometry.parent.dir}/commons-geometry-euclidean/src/test/resources/**/*.ply</exclude>
           </excludes>
         </configuration>
       </plugin>
