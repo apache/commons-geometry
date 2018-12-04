@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-parent</artifactId>
-    <version>43</version>
+    <version>47</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -88,9 +88,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <geometry.pmd.version>3.9.0</geometry.pmd.version>
-    <geometry.spotbugs.version>3.1.1</geometry.spotbugs.version>
     <geometry.checkstyle.version>3.0.0</geometry.checkstyle.version>
-    <geometry.clirr.version>2.8</geometry.clirr.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
@@ -259,7 +257,6 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${geometry.spotbugs.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -358,7 +355,6 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${geometry.spotbugs.version}</version>
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
@@ -383,15 +379,6 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>clirr-maven-plugin</artifactId>
-        <version>${geometry.clirr.version}</version>
-        <configuration>
-          <minSeverity>${minSeverity}</minSeverity>
-          <ignoredDifferencesFile>${geometry.parent.dir}/src/main/resources/clirr/clirr-ignored.xml</ignoredDifferencesFile>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
