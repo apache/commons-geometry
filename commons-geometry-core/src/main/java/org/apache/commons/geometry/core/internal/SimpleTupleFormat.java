@@ -160,6 +160,38 @@ public class SimpleTupleFormat {
         return sb.toString();
     }
 
+    /** Return a tuple string with the given values.
+     * @param a1 first value
+     * @param a2 second value
+     * @param a3 third value
+     * @param a4 fourth value
+     * @return 4-tuple string
+     */
+    public String format(double a1, double a2, double a3, double a4) {
+        final StringBuilder sb = new StringBuilder();
+
+        if (prefix != null) {
+            sb.append(prefix);
+        }
+
+        sb.append(a1)
+            .append(separator)
+            .append(SPACE)
+            .append(a2)
+            .append(separator)
+            .append(SPACE)
+            .append(a3)
+            .append(separator)
+            .append(SPACE)
+            .append(a4);
+
+        if (suffix != null) {
+            sb.append(suffix);
+        }
+
+        return sb.toString();
+    }
+
     /** Parse the given string as a 1-tuple and passes the tuple values to the
      * given function. The function output is returned.
      * @param <T> function return type

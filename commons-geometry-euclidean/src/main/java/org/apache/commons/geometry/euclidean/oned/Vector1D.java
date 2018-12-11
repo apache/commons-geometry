@@ -209,6 +209,16 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
 
+    /** Apply the given transform to this vector, returning the result as a
+     * new vector instance.
+     * @param transform the transform to apply
+     * @return a new, transformed vector
+     * @see AffineTransformMatrix1D#apply(Vector1D)
+     */
+    public Vector1D transform(AffineTransformMatrix1D transform) {
+        return transform.apply(this);
+    }
+
     /**
      * Get a hashCode for the vector.
      * <p>All NaN values have the same hash code.</p>

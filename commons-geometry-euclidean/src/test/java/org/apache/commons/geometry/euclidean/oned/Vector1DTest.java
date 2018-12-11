@@ -449,6 +449,21 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testTransform() {
+        // arrange
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
+                .scale(2)
+                .translate(1);
+
+        Vector1D v1 = Vector1D.of(1);
+        Vector1D v2 = Vector1D.of(-4);
+
+        // act/assert
+        checkVector(v1.transform(transform), 3);
+        checkVector(v2.transform(transform), -7);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Vector1D u = Vector1D.of(1);

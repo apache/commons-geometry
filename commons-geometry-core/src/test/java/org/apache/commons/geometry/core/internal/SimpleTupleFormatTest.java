@@ -157,6 +157,28 @@ public class SimpleTupleFormatTest {
     }
 
     @Test
+    public void testFormat4D() {
+        // arrange
+        SimpleTupleFormat formatter = new SimpleTupleFormat(OPEN_PAREN, CLOSE_PAREN);
+
+        // act/assert
+        Assert.assertEquals("(1.0, 0.0, -1.0, 2.0)", formatter.format(1.0, 0.0, -1.0, 2.0));
+        Assert.assertEquals("(-1.0, 1.0, 0.0, 2.0)", formatter.format(-1.0, 1.0, 0.0, 2.0));
+        Assert.assertEquals("(NaN, -Infinity, Infinity, NaN)", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
+    }
+
+    @Test
+    public void testFormat4D_noPrefixSuffix() {
+        // arrange
+        SimpleTupleFormat formatter = new SimpleTupleFormat(null, null);
+
+        // act/assert
+        Assert.assertEquals("1.0, 0.0, -1.0, 2.0", formatter.format(1.0, 0.0, -1.0, 2.0));
+        Assert.assertEquals("-1.0, 1.0, 0.0, 2.0", formatter.format(-1.0, 1.0, 0.0, 2.0));
+        Assert.assertEquals("NaN, -Infinity, Infinity, NaN", formatter.format(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN));
+    }
+
+    @Test
     public void testFormat_longTokens() {
         // arrange
         SimpleTupleFormat formatter = new SimpleTupleFormat("||", "<<", ">>");

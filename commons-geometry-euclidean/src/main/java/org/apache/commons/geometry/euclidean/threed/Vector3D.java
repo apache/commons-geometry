@@ -360,6 +360,16 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                             LinearCombination.value(x, v.y, -y, v.x));
     }
 
+    /** Apply the given transform to this vector, returning the result as a
+     * new vector instance.
+     * @param transform the transform to apply
+     * @return a new, transformed vector
+     * @see AffineTransformMatrix3D#apply(Vector3D)
+     */
+    public Vector3D transform(AffineTransformMatrix3D transform) {
+        return transform.apply(this);
+    }
+
     /**
      * Get a hashCode for the vector.
      * <p>All NaN values have the same hash code.</p>
