@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
@@ -560,10 +561,10 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
     /** Rotate the region around the specified point.
      * <p>The instance is not modified, a new instance is created.</p>
      * @param center rotation center
-     * @param rotation vectorial rotation operator
+     * @param rotation 3-dimensional rotation
      * @return a new instance representing the rotated region
      */
-    public PolyhedronsSet rotate(final Vector3D center, final Rotation rotation) {
+    public PolyhedronsSet rotate(final Vector3D center, final QuaternionRotation rotation) {
         return (PolyhedronsSet) applyTransform(new RotationTransform(center, rotation));
     }
 
@@ -573,8 +574,8 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         /** Center point of the rotation. */
         private final Vector3D   center;
 
-        /** Vectorial rotation. */
-        private final Rotation   rotation;
+        /** Quaternion rotation. */
+        private final QuaternionRotation   rotation;
 
         /** Cached original hyperplane. */
         private Plane cachedOriginal;
@@ -586,7 +587,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
          * @param center center point of the rotation
          * @param rotation vectorial rotation
          */
-        RotationTransform(final Vector3D center, final Rotation rotation) {
+        RotationTransform(final Vector3D center, final QuaternionRotation rotation) {
             this.center   = center;
             this.rotation = rotation;
         }
@@ -595,7 +596,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         @Override
         public Vector3D apply(final Vector3D point) {
             final Vector3D delta = point.subtract(center);
-            return Vector3D.linearCombination(1.0, center, 1.0, rotation.applyTo(delta));
+            return Vector3D.linearCombination(1.0, center, 1.0, rotation.apply(delta));
         }
 
         /** {@inheritDoc} */

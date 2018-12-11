@@ -41,12 +41,115 @@ import org.apache.commons.geometry.euclidean.twod.SubLine;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 
-/** Class containing various euclidean-related test utilities.
+/**
+ * Class containing various euclidean-related test utilities.
  */
 public class EuclideanTestUtils {
 
-    /** Asserts that corresponding values in the given vectors are equal, using the specified
-     * tolerance value.
+    /** Callback interface for {@link #permute(double, double, double, PermuteCallback2D)}. */
+    @FunctionalInterface
+    public static interface PermuteCallback2D {
+        void accept(double x, double y);
+    }
+
+    /** Callback interface for {@link #permute(double, double, double, PermuteCallback3D)} */
+    @FunctionalInterface
+    public static interface PermuteCallback3D {
+        void accept(double x, double y, double z);
+    }
+
+    /** Iterate through all {@code (x, y)} permutations for the given range of numbers and
+     * call {@code callback} for each.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param callback callback to invoke for each permutation.
+     */
+    public static void permute(double min, double max, double step, PermuteCallback2D callback) {
+        permuteInternal(min, max, step, false, callback);
+    }
+
+    /** Same as {@link #permute(double, double, double, PermuteCallback2D)} but skips the {@code (0, 0))}
+     * permutation.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param callback callback to invoke for each permutation.
+     */
+    public static void permuteSkipZero(double min, double max, double step, PermuteCallback2D callback) {
+        permuteInternal(min, max, step, true, callback);
+    }
+
+    /** Internal permutation method. Iterates through all {@code (x, y)} permutations for the given range
+     * of numbers and calls {@code callback} for each.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param skipZero if true, the {@code (0, 0)} permutation will be skipped
+     * @param callback callback to invoke for each permutation.
+     */
+    private static void permuteInternal(double min, double max, double step, boolean skipZero, PermuteCallback2D callback) {
+        for (double x = min; x <= max; x += step) {
+            for (double y = min; y <= max; y += step) {
+                if (!skipZero || (x != 0.0 || y != 0.0)) {
+                    callback.accept(x, y);
+                }
+            }
+        }
+    }
+
+    /** Iterate through all {@code (x, y, z)} permutations for the given range of numbers and
+     * call {@code callback} for each.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param callback callback to invoke for each permutation.
+     */
+    public static void permute(double min, double max, double step, PermuteCallback3D callback) {
+        permuteInternal(min, max, step, false, callback);
+    }
+
+    /** Same as {@link #permute(double, double, double, PermuteCallback3D)} but skips the {@code (0, 0, 0)}
+     * permutation.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param callback callback to invoke for each permutation.
+     */
+    public static void permuteSkipZero(double min, double max, double step, PermuteCallback3D callback) {
+        permuteInternal(min, max, step, true, callback);
+    }
+
+    /** Internal permutation method. Iterates through all {@code (x, y)} permutations for the given range
+     * of numbers and calls {@code callback} for each.
+     *
+     * @param min the minimum number in the range
+     * @param max the maximum number in the range
+     * @param step the step (increment) value for the range
+     * @param skipZero if true, the {@code (0, 0, 0)} permutation will be skipped
+     * @param callback callback to invoke for each permutation.
+     */
+    private static void permuteInternal(double min, double max, double step, boolean skipZero, PermuteCallback3D callback) {
+        for (double x = min; x <= max; x += step) {
+            for (double y = min; y <= max; y += step) {
+                for (double z = min; z <= max; z += step) {
+                    if (!skipZero || (x != 0.0 || y != 0.0 || z != 0.0)) {
+                        callback.accept(x, y, z);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Asserts that corresponding values in the given vectors are equal, using the
+     * specified tolerance value.
+     *
      * @param expected
      * @param actual
      * @param tolerance
@@ -56,8 +159,10 @@ public class EuclideanTestUtils {
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
     }
 
-    /** Asserts that corresponding values in the given vectors are equal, using the specified
-     * tolerance value.
+    /**
+     * Asserts that corresponding values in the given vectors are equal, using the
+     * specified tolerance value.
+     *
      * @param expected
      * @param actual
      * @param tolerance
@@ -68,8 +173,10 @@ public class EuclideanTestUtils {
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
     }
 
-    /** Asserts that corresponding values in the given vectors are equal, using the specified
-     * tolerance value.
+    /**
+     * Asserts that corresponding values in the given vectors are equal, using the
+     * specified tolerance value.
+     *
      * @param expected
      * @param actual
      * @param tolerance
@@ -81,7 +188,9 @@ public class EuclideanTestUtils {
         Assert.assertEquals(msg, expected.getZ(), actual.getZ(), tolerance);
     }
 
-    /** Asserts that the given value is positive infinity.
+    /**
+     * Asserts that the given value is positive infinity.
+     *
      * @param value
      */
     public static void assertPositiveInfinity(double value) {
@@ -90,7 +199,9 @@ public class EuclideanTestUtils {
         Assert.assertTrue(msg, value > 0);
     }
 
-    /** Asserts that the given value is negative infinity..
+    /**
+     * Asserts that the given value is negative infinity..
+     *
      * @param value
      */
     public static void assertNegativeInfinity(double value) {
@@ -99,7 +210,9 @@ public class EuclideanTestUtils {
         Assert.assertTrue(msg, value < 0);
     }
 
-    /** Get a string representation of an {@link IntervalsSet}.
+    /**
+     * Get a string representation of an {@link IntervalsSet}.
+     *
      * @param intervalsSet region to dump
      * @return string representation of the region
      */
@@ -110,8 +223,7 @@ public class EuclideanTestUtils {
             @Override
             protected void formatHyperplane(final Hyperplane<Vector1D> hyperplane) {
                 final OrientedPoint h = (OrientedPoint) hyperplane;
-                getFormatter().format("%22.15e %b %22.15e",
-                                      h.getLocation().getX(), h.isDirect(), h.getTolerance());
+                getFormatter().format("%22.15e %b %22.15e", h.getLocation().getX(), h.isDirect(), h.getTolerance());
             }
 
         };
@@ -119,7 +231,9 @@ public class EuclideanTestUtils {
         return visitor.getDump();
     }
 
-    /** Get a string representation of a {@link PolygonsSet}.
+    /**
+     * Get a string representation of a {@link PolygonsSet}.
+     *
      * @param polygonsSet region to dump
      * @return string representation of the region
      */
@@ -140,7 +254,9 @@ public class EuclideanTestUtils {
         return visitor.getDump();
     }
 
-    /** Get a string representation of a {@link PolyhedronsSet}.
+    /**
+     * Get a string representation of a {@link PolyhedronsSet}.
+     *
      * @param polyhedronsSet region to dump
      * @return string representation of the region
      */
@@ -163,10 +279,12 @@ public class EuclideanTestUtils {
         return visitor.getDump();
     }
 
-    /** Parse a string representation of an {@link IntervalsSet}.
+    /**
+     * Parse a string representation of an {@link IntervalsSet}.
+     *
      * @param s string to parse
      * @return parsed region
-     * @exception IOException if the string cannot be read
+     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     public static IntervalsSet parseIntervalsSet(final String s)
@@ -184,10 +302,12 @@ public class EuclideanTestUtils {
         return new IntervalsSet(builder.getTree(), builder.getTolerance());
     }
 
-    /** Parse a string representation of a {@link PolygonsSet}.
+    /**
+     * Parse a string representation of a {@link PolygonsSet}.
+     *
      * @param s string to parse
      * @return parsed region
-     * @exception IOException if the string cannot be read
+     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     public static PolygonsSet parsePolygonsSet(final String s)
@@ -205,10 +325,12 @@ public class EuclideanTestUtils {
         return new PolygonsSet(builder.getTree(), builder.getTolerance());
     }
 
-    /** Parse a string representation of a {@link PolyhedronsSet}.
+    /**
+     * Parse a string representation of a {@link PolyhedronsSet}.
+     *
      * @param s string to parse
      * @return parsed region
-     * @exception IOException if the string cannot be read
+     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     public static PolyhedronsSet parsePolyhedronsSet(final String s)
@@ -228,10 +350,10 @@ public class EuclideanTestUtils {
         return new PolyhedronsSet(builder.getTree(), builder.getTolerance());
     }
 
-
-
-    /** Prints a string representation of the given 1D {@link BSPTree} to
-     * the console. This is intended for quick debugging of small trees.
+    /**
+     * Prints a string representation of the given 1D {@link BSPTree} to the
+     * console. This is intended for quick debugging of small trees.
+     *
      * @param tree
      */
     public static void printTree1D(BSPTree<Vector1D> tree) {
@@ -239,8 +361,10 @@ public class EuclideanTestUtils {
         System.out.println(printer.writeAsString(tree));
     }
 
-    /** Prints a string representation of the given 2D {@link BSPTree} to
-     * the console. This is intended for quick debugging of small trees.
+    /**
+     * Prints a string representation of the given 2D {@link BSPTree} to the
+     * console. This is intended for quick debugging of small trees.
+     *
      * @param tree
      */
     public static void printTree2D(BSPTree<Vector2D> tree) {
@@ -248,8 +372,10 @@ public class EuclideanTestUtils {
         System.out.println(printer.writeAsString(tree));
     }
 
-    /** Prints a string representation of the given 3D {@link BSPTree} to
-     * the console. This is intended for quick debugging of small trees.
+    /**
+     * Prints a string representation of the given 3D {@link BSPTree} to the
+     * console. This is intended for quick debugging of small trees.
+     *
      * @param tree
      */
     public static void printTree3D(BSPTree<Vector3D> tree) {
@@ -257,8 +383,8 @@ public class EuclideanTestUtils {
         System.out.println(printer.writeAsString(tree));
     }
 
-
-    /** Class for creating string representations of 1D {@link BSPTree}s.
+    /**
+     * Class for creating string representations of 1D {@link BSPTree}s.
      */
     public static class TreePrinter1D extends TreePrinter<Vector1D> {
 
@@ -271,8 +397,7 @@ public class EuclideanTestUtils {
             write("cut = { hyperplane: ");
             if (hyper.isDirect()) {
                 write("[" + hyper.getLocation().getX() + ", inf)");
-            }
-            else {
+            } else {
                 write("(-inf, " + hyper.getLocation().getX() + "]");
             }
 
@@ -284,8 +409,7 @@ public class EuclideanTestUtils {
                 for (double[] interval : remainingRegion) {
                     if (isFirst) {
                         isFirst = false;
-                    }
-                    else {
+                    } else {
                         write(", ");
                     }
                     write(Arrays.toString(interval));
@@ -298,7 +422,8 @@ public class EuclideanTestUtils {
         }
     }
 
-    /** Class for creating string representations of 2D {@link BSPTree}s.
+    /**
+     * Class for creating string representations of 2D {@link BSPTree}s.
      */
     public static class TreePrinter2D extends TreePrinter<Vector2D> {
 
@@ -316,8 +441,7 @@ public class EuclideanTestUtils {
             for (double[] interval : remainingRegion) {
                 if (isFirst) {
                     isFirst = false;
-                }
-                else {
+                } else {
                     write(", ");
                 }
                 write(Arrays.toString(interval));
@@ -327,7 +451,8 @@ public class EuclideanTestUtils {
         }
     }
 
-    /** Class for creating string representations of 3D {@link BSPTree}s.
+    /**
+     * Class for creating string representations of 3D {@link BSPTree}s.
      */
     public static class TreePrinter3D extends TreePrinter<Vector3D> {
 
@@ -348,16 +473,14 @@ public class EuclideanTestUtils {
                 for (Vector2D vertex : loop) {
                     if (vertex != null) {
                         loop3.add(plane.toSpace(vertex));
-                    }
-                    else {
+                    } else {
                         loop3.add(null);
                     }
                 }
 
                 if (isFirst) {
                     isFirst = false;
-                }
-                else {
+                } else {
                     write(", ");
                 }
 

@@ -18,9 +18,8 @@ package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.Transform;
-import org.apache.commons.geometry.euclidean.threed.Rotation;
-import org.apache.commons.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.LimitAngle;
 import org.apache.commons.geometry.spherical.oned.S1Point;
@@ -157,20 +156,19 @@ public class CircleTest {
         UnitSphereSampler sphRandom = new UnitSphereSampler(3, random);
         for (int i = 0; i < 100; ++i) {
 
-            Rotation r = new Rotation(Vector3D.of(sphRandom.nextVector()),
-                                      Math.PI * random.nextDouble(),
-                                      RotationConvention.VECTOR_OPERATOR);
+            QuaternionRotation r = QuaternionRotation.fromAxisAngle(Vector3D.of(sphRandom.nextVector()),
+                                      Math.PI * random.nextDouble());
             Transform<S2Point, S1Point> t = Circle.getTransform(r);
 
             S2Point  p = S2Point.ofVector(Vector3D.of(sphRandom.nextVector()));
             S2Point tp = t.apply(p);
-            Assert.assertEquals(0.0, r.applyTo(p.getVector()).distance(tp.getVector()), 1.0e-10);
+            Assert.assertEquals(0.0, r.apply(p.getVector()).distance(tp.getVector()), 1.0e-10);
 
             Circle  c = new Circle(Vector3D.of(sphRandom.nextVector()), 1.0e-10);
             Circle tc = (Circle) t.apply(c);
-            Assert.assertEquals(0.0, r.applyTo(c.getPole()).distance(tc.getPole()),   1.0e-10);
-            Assert.assertEquals(0.0, r.applyTo(c.getXAxis()).distance(tc.getXAxis()), 1.0e-10);
-            Assert.assertEquals(0.0, r.applyTo(c.getYAxis()).distance(tc.getYAxis()), 1.0e-10);
+            Assert.assertEquals(0.0, r.apply(c.getPole()).distance(tc.getPole()),   1.0e-10);
+            Assert.assertEquals(0.0, r.apply(c.getXAxis()).distance(tc.getXAxis()), 1.0e-10);
+            Assert.assertEquals(0.0, r.apply(c.getYAxis()).distance(tc.getYAxis()), 1.0e-10);
             Assert.assertEquals(c.getTolerance(), ((Circle) t.apply(c)).getTolerance(), 1.0e-10);
 
             SubLimitAngle  sub = new LimitAngle(S1Point.of(Geometry.TWO_PI * random.nextDouble()),
@@ -178,7 +176,7 @@ public class CircleTest {
             Vector3D psub = c.getPointAt(((LimitAngle) sub.getHyperplane()).getLocation().getAzimuth());
             SubLimitAngle tsub = (SubLimitAngle) t.apply(sub, c, tc);
             Vector3D ptsub = tc.getPointAt(((LimitAngle) tsub.getHyperplane()).getLocation().getAzimuth());
-            Assert.assertEquals(0.0, r.applyTo(psub).distance(ptsub), 1.0e-10);
+            Assert.assertEquals(0.0, r.apply(psub).distance(ptsub), 1.0e-10);
 
         }
     }

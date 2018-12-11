@@ -20,8 +20,8 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane.SplitSubHyperplane;
-import org.apache.commons.geometry.euclidean.threed.Rotation;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
 import org.junit.Assert;
@@ -127,7 +127,7 @@ public class SubCircleTest {
         RegionFactory<S1Point> factory = new RegionFactory<>();
         Circle circle = new Circle(pole, tolerance);
         Circle phased =
-                (Circle) Circle.getTransform(new Rotation(circle.getXAxis(), circle.getYAxis(), x, y)).apply(circle);
+                (Circle) Circle.getTransform(QuaternionRotation.createBasisRotation(circle.getXAxis(), circle.getYAxis(), x, y)).apply(circle);
         ArcsSet set = (ArcsSet) factory.getComplement(new ArcsSet(tolerance));
         for (int i = 0; i < limits.length; i += 2) {
             set = (ArcsSet) factory.union(set, new ArcsSet(limits[i], limits[i + 1], tolerance));

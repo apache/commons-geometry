@@ -30,10 +30,9 @@ import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
-import org.apache.commons.geometry.euclidean.threed.Rotation;
-import org.apache.commons.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.enclosing.SphereGenerator;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.S1Point;
 
 /** This class represents a region on the 2-sphere: a set of spherical polygons.
@@ -158,13 +157,13 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
                                                           final double outsideRadius, final int n) {
         final S2Point[] array = new S2Point[n];
-        final Rotation r0 = new Rotation(center.crossProduct(meridian),
-                                         outsideRadius, RotationConvention.VECTOR_OPERATOR);
-        array[0] = S2Point.ofVector(r0.applyTo(center));
+        final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.crossProduct(meridian),
+                                         outsideRadius);
+        array[0] = S2Point.ofVector(r0.apply(center));
 
-        final Rotation r = new Rotation(center, Geometry.TWO_PI / n, RotationConvention.VECTOR_OPERATOR);
+        final QuaternionRotation r = QuaternionRotation.fromAxisAngle(center, Geometry.TWO_PI / n);
         for (int i = 1; i < n; ++i) {
-            array[i] = S2Point.ofVector(r.applyTo(array[i - 1].getVector()));
+            array[i] = S2Point.ofVector(r.apply(array[i - 1].getVector()));
         }
 
         return array;

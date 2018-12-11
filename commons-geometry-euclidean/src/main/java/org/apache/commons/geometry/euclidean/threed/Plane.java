@@ -21,8 +21,9 @@ import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** The class represent planes in a three dimensional space.
  */
@@ -281,18 +282,18 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     /** Rotate the plane around the specified point.
      * <p>The instance is not modified, a new instance is created.</p>
      * @param center rotation center
-     * @param rotation vectorial rotation operator
+     * @param rotation 3-dimensional rotation
      * @return a new plane
      */
-    public Plane rotate(final Vector3D center, final Rotation rotation) {
+    public Plane rotate(final Vector3D center, final QuaternionRotation rotation) {
 
         final Vector3D delta = origin.subtract(center);
-        final Plane plane = new Plane(center.add(rotation.applyTo(delta)),
-                                      rotation.applyTo(w), tolerance);
+        final Plane plane = new Plane(center.add(rotation.apply(delta)),
+                                      rotation.apply(w), tolerance);
 
         // make sure the frame is transformed as desired
-        plane.u = rotation.applyTo(u);
-        plane.v = rotation.applyTo(v);
+        plane.u = rotation.apply(u);
+        plane.v = rotation.apply(v);
 
         return plane;
 

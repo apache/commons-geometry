@@ -16,10 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.euclidean.threed.Line;
-import org.apache.commons.geometry.euclidean.threed.Plane;
-import org.apache.commons.geometry.euclidean.threed.Rotation;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -72,17 +69,17 @@ public class PlaneTest {
         Plane    p  = new Plane(p1, p2, p3, 1.0e-10);
         Vector3D oldNormal = p.getNormal();
 
-        p = p.rotate(p2, new Rotation(p2.subtract(p1), 1.7, RotationConvention.VECTOR_OPERATOR));
+        p = p.rotate(p2, QuaternionRotation.fromAxisAngle(p2.subtract(p1), 1.7));
         Assert.assertTrue(p.contains(p1));
         Assert.assertTrue(p.contains(p2));
         Assert.assertTrue(! p.contains(p3));
 
-        p = p.rotate(p2, new Rotation(oldNormal, 0.1, RotationConvention.VECTOR_OPERATOR));
+        p = p.rotate(p2, QuaternionRotation.fromAxisAngle(oldNormal, 0.1));
         Assert.assertTrue(! p.contains(p1));
         Assert.assertTrue(p.contains(p2));
         Assert.assertTrue(! p.contains(p3));
 
-        p = p.rotate(p1, new Rotation(oldNormal, 0.1, RotationConvention.VECTOR_OPERATOR));
+        p = p.rotate(p1, QuaternionRotation.fromAxisAngle(oldNormal, 0.1));
         Assert.assertTrue(! p.contains(p1));
         Assert.assertTrue(! p.contains(p2));
         Assert.assertTrue(! p.contains(p3));

@@ -27,6 +27,8 @@ public class GeometryTest {
         double eps = 0.0;
 
         // act/assert
+        Assert.assertEquals(0.0, Geometry.ZERO_PI, eps);
+
         Assert.assertEquals(Math.PI, Geometry.PI, eps);
         Assert.assertEquals(-Math.PI, Geometry.MINUS_PI, eps);
 
@@ -45,6 +47,9 @@ public class GeometryTest {
         double eps = 1e-15;
 
         // act/assert
+        Assert.assertEquals(0.0, Math.sin(Geometry.ZERO_PI), eps);
+        Assert.assertEquals(1.0, Math.cos(Geometry.ZERO_PI), eps);
+
         Assert.assertEquals(0.0, Math.sin(Geometry.PI), eps);
         Assert.assertEquals(-1.0, Math.cos(Geometry.PI), eps);
 

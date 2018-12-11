@@ -41,6 +41,11 @@ public final class Geometry {
     /** Constant value for {@code  3*pi/2}. */
     public static final double THREE_HALVES_PI = 1.5 * Math.PI;
 
+    /** Constant value for {@code 0*pi}, which is, of course, 0.
+     * This value is placed here for completeness.
+     */
+    public static final double ZERO_PI = 0.0;
+
     /** Private constructor */
     private Geometry() {}
 }

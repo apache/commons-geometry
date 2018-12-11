@@ -309,6 +309,16 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         return LinearCombination.value(x1, y1, -x2, y2);
     }
 
+    /** Apply the given transform to this vector, returning the result as a
+     * new vector instance.
+     * @param transform the transform to apply
+     * @return a new, transformed vector
+     * @see AffineTransformMatrix2D#apply(Vector2D)
+     */
+    public Vector2D transform(AffineTransformMatrix2D transform) {
+        return transform.apply(this);
+    }
+
     /**
      * Get a hashCode for the 2D coordinates.
      * <p>
