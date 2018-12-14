@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
@@ -26,12 +27,14 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.arrays.LinearCombination;
-import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.quaternion.Quaternion;
 
 /**
- * Class representing a unit-length quaternion used to model rotations in 3 dimensional
- * Euclidean space.
+ * Class using a unit-length quaternion to model rotations in 3 dimensional Euclidean space.
+ * The underlying quaternion is in <em>positive polar form</em>, meaing that it is normalized
+ * and has a non-negative scalar (ie, {@code w}) component .
  *
+ * @see Quaternion
  * @see <a href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">Quaternion Rotations</a>
  */
 public final class QuaternionRotation implements Serializable {
@@ -60,43 +63,27 @@ public final class QuaternionRotation implements Serializable {
     /** Instance used to represent the identity rotation, ie a rotation with
      * an angle of zero.
      */
-    private static final QuaternionRotation IDENTITY_INSTANCE = new QuaternionRotation(0, 0, 0, 1);
+    private static final QuaternionRotation IDENTITY_INSTANCE = new QuaternionRotation(Quaternion.IDENTITY);
 
-    /** First coordinate of the vectorial part of the quaternion. */
-    private final double qx;
+    /** Unit-length quaternion instance in positive polar form. */
+    private final Quaternion quat;
 
-    /** Second coordinate of the vectorial part of the quaternion. */
-    private final double qy;
-
-    /** Third coordinate of the vectorial part of the quaternion. */
-    private final double qz;
-
-    /** Scalar coordinate of the quaternion. */
-    private final double qw;
+    /** Simple constructor. The given quaternion is converted to positive polar form.
+     * @param quat quaternion instance
+     * @throws IllegalStateException if the the norm of the given components is zero,
+     *                              NaN, or infinite
+     */
+    private QuaternionRotation(final Quaternion quat) {
+        this.quat = quat.positivePolarForm();
+    }
 
     /**
-     * Simple constructor. If the quaternion represents a rotation of greater than
-     * {@code pi}, the values are inverted to keep the angle in the range
-     * {@code [0, pi]}.
+     * Get the scalar coordinate of the underlying quaternion.
      *
-     * @param x first vectorial coordinate
-     * @param y second vectorial coordinate
-     * @param z third vectorial coordinate
-     * @param w scalar coordinate
+     * @return scalar coordinate of the quaternion
      */
-    private QuaternionRotation(final double x, final double y, final double z, final double w) {
-        if (w < 0.0) {
-            this.qx = -x;
-            this.qy = -y;
-            this.qz = -z;
-            this.qw = -w;
-        }
-        else {
-            this.qx = x;
-            this.qy = y;
-            this.qz = z;
-            this.qw = w;
-        }
+    public double getW() {
+        return quat.getW();
     }
 
     /**
@@ -105,7 +92,7 @@ public final class QuaternionRotation implements Serializable {
      * @return first vectorial coordinate of the quaternion
      */
     public double getX() {
-        return qx;
+        return quat.getX();
     }
 
     /**
@@ -114,35 +101,33 @@ public final class QuaternionRotation implements Serializable {
      * @return second vectorial coordinate of the quaternion
      */
     public double getY() {
-        return qy;
+        return quat.getY();
     }
 
     /**
-     * Get the third vectorial coordinate of the quaternion.
+     * Get the third vectorial coordinate of the underlying quaternion.
      *
      * @return third vectorial coordinate of the quaternion
      */
     public double getZ() {
-        return qz;
+        return quat.getZ();
     }
 
-    /**
-     * Get the scalar coordinate of the quaternion.
-     *
-     * @return scalar coordinate of the quaternion
+    /** Get the underlying quaternion instance.
+     * @return the quaternion instance
      */
-    public double getW() {
-        return qw;
+    public Quaternion getQuaternion() {
+        return quat;
     }
 
     /**
      * Get the quaternion coordinates as an array in the order
-     * {@code [x, y, z, w]}.
+     * {@code [w, x, y, z]}.
      *
-     * @return the quaternion coordinates in the order {@code [x, y, z, w]}
+     * @return the quaternion coordinates in the order {@code [w, x, y, z]}
      */
     public double[] toArray() {
-        return new double[] { qx, qy, qz, qw };
+        return new double[] { getW(), getX(), getY(), getZ() };
     }
 
     /**
@@ -157,7 +142,7 @@ public final class QuaternionRotation implements Serializable {
         // the most straightforward way to check if we have a normalizable
         // vector is to just try to normalize it and see if we fail
         try {
-            return Vector3D.normalize(qx, qy, qz);
+            return Vector3D.normalize(getX(), getY(), getZ());
         }
         catch (IllegalNormException exc) {
             return Vector3D.PLUS_X;
@@ -171,7 +156,7 @@ public final class QuaternionRotation implements Serializable {
      * @return The rotation angle in the range {@code [0, pi]}.
      */
     public double getAngle() {
-        return 2 * Math.acos(qw);
+        return 2 * Math.acos(getW());
     }
 
     /**
@@ -183,7 +168,7 @@ public final class QuaternionRotation implements Serializable {
      * @return the negation (inverse) of the rotation
      */
     public QuaternionRotation getInverse() {
-        return new QuaternionRotation(-qx, -qy, -qz, qw);
+        return new QuaternionRotation(quat.conjugate());
     }
 
     /**
@@ -193,15 +178,20 @@ public final class QuaternionRotation implements Serializable {
      * @return the rotated vector
      */
     public Vector3D apply(final Vector3D v) {
+        final double qw = getW();
+        final double qx = getX();
+        final double qy = getY();
+        final double qz = getZ();
+
         final double x = v.getX();
         final double y = v.getY();
         final double z = v.getZ();
 
         // calculate the Hamilton product of the quaternion and vector
+        final double iw = -(qx * x) - (qy * y) - (qz * z);
         final double ix = (qw * x) + (qy * z) - (qz * y);
         final double iy = (qw * y) + (qz * x) - (qx * z);
         final double iz = (qw * z) + (qx * y) - (qy * x);
-        final double iw = -(qx * x) - (qy * y) - (qz * z);
 
         // calculate the Hamilton product of the intermediate vector and
         // the inverse quaternion
@@ -232,18 +222,8 @@ public final class QuaternionRotation implements Serializable {
      * @return the result of multiplying this quaternion by the argument
      */
     public QuaternionRotation multiply(final QuaternionRotation q) {
-        // see
-        // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm#mul
-
-        final QuaternionRotation a = this;
-        final QuaternionRotation b = q;
-
-        final double x = (a.qx * b.qw) + (a.qy * b.qz) - (a.qz * b.qy) + (a.qw * b.qx);
-        final double y = -(a.qx * b.qz) + (a.qy * b.qw) + (a.qz * b.qx) + (a.qw * b.qy);
-        final double z = (a.qx * b.qy) - (a.qy * b.qx) + (a.qz * b.qw) + (a.qw * b.qz);
-        final double w = -(a.qx * b.qx) - (a.qy * b.qy) - (a.qz * b.qz) + (a.qw * b.qw);
-
-        return new QuaternionRotation(x, y, z, w);
+        final Quaternion product = quat.multiply(q.quat);
+        return new QuaternionRotation(product);
     }
 
     /** Multiply the argument by this instance, returning the result as
@@ -298,12 +278,12 @@ public final class QuaternionRotation implements Serializable {
             return end;
         }
 
-        double endX = end.qx;
-        double endY = end.qy;
-        double endZ = end.qz;
-        double endW = end.qw;
+        double endW = end.getW();
+        double endX = end.getX();
+        double endY = end.getY();
+        double endZ = end.getZ();
 
-        double dot = dotProduct(end);
+        double dot = quat.dotProduct(end.quat);
 
         // If the dot product is negative, then the interpolation won't follow the shortest
         // angular path between the two quaterions. In this case, invert the end quaternion
@@ -311,10 +291,10 @@ public final class QuaternionRotation implements Serializable {
         if (dot < 0.0) {
            dot = -dot;
 
+           endW = -endW;
            endX = -endX;
            endY = -endY;
            endZ = -endZ;
-           endW = -endW;
         }
 
         // If the quaternions are too closely aligned, perform linear interpolation
@@ -324,10 +304,10 @@ public final class QuaternionRotation implements Serializable {
             final double oneMinusFactor = 1.0 - t;
 
             return QuaternionRotation.of(
-                    (oneMinusFactor * this.qx) + (t * endX),
-                    (oneMinusFactor * this.qy) + (t * endY),
-                    (oneMinusFactor * this.qz) + (t * endZ),
-                    (oneMinusFactor * this.qw) + (t * endW));
+                    (oneMinusFactor * this.getW()) + (t * endW),
+                    (oneMinusFactor * this.getX()) + (t * endX),
+                    (oneMinusFactor * this.getY()) + (t * endY),
+                    (oneMinusFactor * this.getZ()) + (t * endZ));
         }
 
         // compute the standard slerp formula
@@ -337,12 +317,11 @@ public final class QuaternionRotation implements Serializable {
         final double startFactor = Math.sin((1.0 - t) * theta) / sinTheta;
         final double endFactor = Math.sin(t * theta) / sinTheta;
 
-        return new QuaternionRotation(
-                    (startFactor * this.qx) + (endFactor * endX),
-                    (startFactor * this.qy) + (endFactor * endY),
-                    (startFactor * this.qz) + (endFactor * endZ),
-                    (startFactor * this.qw) + (endFactor * endW)
-                );
+        return of(
+                (startFactor * this.getW()) + (endFactor * endW),
+                (startFactor * this.getX()) + (endFactor * endX),
+                (startFactor * this.getY()) + (endFactor * endY),
+                (startFactor * this.getZ()) + (endFactor * endZ));
     }
 
     /**
@@ -353,6 +332,12 @@ public final class QuaternionRotation implements Serializable {
      *         represented by this instance
      */
     public AffineTransformMatrix3D toTransformMatrix() {
+
+        final double qw = getW();
+        final double qx = getX();
+        final double qy = getY();
+        final double qz = getZ();
+
         // pre-calculate products that we'll need
         final double xx = qx * qx;
         final double xy = qx * qy;
@@ -438,10 +423,7 @@ public final class QuaternionRotation implements Serializable {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return 131 * (193 * Double.hashCode(qx)) +
-                (3 * Double.hashCode(qy)) +
-                (5 * Double.hashCode(qz)) +
-                (19 * Double.hashCode(qw));
+        return quat.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -455,27 +437,13 @@ public final class QuaternionRotation implements Serializable {
         }
 
         QuaternionRotation other = (QuaternionRotation) obj;
-        return Precision.equals(this.qx, other.qx) &&
-                Precision.equals(this.qy, other.qy) &&
-                Precision.equals(this.qz, other.qz) &&
-                Precision.equals(this.qw, other.qw);
+        return Objects.equals(this.quat, other.quat);
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleTupleFormat.getDefault().format(qx, qy, qz, qw);
-    }
-
-    /** Compute the dot product of the current instance and the argument.
-     * @param other instance to compute the dot product with
-     * @return the dot product
-     */
-    private double dotProduct(final QuaternionRotation other) {
-        return (this.qx * other.qx) +
-                (this.qy * other.qy) +
-                (this.qz * other.qz) +
-                (this.qw * other.qw);
+        return SimpleTupleFormat.getDefault().format(getW(), getX(), getY(), getZ());
     }
 
     /** Get a sequence of angles around the given axes that produce a rotation equivalent
@@ -643,38 +611,45 @@ public final class QuaternionRotation implements Serializable {
         return reverseArray(getRelativeEulerAngles(axis3, axis2, axis1));
     }
 
+    /** Create a new instance from the given quaternion. The quaternion is normalized and
+     * converted to positive polar form (ie, with w &gt;= 0).
+     *
+     * @param quat the quaternion to use for the rotation
+     * @return a new instance built from the given quaternion.
+     * @throws IllegalStateException if the the norm of the given components is zero,
+     *                              NaN, or infinite
+     * @see Quaternion#normalize()
+     * @see Quaternion#positivePolarForm()
+     */
+    public static QuaternionRotation of(Quaternion quat) {
+        return new QuaternionRotation(quat);
+    }
+
     /**
      * Create a new instance from the given quaternion values. The inputs are
-     * normalized.
+     * normalized and converted to positive polar form (ie, with w &gt;= 0).
      *
+     * @param w quaterion scalar component
      * @param x first quaternion vectorial component
      * @param y second quaternion vectorial component
      * @param z third quaternion vectorial component
-     * @param w quaterion scalar component
      * @return a new instance containing the normalized quaterion components
-     * @throws IllegalNormException if the the norm of the given components is zero,
+     * @throws IllegalStateException if the the norm of the given components is zero,
      *                              NaN, or infinite
+     * @see Quaternion#normalize()
+     * @see Quaternion#positivePolarForm()
      */
-    public static QuaternionRotation of(final double x, final double y, final double z, final double w) {
-        // normalize the inputs
-        final double norm = Vectors.checkedNorm(Vectors.norm(x, y, z, w));
-        final double invNorm = 1.0 / norm;
-
-        final double qx = invNorm * x;
-        final double qy = invNorm * y;
-        final double qz = invNorm * z;
-        final double qw = invNorm * w;
-
-        return new QuaternionRotation(qx, qy, qz, qw);
+    public static QuaternionRotation of(final double w, final double x, final double y, final double z) {
+        return of(Quaternion.of(w, x, y, z));
     }
 
     /** Create a new instance from the components in the given 4-element array. The
-     * components must be in the order {@code [x, y, z, w]}. The components are
+     * components must be in the order {@code [w, x, y, z]}. The components are
      * normalized.
      *
      * @param q quaternion component array
      * @return new quaterion containing the normalized components
-     * @exception IllegalArgumentException if the array does not have 4 elements
+     * @throws IllegalArgumentException if the array does not have 4 elements
      */
     public static QuaternionRotation of(final double[] q) {
         if (q.length != 4) {
@@ -726,12 +701,12 @@ public final class QuaternionRotation implements Serializable {
         final double halfAngle = 0.5 * angle;
         final double sinHalfAngle = Math.sin(halfAngle);
 
+        final double w = Math.cos(halfAngle);
         final double x = sinHalfAngle * normAxis.getX();
         final double y = sinHalfAngle * normAxis.getY();
         final double z = sinHalfAngle * normAxis.getZ();
-        final double w = Math.cos(halfAngle);
 
-        return new QuaternionRotation(x, y, z, w);
+        return of(w, x, y, z);
     }
 
     /** Return an instance that rotates the first vector to the second.
@@ -759,11 +734,11 @@ public final class QuaternionRotation implements Serializable {
             // an arbitrary unit vector orthogonal to u1
             final Vector3D axis = u.orthogonal();
 
-            return new QuaternionRotation(
+            return of(
+                        0.0,
                         axis.getX(),
                         axis.getY(),
-                        axis.getZ(),
-                        0.0
+                        axis.getZ()
                     );
         }
 
@@ -790,11 +765,11 @@ public final class QuaternionRotation implements Serializable {
         final double vectorialScaleFactor = 1.0 / (2.0 * w * normProduct);
         final Vector3D axis = u.crossProduct(v);
 
-        return new QuaternionRotation(
+        return of(
+                    w,
                     vectorialScaleFactor * axis.getX(),
                     vectorialScaleFactor * axis.getY(),
-                    vectorialScaleFactor * axis.getZ(),
-                    w
+                    vectorialScaleFactor * axis.getZ()
                 );
     }
 
@@ -954,7 +929,7 @@ public final class QuaternionRotation implements Serializable {
             w = (m10 - m01) * sinv;
         }
 
-        return new QuaternionRotation(x, y, z, w);
+        return of(w, x, y, z);
     }
 
     /** Reverse the elements in {@code arr}. The array is returned.

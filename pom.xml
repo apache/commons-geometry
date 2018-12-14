@@ -163,6 +163,11 @@
         <artifactId>commons-numbers-fraction</artifactId>
         <version>${commons.numbers.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-numbers-quaternion</artifactId>
+        <version>${commons.numbers.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.commons</groupId>
