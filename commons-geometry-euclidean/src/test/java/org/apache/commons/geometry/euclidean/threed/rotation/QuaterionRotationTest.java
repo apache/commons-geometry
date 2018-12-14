@@ -504,7 +504,7 @@ public class QuaterionRotationTest {
 
         // assert
         Assert.assertTrue(q.getW() > 0);
-        Assert.assertTrue(q.getQuaternion().isUnitQuaternion(EPS));
+        Assert.assertEquals(1.0, q.getQuaternion().norm(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, q);
     }
