@@ -63,7 +63,7 @@ public final class QuaternionRotation implements Serializable {
     /** Instance used to represent the identity rotation, ie a rotation with
      * an angle of zero.
      */
-    private static final QuaternionRotation IDENTITY_INSTANCE = new QuaternionRotation(Quaternion.IDENTITY);
+    private static final QuaternionRotation IDENTITY_INSTANCE = of(1, 0, 0, 0);
 
     /** Unit-length quaternion instance in positive polar form. */
     private final Quaternion quat;
