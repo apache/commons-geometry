@@ -35,6 +35,9 @@ import org.apache.commons.geometry.euclidean.threed.rotation.AxisSequence;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.numbers.quaternion.Quaternion;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,54 +62,86 @@ public class QuaterionRotationTest {
     private static final double MINUS_TWO_THIRDS_PI = -TWO_THIRDS_PI;
 
     @Test
-    public void testOf() {
+    public void testOf_quaternion() {
+        // act/assert
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(1, 0, 0, 0)), 1, 0, 0, 0);
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(-1, 0, 0, 0)), 1, 0, 0, 0);
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(0, 1, 0, 0)), 0, 1, 0, 0);
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(0, 0, 1, 0)), 0, 0, 1, 0);
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(0, 0, 0, 1)), 0, 0, 0, 1);
+
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(1, 1, 1, 1)), 0.5, 0.5, 0.5, 0.5);
+        checkQuaternion(QuaternionRotation.of(Quaternion.of(-1, -1, -1, -1)), 0.5, 0.5, 0.5, 0.5);
+    }
+
+    @Test
+    public void testOf_quaternion_illegalNorm() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() ->
+            QuaternionRotation.of(Quaternion.of(0, 0, 0, 0)), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() ->
+            QuaternionRotation.of(Quaternion.of(1, 1, 1, Double.NaN)), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() ->
+            QuaternionRotation.of(Quaternion.of(1, 1, Double.POSITIVE_INFINITY, 1)), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() ->
+            QuaternionRotation.of(Quaternion.of(1, Double.NEGATIVE_INFINITY, 1, 1)), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() ->
+            QuaternionRotation.of(Quaternion.of(Double.NaN, 1, 1, 1)), IllegalStateException.class);
+    }
+
+    @Test
+    public void testOf_components() {
         // act/assert
         checkQuaternion(QuaternionRotation.of(1, 0, 0, 0), 1, 0, 0, 0);
+        checkQuaternion(QuaternionRotation.of(-1, 0, 0, 0), 1, 0, 0, 0);
         checkQuaternion(QuaternionRotation.of(0, 1, 0, 0), 0, 1, 0, 0);
         checkQuaternion(QuaternionRotation.of(0, 0, 1, 0), 0, 0, 1, 0);
         checkQuaternion(QuaternionRotation.of(0, 0, 0, 1), 0, 0, 0, 1);
 
         checkQuaternion(QuaternionRotation.of(1, 1, 1, 1), 0.5, 0.5, 0.5, 0.5);
+        checkQuaternion(QuaternionRotation.of(-1, -1, -1, -1), 0.5, 0.5, 0.5, 0.5);
     }
 
     @Test
-    public void testOf_illegalNorm() {
+    public void testOf_components_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(0, 0, 0, 0), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, 1, 1, Double.NaN), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, 1, Double.POSITIVE_INFINITY, 1), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, Double.NEGATIVE_INFINITY, 1, 1), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(Double.NaN, 1, 1, 1), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(0, 0, 0, 0), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, 1, 1, Double.NaN), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, 1, Double.POSITIVE_INFINITY, 1), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(1, Double.NEGATIVE_INFINITY, 1, 1), IllegalStateException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(Double.NaN, 1, 1, 1), IllegalStateException.class);
     }
 
     @Test
-    public void testOf_arrayArg() {
+    public void testOf_array() {
         // act/assert
         checkQuaternion(QuaternionRotation.of(new double[] { 1, 0, 0, 0 }), 1, 0, 0, 0);
+        checkQuaternion(QuaternionRotation.of(new double[] { -1, 0, 0, 0 }), 1, 0, 0, 0);
         checkQuaternion(QuaternionRotation.of(new double[] { 0, 1, 0, 0 }), 0, 1, 0, 0);
         checkQuaternion(QuaternionRotation.of(new double[] { 0, 0, 1, 0 }), 0, 0, 1, 0);
         checkQuaternion(QuaternionRotation.of(new double[] { 0, 0, 0, 1 }), 0, 0, 0, 1);
 
         checkQuaternion(QuaternionRotation.of(new double[] { 1, 1, 1, 1 }), 0.5, 0.5, 0.5, 0.5);
+        checkQuaternion(QuaternionRotation.of(new double[] { -1, -1, -1, -1 }), 0.5, 0.5, 0.5, 0.5);
     }
 
     @Test
-    public void testOf_arrayArg_illegalNorm() {
+    public void testOf_array_illegalNorm() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 0, 0, 0, 0 }),
-                IllegalNormException.class);
+                IllegalStateException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, 1, Double.NaN }),
-                IllegalNormException.class);
+                IllegalStateException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, Double.POSITIVE_INFINITY, 1 }),
-                IllegalNormException.class);
+                IllegalStateException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, Double.NEGATIVE_INFINITY, 1, 1 }),
-                IllegalNormException.class);
+                IllegalStateException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { Double.NaN, 1, 1, 1 }),
-                IllegalNormException.class);
+                IllegalStateException.class);
     }
 
     @Test
-    public void testOf_arrayArg_invalidLength() {
+    public void testOf_array_invalidLength() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, 1 }),
                 IllegalArgumentException.class, "Dimension mismatch: 3 != 4");
@@ -151,20 +186,20 @@ public class QuaterionRotationTest {
     public void testGetAxis()
     {
         // act/assert
-        checkVector(QuaternionRotation.of(1, 0, 0, 0).getAxis(), 1, 0, 0);
-        checkVector(QuaternionRotation.of(-1, 0, 0, 0).getAxis(), -1, 0, 0);
+        checkVector(QuaternionRotation.of(0, 1, 0, 0).getAxis(), 1, 0, 0);
+        checkVector(QuaternionRotation.of(0, -1, 0, 0).getAxis(), -1, 0, 0);
 
-        checkVector(QuaternionRotation.of(0, 1, 0, 0).getAxis(), 0, 1, 0);
-        checkVector(QuaternionRotation.of(0, -1, 0, 0).getAxis(), 0, -1, 0);
+        checkVector(QuaternionRotation.of(0, 0, 1, 0).getAxis(), 0, 1, 0);
+        checkVector(QuaternionRotation.of(0, 0, -1, 0).getAxis(), 0, -1, 0);
 
-        checkVector(QuaternionRotation.of(0, 0, 1, 0).getAxis(), 0, 0, 1);
-        checkVector(QuaternionRotation.of(0, 0, -1, 0).getAxis(), 0, 0, -1);
+        checkVector(QuaternionRotation.of(0, 0, 0, 1).getAxis(), 0, 0, 1);
+        checkVector(QuaternionRotation.of(0, 0, 0, -1).getAxis(), 0, 0, -1);
     }
 
     @Test
     public void testGetAxis_noAxis() {
         // arrange
-        QuaternionRotation rot = QuaternionRotation.of(0, 0, 0, 1);
+        QuaternionRotation rot = QuaternionRotation.of(1, 0, 0, 0);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, rot.getAxis(), EPS);
@@ -192,15 +227,15 @@ public class QuaterionRotationTest {
     @Test
     public void testGetAngle() {
         // act/assert
-        Assert.assertEquals(Geometry.ZERO_PI, QuaternionRotation.of(0, 0, 0, 1).getAngle(), EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, QuaternionRotation.of(0, 0, 0, -1).getAngle(), EPS);
+        Assert.assertEquals(Geometry.ZERO_PI, QuaternionRotation.of(1, 0, 0, 0).getAngle(), EPS);
+        Assert.assertEquals(Geometry.ZERO_PI, QuaternionRotation.of(-1, 0, 0, 0).getAngle(), EPS);
 
         Assert.assertEquals(Geometry.HALF_PI, QuaternionRotation.of(1, 0, 0, 1).getAngle(), EPS);
         Assert.assertEquals(Geometry.HALF_PI, QuaternionRotation.of(-1, 0, 0, -1).getAngle(), EPS);
 
         Assert.assertEquals(Geometry.PI  * 2.0 / 3.0, QuaternionRotation.of(1, 1, 1, 1).getAngle(), EPS);
 
-        Assert.assertEquals(Geometry.PI, QuaternionRotation.of(1, 0, 0, 0).getAngle(), EPS);
+        Assert.assertEquals(Geometry.PI, QuaternionRotation.of(0, 0, 0, 1).getAngle(), EPS);
     }
 
     @Test
@@ -449,6 +484,32 @@ public class QuaterionRotationTest {
     }
 
     @Test
+    public void testMultiply_numericalStability() {
+        // arrange
+        int slices = 1024;
+        double delta = (8.0 * Geometry.PI / 3.0) / slices;
+
+        QuaternionRotation q = QuaternionRotation.identity();
+
+        UniformRandomProvider rand = RandomSource.create(RandomSource.JDK, 2L);
+
+        // act
+        for (int i=0; i<slices; ++i) {
+            double angle = rand.nextDouble();
+            QuaternionRotation forward = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, angle);
+            QuaternionRotation backward = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, delta - angle);
+
+            q = q.multiply(forward).multiply(backward);
+        }
+
+        // assert
+        Assert.assertTrue(q.getW() > 0);
+        Assert.assertTrue(q.getQuaternion().isUnitQuaternion(EPS));
+
+        assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, q);
+    }
+
+    @Test
     public void testPremultiply_sameAxis_simple() {
         // arrange
         QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, 0.1 * Geometry.PI);
@@ -627,8 +688,8 @@ public class QuaterionRotationTest {
     @Test
     public void testSlerp_quaternionsHaveMinusOneDotProduct() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.of(0, 0, 1, 1); // pi/2 around +z
-        QuaternionRotation q2 = QuaternionRotation.of(0, 0, -1, -1); // 3pi/2 around -z
+        QuaternionRotation q1 = QuaternionRotation.of(1, 0, 0, 1); // pi/2 around +z
+        QuaternionRotation q2 = QuaternionRotation.of(-1, 0, 0, -1); // 3pi/2 around -z
 
         // act
         QuaternionRotation result = q1.slerp(q2, 0.5);
@@ -780,7 +841,7 @@ public class QuaterionRotationTest {
                 QuaternionRotation result = QuaternionRotation.fromAxisAngleSequence(seq);
 
                 // assert
-                checkQuaternion(result, q.getX(), q.getY(), q.getZ(), q.getW());
+                checkQuaternion(result, q.getW(), q.getX(), q.getY(), q.getZ());
             }
         });
     }
@@ -817,7 +878,7 @@ public class QuaterionRotationTest {
                 assertRadiansEquals(singularityAngle, resultSeq.getAngle2());
                 assertRadiansEquals(0.0, resultSeq.getAngle3());
 
-                checkQuaternion(resultQuat, inputQuat.getX(), inputQuat.getY(), inputQuat.getZ(), inputQuat.getW());
+                checkQuaternion(resultQuat, inputQuat.getW(), inputQuat.getX(), inputQuat.getY(), inputQuat.getZ());
             }
         }
     }
@@ -854,7 +915,7 @@ public class QuaterionRotationTest {
                 assertRadiansEquals(0.0, resultSeq.getAngle1());
                 assertRadiansEquals(singularityAngle, resultSeq.getAngle2());
 
-                checkQuaternion(resultQuat, inputQuat.getX(), inputQuat.getY(), inputQuat.getZ(), inputQuat.getW());
+                checkQuaternion(resultQuat, inputQuat.getW(), inputQuat.getX(), inputQuat.getY(), inputQuat.getZ());
             }
         }
     }
@@ -891,7 +952,7 @@ public class QuaterionRotationTest {
                 assertRadiansEquals(singularityAngle, resultSeq.getAngle2());
                 assertRadiansEquals(0.0, resultSeq.getAngle3());
 
-                checkQuaternion(resultQuat, inputQuat.getX(), inputQuat.getY(), inputQuat.getZ(), inputQuat.getW());
+                checkQuaternion(resultQuat, inputQuat.getW(), inputQuat.getX(), inputQuat.getY(), inputQuat.getZ());
             }
         }
     }
@@ -928,7 +989,7 @@ public class QuaterionRotationTest {
                 assertRadiansEquals(0.0, resultSeq.getAngle1());
                 assertRadiansEquals(singularityAngle, resultSeq.getAngle2());
 
-                checkQuaternion(resultQuat, inputQuat.getX(), inputQuat.getY(), inputQuat.getZ(), inputQuat.getW());
+                checkQuaternion(resultQuat, inputQuat.getW(), inputQuat.getX(), inputQuat.getY(), inputQuat.getZ());
             }
         }
     }
@@ -1046,7 +1107,7 @@ public class QuaterionRotationTest {
         // assert
         double val = Math.sqrt(2) * 0.5;
 
-        checkQuaternion(q, 0, 0, val, val);
+        checkQuaternion(q, val, 0, 0, val);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.HALF_PI, q.getAngle(), EPS);
@@ -1065,7 +1126,7 @@ public class QuaterionRotationTest {
         QuaternionRotation q = QuaternionRotation.createVectorRotation(u1, u2);
 
         // assert
-        checkQuaternion(q, 0, 0, 0, 1);
+        checkQuaternion(q, 1, 0, 0, 0);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.ZERO_PI, q.getAngle(), EPS);
@@ -1084,7 +1145,7 @@ public class QuaterionRotationTest {
         QuaternionRotation q = QuaternionRotation.createVectorRotation(u1, u2);
 
         // assert
-        checkQuaternion(q, 0, 0, 0, 1);
+        checkQuaternion(q, 1, 0, 0, 0);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.ZERO_PI, q.getAngle(), EPS);
@@ -1545,13 +1606,20 @@ public class QuaterionRotationTest {
         assertRotationEquals(rotation, QuaternionRotation.fromAxisAngleSequence(angles));
     }
 
-    private static void checkQuaternion(QuaternionRotation q, double x, double y, double z, double w) {
-        String msg = "Expected quaternion to equal " + SimpleTupleFormat.getDefault().format(x, y, z, w) + " but was " + q;
+    private static void checkQuaternion(QuaternionRotation qrot, double w, double x, double y, double z) {
+        String msg = "Expected"
+                + " quaternion to equal " + SimpleTupleFormat.getDefault().format(w, x, y, z) + " but was " + qrot;
 
+        Assert.assertEquals(msg, w, qrot.getW(), EPS);
+        Assert.assertEquals(msg, x, qrot.getX(), EPS);
+        Assert.assertEquals(msg, y, qrot.getY(), EPS);
+        Assert.assertEquals(msg, z, qrot.getZ(), EPS);
+
+        Quaternion q = qrot.getQuaternion();
+        Assert.assertEquals(msg, w, q.getW(), EPS);
         Assert.assertEquals(msg, x, q.getX(), EPS);
         Assert.assertEquals(msg, y, q.getY(), EPS);
         Assert.assertEquals(msg, z, q.getZ(), EPS);
-        Assert.assertEquals(msg, w, q.getW(), EPS);
     }
 
     private static void checkVector(Vector3D v, double x, double y, double z) {
