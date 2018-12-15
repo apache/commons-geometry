@@ -42,13 +42,6 @@ public final class QuaternionRotation implements Serializable {
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181018L;
 
-    /** Threshold max value for the dot product computed in the {@code #slerp(QuaternionRotation, double)}
-     * method. If the quaternion dot product is greater than this value (ie, the
-     * quaternions are very close to each other), then the quaternions are
-     * linearly interpolated instead of spherically interpolated.
-     */
-    private static final double SLERP_MAX_DOT_THRESHOLD = 0.9995;
-
     /** Threshold value for the dot product of antiparallel vectors. If the dot product of two vectors is
      * less than this value, (adjusted for the lengths of the vectors), then the vectors are considered to be
      * antiparallel (ie, negations of each other).
@@ -265,63 +258,8 @@ public final class QuaternionRotation implements Serializable {
      *
      * @see <a href="https://en.wikipedia.org/wiki/Slerp">Slerp</a>
      */
-    public QuaternionRotation slerp(final QuaternionRotation end, final double t)
-    {
-        // reference formula:
-        // https://en.wikipedia.org/wiki/Slerp
-
-        // handle no-op cases
-        if (t == 0) {
-            return this;
-        }
-        else if (t == 1.0) {
-            return end;
-        }
-
-        double endW = end.getW();
-        double endX = end.getX();
-        double endY = end.getY();
-        double endZ = end.getZ();
-
-        double dot = quat.dotProduct(end.quat);
-
-        // If the dot product is negative, then the interpolation won't follow the shortest
-        // angular path between the two quaterions. In this case, invert the end quaternion
-        // to produce an equivalent rotation that will give us the path we want.
-        if (dot < 0.0) {
-           dot = -dot;
-
-           endW = -endW;
-           endX = -endX;
-           endY = -endY;
-           endZ = -endZ;
-        }
-
-        // If the quaternions are too closely aligned, perform linear interpolation
-        // and normalize the result. Otherwise, we may end up dividing by zero with the
-        // 1/sin(theta) term below.
-        if (dot > SLERP_MAX_DOT_THRESHOLD) {
-            final double oneMinusFactor = 1.0 - t;
-
-            return QuaternionRotation.of(
-                    (oneMinusFactor * this.getW()) + (t * endW),
-                    (oneMinusFactor * this.getX()) + (t * endX),
-                    (oneMinusFactor * this.getY()) + (t * endY),
-                    (oneMinusFactor * this.getZ()) + (t * endZ));
-        }
-
-        // compute the standard slerp formula
-        final double theta = Math.acos(dot);
-        final double sinTheta = Math.sin(theta);
-
-        final double startFactor = Math.sin((1.0 - t) * theta) / sinTheta;
-        final double endFactor = Math.sin(t * theta) / sinTheta;
-
-        return of(
-                (startFactor * this.getW()) + (endFactor * endW),
-                (startFactor * this.getX()) + (endFactor * endX),
-                (startFactor * this.getY()) + (endFactor * endY),
-                (startFactor * this.getZ()) + (endFactor * endZ));
+    public QuaternionRotation slerp(final QuaternionRotation end, final double t) {
+        return new QuaternionRotation(new Slerp(this.quat, end.quat).apply(t));
     }
 
     /**
