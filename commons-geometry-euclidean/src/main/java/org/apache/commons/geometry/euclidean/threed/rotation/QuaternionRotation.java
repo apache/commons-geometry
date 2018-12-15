@@ -71,41 +71,6 @@ public final class QuaternionRotation implements Serializable {
         this.quat = quat.positivePolarForm();
     }
 
-    /**
-     * Get the scalar coordinate of the underlying quaternion.
-     *
-     * @return scalar coordinate of the quaternion
-     */
-    public double getW() {
-        return quat.getW();
-    }
-
-    /**
-     * Get the first vectorial coordinate of the quaternion.
-     *
-     * @return first vectorial coordinate of the quaternion
-     */
-    public double getX() {
-        return quat.getX();
-    }
-
-    /**
-     * Get the second vectorial coordinate of the quaternion.
-     *
-     * @return second vectorial coordinate of the quaternion
-     */
-    public double getY() {
-        return quat.getY();
-    }
-
-    /**
-     * Get the third vectorial coordinate of the underlying quaternion.
-     *
-     * @return third vectorial coordinate of the quaternion
-     */
-    public double getZ() {
-        return quat.getZ();
-    }
 
     /** Get the underlying quaternion instance.
      * @return the quaternion instance
@@ -121,7 +86,7 @@ public final class QuaternionRotation implements Serializable {
      * @return the quaternion coordinates in the order {@code [w, x, y, z]}
      */
     public double[] toArray() {
-        return new double[] { getW(), getX(), getY(), getZ() };
+        return new double[] { quat.getW(), quat.getX(), quat.getY(), quat.getZ() };
     }
 
     /**
@@ -136,7 +101,7 @@ public final class QuaternionRotation implements Serializable {
         // the most straightforward way to check if we have a normalizable
         // vector is to just try to normalize it and see if we fail
         try {
-            return Vector3D.normalize(getX(), getY(), getZ());
+            return Vector3D.normalize(quat.getX(), quat.getY(), quat.getZ());
         }
         catch (IllegalNormException exc) {
             return Vector3D.PLUS_X;
@@ -150,7 +115,7 @@ public final class QuaternionRotation implements Serializable {
      * @return The rotation angle in the range {@code [0, pi]}.
      */
     public double getAngle() {
-        return 2 * Math.acos(getW());
+        return 2 * Math.acos(quat.getW());
     }
 
     /**
@@ -172,10 +137,10 @@ public final class QuaternionRotation implements Serializable {
      * @return the rotated vector
      */
     public Vector3D apply(final Vector3D v) {
-        final double qw = getW();
-        final double qx = getX();
-        final double qy = getY();
-        final double qz = getZ();
+        final double qw = quat.getW();
+        final double qx = quat.getX();
+        final double qy = quat.getY();
+        final double qz = quat.getZ();
 
         final double x = v.getX();
         final double y = v.getY();
@@ -260,10 +225,10 @@ public final class QuaternionRotation implements Serializable {
      */
     public AffineTransformMatrix3D toTransformMatrix() {
 
-        final double qw = getW();
-        final double qx = getX();
-        final double qy = getY();
-        final double qz = getZ();
+        final double qw = quat.getW();
+        final double qx = quat.getX();
+        final double qy = quat.getY();
+        final double qz = quat.getZ();
 
         // pre-calculate products that we'll need
         final double xx = qx * qx;
@@ -370,7 +335,7 @@ public final class QuaternionRotation implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleTupleFormat.getDefault().format(getW(), getX(), getY(), getZ());
+        return SimpleTupleFormat.getDefault().format(quat.getW(), quat.getX(), quat.getY(), quat.getZ());
     }
 
     /** Get a sequence of angles around the given axes that produce a rotation equivalent
