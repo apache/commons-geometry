@@ -71,22 +71,11 @@ public final class QuaternionRotation implements Serializable {
         this.quat = quat.positivePolarForm();
     }
 
-
     /** Get the underlying quaternion instance.
      * @return the quaternion instance
      */
     public Quaternion getQuaternion() {
         return quat;
-    }
-
-    /**
-     * Get the quaternion coordinates as an array in the order
-     * {@code [w, x, y, z]}.
-     *
-     * @return the quaternion coordinates in the order {@code [w, x, y, z]}
-     */
-    public double[] toArray() {
-        return new double[] { quat.getW(), quat.getX(), quat.getY(), quat.getZ() };
     }
 
     /**
@@ -521,7 +510,7 @@ public final class QuaternionRotation implements Serializable {
      * Create a new instance from the given quaternion values. The inputs are
      * normalized and converted to positive polar form (ie, with w &gt;= 0).
      *
-     * @param w quaterion scalar component
+     * @param w quaternion scalar component
      * @param x first quaternion vectorial component
      * @param y second quaternion vectorial component
      * @param z third quaternion vectorial component
@@ -531,23 +520,11 @@ public final class QuaternionRotation implements Serializable {
      * @see Quaternion#normalize()
      * @see Quaternion#positivePolarForm()
      */
-    public static QuaternionRotation of(final double w, final double x, final double y, final double z) {
+    public static QuaternionRotation of(final double w,
+                                        final double x,
+                                        final double y,
+                                        final double z) {
         return of(Quaternion.of(w, x, y, z));
-    }
-
-    /** Create a new instance from the components in the given 4-element array. The
-     * components must be in the order {@code [w, x, y, z]}. The components are
-     * normalized.
-     *
-     * @param q quaternion component array
-     * @return new quaterion containing the normalized components
-     * @throws IllegalArgumentException if the array does not have 4 elements
-     */
-    public static QuaternionRotation of(final double[] q) {
-        if (q.length != 4) {
-            throw new IllegalArgumentException("Dimension mismatch: " + q.length + " != 4");
-        }
-        return QuaternionRotation.of(q[0], q[1], q[2], q[3]);
     }
 
     /** Return an instance representing a rotation of zero.
@@ -626,12 +603,10 @@ public final class QuaternionRotation implements Serializable {
             // an arbitrary unit vector orthogonal to u1
             final Vector3D axis = u.orthogonal();
 
-            return of(
-                        0.0,
-                        axis.getX(),
-                        axis.getY(),
-                        axis.getZ()
-                    );
+            return of(0,
+                      axis.getX(),
+                      axis.getY(),
+                      axis.getZ());
         }
 
         // General case:
@@ -657,12 +632,10 @@ public final class QuaternionRotation implements Serializable {
         final double vectorialScaleFactor = 1.0 / (2.0 * w * normProduct);
         final Vector3D axis = u.crossProduct(v);
 
-        return of(
-                    w,
-                    vectorialScaleFactor * axis.getX(),
-                    vectorialScaleFactor * axis.getY(),
-                    vectorialScaleFactor * axis.getZ()
-                );
+        return of(w,
+                  vectorialScaleFactor * axis.getX(),
+                  vectorialScaleFactor * axis.getY(),
+                  vectorialScaleFactor * axis.getZ());
     }
 
     /** Return an instance that rotates the basis defined by the first two vectors into the basis

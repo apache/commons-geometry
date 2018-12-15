@@ -113,43 +113,6 @@ public class QuaternionRotationTest {
     }
 
     @Test
-    public void testOf_array() {
-        // act/assert
-        checkQuaternion(QuaternionRotation.of(new double[] { 1, 0, 0, 0 }), 1, 0, 0, 0);
-        checkQuaternion(QuaternionRotation.of(new double[] { -1, 0, 0, 0 }), 1, 0, 0, 0);
-        checkQuaternion(QuaternionRotation.of(new double[] { 0, 1, 0, 0 }), 0, 1, 0, 0);
-        checkQuaternion(QuaternionRotation.of(new double[] { 0, 0, 1, 0 }), 0, 0, 1, 0);
-        checkQuaternion(QuaternionRotation.of(new double[] { 0, 0, 0, 1 }), 0, 0, 0, 1);
-
-        checkQuaternion(QuaternionRotation.of(new double[] { 1, 1, 1, 1 }), 0.5, 0.5, 0.5, 0.5);
-        checkQuaternion(QuaternionRotation.of(new double[] { -1, -1, -1, -1 }), 0.5, 0.5, 0.5, 0.5);
-    }
-
-    @Test
-    public void testOf_array_illegalNorm() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 0, 0, 0, 0 }),
-                IllegalStateException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, 1, Double.NaN }),
-                IllegalStateException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, Double.POSITIVE_INFINITY, 1 }),
-                IllegalStateException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, Double.NEGATIVE_INFINITY, 1, 1 }),
-                IllegalStateException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { Double.NaN, 1, 1, 1 }),
-                IllegalStateException.class);
-    }
-
-    @Test
-    public void testOf_array_invalidLength() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, 1 }),
-                IllegalArgumentException.class, "Dimension mismatch: 3 != 4");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.of(new double[] { 1, 1, 1, 1, 1 }),
-                IllegalArgumentException.class, "Dimension mismatch: 5 != 4");
-    }
-
-    @Test
     public void testIdentity() {
         // act
         QuaternionRotation q = QuaternionRotation.identity();
@@ -165,21 +128,6 @@ public class QuaternionRotationTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
-    }
-
-    @Test
-    public void testToArray() {
-        // arrange
-        QuaternionRotation q = QuaternionRotation.of(1, 2, 3, 4);
-        double base = 1.0 / Math.sqrt(30);
-
-        // act
-        double[] arr = q.toArray();
-
-        // assert
-        Assert.assertArrayEquals(new double[] {
-                base, 2 * base, 3 * base, 4 * base
-        }, arr, EPS);
     }
 
     @Test
