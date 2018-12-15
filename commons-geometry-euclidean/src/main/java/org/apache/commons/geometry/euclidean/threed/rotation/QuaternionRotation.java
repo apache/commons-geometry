@@ -30,12 +30,13 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
 
 /**
- * Class using a unit-length quaternion to model rotations in 3 dimensional Euclidean space.
- * The underlying quaternion is in <em>positive polar form</em>, meaing that it is normalized
- * and has a non-negative scalar (ie, {@code w}) component .
+ * Class using a unit-length quaternion to represent
+ * <a href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">rotations</a>
+ * in 3-dimensional Euclidean space.
+ * The underlying quaternion is in <em>positive polar form</em>: It is normalized and has a
+ * non-negative scalar component ({@code w}).
  *
  * @see Quaternion
- * @see <a href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">Quaternion Rotations</a>
  */
 public final class QuaternionRotation implements Serializable {
 
