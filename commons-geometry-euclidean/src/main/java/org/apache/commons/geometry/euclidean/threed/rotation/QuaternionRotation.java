@@ -240,26 +240,14 @@ public final class QuaternionRotation implements Serializable {
         return q.multiply(this);
     }
 
-    /** Perform spherical linear interpolation (Slerp) between the current instance and {@code end}.
+    /**
+     * Creates a {@link Slerp} transform.
      *
-     * <p>
-     * Slerp is an algorithm designed to interpolate smoothly between two rotations/orientations,
-     * producing a constant-speed motion along an arc. The original purpose of this algorithm was
-     * to animate 3D rotations. The rotation returned by this method is controlled by the interpolation parameter,
-     * {@code t}. When {@code t = 0}, a rotation equal to the current instance is
-     * returned. When {@code t = 1}, a rotation equal to {@code end} is returned. All other values
-     * are interpolated (or extrapolated if {@code t} is outside of the {@code [0, 1]} range).
-     * </p>
-     *
-     * @param end the end rotation of the interpolation.
-     * @param t interpolation parameter
-     * @return rotation representing a spherical linear interpolation between this instance and
-     *      {@code end}
-     *
-     * @see <a href="https://en.wikipedia.org/wiki/Slerp">Slerp</a>
+     * @param end End rotation of the interpolation.
+     * @return the transform.
      */
-    public QuaternionRotation slerp(final QuaternionRotation end, final double t) {
-        return new QuaternionRotation(new Slerp(this.quat, end.quat).apply(t));
+    public Slerp slerp(QuaternionRotation end) {
+        return new Slerp(getQuaternion(), end.getQuaternion());
     }
 
     /**

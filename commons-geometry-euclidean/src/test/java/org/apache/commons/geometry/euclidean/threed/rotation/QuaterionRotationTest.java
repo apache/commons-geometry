@@ -589,17 +589,17 @@ public class QuaterionRotationTest {
         // arrange
         QuaternionRotation q0 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.ZERO_PI);
         QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.PI);
-
+        final Slerp transform = q0.slerp(q1);
         Vector3D v = Vector3D.of(2, 0, 1);
 
         double sqrt2 = Math.sqrt(2);
 
         // act
-        checkVector(q0.slerp(q1, 0).apply(v), 2, 0, 1);
-        checkVector(q0.slerp(q1, 0.25).apply(v), sqrt2, sqrt2, 1);
-        checkVector(q0.slerp(q1, 0.5).apply(v), 0, 2, 1);
-        checkVector(q0.slerp(q1, 0.75).apply(v), -sqrt2, sqrt2, 1);
-        checkVector(q0.slerp(q1, 1).apply(v), -2, 0, 1);
+        checkVector(QuaternionRotation.of(transform.apply(0)).apply(v), 2, 0, 1);
+        checkVector(QuaternionRotation.of(transform.apply(0.25)).apply(v), sqrt2, sqrt2, 1);
+        checkVector(QuaternionRotation.of(transform.apply(0.5)).apply(v), 0, 2, 1);
+        checkVector(QuaternionRotation.of(transform.apply(0.75)).apply(v), -sqrt2, sqrt2, 1);
+        checkVector(QuaternionRotation.of(transform.apply(1)).apply(v), -2, 0, 1);
     }
 
     @Test
@@ -641,22 +641,26 @@ public class QuaterionRotationTest {
     }
 
     private void checkSlerpCombination(QuaternionRotation start, QuaternionRotation end) {
+        final Slerp slerp = start.slerp(end);
         Vector3D vec = Vector3D.of(1, 1, 1).normalize();
 
         Vector3D startVec = start.apply(vec);
         Vector3D endVec = end.apply(vec);
 
         // check start and end values
-        EuclideanTestUtils.assertCoordinatesEqual(startVec, start.slerp(end, 0.0).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(endVec, start.slerp(end, 1.0).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(startVec, QuaternionRotation.of(slerp.apply(0)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(endVec, QuaternionRotation.of(slerp.apply(1)).apply(vec), EPS);
 
         // check intermediate values
-        double prevAngle = -1.0;
-        for (double t=0; t<=1.0; t+= 0.01) {
-            QuaternionRotation result = start.slerp(end, t);
+        double prevAngle = -1;
+        final int numSteps = 100;
+        final double delta = 1d / numSteps;
+        for (int step = 0; step <= numSteps; step++) {
+            final double t = step * delta;
+            QuaternionRotation result = QuaternionRotation.of(slerp.apply(t));
 
             Vector3D slerpVec = result.apply(vec);
-            Assert.assertEquals(1.0, slerpVec.getNorm(), EPS);
+            Assert.assertEquals(1, slerpVec.getNorm(), EPS);
 
             // make sure that we're steadily progressing to the end angle
             double angle = slerpVec.angle(startVec);
@@ -674,7 +678,7 @@ public class QuaterionRotationTest {
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, - 0.75 * Geometry.PI);
 
         // act
-        QuaternionRotation result = q1.slerp(q2, 0.5);
+        QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
 
         // assert
         // the slerp should have followed the path around the pi coordinate of the circle rather than
@@ -692,7 +696,7 @@ public class QuaterionRotationTest {
         QuaternionRotation q2 = QuaternionRotation.of(-1, 0, 0, -1); // 3pi/2 around -z
 
         // act
-        QuaternionRotation result = q1.slerp(q2, 0.5);
+        QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Y, result.apply(Vector3D.PLUS_X), EPS);
@@ -707,9 +711,13 @@ public class QuaterionRotationTest {
         QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.25 * Geometry.PI);
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
 
-        for (double t=-10.0; t<=10.0; t+=0.1) {
+        final int numSteps = 200;
+        final double delta = 1d / numSteps;
+        for (int step = 0; step <= numSteps; step++) {
+            final double t = -10 + step * delta;
+
             // act
-            QuaternionRotation result = q1.slerp(q2, t);
+            QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(t));
 
             // assert
             Assert.assertEquals(1.0, Vectors.norm(result.getX(), result.getY(), result.getZ(), result.getW()), EPS);
@@ -725,15 +733,17 @@ public class QuaterionRotationTest {
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q1.slerp(q2, -4.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q1.slerp(q2, -0.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, q1.slerp(q2, 1.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, q1.slerp(q2, 5.5).apply(vec), EPS);
+        final Slerp slerp12 = q1.slerp(q2);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp12.apply(-4.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp12.apply(-0.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp12.apply(1.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp12.apply(5.5)).apply(vec), EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, q2.slerp(q1, -4.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, q2.slerp(q1, -0.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q2.slerp(q1, 1.5).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q2.slerp(q1, 5.5).apply(vec), EPS);
+        final Slerp slerp21 = q2.slerp(q1);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp21.apply(-4.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp21.apply(-0.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp21.apply(1.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp21.apply(5.5)).apply(vec), EPS);
     }
 
     @Test
