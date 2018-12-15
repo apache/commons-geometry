@@ -41,7 +41,7 @@ import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class QuaterionRotationTest {
+public class QuaternionRotationTest {
 
     private static final double EPS = 1e-12;
 
