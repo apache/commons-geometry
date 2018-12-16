@@ -36,6 +36,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.numbers.quaternion.Quaternion;
+import org.apache.commons.numbers.quaternion.Slerp;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;
@@ -613,7 +614,8 @@ public class QuaternionRotationTest {
             // make sure that we're steadily progressing to the end angle
             double angle = slerpVec.angle(startVec);
             Assert.assertTrue("Expected slerp angle to continuously increase; previous angle was " +
-                    prevAngle + " and new angle is " + angle, Precision.compareTo(angle, prevAngle, EPS) >= 0);
+                              prevAngle + " and new angle is " + angle,
+                              Precision.compareTo(angle, prevAngle, EPS) >= 0);
 
             prevAngle = angle;
         }
@@ -623,7 +625,7 @@ public class QuaternionRotationTest {
     public void testSlerp_followsShortestPath() {
         // arrange
         QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, - 0.75 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, -0.75 * Geometry.PI);
 
         // act
         QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
@@ -668,7 +670,11 @@ public class QuaternionRotationTest {
             QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(t));
 
             // assert
-            Assert.assertEquals(1.0, Vectors.norm(result.getQuaternion().getX(), result.getQuaternion().getY(), result.getQuaternion().getZ(), result.getQuaternion().getW()), EPS);
+            Assert.assertEquals(1.0, Vectors.norm(result.getQuaternion().getX(),
+                                                  result.getQuaternion().getY(),
+                                                  result.getQuaternion().getZ(),
+                                                  result.getQuaternion().getW()),
+                                EPS);
         }
     }
 

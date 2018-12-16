@@ -28,6 +28,7 @@ import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
+import org.apache.commons.numbers.quaternion.Slerp;
 
 /**
  * Class using a unit-length quaternion to represent
@@ -202,7 +203,7 @@ public final class QuaternionRotation implements Serializable {
      * @return the transform.
      */
     public Slerp slerp(QuaternionRotation end) {
-        return new Slerp(getQuaternion(), end.getQuaternion());
+        return new Slerp(quat, end.quat);
     }
 
     /**
