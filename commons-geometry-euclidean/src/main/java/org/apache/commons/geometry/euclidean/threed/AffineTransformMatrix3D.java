@@ -18,12 +18,13 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.io.Serializable;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
+import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -35,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
  * use arrays containing 12 elements, instead of 16.
  * </p>
  */
-public final class AffineTransformMatrix3D implements Serializable {
+public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vector3D, Vector2D>, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180923L;
@@ -147,11 +148,11 @@ public final class AffineTransformMatrix3D implements Serializable {
         };
     }
 
-    /** Apply this transform to the given vector, returning the result as a new instance.
+    /** Apply this transform to the given point, returning the result as a new instance.
      *
-     * <p>The transformed vector is computed by creating a 4-element column vector from the
+     * <p>The transformed point is computed by creating a 4-element column vector from the
      * coordinates in the input and setting the last element to 1. This is then multiplied with the
-     * 4x4 transform matrix to produce the transformed vector. The {@code 1} in the last position
+     * 4x4 transform matrix to produce the transformed point. The {@code 1} in the last position
      * is ignored.
      * <pre>
      *      [ m00  m01  m02  m03 ]     [ x ]     [ x']
@@ -159,14 +160,12 @@ public final class AffineTransformMatrix3D implements Serializable {
      *      [ m20  m21  m22  m23 ]     [ z ]     [ z']
      *      [ 0    0    0    1   ]     [ 1 ]     [ 1 ]
      * </pre>
-     *
-     * @param vec the vector to transform
-     * @return the new, transformed vector
      */
-    public Vector3D apply(final Vector3D vec) {
-        final double x = vec.getX();
-        final double y = vec.getY();
-        final double z = vec.getZ();
+    @Override
+    public Vector3D apply(final Vector3D pt) {
+        final double x = pt.getX();
+        final double y = pt.getY();
+        final double z = pt.getZ();
 
         final double resultX = LinearCombination.value(m00, x, m01, y, m02, z) + m03;
         final double resultY = LinearCombination.value(m10, x, m11, y, m12, z) + m13;
@@ -175,13 +174,7 @@ public final class AffineTransformMatrix3D implements Serializable {
         return Vector3D.of(resultX, resultY, resultZ);
     }
 
-    /** Apply this transform to the given vector, ignoring translations.
-     *
-     * <p>This method can be used to transform vector instances representing displacements between points.
-     * For example, if {@code v} represents the difference between points {@code p1} and {@code p2},
-     * then {@code transform.applyVector(v)} will represent the difference between {@code p1} and {@code p2}
-     * after {@code transform} is applied.
-     * </p>
+    /** {@inheritDoc}
      *
      *  <p>The transformed vector is computed by creating a 4-element column vector from the
      * coordinates in the input and setting the last element to 0. This is then multiplied with the
@@ -194,22 +187,17 @@ public final class AffineTransformMatrix3D implements Serializable {
      *      [ 0    0    0    1   ]     [ 0 ]     [ 0 ]
      * </pre>
      *
-     * @param vec the vector to transform
-     * @return the new, transformed vector
      * @see #applyDirection(Vector3D)
      */
+    @Override
     public Vector3D applyVector(final Vector3D vec) {
         return applyVector(vec, Vector3D::of);
     }
 
-    /** Apply this transform to the given vector, ignoring translations and normalizing the
-     * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without
-     * the intermediate vector instance.
-     * @param vec the vector to transform
-     * @return the new, transformed unit vector
-     * @throws IllegalNormException if the transformed vector coordinates cannot be normalized
+    /** {@inheritDoc}
      * @see #applyVector(Vector3D)
      */
+    @Override
     public Vector3D applyDirection(final Vector3D vec) {
         return applyVector(vec, Vector3D::normalize);
     }

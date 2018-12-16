@@ -39,7 +39,7 @@ import org.apache.commons.numbers.quaternion.Slerp;
  *
  * @see Quaternion
  */
-public final class QuaternionRotation implements Serializable {
+public final class QuaternionRotation implements Rotation3D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181018L;
@@ -87,6 +87,7 @@ public final class QuaternionRotation implements Serializable {
      *
      * @return the axis of rotation
      */
+    @Override
     public Vector3D getAxis() {
         // the most straightforward way to check if we have a normalizable
         // vector is to just try to normalize it and see if we fail
@@ -104,6 +105,7 @@ public final class QuaternionRotation implements Serializable {
      *
      * @return The rotation angle in the range {@code [0, pi]}.
      */
+    @Override
     public double getAngle() {
         return 2 * Math.acos(quat.getW());
     }
@@ -116,6 +118,7 @@ public final class QuaternionRotation implements Serializable {
      *
      * @return the negation (inverse) of the rotation
      */
+    @Override
     public QuaternionRotation getInverse() {
         return new QuaternionRotation(quat.conjugate());
     }
@@ -126,6 +129,7 @@ public final class QuaternionRotation implements Serializable {
      * @param v vector to rotate
      * @return the rotated vector
      */
+    @Override
     public Vector3D apply(final Vector3D v) {
         final double qw = quat.getW();
         final double qx = quat.getX();

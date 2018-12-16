@@ -18,11 +18,12 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.io.Serializable;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
+import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -34,7 +35,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 6 elements, instead of 9.
 * </p>
 */
-public final class AffineTransformMatrix2D implements Serializable {
+public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vector2D, Vector1D>, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181005L;
@@ -116,24 +117,22 @@ public final class AffineTransformMatrix2D implements Serializable {
         };
     }
 
-    /** Apply this transform to the given vector, returning the result as a new instance.
+    /** Apply this transform to the given point, returning the result as a new instance.
     *
-    * <p>The transformed vector is computed by creating a 3-element column vector from the
+    * <p>The transformed point is computed by creating a 3-element column vector from the
     * coordinates in the input and setting the last element to 1. This is then multiplied with the
-    * 3x3 transform matrix to produce the transformed vector. The {@code 1} in the last position
+    * 3x3 transform matrix to produce the transformed point. The {@code 1} in the last position
     * is ignored.
     * <pre>
     *      [ m00  m01  m02 ]     [ x ]     [ x']
     *      [ m10  m11  m12 ]  *  [ y ]  =  [ y']
     *      [ 0    0    1   ]     [ 1 ]     [ 1 ]
     * </pre>
-    *
-    * @param vec the vector to transform
-    * @return the new, transformed vector
     */
-    public Vector2D apply(final Vector2D vec) {
-        final double x = vec.getX();
-        final double y = vec.getY();
+    @Override
+    public Vector2D apply(final Vector2D pt) {
+        final double x = pt.getX();
+        final double y = pt.getY();
 
         final double resultX = LinearCombination.value(m00, x, m01, y) + m02;
         final double resultY = LinearCombination.value(m10, x, m11, y) + m12;
@@ -141,13 +140,7 @@ public final class AffineTransformMatrix2D implements Serializable {
         return Vector2D.of(resultX, resultY);
     }
 
-    /** Apply this transform to the given vector, ignoring translations.
-    *
-    * <p>This method can be used to transform vector instances representing displacements between points.
-    * For example, if {@code v} represents the difference between points {@code p1} and {@code p2},
-    * then {@code transform.applyVector(v)} will represent the difference between {@code p1} and {@code p2}
-    * after {@code transform} is applied.
-    * </p>
+    /** {@inheritDoc}
     *
     *  <p>The transformed vector is computed by creating a 3-element column vector from the
     * coordinates in the input and setting the last element to 0. This is then multiplied with the
@@ -159,22 +152,17 @@ public final class AffineTransformMatrix2D implements Serializable {
     *      [ 0    0    1   ]     [ 0 ]     [ 0 ]
     * </pre>
     *
-    * @param vec the vector to transform
-    * @return the new, transformed vector
     * @see #applyDirection(Vector2D)
     */
+    @Override
     public Vector2D applyVector(final Vector2D vec) {
         return applyVector(vec, Vector2D::of);
     }
 
-    /** Apply this transform to the given vector, ignoring translations and normalizing the
-     * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without
-     * the intermediate vector instance.
-     * @param vec the vector to transform
-     * @return the new, transformed unit vector
-     * @throws IllegalNormException if the transformed vector coordinates cannot be normalized
+    /** {@inheritDoc}
      * @see #applyVector(Vector2D)
      */
+    @Override
     public Vector2D applyDirection(final Vector2D vec) {
         return applyVector(vec, Vector2D::normalize);
     }

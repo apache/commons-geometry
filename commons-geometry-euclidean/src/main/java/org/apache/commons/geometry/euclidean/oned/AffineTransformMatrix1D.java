@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.io.Serializable;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
+import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.core.Precision;
@@ -32,7 +32,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D implements Serializable {
+public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vector1D, Vector1D>, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181006L;
@@ -85,10 +85,8 @@ public final class AffineTransformMatrix1D implements Serializable {
         };
     }
 
-    /** Apply this transform to the given vector. A new vector is returned.
-     * @param vec the vector to transform
-     * @return the new, transformed vector
-     */
+    /** {@inheritDoc} */
+    @Override
     public Vector1D apply(final Vector1D vec) {
         final double x = vec.getX();
 
@@ -97,31 +95,18 @@ public final class AffineTransformMatrix1D implements Serializable {
         return Vector1D.of(resultX);
     }
 
-    /** Apply this transform to the given vector, ignoring translations.
-     *
-     * <p>This method can be used to transform vector instances representing displacements between points.
-     * For example, if {@code v} represents the difference between points {@code p1} and {@code p2},
-     * then {@code transform.applyVector(v)} will represent the difference between {@code p1} and {@code p2}
-     * after {@code transform} is applied.
-     * </p>
-     *
-     * @param vec the vector to transform
-     * @return the new, transformed vector
+    /** {@inheritDoc}
      * @see #applyDirection(Vector1D)
      */
+    @Override
     public Vector1D applyVector(final Vector1D vec) {
         return applyVector(vec, Vector1D::of);
     }
 
-    /** Apply this transform to the given vector, ignoring translations and normalizing the
-     * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without
-     * the intermediate vector instance.
-     *
-     * @param vec the vector to transform
-     * @return the new, transformed unit vector
-     * @throws IllegalNormException if the transformed vector coordinates cannot be normalized
+    /** {@inheritDoc}
      * @see #applyVector(Vector1D)
      */
+    @Override
     public Vector1D applyDirection(final Vector1D vec) {
         return applyVector(vec, Vector1D::normalize);
     }
