@@ -105,7 +105,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      * @param m22 matrix entry <code>m<sub>2,2</sub></code>
      * @param m23 matrix entry <code>m<sub>2,3</sub></code>
      */
-    AffineTransformMatrix3D(
+    private AffineTransformMatrix3D(
             final double m00, final double m01, final double m02, final double m03,
             final double m10, final double m11, final double m12, final double m13,
             final double m20, final double m21, final double m22, final double m23) {
