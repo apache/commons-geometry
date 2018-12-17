@@ -1049,14 +1049,10 @@ public class QuaternionRotationTest {
     public void testToString() {
         // arrange
         QuaternionRotation q = QuaternionRotation.of(1, 2, 3, 4);
-        Pattern pattern = Pattern.compile("\\(0\\.1\\d+, 0\\.3\\d+, 0\\.5\\d+, 0\\.7\\d+\\)");
-
-        // act
-        String str = q.toString();
+        Quaternion qField = q.getQuaternion();
 
         // assert
-        Assert.assertTrue("Expected string " + str + " to match regex " + pattern,
-                    pattern.matcher(str).matches());
+        Assert.assertEquals(qField.toString(), q.toString());
     }
 
     @Test

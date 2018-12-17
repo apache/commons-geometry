@@ -22,7 +22,6 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
-import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -329,7 +328,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return SimpleTupleFormat.getDefault().format(quat.getW(), quat.getX(), quat.getY(), quat.getZ());
+        return quat.toString();
     }
 
     /** Get a sequence of angles around the given axes that produce a rotation equivalent
