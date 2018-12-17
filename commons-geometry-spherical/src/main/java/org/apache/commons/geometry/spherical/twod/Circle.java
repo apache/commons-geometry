@@ -20,8 +20,8 @@ import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
-import org.apache.commons.geometry.euclidean.threed.Rotation;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
@@ -286,7 +286,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      */
-    public static Transform<S2Point, S1Point> getTransform(final Rotation rotation) {
+    public static Transform<S2Point, S1Point> getTransform(final QuaternionRotation rotation) {
         return new CircleTransform(rotation);
     }
 
@@ -294,28 +294,28 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     private static class CircleTransform implements Transform<S2Point, S1Point> {
 
         /** Underlying rotation. */
-        private final Rotation rotation;
+        private final QuaternionRotation rotation;
 
         /** Build a transform from a {@code Rotation}.
          * @param rotation rotation to use
          */
-        CircleTransform(final Rotation rotation) {
+        CircleTransform(final QuaternionRotation rotation) {
             this.rotation = rotation;
         }
 
         /** {@inheritDoc} */
         @Override
         public S2Point apply(final S2Point point) {
-            return S2Point.ofVector(rotation.applyTo(point.getVector()));
+            return S2Point.ofVector(rotation.apply(point.getVector()));
         }
 
         /** {@inheritDoc} */
         @Override
         public Circle apply(final Hyperplane<S2Point> hyperplane) {
             final Circle circle = (Circle) hyperplane;
-            return new Circle(rotation.applyTo(circle.pole),
-                              rotation.applyTo(circle.x),
-                              rotation.applyTo(circle.y),
+            return new Circle(rotation.apply(circle.pole),
+                              rotation.apply(circle.x),
+                              rotation.apply(circle.y),
                               circle.tolerance);
         }
 

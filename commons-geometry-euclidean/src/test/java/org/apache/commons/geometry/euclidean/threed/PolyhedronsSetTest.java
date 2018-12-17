@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -543,14 +544,14 @@ public class PolyhedronsSetTest {
         Vector3D barycenter = tree.getBarycenter();
         Vector3D s = Vector3D.of(10.2, 4.3, -6.7);
         Vector3D c = Vector3D.of(-0.2, 2.1, -3.2);
-        Rotation r = new Rotation(Vector3D.of(6.2, -4.4, 2.1), 0.12, RotationConvention.VECTOR_OPERATOR);
+        QuaternionRotation r = QuaternionRotation.fromAxisAngle(Vector3D.of(6.2, -4.4, 2.1), 0.12);
 
         tree = tree.rotate(c, r).translate(s);
 
         Vector3D newB =
                 Vector3D.linearCombination(1.0, s,
                          1.0, c,
-                         1.0, r.applyTo(barycenter.subtract(c)));
+                         1.0, r.apply(barycenter.subtract(c)));
         Assert.assertEquals(0.0,
                             newB.subtract(tree.getBarycenter()).getNorm(),
                             TEST_TOLERANCE);
@@ -558,16 +559,16 @@ public class PolyhedronsSetTest {
         final Vector3D[] expectedV = new Vector3D[] {
                 Vector3D.linearCombination(1.0, s,
                          1.0, c,
-                         1.0, r.applyTo(vertex1.subtract(c))),
+                         1.0, r.apply(vertex1.subtract(c))),
                             Vector3D.linearCombination(1.0, s,
                                       1.0, c,
-                                      1.0, r.applyTo(vertex2.subtract(c))),
+                                      1.0, r.apply(vertex2.subtract(c))),
                                         Vector3D.linearCombination(1.0, s,
                                                    1.0, c,
-                                                   1.0, r.applyTo(vertex3.subtract(c))),
+                                                   1.0, r.apply(vertex3.subtract(c))),
                                                     Vector3D.linearCombination(1.0, s,
                                                                 1.0, c,
-                                                                1.0, r.applyTo(vertex4.subtract(c)))
+                                                                1.0, r.apply(vertex4.subtract(c)))
         };
         tree.getTree(true).visit(new BSPTreeVisitor<Vector3D>() {
 

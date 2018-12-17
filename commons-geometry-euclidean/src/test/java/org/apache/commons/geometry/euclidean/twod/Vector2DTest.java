@@ -726,6 +726,21 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testTransform() {
+        // arrange
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
+                .scale(2)
+                .translate(1, 2);
+
+        Vector2D v1 = Vector2D.of(1, 2);
+        Vector2D v2 = Vector2D.of(-4, -5);
+
+        // act/assert
+        checkVector(v1.transform(transform), 3, 6);
+        checkVector(v2.transform(transform), -7, -8);
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Vector2D u = Vector2D.of(1, 1);

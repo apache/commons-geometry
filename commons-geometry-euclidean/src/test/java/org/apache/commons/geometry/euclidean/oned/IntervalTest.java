@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
