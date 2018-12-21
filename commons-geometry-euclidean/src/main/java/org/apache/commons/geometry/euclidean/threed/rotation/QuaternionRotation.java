@@ -118,7 +118,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
      * @return the negation (inverse) of the rotation
      */
     @Override
-    public QuaternionRotation getInverse() {
+    public QuaternionRotation inverse() {
         return new QuaternionRotation(quat.conjugate());
     }
 
@@ -382,7 +382,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // if it were the first rotation in the inverse (which it would be).
 
         final Vector3D vec3 = apply(axis3);
-        final Vector3D invVec1 = getInverse().apply(axis1);
+        final Vector3D invVec1 = inverse().apply(axis1);
 
         final double angle2Sin = vec3.dotProduct(axis2.crossProduct(axis3));
 
@@ -448,7 +448,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         final Vector3D crossAxis = axis1.crossProduct(axis2);
 
         final Vector3D vec1 = apply(axis1);
-        final Vector3D invVec1 = getInverse().apply(axis1);
+        final Vector3D invVec1 = inverse().apply(axis1);
 
         final double angle2Cos = vec1.dotProduct(axis1);
 

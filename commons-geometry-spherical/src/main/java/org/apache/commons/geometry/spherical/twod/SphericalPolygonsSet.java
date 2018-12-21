@@ -508,7 +508,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
-        final double h = enclosing3D.getCenter().getNorm();
+        final double h = enclosing3D.getCenter().norm();
         if (h < getTolerance()) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells

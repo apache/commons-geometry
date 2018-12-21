@@ -142,13 +142,13 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm() {
+    public double norm() {
         return Vectors.norm(x, y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getNormSq() {
+    public double normSq() {
         return Vectors.normSq(x, y);
     }
 
@@ -201,7 +201,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D scalarMultiply(double a) {
+    public Vector2D multiply(double a) {
         return new Vector2D(a * x, a * y);
     }
 
@@ -397,7 +397,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
-        final double baseMagSq = Vectors.checkedNorm(base.getNormSq());
+        final double baseMagSq = Vectors.checkedNorm(base.normSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -550,7 +550,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public double getNorm() {
+        public double norm() {
             return 1;
         }
 
@@ -563,7 +563,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         /** {@inheritDoc} */
         @Override
         public Vector2D withNorm(final double mag) {
-            return scalarMultiply(mag);
+            return multiply(mag);
         }
     }
 }

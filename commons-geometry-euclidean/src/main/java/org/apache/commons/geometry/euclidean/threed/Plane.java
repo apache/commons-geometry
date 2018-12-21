@@ -339,7 +339,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Line intersection(final Plane other) {
         final Vector3D direction = w.crossProduct(other.w);
-        if (direction.getNorm() < tolerance) {
+        if (direction.norm() < tolerance) {
             return null;
         }
         final Vector3D point = intersection(this, other, new Plane(direction, tolerance));

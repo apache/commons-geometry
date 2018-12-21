@@ -443,7 +443,7 @@ public class AffineTransformMatrix3DTest {
         runWithCoordinates((x, y, z) -> {
             Vector3D vec = Vector3D.of(x, y, z);
 
-            Vector3D expectedVec = StandardRotations.PLUS_Z_HALF_PI.apply(vec.scalarMultiply(scaleFactor).subtract(center)).add(center);
+            Vector3D expectedVec = StandardRotations.PLUS_Z_HALF_PI.apply(vec.multiply(scaleFactor).subtract(center)).add(center);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
         });
@@ -641,7 +641,7 @@ public class AffineTransformMatrix3DTest {
 
             Vector3D expectedVec = vec
                     .add(translation1)
-                    .scalarMultiply(scale)
+                    .multiply(scale)
                     .add(translation2);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
@@ -695,7 +695,7 @@ public class AffineTransformMatrix3DTest {
 
             Vector3D expectedVec = vec
                     .add(translation1)
-                    .scalarMultiply(scale)
+                    .multiply(scale)
                     .add(translation2);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
@@ -703,9 +703,9 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_identity() {
+    public void testInverse_identity() {
         // act
-        AffineTransformMatrix3D inverse = AffineTransformMatrix3D.identity().getInverse();
+        AffineTransformMatrix3D inverse = AffineTransformMatrix3D.identity().inverse();
 
         // assert
         double[] expected = {
@@ -717,7 +717,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_multiplyByInverse_producesIdentity() {
+    public void testInverse_multiplyByInverse_producesIdentity() {
         // arrange
         AffineTransformMatrix3D a = AffineTransformMatrix3D.of(
                     1, 3, 7, 8,
@@ -725,7 +725,7 @@ public class AffineTransformMatrix3DTest {
                     5, 6, 10, 11
                 );
 
-        AffineTransformMatrix3D inv = a.getInverse();
+        AffineTransformMatrix3D inv = a.inverse();
 
         // act
         AffineTransformMatrix3D result = inv.multiply(a);
@@ -740,12 +740,12 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_translate() {
+    public void testInverse_translate() {
         // arrange
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(1, -2, 4);
 
         // act
-        AffineTransformMatrix3D inverse = transform.getInverse();
+        AffineTransformMatrix3D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -757,12 +757,12 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_scale() {
+    public void testInverse_scale() {
         // arrange
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createScale(10, -2, 4);
 
         // act
-        AffineTransformMatrix3D inverse = transform.getInverse();
+        AffineTransformMatrix3D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -774,7 +774,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_rotate() {
+    public void testInverse_rotate() {
         // arrange
         Vector3D center = Vector3D.of(1, 2, 3);
         QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
@@ -782,7 +782,7 @@ public class AffineTransformMatrix3DTest {
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(center, rotation);
 
         // act
-        AffineTransformMatrix3D inverse = transform.getInverse();
+        AffineTransformMatrix3D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -794,7 +794,7 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_undoesOriginalTransform() {
+    public void testInverse_undoesOriginalTransform() {
         // arrange
         Vector3D v1 = Vector3D.ZERO;
         Vector3D v2 = Vector3D.PLUS_X;
@@ -812,7 +812,7 @@ public class AffineTransformMatrix3DTest {
                         .rotate(center, rotation)
                         .translate(x / 3, y / 3, z / 3);
 
-            AffineTransformMatrix3D inverse = transform.getInverse();
+            AffineTransformMatrix3D inverse = transform.inverse();
 
             EuclideanTestUtils.assertCoordinatesEqual(v1, inverse.apply(transform.apply(v1)), EPS);
             EuclideanTestUtils.assertCoordinatesEqual(v2, inverse.apply(transform.apply(v2)), EPS);
@@ -822,55 +822,55 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testGetInverse_nonInvertible() {
+    public void testInverse_nonInvertible() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     0, 0, 0, 0,
                     0, 0, 0, 0,
-                    0, 0, 0, 0).getInverse();
+                    0, 0, 0, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is 0.0");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
-                    0, 0, Double.NaN, 0).getInverse();
+                    0, 0, Double.NaN, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, Double.NEGATIVE_INFINITY, 0, 0,
-                    0, 0, 1, 0).getInverse();
+                    0, 0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     Double.POSITIVE_INFINITY, 0, 0, 0,
                     0, 1, 0, 0,
-                    0, 0, 1, 0).getInverse();
+                    0, 0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, Double.NaN,
                     0, 1, 0, 0,
-                    0, 0, 1, 0).getInverse();
+                    0, 0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, Double.POSITIVE_INFINITY,
-                    0, 0, 1, 0).getInverse();
+                    0, 0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
-                    0, 0, 1, Double.NEGATIVE_INFINITY).getInverse();
+                    0, 0, 1, Double.NEGATIVE_INFINITY).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: -Infinity");
     }
 

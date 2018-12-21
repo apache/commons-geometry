@@ -60,7 +60,7 @@ public interface Rotation3D extends Transform<Vector3D, Vector2D> {
     /** Get the inverse rotation.
      * @return the inverse rotation.
      */
-    Rotation3D getInverse();
+    Rotation3D inverse();
 
     /** {@inheritDoc}
      * This operation is not supported. See GEOMETRY-24.

@@ -162,13 +162,13 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm() {
+    public double norm() {
         return Vectors.norm(x, y, z);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getNormSq() {
+    public double normSq() {
         return Vectors.normSq(x, y, z);
     }
 
@@ -238,7 +238,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D scalarMultiply(double a) {
+    public Vector3D multiply(double a) {
         return new Vector3D(a * x, a * y, a * z);
     }
 
@@ -292,9 +292,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
             // the vectors are almost aligned, compute using the sine
             Vector3D cross = crossProduct(v);
             if (dot >= 0) {
-                return Math.asin(cross.getNorm() / normProduct);
+                return Math.asin(cross.norm() / normProduct);
             }
-            return Math.PI - Math.asin(cross.getNorm() / normProduct);
+            return Math.PI - Math.asin(cross.norm() / normProduct);
         }
 
         // the vectors are sufficiently separated to use the cosine
@@ -447,7 +447,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         // directly. This will produce the same error result as checking the actual norm since
         // Math.sqrt(0.0) == 0.0, Math.sqrt(Double.NaN) == Double.NaN and
         // Math.sqrt(Double.POSITIVE_INFINITY) == Double.POSITIVE_INFINITY.
-        final double baseMagSq = Vectors.checkedNorm(base.getNormSq());
+        final double baseMagSq = Vectors.checkedNorm(base.normSq());
 
         final double scale = aDotB / baseMagSq;
 
@@ -607,7 +607,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
-        public double getNorm() {
+        public double norm() {
             return 1;
         }
 
@@ -620,7 +620,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         /** {@inheritDoc} */
         @Override
         public Vector3D withNorm(final double mag) {
-            return scalarMultiply(mag);
+            return multiply(mag);
         }
     }
 }

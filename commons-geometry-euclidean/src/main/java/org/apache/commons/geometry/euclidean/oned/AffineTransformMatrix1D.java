@@ -201,7 +201,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @return inverse transform
      * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
      */
-    public AffineTransformMatrix1D getInverse() {
+    public AffineTransformMatrix1D inverse() {
 
         final double det = this.m00;
 

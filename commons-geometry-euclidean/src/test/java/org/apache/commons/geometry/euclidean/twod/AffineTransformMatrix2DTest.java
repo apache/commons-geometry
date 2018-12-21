@@ -642,7 +642,7 @@ public class AffineTransformMatrix2DTest {
 
             Vector2D expectedVec = vec
                     .add(translation1)
-                    .scalarMultiply(scale)
+                    .multiply(scale)
                     .add(translation2);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
@@ -693,7 +693,7 @@ public class AffineTransformMatrix2DTest {
 
             Vector2D expectedVec = vec
                     .add(translation1)
-                    .scalarMultiply(scale)
+                    .multiply(scale)
                     .add(translation2);
 
             EuclideanTestUtils.assertCoordinatesEqual(expectedVec, transform.apply(vec), EPS);
@@ -701,9 +701,9 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_identity() {
+    public void testInverse_identity() {
         // act
-        AffineTransformMatrix2D inverse = AffineTransformMatrix2D.identity().getInverse();
+        AffineTransformMatrix2D inverse = AffineTransformMatrix2D.identity().inverse();
 
         // assert
         double[] expected = {
@@ -714,14 +714,14 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_multiplyByInverse_producesIdentity() {
+    public void testInverse_multiplyByInverse_producesIdentity() {
         // arrange
         AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
                     1, 3, 7,
                     2, 4, 9
                 );
 
-        AffineTransformMatrix2D inv = a.getInverse();
+        AffineTransformMatrix2D inv = a.inverse();
 
         // act
         AffineTransformMatrix2D result = inv.multiply(a);
@@ -735,12 +735,12 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_translate() {
+    public void testInverse_translate() {
         // arrange
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createTranslation(1, -2);
 
         // act
-        AffineTransformMatrix2D inverse = transform.getInverse();
+        AffineTransformMatrix2D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -751,12 +751,12 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_scale() {
+    public void testInverse_scale() {
         // arrange
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(10, -2);
 
         // act
-        AffineTransformMatrix2D inverse = transform.getInverse();
+        AffineTransformMatrix2D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -767,12 +767,12 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_rotate() {
+    public void testInverse_rotate() {
         // arrange
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
 
         // act
-        AffineTransformMatrix2D inverse = transform.getInverse();
+        AffineTransformMatrix2D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -783,13 +783,13 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_rotate_aroundCenter() {
+    public void testInverse_rotate_aroundCenter() {
         // arrange
         Vector2D center = Vector2D.of(1, 2);
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, Geometry.HALF_PI);
 
         // act
-        AffineTransformMatrix2D inverse = transform.getInverse();
+        AffineTransformMatrix2D inverse = transform.inverse();
 
         // assert
         double[] expected = {
@@ -800,7 +800,7 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_undoesOriginalTransform() {
+    public void testInverse_undoesOriginalTransform() {
         // arrange
         Vector2D v1 = Vector2D.ZERO;
         Vector2D v2 = Vector2D.PLUS_X;
@@ -818,7 +818,7 @@ public class AffineTransformMatrix2DTest {
                         .rotate(x / 4)
                         .rotate(center, y / 2);
 
-            AffineTransformMatrix2D inverse = transform.getInverse();
+            AffineTransformMatrix2D inverse = transform.inverse();
 
             EuclideanTestUtils.assertCoordinatesEqual(v1, inverse.apply(transform.apply(v1)), EPS);
             EuclideanTestUtils.assertCoordinatesEqual(v2, inverse.apply(transform.apply(v2)), EPS);
@@ -828,48 +828,48 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testGetInverse_nonInvertible() {
+    public void testInverse_nonInvertible() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     0, 0, 0,
-                    0, 0, 0).getInverse();
+                    0, 0, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is 0.0");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     1, 0, 0,
-                    0, Double.NaN, 0).getInverse();
+                    0, Double.NaN, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     1, 0, 0,
-                    0, Double.NEGATIVE_INFINITY, 0).getInverse();
+                    0, Double.NEGATIVE_INFINITY, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is -Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     Double.POSITIVE_INFINITY, 0, 0,
-                    0, 1, 0).getInverse();
+                    0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     1, 0, Double.NaN,
-                    0, 1, 0).getInverse();
+                    0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     1, 0, Double.POSITIVE_INFINITY,
-                    0, 1, 0).getInverse();
+                    0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix2D.of(
                     1, 0, Double.NEGATIVE_INFINITY,
-                    0, 1, 0).getInverse();
+                    0, 1, 0).inverse();
         }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: -Infinity");
     }
 

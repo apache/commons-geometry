@@ -60,7 +60,7 @@ public final class Vectors {
      *  or zero
      */
     public static double checkedNorm(final Vector<?> vec) {
-        return checkedNorm(vec.getNorm());
+        return checkedNorm(vec.norm());
     }
 
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector

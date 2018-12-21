@@ -131,27 +131,27 @@ public class Vector2DTest {
     @Test
     public void testNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getNorm(), EPS);
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).norm(), EPS);
 
-        Assert.assertEquals(5.0, Vector2D.of(3, 4).getNorm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(3, -4).getNorm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, 4).getNorm(), EPS);
-        Assert.assertEquals(5.0, Vector2D.of(-3, -4).getNorm(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(3, 4).norm(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(3, -4).norm(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, 4).norm(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-3, -4).norm(), EPS);
 
-        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).getNorm(), EPS);
+        Assert.assertEquals(Math.sqrt(5.0), Vector2D.of(-1, -2).norm(), EPS);
     }
 
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector2D.of(0, 0).getNormSq(), EPS);
+        Assert.assertEquals(0.0, Vector2D.of(0, 0).normSq(), EPS);
 
-        Assert.assertEquals(25.0, Vector2D.of(3, 4).getNormSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(3, -4).getNormSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, 4).getNormSq(), EPS);
-        Assert.assertEquals(25.0, Vector2D.of(-3, -4).getNormSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(3, 4).normSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(3, -4).normSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, 4).normSq(), EPS);
+        Assert.assertEquals(25.0, Vector2D.of(-3, -4).normSq(), EPS);
 
-        Assert.assertEquals(5.0, Vector2D.of(-1, -2).getNormSq(), EPS);
+        Assert.assertEquals(5.0, Vector2D.of(-1, -2).normSq(), EPS);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class Vector2DTest {
 
         for (int i = -10; i <= 10; i++) {
             final double mag = i;
-            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), eps);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), eps);
         }
     }
 
@@ -309,13 +309,13 @@ public class Vector2DTest {
     @Test
     public void testScalarMultiply() {
         // act/assert
-        checkVector(Vector2D.of(1, 2).scalarMultiply(0), 0, 0);
+        checkVector(Vector2D.of(1, 2).multiply(0), 0, 0);
 
-        checkVector(Vector2D.of(1, 2).scalarMultiply(3), 3, 6);
-        checkVector(Vector2D.of(1, 2).scalarMultiply(-3), -3, -6);
+        checkVector(Vector2D.of(1, 2).multiply(3), 3, 6);
+        checkVector(Vector2D.of(1, 2).multiply(-3), -3, -6);
 
-        checkVector(Vector2D.of(2, 3).scalarMultiply(1.5), 3, 4.5);
-        checkVector(Vector2D.of(2, 3).scalarMultiply(-1.5), -3, -4.5);
+        checkVector(Vector2D.of(2, 3).multiply(1.5), 3, 4.5);
+        checkVector(Vector2D.of(2, 3).multiply(-1.5), -3, -4.5);
     }
 
     @Test
@@ -405,7 +405,7 @@ public class Vector2DTest {
             Vector2D ortho = v.orthogonal();
 
             // assert
-            Assert.assertEquals(1.0, ortho.getNorm(), EPS);
+            Assert.assertEquals(1.0, ortho.norm(), EPS);
             Assert.assertEquals(0.0, v.dotProduct(ortho), EPS);
         }
     }

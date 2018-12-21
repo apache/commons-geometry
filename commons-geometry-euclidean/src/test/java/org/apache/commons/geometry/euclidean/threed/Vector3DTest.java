@@ -147,23 +147,23 @@ public class Vector3DTest {
 
         // assert
         checkVector(zero, 0, 0, 0);
-        Assert.assertEquals(0, zero.getNorm(), EPS);
+        Assert.assertEquals(0, zero.norm(), EPS);
     }
 
     @Test
     public void testNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getNorm(), 0);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).getNorm(), EPS);
-        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).getNorm(), EPS);
+        Assert.assertEquals(0.0, Vector3D.ZERO.norm(), 0);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(2, 3, 4).norm(), EPS);
+        Assert.assertEquals(Math.sqrt(29), Vector3D.of(-2, -3, -4).norm(), EPS);
     }
 
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector3D.ZERO.getNormSq(), 0);
-        Assert.assertEquals(29, Vector3D.of(2, 3, 4).getNormSq(), EPS);
-        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).getNormSq(), EPS);
+        Assert.assertEquals(0.0, Vector3D.ZERO.normSq(), 0);
+        Assert.assertEquals(29, Vector3D.of(2, 3, 4).normSq(), EPS);
+        Assert.assertEquals(29, Vector3D.of(-2, -3, -4).normSq(), EPS);
     }
 
     @Test
@@ -199,7 +199,7 @@ public class Vector3DTest {
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).getNorm(), EPS);
+            Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).norm(), EPS);
         }
     }
 
@@ -228,7 +228,7 @@ public class Vector3DTest {
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), EPS);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), EPS);
         }
     }
 
@@ -329,7 +329,7 @@ public class Vector3DTest {
         checkVector(Vector3D.of(2, 2, 2).normalize(), invSqrt3, invSqrt3, invSqrt3);
         checkVector(Vector3D.of(-2, -2, -2).normalize(), -invSqrt3, -invSqrt3, -invSqrt3);
 
-        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().getNorm(), EPS);
+        Assert.assertEquals(1.0, Vector3D.of(5, -4, 2).normalize().norm(), EPS);
     }
 
     @Test
@@ -486,7 +486,7 @@ public class Vector3DTest {
 
         Vector3D  k = v1.normalize();
         Vector3D  i = k.orthogonal();
-        Vector3D v2 = k.scalarMultiply(Math.cos(1.2)).add(i.scalarMultiply(Math.sin(1.2)));
+        Vector3D v2 = k.multiply(Math.cos(1.2)).add(i.multiply(Math.sin(1.2)));
 
         // act/assert
         Assert.assertTrue(Math.abs(v1.angle(v2) - 1.2) < 1.0e-12);
@@ -533,8 +533,8 @@ public class Vector3DTest {
         Vector3D cAccurate = u1.crossProduct(u2);
 
         // assert
-        Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.getNorm());
-        Assert.assertEquals(0.0, u3.distance(cAccurate), 1.0e-30 * cAccurate.getNorm());
+        Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.norm());
+        Assert.assertEquals(0.0, u3.distance(cAccurate), 1.0e-30 * cAccurate.norm());
     }
 
     @Test
@@ -556,7 +556,7 @@ public class Vector3DTest {
             Vector3D cAccurate = Vector3D.of(ux, uy, uz).crossProduct(Vector3D.of(vx, vy, vz));
 
             // assert
-            Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.getNorm());
+            Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.norm());
         }
     }
 
@@ -580,17 +580,17 @@ public class Vector3DTest {
         Vector3D v2 = Vector3D.of(-2, -3, -4);
 
         // act/assert
-        checkVector(v1.scalarMultiply(0), 0, 0, 0);
-        checkVector(v1.scalarMultiply(0.5), 1, 1.5, 2);
-        checkVector(v1.scalarMultiply(1), 2, 3, 4);
-        checkVector(v1.scalarMultiply(2), 4, 6, 8);
-        checkVector(v1.scalarMultiply(-2), -4, -6, -8);
+        checkVector(v1.multiply(0), 0, 0, 0);
+        checkVector(v1.multiply(0.5), 1, 1.5, 2);
+        checkVector(v1.multiply(1), 2, 3, 4);
+        checkVector(v1.multiply(2), 4, 6, 8);
+        checkVector(v1.multiply(-2), -4, -6, -8);
 
-        checkVector(v2.scalarMultiply(0), 0, 0, 0);
-        checkVector(v2.scalarMultiply(0.5), -1, -1.5, -2);
-        checkVector(v2.scalarMultiply(1), -2, -3, -4);
-        checkVector(v2.scalarMultiply(2), -4, -6, -8);
-        checkVector(v2.scalarMultiply(-2), 4, 6, 8);
+        checkVector(v2.multiply(0), 0, 0, 0);
+        checkVector(v2.multiply(0.5), -1, -1.5, -2);
+        checkVector(v2.multiply(1), -2, -3, -4);
+        checkVector(v2.multiply(2), -4, -6, -8);
+        checkVector(v2.multiply(-2), 4, 6, 8);
     }
 
     @Test
@@ -607,7 +607,7 @@ public class Vector3DTest {
         Assert.assertEquals(Math.sqrt(50), v1.distance(v2), EPS);
         Assert.assertEquals(Math.sqrt(50), v2.distance(v1), EPS);
 
-        Assert.assertEquals(v1.subtract(v2).getNorm(), v1.distance(v2), EPS);
+        Assert.assertEquals(v1.subtract(v2).norm(), v1.distance(v2), EPS);
 
         Assert.assertEquals(Math.sqrt(132), v1.distance(v3), EPS);
         Assert.assertEquals(Math.sqrt(132), v3.distance(v1), EPS);
@@ -627,7 +627,7 @@ public class Vector3DTest {
         Assert.assertEquals(50, v1.distanceSq(v2), EPS);
         Assert.assertEquals(50, v2.distanceSq(v1), EPS);
 
-        Assert.assertEquals(v1.subtract(v2).getNormSq(), v1.distanceSq(v2), EPS);
+        Assert.assertEquals(v1.subtract(v2).normSq(), v1.distanceSq(v2), EPS);
 
         Assert.assertEquals(132, v1.distanceSq(v3), EPS);
         Assert.assertEquals(132, v3.distanceSq(v1), EPS);

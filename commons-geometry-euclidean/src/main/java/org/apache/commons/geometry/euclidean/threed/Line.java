@@ -71,7 +71,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public void reset(final Vector3D p1, final Vector3D p2) {
         final Vector3D delta = p2.subtract(p1);
-        final double norm2 = delta.getNormSq();
+        final double norm2 = delta.normSq();
         if (norm2 == 0.0) {
             throw new IllegalArgumentException("Points are equal");
         }
@@ -175,7 +175,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     public double distance(final Vector3D p) {
         final Vector3D d = p.subtract(zero);
         final Vector3D n = Vector3D.linearCombination(1.0, d, -d.dotProduct(direction), direction);
-        return n.getNorm();
+        return n.norm();
     }
 
     /** Compute the shortest distance between the instance and another line.
@@ -185,7 +185,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     public double distance(final Line line) {
 
         final Vector3D normal = direction.crossProduct(line.direction);
-        final double n = normal.getNorm();
+        final double n = normal.norm();
         if (n < Precision.SAFE_MIN) {
             // lines are parallel
             return distance(line.zero);
