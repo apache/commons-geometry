@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -30,9 +29,6 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.threed.rotation.AxisAngleSequence;
-import org.apache.commons.geometry.euclidean.threed.rotation.AxisSequence;
-import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.numbers.quaternion.Quaternion;
@@ -640,7 +636,7 @@ public class QuaternionRotationTest {
     }
 
     @Test
-    public void testSlerp_quaternionsHaveMinusOneDotProduct() {
+    public void testSlerp_inputQuaternionsHaveMinusOneDotProduct() {
         // arrange
         QuaternionRotation q1 = QuaternionRotation.of(1, 0, 0, 1); // pi/2 around +z
         QuaternionRotation q2 = QuaternionRotation.of(-1, 0, 0, -1); // 3pi/2 around -z
@@ -656,7 +652,7 @@ public class QuaternionRotationTest {
     }
 
     @Test
-    public void testSlerp_quaternionIsNormalizedForAllT() {
+    public void testSlerp_outputQuaternionIsNormalizedForAllT() {
         // arrange
         QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.25 * Geometry.PI);
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
@@ -670,11 +666,7 @@ public class QuaternionRotationTest {
             QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(t));
 
             // assert
-            Assert.assertEquals(1.0, Vectors.norm(result.getQuaternion().getX(),
-                                                  result.getQuaternion().getY(),
-                                                  result.getQuaternion().getZ(),
-                                                  result.getQuaternion().getW()),
-                                EPS);
+            Assert.assertEquals(1.0, result.getQuaternion().norm(), EPS);
         }
     }
 
@@ -1336,7 +1328,7 @@ public class QuaternionRotationTest {
             EuclideanTestUtils.assertCoordinatesEqual(transformedZ.normalize(),
                     transformedX.normalize().crossProduct(transformedY.normalize()), EPS);
 
-            Assert.assertEquals(1.0, Vectors.norm(q.getQuaternion().getX(), q.getQuaternion().getY(), q.getQuaternion().getZ(), q.getQuaternion().getW()), EPS);
+            Assert.assertEquals(1.0, q.getQuaternion().norm(), EPS);
         });
     }
 

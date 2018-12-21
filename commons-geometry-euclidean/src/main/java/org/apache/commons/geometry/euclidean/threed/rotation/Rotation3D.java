@@ -27,6 +27,15 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 public interface Rotation3D extends Transform<Vector3D, Vector2D> {
 
+    /** Apply this rotation to the given argument. Since rotations do
+     * not affect vector magnitudes, this method can be applied to
+     * both points and vectors.
+     * @param vec the point or vector to rotate
+     * @return a new instance representing the rotated point or vector
+     */
+    @Override
+    Vector3D apply(Vector3D vec);
+
     /** Get the axis of rotation as a normalized {@link Vector3D}.
      *
      * <p>All 3-dimensional rotations and sequences of rotations can be reduced

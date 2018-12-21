@@ -99,21 +99,6 @@ public final class Vectors {
         return Math.sqrt(normSq(x1, x2, x3));
     }
 
-    /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector
-     * with the given components. This corresponds to the common notion of vector magnitude
-     * or length and is defined as the square root of the sum of the squares of all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @param x3 third vector component
-     * @param x4 fourth vector component
-     * @return L<sub>2</sub> norm for the vector with the given components
-     * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
-     */
-    public static double norm(final double x1, final double x2, final double x3, final double x4) {
-        return Math.sqrt(normSq(x1, x2, x3, x4));
-    }
-
-
     /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
      * for the vector with the given components. This is equal to the sum of the squares of
      * all vector components.
@@ -148,19 +133,5 @@ public final class Vectors {
      */
     public static double normSq(final double x1, final double x2, final double x3) {
         return (x1 * x1) + (x2 * x2) + (x3 * x3);
-    }
-
-    /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
-     * for the vector with the given components. This is equal to the sum of the squares of
-     * all vector components.
-     * @param x1 first vector component
-     * @param x2 second vector component
-     * @param x3 third vector component
-     * @param x4 fourth vector component
-     * @return square of the L<sub>2</sub> norm for the vector with the given components
-     * @see #norm(double, double, double, double)
-     */
-    public static double normSq(final double x1, final double x2, final double x3, final double x4) {
-        return (x1 * x1) + (x2 * x2) + (x3 * x3) + (x4 * x4);
     }
 }
