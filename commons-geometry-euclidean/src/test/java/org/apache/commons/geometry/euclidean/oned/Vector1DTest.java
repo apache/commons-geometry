@@ -305,11 +305,11 @@ public class Vector1DTest {
         Vector1D v3 = Vector1D.of(3);
 
         // act/assert
-        Assert.assertEquals(-6.0, v1.dotProduct(v2), TEST_TOLERANCE);
-        Assert.assertEquals(-6.0, v2.dotProduct(v1), TEST_TOLERANCE);
+        Assert.assertEquals(-6.0, v1.dot(v2), TEST_TOLERANCE);
+        Assert.assertEquals(-6.0, v2.dot(v1), TEST_TOLERANCE);
 
-        Assert.assertEquals(6.0, v1.dotProduct(v3), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, v3.dotProduct(v1), TEST_TOLERANCE);
+        Assert.assertEquals(6.0, v1.dot(v3), TEST_TOLERANCE);
+        Assert.assertEquals(6.0, v3.dot(v1), TEST_TOLERANCE);
     }
 
     @Test

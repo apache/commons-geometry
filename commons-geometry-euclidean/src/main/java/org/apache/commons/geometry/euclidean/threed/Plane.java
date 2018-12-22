@@ -70,7 +70,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
         throws IllegalArgumentException {
         setNormal(normal);
         this.tolerance = tolerance;
-        this.originOffset = -p.dotProduct(w);
+        this.originOffset = -p.dot(w);
         setFrame();
     }
 
@@ -85,7 +85,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3, final double tolerance)
         throws IllegalArgumentException {
-        this(p1, p2.subtract(p1).crossProduct(p3.subtract(p1)), tolerance);
+        this(p1, p2.subtract(p1).cross(p3.subtract(p1)), tolerance);
     }
 
     /** Copy constructor.
@@ -121,7 +121,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public void reset(final Vector3D p, final Vector3D normal) {
         setNormal(normal);
-        originOffset = -p.dotProduct(w);
+        originOffset = -p.dot(w);
         setFrame();
     }
 
@@ -154,7 +154,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     private void setFrame() {
         origin = Vector3D.linearCombination(-originOffset, w);
         u = w.orthogonal();
-        v = w.crossProduct(u);
+        v = w.cross(u);
     }
 
     /** Get the origin point of the plane frame.
@@ -242,7 +242,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     @Override
     public Vector2D toSubSpace(final Vector3D point) {
         Vector3D vec = point;
-        return Vector2D.of(vec.dotProduct(u), vec.dotProduct(v));
+        return Vector2D.of(vec.dot(u), vec.dot(v));
     }
 
     /** Transform an in-plane point into a 3D space point.
@@ -323,12 +323,12 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Vector3D intersection(final Line line) {
         final Vector3D direction = line.getDirection();
-        final double   dot       = w.dotProduct(direction);
+        final double   dot       = w.dot(direction);
         if (Math.abs(dot) < 1.0e-10) {
             return null;
         }
         final Vector3D point = line.toSpace(Vector1D.ZERO);
-        final double   k     = -(originOffset + w.dotProduct(point)) / dot;
+        final double   k     = -(originOffset + w.dot(point)) / dot;
         return Vector3D.linearCombination(1.0, point, k, direction);
     }
 
@@ -338,7 +338,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      * other plane (really a {@link Line Line} instance)
      */
     public Line intersection(final Plane other) {
-        final Vector3D direction = w.crossProduct(other.w);
+        final Vector3D direction = w.cross(other.w);
         if (direction.norm() < tolerance) {
             return null;
         }
@@ -437,7 +437,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     @Override
     public double getOffset(final Vector3D point) {
-        return point.dotProduct(w) + originOffset;
+        return point.dot(w) + originOffset;
     }
 
     /** Check if the instance has the same orientation as another hyperplane.
@@ -447,7 +447,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     @Override
     public boolean sameOrientationAs(final Hyperplane<Vector3D> other) {
-        return (((Plane) other).w).dotProduct(w) > 0.0;
+        return (((Plane) other).w).dot(w) > 0.0;
     }
 
 }

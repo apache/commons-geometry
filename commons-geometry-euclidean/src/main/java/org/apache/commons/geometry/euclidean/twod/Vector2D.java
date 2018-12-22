@@ -219,7 +219,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public double dotProduct(Vector2D v) {
+    public double dot(Vector2D v) {
         return LinearCombination.value(x, v.x, y, v.y);
     }
 
@@ -234,7 +234,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     public double angle(Vector2D v) {
         double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
-        double dot = dotProduct(v);
+        double dot = dot(v);
         double threshold = normProduct * 0.9999;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
@@ -301,7 +301,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      *
      * @see <a href="http://mathworld.wolfram.com/CrossProduct.html">Cross product (Mathworld)</a>
      */
-    public double crossProduct(final Vector2D p1, final Vector2D p2) {
+    public double cross(final Vector2D p1, final Vector2D p2) {
         final double x1 = p2.x - p1.x;
         final double y1 = y - p1.y;
         final double x2 = x - p1.x;
@@ -389,7 +389,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
     private Vector2D getComponent(Vector2D base, boolean reject, DoubleFunction2N<Vector2D> factory) {
-        final double aDotB = dotProduct(base);
+        final double aDotB = dot(base);
 
         // We need to check the norm value here to ensure that it's legal. However, we don't
         // want to incur the cost or floating point error of getting the actual norm and then

@@ -197,7 +197,7 @@ public class QuaternionRotationTest {
             Assert.assertTrue(angle <= Geometry.PI);
 
             double expected = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(theta);
-            if (PLUS_DIAGONAL.dotProduct(rot.getAxis()) < 0) {
+            if (PLUS_DIAGONAL.dot(rot.getAxis()) < 0) {
                 // if the axis ended up being flipped, then negate the expected angle
                 expected *= -1;
             }
@@ -1116,8 +1116,8 @@ public class QuaternionRotationTest {
 
         // assert
         Vector3D axis = q.getAxis();
-        Assert.assertEquals(0.0, axis.dotProduct(u1), EPS);
-        Assert.assertEquals(0.0, axis.dotProduct(u2), EPS);
+        Assert.assertEquals(0.0, axis.dot(u1), EPS);
+        Assert.assertEquals(0.0, axis.dot(u2), EPS);
         Assert.assertEquals(Geometry.PI, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -2, 0), q.apply(u1), EPS);
@@ -1320,12 +1320,12 @@ public class QuaternionRotationTest {
             Assert.assertEquals(1.0, transformedY.norm(), EPS);
             Assert.assertEquals(1.0, transformedZ.norm(), EPS);
 
-            Assert.assertEquals(0.0, transformedX.dotProduct(transformedY), EPS);
-            Assert.assertEquals(0.0, transformedX.dotProduct(transformedZ), EPS);
-            Assert.assertEquals(0.0, transformedY.dotProduct(transformedZ), EPS);
+            Assert.assertEquals(0.0, transformedX.dot(transformedY), EPS);
+            Assert.assertEquals(0.0, transformedX.dot(transformedZ), EPS);
+            Assert.assertEquals(0.0, transformedY.dot(transformedZ), EPS);
 
             EuclideanTestUtils.assertCoordinatesEqual(transformedZ.normalize(),
-                    transformedX.normalize().crossProduct(transformedY.normalize()), EPS);
+                    transformedX.normalize().cross(transformedY.normalize()), EPS);
 
             Assert.assertEquals(1.0, q.getQuaternion().norm(), EPS);
         });

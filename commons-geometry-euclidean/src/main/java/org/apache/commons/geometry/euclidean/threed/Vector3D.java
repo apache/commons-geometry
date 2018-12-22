@@ -271,7 +271,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @see LinearCombination#value(double, double, double, double, double, double)
      */
     @Override
-    public double dotProduct(Vector3D v) {
+    public double dot(Vector3D v) {
         return LinearCombination.value(x, v.x, y, v.y, z, v.z);
     }
 
@@ -286,11 +286,11 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     public double angle(Vector3D v) {
         double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
-        double dot = dotProduct(v);
+        double dot = dot(v);
         double threshold = normProduct * 0.99;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
-            Vector3D cross = crossProduct(v);
+            Vector3D cross = cross(v);
             if (dot >= 0) {
                 return Math.asin(cross.norm() / normProduct);
             }
@@ -354,7 +354,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param v other vector
      * @return the cross product this ^ v as a new Vector3D
      */
-    public Vector3D crossProduct(final Vector3D v) {
+    public Vector3D cross(final Vector3D v) {
         return new Vector3D(LinearCombination.value(y, v.z, -z, v.y),
                             LinearCombination.value(z, v.x, -x, v.z),
                             LinearCombination.value(x, v.y, -y, v.x));
@@ -439,7 +439,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
     private Vector3D getComponent(Vector3D base, boolean reject, DoubleFunction3N<Vector3D> factory) {
-        final double aDotB = dotProduct(base);
+        final double aDotB = dot(base);
 
         // We need to check the norm value here to ensure that it's legal. However, we don't
         // want to incur the cost or floating point error of getting the actual norm and then

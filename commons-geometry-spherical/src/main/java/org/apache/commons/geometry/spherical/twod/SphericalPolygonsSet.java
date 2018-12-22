@@ -157,7 +157,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
                                                           final double outsideRadius, final int n) {
         final S2Point[] array = new S2Point[n];
-        final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.crossProduct(meridian),
+        final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.cross(meridian),
                                          outsideRadius);
         array[0] = S2Point.ofVector(r0.apply(center));
 

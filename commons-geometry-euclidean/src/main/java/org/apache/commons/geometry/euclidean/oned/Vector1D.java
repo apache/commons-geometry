@@ -188,7 +188,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double dotProduct(Vector1D v) {
+    public double dot(Vector1D v) {
         return x * v.x;
     }
 

@@ -450,7 +450,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
                 // the volume here is actually 3x the actual pyramid volume; we'll apply
                 // the final scaling all at once at the end
-                double scaledVolume = area * facetBarycenter.dotProduct(plane.getNormal());
+                double scaledVolume = area * facetBarycenter.dot(plane.getNormal());
                 if (reversed) {
                     scaledVolume = -scaledVolume;
                 }

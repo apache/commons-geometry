@@ -360,20 +360,20 @@ public class Vector2DTest {
         Vector2D v3 = Vector2D.of(-1, 0);
 
         // act/assert
-        Assert.assertEquals(2, v1.dotProduct(v1), EPS);
-        Assert.assertEquals(41, v2.dotProduct(v2), EPS);
-        Assert.assertEquals(1, v3.dotProduct(v3), EPS);
+        Assert.assertEquals(2, v1.dot(v1), EPS);
+        Assert.assertEquals(41, v2.dot(v2), EPS);
+        Assert.assertEquals(1, v3.dot(v3), EPS);
 
-        Assert.assertEquals(9, v1.dotProduct(v2), EPS);
-        Assert.assertEquals(9, v2.dotProduct(v1), EPS);
+        Assert.assertEquals(9, v1.dot(v2), EPS);
+        Assert.assertEquals(9, v2.dot(v1), EPS);
 
-        Assert.assertEquals(-1, v1.dotProduct(v3), EPS);
-        Assert.assertEquals(-1, v3.dotProduct(v1), EPS);
+        Assert.assertEquals(-1, v1.dot(v3), EPS);
+        Assert.assertEquals(-1, v3.dot(v1), EPS);
 
-        Assert.assertEquals(1, Vector2D.PLUS_X.dotProduct(Vector2D.PLUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.PLUS_X.dotProduct(Vector2D.PLUS_Y), EPS);
-        Assert.assertEquals(-1, Vector2D.PLUS_X.dotProduct(Vector2D.MINUS_X), EPS);
-        Assert.assertEquals(0, Vector2D.PLUS_X.dotProduct(Vector2D.MINUS_Y), EPS);
+        Assert.assertEquals(1, Vector2D.PLUS_X.dot(Vector2D.PLUS_X), EPS);
+        Assert.assertEquals(0, Vector2D.PLUS_X.dot(Vector2D.PLUS_Y), EPS);
+        Assert.assertEquals(-1, Vector2D.PLUS_X.dot(Vector2D.MINUS_X), EPS);
+        Assert.assertEquals(0, Vector2D.PLUS_X.dot(Vector2D.MINUS_Y), EPS);
     }
 
     @Test
@@ -406,7 +406,7 @@ public class Vector2DTest {
 
             // assert
             Assert.assertEquals(1.0, ortho.norm(), EPS);
-            Assert.assertEquals(0.0, v.dotProduct(ortho), EPS);
+            Assert.assertEquals(0.0, v.dot(ortho), EPS);
         }
     }
 
@@ -523,9 +523,9 @@ public class Vector2DTest {
         Vector2D p5 = Vector2D.of(2, 1);
 
         // act/assert
-        Assert.assertEquals(0.0, p3.crossProduct(p1, p2), EPS);
-        Assert.assertEquals(1.0, p4.crossProduct(p1, p2), EPS);
-        Assert.assertEquals(-1.0, p5.crossProduct(p1, p2), EPS);
+        Assert.assertEquals(0.0, p3.cross(p1, p2), EPS);
+        Assert.assertEquals(1.0, p4.cross(p1, p2), EPS);
+        Assert.assertEquals(-1.0, p5.cross(p1, p2), EPS);
     }
 
     @Test

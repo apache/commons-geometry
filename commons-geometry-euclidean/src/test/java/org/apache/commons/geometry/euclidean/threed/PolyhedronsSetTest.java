@@ -910,7 +910,7 @@ public class PolyhedronsSetTest {
             SubHyperplane<Vector3D> plane = polyset.firstIntersection(origin, line);
             if (plane != null) {
                 Vector3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
-                double dotProduct = direction.dotProduct(intersectionPoint.subtract(origin));
+                double dotProduct = direction.dot(intersectionPoint.subtract(origin));
                 Assert.assertTrue(dotProduct > 0);
             }
         }

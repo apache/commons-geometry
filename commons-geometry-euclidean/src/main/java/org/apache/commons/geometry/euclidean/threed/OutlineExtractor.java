@@ -49,7 +49,7 @@ public class OutlineExtractor {
     public OutlineExtractor(final Vector3D u, final Vector3D v) {
         this.u = u;
         this.v = v;
-        this.w = u.crossProduct(v);
+        this.w = u.cross(v);
     }
 
     /** Extract the outline of a polyhedrons set.
@@ -168,7 +168,7 @@ public class OutlineExtractor {
                 (AbstractSubHyperplane<Vector3D, Vector2D>) facet;
             final Plane plane    = (Plane) facet.getHyperplane();
 
-            final double scal = plane.getNormal().dotProduct(w);
+            final double scal = plane.getNormal().dot(w);
             if (Math.abs(scal) > 1.0e-3) {
                 Vector2D[][] vertices =
                     ((PolygonsSet) absFacet.getRemainingRegion()).getVertices();
@@ -205,13 +205,13 @@ public class OutlineExtractor {
                     int previous         = closed ? (loop.length - 1) : 1;
                     Vector3D previous3D  = plane.toSpace(loop[previous]);
                     int current          = (previous + 1) % loop.length;
-                    Vector2D pPoint       = Vector2D.of(previous3D.dotProduct(u),
-                                                         previous3D.dotProduct(v));
+                    Vector2D pPoint       = Vector2D.of(previous3D.dot(u),
+                                                         previous3D.dot(v));
                     while (current < loop.length) {
 
                         final Vector3D current3D = plane.toSpace(loop[current]);
-                        final Vector2D  cPoint    = Vector2D.of(current3D.dotProduct(u),
-                                                                 current3D.dotProduct(v));
+                        final Vector2D  cPoint    = Vector2D.of(current3D.dot(u),
+                                                                 current3D.dot(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
                             new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, tolerance);
                         SubHyperplane<Vector2D> edge = line.wholeHyperplane();

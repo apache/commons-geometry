@@ -365,10 +365,10 @@ public class Vector3DTest {
         Vector3D v4 = Vector3D.of(4.2, 0.1, -1.8);
 
         // act/assert
-        Assert.assertEquals(0.0, v1.dotProduct(v1.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v2.dotProduct(v2.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v3.dotProduct(v3.orthogonal()), EPS);
-        Assert.assertEquals(0.0, v4.dotProduct(v4.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v1.dot(v1.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v2.dot(v2.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v3.dot(v3.orthogonal()), EPS);
+        Assert.assertEquals(0.0, v4.dot(v4.orthogonal()), EPS);
     }
 
     @Test
@@ -495,16 +495,16 @@ public class Vector3DTest {
     @Test
     public void testCrossProduct() {
         // act/assert
-        checkVector(Vector3D.PLUS_X.crossProduct(Vector3D.PLUS_Y), 0, 0, 1);
-        checkVector(Vector3D.PLUS_X.crossProduct(Vector3D.MINUS_Y), 0, 0, -1);
+        checkVector(Vector3D.PLUS_X.cross(Vector3D.PLUS_Y), 0, 0, 1);
+        checkVector(Vector3D.PLUS_X.cross(Vector3D.MINUS_Y), 0, 0, -1);
 
-        checkVector(Vector3D.MINUS_X.crossProduct(Vector3D.MINUS_Y), 0, 0, 1);
-        checkVector(Vector3D.MINUS_X.crossProduct(Vector3D.PLUS_Y), 0, 0, -1);
+        checkVector(Vector3D.MINUS_X.cross(Vector3D.MINUS_Y), 0, 0, 1);
+        checkVector(Vector3D.MINUS_X.cross(Vector3D.PLUS_Y), 0, 0, -1);
 
-        checkVector(Vector3D.of(2, 1, -4).crossProduct(Vector3D.of(3, 1, -1)), 3, -10, -1);
+        checkVector(Vector3D.of(2, 1, -4).cross(Vector3D.of(3, 1, -1)), 3, -10, -1);
 
         double invSqrt6 = 1 / Math.sqrt(6);
-        checkVector(Vector3D.of(1, 1, 1).crossProduct(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
+        checkVector(Vector3D.of(1, 1, 1).cross(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
     }
 
     @Test
@@ -530,7 +530,7 @@ public class Vector3DTest {
         Vector3D cNaive = Vector3D.of(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
                                        u1.getZ() * u2.getX() - u1.getX() * u2.getZ(),
                                        u1.getX() * u2.getY() - u1.getY() * u2.getX());
-        Vector3D cAccurate = u1.crossProduct(u2);
+        Vector3D cAccurate = u1.cross(u2);
 
         // assert
         Assert.assertTrue(u3.distance(cNaive) > 2.9 * u3.norm());
@@ -553,7 +553,7 @@ public class Vector3DTest {
 
             // act
             Vector3D cNaive = Vector3D.of(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx);
-            Vector3D cAccurate = Vector3D.of(ux, uy, uz).crossProduct(Vector3D.of(vx, vy, vz));
+            Vector3D cAccurate = Vector3D.of(ux, uy, uz).cross(Vector3D.of(vx, vy, vz));
 
             // assert
             Assert.assertEquals(0.0, cAccurate.distance(cNaive), 6.0e-15 * cAccurate.norm());
@@ -565,12 +565,12 @@ public class Vector3DTest {
         // act/assert
         Vector3D v1 = Vector3D.of(9070467121.0, 4535233560.0, 1);
         Vector3D v2 = Vector3D.of(9070467123.0, 4535233561.0, 1);
-        checkVector(v1.crossProduct(v2), -1, 2, 1);
+        checkVector(v1.cross(v2), -1, 2, 1);
 
         double scale    = Math.scalb(1.0, 100);
         Vector3D big1   = Vector3D.linearCombination(scale, v1);
         Vector3D small2 = Vector3D.linearCombination(1 / scale, v2);
-        checkVector(big1.crossProduct(small2), -1, 2, 1);
+        checkVector(big1.cross(small2), -1, 2, 1);
     }
 
     @Test
@@ -641,13 +641,13 @@ public class Vector3DTest {
         Vector3D v3 = Vector3D.of(7, 8, 9);
 
         // act/assert
-        Assert.assertEquals(14, v1.dotProduct(v1), EPS);
+        Assert.assertEquals(14, v1.dot(v1), EPS);
 
-        Assert.assertEquals(-32, v1.dotProduct(v2), EPS);
-        Assert.assertEquals(-32, v2.dotProduct(v1), EPS);
+        Assert.assertEquals(-32, v1.dot(v2), EPS);
+        Assert.assertEquals(-32, v2.dot(v1), EPS);
 
-        Assert.assertEquals(18, v1.dotProduct(v3), EPS);
-        Assert.assertEquals(18, v3.dotProduct(v1), EPS);
+        Assert.assertEquals(18, v1.dot(v3), EPS);
+        Assert.assertEquals(18, v3.dot(v1), EPS);
     }
 
     @Test
@@ -666,7 +666,7 @@ public class Vector3DTest {
 
         // act
         double sNaive = u1.getX() * u2.getX() + u1.getY() * u2.getY() + u1.getZ() * u2.getZ();
-        double sAccurate = u1.dotProduct(u2);
+        double sAccurate = u1.dot(u2);
 
         // assert
         Assert.assertEquals(0.0, sNaive, 1.0e-30);
@@ -689,7 +689,7 @@ public class Vector3DTest {
 
             // act
             double sNaive = ux * vx + uy * vy + uz * vz;
-            double sAccurate = Vector3D.of(ux, uy, uz).dotProduct(Vector3D.of(vx, vy, vz));
+            double sAccurate = Vector3D.of(ux, uy, uz).dot(Vector3D.of(vx, vy, vz));
 
             // assert
             Assert.assertEquals(sNaive, sAccurate, 2.5e-16 * sAccurate);

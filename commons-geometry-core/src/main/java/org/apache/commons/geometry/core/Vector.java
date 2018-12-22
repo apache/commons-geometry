@@ -124,9 +124,9 @@ public interface Vector<V extends Vector<V>> extends Spatial {
 
     /** Compute the dot-product of the instance and another vector.
      * @param v second vector
-     * @return the dot product this &middot; v
+     * @return the dot product (this &middot; v)
      */
-    double dotProduct(V v);
+    double dot(V v);
 
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
