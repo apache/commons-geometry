@@ -105,17 +105,17 @@ public class Vector1DTest {
     @Test
     public void testNorm() {
         // act/assert
-        Assert.assertEquals(0.0, Vector1D.ZERO.getNorm(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(3).getNorm(), TEST_TOLERANCE);
-        Assert.assertEquals(3.0, Vector1D.of(-3).getNorm(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, Vector1D.ZERO.norm(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(3).norm(), TEST_TOLERANCE);
+        Assert.assertEquals(3.0, Vector1D.of(-3).norm(), TEST_TOLERANCE);
     }
 
     @Test
     public void testNormSq() {
         // act/assert
-        Assert.assertEquals(0.0, Vector1D.of(0).getNormSq(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, Vector1D.of(3).getNormSq(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, Vector1D.of(-3).getNormSq(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, Vector1D.of(0).normSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(3).normSq(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, Vector1D.of(-3).normSq(), TEST_TOLERANCE);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class Vector1DTest {
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
-            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).getNorm(), TEST_TOLERANCE);
+            Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), TEST_TOLERANCE);
         }
     }
 
@@ -262,11 +262,11 @@ public class Vector1DTest {
     @Test
     public void testScalarMultiply() {
         // act/assert
-        checkVector(Vector1D.of(1).scalarMultiply(3), 3);
-        checkVector(Vector1D.of(1).scalarMultiply(-3), -3);
+        checkVector(Vector1D.of(1).multiply(3), 3);
+        checkVector(Vector1D.of(1).multiply(-3), -3);
 
-        checkVector(Vector1D.of(1.5).scalarMultiply(7), 10.5);
-        checkVector(Vector1D.of(-1.5).scalarMultiply(7), -10.5);
+        checkVector(Vector1D.of(1.5).multiply(7), 10.5);
+        checkVector(Vector1D.of(-1.5).multiply(7), -10.5);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class Vector1DTest {
 
         Assert.assertEquals(5.0, v1.distance(v2), TEST_TOLERANCE);
         Assert.assertEquals(5.0, v2.distance(v1), TEST_TOLERANCE);
-        Assert.assertEquals(v1.subtract(v2).getNorm(), v1.distance(v2), TEST_TOLERANCE);
+        Assert.assertEquals(v1.subtract(v2).norm(), v1.distance(v2), TEST_TOLERANCE);
 
         Assert.assertEquals(0.0, Vector1D.of(-1).distance(Vector1D.of(-1)), TEST_TOLERANCE);
     }
@@ -305,11 +305,11 @@ public class Vector1DTest {
         Vector1D v3 = Vector1D.of(3);
 
         // act/assert
-        Assert.assertEquals(-6.0, v1.dotProduct(v2), TEST_TOLERANCE);
-        Assert.assertEquals(-6.0, v2.dotProduct(v1), TEST_TOLERANCE);
+        Assert.assertEquals(-6.0, v1.dot(v2), TEST_TOLERANCE);
+        Assert.assertEquals(-6.0, v2.dot(v1), TEST_TOLERANCE);
 
-        Assert.assertEquals(6.0, v1.dotProduct(v3), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, v3.dotProduct(v1), TEST_TOLERANCE);
+        Assert.assertEquals(6.0, v1.dot(v3), TEST_TOLERANCE);
+        Assert.assertEquals(6.0, v3.dot(v1), TEST_TOLERANCE);
     }
 
     @Test

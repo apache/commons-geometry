@@ -53,7 +53,7 @@ public class CircleTest {
         Assert.assertEquals(0.5 * Math.PI, circle.getXAxis().angle(circle.getPole()), 1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, circle.getPole().angle(circle.getYAxis()), 1.0e-10);
         Assert.assertEquals(0.0,
-                            circle.getPole().distance(circle.getXAxis().crossProduct(circle.getYAxis())),
+                            circle.getPole().distance(circle.getXAxis().cross(circle.getYAxis())),
                             1.0e-10);
     }
 
@@ -67,7 +67,7 @@ public class CircleTest {
         Assert.assertEquals(0.5 * Math.PI, reversed.getXAxis().angle(reversed.getPole()), 1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, reversed.getPole().angle(reversed.getYAxis()), 1.0e-10);
         Assert.assertEquals(0.0,
-                            reversed.getPole().distance(reversed.getXAxis().crossProduct(reversed.getYAxis())),
+                            reversed.getPole().distance(reversed.getXAxis().cross(reversed.getYAxis())),
                             1.0e-10);
 
         Assert.assertEquals(0, circle.getXAxis().angle(reversed.getXAxis()), 1.0e-10);
@@ -84,8 +84,8 @@ public class CircleTest {
         Vector3D p = Vector3D.of(1, 2, -4);
         Vector3D samePhase = circle.getPointAt(circle.getPhase(p));
         Assert.assertEquals(0.0,
-                            circle.getPole().crossProduct(p).angle(
-                                           circle.getPole().crossProduct(samePhase)),
+                            circle.getPole().cross(p).angle(
+                                           circle.getPole().cross(samePhase)),
                             1.0e-10);
         Assert.assertEquals(0.5 * Math.PI, circle.getPole().angle(samePhase), 1.0e-10);
         Assert.assertEquals(circle.getPhase(p), circle.getPhase(samePhase), 1.0e-10);

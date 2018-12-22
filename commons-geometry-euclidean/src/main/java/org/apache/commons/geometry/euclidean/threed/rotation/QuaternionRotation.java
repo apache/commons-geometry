@@ -118,7 +118,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
      * @return the negation (inverse) of the rotation
      */
     @Override
-    public QuaternionRotation getInverse() {
+    public QuaternionRotation inverse() {
         return new QuaternionRotation(quat.conjugate());
     }
 
@@ -382,17 +382,17 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // if it were the first rotation in the inverse (which it would be).
 
         final Vector3D vec3 = apply(axis3);
-        final Vector3D invVec1 = getInverse().apply(axis1);
+        final Vector3D invVec1 = inverse().apply(axis1);
 
-        final double angle2Sin = vec3.dotProduct(axis2.crossProduct(axis3));
+        final double angle2Sin = vec3.dot(axis2.cross(axis3));
 
         if (angle2Sin < -AXIS_ANGLE_SINGULARITY_THRESHOLD ||
                 angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD) {
 
             final Vector3D vec2 = apply(axis2);
 
-            final double angle1TanY = vec2.dotProduct(axis1.crossProduct(axis2));
-            final double angle1TanX = vec2.dotProduct(axis2);
+            final double angle1TanY = vec2.dot(axis1.cross(axis2));
+            final double angle1TanX = vec2.dot(axis2);
 
             final double angle2 = angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD ? Geometry.HALF_PI : Geometry.MINUS_HALF_PI;
 
@@ -403,13 +403,13 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             };
         }
 
-        final Vector3D  crossAxis13 = axis1.crossProduct(axis3);
+        final Vector3D  crossAxis13 = axis1.cross(axis3);
 
-        final double angle1TanY = vec3.dotProduct(crossAxis13);
-        final double angle1TanX = vec3.dotProduct(axis3);
+        final double angle1TanY = vec3.dot(crossAxis13);
+        final double angle1TanX = vec3.dot(axis3);
 
-        final double angle3TanY = invVec1.dotProduct(crossAxis13);
-        final double angle3TanX = invVec1.dotProduct(axis1);
+        final double angle3TanY = invVec1.dot(crossAxis13);
+        final double angle3TanX = invVec1.dot(axis1);
 
         return new double[] {
             Math.atan2(angle1TanY, angle1TanX),
@@ -445,20 +445,20 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // Use the same overall approach as with the Tait-Bryan angles: get the first two angles by looking
         // at the transformed rotation axes and the third by using the inverse.
 
-        final Vector3D crossAxis = axis1.crossProduct(axis2);
+        final Vector3D crossAxis = axis1.cross(axis2);
 
         final Vector3D vec1 = apply(axis1);
-        final Vector3D invVec1 = getInverse().apply(axis1);
+        final Vector3D invVec1 = inverse().apply(axis1);
 
-        final double angle2Cos = vec1.dotProduct(axis1);
+        final double angle2Cos = vec1.dot(axis1);
 
         if (angle2Cos < -AXIS_ANGLE_SINGULARITY_THRESHOLD ||
                 angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD) {
 
             final Vector3D vec2 = apply(axis2);
 
-            final double angle1TanY = vec2.dotProduct(crossAxis);
-            final double angle1TanX = vec2.dotProduct(axis2);
+            final double angle1TanY = vec2.dot(crossAxis);
+            final double angle1TanX = vec2.dot(axis2);
 
             final double angle2 = angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD ? Geometry.ZERO_PI : Geometry.PI;
 
@@ -469,11 +469,11 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             };
         }
 
-        final double angle1TanY = vec1.dotProduct(axis2);
-        final double angle1TanX = -vec1.dotProduct(crossAxis);
+        final double angle1TanY = vec1.dot(axis2);
+        final double angle1TanX = -vec1.dot(crossAxis);
 
-        final double angle3TanY = invVec1.dotProduct(axis2);
-        final double angle3TanX = invVec1.dotProduct(crossAxis);
+        final double angle3TanY = invVec1.dot(axis2);
+        final double angle3TanX = invVec1.dot(crossAxis);
 
         return new double[] {
             Math.atan2(angle1TanY, angle1TanX),
@@ -599,7 +599,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
     public static QuaternionRotation createVectorRotation(final Vector3D u, final Vector3D v) {
 
         double normProduct  = Vectors.checkedNorm(u) * Vectors.checkedNorm(v);
-        double dot = u.dotProduct(v);
+        double dot = u.dot(v);
 
         if (dot < ANTIPARALLEL_DOT_THRESHOLD * normProduct) {
             // Special case where u1 = -u2:
@@ -634,7 +634,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         //
         // This can be simplified to the expression below.
         final double vectorialScaleFactor = 1.0 / (2.0 * w * normProduct);
-        final Vector3D axis = u.crossProduct(v);
+        final Vector3D axis = u.cross(v);
 
         return of(w,
                   vectorialScaleFactor * axis.getX(),
@@ -666,11 +666,11 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // calculate orthonormalized bases
         final Vector3D a = u1.normalize();
         final Vector3D b = a.orthogonal(u2);
-        final Vector3D c = a.crossProduct(b);
+        final Vector3D c = a.cross(b);
 
         final Vector3D d = v1.normalize();
         final Vector3D e = d.orthogonal(v2);
-        final Vector3D f = d.crossProduct(e);
+        final Vector3D f = d.cross(e);
 
         // create an orthogonal rotation matrix representing the change of basis; this matrix will
         // be the multiplication of the matrix composed of the column vectors d, e, f and the

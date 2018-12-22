@@ -115,13 +115,13 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getNorm() {
+    public double norm() {
         return Vectors.norm(x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getNormSq() {
+    public double normSq() {
         return Vectors.normSq(x);
     }
 
@@ -170,7 +170,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D scalarMultiply(double a) {
+    public Vector1D multiply(double a) {
         return new Vector1D(a * x);
     }
 
@@ -188,7 +188,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double dotProduct(Vector1D v) {
+    public double dot(Vector1D v) {
         return x * v.x;
     }
 
@@ -396,7 +396,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        public double getNorm() {
+        public double norm() {
             return 1;
         }
 
@@ -409,7 +409,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /** {@inheritDoc} */
         @Override
         public Vector1D withNorm(final double mag) {
-            return scalarMultiply(mag);
+            return multiply(mag);
         }
     }
 }

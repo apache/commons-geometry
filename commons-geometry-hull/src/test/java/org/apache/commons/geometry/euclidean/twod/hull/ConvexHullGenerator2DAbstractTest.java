@@ -396,8 +396,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             Vector2D d1 = p2.subtract(p1);
             Vector2D d2 = p3.subtract(p2);
 
-            Assert.assertTrue(d1.getNorm() > 1e-10);
-            Assert.assertTrue(d2.getNorm() > 1e-10);
+            Assert.assertTrue(d1.norm() > 1e-10);
+            Assert.assertTrue(d2.norm() > 1e-10);
 
             final double cross = LinearCombination.value(d1.getX(), d2.getY(), -d1.getY(), d2.getX());
             final int cmp = Precision.compareTo(cross, 0.0, tolerance);

@@ -45,14 +45,14 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @see <a href="http://mathworld.wolfram.com/L2-Norm.html">L2 Norm</a>
      * @return L<sub>2</sub> norm for the vector
      */
-    double getNorm();
+    double norm();
 
     /** Get the square of the L<sub>2</sub> norm (also known as the Euclidean norm)
      * for the vector. This is equal to the sum of the squares of all vector components.
-     * @see #getNorm()
+     * @see #norm()
      * @return square of the L<sub>2</sub> norm for the vector
      */
-    double getNormSq();
+    double normSq();
 
     /** Returns a vector with the same direction but with the given
      * norm. This is equivalent to calling {@code vec.normalize().scalarMultiply(mag)}
@@ -104,7 +104,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * @param a scalar
      * @return a new vector
      */
-    V scalarMultiply(double a);
+    V multiply(double a);
 
     /** Compute the distance between the instance and another vector.
      * @param v second vector
@@ -116,7 +116,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
      * <p>Calling this method is equivalent to calling:
      * <code>q.subtract(p).getNormSq()</code> except that no intermediate
      * vector is built</p>
-     * @see #getNormSq()
+     * @see #normSq()
      * @param v second vector
      * @return the square of the distance between the instance and p
      */
@@ -124,9 +124,9 @@ public interface Vector<V extends Vector<V>> extends Spatial {
 
     /** Compute the dot-product of the instance and another vector.
      * @param v second vector
-     * @return the dot product this &middot; v
+     * @return the dot product (this &middot; v)
      */
-    double dotProduct(V v);
+    double dot(V v);
 
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector

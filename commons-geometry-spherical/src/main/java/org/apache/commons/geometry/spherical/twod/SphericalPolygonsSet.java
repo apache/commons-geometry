@@ -157,7 +157,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
                                                           final double outsideRadius, final int n) {
         final S2Point[] array = new S2Point[n];
-        final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.crossProduct(meridian),
+        final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.cross(meridian),
                                          outsideRadius);
         array[0] = S2Point.ofVector(r0.apply(center));
 
@@ -508,7 +508,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
-        final double h = enclosing3D.getCenter().getNorm();
+        final double h = enclosing3D.getCenter().norm();
         if (h < getTolerance()) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells

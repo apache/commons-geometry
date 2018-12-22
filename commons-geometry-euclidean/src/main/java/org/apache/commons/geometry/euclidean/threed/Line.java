@@ -71,12 +71,12 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public void reset(final Vector3D p1, final Vector3D p2) {
         final Vector3D delta = p2.subtract(p1);
-        final double norm2 = delta.getNormSq();
+        final double norm2 = delta.normSq();
         if (norm2 == 0.0) {
             throw new IllegalArgumentException("Points are equal");
         }
         this.direction = Vector3D.linearCombination(1.0 / Math.sqrt(norm2), delta);
-        this.zero = Vector3D.linearCombination(1.0, p1, -p1.dotProduct(delta) / norm2, delta);
+        this.zero = Vector3D.linearCombination(1.0, p1, -p1.dot(delta) / norm2, delta);
     }
 
     /** Get the tolerance below which points are considered identical.
@@ -117,7 +117,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      * @return abscissa of the point
      */
     public double getAbscissa(final Vector3D point) {
-        return point.subtract(zero).dotProduct(direction);
+        return point.subtract(zero).dot(direction);
     }
 
     /** Get one point from the line.
@@ -174,8 +174,8 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public double distance(final Vector3D p) {
         final Vector3D d = p.subtract(zero);
-        final Vector3D n = Vector3D.linearCombination(1.0, d, -d.dotProduct(direction), direction);
-        return n.getNorm();
+        final Vector3D n = Vector3D.linearCombination(1.0, d, -d.dot(direction), direction);
+        return n.norm();
     }
 
     /** Compute the shortest distance between the instance and another line.
@@ -184,15 +184,15 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public double distance(final Line line) {
 
-        final Vector3D normal = direction.crossProduct(line.direction);
-        final double n = normal.getNorm();
+        final Vector3D normal = direction.cross(line.direction);
+        final double n = normal.norm();
         if (n < Precision.SAFE_MIN) {
             // lines are parallel
             return distance(line.zero);
         }
 
         // signed separation of the two parallel planes that contains the lines
-        final double offset = line.zero.subtract(zero).dotProduct(normal) / n;
+        final double offset = line.zero.subtract(zero).dot(normal) / n;
 
         return Math.abs(offset);
 
@@ -204,7 +204,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public Vector3D closestPoint(final Line line) {
 
-        final double cos = direction.dotProduct(line.direction);
+        final double cos = direction.dot(line.direction);
         final double n = 1 - cos * cos;
         if (n < Precision.EPSILON) {
             // the lines are parallel
@@ -212,8 +212,8 @@ public class Line implements Embedding<Vector3D, Vector1D> {
         }
 
         final Vector3D delta0 = line.zero.subtract(zero);
-        final double a        = delta0.dotProduct(direction);
-        final double b        = delta0.dotProduct(line.direction);
+        final double a        = delta0.dot(direction);
+        final double b        = delta0.dot(line.direction);
 
         return Vector3D.linearCombination(1, zero, (a - b * cos) / n, direction);
 

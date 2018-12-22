@@ -68,7 +68,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * @param tolerance tolerance below which close sub-arcs are merged together
      */
     public Circle(final S2Point first, final S2Point second, final double tolerance) {
-        reset(first.getVector().crossProduct(second.getVector()));
+        reset(first.getVector().cross(second.getVector()));
         this.tolerance = tolerance;
     }
 
@@ -109,7 +109,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     public void reset(final Vector3D newPole) {
         this.pole = newPole.normalize();
         this.x    = newPole.orthogonal();
-        this.y    = newPole.crossProduct(x).normalize();
+        this.y    = newPole.cross(x).normalize();
     }
 
     /** Revert the instance.
@@ -160,7 +160,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * @see #toSubSpace(Point)
      */
     public double getPhase(final Vector3D direction) {
-        return Math.PI + Math.atan2(-direction.dotProduct(y), -direction.dotProduct(x));
+        return Math.PI + Math.atan2(-direction.dot(y), -direction.dot(x));
     }
 
     /** {@inheritDoc}
@@ -275,7 +275,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     @Override
     public boolean sameOrientationAs(final Hyperplane<S2Point> other) {
         final Circle otherC = (Circle) other;
-        return pole.dotProduct(otherC.pole) >= 0.0;
+        return pole.dot(otherC.pole) >= 0.0;
     }
 
     /** Get a {@link org.apache.commons.geometry.core.partitioning.Transform

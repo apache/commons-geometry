@@ -316,7 +316,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      * @return inverse transform
      * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
      */
-    public AffineTransformMatrix3D getInverse() {
+    public AffineTransformMatrix3D inverse() {
 
         // Our full matrix is 4x4 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 0 1].

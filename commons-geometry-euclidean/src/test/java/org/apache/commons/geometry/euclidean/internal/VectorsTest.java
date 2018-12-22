@@ -23,7 +23,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class VectorsTest {
 
     private static final double EPS = Math.ulp(1d);
@@ -124,18 +123,6 @@ public class VectorsTest {
     }
 
     @Test
-    public void testNorm_fourD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.norm(0.0, 0.0, 0.0, 0.0), EPS);
-
-        Assert.assertEquals(Math.sqrt(30.0), Vectors.norm(1.0, 2.0, 3.0, 4.0), EPS);
-        Assert.assertEquals(Math.sqrt(174.0), Vectors.norm(5.0, 6.0, 7.0, -8.0), EPS);
-        Assert.assertEquals(Math.sqrt(446.0), Vectors.norm(9.0, 10.0, -11.0, 12.0), EPS);
-        Assert.assertEquals(Math.sqrt(846.0), Vectors.norm(13.0, -14.0, 15.0, 16.0), EPS);
-        Assert.assertEquals(Math.sqrt(1374.0), Vectors.norm(-17.0, 18.0, 19.0, 20.0), EPS);
-    }
-
-    @Test
     public void testNormSq_oneD() {
         // act/assert
         Assert.assertEquals(0.0, Vectors.normSq(0.0), EPS);
@@ -171,17 +158,5 @@ public class VectorsTest {
         Assert.assertEquals(869.0, Vectors.normSq(-16.0, 17.0, -18.0), EPS);
         Assert.assertEquals(1202.0, Vectors.normSq(-19.0, -20.0, 21.0), EPS);
         Assert.assertEquals(1589.0, Vectors.normSq(-22.0, -23.0, -24.0), EPS);
-    }
-
-    @Test
-    public void testNormSq_fourD() {
-        // act/assert
-        Assert.assertEquals(0.0, Vectors.normSq(0.0, 0.0, 0.0, 0.0), EPS);
-
-        Assert.assertEquals(30.0, Vectors.normSq(1.0, 2.0, 3.0, 4.0), EPS);
-        Assert.assertEquals(174.0, Vectors.normSq(5.0, 6.0, 7.0, -8.0), EPS);
-        Assert.assertEquals(446.0, Vectors.normSq(9.0, 10.0, -11.0, 12.0), EPS);
-        Assert.assertEquals(846.0, Vectors.normSq(13.0, -14.0, 15.0, 16.0), EPS);
-        Assert.assertEquals(1374.0, Vectors.normSq(-17.0, 18.0, 19.0, 20.0), EPS);
     }
 }

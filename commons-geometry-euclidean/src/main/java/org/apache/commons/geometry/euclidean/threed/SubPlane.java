@@ -74,8 +74,8 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
         // the hyperplanes do intersect
         Vector2D p = thisPlane.toSubSpace(inter.toSpace(Vector1D.ZERO));
         Vector2D q = thisPlane.toSubSpace(inter.toSpace(Vector1D.ONE));
-        Vector3D crossP = inter.getDirection().crossProduct(thisPlane.getNormal());
-        if (crossP.dotProduct(otherPlane.getNormal()) < 0) {
+        Vector3D crossP = inter.getDirection().cross(thisPlane.getNormal());
+        if (crossP.dot(otherPlane.getNormal()) < 0) {
             final Vector2D tmp = p;
             p           = q;
             q           = tmp;

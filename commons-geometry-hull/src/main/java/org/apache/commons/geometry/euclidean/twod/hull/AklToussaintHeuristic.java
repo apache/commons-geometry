@@ -129,7 +129,7 @@ public final class AklToussaintHeuristic {
         }
 
         // get the location of the point relative to the first two vertices
-        final double last = v0.crossProduct(v1, v2);
+        final double last = v0.cross(v1, v2);
         final int size = quadrilateralPoints.size();
         // loop through the rest of the vertices
         for (int i = 1; i < size; i++) {
@@ -143,7 +143,7 @@ public final class AklToussaintHeuristic {
             // do side of line test: multiply the last location with this location
             // if they are the same sign then the operation will yield a positive result
             // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-            if (last * v0.crossProduct(v1, v2) < 0) {
+            if (last * v0.cross(v1, v2) < 0) {
                 return false;
             }
         }

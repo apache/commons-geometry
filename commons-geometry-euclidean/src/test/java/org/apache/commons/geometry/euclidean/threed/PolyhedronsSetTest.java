@@ -553,7 +553,7 @@ public class PolyhedronsSetTest {
                          1.0, c,
                          1.0, r.apply(barycenter.subtract(c)));
         Assert.assertEquals(0.0,
-                            newB.subtract(tree.getBarycenter()).getNorm(),
+                            newB.subtract(tree.getBarycenter()).norm(),
                             TEST_TOLERANCE);
 
         final Vector3D[] expectedV = new Vector3D[] {
@@ -603,7 +603,7 @@ public class PolyhedronsSetTest {
                     Vector3D v = plane.toSpace(vertices[0][i]);
                     double d = Double.POSITIVE_INFINITY;
                     for (int k = 0; k < expectedV.length; ++k) {
-                        d = Math.min(d, v.subtract(expectedV[k]).getNorm());
+                        d = Math.min(d, v.subtract(expectedV[k]).norm());
                     }
                     Assert.assertEquals(0, d, TEST_TOLERANCE);
                 }
@@ -910,7 +910,7 @@ public class PolyhedronsSetTest {
             SubHyperplane<Vector3D> plane = polyset.firstIntersection(origin, line);
             if (plane != null) {
                 Vector3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
-                double dotProduct = direction.dotProduct(intersectionPoint.subtract(origin));
+                double dotProduct = direction.dot(intersectionPoint.subtract(origin));
                 Assert.assertTrue(dotProduct > 0);
             }
         }
@@ -1459,7 +1459,7 @@ public class PolyhedronsSetTest {
                 y = Math.sin(hAngle) * stackRadius;
 
                 norm = Vector3D.of(x, y, stackHeight).normalize();
-                pt = center.add(norm.scalarMultiply(adjustedRadius));
+                pt = center.add(norm.multiply(adjustedRadius));
 
                 planes.add(new Plane(pt, norm, TEST_TOLERANCE));
             }
