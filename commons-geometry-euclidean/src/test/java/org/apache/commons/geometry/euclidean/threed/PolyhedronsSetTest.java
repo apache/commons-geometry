@@ -16,6 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +33,7 @@ import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.Region.Location;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -46,6 +50,7 @@ import org.junit.Test;
 public class PolyhedronsSetTest {
 
     private static final double TEST_TOLERANCE = 1e-10;
+
 
     @Test
     public void testWholeSpace() {
@@ -67,6 +72,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
+   
 
     @Test
     public void testEmptyRegion() {
@@ -1324,6 +1330,60 @@ public class PolyhedronsSetTest {
                 Vector3D.of(1, 0.5, 0.5), -0.5);
         checkProjectToBoundary(polySet, Vector3D.of(2, 2, 2),
                 Vector3D.of(1, 1, 1), -Math.sqrt(3));
+    }
+
+    @Test
+    public void testIntersectCubeDiagonally() {
+    	// setting up a cube. edge length =  1
+    	List< Vector3D > verts = new ArrayList<>();
+    	verts.add( Vector3D.of( 1, 0, 0 ) );
+        verts.add( Vector3D.of( 1, 1, 0 ) );
+        verts.add( Vector3D.of( 1, 1, 1 ) );
+        verts.add( Vector3D.of( 1, 0, 1 ) );
+        verts.add( Vector3D.of( 0, 0, 0 ) );
+        verts.add( Vector3D.of( 0, 1, 0 ) );
+        verts.add( Vector3D.of( 0, 1, 1 ) );
+        verts.add( Vector3D.of( 0, 0, 1 ) );
+
+        int[][] faces = new int[6][];
+        faces[0] = new int[] { 0, 4, 5, 1 }; // bottom
+        faces[1] = new int[] { 3, 2, 6, 7 }; // top
+        faces[2] = new int[] { 1, 5, 6, 2 }; // right
+        faces[3] = new int[] { 5, 4, 7, 6 }; // back
+        faces[4] = new int[] { 0, 3, 7, 4 }; // left
+        faces[5] = new int[] { 0, 1, 2, 3 }; // front
+        
+        PolyhedronsSet cube = new PolyhedronsSet( verts, Arrays.asList( faces ), TEST_TOLERANCE );
+        
+        // setting up a line which intersects the cube diagonally
+        // Did not use start (0,0,0), since documentation states for
+        // PolyhedronsSets.firstIntersection(....) states:
+        // ' @return the first sub-hyperplane crossed by the line AFTER the given point '
+        Vector3D start = Vector3D.of( -1, -1, -1 );
+        Vector3D end = Vector3D.of( 1, 1, 1 );
+        Line line = new Line( start, end, TEST_TOLERANCE );
+
+        Vector3D origin = Vector3D.of( 0.0, 0.0, 0.0 );
+        assertEquals(Location.BOUNDARY, cube.checkPoint(origin));
+        assertEquals(Location.OUTSIDE, cube.checkPoint(start));
+        assertEquals(Location.BOUNDARY, cube.checkPoint(end));
+        
+        SubHyperplane<Vector3D> r = cube.firstIntersection( start, line );
+        assertTrue( r != null );
+        Plane plane = (Plane) r.getHyperplane();
+        Vector3D firstIntersection = plane.intersection( line );
+        assertVectorEquals( origin, firstIntersection );
+    }
+    
+    /**
+     * Asserts equality of two Vector3D (using a delta)
+     * @param lhs left-hand side Vector3D
+     * @param rhs right-hand side Vector3D
+     */
+    private void assertVectorEquals( Vector3D lhs,Vector3D rhs ) {
+    	assertEquals( lhs.getX(), rhs.getX(), TEST_TOLERANCE );
+    	assertEquals( lhs.getY(), rhs.getY(), TEST_TOLERANCE );
+    	assertEquals( lhs.getZ(), rhs.getZ(), TEST_TOLERANCE );
     }
 
     private void checkProjectToBoundary(PolyhedronsSet poly, Vector3D toProject,
