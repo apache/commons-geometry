@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.commons.geometry.euclidean.threed;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -890,6 +889,43 @@ public class PolyhedronsSetTest {
         assertSubPlaneNormal(Vector3D.of(0, 0, -1), polySet.firstIntersection(Vector3D.of(0, 0, 0.9), zMinus));
         Assert.assertEquals(null, polySet.firstIntersection(Vector3D.of(0, 0, -1.1), zMinus));
     }
+
+    // issue GEOMETRY-38
+    @Test
+    public void testFirstIntersection_linesPassThroughBoundaries() {
+        // arrange
+        Vector3D lowerCorner = Vector3D.ZERO;
+        Vector3D upperCorner = Vector3D.of(1, 1, 1);
+        Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
+
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+
+        Line upDiagonal = new Line(lowerCorner, upperCorner, TEST_TOLERANCE);
+        Line downDiagonal = upDiagonal.revert();
+
+        // act/assert
+        SubPlane upFromOutsideResult = (SubPlane) polySet.firstIntersection(Vector3D.of(-1, -1, -1), upDiagonal);
+        Assert.assertNotNull(upFromOutsideResult);
+        EuclideanTestUtils.assertCoordinatesEqual(lowerCorner,
+                ((Plane) upFromOutsideResult.getHyperplane()).intersection(upDiagonal), TEST_TOLERANCE);
+
+        SubPlane upFromCenterResult = (SubPlane) polySet.firstIntersection(center, upDiagonal);
+        Assert.assertNotNull(upFromCenterResult);
+        EuclideanTestUtils.assertCoordinatesEqual(upperCorner,
+                ((Plane) upFromCenterResult.getHyperplane()).intersection(upDiagonal), TEST_TOLERANCE);
+
+        SubPlane downFromOutsideResult = (SubPlane) polySet.firstIntersection(Vector3D.of(2, 2, 2), downDiagonal);
+        Assert.assertNotNull(downFromOutsideResult);
+        EuclideanTestUtils.assertCoordinatesEqual(upperCorner,
+                ((Plane) downFromOutsideResult.getHyperplane()).intersection(downDiagonal), TEST_TOLERANCE);
+
+        SubPlane downFromCenterResult = (SubPlane) polySet.firstIntersection(center, downDiagonal);
+        Assert.assertNotNull(downFromCenterResult);
+        EuclideanTestUtils.assertCoordinatesEqual(lowerCorner,
+                ((Plane) downFromCenterResult.getHyperplane()).intersection(downDiagonal), TEST_TOLERANCE);
+    }
+
 
     // Issue 1211
     // See https://issues.apache.org/jira/browse/MATH-1211
