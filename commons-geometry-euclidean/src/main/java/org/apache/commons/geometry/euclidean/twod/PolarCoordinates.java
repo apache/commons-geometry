@@ -230,14 +230,8 @@ public final class PolarCoordinates implements Spatial, Serializable {
      * @return equivalent azimuth value in the range {@code [0, 2pi)}.
      */
     public static double normalizeAzimuth(double azimuth) {
-        if (Double.isFinite(azimuth) && (azimuth < 0.0 || azimuth >= Geometry.TWO_PI)) {
+        if (Double.isFinite(azimuth)) {
             azimuth = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
-
-            // azimuth is now in the range [0, 2pi] but we want it to be in the range
-            // [0, 2pi) in order to have completely unique coordinates
-            if (azimuth >= Geometry.TWO_PI) {
-                azimuth -= Geometry.TWO_PI;
-            }
         }
 
         return azimuth;
