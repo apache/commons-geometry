@@ -548,11 +548,11 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         final BoundaryAttribute<Vector3D> attribute =
             (BoundaryAttribute<Vector3D>) node.getAttribute();
         if ((attribute.getPlusOutside() != null) &&
-            (((SubPlane) attribute.getPlusOutside()).getRemainingRegion().checkPoint(Vector2D) == Location.INSIDE)) {
+            (((SubPlane) attribute.getPlusOutside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
             return attribute.getPlusOutside();
         }
         if ((attribute.getPlusInside() != null) &&
-            (((SubPlane) attribute.getPlusInside()).getRemainingRegion().checkPoint(Vector2D) == Location.INSIDE)) {
+            (((SubPlane) attribute.getPlusInside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
             return attribute.getPlusInside();
         }
         return null;
