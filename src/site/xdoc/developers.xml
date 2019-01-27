@@ -45,11 +45,11 @@
             <li>
               Download the Commons Geometry source code.  Follow the instructions
               under the heading "Repository Checkout" on the
-              <a href="https://git-wip-us.apache.org/">Git at the ASF page</a>.
+              <a href="https://gitbox.apache.org/">Git at the ASF page</a>.
               The git url for the current development sources of Commons Geometry
-              is <source>http://git-wip-us.apache.org/repos/asf/commons-rng.git</source>
+              is <source>http://gitbox.apache.org/repos/asf/commons-geometry.git</source>
               for anonymous read-only access and
-              <source>https://apacheid@git-wip-us.apache.org/repos/asf/commons-rng.git</source>
+              <source>https://apacheid@gitbox.apache.org/repos/asf/commons-geometry.git</source>
               (where apacheid should be replaced by each committer Apache ID) for committers
               read-write access.
             </li>
@@ -66,11 +66,6 @@
               "site" goal), you may need to increase the default memory allocation
               (e.g. <code>export MAVEN_OPTS=-Xmx512m</code>) before launching
               Maven.
-            </li>
-            <li>
-              Have a look at the new features that users and developers have requested
-              on the <a href="http://wiki.apache.org/commons/RngWishList">
-              Geometry Wish List Wiki Page.</a>
             </li>
             <li>
               Be sure to join the commons-dev and commons-user 
@@ -90,7 +85,7 @@
               for submitting bugs and search the database to
               determine if an issue exists or has already been dealt with.        
               <p>
-                See the <a href="http://commons.apache.org/rng/issue-tracking.html">
+                See the <a href="http://commons.apache.org/geometry/issue-tracking.html">
                 Commons Geometry Issue Tracking Page</a>
                 for more information on how to
                 search for or submit bugs or enhancement requests.
@@ -128,13 +123,10 @@
               useful</li>
             </ul></li>
             <li>Assuming a generally favorable response to the idea on commons-dev,
-            the next step is to add an entry to the 
-            <a href="http://wiki.apache.org/commons/RngWishList">Geometry Wish
-            List</a> corresponding to the idea.  Include a reference to the
-            discussion thread. </li>
-            <li>Create a JIRA ticket using the the feature title as the short
+            the next step is to file a report on the issue-tracking system (JIRA):
+            Create a JIRA ticket using the the feature title as the short
             description. Incorporate feedback from the initial posting in the
-            description. Add a reference to the JIRA ticket to the WishList entry.
+            description. Add a reference to the discussion thread.
             </li>
             <li>Submit code as attachments to the JIRA ticket.  Please use one
             ticket for each feature, adding multiple patches to the ticket
@@ -190,7 +182,7 @@
             terms used in component documentation <i>must</i> be provided.
           </li>
           <li>
-            Commons rng javadoc generation supports embedded LaTeX formulas via the
+            Commons Geometry javadoc generation supports embedded LaTeX formulas via the
             <a href="http://www.mathjax.org">MathJax</a> javascript display engine.
             To embed mathematical expressions formatted in LaTeX in javadoc, simply surround
             the expression to be formatted with either <code>\(</code> and <code>\)</code>
