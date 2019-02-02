@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents sub-hyperplane for {@link OrientedPoint}.
  * <p>An hyperplane in 1D is a simple point, its orientation being a
@@ -61,12 +62,14 @@ public class SubOrientedPoint extends AbstractSubHyperplane<Vector1D, Vector1D> 
         final OrientedPoint thisHyperplane = (OrientedPoint) getHyperplane();
         final double global = hyperplane.getOffset(thisHyperplane.getLocation());
 
-        // use the tolerance value from our parent hyperplane to determine equality
-        final double tolerance = thisHyperplane.getTolerance();
+        // use the precision context from our parent hyperplane to determine equality
+        final DoublePrecisionContext precision = thisHyperplane.getPrecision();
 
-        if (global < -tolerance) {
+        int comparison = precision.compare(global, 0.0);
+
+        if (comparison < 0) {
             return new SplitSubHyperplane<Vector1D>(null, this);
-        } else if (global > tolerance) {
+        } else if (comparison > 0) {
             return new SplitSubHyperplane<Vector1D>(this, null);
         } else {
             return new SplitSubHyperplane<Vector1D>(null, null);

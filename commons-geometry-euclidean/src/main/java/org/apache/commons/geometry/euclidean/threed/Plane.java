@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -44,18 +45,18 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     /** Third vector of the plane frame (plane normal). */
     private Vector3D w;
 
-    /** Tolerance below which points are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Build a plane normal to a given direction and containing the origin.
      * @param normal normal direction to the plane
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public Plane(final Vector3D normal, final double tolerance)
+    public Plane(final Vector3D normal, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
         setNormal(normal);
-        this.tolerance = tolerance;
+        this.precision = precision;
         originOffset = 0;
         setFrame();
     }
@@ -63,13 +64,13 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     /** Build a plane from a point and a normal.
      * @param p point belonging to the plane
      * @param normal normal direction to the plane
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the normal norm is too small
      */
-    public Plane(final Vector3D p, final Vector3D normal, final double tolerance)
+    public Plane(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
         setNormal(normal);
-        this.tolerance = tolerance;
+        this.precision = precision;
         this.originOffset = -p.dot(w);
         setFrame();
     }
@@ -80,12 +81,12 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      * @param p1 first point belonging to the plane
      * @param p2 second point belonging to the plane
      * @param p3 third point belonging to the plane
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points do not constitute a plane
      */
-    public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3, final double tolerance)
+    public Plane(final Vector3D p1, final Vector3D p2, final Vector3D p3, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        this(p1, p2.subtract(p1).cross(p3.subtract(p1)), tolerance);
+        this(p1, p2.subtract(p1).cross(p3.subtract(p1)), precision);
     }
 
     /** Copy constructor.
@@ -100,7 +101,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
         u            = plane.u;
         v            = plane.v;
         w            = plane.w;
-        tolerance    = plane.tolerance;
+        precision    = plane.precision;
     }
 
     /** Copy the instance.
@@ -211,8 +212,8 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
 
     /** {@inheritDoc} */
     @Override
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Revert the plane.
@@ -275,8 +276,9 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public boolean isSimilarTo(final Plane plane) {
         final double angle = w.angle(plane.w);
-        return ((angle < 1.0e-10) && (Math.abs(originOffset - plane.originOffset) < tolerance)) ||
-               (((angle + 1.0e-10) > Math.PI) && (Math.abs(originOffset + plane.originOffset) < tolerance));
+
+        return ((precision.isZero(angle)) && precision.areEqual(originOffset, plane.originOffset)) ||
+                ((precision.areEqual(angle, Math.PI)) && precision.areEqual(originOffset, -plane.originOffset));
     }
 
     /** Rotate the plane around the specified point.
@@ -289,7 +291,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
 
         final Vector3D delta = origin.subtract(center);
         final Plane plane = new Plane(center.add(rotation.apply(delta)),
-                                      rotation.apply(w), tolerance);
+                                      rotation.apply(w), precision);
 
         // make sure the frame is transformed as desired
         plane.u = rotation.apply(u);
@@ -306,7 +308,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Plane translate(final Vector3D translation) {
 
-        final Plane plane = new Plane(origin.add(translation), w, tolerance);
+        final Plane plane = new Plane(origin.add(translation), w, precision);
 
         // make sure the frame is transformed as desired
         plane.u = u;
@@ -324,7 +326,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     public Vector3D intersection(final Line line) {
         final Vector3D direction = line.getDirection();
         final double   dot       = w.dot(direction);
-        if (Math.abs(dot) < 1.0e-10) {
+        if (precision.isZero(dot)) {
             return null;
         }
         final Vector3D point = line.toSpace(Vector1D.ZERO);
@@ -339,11 +341,11 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Line intersection(final Plane other) {
         final Vector3D direction = w.cross(other.w);
-        if (direction.norm() < tolerance) {
+        if (precision.isZero(direction.norm())) {
             return null;
         }
-        final Vector3D point = intersection(this, other, new Plane(direction, tolerance));
-        return new Line(point, point.add(direction), tolerance);
+        final Vector3D point = intersection(this, other, new Plane(direction, precision));
+        return new Line(point, point.add(direction), precision);
     }
 
     /** Get the intersection point of three planes.
@@ -393,7 +395,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     @Override
     public SubPlane wholeHyperplane() {
-        return new SubPlane(this, new PolygonsSet(tolerance));
+        return new SubPlane(this, new PolygonsSet(precision));
     }
 
     /** Build a region covering the whole space.
@@ -402,7 +404,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     @Override
     public PolyhedronsSet wholeSpace() {
-        return new PolyhedronsSet(tolerance);
+        return new PolyhedronsSet(precision);
     }
 
     /** Check if the instance contains a point.
@@ -410,7 +412,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      * @return true if p belongs to the plane
      */
     public boolean contains(final Vector3D p) {
-        return Math.abs(getOffset(p)) < tolerance;
+        return precision.isZero(getOffset(p));
     }
 
     /** Get the offset (oriented distance) of a parallel plane.

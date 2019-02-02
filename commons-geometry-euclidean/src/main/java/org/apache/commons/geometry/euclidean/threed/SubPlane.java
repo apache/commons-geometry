@@ -21,9 +21,10 @@ import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a sub-hyperplane for {@link Plane}.
  */
@@ -57,14 +58,16 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
         final Plane otherPlane = (Plane) hyperplane;
         final Plane thisPlane  = (Plane) getHyperplane();
         final Line  inter      = otherPlane.intersection(thisPlane);
-        final double tolerance = thisPlane.getTolerance();
+        final DoublePrecisionContext precision = thisPlane.getPrecision();
 
         if (inter == null) {
             // the hyperplanes are parallel
             final double global = otherPlane.getOffset(thisPlane);
-            if (global < -tolerance) {
+            final int comparison = precision.compare(global, 0.0);
+
+            if (comparison < 0) {
                 return new SplitSubHyperplane<>(null, this);
-            } else if (global > tolerance) {
+            } else if (comparison > 0) {
                 return new SplitSubHyperplane<>(this, null);
             } else {
                 return new SplitSubHyperplane<>(null, null);
@@ -81,9 +84,9 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
             q           = tmp;
         }
         final SubHyperplane<Vector2D> l2DMinus =
-            new org.apache.commons.geometry.euclidean.twod.Line(p, q, tolerance).wholeHyperplane();
+            new org.apache.commons.geometry.euclidean.twod.Line(p, q, precision).wholeHyperplane();
         final SubHyperplane<Vector2D> l2DPlus =
-            new org.apache.commons.geometry.euclidean.twod.Line(q, p, tolerance).wholeHyperplane();
+            new org.apache.commons.geometry.euclidean.twod.Line(q, p, precision).wholeHyperplane();
 
         final BSPTree<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
         final BSPTree<Vector2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
@@ -96,8 +99,8 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
                                                    new BSPTree<>(l2DMinus, new BSPTree<Vector2D>(Boolean.FALSE),
                                                                             splitTree.getMinus(), null);
 
-        return new SplitSubHyperplane<>(new SubPlane(thisPlane.copySelf(), new PolygonsSet(plusTree, tolerance)),
-                                                   new SubPlane(thisPlane.copySelf(), new PolygonsSet(minusTree, tolerance)));
+        return new SplitSubHyperplane<>(new SubPlane(thisPlane.copySelf(), new PolygonsSet(plusTree, precision)),
+                                                   new SubPlane(thisPlane.copySelf(), new PolygonsSet(minusTree, precision)));
 
     }
 

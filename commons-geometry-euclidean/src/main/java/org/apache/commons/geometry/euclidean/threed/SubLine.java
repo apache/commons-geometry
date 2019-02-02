@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -46,12 +47,12 @@ public class SubLine {
     /** Create a sub-line from two endpoints.
      * @param start start point
      * @param end end point
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points are equal
      */
-    public SubLine(final Vector3D start, final Vector3D end, final double tolerance)
+    public SubLine(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        this(new Line(start, end, tolerance), buildIntervalSet(start, end, tolerance));
+        this(new Line(start, end, precision), buildIntervalSet(start, end, precision));
     }
 
     /** Create a sub-line from a segment.
@@ -60,7 +61,7 @@ public class SubLine {
      */
     public SubLine(final Segment segment) {
         this(segment.getLine(),
-             buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getTolerance()));
+             buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getPrecision()));
     }
 
     /** Get the endpoints of the sub-line.
@@ -132,15 +133,15 @@ public class SubLine {
      * @param start start point
      * @param end end point
      * @return an interval set
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points are equal
      */
-    private static IntervalsSet buildIntervalSet(final Vector3D start, final Vector3D end, final double tolerance)
+    private static IntervalsSet buildIntervalSet(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        final Line line = new Line(start, end, tolerance);
+        final Line line = new Line(start, end, precision);
         return new IntervalsSet(line.toSubSpace(start).getX(),
                                 line.toSubSpace(end).getX(),
-                                tolerance);
+                                precision);
     }
 
 }

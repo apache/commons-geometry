@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Abstract class for all regions, independent of geometry type or dimension.
 
@@ -36,8 +37,8 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     /** Inside/Outside BSP tree. */
     private BSPTree<P> tree;
 
-    /** Tolerance below which points are considered to belong to hyperplanes. */
-    private final double tolerance;
+    /** Precision context used to determine floating point equality. */
+    private final DoublePrecisionContext precision;
 
     /** Size of the instance. */
     private double size;
@@ -46,11 +47,11 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     private P barycenter;
 
     /** Build a region representing the whole space.
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point numbers
      */
-    protected AbstractRegion(final double tolerance) {
+    protected AbstractRegion(final DoublePrecisionContext precision) {
         this.tree      = new BSPTree<>(Boolean.TRUE);
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a region from an inside/outside BSP tree.
@@ -64,11 +65,11 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * internal nodes representing the boundary as specified in the
      * {@link #getTree getTree} method).</p>
      * @param tree inside/outside BSP tree representing the region
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    protected AbstractRegion(final BSPTree<P> tree, final double tolerance) {
+    protected AbstractRegion(final BSPTree<P> tree, final DoublePrecisionContext precision) {
         this.tree      = tree;
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a Region from a Boundary REPresentation (B-rep).
@@ -89,11 +90,11 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * space.</p>
      * @param boundary collection of boundary elements, as a
      * collection of {@link SubHyperplane SubHyperplane} objects
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    protected AbstractRegion(final Collection<SubHyperplane<P>> boundary, final double tolerance) {
+    protected AbstractRegion(final Collection<SubHyperplane<P>> boundary, final DoublePrecisionContext precision) {
 
-        this.tolerance = tolerance;
+        this.precision = precision;
 
         if (boundary.size() == 0) {
 
@@ -152,10 +153,10 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     /** Build a convex region from an array of bounding hyperplanes.
      * @param hyperplanes array of bounding hyperplanes (if null, an
      * empty region will be built)
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    public AbstractRegion(final Hyperplane<P>[] hyperplanes, final double tolerance) {
-        this.tolerance = tolerance;
+    public AbstractRegion(final Hyperplane<P>[] hyperplanes, final DoublePrecisionContext precision) {
+        this.precision = precision;
         if ((hyperplanes == null) || (hyperplanes.length == 0)) {
             tree = new BSPTree<>(Boolean.FALSE);
         } else {
@@ -183,11 +184,11 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     @Override
     public abstract AbstractRegion<P, S> buildNew(BSPTree<P> newTree);
 
-    /** Get the tolerance below which points are considered to belong to hyperplanes.
-     * @return tolerance below which points are considered to belong to hyperplanes
+    /** Get the object used to determine floating point equality for this region.
+     * @return the floating point precision context for the instance
      */
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Recursively build a tree by inserting cut sub-hyperplanes.
@@ -324,7 +325,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * OUTSIDE} or {@link Region.Location#BOUNDARY BOUNDARY}
      */
     protected Location checkPoint(final BSPTree<P> node, final P point) {
-        final BSPTree<P> cell = node.getCell(point, tolerance);
+        final BSPTree<P> cell = node.getCell(point, precision);
         if (cell.getCut() == null) {
             // the point is in the interior of a cell, just check the attribute
             return ((Boolean) cell.getAttribute()) ? Location.INSIDE : Location.OUTSIDE;

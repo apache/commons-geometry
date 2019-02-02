@@ -39,14 +39,14 @@ public class SphericalTestUtils {
      * @return string representation of the region
      */
     public static String dump(final ArcsSet arcsSet) {
-        final TreeDumper<S1Point> visitor = new TreeDumper<S1Point>("ArcsSet", arcsSet.getTolerance()) {
+        final TreeDumper<S1Point> visitor = new TreeDumper<S1Point>("ArcsSet") {
 
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane<S1Point> hyperplane) {
                 final LimitAngle h = (LimitAngle) hyperplane;
-                getFormatter().format("%22.15e %b %22.15e",
-                                      h.getLocation().getAzimuth(), h.isDirect(), h.getTolerance());
+                getFormatter().format("%22.15e %b %s",
+                                      h.getLocation().getAzimuth(), h.isDirect(), h.getPrecision().toString());
             }
 
         };
@@ -59,15 +59,15 @@ public class SphericalTestUtils {
      * @return string representation of the region
      */
     public static String dump(final SphericalPolygonsSet sphericalPolygonsSet) {
-        final TreeDumper<S2Point> visitor = new TreeDumper<S2Point>("SphericalPolygonsSet", sphericalPolygonsSet.getTolerance()) {
+        final TreeDumper<S2Point> visitor = new TreeDumper<S2Point>("SphericalPolygonsSet") {
 
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane<S2Point> hyperplane) {
                 final Circle h = (Circle) hyperplane;
-                getFormatter().format("%22.15e %22.15e %22.15e %22.15e",
+                getFormatter().format("%22.15e %22.15e %22.15e %s",
                                       h.getPole().getX(), h.getPole().getY(), h.getPole().getZ(),
-                                      h.getTolerance());
+                                      h.getPrecision().toString());
             }
 
         };
@@ -88,12 +88,12 @@ public class SphericalTestUtils {
             /** {@inheritDoc} */
             @Override
             protected LimitAngle parseHyperplane()
-                throws IOException, ParseException {
-                return new LimitAngle(S1Point.of(getNumber()), getBoolean(), getNumber());
+                throws ParseException {
+                return new LimitAngle(S1Point.of(getNumber()), getBoolean(), getPrecision());
             }
 
         };
-        return new ArcsSet(builder.getTree(), builder.getTolerance());
+        return new ArcsSet(builder.getTree(), builder.getPrecision());
     }
 
     /** Parse a string representation of a {@link SphericalPolygonsSet}.
@@ -109,12 +109,12 @@ public class SphericalTestUtils {
             /** {@inheritDoc} */
             @Override
             public Circle parseHyperplane()
-                throws IOException, ParseException {
-                return new Circle(Vector3D.of(getNumber(), getNumber(), getNumber()), getNumber());
+                throws ParseException {
+                return new Circle(Vector3D.of(getNumber(), getNumber(), getNumber()), getPrecision());
             }
 
         };
-        return new SphericalPolygonsSet(builder.getTree(), builder.getTolerance());
+        return new SphericalPolygonsSet(builder.getTree(), builder.getPrecision());
     }
 
 }

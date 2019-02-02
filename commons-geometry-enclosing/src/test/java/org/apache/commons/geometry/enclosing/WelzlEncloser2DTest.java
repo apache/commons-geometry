@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
 import org.apache.commons.rng.UniformRandomProvider;
@@ -30,11 +32,16 @@ import org.junit.Test;
 
 public class WelzlEncloser2DTest {
 
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
     @Test
     public void testNullList() {
         DiskGenerator generator = new DiskGenerator();
         WelzlEncloser<Vector2D> encloser =
-                new WelzlEncloser<>(1.0e-10, generator);
+                new WelzlEncloser<>(TEST_PRECISION, generator);
         EnclosingBall<Vector2D> ball = encloser.enclose(null);
         Assert.assertTrue(ball.getRadius() < 0);
     }
@@ -43,7 +50,7 @@ public class WelzlEncloser2DTest {
     public void testNoPoints() {
         DiskGenerator generator = new DiskGenerator();
         WelzlEncloser<Vector2D> encloser =
-                new WelzlEncloser<>(1.0e-10, generator);
+                new WelzlEncloser<>(TEST_PRECISION, generator);
         EnclosingBall<Vector2D> ball = encloser.enclose(new ArrayList<Vector2D>());
         Assert.assertTrue(ball.getRadius() < 0);
     }
@@ -148,7 +155,7 @@ public class WelzlEncloser2DTest {
     private EnclosingBall<Vector2D> checkDisk(List<Vector2D> points) {
 
         WelzlEncloser<Vector2D> encloser =
-                new WelzlEncloser<>(1.0e-10, new DiskGenerator());
+                new WelzlEncloser<>(TEST_PRECISION, new DiskGenerator());
         EnclosingBall<Vector2D> disk = encloser.enclose(points);
 
         // all points are enclosed

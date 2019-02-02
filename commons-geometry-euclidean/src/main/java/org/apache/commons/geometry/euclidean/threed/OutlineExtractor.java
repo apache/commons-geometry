@@ -24,8 +24,9 @@ import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Extractor for {@link PolygonsSet polyhedrons sets} outlines.
  * <p>This class extracts the 2D outlines from {{@link PolygonsSet
@@ -59,7 +60,7 @@ public class OutlineExtractor {
     public Vector2D[][] getOutline(final PolyhedronsSet polyhedronsSet) {
 
         // project all boundary facets into one polygons set
-        final BoundaryProjector projector = new BoundaryProjector(polyhedronsSet.getTolerance());
+        final BoundaryProjector projector = new BoundaryProjector(polyhedronsSet.getPrecision());
         polyhedronsSet.getTree(true).visit(projector);
         final PolygonsSet projected = projector.getProjected();
 
@@ -120,15 +121,15 @@ public class OutlineExtractor {
         /** Projection of the polyhedrons set on the plane. */
         private PolygonsSet projected;
 
-        /** Tolerance below which points are considered identical. */
-        private final double tolerance;
+        /** Precision context used to compare floating point numbers. */
+        private final DoublePrecisionContext precision;
 
         /** Simple constructor.
-         * @param tolerance tolerance below which points are considered identical
+         * @param precision precision context used to compare floating point values
          */
-        BoundaryProjector(final double tolerance) {
-            this.projected = new PolygonsSet(new BSPTree<Vector2D>(Boolean.FALSE), tolerance);
-            this.tolerance = tolerance;
+        BoundaryProjector(final DoublePrecisionContext precision) {
+            this.projected = new PolygonsSet(new BSPTree<Vector2D>(Boolean.FALSE), precision);
+            this.precision = precision;
         }
 
         /** {@inheritDoc} */
@@ -213,7 +214,7 @@ public class OutlineExtractor {
                         final Vector2D  cPoint    = Vector2D.of(current3D.dot(u),
                                                                  current3D.dot(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
-                            new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, tolerance);
+                            new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, precision);
                         SubHyperplane<Vector2D> edge = line.wholeHyperplane();
 
                         if (closed || (previous != 1)) {
@@ -221,7 +222,7 @@ public class OutlineExtractor {
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
                             final org.apache.commons.geometry.euclidean.twod.Line l =
-                                new org.apache.commons.geometry.euclidean.twod.Line(pPoint, angle, tolerance);
+                                new org.apache.commons.geometry.euclidean.twod.Line(pPoint, angle, precision);
                             edge = edge.split(l).getPlus();
                         }
 
@@ -230,7 +231,7 @@ public class OutlineExtractor {
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
                             final org.apache.commons.geometry.euclidean.twod.Line l =
-                                new org.apache.commons.geometry.euclidean.twod.Line(cPoint, angle, tolerance);
+                                new org.apache.commons.geometry.euclidean.twod.Line(cPoint, angle, precision);
                             edge = edge.split(l).getMinus();
                         }
 
@@ -242,7 +243,7 @@ public class OutlineExtractor {
 
                     }
                 }
-                final PolygonsSet projectedFacet = new PolygonsSet(edges, tolerance);
+                final PolygonsSet projectedFacet = new PolygonsSet(edges, precision);
 
                 // add the contribution of the facet to the global outline
                 projected = (PolygonsSet) new RegionFactory<Vector2D>().union(projected, projectedFacet);

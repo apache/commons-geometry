@@ -19,26 +19,32 @@ package org.apache.commons.geometry.euclidean.oned;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane.SplitSubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class SubOrientedPointTest {
-    private static final double TEST_TOLERANCE = 1e-10;
+
+    private static final double TEST_EPS = 1e-15;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
     public void testGetSize() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
         SubOrientedPoint pt = hyperplane.wholeHyperplane();
 
         // act/assert
-        Assert.assertEquals(0.0, pt.getSize(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, pt.getSize(), TEST_EPS);
     }
 
     @Test
     public void testIsEmpty() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
         SubOrientedPoint pt = hyperplane.wholeHyperplane();
 
         // act/assert
@@ -48,11 +54,11 @@ public class SubOrientedPointTest {
     @Test
     public void testBuildNew() {
         // arrange
-        OrientedPoint originalHyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
+        OrientedPoint originalHyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
         SubOrientedPoint pt = originalHyperplane.wholeHyperplane();
 
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(2), true, TEST_TOLERANCE);
-        IntervalsSet intervals = new IntervalsSet(2, 3, TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(2), true, TEST_PRECISION);
+        IntervalsSet intervals = new IntervalsSet(2, 3, TEST_PRECISION);
 
         // act
         SubHyperplane<Vector1D> result = pt.buildNew(hyperplane, intervals);
@@ -66,11 +72,11 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_resultOnMinusSide() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
-        IntervalsSet interval = new IntervalsSet(TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
+        IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
         SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
 
-        OrientedPoint splitter = new OrientedPoint(Vector1D.of(2), true, TEST_TOLERANCE);
+        OrientedPoint splitter = new OrientedPoint(Vector1D.of(2), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -82,7 +88,7 @@ public class SubOrientedPointTest {
         Assert.assertNotNull(minusSub);
 
         OrientedPoint minusHyper = (OrientedPoint) minusSub.getHyperplane();
-        Assert.assertEquals(1, minusHyper.getLocation().getX(), TEST_TOLERANCE);
+        Assert.assertEquals(1, minusHyper.getLocation().getX(), TEST_EPS);
 
         Assert.assertSame(interval, minusSub.getRemainingRegion());
 
@@ -92,11 +98,11 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_resultOnPlusSide() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
-        IntervalsSet interval = new IntervalsSet(TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
+        IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
         SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
 
-        OrientedPoint splitter = new OrientedPoint(Vector1D.of(0), true, TEST_TOLERANCE);
+        OrientedPoint splitter = new OrientedPoint(Vector1D.of(0), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -110,7 +116,7 @@ public class SubOrientedPointTest {
         Assert.assertNotNull(plusSub);
 
         OrientedPoint plusHyper = (OrientedPoint) plusSub.getHyperplane();
-        Assert.assertEquals(1, plusHyper.getLocation().getX(), TEST_TOLERANCE);
+        Assert.assertEquals(1, plusHyper.getLocation().getX(), TEST_EPS);
 
         Assert.assertSame(interval, plusSub.getRemainingRegion());
     }
@@ -118,11 +124,11 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_equivalentHyperplanes() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
-        IntervalsSet interval = new IntervalsSet(TEST_TOLERANCE);
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
+        IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
         SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
 
-        OrientedPoint splitter = new OrientedPoint(Vector1D.of(1), true, TEST_TOLERANCE);
+        OrientedPoint splitter = new OrientedPoint(Vector1D.of(1), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -137,23 +143,26 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_usesToleranceFromParentHyperplane() {
         // arrange
-        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, 0.1);
+        DoublePrecisionContext parentPrecision = new EpsilonDoublePrecisionContext(0.1);
+        DoublePrecisionContext otherPrecision = new EpsilonDoublePrecisionContext(1e-10);
+
+        OrientedPoint hyperplane = new OrientedPoint(Vector1D.of(1), true, parentPrecision);
         SubOrientedPoint pt = hyperplane.wholeHyperplane();
 
         // act/assert
-        SplitSubHyperplane<Vector1D> plusSplit = pt.split(new OrientedPoint(Vector1D.of(0.899), true, 1e-10));
+        SplitSubHyperplane<Vector1D> plusSplit = pt.split(new OrientedPoint(Vector1D.of(0.899), true, otherPrecision));
         Assert.assertNull(plusSplit.getMinus());
         Assert.assertNotNull(plusSplit.getPlus());
 
-        SplitSubHyperplane<Vector1D> lowWithinTolerance = pt.split(new OrientedPoint(Vector1D.of(0.901), true, 1e-10));
+        SplitSubHyperplane<Vector1D> lowWithinTolerance = pt.split(new OrientedPoint(Vector1D.of(0.901), true, otherPrecision));
         Assert.assertNull(lowWithinTolerance.getMinus());
         Assert.assertNull(lowWithinTolerance.getPlus());
 
-        SplitSubHyperplane<Vector1D> highWithinTolerance = pt.split(new OrientedPoint(Vector1D.of(1.09), true, 1e-10));
+        SplitSubHyperplane<Vector1D> highWithinTolerance = pt.split(new OrientedPoint(Vector1D.of(1.09), true, otherPrecision));
         Assert.assertNull(highWithinTolerance.getMinus());
         Assert.assertNull(highWithinTolerance.getPlus());
 
-        SplitSubHyperplane<Vector1D> minusSplit = pt.split(new OrientedPoint(Vector1D.of(1.101), true, 1e-10));
+        SplitSubHyperplane<Vector1D> minusSplit = pt.split(new OrientedPoint(Vector1D.of(1.101), true, otherPrecision));
         Assert.assertNotNull(minusSplit.getMinus());
         Assert.assertNull(minusSplit.getPlus());
     }

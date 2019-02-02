@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -23,36 +25,41 @@ import org.junit.Test;
 
 public class OrientedPointTest {
 
+    private static final double TEST_EPS = 1e-15;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
     @Test
     public void testConstructor() {
         // act
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(2.0), true, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // assert
+        Assert.assertSame(TEST_PRECISION, pt.getPrecision());
         Assert.assertEquals(2.0, pt.getLocation().getX(), Precision.EPSILON);
         Assert.assertTrue(pt.isDirect());
-        Assert.assertEquals(1e-5, pt.getTolerance(), Precision.EPSILON);
     }
 
     @Test
     public void testCopySelf() {
         // arrange
-        OrientedPoint orig = new OrientedPoint(Vector1D.of(2.0), true, 1e-5);
+        OrientedPoint orig = new OrientedPoint(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // act
         OrientedPoint copy = orig.copySelf();
 
         // assert
         Assert.assertSame(orig, copy);
+        Assert.assertSame(TEST_PRECISION, copy.getPrecision());
         Assert.assertEquals(2.0, copy.getLocation().getX(), Precision.EPSILON);
         Assert.assertTrue(copy.isDirect());
-        Assert.assertEquals(1e-5, copy.getTolerance(), Precision.EPSILON);
     }
 
     @Test
     public void testGetOffset_direct_point() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(-1.0), true, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(-1.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(-99, pt.getOffset(Vector1D.of(-100)), Precision.EPSILON);
@@ -67,7 +74,7 @@ public class OrientedPointTest {
     @Test
     public void testGetOffset_notDirect_point() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(-1.0), false, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(-1.0), false, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(99, pt.getOffset(Vector1D.of(-100)), Precision.EPSILON);
@@ -82,7 +89,7 @@ public class OrientedPointTest {
     @Test
     public void testWholeHyperplane() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), false, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), false, TEST_PRECISION);
 
         // act
         SubOrientedPoint subPt = pt.wholeHyperplane();
@@ -95,7 +102,7 @@ public class OrientedPointTest {
     @Test
     public void testWholeSpace() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), false, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), false, TEST_PRECISION);
 
         // act
         IntervalsSet set = pt.wholeSpace();
@@ -108,10 +115,10 @@ public class OrientedPointTest {
     @Test
     public void testSameOrientationAs() {
         // arrange
-        OrientedPoint notDirect1 = new OrientedPoint(Vector1D.of(1.0), false, 1e-5);
-        OrientedPoint notDirect2 = new OrientedPoint(Vector1D.of(1.0), false, 1e-5);
-        OrientedPoint direct1 = new OrientedPoint(Vector1D.of(1.0), true, 1e-5);
-        OrientedPoint direct2 = new OrientedPoint(Vector1D.of(1.0), true, 1e-5);
+        OrientedPoint notDirect1 = new OrientedPoint(Vector1D.of(1.0), false, TEST_PRECISION);
+        OrientedPoint notDirect2 = new OrientedPoint(Vector1D.of(1.0), false, TEST_PRECISION);
+        OrientedPoint direct1 = new OrientedPoint(Vector1D.of(1.0), true, TEST_PRECISION);
+        OrientedPoint direct2 = new OrientedPoint(Vector1D.of(1.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(notDirect1.sameOrientationAs(notDirect1));
@@ -129,7 +136,7 @@ public class OrientedPointTest {
     @Test
     public void testProject() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), true, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(1.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(1.0, pt.project(Vector1D.of(-1.0)).getX(), Precision.EPSILON);
@@ -141,7 +148,7 @@ public class OrientedPointTest {
     @Test
     public void testRevertSelf() {
         // arrange
-        OrientedPoint pt = new OrientedPoint(Vector1D.of(2.0), true, 1e-5);
+        OrientedPoint pt = new OrientedPoint(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // act
         pt.revertSelf();
@@ -149,7 +156,7 @@ public class OrientedPointTest {
         // assert
         Assert.assertEquals(2.0, pt.getLocation().getX(), Precision.EPSILON);
         Assert.assertFalse(pt.isDirect());
-        Assert.assertEquals(1e-5, pt.getTolerance(), Precision.EPSILON);
+        Assert.assertSame(TEST_PRECISION, pt.getPrecision());
 
         Assert.assertEquals(1, pt.getOffset(Vector1D.of(1.0)), Precision.EPSILON);
         Assert.assertEquals(-1, pt.getOffset(Vector1D.of(3.0)), Precision.EPSILON);

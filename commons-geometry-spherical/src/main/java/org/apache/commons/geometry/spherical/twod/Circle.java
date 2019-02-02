@@ -20,6 +20,7 @@ import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.Arc;
@@ -48,28 +49,28 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     /** Second axis in the equator plane, in quadrature with respect to x. */
     private Vector3D y;
 
-    /** Tolerance below which close sub-arcs are merged together. */
-    private final double tolerance;
+    /** Precision context used to determine floating point equality. */
+    private final DoublePrecisionContext precision;
 
     /** Build a great circle from its pole.
      * <p>The circle is oriented in the trigonometric direction around pole.</p>
      * @param pole circle pole
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      */
-    public Circle(final Vector3D pole, final double tolerance) {
+    public Circle(final Vector3D pole, final DoublePrecisionContext precision) {
         reset(pole);
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a great circle from two non-aligned points.
      * <p>The circle is oriented from first to second point using the path smaller than \( \pi \).</p>
      * @param first first point contained in the great circle
      * @param second second point contained in the great circle
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      */
-    public Circle(final S2Point first, final S2Point second, final double tolerance) {
+    public Circle(final S2Point first, final S2Point second, final DoublePrecisionContext precision) {
         reset(first.getVector().cross(second.getVector()));
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a circle from its internal components.
@@ -77,14 +78,14 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * @param pole circle pole
      * @param x first axis in the equator plane
      * @param y second axis in the equator plane
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      */
     private Circle(final Vector3D pole, final Vector3D x, final Vector3D y,
-                   final double tolerance) {
+            final DoublePrecisionContext precision) {
         this.pole      = pole;
         this.x         = x;
         this.y         = y;
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Copy constructor.
@@ -93,7 +94,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * @param circle circle to copy
      */
     public Circle(final Circle circle) {
-        this(circle.pole, circle.x, circle.y, circle.tolerance);
+        this(circle.pole, circle.x, circle.y, circle.precision);
     }
 
     /** {@inheritDoc} */
@@ -126,7 +127,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      * @return a new circle, with orientation opposite to the instance orientation
      */
     public Circle getReverse() {
-        return new Circle(pole.negate(), x, y.negate(), tolerance);
+        return new Circle(pole.negate(), x, y.negate(), precision);
     }
 
     /** {@inheritDoc} */
@@ -135,10 +136,12 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
         return toSpace(toSubSpace(point));
     }
 
-    /** {@inheritDoc} */
+    /** Get the object used to determine floating point equality for this region.
+     * @return the floating point precision context for the instance
+     */
     @Override
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** {@inheritDoc}
@@ -232,13 +235,13 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
     public Arc getInsideArc(final Circle other) {
         final double alpha  = getPhase(other.pole);
         final double halfPi = 0.5 * Math.PI;
-        return new Arc(alpha - halfPi, alpha + halfPi, tolerance);
+        return new Arc(alpha - halfPi, alpha + halfPi, precision);
     }
 
     /** {@inheritDoc} */
     @Override
     public SubCircle wholeHyperplane() {
-        return new SubCircle(this, new ArcsSet(tolerance));
+        return new SubCircle(this, new ArcsSet(precision));
     }
 
     /** Build a region covering the whole space.
@@ -247,7 +250,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
      */
     @Override
     public SphericalPolygonsSet wholeSpace() {
-        return new SphericalPolygonsSet(tolerance);
+        return new SphericalPolygonsSet(precision);
     }
 
     /** {@inheritDoc}
@@ -316,7 +319,7 @@ public class Circle implements Hyperplane<S2Point>, Embedding<S2Point, S1Point> 
             return new Circle(rotation.apply(circle.pole),
                               rotation.apply(circle.x),
                               rotation.apply(circle.y),
-                              circle.tolerance);
+                              circle.precision);
         }
 
         /** {@inheritDoc} */

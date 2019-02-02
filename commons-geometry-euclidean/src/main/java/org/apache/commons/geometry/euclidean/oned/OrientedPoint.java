@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.
  * <p>An hyperplane in 1D is a simple point, its orientation being a
@@ -31,19 +32,19 @@ public class OrientedPoint implements Hyperplane<Vector1D> {
     /** Orientation. */
     private boolean direct;
 
-    /** Tolerance below which points are considered to belong to the hyperplane. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Simple constructor.
      * @param location location of the hyperplane
      * @param direct if true, the plus side of the hyperplane is towards
      * abscissas greater than {@code location}
-     * @param tolerance tolerance below which points are considered to belong to the hyperplane
+     * @param precision precision context used to compare floating point values
      */
-    public OrientedPoint(final Vector1D location, final boolean direct, final double tolerance) {
+    public OrientedPoint(final Vector1D location, final boolean direct, final DoublePrecisionContext precision) {
         this.location  = location;
         this.direct    = direct;
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Copy the instance.
@@ -85,7 +86,7 @@ public class OrientedPoint implements Hyperplane<Vector1D> {
      */
     @Override
     public IntervalsSet wholeSpace() {
-        return new IntervalsSet(tolerance);
+        return new IntervalsSet(precision);
     }
 
     /** {@inheritDoc} */
@@ -102,8 +103,8 @@ public class OrientedPoint implements Hyperplane<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Get the hyperplane location on the real line.

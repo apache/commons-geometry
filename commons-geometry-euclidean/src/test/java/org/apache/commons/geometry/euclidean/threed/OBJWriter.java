@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -60,7 +61,7 @@ public class OBJWriter {
      */
     public static void write(File file, PolyhedronsSet poly) throws IOException {
         // get the vertices and faces
-        MeshBuilder meshBuilder = new MeshBuilder(poly.getTolerance());
+        MeshBuilder meshBuilder = new MeshBuilder(poly.getPrecision());
         poly.getTree(true).visit(meshBuilder);
 
         // write them to the file
@@ -114,45 +115,27 @@ public class OBJWriter {
      */
     private static class VertexComparator implements Comparator<Vector3D> {
 
-        /** Geometric tolerance value */
-        private double tolerance;
+        /** Precision context to deteremine floating-point equality */
+        private final DoublePrecisionContext precision;
 
         /** Creates a new instance with the given tolerance value.
          * @param tolerance
          */
-        public VertexComparator(double tolerance) {
-            this.tolerance = tolerance;
+        public VertexComparator(final DoublePrecisionContext precision) {
+            this.precision = precision;
         }
 
         /** {@inheritDoc} */
         @Override
         public int compare(Vector3D a, Vector3D b) {
-            int result = compareDoubles(a.getX(), b.getX());
+            int result = precision.compare(a.getX(), b.getX());
             if (result == 0) {
-                result = compareDoubles(a.getY(), b.getY());
+                result = precision.compare(a.getY(), b.getY());
                 if (result == 0) {
-                    result = compareDoubles(a.getZ(), b.getZ());
+                    result = precision.compare(a.getZ(), b.getZ());
                 }
             }
             return result;
-        }
-
-        /** Helper method to compare two double values using the
-         * configured tolerance value. If the values are within
-         * tolerance of each other, then they are considered equal.
-         * @param a
-         * @param b
-         * @return
-         */
-        private int compareDoubles(double a, double b) {
-            double diff = a - b;
-            if (diff < -tolerance) {
-                return -1;
-            }
-            else if (diff > tolerance) {
-                return 1;
-            }
-            return 0;
         }
     }
 
@@ -161,8 +144,8 @@ public class OBJWriter {
      */
     private static class MeshBuilder implements BSPTreeVisitor<Vector3D> {
 
-        /** Geometric tolerance */
-        private final double tolerance;
+        /** Precision context to deteremine floating-point equality */
+        private final DoublePrecisionContext precision;
 
         /** Map of vertices to their index in the vertices list */
         private Map<Vector3D, Integer> vertexIndexMap;
@@ -179,9 +162,9 @@ public class OBJWriter {
         /** Creates a new instance with the given tolerance.
          * @param tolerance
          */
-        public MeshBuilder(double tolerance) {
-            this.tolerance = tolerance;
-            this.vertexIndexMap = new TreeMap<>(new VertexComparator(tolerance));
+        public MeshBuilder(final DoublePrecisionContext precision) {
+            this.precision = precision;
+            this.vertexIndexMap = new TreeMap<>(new VertexComparator(precision));
             this.vertices = new ArrayList<>();
             this.faces = new ArrayList<>();
         }
@@ -235,7 +218,7 @@ public class OBJWriter {
             Plane plane = (Plane) subplane.getHyperplane();
             PolygonsSet poly = (PolygonsSet) subplane.getRemainingRegion();
 
-            TriangleExtractor triExtractor = new TriangleExtractor(tolerance);
+            TriangleExtractor triExtractor = new TriangleExtractor(precision);
             poly.getTree(true).visit(triExtractor);
 
             Vector3D v1, v2, v3;
@@ -274,8 +257,8 @@ public class OBJWriter {
      */
     private static class TriangleExtractor implements BSPTreeVisitor<Vector2D> {
 
-        /** Geometric tolerance */
-        private double tolerance;
+        /** Precision context to deteremine floating-point equality */
+        private final DoublePrecisionContext precision;
 
         /** List of extracted triangles */
         private List<Vector2D[]> triangles = new ArrayList<>();
@@ -283,8 +266,8 @@ public class OBJWriter {
         /** Creates a new instance with the given geometric tolerance.
          * @param tolerance
          */
-        public TriangleExtractor(double tolerance) {
-            this.tolerance = tolerance;
+        public TriangleExtractor(final DoublePrecisionContext precision) {
+            this.precision = precision;
         }
 
         /** Returns the list of extracted triangles.
@@ -311,7 +294,7 @@ public class OBJWriter {
         public void visitLeafNode(BSPTree<Vector2D> node) {
             if ((Boolean) node.getAttribute()) {
                 PolygonsSet convexPoly = new PolygonsSet(node.pruneAroundConvexCell(Boolean.TRUE,
-                        Boolean.FALSE, null), tolerance);
+                        Boolean.FALSE, null), precision);
 
                 for (Vector2D[] loop : convexPoly.getVertices()) {
                     if (loop.length > 0 && loop[0] != null) { // skip unclosed loops

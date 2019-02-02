@@ -20,13 +20,12 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Line;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.hull.ConvexHull;
 import org.apache.commons.numbers.arrays.LinearCombination;
-import org.apache.commons.numbers.core.Precision;
 
 /**
  * This class represents a convex hull in an two-dimensional Euclidean space.
@@ -39,8 +38,8 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
     /** Vertices of the hull. */
     private final Vector2D[] vertices;
 
-    /** Tolerance threshold used during creation of the hull vertices. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /**
      * Line segments of the hull.
@@ -51,14 +50,13 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
     /**
      * Simple constructor.
      * @param vertices the vertices of the convex hull, must be ordered
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point numbers
      * @throws IllegalArgumentException if the vertices do not form a convex hull
      */
-    public ConvexHull2D(final Vector2D[] vertices, final double tolerance)
+    public ConvexHull2D(final Vector2D[] vertices, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
 
-        // assign tolerance as it will be used by the isConvex method
-        this.tolerance = tolerance;
+        this.precision = precision;
 
         if (!isConvex(vertices)) {
             throw new IllegalArgumentException("Vertices do not form a convex hull in CCW winding");
@@ -87,7 +85,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
             final Vector2D d2 = p3.subtract(p2);
 
             final double crossProduct = LinearCombination.value(d1.getX(), d2.getY(), -d1.getY(), d2.getX());
-            final int cmp = Precision.compareTo(crossProduct, 0.0, tolerance);
+            final int cmp = precision.compare(crossProduct, 0.0);
             // in case of collinear points the cross product will be zero
             if (cmp != 0.0) {
                 if (sign != 0.0 && cmp != sign) {
@@ -129,7 +127,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                 this.lineSegments = new Segment[1];
                 final Vector2D p1 = vertices[0];
                 final Vector2D p2 = vertices[1];
-                this.lineSegments[0] = new Segment(p1, p2, new Line(p1, p2, tolerance));
+                this.lineSegments[0] = new Segment(p1, p2, new Line(p1, p2, precision));
             } else {
                 this.lineSegments = new Segment[size];
                 Vector2D firstPoint = null;
@@ -141,12 +139,12 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                         lastPoint = point;
                     } else {
                         this.lineSegments[index++] =
-                                new Segment(lastPoint, point, new Line(lastPoint, point, tolerance));
+                                new Segment(lastPoint, point, new Line(lastPoint, point, precision));
                         lastPoint = point;
                     }
                 }
                 this.lineSegments[index] =
-                        new Segment(lastPoint, firstPoint, new Line(lastPoint, firstPoint, tolerance));
+                        new Segment(lastPoint, firstPoint, new Line(lastPoint, firstPoint, precision));
             }
         }
         return lineSegments;

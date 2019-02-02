@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 
 /** This class represent a tree of nested 2D boundary loops.
@@ -54,28 +55,28 @@ class NestedLoops {
     /** Indicator for original loop orientation. */
     private boolean originalIsClockwise;
 
-    /** Tolerance below which points are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Simple Constructor.
      * <p>Build an empty tree of nested loops. This instance will become
      * the root node of a complete tree, it is not associated with any
      * loop by itself, the outermost loops are in the root tree child
      * nodes.</p>
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    NestedLoops(final double tolerance) {
+    NestedLoops(final DoublePrecisionContext precision) {
         this.surrounded = new ArrayList<>();
-        this.tolerance  = tolerance;
+        this.precision  = precision;
     }
 
     /** Constructor.
      * <p>Build a tree node with neither parent nor children</p>
      * @param loop boundary loop (will be reversed in place if needed)
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if an outline has an open boundary loop
      */
-    private NestedLoops(final Vector2D[] loop, final double tolerance)
+    private NestedLoops(final Vector2D[] loop, DoublePrecisionContext precision)
         throws IllegalArgumentException {
 
         if (loop[0] == null) {
@@ -84,7 +85,7 @@ class NestedLoops {
 
         this.loop       = loop;
         this.surrounded = new ArrayList<>();
-        this.tolerance  = tolerance;
+        this.precision  = precision;
 
         // build the polygon defined by the loop
         final ArrayList<SubHyperplane<Vector2D>> edges = new ArrayList<>();
@@ -92,14 +93,14 @@ class NestedLoops {
         for (int i = 0; i < loop.length; ++i) {
             final Vector2D previous = current;
             current = loop[i];
-            final Line   line   = new Line(previous, current, tolerance);
+            final Line   line   = new Line(previous, current, precision);
             final IntervalsSet region =
                 new IntervalsSet(line.toSubSpace(previous).getX(),
                                  line.toSubSpace(current).getX(),
-                                 tolerance);
+                                 precision);
             edges.add(new SubLine(line, region));
         }
-        polygon = new PolygonsSet(edges, tolerance);
+        polygon = new PolygonsSet(edges, precision);
 
         // ensure the polygon encloses a finite region of the plane
         if (Double.isInfinite(polygon.getSize())) {
@@ -117,7 +118,7 @@ class NestedLoops {
      * boundary loops or open boundary loops
      */
     public void add(final Vector2D[] bLoop) {
-        add(new NestedLoops(bLoop, tolerance));
+        add(new NestedLoops(bLoop, precision));
     }
 
     /** Add a loop in a tree.

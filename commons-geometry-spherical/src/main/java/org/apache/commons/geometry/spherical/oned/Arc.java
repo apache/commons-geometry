@@ -16,9 +16,10 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 
 
@@ -36,8 +37,8 @@ public class Arc {
     /** Middle point of the arc. */
     private final double middle;
 
-    /** Tolerance below which angles are considered identical. */
-    private final double tolerance;
+    /** Precision context used to determine floating point equality. */
+    private final DoublePrecisionContext precision;
 
     /** Simple constructor.
      * <p>
@@ -52,12 +53,12 @@ public class Arc {
      * </p>
      * @param lower lower angular bound of the arc
      * @param upper upper angular bound of the arc
-     * @param tolerance tolerance below which angles are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    public Arc(final double lower, final double upper, final double tolerance)
+    public Arc(final double lower, final double upper, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        this.tolerance = tolerance;
+        this.precision = precision;
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
             // the arc must cover the whole circle
             this.lower  = 0;
@@ -102,11 +103,11 @@ public class Arc {
         return middle;
     }
 
-    /** Get the tolerance below which angles are considered identical.
-     * @return tolerance below which angles are considered identical
+    /** Get the object used to determine floating point equality for this region.
+     * @return the floating point precision context for the instance
      */
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Check a point with respect to the arc.
@@ -116,12 +117,16 @@ public class Arc {
      */
     public Location checkPoint(final double point) {
         final double normalizedPoint = PlaneAngleRadians.normalize(point, middle);
-        if (normalizedPoint < lower - tolerance || normalizedPoint > upper + tolerance) {
+
+        final int lowerCmp = precision.compare(normalizedPoint, lower);
+        final int upperCmp = precision.compare(normalizedPoint, upper);
+
+        if (lowerCmp < 0 || upperCmp > 0) {
             return Location.OUTSIDE;
-        } else if (normalizedPoint > lower + tolerance && normalizedPoint < upper - tolerance) {
+        } else if (lowerCmp > 0 && upperCmp < 0) {
             return Location.INSIDE;
         } else {
-            return (getSize() >= Geometry.TWO_PI - tolerance) ? Location.INSIDE : Location.BOUNDARY;
+            return (precision.compare(getSize(), Geometry.TWO_PI) >= 0) ? Location.INSIDE : Location.BOUNDARY;
         }
     }
 

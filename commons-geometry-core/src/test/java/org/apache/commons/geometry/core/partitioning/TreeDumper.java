@@ -36,14 +36,12 @@ public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P
 
     /** Simple constructor.
      * @param type type of the region to dump
-     * @param tolerance tolerance of the region
      */
-    public TreeDumper(final String type, final double tolerance) {
+    public TreeDumper(final String type) {
         this.dump      = new StringBuilder();
         this.formatter = new Formatter(dump, Locale.US);
         this.prefix    = "";
         formatter.format("%s%n", type);
-        formatter.format("tolerance %22.15e%n", tolerance);
     }
 
     /** Get the string representation of the tree.

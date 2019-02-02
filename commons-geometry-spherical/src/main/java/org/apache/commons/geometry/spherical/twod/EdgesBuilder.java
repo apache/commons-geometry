@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
@@ -36,8 +37,8 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
     /** Root of the tree. */
     private final BSPTree<S2Point> root;
 
-    /** Tolerance below which points are consider to be identical. */
-    private final double tolerance;
+    /** Precision context used to determine floating point equality. */
+    private final DoublePrecisionContext precision;
 
     /** Built edges and their associated nodes. */
     private final Map<Edge, BSPTree<S2Point>> edgeToNode;
@@ -47,11 +48,11 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
     /** Simple constructor.
      * @param root tree root
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    EdgesBuilder(final BSPTree<S2Point> root, final double tolerance) {
+    EdgesBuilder(final BSPTree<S2Point> root, final DoublePrecisionContext precision) {
         this.root            = root;
-        this.tolerance       = tolerance;
+        this.precision       = precision;
         this.edgeToNode      = new IdentityHashMap<>();
         this.nodeToEdgesList = new IdentityHashMap<>();
     }
@@ -117,10 +118,10 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
         // get the candidate nodes
         final S2Point point = previous.getEnd().getLocation();
-        final List<BSPTree<S2Point>> candidates = root.getCloseCuts(point, tolerance);
+        final List<BSPTree<S2Point>> candidates = root.getCloseCuts(point, precision.getMaxZero());
 
         // the following edge we are looking for must start from one of the candidates nodes
-        double closest = tolerance;
+        double closest = precision.getMaxZero();
         Edge following = null;
         for (final BSPTree<S2Point> node : candidates) {
             for (final Edge edge : nodeToEdgesList.get(node)) {
@@ -137,7 +138,7 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
         if (following == null) {
             final Vector3D previousStart = previous.getStart().getLocation().getVector();
-            if (point.getVector().angle(previousStart) <= tolerance) {
+            if (precision.isZero(point.getVector().angle(previousStart))) {
                 // the edge connects back to itself
                 return previous;
             }

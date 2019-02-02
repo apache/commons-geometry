@@ -24,27 +24,31 @@ import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class IntervalsSetTest {
 
-    private static final double TEST_TOLERANCE = 1e-15;
+    private static final double TEST_EPS = 1e-15;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
     public void testInterval_wholeNumberLine() {
         // act
-        IntervalsSet set = new IntervalsSet(TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         BSPTree<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
@@ -54,7 +58,7 @@ public class IntervalsSetTest {
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, 0.0);
@@ -64,15 +68,15 @@ public class IntervalsSetTest {
     @Test
     public void testInterval_doubleOpenInterval() {
         // act
-        IntervalsSet set = new IntervalsSet(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         BSPTree<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
@@ -82,7 +86,7 @@ public class IntervalsSetTest {
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, 0.0);
@@ -92,19 +96,19 @@ public class IntervalsSetTest {
     @Test
     public void testInterval_openInterval_positive() {
         // act
-        IntervalsSet set = new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(9.0, set.getInf(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(9.0, set.getInf(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, 0.0);
@@ -117,19 +121,19 @@ public class IntervalsSetTest {
     @Test
     public void testInterval_openInterval_negative() {
         // act
-        IntervalsSet set = new IntervalsSet(Double.NEGATIVE_INFINITY, 9.0, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(Double.NEGATIVE_INFINITY, 9.0, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
-        Assert.assertEquals(9.0, set.getSup(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, set.getSup(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, 0.0);
@@ -142,19 +146,19 @@ public class IntervalsSetTest {
     @Test
     public void testInterval_singleClosedInterval() {
         // act
-        IntervalsSet set = new IntervalsSet(-1.0, 9.0, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(-1.0, 9.0, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(-1.0, set.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, set.getSup(), TEST_TOLERANCE);
-        Assert.assertEquals(10.0, set.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(-1.0, set.getInf(), TEST_EPS);
+        Assert.assertEquals(9.0, set.getSup(), TEST_EPS);
+        Assert.assertEquals(10.0, set.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(-1.0, 9.0, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, -2.0);
@@ -168,19 +172,19 @@ public class IntervalsSetTest {
     @Test
     public void testInterval_singlePoint() {
         // act
-        IntervalsSet set = new IntervalsSet(1.0, 1.0, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(1.0, 1.0, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(1.0, set.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(1.0, set.getSup(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, set.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.0), set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(1.0, set.getInf(), TEST_EPS);
+        Assert.assertEquals(1.0, set.getSup(), TEST_EPS);
+        Assert.assertEquals(0.0, set.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.0), set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(1.0, 1.0, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(1.0, 1.0, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, 0.0);
@@ -195,15 +199,15 @@ public class IntervalsSetTest {
         List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         BSPTree<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
@@ -213,7 +217,7 @@ public class IntervalsSetTest {
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, 0.0);
@@ -227,19 +231,19 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(9.0, false));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(9.0, set.getInf(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(9.0, set.getInf(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, 0.0);
@@ -256,19 +260,19 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(9.0, true));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
-        Assert.assertEquals(9.0, set.getSup(), TEST_TOLERANCE);
+        Assert.assertEquals(9.0, set.getSup(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, 0.0);
@@ -286,19 +290,19 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(9.0, true));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(-1.0, set.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, set.getSup(), TEST_TOLERANCE);
-        Assert.assertEquals(10.0, set.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(-1.0, set.getInf(), TEST_EPS);
+        Assert.assertEquals(9.0, set.getSup(), TEST_EPS);
+        Assert.assertEquals(10.0, set.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(-1.0, 9.0, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, -2.0);
@@ -319,20 +323,20 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(9.0, true));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(-1.0, set.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(9.0, set.getSup(), TEST_TOLERANCE);
-        Assert.assertEquals(7.0, set.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(29.5 / 7.0), set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
+        Assert.assertEquals(-1.0, set.getInf(), TEST_EPS);
+        Assert.assertEquals(9.0, set.getSup(), TEST_EPS);
+        Assert.assertEquals(7.0, set.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(29.5 / 7.0), set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(2, intervals.size());
-        assertInterval(-1.0, 2.0, intervals.get(0), TEST_TOLERANCE);
-        assertInterval(5.0, 9.0, intervals.get(1), TEST_TOLERANCE);
+        assertInterval(-1.0, 2.0, intervals.get(0), TEST_EPS);
+        assertInterval(5.0, 9.0, intervals.get(1), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.OUTSIDE, set, -2.0);
@@ -357,22 +361,22 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(10.0, false));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(TEST_PRECISION, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(Double.NaN), set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(Double.NaN), set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(4, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, -2.0, intervals.get(0), TEST_TOLERANCE);
-        assertInterval(-1.0, 2.0, intervals.get(1), TEST_TOLERANCE);
-        assertInterval(5.0, 9.0, intervals.get(2), TEST_TOLERANCE);
-        assertInterval(10.0, Double.POSITIVE_INFINITY, intervals.get(3), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, -2.0, intervals.get(0), TEST_EPS);
+        assertInterval(-1.0, 2.0, intervals.get(1), TEST_EPS);
+        assertInterval(5.0, 9.0, intervals.get(2), TEST_EPS);
+        assertInterval(10.0, Double.POSITIVE_INFINITY, intervals.get(3), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
         assertLocation(Region.Location.INSIDE, set, -3);
@@ -388,29 +392,30 @@ public class IntervalsSetTest {
     }
 
     @Test
-    public void testFromBoundaries_intervalEqualToTolerance_onlyFirstBoundaryUsed() {
+    public void testFromBoundaries_intervalEqualToEpsilon_onlyFirstBoundaryUsed() {
         // arrange
-        double tolerance = 1e-3;
+        double eps = 1e-3;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
         double first = 1.0;
-        double second = 1.0 + tolerance;
+        double second = 1.0 + eps;
         List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
-        boundaries.add(subOrientedPoint(first, true, tolerance));
-        boundaries.add(subOrientedPoint(second, false, tolerance));
+        boundaries.add(subOrientedPoint(first, true, precision));
+        boundaries.add(subOrientedPoint(second, false, precision));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, tolerance);
+        IntervalsSet set = new IntervalsSet(boundaries, precision);
 
         // assert
-        Assert.assertEquals(tolerance, set.getTolerance(), Precision.SAFE_MIN);
+        Assert.assertSame(precision, set.getPrecision());
         EuclideanTestUtils.assertNegativeInfinity(set.getInf());
-        Assert.assertEquals(first, set.getSup(), TEST_TOLERANCE);
+        Assert.assertEquals(first, set.getSup(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(Double.NEGATIVE_INFINITY, first, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(Double.NEGATIVE_INFINITY, first, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.INSIDE, set, 0.0);
         assertLocation(Region.Location.BOUNDARY, set, 1.0);
@@ -420,27 +425,28 @@ public class IntervalsSetTest {
     @Test
     public void testFromBoundaries_intervalSmallerThanTolerance_onlyFirstBoundaryUsed() {
         // arrange
-        double tolerance = 1e-3;
+        double eps = 1e-3;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
         double first = 1.0;
         double second = 1.0 - 1e-4;
         List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
-        boundaries.add(subOrientedPoint(first, false, tolerance));
-        boundaries.add(subOrientedPoint(second, true, tolerance));
+        boundaries.add(subOrientedPoint(first, false, precision));
+        boundaries.add(subOrientedPoint(second, true, precision));
 
         // act
-        IntervalsSet set = new IntervalsSet(boundaries, tolerance);
+        IntervalsSet set = new IntervalsSet(boundaries, precision);
 
         // assert
-        Assert.assertEquals(tolerance, set.getTolerance(), Precision.SAFE_MIN);
-        Assert.assertEquals(first, set.getInf(), TEST_TOLERANCE);
+        Assert.assertSame(precision, set.getPrecision());
+        Assert.assertEquals(first, set.getInf(), TEST_EPS);
         EuclideanTestUtils.assertPositiveInfinity(set.getSup());
         EuclideanTestUtils.assertPositiveInfinity(set.getSize());
-        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
         List<Interval> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
-        assertInterval(first, Double.POSITIVE_INFINITY, intervals.get(0), TEST_TOLERANCE);
+        assertInterval(first, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, 0.0);
         assertLocation(Region.Location.BOUNDARY, set, 1.0);
@@ -458,7 +464,7 @@ public class IntervalsSetTest {
         boundaries.add(subOrientedPoint(9.0, true));
         boundaries.add(subOrientedPoint(10.0, false));
 
-        IntervalsSet set = new IntervalsSet(boundaries, TEST_TOLERANCE);
+        IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
 
         // act/assert
         assertProjection(Vector1D.of(-2), -1, set, Vector1D.of(-3));
@@ -490,7 +496,7 @@ public class IntervalsSetTest {
 
     @Test
     public void testInterval() {
-        IntervalsSet set = new IntervalsSet(2.3, 5.7, 1.0e-10);
+        IntervalsSet set = new IntervalsSet(2.3, 5.7, TEST_PRECISION);
         Assert.assertEquals(3.4, set.getSize(), 1.0e-10);
         Assert.assertEquals(4.0, set.getBarycenter().getX(), 1.0e-10);
         Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(Vector1D.of(2.3)));
@@ -504,7 +510,7 @@ public class IntervalsSetTest {
 
     @Test
     public void testInfinite() {
-        IntervalsSet set = new IntervalsSet(9.0, Double.POSITIVE_INFINITY, 1.0e-10);
+        IntervalsSet set = new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_PRECISION);
         Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(Vector1D.of(9.0)));
         Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(Vector1D.of(8.4)));
         for (double e = 1.0; e <= 6.0; e += 1.0) {
@@ -528,17 +534,17 @@ public class IntervalsSetTest {
 
         // act
         IntervalsSet set = (IntervalsSet)
-        factory.intersection(factory.union(factory.difference(new IntervalsSet(1.0, 6.0, TEST_TOLERANCE),
-                                                              new IntervalsSet(3.0, 5.0, TEST_TOLERANCE)),
-                                                              new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_TOLERANCE)),
-                                                              new IntervalsSet(Double.NEGATIVE_INFINITY, 11.0, TEST_TOLERANCE));
+        factory.intersection(factory.union(factory.difference(new IntervalsSet(1.0, 6.0, TEST_PRECISION),
+                                                              new IntervalsSet(3.0, 5.0, TEST_PRECISION)),
+                                                              new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_PRECISION)),
+                                                              new IntervalsSet(Double.NEGATIVE_INFINITY, 11.0, TEST_PRECISION));
 
         // arrange
-        Assert.assertEquals(1.0, set.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(11.0, set.getSup(), TEST_TOLERANCE);
+        Assert.assertEquals(1.0, set.getInf(), TEST_EPS);
+        Assert.assertEquals(11.0, set.getSup(), TEST_EPS);
 
-        Assert.assertEquals(5.0, set.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(5.9, set.getBarycenter().getX(), TEST_TOLERANCE);
+        Assert.assertEquals(5.0, set.getSize(), TEST_EPS);
+        Assert.assertEquals(5.9, set.getBarycenter().getX(), TEST_EPS);
 
         assertLocation(Region.Location.OUTSIDE, set, 0.0);
         assertLocation(Region.Location.OUTSIDE, set, 4.0);
@@ -552,9 +558,9 @@ public class IntervalsSetTest {
 
         List<Interval> list = set.asList();
         Assert.assertEquals(3, list.size());
-        assertInterval(1.0, 3.0, list.get(0), TEST_TOLERANCE);
-        assertInterval(5.0, 6.0, list.get(1), TEST_TOLERANCE);
-        assertInterval(9.0, 11.0, list.get(2), TEST_TOLERANCE);
+        assertInterval(1.0, 3.0, list.get(0), TEST_EPS);
+        assertInterval(5.0, 6.0, list.get(1), TEST_EPS);
+        assertInterval(9.0, 11.0, list.get(2), TEST_EPS);
     }
 
     private void assertLocation(Region.Location location, IntervalsSet set, double pt) {
@@ -570,17 +576,17 @@ public class IntervalsSetTest {
             IntervalsSet set, Vector1D toProject) {
         BoundaryProjection<Vector1D> proj = set.projectToBoundary(toProject);
 
-        EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(expectedProjection, proj.getProjected(), TEST_TOLERANCE);
-        Assert.assertEquals(expectedOffset, proj.getOffset(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedProjection, proj.getProjected(), TEST_EPS);
+        Assert.assertEquals(expectedOffset, proj.getOffset(), TEST_EPS);
     }
 
     private SubOrientedPoint subOrientedPoint(double location, boolean direct) {
-        return subOrientedPoint(location, direct, TEST_TOLERANCE);
+        return subOrientedPoint(location, direct, TEST_PRECISION);
     }
 
-    private SubOrientedPoint subOrientedPoint(double location, boolean direct, double tolerance) {
+    private SubOrientedPoint subOrientedPoint(double location, boolean direct, DoublePrecisionContext precision) {
         // the remaining region isn't necessary for creating 1D boundaries so we can set it to null here
-        return new SubOrientedPoint(new OrientedPoint(Vector1D.of(location), direct, tolerance), null);
+        return new SubOrientedPoint(new OrientedPoint(Vector1D.of(location), direct, precision), null);
     }
 }

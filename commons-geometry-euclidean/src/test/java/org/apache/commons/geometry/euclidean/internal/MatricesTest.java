@@ -16,13 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.internal;
 
-
-import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class MatricesTest {
 

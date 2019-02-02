@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 
@@ -48,7 +49,7 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(40, 1));
 
         @SuppressWarnings("unused")
-        final ConvexHull2D hull = new MonotoneChain(true, 2).generate(points);
+        final ConvexHull2D hull = new MonotoneChain(true, new EpsilonDoublePrecisionContext(2)).generate(points);
     }
 
 }

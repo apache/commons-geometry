@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.core.Precision;
 
 /**
  * Implements Andrew's monotone chain method to generate the convex hull of a finite set of
@@ -65,10 +65,10 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
     /**
      * Create a new MonotoneChain instance.
      * @param includeCollinearPoints whether collinear points shall be added as hull vertices
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point numbers
      */
-    public MonotoneChain(final boolean includeCollinearPoints, final double tolerance) {
-        super(includeCollinearPoints, tolerance);
+    public MonotoneChain(final boolean includeCollinearPoints, final DoublePrecisionContext precision) {
+        super(includeCollinearPoints, precision);
     }
 
     /** {@inheritDoc} */
@@ -82,12 +82,12 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
             /** {@inheritDoc} */
             @Override
             public int compare(final Vector2D o1, final Vector2D o2) {
-                final double tolerance = getTolerance();
+                final DoublePrecisionContext precision = getPrecision();
                 // need to take the tolerance value into account, otherwise collinear points
                 // will not be handled correctly when building the upper/lower hull
-                final int diff = Precision.compareTo(o1.getX(), o2.getX(), tolerance);
+                final int diff = precision.compare(o1.getX(), o2.getX());
                 if (diff == 0) {
-                    return Precision.compareTo(o1.getY(), o2.getY(), tolerance);
+                    return precision.compare(o1.getY(), o2.getY());
                 } else {
                     return diff;
                 }
@@ -132,12 +132,12 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
      * @param hull the partial hull
      */
     private void updateHull(final Vector2D point, final List<Vector2D> hull) {
-        final double tolerance = getTolerance();
+        final DoublePrecisionContext precision = getPrecision();
 
         if (hull.size() == 1) {
             // ensure that we do not add an identical point
             final Vector2D p1 = hull.get(0);
-            if (p1.distance(point) < tolerance) {
+            if (precision.isZero(p1.distance(point))) {
                 return;
             }
         }
@@ -147,12 +147,12 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
             final Vector2D p1 = hull.get(size - 2);
             final Vector2D p2 = hull.get(size - 1);
 
-            final double offset = new Line(p1, p2, tolerance).getOffset(point);
-            if (Math.abs(offset) < tolerance) {
+            final double offset = new Line(p1, p2, precision).getOffset(point);
+            if (precision.isZero(offset)) {
                 // the point is collinear to the line (p1, p2)
 
                 final double distanceToCurrent = p1.distance(point);
-                if (distanceToCurrent < tolerance || p2.distance(point) < tolerance) {
+                if (precision.isZero(distanceToCurrent) || precision.isZero(p2.distance(point))) {
                     // the point is assumed to be identical to either p1 or p2
                     return;
                 }

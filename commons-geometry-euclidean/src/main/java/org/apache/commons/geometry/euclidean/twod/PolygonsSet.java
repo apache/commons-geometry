@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -41,10 +42,10 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
     private Vector2D[][] vertices;
 
     /** Build a polygons set representing the whole plane.
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public PolygonsSet(final double tolerance) {
-        super(tolerance);
+    public PolygonsSet(final DoublePrecisionContext precision) {
+        super(precision);
     }
 
     /** Build a polygons set from a BSP tree.
@@ -65,10 +66,10 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * use only. The caller does have the responsibility to provided correct arguments.
      * </p>
      * @param tree inside/outside BSP tree representing the region
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public PolygonsSet(final BSPTree<Vector2D> tree, final double tolerance) {
-        super(tree, tolerance);
+    public PolygonsSet(final BSPTree<Vector2D> tree, final DoublePrecisionContext precision) {
+        super(tree, precision);
     }
 
     /** Build a polygons set from a Boundary REPresentation (B-rep).
@@ -90,10 +91,10 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * space.</p>
      * @param boundary collection of boundary elements, as a
      * collection of {@link SubHyperplane SubHyperplane} objects
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public PolygonsSet(final Collection<SubHyperplane<Vector2D>> boundary, final double tolerance) {
-        super(boundary, tolerance);
+    public PolygonsSet(final Collection<SubHyperplane<Vector2D>> boundary, final DoublePrecisionContext precision) {
+        super(boundary, precision);
     }
 
     /** Build a parallellepipedic box.
@@ -101,12 +102,12 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * @param xMax high bound along the x direction
      * @param yMin low bound along the y direction
      * @param yMax high bound along the y direction
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
     public PolygonsSet(final double xMin, final double xMax,
                        final double yMin, final double yMax,
-                       final double tolerance) {
-        super(boxBoundary(xMin, xMax, yMin, yMax, tolerance), tolerance);
+                       final DoublePrecisionContext precision) {
+        super(boxBoundary(xMin, xMax, yMin, yMax, precision), precision);
     }
 
     /** Build a polygon from a simple list of vertices.
@@ -117,7 +118,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * <p>This constructor does not handle polygons with a boundary
      * forming several disconnected paths (such as polygons with holes).</p>
      * <p>For cases where this simple constructor applies, it is expected to
-     * be numerically more robust than the {@link #PolygonsSet(Collection,double) general
+     * be numerically more robust than the {@link #PolygonsSet(Collection, DoublePrecisionContext) general
      * constructor} using {@link SubHyperplane subhyperplanes}.</p>
      * <p>If the list is empty, the region will represent the whole
      * space.</p>
@@ -135,12 +136,11 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * most accurate detail needed is a good value for the {@code hyperplaneThickness}
      * parameter.
      * </p>
-     * @param hyperplaneThickness tolerance below which points are considered to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      */
-    public PolygonsSet(final double hyperplaneThickness, final Vector2D ... vertices) {
-        super(verticesToTree(hyperplaneThickness, vertices), hyperplaneThickness);
+    public PolygonsSet(final DoublePrecisionContext precision, final Vector2D ... vertices) {
+        super(verticesToTree(precision, vertices), precision);
     }
 
     /** Create a list of hyperplanes representing the boundary of a box.
@@ -148,13 +148,13 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * @param xMax high bound along the x direction
      * @param yMin low bound along the y direction
      * @param yMax high bound along the y direction
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @return boundary of the box
      */
     private static Line[] boxBoundary(final double xMin, final double xMax,
                                       final double yMin, final double yMax,
-                                      final double tolerance) {
-        if ((xMin >= xMax - tolerance) || (yMin >= yMax - tolerance)) {
+                                      final DoublePrecisionContext precision) {
+        if (precision.areEqual(xMin, xMax) || precision.areEqual(yMin, yMax)) {
             // too thin box, build an empty polygons set
             return null;
         }
@@ -163,10 +163,10 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
         final Vector2D maxMin = Vector2D.of(xMax, yMin);
         final Vector2D maxMax = Vector2D.of(xMax, yMax);
         return new Line[] {
-            new Line(minMin, maxMin, tolerance),
-            new Line(maxMin, maxMax, tolerance),
-            new Line(maxMax, minMax, tolerance),
-            new Line(minMax, minMin, tolerance)
+            new Line(minMin, maxMin, precision),
+            new Line(maxMin, maxMax, precision),
+            new Line(maxMax, minMax, precision),
+            new Line(minMax, minMin, precision)
         };
     }
 
@@ -180,12 +180,11 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * <p>For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #PolygonsSet(Collection,double) general
      * constructor} using {@link SubHyperplane subhyperplanes}.</p>
-     * @param hyperplaneThickness tolerance below which points are consider to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree<Vector2D> verticesToTree(final double hyperplaneThickness,
+    private static BSPTree<Vector2D> verticesToTree(final DoublePrecisionContext precision,
                                                        final Vector2D ... vertices) {
 
         final int n = vertices.length;
@@ -213,7 +212,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             // with the current one
             Line line = start.sharedLineWith(end);
             if (line == null) {
-                line = new Line(start.getLocation(), end.getLocation(), hyperplaneThickness);
+                line = new Line(start.getLocation(), end.getLocation(), precision);
             }
 
             // create the edge and store it
@@ -222,7 +221,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             // check if another vertex also happens to be on this line
             for (final Vertex vertex : vArray) {
                 if (vertex != start && vertex != end &&
-                    Math.abs(line.getOffset(vertex.getLocation())) <= hyperplaneThickness) {
+                    precision.isZero(line.getOffset(vertex.getLocation()))) {
                     vertex.bindWith(line);
                 }
             }
@@ -231,21 +230,20 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
 
         // build the tree top-down
         final BSPTree<Vector2D> tree = new BSPTree<>();
-        insertEdges(hyperplaneThickness, tree, edges);
+        insertEdges(precision, tree, edges);
 
         return tree;
 
     }
 
     /** Recursively build a tree by inserting cut sub-hyperplanes.
-     * @param hyperplaneThickness tolerance below which points are consider to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param node current tree node (it is a leaf node at the beginning
      * of the call)
      * @param edges list of edges to insert in the cell defined by this node
      * (excluding edges not belonging to the cell defined by this node)
      */
-    private static void insertEdges(final double hyperplaneThickness,
+    private static void insertEdges(final DoublePrecisionContext precision,
                                     final BSPTree<Vector2D> node,
                                     final List<Edge> edges) {
 
@@ -285,9 +283,9 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             if (edge != inserted) {
                 final double startOffset = inserted.getLine().getOffset(edge.getStart().getLocation());
                 final double endOffset   = inserted.getLine().getOffset(edge.getEnd().getLocation());
-                Side startSide = (Math.abs(startOffset) <= hyperplaneThickness) ?
+                Side startSide = precision.isZero(Math.abs(startOffset)) ?
                                  Side.HYPER : ((startOffset < 0) ? Side.MINUS : Side.PLUS);
-                Side endSide   = (Math.abs(endOffset) <= hyperplaneThickness) ?
+                Side endSide   = precision.isZero(endOffset) ?
                                  Side.HYPER : ((endOffset < 0) ? Side.MINUS : Side.PLUS);
                 switch (startSide) {
                     case PLUS:
@@ -323,12 +321,12 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
 
         // recurse through lower levels
         if (!plusList.isEmpty()) {
-            insertEdges(hyperplaneThickness, node.getPlus(),  plusList);
+            insertEdges(precision, node.getPlus(),  plusList);
         } else {
             node.getPlus().setAttribute(Boolean.FALSE);
         }
         if (!minusList.isEmpty()) {
-            insertEdges(hyperplaneThickness, node.getMinus(), minusList);
+            insertEdges(precision, node.getMinus(), minusList);
         } else {
             node.getMinus().setAttribute(Boolean.TRUE);
         }
@@ -528,7 +526,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
     /** {@inheritDoc} */
     @Override
     public PolygonsSet buildNew(final BSPTree<Vector2D> tree) {
-        return new PolygonsSet(tree, getTolerance());
+        return new PolygonsSet(tree, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -616,7 +614,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             } else {
 
                 // build the unconnected segments
-                final SegmentsBuilder visitor = new SegmentsBuilder(getTolerance());
+                final SegmentsBuilder visitor = new SegmentsBuilder(getPrecision());
                 getTree(true).visit(visitor);
                 final List<ConnectableSegment> segments = visitor.getSegments();
 
@@ -783,7 +781,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                         }
                     }
                 }
-                if (min <= getTolerance()) {
+                if (getPrecision().isZero(min)) {
                     // connect the two segments
                     segment.setNext(selectedNext);
                     selectedNext.setPrevious(segment);
@@ -989,17 +987,17 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
     /** Visitor building segments. */
     private static class SegmentsBuilder implements BSPTreeVisitor<Vector2D> {
 
-        /** Tolerance for close nodes connection. */
-        private final double tolerance;
+        /** Object used to determine floating point equality */
+        private final DoublePrecisionContext precision;
 
         /** Built segments. */
         private final List<ConnectableSegment> segments;
 
         /** Simple constructor.
-         * @param tolerance tolerance for close nodes connection
+         * @param precision precision context used to compare floating point values
          */
-        SegmentsBuilder(final double tolerance) {
-            this.tolerance = tolerance;
+        SegmentsBuilder(final DoublePrecisionContext precision) {
+            this.precision = precision;
             this.segments  = new ArrayList<>();
         }
 
@@ -1084,7 +1082,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                     }
                 }
 
-                if (min <= tolerance) {
+                if (precision.isZero(min)) {
                     return selected;
                 }
             }

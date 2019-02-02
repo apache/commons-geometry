@@ -42,6 +42,13 @@
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
   </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-numbers-core</artifactId>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>

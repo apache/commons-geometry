@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane on the circle.
  * <p>An hyperplane on the 1-sphere is an angle with an orientation.</p>
@@ -30,19 +31,19 @@ public class LimitAngle implements Hyperplane<S1Point> {
     /** Orientation. */
     private final boolean direct;
 
-    /** Tolerance below which angles are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Simple constructor.
      * @param location location of the hyperplane
      * @param direct if true, the plus side of the hyperplane is towards
      * angles greater than {@code location}
-     * @param tolerance tolerance below which angles are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public LimitAngle(final S1Point location, final boolean direct, final double tolerance) {
+    public LimitAngle(final S1Point location, final boolean direct, final DoublePrecisionContext precision) {
         this.location  = location;
         this.direct    = direct;
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Copy the instance.
@@ -76,7 +77,7 @@ public class LimitAngle implements Hyperplane<S1Point> {
      * @return a new limit angle, with orientation opposite to the instance orientation
      */
     public LimitAngle getReverse() {
-        return new LimitAngle(location, !direct, tolerance);
+        return new LimitAngle(location, !direct, precision);
     }
 
     /** Build a region covering the whole hyperplane.
@@ -101,7 +102,7 @@ public class LimitAngle implements Hyperplane<S1Point> {
      */
     @Override
     public ArcsSet wholeSpace() {
-        return new ArcsSet(tolerance);
+        return new ArcsSet(precision);
     }
 
     /** {@inheritDoc} */
@@ -125,8 +126,8 @@ public class LimitAngle implements Hyperplane<S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
 }

@@ -26,16 +26,17 @@ import org.apache.commons.geometry.core.partitioning.AbstractRegion;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D region: a set of intervals.
  */
 public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements Iterable<double[]> {
 
     /** Build an intervals set representing the whole real line.
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    public IntervalsSet(final double tolerance) {
-        super(tolerance);
+    public IntervalsSet(final DoublePrecisionContext precision) {
+        super(precision);
     }
 
     /** Build an intervals set corresponding to a single interval.
@@ -43,10 +44,10 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * to {@code upper} (may be {@code Double.NEGATIVE_INFINITY})
      * @param upper upper bound of the interval, must be greater or equal
      * to {@code lower} (may be {@code Double.POSITIVE_INFINITY})
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    public IntervalsSet(final double lower, final double upper, final double tolerance) {
-        super(buildTree(lower, upper, tolerance), tolerance);
+    public IntervalsSet(final double lower, final double upper, final DoublePrecisionContext precision) {
+        super(buildTree(lower, upper, precision), precision);
     }
 
     /** Build an intervals set from an inside/outside BSP tree.
@@ -57,10 +58,10 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * recommended to use the predefined constants
      * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>
      * @param tree inside/outside BSP tree representing the intervals set
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
-    public IntervalsSet(final BSPTree<Vector1D> tree, final double tolerance) {
-        super(tree, tolerance);
+    public IntervalsSet(final BSPTree<Vector1D> tree, final DoublePrecisionContext precision) {
+        super(tree, precision);
     }
 
     /** Build an intervals set from a Boundary REPresentation (B-rep).
@@ -81,11 +82,11 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
      * @param boundary collection of boundary elements
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      */
     public IntervalsSet(final Collection<SubHyperplane<Vector1D>> boundary,
-                        final double tolerance) {
-        super(boundary, tolerance);
+                        final DoublePrecisionContext precision) {
+        super(boundary, precision);
     }
 
     /** Build an inside/outside tree representing a single interval.
@@ -93,11 +94,11 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * to {@code upper} (may be {@code Double.NEGATIVE_INFINITY})
      * @param upper upper bound of the interval, must be greater or equal
      * to {@code lower} (may be {@code Double.POSITIVE_INFINITY})
-     * @param tolerance tolerance below which points are considered identical.
+     * @param precision precision context used to compare floating point values
      * @return the built tree
      */
     private static BSPTree<Vector1D> buildTree(final double lower, final double upper,
-                                                  final double tolerance) {
+                                                  final DoublePrecisionContext precision) {
         if (Double.isInfinite(lower) && (lower < 0)) {
             if (Double.isInfinite(upper) && (upper > 0)) {
                 // the tree must cover the whole real line
@@ -105,14 +106,14 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
             }
             // the tree must be open on the negative infinity side
             final SubHyperplane<Vector1D> upperCut =
-                new OrientedPoint(Vector1D.of(upper), true, tolerance).wholeHyperplane();
+                new OrientedPoint(Vector1D.of(upper), true, precision).wholeHyperplane();
             return new BSPTree<>(upperCut,
                                new BSPTree<Vector1D>(Boolean.FALSE),
                                new BSPTree<Vector1D>(Boolean.TRUE),
                                null);
         }
         final SubHyperplane<Vector1D> lowerCut =
-            new OrientedPoint(Vector1D.of(lower), false, tolerance).wholeHyperplane();
+            new OrientedPoint(Vector1D.of(lower), false, precision).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
             return new BSPTree<>(lowerCut,
@@ -123,7 +124,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
 
         // the tree must be bounded on the two sides
         final SubHyperplane<Vector1D> upperCut =
-            new OrientedPoint(Vector1D.of(upper), true, tolerance).wholeHyperplane();
+            new OrientedPoint(Vector1D.of(upper), true, precision).wholeHyperplane();
         return new BSPTree<>(lowerCut,
                                         new BSPTree<Vector1D>(Boolean.FALSE),
                                         new BSPTree<>(upperCut,
@@ -137,7 +138,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     /** {@inheritDoc} */
     @Override
     public IntervalsSet buildNew(final BSPTree<Vector1D> tree) {
-        return new IntervalsSet(tree, getTolerance());
+        return new IntervalsSet(tree, getPrecision());
     }
 
     /** {@inheritDoc} */

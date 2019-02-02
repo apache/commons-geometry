@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.threed.rotation.AxisSequence;
 import org.junit.Assert;
 import org.junit.Test;
 

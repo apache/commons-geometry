@@ -20,6 +20,7 @@ import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -63,8 +64,8 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
     /** Offset of the frame origin. */
     private double originOffset;
 
-    /** Tolerance below which points are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Reverse line. */
     private Line reverse;
@@ -73,21 +74,21 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * <p>The line is oriented from p1 to p2</p>
      * @param p1 first point
      * @param p2 second point
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public Line(final Vector2D p1, final Vector2D p2, final double tolerance) {
+    public Line(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
         reset(p1, p2);
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a line from a point and an angle.
      * @param p point belonging to the line
      * @param angle angle of the line with respect to abscissa axis
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public Line(final Vector2D p, final double angle, final double tolerance) {
+    public Line(final Vector2D p, final double angle, final DoublePrecisionContext precision) {
         reset(p, angle);
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Build a line from its internal characteristics.
@@ -95,15 +96,15 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * @param cos cosine of the angle
      * @param sin sine of the angle
      * @param originOffset offset of the origin
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
     private Line(final double angle, final double cos, final double sin,
-                 final double originOffset, final double tolerance) {
+                 final double originOffset, final DoublePrecisionContext precision) {
         this.angle        = angle;
         this.cos          = cos;
         this.sin          = sin;
         this.originOffset = originOffset;
-        this.tolerance    = tolerance;
+        this.precision    = precision;
         this.reverse      = null;
     }
 
@@ -117,7 +118,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
         cos          = line.cos;
         sin          = line.sin;
         originOffset = line.originOffset;
-        tolerance    = line.tolerance;
+        precision    = line.precision;
         reverse      = null;
     }
 
@@ -203,7 +204,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
     public Line getReverse() {
         if (reverse == null) {
             reverse = new Line((angle < Math.PI) ? (angle + Math.PI) : (angle - Math.PI),
-                               -cos, -sin, -originOffset, tolerance);
+                               -cos, -sin, -originOffset, precision);
             reverse.reverse = this;
         }
         return reverse;
@@ -230,7 +231,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      */
     public Vector2D intersection(final Line other) {
         final double d = LinearCombination.value(sin, other.cos, -other.sin, cos);
-        if (Math.abs(d) < tolerance) {
+        if (precision.isZero(d)) {
             return null;
         }
         return Vector2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
@@ -245,14 +246,14 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** {@inheritDoc} */
     @Override
     public SubLine wholeHyperplane() {
-        return new SubLine(this, new IntervalsSet(tolerance));
+        return new SubLine(this, new IntervalsSet(precision));
     }
 
     /** Build a region covering the whole space.
@@ -261,7 +262,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      */
     @Override
     public PolygonsSet wholeSpace() {
-        return new PolygonsSet(tolerance);
+        return new PolygonsSet(precision);
     }
 
     /** Get the offset (oriented distance) of a parallel line.
@@ -310,7 +311,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * @return true if p belongs to the line
      */
     public boolean contains(final Vector2D p) {
-        return Math.abs(getOffset(p)) < tolerance;
+        return precision.isZero(getOffset(p));
     }
 
     /** Compute the distance between the instance and a point.
@@ -331,7 +332,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * (they can have either the same or opposite orientations)
      */
     public boolean isParallelTo(final Line line) {
-        return Math.abs(LinearCombination.value(sin, line.cos, -cos, line.sin)) < tolerance;
+        return precision.isZero(LinearCombination.value(sin, line.cos, -cos, line.sin));
     }
 
     /** Translate the line to force it passing by a point.
@@ -482,7 +483,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
             final double inv     = 1.0 / Math.sqrt(rSin * rSin + rCos * rCos);
             return new Line(Math.PI + Math.atan2(-rSin, -rCos),
                             inv * rCos, inv * rSin,
-                            inv * rOffset, line.tolerance);
+                            inv * rOffset, line.precision);
         }
 
         /** {@inheritDoc} */
@@ -495,7 +496,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
             final Line transformedLine = (Line) transformed;
             final Vector1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
-            return new OrientedPoint(newLoc, op.isDirect(), originalLine.tolerance).wholeHyperplane();
+            return new OrientedPoint(newLoc, op.isDirect(), originalLine.precision).wholeHyperplane();
         }
 
     }
