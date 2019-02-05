@@ -23,14 +23,15 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Visitor computing geometrical properties.
  */
 class PropertiesComputer implements BSPTreeVisitor<S2Point> {
 
-    /** Tolerance below which points are consider to be identical. */
-    private final double tolerance;
+    /** Precision context used to determine floating point equality. */
+    private final DoublePrecisionContext precision;
 
     /** Summed area. */
     private double summedArea;
@@ -42,10 +43,10 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
     private final List<Vector3D> convexCellsInsidePoints;
 
     /** Simple constructor.
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    PropertiesComputer(final double tolerance) {
-        this.tolerance              = tolerance;
+    PropertiesComputer(final DoublePrecisionContext precision) {
+        this.precision              = precision;
         this.summedArea             = 0;
         this.summedBarycenter       = Vector3D.ZERO;
         this.convexCellsInsidePoints = new ArrayList<>();
@@ -73,7 +74,7 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
                     new SphericalPolygonsSet(node.pruneAroundConvexCell(Boolean.TRUE,
                                                                         Boolean.FALSE,
                                                                         null),
-                                             tolerance);
+                            precision);
 
             // extract the start of the single loop boundary of the convex cell
             final List<Vertex> boundary = convex.getBoundaryLoops();

@@ -43,6 +43,13 @@
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-numbers-core</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <!-- Make the core test utilities accessible to other projects. -->

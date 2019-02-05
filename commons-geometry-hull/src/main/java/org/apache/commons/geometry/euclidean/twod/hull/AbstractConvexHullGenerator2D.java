@@ -18,6 +18,8 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.util.Collection;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
@@ -25,11 +27,11 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
-    /** Default value for tolerance. */
-    private static final double DEFAULT_TOLERANCE = 1e-10;
+    /** Default epsilon vlaue. */
+    private static final double DEFAULT_EPSILON = 1e-10;
 
-    /** Tolerance below which points are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /**
      * Indicates if collinear points on the hull shall be present in the output.
@@ -40,13 +42,13 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
     /**
      * Simple constructor.
      * <p>
-     * The default tolerance (1e-10) will be used to determine identical points.
+     * The default epsilon (1e-10) will be used to determine identical points.
      *
      * @param includeCollinearPoints indicates if collinear points on the hull shall be
      * added as hull vertices
      */
     protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints) {
-        this(includeCollinearPoints, DEFAULT_TOLERANCE);
+        this(includeCollinearPoints, new EpsilonDoublePrecisionContext(DEFAULT_EPSILON));
     }
 
     /**
@@ -54,19 +56,18 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      *
      * @param includeCollinearPoints indicates if collinear points on the hull shall be
      * added as hull vertices
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point numbers
      */
-    protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints, final double tolerance) {
+    protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints, final DoublePrecisionContext precision) {
         this.includeCollinearPoints = includeCollinearPoints;
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
-    /**
-     * Get the tolerance below which points are considered identical.
-     * @return the tolerance below which points are considered identical
+    /** Get the object used to determine floating point equality for this region.
+     * @return the floating point precision context for the instance
      */
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /**
@@ -91,7 +92,7 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
         try {
             return new ConvexHull2D(hullVertices.toArray(new Vector2D[hullVertices.size()]),
-                                    tolerance);
+                                    precision);
         } catch (IllegalArgumentException e) {
             // the hull vertices may not form a convex hull if the tolerance value is to large
             throw new IllegalStateException("Convex hull algorithm failed to generate solution", e);

@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This interface represents an hyperplane of a space.
 
@@ -64,10 +65,12 @@ public interface Hyperplane<P extends Point<P>> {
      */
     P project(P point);
 
-    /** Get the tolerance below which points are considered to belong to the hyperplane.
-     * @return tolerance below which points are considered to belong to the hyperplane
+    /** Get the object used to determine floating point equality for this hyperplane.
+     * This determines which points belong to the hyperplane and which do not, or pictured
+     * another way, the "thickness" of the hyperplane.
+     * @return the floating point precision context for the instance
      */
-    double getTolerance();
+    DoublePrecisionContext getPrecision();
 
     /** Check if the instance has the same orientation as another hyperplane.
      * <p>This method is expected to be called on parallel hyperplanes. The

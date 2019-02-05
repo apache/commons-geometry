@@ -19,6 +19,8 @@ package org.apache.commons.geometry.euclidean.threed.enclosing;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -30,6 +32,9 @@ import org.apache.commons.numbers.fraction.BigFraction;
 /** Class generating an enclosing ball from its support points.
  */
 public class SphereGenerator implements SupportBallGenerator<Vector3D> {
+
+    /** Base epsilon value */
+    private static final double BASE_EPS = 1e-10;
 
     /** {@inheritDoc} */
     @Override
@@ -52,8 +57,8 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                     if (support.size() < 4) {
 
                         // delegate to 2D disk generator
-                        final Plane p = new Plane(vA, vB, vC,
-                                                  1.0e-10 * (norm1(vA) + norm1(vB) + norm1(vC)));
+                        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
+                        final Plane p = new Plane(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
                                                                                 p.toSubSpace(vB),

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -132,9 +133,9 @@ public class Edge {
         final double unwrappedEnd     = arcRelativeEnd - Geometry.TWO_PI;
 
         // build the sub-edges
-        final double tolerance = circle.getTolerance();
+        final DoublePrecisionContext precision = circle.getPrecision();
         Vertex previousVertex = start;
-        if (unwrappedEnd >= length - tolerance) {
+        if (precision.compare(unwrappedEnd, length) >= 0) {
 
             // the edge is entirely contained inside the circle
             // we don't split anything
@@ -153,7 +154,7 @@ public class Edge {
                 alreadyManagedLength = unwrappedEnd;
             }
 
-            if (arcRelativeStart >= length - tolerance) {
+            if (precision.compare(arcRelativeStart, length) >= 0) {
                 // the edge ends while still outside of the circle
                 if (unwrappedEnd >= 0) {
                     previousVertex = addSubEdge(previousVertex, end,
@@ -170,7 +171,7 @@ public class Edge {
                                             arcRelativeStart - alreadyManagedLength, outsideList, splitCircle);
                 alreadyManagedLength = arcRelativeStart;
 
-                if (arcRelativeEnd >= length - tolerance) {
+                if (precision.compare(arcRelativeEnd, length) >= 0) {
                     // the edge ends while still inside of the circle
                     previousVertex = addSubEdge(previousVertex, end,
                                                 length - alreadyManagedLength, insideList, splitCircle);
@@ -205,7 +206,7 @@ public class Edge {
     private Vertex addSubEdge(final Vertex subStart, final Vertex subEnd, final double subLength,
                               final List<Edge> list, final Circle splitCircle) {
 
-        if (subLength <= circle.getTolerance()) {
+        if (circle.getPrecision().isZero(subLength)) {
             // the edge is too short, we ignore it
             return subStart;
         }

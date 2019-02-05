@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
@@ -46,10 +47,10 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
     /** Create a sub-line from two endpoints.
      * @param start start point
      * @param end end point
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public SubLine(final Vector2D start, final Vector2D end, final double tolerance) {
-        super(new Line(start, end, tolerance), buildIntervalSet(start, end, tolerance));
+    public SubLine(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
+        super(new Line(start, end, precision), buildIntervalSet(start, end, precision));
     }
 
     /** Create a sub-line from a segment.
@@ -57,7 +58,7 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
      */
     public SubLine(final Segment segment) {
         super(segment.getLine(),
-              buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getTolerance()));
+              buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getPrecision()));
     }
 
     /** Get the endpoints of the sub-line.
@@ -133,14 +134,14 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
     /** Build an interval set from two points.
      * @param start start point
      * @param end end point
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @return an interval set
      */
-    private static IntervalsSet buildIntervalSet(final Vector2D start, final Vector2D end, final double tolerance) {
-        final Line line = new Line(start, end, tolerance);
+    private static IntervalsSet buildIntervalSet(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
+        final Line line = new Line(start, end, precision);
         return new IntervalsSet(line.toSubSpace(start).getX(),
                                 line.toSubSpace(end).getX(),
-                                tolerance);
+                                precision);
     }
 
     /** {@inheritDoc} */
@@ -157,14 +158,16 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
         final Line    thisLine  = (Line) getHyperplane();
         final Line    otherLine = (Line) hyperplane;
         final Vector2D crossing = thisLine.intersection(otherLine);
-        final double tolerance  = thisLine.getTolerance();
+        final DoublePrecisionContext precision = thisLine.getPrecision();
 
         if (crossing == null) {
             // the lines are parallel
             final double global = otherLine.getOffset(thisLine);
-            if (global < -tolerance) {
+            final int comparison = precision.compare(global, 0.0);
+
+            if (comparison < 0) {
                 return new SplitSubHyperplane<>(null, this);
-            } else if (global > tolerance) {
+            } else if (comparison > 0) {
                 return new SplitSubHyperplane<>(this, null);
             } else {
                 return new SplitSubHyperplane<>(null, null);
@@ -175,9 +178,9 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
         final boolean direct = Math.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
         final Vector1D x      = thisLine.toSubSpace(crossing);
         final SubHyperplane<Vector1D> subPlus  =
-                new OrientedPoint(x, !direct, tolerance).wholeHyperplane();
+                new OrientedPoint(x, !direct, precision).wholeHyperplane();
         final SubHyperplane<Vector1D> subMinus =
-                new OrientedPoint(x,  direct, tolerance).wholeHyperplane();
+                new OrientedPoint(x,  direct, precision).wholeHyperplane();
 
         final BSPTree<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
         final BSPTree<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
@@ -188,8 +191,8 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
                                                new BSPTree<Vector1D>(Boolean.FALSE) :
                                                new BSPTree<>(subMinus, new BSPTree<Vector1D>(Boolean.FALSE),
                                                                         splitTree.getMinus(), null);
-        return new SplitSubHyperplane<>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree, tolerance)),
-                                                   new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree, tolerance)));
+        return new SplitSubHyperplane<>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree, precision)),
+                                                   new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree, precision)));
 
     }
 

@@ -18,6 +18,8 @@ package org.apache.commons.geometry.core.partitioning;
 
 import java.util.Iterator;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -32,7 +34,9 @@ import org.junit.Test;
  */
 public class CharacterizationTest {
 
-    private static final double TEST_TOLERANCE = 1e-10;
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION = new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
     public void testCharacterize_insideLeaf() {
@@ -352,7 +356,7 @@ public class CharacterizationTest {
     @Test
     public void testCharacterize_onHyperplane_box() {
         // arrange
-        PolygonsSet poly = new PolygonsSet(0, 1, 0, 1, TEST_TOLERANCE);
+        PolygonsSet poly = new PolygonsSet(0, 1, 0, 1, TEST_PRECISION);
         BSPTree<Vector2D> tree = poly.getTree(false);
 
         SubLine sub = buildSubLine(Vector2D.of(2, 0), Vector2D.of(-2, 0));
@@ -405,19 +409,19 @@ public class CharacterizationTest {
     }
 
     private Line buildLine(Vector2D p1, Vector2D p2) {
-        return new Line(p1, p2, TEST_TOLERANCE);
+        return new Line(p1, p2, TEST_PRECISION);
     }
 
     private SubLine buildSubLine(Vector2D start, Vector2D end) {
-        Line line = new Line(start, end, TEST_TOLERANCE);
+        Line line = new Line(start, end, TEST_PRECISION);
         double lower = (line.toSubSpace(start)).getX();
         double upper = (line.toSubSpace(end)).getX();
-        return new SubLine(line, new IntervalsSet(lower, upper, TEST_TOLERANCE));
+        return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));
     }
 
     private void assertVectorEquals(Vector2D expected, Vector2D actual) {
         String msg = "Expected vector to equal " + expected + " but was " + actual + ";";
-        Assert.assertEquals(msg, expected.getX(), actual.getX(), TEST_TOLERANCE);
-        Assert.assertEquals(msg, expected.getY(), actual.getY(), TEST_TOLERANCE);
+        Assert.assertEquals(msg, expected.getX(), actual.getX(), TEST_EPS);
+        Assert.assertEquals(msg, expected.getY(), actual.getY(), TEST_EPS);
     }
 }

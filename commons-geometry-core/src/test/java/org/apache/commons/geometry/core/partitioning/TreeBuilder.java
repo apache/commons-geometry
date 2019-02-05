@@ -16,19 +16,22 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 
 /** Local class for building an {@link AbstractRegion} tree.
  * @param <P> Point type defining the space
  */
 public abstract class TreeBuilder<P extends Point<P>> {
 
-    /** Keyword for tolerance. */
-    private static final String TOLERANCE = "tolerance";
+    /** Default epsilon value for use when no value is specified
+     * in the constructor.
+     */
+    private static final double DEFAULT_EPS = 1e-10;
 
     /** Keyword for internal nodes. */
     private static final String INTERNAL  = "internal";
@@ -51,25 +54,34 @@ public abstract class TreeBuilder<P extends Point<P>> {
     /** Tree root. */
     private BSPTree<P> root;
 
-    /** Tolerance. */
-    private final double tolerance;
+    /** Precision. */
+    private final DoublePrecisionContext precision;
 
     /** Tokenizer parsing string representation. */
     private final StringTokenizer tokenizer;
 
-    /** Simple constructor.
+    /** Constructor using a default precision context.
      * @param type type of the expected representation
-     * @param reader reader for the string representation
-     * @exception IOException if the string cannot be read
+     * @param str the tree string representation
      * @exception ParseException if the string cannot be parsed
      */
-    public TreeBuilder(final String type, final String s)
-        throws IOException, ParseException {
+    public TreeBuilder(final String type, final String str) throws ParseException {
+        this(type, str, new EpsilonDoublePrecisionContext(DEFAULT_EPS));
+    }
+
+    /** Simple constructor.
+     * @param type type of the expected representation
+     * @param str the tree string representation
+     * @param precision precision context for determining floating point equality
+     * @exception ParseException if the string cannot be parsed
+     */
+    public TreeBuilder(final String type, final String str, final DoublePrecisionContext precision)
+        throws ParseException {
+        this.precision = precision;
+
         root = null;
-        tokenizer = new StringTokenizer(s);
+        tokenizer = new StringTokenizer(str);
         getWord(type);
-        getWord(TOLERANCE);
-        tolerance = getNumber();
         getWord(PLUS);
         root = new BSPTree<>();
         parseTree(root);
@@ -80,11 +92,10 @@ public abstract class TreeBuilder<P extends Point<P>> {
 
     /** Parse a tree.
      * @param node start node
-     * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     private void parseTree(final BSPTree<P> node)
-        throws IOException, ParseException {
+        throws ParseException {
         if (INTERNAL.equals(getWord(INTERNAL, LEAF))) {
             // this is an internal node, it has a cut sub-hyperplane (stored as a whole hyperplane)
             // then a minus tree, then a plus tree
@@ -102,11 +113,10 @@ public abstract class TreeBuilder<P extends Point<P>> {
     /** Get next word.
      * @param allowed allowed values
      * @return parsed word
-     * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     protected String getWord(final String ... allowed)
-        throws IOException, ParseException {
+        throws ParseException {
         final String token = tokenizer.nextToken();
         for (final String a : allowed) {
             if (a.equals(token)) {
@@ -118,21 +128,19 @@ public abstract class TreeBuilder<P extends Point<P>> {
 
     /** Get next number.
      * @return parsed number
-     * @exception IOException if the string cannot be read
      * @exception NumberFormatException if the string cannot be parsed
      */
     protected double getNumber()
-        throws IOException, NumberFormatException {
+        throws NumberFormatException {
         return Double.parseDouble(tokenizer.nextToken());
     }
 
     /** Get next boolean.
      * @return parsed boolean
-     * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     protected boolean getBoolean()
-        throws IOException, ParseException {
+        throws ParseException {
         return getWord(TRUE, FALSE).equals(TRUE);
     }
 
@@ -143,19 +151,18 @@ public abstract class TreeBuilder<P extends Point<P>> {
         return root;
     }
 
-    /** Get the tolerance.
-     * @return tolerance
+    /** Get the precision.
+     * @return precision
      */
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Parse an hyperplane.
      * @return next hyperplane from the stream
-     * @exception IOException if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
     protected abstract Hyperplane<P> parseHyperplane()
-        throws IOException, ParseException;
+        throws ParseException;
 
 }

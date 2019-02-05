@@ -23,10 +23,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class NestedLoopsTest {
+
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @SuppressWarnings("unchecked")
     @Test
@@ -45,7 +52,7 @@ public class NestedLoopsTest {
                 origin
         };
 
-        NestedLoops nestedLoops = new NestedLoops(0.00000001);
+        NestedLoops nestedLoops = new NestedLoops(TEST_PRECISION);
         nestedLoops.add(vertices);
         nestedLoops.correctOrientation();
 

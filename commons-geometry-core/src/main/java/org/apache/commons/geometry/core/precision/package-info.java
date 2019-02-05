@@ -14,25 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod.hull;
-
-import java.util.Collection;
-
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
-
 /**
- * Test class for AklToussaintHeuristic.
+ *
+ * <p>
+ * This package contains classes related to floating-point precision.
+ * </p>
  */
-public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
-
-    @Override
-    protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
-        return new MonotoneChain(includeCollinearPoints);
-    }
-
-    @Override
-    protected Collection<Vector2D> reducePoints(Collection<Vector2D> points) {
-        return AklToussaintHeuristic.reducePoints(points);
-    }
-
-}
+package org.apache.commons.geometry.core.precision;

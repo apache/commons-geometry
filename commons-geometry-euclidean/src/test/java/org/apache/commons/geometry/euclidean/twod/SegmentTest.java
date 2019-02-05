@@ -16,27 +16,34 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class SegmentTest {
 
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
     @Test
     public void testDistance() {
         Vector2D start = Vector2D.of(2, 2);
         Vector2D end = Vector2D.of(-2, -2);
-        Segment segment = new Segment(start, end, new Line(start, end, 1.0e-10));
+        Segment segment = new Segment(start, end, new Line(start, end, TEST_PRECISION));
 
         // distance to center of segment
-        Assert.assertEquals(Math.sqrt(2), segment.distance(Vector2D.of(1, -1)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(2), segment.distance(Vector2D.of(1, -1)), TEST_EPS);
 
         // distance a point on segment
-        Assert.assertEquals(Math.sin(Math.PI / 4.0), segment.distance(Vector2D.of(0, -1)), 1.0e-10);
+        Assert.assertEquals(Math.sin(Math.PI / 4.0), segment.distance(Vector2D.of(0, -1)), TEST_EPS);
 
         // distance to end point
-        Assert.assertEquals(Math.sqrt(8), segment.distance(Vector2D.of(0, 4)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(8), segment.distance(Vector2D.of(0, 4)), TEST_EPS);
 
         // distance to start point
-        Assert.assertEquals(Math.sqrt(8), segment.distance(Vector2D.of(0, -4)), 1.0e-10);
+        Assert.assertEquals(Math.sqrt(8), segment.distance(Vector2D.of(0, -4)), TEST_EPS);
     }
 }

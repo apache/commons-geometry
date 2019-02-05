@@ -29,6 +29,7 @@ import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
 
@@ -44,10 +45,10 @@ import org.apache.commons.numbers.core.Precision;
 public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterable<double[]> {
 
     /** Build an arcs set representing the whole circle.
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      */
-    public ArcsSet(final double tolerance) {
-        super(tolerance);
+    public ArcsSet(final DoublePrecisionContext precision) {
+        super(precision);
     }
 
     /** Build an arcs set corresponding to a single arc.
@@ -60,11 +61,11 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * </p>
      * @param lower lower bound of the arc
      * @param upper upper bound of the arc
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    public ArcsSet(final double lower, final double upper, final double tolerance) {
-        super(buildTree(lower, upper, tolerance), tolerance);
+    public ArcsSet(final double lower, final double upper, final DoublePrecisionContext precision) {
+        super(buildTree(lower, upper, precision), precision);
     }
 
     /** Build an arcs set from an inside/outside BSP tree.
@@ -75,12 +76,12 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * recommended to use the predefined constants
      * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>
      * @param tree inside/outside BSP tree representing the arcs set
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final BSPTree<S1Point> tree, final double tolerance) {
-        super(tree, tolerance);
+    public ArcsSet(final BSPTree<S1Point> tree, final DoublePrecisionContext precision) {
+        super(tree, precision);
         check2PiConsistency();
     }
 
@@ -102,24 +103,24 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
      * @param boundary collection of boundary elements
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final double tolerance) {
-        super(boundary, tolerance);
+    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final DoublePrecisionContext precision) {
+        super(boundary, precision);
         check2PiConsistency();
     }
 
     /** Build an inside/outside tree representing a single arc.
      * @param lower lower angular bound of the arc
      * @param upper upper angular bound of the arc
-     * @param tolerance tolerance below which close sub-arcs are merged together
+     * @param precision precision context used to compare floating point values
      * @return the built tree
      * @exception IllegalArgumentException if lower is greater than upper
      */
     private static BSPTree<S1Point> buildTree(final double lower, final double upper,
-                                               final double tolerance) {
+                                               final DoublePrecisionContext precision) {
 
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
             // the tree must cover the whole circle
@@ -132,12 +133,12 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         final double normalizedLower = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(lower);
         final double normalizedUpper = normalizedLower + (upper - lower);
         final SubHyperplane<S1Point> lowerCut =
-                new LimitAngle(S1Point.of(normalizedLower), false, tolerance).wholeHyperplane();
+                new LimitAngle(S1Point.of(normalizedLower), false, precision).wholeHyperplane();
 
         if (normalizedUpper <= Geometry.TWO_PI) {
             // simple arc starting after 0 and ending before 2 \pi
             final SubHyperplane<S1Point> upperCut =
-                    new LimitAngle(S1Point.of(normalizedUpper), true, tolerance).wholeHyperplane();
+                    new LimitAngle(S1Point.of(normalizedUpper), true, precision).wholeHyperplane();
             return new BSPTree<>(lowerCut,
                                          new BSPTree<S1Point>(Boolean.FALSE),
                                          new BSPTree<>(upperCut,
@@ -148,7 +149,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         } else {
             // arc wrapping around 2 \pi
             final SubHyperplane<S1Point> upperCut =
-                    new LimitAngle(S1Point.of(normalizedUpper - Geometry.TWO_PI), true, tolerance).wholeHyperplane();
+                    new LimitAngle(S1Point.of(normalizedUpper - Geometry.TWO_PI), true, precision).wholeHyperplane();
             return new BSPTree<>(lowerCut,
                                          new BSPTree<>(upperCut,
                                                                new BSPTree<S1Point>(Boolean.FALSE),
@@ -435,7 +436,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     /** {@inheritDoc} */
     @Override
     public ArcsSet buildNew(final BSPTree<S1Point> tree) {
-        return new ArcsSet(tree, getTolerance());
+        return new ArcsSet(tree, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -555,7 +556,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     public List<Arc> asList() {
         final List<Arc> list = new ArrayList<>();
         for (final double[] a : this) {
-            list.add(new Arc(a[0], a[1], getTolerance()));
+            list.add(new Arc(a[0], a[1], getPrecision()));
         }
         return list;
     }
@@ -784,8 +785,8 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      */
     private void addArcLimit(final BSPTree<S1Point> tree, final double alpha, final boolean isStart) {
 
-        final LimitAngle limit = new LimitAngle(S1Point.of(alpha), !isStart, getTolerance());
-        final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getTolerance());
+        final LimitAngle limit = new LimitAngle(S1Point.of(alpha), !isStart, getPrecision());
+        final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getPrecision());
         if (node.getCut() != null) {
             // this should never happen
             throw new GeometryInternalError();
@@ -817,7 +818,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 final int    j  = (i + 1) % limits.size();
                 final double lA = limits.get(i);
                 final double lB = PlaneAngleRadians.normalize(limits.get(j), lA);
-                if (Math.abs(lB - lA) <= getTolerance()) {
+                if (getPrecision().areEqual(lB, lA)) {
                     // the two limits are too close to each other, we remove both of them
                     if (j > 0) {
                         // regular case, the two entries are consecutive ones
@@ -833,7 +834,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                             // the ends were the only limits, is it a full circle or an empty circle?
                             if (lEnd - lStart > Geometry.PI) {
                                 // it was full circle
-                                return new ArcsSet(new BSPTree<S1Point>(Boolean.TRUE), getTolerance());
+                                return new ArcsSet(new BSPTree<S1Point>(Boolean.TRUE), getPrecision());
                             } else {
                                 // it was an empty circle
                                 return null;
@@ -860,7 +861,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 return null;
             }
 
-            return new ArcsSet(tree, getTolerance());
+            return new ArcsSet(tree, getPrecision());
 
         }
     }

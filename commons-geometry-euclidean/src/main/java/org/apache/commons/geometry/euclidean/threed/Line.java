@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.partitioning.Embedding;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
@@ -38,19 +39,19 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     /** Line point closest to the origin. */
     private Vector3D zero;
 
-    /** Tolerance below which points are considered identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Build a line from two points.
      * @param p1 first point belonging to the line (this can be any point)
      * @param p2 second point belonging to the line (this can be any point, different from p1)
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points are equal
      */
-    public Line(final Vector3D p1, final Vector3D p2, final double tolerance)
+    public Line(final Vector3D p1, final Vector3D p2, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
         reset(p1, p2);
-        this.tolerance = tolerance;
+        this.precision = precision;
     }
 
     /** Copy constructor.
@@ -61,7 +62,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     public Line(final Line line) {
         this.direction = line.direction;
         this.zero      = line.zero;
-        this.tolerance = line.tolerance;
+        this.precision = line.precision;
     }
 
     /** Reset the instance as if built from two points.
@@ -79,11 +80,11 @@ public class Line implements Embedding<Vector3D, Vector1D> {
         this.zero = Vector3D.linearCombination(1.0, p1, -p1.dot(delta) / norm2, delta);
     }
 
-    /** Get the tolerance below which points are considered identical.
-     * @return tolerance below which points are considered identical
+    /** Get the object used to determine floating point equality for this instance.
+     * @return the floating point precision context for the instance
      */
-    public double getTolerance() {
-        return tolerance;
+    public DoublePrecisionContext getPrecision() {
+        return precision;
     }
 
     /** Get a line with reversed direction.
@@ -157,7 +158,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public boolean isSimilarTo(final Line line) {
         final double angle = direction.angle(line.direction);
-        return ((angle < tolerance) || (angle > (Math.PI - tolerance))) && contains(line.zero);
+        return (precision.isZero(angle) || precision.areEqual(angle, Math.PI)) && contains(line.zero);
     }
 
     /** Check if the instance contains a point.
@@ -165,7 +166,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      * @return true if p belongs to the line
      */
     public boolean contains(final Vector3D p) {
-        return distance(p) < tolerance;
+        return precision.isZero(distance(p));
     }
 
     /** Compute the distance between the instance and a point.
@@ -233,7 +234,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      * @return a sub-line covering the whole line
      */
     public SubLine wholeLine() {
-        return new SubLine(this, new IntervalsSet(tolerance));
+        return new SubLine(this, new IntervalsSet(precision));
     }
 
 }

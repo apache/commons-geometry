@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
  * <p>
@@ -39,18 +40,18 @@ import org.apache.commons.geometry.core.internal.GeometryInternalError;
  */
 public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
-    /** Tolerance below which points are consider to be identical. */
-    private final double tolerance;
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
 
     /** Generator for balls on support. */
     private final SupportBallGenerator<P> generator;
 
     /** Simple constructor.
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      * @param generator generator for balls on support
      */
-    public WelzlEncloser(final double tolerance, final SupportBallGenerator<P> generator) {
-        this.tolerance = tolerance;
+    public WelzlEncloser(final DoublePrecisionContext precision, final SupportBallGenerator<P> generator) {
+        this.precision = precision;
         this.generator = generator;
     }
 
@@ -87,7 +88,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             // select the point farthest to current ball
             final P farthest = selectFarthest(points, ball);
 
-            if (ball.contains(farthest, tolerance)) {
+            if (ball.contains(farthest, precision.getMaxZero())) {
                 // we have found a ball containing all points
                 return ball;
             }
@@ -129,7 +130,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
             for (int i = 0; i < nbExtreme; ++i) {
                 final P pi = extreme.get(i);
-                if (!ball.contains(pi, tolerance)) {
+                if (!ball.contains(pi, precision.getMaxZero())) {
 
                     // we have found an outside point,
                     // enlarge the ball by adding it to the support

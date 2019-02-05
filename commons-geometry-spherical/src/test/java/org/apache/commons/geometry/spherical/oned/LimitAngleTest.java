@@ -17,21 +17,28 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class LimitAngleTest {
 
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
     @Test
     public void testReversedLimit() {
         for (int k = -2; k < 3; ++k) {
-            LimitAngle l  = new LimitAngle(S1Point.of(1.0 + k * Geometry.TWO_PI), false, 1.0e-10);
-            Assert.assertEquals(l.getLocation().getAzimuth(), l.getReverse().getLocation().getAzimuth(), 1.0e-10);
-            Assert.assertEquals(l.getTolerance(), l.getReverse().getTolerance(), 1.0e-10);
+            LimitAngle l  = new LimitAngle(S1Point.of(1.0 + k * Geometry.TWO_PI), false, TEST_PRECISION);
+            Assert.assertEquals(l.getLocation().getAzimuth(), l.getReverse().getLocation().getAzimuth(), TEST_EPS);
+            Assert.assertSame(l.getPrecision(), l.getReverse().getPrecision());
             Assert.assertTrue(l.sameOrientationAs(l));
             Assert.assertFalse(l.sameOrientationAs(l.getReverse()));
-            Assert.assertEquals(Geometry.TWO_PI, l.wholeSpace().getSize(), 1.0e-10);
-            Assert.assertEquals(Geometry.TWO_PI, l.getReverse().wholeSpace().getSize(), 1.0e-10);
+            Assert.assertEquals(Geometry.TWO_PI, l.wholeSpace().getSize(), TEST_EPS);
+            Assert.assertEquals(Geometry.TWO_PI, l.getReverse().wholeSpace().getSize(), TEST_EPS);
         }
     }
 

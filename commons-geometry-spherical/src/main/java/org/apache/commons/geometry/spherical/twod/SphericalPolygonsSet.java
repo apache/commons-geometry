@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.partitioning.BSPTree;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -43,22 +44,22 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private List<Vertex> loops;
 
     /** Build a polygons set representing the whole real 2-sphere.
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final double tolerance) {
-        super(tolerance);
+    public SphericalPolygonsSet(final DoublePrecisionContext precision) {
+        super(precision);
     }
 
     /** Build a polygons set representing a hemisphere.
      * @param pole pole of the hemisphere (the pole is in the inside half)
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final Vector3D pole, final double tolerance) {
-        super(new BSPTree<>(new Circle(pole, tolerance).wholeHyperplane(),
+    public SphericalPolygonsSet(final Vector3D pole, final DoublePrecisionContext precision) {
+        super(new BSPTree<>(new Circle(pole, precision).wholeHyperplane(),
                                     new BSPTree<S2Point>(Boolean.FALSE),
                                     new BSPTree<S2Point>(Boolean.TRUE),
                                     null),
-              tolerance);
+              precision);
     }
 
     /** Build a polygons set representing a regular polygon.
@@ -66,12 +67,12 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @param meridian point defining the reference meridian for first polygon vertex
      * @param outsideRadius distance of the vertices to the center
      * @param n number of sides of the polygon
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
     public SphericalPolygonsSet(final Vector3D center, final Vector3D meridian,
                                 final double outsideRadius, final int n,
-                                final double tolerance) {
-        this(tolerance, createRegularPolygonVertices(center, meridian, outsideRadius, n));
+                                final DoublePrecisionContext precision) {
+        this(precision, createRegularPolygonVertices(center, meridian, outsideRadius, n));
     }
 
     /** Build a polygons set from a BSP tree.
@@ -82,10 +83,10 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * recommended to use the predefined constants
      * {@code Boolean.TRUE} and {@code Boolean.FALSE}</p>
      * @param tree inside/outside BSP tree representing the region
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final BSPTree<S2Point> tree, final double tolerance) {
-        super(tree, tolerance);
+    public SphericalPolygonsSet(final BSPTree<S2Point> tree, final DoublePrecisionContext precision) {
+        super(tree, precision);
     }
 
     /** Build a polygons set from a Boundary REPresentation (B-rep).
@@ -107,10 +108,10 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * space.</p>
      * @param boundary collection of boundary elements, as a
      * collection of {@link SubHyperplane SubHyperplane} objects
-     * @param tolerance below which points are consider to be identical
+     * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final Collection<SubHyperplane<S2Point>> boundary, final double tolerance) {
-        super(boundary, tolerance);
+    public SphericalPolygonsSet(final Collection<SubHyperplane<S2Point>> boundary, final DoublePrecisionContext precision) {
+        super(boundary, precision);
     }
 
     /** Build a polygon from a simple list of vertices.
@@ -121,8 +122,8 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * <p>This constructor does not handle polygons with a boundary
      * forming several disconnected paths (such as polygons with holes).</p>
      * <p>For cases where this simple constructor applies, it is expected to
-     * be numerically more robust than the {@link #SphericalPolygonsSet(Collection,
-     * double) general constructor} using {@link SubHyperplane subhyperplanes}.</p>
+     * be numerically more robust than the {@link #SphericalPolygonsSet(Collection, DoublePrecisionContext)
+     * general constructor} using {@link SubHyperplane subhyperplanes}.</p>
      * <p>If the list is empty, the region will represent the whole
      * space.</p>
      * <p>
@@ -139,12 +140,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * most accurate detail needed is a good value for the {@code hyperplaneThickness}
      * parameter.
      * </p>
-     * @param hyperplaneThickness tolerance below which points are considered to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      */
-    public SphericalPolygonsSet(final double hyperplaneThickness, final S2Point ... vertices) {
-        super(verticesToTree(hyperplaneThickness, vertices), hyperplaneThickness);
+    public SphericalPolygonsSet(final DoublePrecisionContext precision, final S2Point ... vertices) {
+        super(verticesToTree(precision, vertices), precision);
     }
 
     /** Build the vertices representing a regular polygon.
@@ -182,12 +182,11 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * <p>For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #PolygonsSet(Collection) general
      * constructor} using {@link SubHyperplane subhyperplanes}.</p>
-     * @param hyperplaneThickness tolerance below which points are consider to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree<S2Point> verticesToTree(final double hyperplaneThickness,
+    private static BSPTree<S2Point> verticesToTree(final DoublePrecisionContext precision,
                                                     final S2Point ... vertices) {
 
         final int n = vertices.length;
@@ -216,7 +215,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             // with the current one
             Circle circle = start.sharedCircleWith(end);
             if (circle == null) {
-                circle = new Circle(start.getLocation(), end.getLocation(), hyperplaneThickness);
+                circle = new Circle(start.getLocation(), end.getLocation(), precision);
             }
 
             // create the edge and store it
@@ -228,7 +227,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             // check if another vertex also happens to be on this circle
             for (final Vertex vertex : vArray) {
                 if (vertex != start && vertex != end &&
-                    Math.abs(circle.getOffset(vertex.getLocation())) <= hyperplaneThickness) {
+                    precision.isZero(circle.getOffset(vertex.getLocation()))) {
                     vertex.bindWith(circle);
                 }
             }
@@ -237,21 +236,20 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
         // build the tree top-down
         final BSPTree<S2Point> tree = new BSPTree<>();
-        insertEdges(hyperplaneThickness, tree, edges);
+        insertEdges(precision, tree, edges);
 
         return tree;
 
     }
 
     /** Recursively build a tree by inserting cut sub-hyperplanes.
-     * @param hyperplaneThickness tolerance below which points are considered to
-     * belong to the hyperplane (which is therefore more a slab)
+     * @param precision precision context used to compare floating point values
      * @param node current tree node (it is a leaf node at the beginning
      * of the call)
      * @param edges list of edges to insert in the cell defined by this node
      * (excluding edges not belonging to the cell defined by this node)
      */
-    private static void insertEdges(final double hyperplaneThickness,
+    private static void insertEdges(final DoublePrecisionContext precision,
                                     final BSPTree<S2Point> node,
                                     final List<Edge> edges) {
 
@@ -289,12 +287,12 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
         // recurse through lower levels
         if (!outsideList.isEmpty()) {
-            insertEdges(hyperplaneThickness, node.getPlus(), outsideList);
+            insertEdges(precision, node.getPlus(), outsideList);
         } else {
             node.getPlus().setAttribute(Boolean.FALSE);
         }
         if (!insideList.isEmpty()) {
-            insertEdges(hyperplaneThickness, node.getMinus(),  insideList);
+            insertEdges(precision, node.getMinus(),  insideList);
         } else {
             node.getMinus().setAttribute(Boolean.TRUE);
         }
@@ -304,7 +302,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     /** {@inheritDoc} */
     @Override
     public SphericalPolygonsSet buildNew(final BSPTree<S2Point> tree) {
-        return new SphericalPolygonsSet(tree, getTolerance());
+        return new SphericalPolygonsSet(tree, getPrecision());
     }
 
     /** {@inheritDoc}
@@ -332,7 +330,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         } else {
 
             // the instance has a boundary
-            final PropertiesComputer pc = new PropertiesComputer(getTolerance());
+            final PropertiesComputer pc = new PropertiesComputer(getPrecision());
             tree.visit(pc);
             setSize(pc.getArea());
             setBarycenter(pc.getBarycenter());
@@ -373,7 +371,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
                 // sort the arcs according to their start point
                 final BSPTree<S2Point> root = getTree(true);
-                final EdgesBuilder visitor = new EdgesBuilder(root, getTolerance());
+                final EdgesBuilder visitor = new EdgesBuilder(root, getPrecision());
                 root.visit(visitor);
                 final List<Edge> edges = visitor.getEdges();
 
@@ -411,8 +409,6 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         return Collections.unmodifiableList(loops);
 
     }
-
-    // TODO: Revisit the vector/point conversions here.
 
     /** Get a spherical cap enclosing the polygon.
      * <p>
@@ -502,14 +498,14 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         // find the smallest enclosing 3D sphere
         final SphereGenerator generator = new SphereGenerator();
         final WelzlEncloser<Vector3D> encloser =
-                new WelzlEncloser<>(getTolerance(), generator);
+                new WelzlEncloser<>(getPrecision(), generator);
         EnclosingBall<Vector3D> enclosing3D = encloser.enclose(points);
         final Vector3D[] support3D = enclosing3D.getSupport();
 
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
         final double h = enclosing3D.getCenter().norm();
-        if (h < getTolerance()) {
+        if (getPrecision().isZero(h)) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells
             EnclosingBall<S2Point> enclosingS2 =
@@ -543,7 +539,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @return list of points known to be strictly in all inside convex cells
      */
     private List<Vector3D> getInsidePoints() {
-        final PropertiesComputer pc = new PropertiesComputer(getTolerance());
+        final PropertiesComputer pc = new PropertiesComputer(getPrecision());
         getTree(true).visit(pc);
         return pc.getConvexCellsInsidePoints();
     }
@@ -554,7 +550,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     private List<Vector3D> getOutsidePoints() {
         final SphericalPolygonsSet complement =
                 (SphericalPolygonsSet) new RegionFactory<S2Point>().getComplement(this);
-        final PropertiesComputer pc = new PropertiesComputer(getTolerance());
+        final PropertiesComputer pc = new PropertiesComputer(getPrecision());
         complement.getTree(true).visit(pc);
         return pc.getConvexCellsInsidePoints();
     }

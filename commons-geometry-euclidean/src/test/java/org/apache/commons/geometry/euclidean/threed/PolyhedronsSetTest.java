@@ -31,12 +31,13 @@ import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;
@@ -44,18 +45,21 @@ import org.junit.Test;
 
 public class PolyhedronsSetTest {
 
-    private static final double TEST_TOLERANCE = 1e-10;
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
     public void testWholeSpace() {
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
-        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertTrue(polySet.isFull());
 
@@ -70,13 +74,13 @@ public class PolyhedronsSetTest {
     @Test
     public void testEmptyRegion() {
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree<Vector3D>(Boolean.FALSE), TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree<Vector3D>(Boolean.FALSE), TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(0.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(0.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_EPS);
         Assert.assertTrue(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -92,17 +96,17 @@ public class PolyhedronsSetTest {
     public void testHalfSpace() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.add(new SubPlane(new Plane(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_TOLERANCE),
-                new PolygonsSet(TEST_TOLERANCE)));
+        boundaries.add(new SubPlane(new Plane(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION),
+                new PolygonsSet(TEST_PRECISION)));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getBoundarySize());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -118,17 +122,17 @@ public class PolyhedronsSetTest {
     @Test
     public void testInvertedRegion() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE);
-        PolyhedronsSet box = new PolyhedronsSet(boundaries, TEST_TOLERANCE);;
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
+        PolyhedronsSet box = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // act
         PolyhedronsSet polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(box);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
-        Assert.assertEquals(6, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(6, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -147,13 +151,13 @@ public class PolyhedronsSetTest {
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
         EuclideanTestUtils.assertPositiveInfinity(polySet.getSize());
-        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertTrue(polySet.isFull());
     }
@@ -161,16 +165,16 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_unitBox() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(1.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(1.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(6.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -225,17 +229,17 @@ public class PolyhedronsSetTest {
     public void testCreateFromBoundaries_twoBoxes_disjoint() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(2, 0, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(2, 0, 0), 1.0, TEST_EPS));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(2.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -253,17 +257,17 @@ public class PolyhedronsSetTest {
     public void testCreateFromBoundaries_twoBoxes_sharedSide() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 0, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 0, 0), 1.0, TEST_EPS));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(10.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(2.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(10.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -279,19 +283,20 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_twoBoxes_separationLessThanTolerance() {
         // arrange
-        double tolerance = 1e-6;
+        double eps = 1e-6;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, tolerance));
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(1 + 1e-7, 0, 0), 1.0, tolerance));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, eps));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1 + 1e-7, 0, 0), 1.0, eps));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, tolerance);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, precision);
 
         // assert
-        Assert.assertEquals(tolerance, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(2.0, polySet.getSize(), tolerance);
-        Assert.assertEquals(10.0, polySet.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5e-8, 0, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(precision, polySet.getPrecision());
+        Assert.assertEquals(2.0, polySet.getSize(), eps);
+        Assert.assertEquals(10.0, polySet.getBoundarySize(), eps);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5e-8, 0, 0), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -308,17 +313,17 @@ public class PolyhedronsSetTest {
     public void testCreateFromBoundaries_twoBoxes_sharedEdge() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 0), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 0), 1.0, TEST_EPS));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(2.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -337,17 +342,17 @@ public class PolyhedronsSetTest {
     public void testCreateFromBoundaries_twoBoxes_sharedPoint() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_TOLERANCE));
-        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 1), 1.0, TEST_TOLERANCE));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
+        boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 1), 1.0, TEST_EPS));
 
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(TEST_TOLERANCE, polySet.getTolerance(), Precision.EPSILON);
-        Assert.assertEquals(2.0, polySet.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), polySet.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
+        Assert.assertEquals(2.0, polySet.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, polySet.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -365,12 +370,12 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateBox() {
         // act
-        PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_TOLERANCE);
+        PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(1.0, tree.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
 
         for (double x = -0.25; x < 1.25; x += 0.1) {
             boolean xOK = (x >= 0.0) && (x <= 1.0);
@@ -405,7 +410,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testInvertedBox() {
         // arrange
-        PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, 1.0e-10);
+        PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
 
         // act
         tree = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(tree);
@@ -460,15 +465,15 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                new Plane(vertex3, vertex2, vertex1, TEST_TOLERANCE),
-                new Plane(vertex2, vertex3, vertex4, TEST_TOLERANCE),
-                new Plane(vertex4, vertex3, vertex1, TEST_TOLERANCE),
-                new Plane(vertex1, vertex2, vertex4, TEST_TOLERANCE));
+                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
+                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
+                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
+                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
-        Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_EPS);
 
         double third = 1.0 / 3.0;
         checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
@@ -499,7 +504,7 @@ public class PolyhedronsSetTest {
         // assert
         Assert.assertEquals(sphereVolume(radius), polySet.getSize(), approximationTolerance);
         Assert.assertEquals(sphereSurface(radius), polySet.getBoundarySize(), approximationTolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), polySet.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), polySet.getBarycenter(), TEST_EPS);
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
@@ -534,10 +539,10 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                new Plane(vertex3, vertex2, vertex1, TEST_TOLERANCE),
-                new Plane(vertex2, vertex3, vertex4, TEST_TOLERANCE),
-                new Plane(vertex4, vertex3, vertex1, TEST_TOLERANCE),
-                new Plane(vertex1, vertex2, vertex4, TEST_TOLERANCE));
+                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
+                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
+                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
+                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Vector3D barycenter = tree.getBarycenter();
@@ -553,7 +558,7 @@ public class PolyhedronsSetTest {
                          1.0, r.apply(barycenter.subtract(c)));
         Assert.assertEquals(0.0,
                             newB.subtract(tree.getBarycenter()).norm(),
-                            TEST_TOLERANCE);
+                            TEST_EPS);
 
         final Vector3D[] expectedV = new Vector3D[] {
                 Vector3D.linearCombination(1.0, s,
@@ -604,7 +609,7 @@ public class PolyhedronsSetTest {
                     for (int k = 0; k < expectedV.length; ++k) {
                         d = Math.min(d, v.subtract(expectedV[k]).norm());
                     }
-                    Assert.assertEquals(0, d, TEST_TOLERANCE);
+                    Assert.assertEquals(0, d, TEST_EPS);
                 }
             }
 
@@ -623,12 +628,12 @@ public class PolyhedronsSetTest {
 
         // act
         PolyhedronsSet tree =
-            new PolyhedronsSet(x - l, x + l, y - w, y + w, z - w, z + w, TEST_TOLERANCE);
+            new PolyhedronsSet(x - l, x + l, y - w, y + w, z - w, z + w, TEST_PRECISION);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
-        Assert.assertEquals(8 * l * w * w, tree.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(8 * w * (2 * l + w), tree.getBoundarySize(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(8 * l * w * w, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(8 * w * (2 * l + w), tree.getBoundarySize(), TEST_EPS);
     }
 
     @Test
@@ -640,20 +645,20 @@ public class PolyhedronsSetTest {
         double w = 0.1;
         double l = 1.0;
         PolyhedronsSet xBeam =
-            new PolyhedronsSet(x - l, x + l, y - w, y + w, z - w, z + w, TEST_TOLERANCE);
+            new PolyhedronsSet(x - l, x + l, y - w, y + w, z - w, z + w, TEST_PRECISION);
         PolyhedronsSet yBeam =
-            new PolyhedronsSet(x - w, x + w, y - l, y + l, z - w, z + w, TEST_TOLERANCE);
+            new PolyhedronsSet(x - w, x + w, y - l, y + l, z - w, z + w, TEST_PRECISION);
         PolyhedronsSet zBeam =
-            new PolyhedronsSet(x - w, x + w, y - w, y + w, z - l, z + l, TEST_TOLERANCE);
+            new PolyhedronsSet(x - w, x + w, y - w, y + w, z - l, z + l, TEST_PRECISION);
         RegionFactory<Vector3D> factory = new RegionFactory<>();
 
         // act
         PolyhedronsSet tree = (PolyhedronsSet) factory.union(xBeam, factory.union(yBeam, zBeam));
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_TOLERANCE);
-        Assert.assertEquals(8 * w * w * (3 * l - 2 * w), tree.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(24 * w * (2 * l - w), tree.getBoundarySize(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(x, y, z), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(8 * w * w * (3 * l - 2 * w), tree.getSize(), TEST_EPS);
+        Assert.assertEquals(24 * w * (2 * l - w), tree.getBoundarySize(), TEST_EPS);
     }
 
     // Issue MATH-780
@@ -686,7 +691,7 @@ public class PolyhedronsSetTest {
             Vector3D v_2 = Vector3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
             Vector3D v_3 = Vector3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
             Vector3D[] vertices = {v_1, v_2, v_3};
-            Plane polyPlane = new Plane(v_1, v_2, v_3, TEST_TOLERANCE);
+            Plane polyPlane = new Plane(v_1, v_2, v_3, TEST_PRECISION);
             ArrayList<SubHyperplane<Vector2D>> lines = new ArrayList<>();
 
             Vector2D[] projPts = new Vector2D[vertices.length];
@@ -696,16 +701,16 @@ public class PolyhedronsSetTest {
 
             SubLine lineInPlane = null;
             for (int ptIdx = 0; ptIdx < projPts.length; ptIdx++) {
-                lineInPlane = new SubLine(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_TOLERANCE);
+                lineInPlane = new SubLine(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_PRECISION);
                 lines.add(lineInPlane);
             }
-            Region<Vector2D> polyRegion = new PolygonsSet(lines, TEST_TOLERANCE);
+            Region<Vector2D> polyRegion = new PolygonsSet(lines, TEST_PRECISION);
             SubPlane polygon = new SubPlane(polyPlane, polyRegion);
             subHyperplaneList.add(polygon);
         }
 
         // act
-        PolyhedronsSet polyhedronsSet = new PolyhedronsSet(subHyperplaneList, TEST_TOLERANCE);
+        PolyhedronsSet polyhedronsSet = new PolyhedronsSet(subHyperplaneList, TEST_PRECISION);
 
         // assert
         Assert.assertEquals(8.0, polyhedronsSet.getSize(), 3.0e-6);
@@ -715,10 +720,10 @@ public class PolyhedronsSetTest {
     @Test
     public void testTooThinBox() {
         // act
-        PolyhedronsSet polyhedronsSet = new PolyhedronsSet(0.0, 0.0, 0.0, 1.0, 0.0, 1.0, TEST_TOLERANCE);
+        PolyhedronsSet polyhedronsSet = new PolyhedronsSet(0.0, 0.0, 0.0, 1.0, 0.0, 1.0, TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(0.0, polyhedronsSet.getSize(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, polyhedronsSet.getSize(), TEST_EPS);
     }
 
     @Test
@@ -726,7 +731,7 @@ public class PolyhedronsSetTest {
         // the following is a wrong usage of the constructor.
         // as explained in the javadoc, the failure is NOT detected at construction
         // time but occurs later on
-        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree<Vector3D>(), TEST_TOLERANCE);
+        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree<Vector3D>(), TEST_PRECISION);
         Assert.assertNotNull(ps);
         try {
             ps.checkPoint(Vector3D.ZERO);
@@ -739,7 +744,8 @@ public class PolyhedronsSetTest {
     @Test
     public void testDumpParse() throws IOException, ParseException {
         // arrange
-        double tol=1e-8;
+        double eps = 1e-8;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
 
         Vector3D[] verts=new Vector3D[8];
         double xmin=-1,xmax=1;
@@ -768,18 +774,18 @@ public class PolyhedronsSetTest {
         faces[10]=new int[]{3,6,2}; // back (+y)
         faces[11]=new int[]{6,3,7}; // back (+y)
 
-        PolyhedronsSet polyset = new PolyhedronsSet(Arrays.asList(verts), Arrays.asList(faces), tol);
+        PolyhedronsSet polyset = new PolyhedronsSet(Arrays.asList(verts), Arrays.asList(faces), precision);
 
         // act
         String dump = EuclideanTestUtils.dump(polyset);
-        PolyhedronsSet parsed = EuclideanTestUtils.parsePolyhedronsSet(dump);
+        PolyhedronsSet parsed = EuclideanTestUtils.parsePolyhedronsSet(dump, precision);
 
         // assert
-        Assert.assertEquals(8.0, polyset.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(24.0, polyset.getBoundarySize(), TEST_TOLERANCE);
+        Assert.assertEquals(8.0, polyset.getSize(), TEST_EPS);
+        Assert.assertEquals(24.0, polyset.getBoundarySize(), TEST_EPS);
 
-        Assert.assertEquals(8.0, parsed.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(24.0, parsed.getBoundarySize(), TEST_TOLERANCE);
+        Assert.assertEquals(8.0, parsed.getSize(), TEST_EPS);
+        Assert.assertEquals(24.0, parsed.getBoundarySize(), TEST_EPS);
         Assert.assertTrue(new RegionFactory<Vector3D>().difference(polyset, parsed).isEmpty());
     }
 
@@ -788,9 +794,9 @@ public class PolyhedronsSetTest {
         InputStream stream = getClass().getResourceAsStream("pentomino-N.ply");
         PLYParser   parser = new PLYParser(stream);
         stream.close();
-        PolyhedronsSet polyhedron = new PolyhedronsSet(parser.getVertices(), parser.getFaces(), TEST_TOLERANCE);
-        Assert.assertEquals( 5.0, polyhedron.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(22.0, polyhedron.getBoundarySize(), TEST_TOLERANCE);
+        PolyhedronsSet polyhedron = new PolyhedronsSet(parser.getVertices(), parser.getFaces(), TEST_PRECISION);
+        Assert.assertEquals( 5.0, polyhedron.getSize(), TEST_EPS);
+        Assert.assertEquals(22.0, polyhedron.getBoundarySize(), TEST_EPS);
     }
 
     @Test
@@ -834,7 +840,7 @@ public class PolyhedronsSetTest {
     private void checkError(final List<Vector3D> vertices, final List<int[]> facets,
                             final String expected) {
         try {
-            new PolyhedronsSet(vertices, facets, TEST_TOLERANCE);
+            new PolyhedronsSet(vertices, facets, TEST_PRECISION);
             Assert.fail("an exception should have been thrown");
         } catch (IllegalArgumentException e) {
             String actual = e.getMessage();
@@ -846,17 +852,17 @@ public class PolyhedronsSetTest {
     @Test
     public void testFirstIntersection() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 2.0, TEST_TOLERANCE);
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 2.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
-        Line xPlus = new Line(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_TOLERANCE);
-        Line xMinus = new Line(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_TOLERANCE);
+        Line xPlus = new Line(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
+        Line xMinus = new Line(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_PRECISION);
 
-        Line yPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 1, 0), TEST_TOLERANCE);
-        Line yMinus = new Line(Vector3D.ZERO, Vector3D.of(0, -1, 0), TEST_TOLERANCE);
+        Line yPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 1, 0), TEST_PRECISION);
+        Line yMinus = new Line(Vector3D.ZERO, Vector3D.of(0, -1, 0), TEST_PRECISION);
 
-        Line zPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_TOLERANCE);
-        Line zMinus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, -1), TEST_TOLERANCE);
+        Line zPlus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_PRECISION);
+        Line zMinus = new Line(Vector3D.ZERO, Vector3D.of(0, 0, -1), TEST_PRECISION);
 
         // act/assert
         assertSubPlaneNormal(Vector3D.of(-1, 0, 0), polySet.firstIntersection(Vector3D.of(-1.1, 0, 0), xPlus));
@@ -898,32 +904,32 @@ public class PolyhedronsSetTest {
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
 
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_TOLERANCE);
-        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_TOLERANCE);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
-        Line upDiagonal = new Line(lowerCorner, upperCorner, TEST_TOLERANCE);
+        Line upDiagonal = new Line(lowerCorner, upperCorner, TEST_PRECISION);
         Line downDiagonal = upDiagonal.revert();
 
         // act/assert
         SubPlane upFromOutsideResult = (SubPlane) polySet.firstIntersection(Vector3D.of(-1, -1, -1), upDiagonal);
         Assert.assertNotNull(upFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner,
-                ((Plane) upFromOutsideResult.getHyperplane()).intersection(upDiagonal), TEST_TOLERANCE);
+                ((Plane) upFromOutsideResult.getHyperplane()).intersection(upDiagonal), TEST_EPS);
 
         SubPlane upFromCenterResult = (SubPlane) polySet.firstIntersection(center, upDiagonal);
         Assert.assertNotNull(upFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner,
-                ((Plane) upFromCenterResult.getHyperplane()).intersection(upDiagonal), TEST_TOLERANCE);
+                ((Plane) upFromCenterResult.getHyperplane()).intersection(upDiagonal), TEST_EPS);
 
         SubPlane downFromOutsideResult = (SubPlane) polySet.firstIntersection(Vector3D.of(2, 2, 2), downDiagonal);
         Assert.assertNotNull(downFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner,
-                ((Plane) downFromOutsideResult.getHyperplane()).intersection(downDiagonal), TEST_TOLERANCE);
+                ((Plane) downFromOutsideResult.getHyperplane()).intersection(downDiagonal), TEST_EPS);
 
         SubPlane downFromCenterResult = (SubPlane) polySet.firstIntersection(center, downDiagonal);
         Assert.assertNotNull(downFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner,
-                ((Plane) downFromCenterResult.getHyperplane()).intersection(downDiagonal), TEST_TOLERANCE);
+                ((Plane) downFromCenterResult.getHyperplane()).intersection(downDiagonal), TEST_EPS);
     }
 
 
@@ -932,7 +938,8 @@ public class PolyhedronsSetTest {
     @Test
     public void testFirstIntersection_onlyReturnsPointsInDirectionOfRay() throws IOException, ParseException {
         // arrange
-        PolyhedronsSet polyset = EuclideanTestUtils.parsePolyhedronsSet(loadTestData("issue-1211.bsp"));
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-8);
+        PolyhedronsSet polyset = EuclideanTestUtils.parsePolyhedronsSet(loadTestData("issue-1211.bsp"), precision);
         UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 0xb97c9d1ade21e40al);
 
         // act/assert
@@ -942,7 +949,7 @@ public class PolyhedronsSetTest {
             Vector3D direction = Vector3D.of(2 * random.nextDouble() - 1,
                                               2 * random.nextDouble() - 1,
                                               2 * random.nextDouble() - 1).normalize();
-            Line line = new Line(origin, origin.add(direction), polyset.getTolerance());
+            Line line = new Line(origin, origin.add(direction), polyset.getPrecision());
             SubHyperplane<Vector3D> plane = polyset.firstIntersection(origin, line);
             if (plane != null) {
                 Vector3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
@@ -958,7 +965,7 @@ public class PolyhedronsSetTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
+        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_PRECISION);
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
@@ -1005,7 +1012,7 @@ public class PolyhedronsSetTest {
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
@@ -1033,7 +1040,7 @@ public class PolyhedronsSetTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
+        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_PRECISION);
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
@@ -1079,7 +1086,7 @@ public class PolyhedronsSetTest {
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
@@ -1108,21 +1115,21 @@ public class PolyhedronsSetTest {
         PolyhedronsSet box1 = new PolyhedronsSet(
                 0, size,
                 0, size,
-                0, size, TEST_TOLERANCE);
+                0, size, TEST_PRECISION);
         PolyhedronsSet box2 = new PolyhedronsSet(
                 0.5, size + 0.5,
                 0.5, size + 0.5,
-                0.5, size + 0.5, TEST_TOLERANCE);
+                0.5, size + 0.5, TEST_PRECISION);
 
         // act
         PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(box1, box2);
 
         // OBJWriter.write("xor_twoCubes.obj", result);
 
-        Assert.assertEquals((2 * cubeVolume(size)) - (2 * cubeVolume(size * 0.5)), result.getSize(), TEST_TOLERANCE);
+        Assert.assertEquals((2 * cubeVolume(size)) - (2 * cubeVolume(size * 0.5)), result.getSize(), TEST_EPS);
 
         // assert
-        Assert.assertEquals(2 * cubeSurface(size), result.getBoundarySize(), TEST_TOLERANCE);
+        Assert.assertEquals(2 * cubeSurface(size), result.getBoundarySize(), TEST_EPS);
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
@@ -1150,7 +1157,7 @@ public class PolyhedronsSetTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
+        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_PRECISION);
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
@@ -1195,9 +1202,9 @@ public class PolyhedronsSetTest {
         PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(sphere, sphere.copySelf());
 
         // assert
-        Assert.assertEquals(0.0, result.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_EPS);
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
@@ -1223,7 +1230,7 @@ public class PolyhedronsSetTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
+        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_PRECISION);
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
@@ -1266,9 +1273,9 @@ public class PolyhedronsSetTest {
         PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().difference(sphere, sphere.copySelf());
 
         // assert
-        Assert.assertEquals(0.0, result.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_TOLERANCE);
+        Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
+        Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.NaN, result.getBarycenter(), TEST_EPS);
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
@@ -1294,7 +1301,7 @@ public class PolyhedronsSetTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_TOLERANCE);
+        PolyhedronsSet box = new PolyhedronsSet(0, size, 0, size, 0, size, TEST_PRECISION);
         PolyhedronsSet sphereToAdd = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
         PolyhedronsSet sphereToRemove1 = createSphere(Vector3D.of(size * 0.5, 0, size * 0.5), radius, 8, 16);
         PolyhedronsSet sphereToRemove2 = createSphere(Vector3D.of(size * 0.5, 1, size * 0.5), radius, 8, 16);
@@ -1336,7 +1343,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testProjectToBoundary() {
         // arrange
-        PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
 
         // act/assert
         checkProjectToBoundary(polySet, Vector3D.of(0.4, 0.5, 0.5),
@@ -1350,7 +1357,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testProjectToBoundary_invertedRegion() {
         // arrange
-        PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_TOLERANCE);
+        PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
         polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(polySet);
 
         // act/assert
@@ -1366,9 +1373,9 @@ public class PolyhedronsSetTest {
             Vector3D expectedPoint, double expectedOffset) {
         BoundaryProjection<Vector3D> proj = poly.projectToBoundary(toProject);
 
-        EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertCoordinatesEqual(expectedPoint, proj.getProjected(), TEST_TOLERANCE);
-        Assert.assertEquals(expectedOffset, proj.getOffset(), TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedPoint, proj.getProjected(), TEST_EPS);
+        Assert.assertEquals(expectedOffset, proj.getOffset(), TEST_EPS);
     }
 
     private String loadTestData(final String resourceName)
@@ -1388,17 +1395,18 @@ public class PolyhedronsSetTest {
         }
     }
 
-    private List<SubHyperplane<Vector3D>> createBoxBoundaries(Vector3D center, double size, double tolerance) {
+    private List<SubHyperplane<Vector3D>> createBoxBoundaries(Vector3D center, double size, double eps) {
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
 
         double offset = size * 0.5;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
 
-        Plane xMinus = new Plane(center.add(Vector3D.of(-offset, 0, 0)), Vector3D.MINUS_X, tolerance);
-        Plane xPlus = new Plane(center.add(Vector3D.of(offset, 0, 0)), Vector3D.PLUS_X, tolerance);
-        Plane yPlus = new Plane(center.add(Vector3D.of(0, offset, 0)), Vector3D.PLUS_Y, tolerance);
-        Plane yMinus = new Plane(center.add(Vector3D.of(0, -offset, 0)), Vector3D.MINUS_Y, tolerance);
-        Plane zPlus = new Plane(center.add(Vector3D.of(0, 0, offset)), Vector3D.PLUS_Z, tolerance);
-        Plane zMinus = new Plane(center.add(Vector3D.of(0, 0, -offset)), Vector3D.MINUS_Z, tolerance);
+        Plane xMinus = new Plane(center.add(Vector3D.of(-offset, 0, 0)), Vector3D.MINUS_X, precision);
+        Plane xPlus = new Plane(center.add(Vector3D.of(offset, 0, 0)), Vector3D.PLUS_X, precision);
+        Plane yPlus = new Plane(center.add(Vector3D.of(0, offset, 0)), Vector3D.PLUS_Y, precision);
+        Plane yMinus = new Plane(center.add(Vector3D.of(0, -offset, 0)), Vector3D.MINUS_Y, precision);
+        Plane zPlus = new Plane(center.add(Vector3D.of(0, 0, offset)), Vector3D.PLUS_Z, precision);
+        Plane zMinus = new Plane(center.add(Vector3D.of(0, 0, -offset)), Vector3D.MINUS_Z, precision);
 
         // +x
         boundaries.add(createSubPlane(xPlus,
@@ -1451,7 +1459,7 @@ public class PolyhedronsSetTest {
             points2d[i] = plane.toSubSpace(points[i]);
         }
 
-        PolygonsSet polygon = new PolygonsSet(plane.getTolerance(), points2d);
+        PolygonsSet polygon = new PolygonsSet(plane.getPrecision(), points2d);
 
         return new SubPlane(plane, polygon);
     }
@@ -1463,8 +1471,8 @@ public class PolyhedronsSetTest {
         Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
         Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
 
-        planes.add(new Plane(topZ, Vector3D.PLUS_Z, TEST_TOLERANCE));
-        planes.add(new Plane(bottomZ, Vector3D.MINUS_Z, TEST_TOLERANCE));
+        planes.add(new Plane(topZ, Vector3D.PLUS_Z, TEST_PRECISION));
+        planes.add(new Plane(bottomZ, Vector3D.MINUS_Z, TEST_PRECISION));
 
         // add the side planes
         double vDelta = Math.PI / stacks;
@@ -1497,7 +1505,7 @@ public class PolyhedronsSetTest {
                 norm = Vector3D.of(x, y, stackHeight).normalize();
                 pt = center.add(norm.multiply(adjustedRadius));
 
-                planes.add(new Plane(pt, norm, TEST_TOLERANCE));
+                planes.add(new Plane(pt, norm, TEST_PRECISION));
             }
         }
 
@@ -1506,7 +1514,7 @@ public class PolyhedronsSetTest {
 
     private void assertSubPlaneNormal(Vector3D expectedNormal, SubHyperplane<Vector3D> sub) {
         Vector3D norm = ((Plane) sub.getHyperplane()).getNormal();
-        EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, norm, TEST_TOLERANCE);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, norm, TEST_EPS);
     }
 
     private double cubeVolume(double size) {

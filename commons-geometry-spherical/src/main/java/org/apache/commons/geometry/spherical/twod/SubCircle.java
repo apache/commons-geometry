@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical.twod;
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
@@ -50,8 +51,9 @@ public class SubCircle extends AbstractSubHyperplane<S2Point, S1Point> {
         final Circle thisCircle   = (Circle) getHyperplane();
         final Circle otherCircle  = (Circle) hyperplane;
         final double angle = thisCircle.getPole().angle(otherCircle.getPole());
+        final DoublePrecisionContext precision = thisCircle.getPrecision();
 
-        if (angle < thisCircle.getTolerance() || angle > Math.PI - thisCircle.getTolerance()) {
+        if (precision.isZero(angle) || precision.compare(angle, Math.PI) >= 0) {
             // the two circles are aligned or opposite
             return new SplitSubHyperplane<>(null, null);
         } else {

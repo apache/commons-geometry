@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +26,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
 import org.apache.commons.geometry.core.partitioning.TreePrinter;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.SubOrientedPoint;
@@ -217,13 +217,13 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final IntervalsSet intervalsSet) {
-        final TreeDumper<Vector1D> visitor = new TreeDumper<Vector1D>("IntervalsSet", intervalsSet.getTolerance()) {
+        final TreeDumper<Vector1D> visitor = new TreeDumper<Vector1D>("IntervalsSet") {
 
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane<Vector1D> hyperplane) {
                 final OrientedPoint h = (OrientedPoint) hyperplane;
-                getFormatter().format("%22.15e %b %22.15e", h.getLocation().getX(), h.isDirect(), h.getTolerance());
+                getFormatter().format("%22.15e %b", h.getLocation().getX(), h.isDirect());
             }
 
         };
@@ -238,15 +238,15 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final PolygonsSet polygonsSet) {
-        final TreeDumper<Vector2D> visitor = new TreeDumper<Vector2D>("PolygonsSet", polygonsSet.getTolerance()) {
+        final TreeDumper<Vector2D> visitor = new TreeDumper<Vector2D>("PolygonsSet") {
 
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane<Vector2D> hyperplane) {
                 final Line h = (Line) hyperplane;
                 final Vector2D p = h.toSpace(Vector1D.ZERO);
-                getFormatter().format("%22.15e %22.15e %22.15e %22.15e",
-                                      p.getX(), p.getY(), h.getAngle(), h.getTolerance());
+                getFormatter().format("%22.15e %22.15e %22.15e",
+                                      p.getX(), p.getY(), h.getAngle());
             }
 
         };
@@ -261,17 +261,16 @@ public class EuclideanTestUtils {
      * @return string representation of the region
      */
     public static String dump(final PolyhedronsSet polyhedronsSet) {
-        final TreeDumper<Vector3D> visitor = new TreeDumper<Vector3D>("PolyhedronsSet", polyhedronsSet.getTolerance()) {
+        final TreeDumper<Vector3D> visitor = new TreeDumper<Vector3D>("PolyhedronsSet") {
 
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane<Vector3D> hyperplane) {
                 final Plane h = (Plane) hyperplane;
                 final Vector3D p = h.toSpace(Vector2D.ZERO);
-                getFormatter().format("%22.15e %22.15e %22.15e %22.15e %22.15e %22.15e %22.15e",
+                getFormatter().format("%22.15e %22.15e %22.15e %22.15e %22.15e %22.15e",
                                       p.getX(), p.getY(), p.getZ(),
-                                      h.getNormal().getX(), h.getNormal().getY(), h.getNormal().getZ(),
-                                      h.getTolerance());
+                                      h.getNormal().getX(), h.getNormal().getY(), h.getNormal().getZ());
             }
 
         };
@@ -282,72 +281,72 @@ public class EuclideanTestUtils {
     /**
      * Parse a string representation of an {@link IntervalsSet}.
      *
-     * @param s string to parse
+     * @param str string to parse
+     * @param precision precision context to use for the region
      * @return parsed region
-     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
-    public static IntervalsSet parseIntervalsSet(final String s)
-        throws IOException, ParseException {
-        final TreeBuilder<Vector1D> builder = new TreeBuilder<Vector1D>("IntervalsSet", s) {
+    public static IntervalsSet parseIntervalsSet(final String str, final DoublePrecisionContext precision)
+        throws ParseException {
+        final TreeBuilder<Vector1D> builder = new TreeBuilder<Vector1D>("IntervalsSet", str, precision) {
 
             /** {@inheritDoc} */
             @Override
             public OrientedPoint parseHyperplane()
-                throws IOException, ParseException {
-                return new OrientedPoint(Vector1D.of(getNumber()), getBoolean(), getNumber());
+                throws ParseException {
+                return new OrientedPoint(Vector1D.of(getNumber()), getBoolean(), getPrecision());
             }
 
         };
-        return new IntervalsSet(builder.getTree(), builder.getTolerance());
+        return new IntervalsSet(builder.getTree(), builder.getPrecision());
     }
 
     /**
      * Parse a string representation of a {@link PolygonsSet}.
      *
-     * @param s string to parse
+     * @param str string to parse
+     * @param precision precision context to use for the region
      * @return parsed region
-     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
-    public static PolygonsSet parsePolygonsSet(final String s)
-        throws IOException, ParseException {
-        final TreeBuilder<Vector2D> builder = new TreeBuilder<Vector2D>("PolygonsSet", s) {
+    public static PolygonsSet parsePolygonsSet(final String str, final DoublePrecisionContext precision)
+        throws ParseException {
+        final TreeBuilder<Vector2D> builder = new TreeBuilder<Vector2D>("PolygonsSet", str, precision) {
 
             /** {@inheritDoc} */
             @Override
             public Line parseHyperplane()
-                throws IOException, ParseException {
-                return new Line(Vector2D.of(getNumber(), getNumber()), getNumber(), getNumber());
+                throws ParseException {
+                return new Line(Vector2D.of(getNumber(), getNumber()), getNumber(), getPrecision());
             }
 
         };
-        return new PolygonsSet(builder.getTree(), builder.getTolerance());
+        return new PolygonsSet(builder.getTree(), builder.getPrecision());
     }
 
     /**
      * Parse a string representation of a {@link PolyhedronsSet}.
      *
-     * @param s string to parse
+     * @param str string to parse
+     * @param precision precision context to use for the region
      * @return parsed region
-     * @exception IOException    if the string cannot be read
      * @exception ParseException if the string cannot be parsed
      */
-    public static PolyhedronsSet parsePolyhedronsSet(final String s)
-        throws IOException, ParseException {
-        final TreeBuilder<Vector3D> builder = new TreeBuilder<Vector3D>("PolyhedronsSet", s) {
+    public static PolyhedronsSet parsePolyhedronsSet(final String str, final DoublePrecisionContext precision)
+        throws ParseException {
+        final TreeBuilder<Vector3D> builder = new TreeBuilder<Vector3D>("PolyhedronsSet", str, precision) {
 
             /** {@inheritDoc} */
             @Override
             public Plane parseHyperplane()
-                throws IOException, ParseException {
+                throws ParseException {
                 return new Plane(Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  Vector3D.of(getNumber(), getNumber(), getNumber()),
-                                 getNumber());
+                                 getPrecision());
             }
 
         };
-        return new PolyhedronsSet(builder.getTree(), builder.getTolerance());
+        return new PolyhedronsSet(builder.getTree(), builder.getPrecision());
     }
 
     /**

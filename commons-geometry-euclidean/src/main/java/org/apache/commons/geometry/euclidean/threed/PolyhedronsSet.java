@@ -32,21 +32,22 @@ import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a 3D region: a set of polyhedrons.
  */
 public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
     /** Build a polyhedrons set representing the whole real line.
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public PolyhedronsSet(final double tolerance) {
-        super(tolerance);
+    public PolyhedronsSet(final DoublePrecisionContext precision) {
+        super(precision);
     }
 
     /** Build a polyhedrons set from a BSP tree.
@@ -67,10 +68,10 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * use only. The caller does have the responsibility to provided correct arguments.
      * </p>
      * @param tree inside/outside BSP tree representing the region
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
-    public PolyhedronsSet(final BSPTree<Vector3D> tree, final double tolerance) {
-        super(tree, tolerance);
+    public PolyhedronsSet(final BSPTree<Vector3D> tree, final DoublePrecisionContext precision) {
+        super(tree, precision);
     }
 
     /** Build a polyhedrons set from a Boundary REPresentation (B-rep) specified by sub-hyperplanes.
@@ -91,11 +92,11 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * space.</p>
      * @param boundary collection of boundary elements, as a
      * collection of {@link SubHyperplane SubHyperplane} objects
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
     public PolyhedronsSet(final Collection<SubHyperplane<Vector3D>> boundary,
-                          final double tolerance) {
-        super(boundary, tolerance);
+                          final DoublePrecisionContext precision) {
+        super(boundary, precision);
     }
 
     /** Build a polyhedrons set from a Boundary REPresentation (B-rep) specified by connected vertices.
@@ -112,12 +113,12 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * </p>
      * @param vertices list of polyhedrons set vertices
      * @param facets list of facets, as vertices indices in the vertices list
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if some basic sanity checks fail
      */
     public PolyhedronsSet(final List<Vector3D> vertices, final List<int[]> facets,
-                          final double tolerance) {
-        super(buildBoundary(vertices, facets, tolerance), tolerance);
+                          final DoublePrecisionContext precision) {
+        super(buildBoundary(vertices, facets, precision), precision);
     }
 
     /** Build a parallellepipedic box.
@@ -127,13 +128,13 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * @param yMax high bound along the y direction
      * @param zMin low bound along the z direction
      * @param zMax high bound along the z direction
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      */
     public PolyhedronsSet(final double xMin, final double xMax,
                           final double yMin, final double yMax,
                           final double zMin, final double zMax,
-                          final double tolerance) {
-        super(buildBoundary(xMin, xMax, yMin, yMax, zMin, zMax, tolerance), tolerance);
+                          final DoublePrecisionContext precision) {
+        super(buildBoundary(xMin, xMax, yMin, yMax, zMin, zMax, precision), precision);
     }
 
     /** Build a parallellepipedic box boundary.
@@ -143,23 +144,23 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * @param yMax high bound along the y direction
      * @param zMin low bound along the z direction
      * @param zMax high bound along the z direction
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @return boundary tree
      */
     private static BSPTree<Vector3D> buildBoundary(final double xMin, final double xMax,
                                                       final double yMin, final double yMax,
                                                       final double zMin, final double zMax,
-                                                      final double tolerance) {
-        if ((xMin >= xMax - tolerance) || (yMin >= yMax - tolerance) || (zMin >= zMax - tolerance)) {
+                                                      final DoublePrecisionContext precision) {
+        if (precision.areEqual(xMin, xMax) || precision.areEqual(yMin, yMax) || precision.areEqual(zMin, zMax)) {
             // too thin box, build an empty polygons set
             return new BSPTree<>(Boolean.FALSE);
         }
-        final Plane pxMin = new Plane(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, tolerance);
-        final Plane pxMax = new Plane(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  tolerance);
-        final Plane pyMin = new Plane(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, tolerance);
-        final Plane pyMax = new Plane(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  tolerance);
-        final Plane pzMin = new Plane(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, tolerance);
-        final Plane pzMax = new Plane(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  tolerance);
+        final Plane pxMin = new Plane(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, precision);
+        final Plane pxMax = new Plane(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  precision);
+        final Plane pyMin = new Plane(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, precision);
+        final Plane pyMax = new Plane(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
+        final Plane pzMin = new Plane(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
+        final Plane pzMax = new Plane(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
         final Region<Vector3D> boundary =
         new RegionFactory<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
@@ -168,19 +169,19 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
     /** Build boundary from vertices and facets.
      * @param vertices list of polyhedrons set vertices
      * @param facets list of facets, as vertices indices in the vertices list
-     * @param tolerance tolerance below which points are considered identical
+     * @param precision precision context used to compare floating point values
      * @return boundary as a list of sub-hyperplanes
      * @exception IllegalArgumentException if some basic sanity checks fail
      */
     private static List<SubHyperplane<Vector3D>> buildBoundary(final List<Vector3D> vertices,
                                                                   final List<int[]> facets,
-                                                                  final double tolerance) {
+                                                                  final DoublePrecisionContext precision) {
 
         // check vertices distances
         for (int i = 0; i < vertices.size() - 1; ++i) {
             final Vector3D vi = vertices.get(i);
             for (int j = i + 1; j < vertices.size(); ++j) {
-                if (vi.distance(vertices.get(j)) <= tolerance) {
+                if (precision.isZero(vi.distance(vertices.get(j)))) {
                     throw new IllegalArgumentException("Vertices are too close near point " + vi);
                 }
             }
@@ -218,7 +219,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
             // define facet plane from the first 3 points
             Plane plane = new Plane(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
-                                    tolerance);
+                                    precision);
 
             // check all points are in the plane
             final Vector2D[] two2Points = new Vector2D[facet.length];
@@ -231,7 +232,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
             }
 
             // create the polygonal facet
-            boundary.add(new SubPlane(plane, new PolygonsSet(tolerance, two2Points)));
+            boundary.add(new SubPlane(plane, new PolygonsSet(precision, two2Points)));
 
         }
 
@@ -328,7 +329,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
     /** {@inheritDoc} */
     @Override
     public PolyhedronsSet buildNew(final BSPTree<Vector3D> tree) {
-        return new PolyhedronsSet(tree, getTolerance());
+        return new PolyhedronsSet(tree, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -494,7 +495,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         // establish search order
         final double offset = plane.getOffset(point);
-        final boolean in    = Math.abs(offset) < getTolerance();
+        final boolean in    = getPrecision().isZero(Math.abs(offset));
         final BSPTree<Vector3D> near;
         final BSPTree<Vector3D> far;
         if (offset < 0) {

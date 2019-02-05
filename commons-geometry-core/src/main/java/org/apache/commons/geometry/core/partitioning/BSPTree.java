@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor.Order;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represent a Binary Space Partition tree.
 
@@ -305,11 +306,11 @@ public class BSPTree<P extends Point<P>> {
      * interior of the node, if the cell is an internal node the points
      * belongs to the node cut sub-hyperplane.</p>
      * @param point point to check
-     * @param tolerance tolerance below which points close to a cut hyperplane
-     * are considered to belong to the hyperplane itself
+     * @param precision precision context used to determine which points
+     * close to a cut hyperplane are considered to belong to the hyperplane itself
      * @return the tree cell to which the point belongs
      */
-    public BSPTree<P> getCell(final P point, final double tolerance) {
+    public BSPTree<P> getCell(final P point, final DoublePrecisionContext precision) {
 
         if (cut == null) {
             return this;
@@ -318,14 +319,15 @@ public class BSPTree<P extends Point<P>> {
         // position of the point with respect to the cut hyperplane
         final double offset = cut.getHyperplane().getOffset(point);
 
-        if (Math.abs(offset) < tolerance) {
+        final int comparison = precision.compare(offset, 0.0);
+        if (comparison == 0) {
             return this;
-        } else if (offset <= 0) {
+        } else if (comparison < 0) {
             // point is on the minus side of the cut hyperplane
-            return minus.getCell(point, tolerance);
+            return minus.getCell(point, precision);
         } else {
             // point is on the plus side of the cut hyperplane
-            return plus.getCell(point, tolerance);
+            return plus.getCell(point, precision);
         }
 
     }
