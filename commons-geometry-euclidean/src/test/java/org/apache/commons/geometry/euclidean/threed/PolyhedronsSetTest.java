@@ -932,6 +932,34 @@ public class PolyhedronsSetTest {
                 ((Plane) downFromCenterResult.getHyperplane()).intersection(downDiagonal), TEST_EPS);
     }
 
+    @Test
+    public void testFirstIntersection_linesPassThroughBoundaries2() {
+        // arrange - setup box
+        Vector3D lowerCorner = Vector3D.ZERO;
+        Vector3D upperCorner = Vector3D.of(1, 1, 1);
+        Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
+
+        Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
+        Vector3D secondPointOnLine = Vector3D.of(0.5, 2.0, 0);
+        Line bottomLine = new Line(firstPointOnLine, secondPointOnLine, TEST_PRECISION);
+
+        Vector3D expectedIntersection1 = Vector3D.of(0.5, 0, 0.0);
+        Vector3D expectedIntersection2 = Vector3D.of(0.5, 1.0, 0.0);
+
+        // act/assert
+        SubPlane bottom = (SubPlane) polySet.firstIntersection(firstPointOnLine, bottomLine);
+        Assert.assertNotNull(bottom);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection1,
+                ((Plane) bottom.getHyperplane()).intersection(bottomLine), TEST_EPS);
+
+        bottom = (SubPlane) polySet.firstIntersection(Vector3D.of(0.5, 0.1, 0.0), bottomLine);
+        Assert.assertNotNull(bottom);
+        Vector3D intersection = ((Plane) bottom.getHyperplane()).intersection(bottomLine);
+        Assert.assertNotNull(intersection);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection2, intersection, TEST_EPS);
+    }
 
     // Issue 1211
     // See https://issues.apache.org/jira/browse/MATH-1211
