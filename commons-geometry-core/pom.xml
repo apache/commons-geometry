@@ -42,7 +42,7 @@
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}/..</geometry.parent.dir>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.apache.commons</groupId>
