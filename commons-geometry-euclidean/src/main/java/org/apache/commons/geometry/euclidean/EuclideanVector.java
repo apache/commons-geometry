@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 
 /** Abstract base class for Euclidean vectors <em>and</em> points. See
@@ -66,6 +67,35 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @return interpolated or extrapolated vector
      */
     public abstract V lerp(V v, double t);
+
+    /** Return true if the current instance and given vector are considered equal as evaluated by the
+     * given precision context.
+     *
+     * <p>Equality is determined by comparing each pair of components in turn from the two
+     * vectors. If all components evaluate as equal, then the vectors are considered equal. If any are
+     * not equal, then the vectors are not considered equal. Note that this approach means that the
+     * calculated distance between two "equal" vectors may be as much as <code>&radic;(n * eps<sup>2</sup>)</code>,
+     * where {@code n} is the number of components in the vector and {@code eps} is the maximum epsilon
+     * value allowed by the precision context.
+     * @param v vector to check for equality
+     * @param precision precision context used to determine floating point equality
+     * @return true if the current instance is considered equal to the given vector when using
+     *      the given precision context; otherwise false
+     */
+    public abstract boolean equals(V v, DoublePrecisionContext precision);
+
+    /** Return true if the current instance is considered equal to the zero vector as evaluated by the
+     * given precision context. This is a convenience method equivalent to
+     * {@code vec.equals(vec.getZero(), precision)}.
+     *
+     * @param precision precision context used to determine floating point equality
+     * @return true if the current instance is considered equal to the zero vector when using
+     *      the given precision context; otherwise false
+     * @see #equals(EuclideanVector, DoublePrecisionContext)
+     */
+    public boolean isZero(final DoublePrecisionContext precision) {
+        return equals(getZero(), precision);
+    }
 
     /** Return the vector norm value, throwing an {@link IllegalNormException} if the value
      * is not real (ie, NaN or infinite) or zero.

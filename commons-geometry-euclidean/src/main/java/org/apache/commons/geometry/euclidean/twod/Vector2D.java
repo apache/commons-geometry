@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.MultiDimensionalEuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -317,6 +318,13 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      */
     public Vector2D transform(AffineTransformMatrix2D transform) {
         return transform.apply(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Vector2D vec, final DoublePrecisionContext precision) {
+        return precision.areEqual(x, vec.x) &&
+                precision.areEqual(y, vec.y);
     }
 
     /**
