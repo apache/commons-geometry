@@ -513,19 +513,46 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testCrossProduct() {
+    public void testSignedArea() {
         // arrange
-        Vector2D p1 = Vector2D.of(1, 1);
-        Vector2D p2 = Vector2D.of(2, 2);
+        double eps = 1e-10;
 
-        Vector2D p3 = Vector2D.of(3, 3);
-        Vector2D p4 = Vector2D.of(1, 2);
-        Vector2D p5 = Vector2D.of(2, 1);
+        Vector2D a = Vector2D.PLUS_X;
+        Vector2D b = Vector2D.PLUS_Y;
+        Vector2D c = Vector2D.of(1, 1).withNorm(2.0);
+        Vector2D d = Vector2D.of(-1, 1).withNorm(3.0);
 
         // act/assert
-        Assert.assertEquals(0.0, p3.cross(p1, p2), EPS);
-        Assert.assertEquals(1.0, p4.cross(p1, p2), EPS);
-        Assert.assertEquals(-1.0, p5.cross(p1, p2), EPS);
+        Assert.assertEquals(1.0, a.signedArea(b), eps);
+        Assert.assertEquals(-1.0, b.signedArea(a), eps);
+
+        double xAxisAndCArea = 2 * Math.cos(0.25 * Geometry.PI);
+        Assert.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
+        Assert.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
+
+        double xAxisAndDArea = 3 * Math.cos(0.25 * Geometry.PI);
+        Assert.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
+        Assert.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
+
+        Assert.assertEquals(6.0, c.signedArea(d), eps);
+        Assert.assertEquals(-6.0, d.signedArea(c), eps);
+    }
+
+    @Test
+    public void testSignedArea_collinear() {
+        // arrange
+        Vector2D a = Vector2D.PLUS_X;
+        Vector2D b = Vector2D.PLUS_Y;
+        Vector2D c = Vector2D.of(-3, 8);
+
+        // act/assert
+        Assert.assertEquals(0.0, a.signedArea(a), EPS);
+        Assert.assertEquals(0.0, b.signedArea(b), EPS);
+        Assert.assertEquals(0.0, c.signedArea(c), EPS);
+
+        Assert.assertEquals(0.0, a.signedArea(a.multiply(100.0)), EPS);
+        Assert.assertEquals(0.0, b.signedArea(b.negate()), EPS);
+        Assert.assertEquals(0.0, c.signedArea(c.multiply(-0.03)), EPS);
     }
 
     @Test
