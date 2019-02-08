@@ -374,9 +374,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Vector3D vec, final DoublePrecisionContext precision) {
-        return precision.areEqual(x, vec.x) &&
-                precision.areEqual(y, vec.y) &&
-                precision.areEqual(z, vec.z);
+        return precision.eq(x, vec.x) &&
+                precision.eq(y, vec.y) &&
+                precision.eq(z, vec.z);
     }
 
     /**

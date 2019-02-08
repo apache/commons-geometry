@@ -25,72 +25,72 @@ public class DoublePrecisionContextTest {
     private StubContext ctx = new StubContext();
 
     @Test
-    public void testAreEqual() {
+    public void testEq() {
         // act/assert
-        Assert.assertTrue(ctx.areEqual(0.0, 0.0));
-        Assert.assertTrue(ctx.areEqual(1.0, 1.0));
-        Assert.assertTrue(ctx.areEqual(-1.0, -1.0));
+        Assert.assertTrue(ctx.eq(0.0, 0.0));
+        Assert.assertTrue(ctx.eq(1.0, 1.0));
+        Assert.assertTrue(ctx.eq(-1.0, -1.0));
 
-        Assert.assertFalse(ctx.areEqual(1.0, -1.0));
-        Assert.assertFalse(ctx.areEqual(1.0, Math.nextUp(1.0)));
-        Assert.assertFalse(ctx.areEqual(-1.0, Math.nextDown(1.0)));
+        Assert.assertFalse(ctx.eq(1.0, -1.0));
+        Assert.assertFalse(ctx.eq(1.0, Math.nextUp(1.0)));
+        Assert.assertFalse(ctx.eq(-1.0, Math.nextDown(1.0)));
     }
 
     @Test
-    public void testIsZero() {
+    public void testEqZero() {
         // act/assert
-        Assert.assertTrue(ctx.isZero(0.0));
+        Assert.assertTrue(ctx.eqZero(0.0));
 
-        Assert.assertFalse(ctx.isZero(Math.nextUp(0.0)));
-        Assert.assertFalse(ctx.isZero(Math.nextDown(-0.0)));
+        Assert.assertFalse(ctx.eqZero(Math.nextUp(0.0)));
+        Assert.assertFalse(ctx.eqZero(Math.nextDown(-0.0)));
     }
 
     @Test
-    public void testIsLessThan() {
+    public void testLt() {
         // act/assert
-        Assert.assertTrue(ctx.isLessThan(1, 2));
-        Assert.assertTrue(ctx.isLessThan(-2, -1));
+        Assert.assertTrue(ctx.lt(1, 2));
+        Assert.assertTrue(ctx.lt(-2, -1));
 
-        Assert.assertFalse(ctx.isLessThan(1, 1));
-        Assert.assertFalse(ctx.isLessThan(-1, -1));
-        Assert.assertFalse(ctx.isLessThan(2, 1));
-        Assert.assertFalse(ctx.isLessThan(-1, -2));
+        Assert.assertFalse(ctx.lt(1, 1));
+        Assert.assertFalse(ctx.lt(-1, -1));
+        Assert.assertFalse(ctx.lt(2, 1));
+        Assert.assertFalse(ctx.lt(-1, -2));
     }
 
     @Test
-    public void testIsLessThanOrEqual() {
+    public void testLte() {
         // act/assert
-        Assert.assertTrue(ctx.isLessThanOrEqual(1, 2));
-        Assert.assertTrue(ctx.isLessThanOrEqual(-2, -1));
-        Assert.assertTrue(ctx.isLessThanOrEqual(1, 1));
-        Assert.assertTrue(ctx.isLessThanOrEqual(-1, -1));
+        Assert.assertTrue(ctx.lte(1, 2));
+        Assert.assertTrue(ctx.lte(-2, -1));
+        Assert.assertTrue(ctx.lte(1, 1));
+        Assert.assertTrue(ctx.lte(-1, -1));
 
-        Assert.assertFalse(ctx.isLessThanOrEqual(2, 1));
-        Assert.assertFalse(ctx.isLessThanOrEqual(-1, -2));
+        Assert.assertFalse(ctx.lte(2, 1));
+        Assert.assertFalse(ctx.lte(-1, -2));
     }
 
     @Test
-    public void testIsGreaterThan() {
+    public void testGt() {
         // act/assert
-        Assert.assertTrue(ctx.isGreaterThan(2, 1));
-        Assert.assertTrue(ctx.isGreaterThan(-1, -2));
+        Assert.assertTrue(ctx.gt(2, 1));
+        Assert.assertTrue(ctx.gt(-1, -2));
 
-        Assert.assertFalse(ctx.isGreaterThan(1, 1));
-        Assert.assertFalse(ctx.isGreaterThan(-1, -1));
-        Assert.assertFalse(ctx.isGreaterThan(1, 2));
-        Assert.assertFalse(ctx.isGreaterThan(-2, -1));
+        Assert.assertFalse(ctx.gt(1, 1));
+        Assert.assertFalse(ctx.gt(-1, -1));
+        Assert.assertFalse(ctx.gt(1, 2));
+        Assert.assertFalse(ctx.gt(-2, -1));
     }
 
     @Test
-    public void testIsGreaterThanOrEqual() {
+    public void testGte() {
         // act/assert
-        Assert.assertTrue(ctx.isGreaterThanOrEqual(2, 1));
-        Assert.assertTrue(ctx.isGreaterThanOrEqual(-1, -2));
-        Assert.assertTrue(ctx.isGreaterThanOrEqual(1, 1));
-        Assert.assertTrue(ctx.isGreaterThanOrEqual(-1, -1));
+        Assert.assertTrue(ctx.gte(2, 1));
+        Assert.assertTrue(ctx.gte(-1, -2));
+        Assert.assertTrue(ctx.gte(1, 1));
+        Assert.assertTrue(ctx.gte(-1, -1));
 
-        Assert.assertFalse(ctx.isGreaterThanOrEqual(1, 2));
-        Assert.assertFalse(ctx.isGreaterThanOrEqual(-2, -1));
+        Assert.assertFalse(ctx.gte(1, 2));
+        Assert.assertFalse(ctx.gte(-2, -1));
     }
 
     @Test
@@ -118,6 +118,8 @@ public class DoublePrecisionContextTest {
     }
 
     private static class StubContext extends DoublePrecisionContext {
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         public double getMaxZero() {

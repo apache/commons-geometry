@@ -154,7 +154,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
     private static Line[] boxBoundary(final double xMin, final double xMax,
                                       final double yMin, final double yMax,
                                       final DoublePrecisionContext precision) {
-        if (precision.areEqual(xMin, xMax) || precision.areEqual(yMin, yMax)) {
+        if (precision.eq(xMin, xMax) || precision.eq(yMin, yMax)) {
             // too thin box, build an empty polygons set
             return null;
         }
@@ -221,7 +221,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             // check if another vertex also happens to be on this line
             for (final Vertex vertex : vArray) {
                 if (vertex != start && vertex != end &&
-                    precision.isZero(line.getOffset(vertex.getLocation()))) {
+                    precision.eqZero(line.getOffset(vertex.getLocation()))) {
                     vertex.bindWith(line);
                 }
             }
@@ -283,9 +283,9 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             if (edge != inserted) {
                 final double startOffset = inserted.getLine().getOffset(edge.getStart().getLocation());
                 final double endOffset   = inserted.getLine().getOffset(edge.getEnd().getLocation());
-                Side startSide = precision.isZero(Math.abs(startOffset)) ?
+                Side startSide = precision.eqZero(Math.abs(startOffset)) ?
                                  Side.HYPER : ((startOffset < 0) ? Side.MINUS : Side.PLUS);
-                Side endSide   = precision.isZero(endOffset) ?
+                Side endSide   = precision.eqZero(endOffset) ?
                                  Side.HYPER : ((endOffset < 0) ? Side.MINUS : Side.PLUS);
                 switch (startSide) {
                     case PLUS:
@@ -781,7 +781,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                         }
                     }
                 }
-                if (getPrecision().isZero(min)) {
+                if (getPrecision().eqZero(min)) {
                     // connect the two segments
                     segment.setNext(selectedNext);
                     selectedNext.setPrevious(segment);
@@ -1082,7 +1082,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                     }
                 }
 
-                if (precision.isZero(min)) {
+                if (precision.eqZero(min)) {
                     return selected;
                 }
             }

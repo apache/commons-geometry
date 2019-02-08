@@ -206,7 +206,7 @@ public class Edge {
     private Vertex addSubEdge(final Vertex subStart, final Vertex subEnd, final double subLength,
                               final List<Edge> list, final Circle splitCircle) {
 
-        if (circle.getPrecision().isZero(subLength)) {
+        if (circle.getPrecision().eqZero(subLength)) {
             // the edge is too short, we ignore it
             return subStart;
         }

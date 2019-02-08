@@ -31,18 +31,18 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      * @param b second value
      * @return true if the given values are considered equal
      */
-    public boolean areEqual(final double a, final double b) {
+    public boolean eq(final double a, final double b) {
         return compare(a, b) == 0;
     }
 
     /** Return true if the given value is considered equal to zero. This is
-     * equivalent {@code context.areEqual(n, 0.0)} but with a more explicit
+     * equivalent {@code context.eq(n, 0.0)} but with a more explicit
      * method name.
      * @param n the number to compare to zero
      * @return true if the argument is considered equal to zero.
      */
-    public boolean isZero(final double n) {
-        return areEqual(n, 0.0);
+    public boolean eqZero(final double n) {
+        return eq(n, 0.0);
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      * @param b second value
      * @return true if {@code a < b}
      */
-    public boolean isLessThan(final double a, final double b) {
+    public boolean lt(final double a, final double b) {
         return compare(a, b) < 0;
     }
 
@@ -61,7 +61,7 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      * @param b second value
      * @return true if {@code a <= b}
      */
-    public boolean isLessThanOrEqual(final double a, final double b) {
+    public boolean lte(final double a, final double b) {
         return compare(a, b) <= 0;
     }
 
@@ -71,7 +71,7 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      * @param b second value
      * @return true if {@code a > b}
      */
-    public boolean isGreaterThan(final double a, final double b) {
+    public boolean gt(final double a, final double b) {
         return compare(a, b) > 0;
     }
 
@@ -81,7 +81,7 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      * @param b second value
      * @return true if {@code a >= b}
      */
-    public boolean isGreaterThanOrEqual(final double a, final double b) {
+    public boolean gte(final double a, final double b) {
         return compare(a, b) >= 0;
     }
 

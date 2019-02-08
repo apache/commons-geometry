@@ -158,7 +158,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      */
     public boolean isSimilarTo(final Line line) {
         final double angle = direction.angle(line.direction);
-        return (precision.isZero(angle) || precision.areEqual(angle, Math.PI)) && contains(line.zero);
+        return (precision.eqZero(angle) || precision.eq(angle, Math.PI)) && contains(line.zero);
     }
 
     /** Check if the instance contains a point.
@@ -166,7 +166,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
      * @return true if p belongs to the line
      */
     public boolean contains(final Vector3D p) {
-        return precision.isZero(distance(p));
+        return precision.eqZero(distance(p));
     }
 
     /** Compute the distance between the instance and a point.

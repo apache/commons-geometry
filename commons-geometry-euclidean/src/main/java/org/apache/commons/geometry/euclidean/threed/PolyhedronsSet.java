@@ -151,7 +151,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
                                                       final double yMin, final double yMax,
                                                       final double zMin, final double zMax,
                                                       final DoublePrecisionContext precision) {
-        if (precision.areEqual(xMin, xMax) || precision.areEqual(yMin, yMax) || precision.areEqual(zMin, zMax)) {
+        if (precision.eq(xMin, xMax) || precision.eq(yMin, yMax) || precision.eq(zMin, zMax)) {
             // too thin box, build an empty polygons set
             return new BSPTree<>(Boolean.FALSE);
         }
@@ -181,7 +181,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         for (int i = 0; i < vertices.size() - 1; ++i) {
             final Vector3D vi = vertices.get(i);
             for (int j = i + 1; j < vertices.size(); ++j) {
-                if (precision.isZero(vi.distance(vertices.get(j)))) {
+                if (precision.eqZero(vi.distance(vertices.get(j)))) {
                     throw new IllegalArgumentException("Vertices are too close near point " + vi);
                 }
             }
@@ -495,7 +495,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         // establish search order
         final double offset = plane.getOffset(point);
-        final boolean in    = getPrecision().isZero(Math.abs(offset));
+        final boolean in    = getPrecision().eqZero(Math.abs(offset));
         final BSPTree<Vector3D> near;
         final BSPTree<Vector3D> far;
         if (offset < 0) {

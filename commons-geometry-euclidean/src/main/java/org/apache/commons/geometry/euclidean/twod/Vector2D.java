@@ -323,8 +323,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Vector2D vec, final DoublePrecisionContext precision) {
-        return precision.areEqual(x, vec.x) &&
-                precision.areEqual(y, vec.y);
+        return precision.eq(x, vec.x) &&
+                precision.eq(y, vec.y);
     }
 
     /**

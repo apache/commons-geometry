@@ -138,7 +138,7 @@ class EdgesBuilder implements BSPTreeVisitor<S2Point> {
 
         if (following == null) {
             final Vector3D previousStart = previous.getStart().getLocation().getVector();
-            if (precision.isZero(point.getVector().angle(previousStart))) {
+            if (precision.eqZero(point.getVector().angle(previousStart))) {
                 // the edge connects back to itself
                 return previous;
             }

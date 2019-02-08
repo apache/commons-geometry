@@ -227,7 +227,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             // check if another vertex also happens to be on this circle
             for (final Vertex vertex : vArray) {
                 if (vertex != start && vertex != end &&
-                    precision.isZero(circle.getOffset(vertex.getLocation()))) {
+                    precision.eqZero(circle.getOffset(vertex.getLocation()))) {
                     vertex.bindWith(circle);
                 }
             }
@@ -505,7 +505,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         // convert to 3D sphere to spherical cap
         final double r = enclosing3D.getRadius();
         final double h = enclosing3D.getCenter().norm();
-        if (getPrecision().isZero(h)) {
+        if (getPrecision().eqZero(h)) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells
             EnclosingBall<S2Point> enclosingS2 =
