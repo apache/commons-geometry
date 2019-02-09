@@ -898,7 +898,7 @@ public class PolyhedronsSetTest {
 
     // issue GEOMETRY-38
     @Test
-    public void testFirstIntersection_linesPassThroughBoundaries() {
+    public void testFirstIntersection_linePassesThroughVertex() {
         // arrange
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
@@ -932,6 +932,81 @@ public class PolyhedronsSetTest {
                 ((Plane) downFromCenterResult.getHyperplane()).intersection(downDiagonal), TEST_EPS);
     }
 
+    // Issue GEOMETRY-43
+    @Test
+    public void testFirstIntersection_lineParallelToFace() {
+        // arrange - setup box
+        Vector3D lowerCorner = Vector3D.ZERO;
+        Vector3D upperCorner = Vector3D.of(1, 1, 1);
+        Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
+
+        Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
+        Vector3D secondPointOnLine = Vector3D.of(0.5, 2.0, 0);
+        Line bottomLine = new Line(firstPointOnLine, secondPointOnLine, TEST_PRECISION);
+
+        Vector3D expectedIntersection1 = Vector3D.of(0.5, 0, 0.0);
+        Vector3D expectedIntersection2 = Vector3D.of(0.5, 1.0, 0.0);
+
+        // act/assert
+        SubPlane bottom = (SubPlane) polySet.firstIntersection(firstPointOnLine, bottomLine);
+        Assert.assertNotNull(bottom);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection1,
+                ((Plane) bottom.getHyperplane()).intersection(bottomLine), TEST_EPS);
+
+        bottom = (SubPlane) polySet.firstIntersection(Vector3D.of(0.5, 0.1, 0.0), bottomLine);
+        Assert.assertNotNull(bottom);
+        Vector3D intersection = ((Plane) bottom.getHyperplane()).intersection(bottomLine);
+        Assert.assertNotNull(intersection);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection2, intersection, TEST_EPS);
+    }
+
+    @Test
+    public void testFirstIntersection_rayPointOnFace() {
+        // arrange
+        Vector3D lowerCorner = Vector3D.ZERO;
+        Vector3D upperCorner = Vector3D.of(1, 1, 1);
+        Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
+
+        Vector3D pt = Vector3D.of(0.5, 0.5, 0);
+        Line intoBoxLine = new Line(pt, pt.add(Vector3D.PLUS_Z), TEST_PRECISION);
+        Line outOfBoxLine = new Line(pt, pt.add(Vector3D.MINUS_Z), TEST_PRECISION);
+
+        // act/assert
+        SubPlane intoBoxResult = (SubPlane) polySet.firstIntersection(pt, intoBoxLine);
+        Vector3D intoBoxPt = ((Plane) intoBoxResult.getHyperplane()).intersection(intoBoxLine);
+        EuclideanTestUtils.assertCoordinatesEqual(pt, intoBoxPt, TEST_EPS);
+
+        SubPlane outOfBoxResult = (SubPlane) polySet.firstIntersection(pt, outOfBoxLine);
+        Vector3D outOfBoxPt = ((Plane) outOfBoxResult.getHyperplane()).intersection(outOfBoxLine);
+        EuclideanTestUtils.assertCoordinatesEqual(pt, outOfBoxPt, TEST_EPS);
+    }
+
+    @Test
+    public void testFirstIntersection_rayPointOnVertex() {
+        // arrange
+        Vector3D lowerCorner = Vector3D.ZERO;
+        Vector3D upperCorner = Vector3D.of(1, 1, 1);
+        Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
+
+        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
+
+        Line intoBoxLine = new Line(lowerCorner, upperCorner, TEST_PRECISION);
+        Line outOfBoxLine = intoBoxLine.revert();
+
+        // act/assert
+        SubPlane intoBoxResult = (SubPlane) polySet.firstIntersection(lowerCorner, intoBoxLine);
+        Vector3D intoBoxPt = ((Plane) intoBoxResult.getHyperplane()).intersection(intoBoxLine);
+        EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, intoBoxPt, TEST_EPS);
+
+        SubPlane outOfBoxResult = (SubPlane) polySet.firstIntersection(lowerCorner, outOfBoxLine);
+        Vector3D outOfBoxPt = ((Plane) outOfBoxResult.getHyperplane()).intersection(outOfBoxLine);
+        EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, outOfBoxPt, TEST_EPS);
+    }
 
     // Issue 1211
     // See https://issues.apache.org/jira/browse/MATH-1211
