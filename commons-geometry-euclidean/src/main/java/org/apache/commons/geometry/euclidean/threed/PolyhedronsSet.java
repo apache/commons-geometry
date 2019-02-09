@@ -509,7 +509,10 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         if (in) {
             // search in the cut hyperplane
             final SubHyperplane<Vector3D> facet = boundaryFacet(point, node);
-            if (facet != null) {
+
+            // only return the facet here if it exists and intersects the plane
+            // (ie, is not parallel it)
+            if (facet != null && plane.intersection(line) != null) {
                 return facet;
             }
         }
