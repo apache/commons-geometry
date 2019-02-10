@@ -587,6 +587,6 @@ public class IntervalsSetTest {
 
     private SubOrientedPoint subOrientedPoint(double location, boolean direct, DoublePrecisionContext precision) {
         // the remaining region isn't necessary for creating 1D boundaries so we can set it to null here
-        return new SubOrientedPoint(new OrientedPoint(Vector1D.of(location), direct, precision), null);
+        return new SubOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(location), direct, precision), null);
     }
 }

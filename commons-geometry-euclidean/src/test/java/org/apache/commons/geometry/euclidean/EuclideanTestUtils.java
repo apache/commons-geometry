@@ -223,7 +223,7 @@ public class EuclideanTestUtils {
             @Override
             protected void formatHyperplane(final Hyperplane<Vector1D> hyperplane) {
                 final OrientedPoint h = (OrientedPoint) hyperplane;
-                getFormatter().format("%22.15e %b", h.getLocation().getX(), h.isDirect());
+                getFormatter().format("%22.15e %b", h.getLocation().getX(), h.isPositiveFacing());
             }
 
         };
@@ -294,7 +294,7 @@ public class EuclideanTestUtils {
             @Override
             public OrientedPoint parseHyperplane()
                 throws ParseException {
-                return new OrientedPoint(Vector1D.of(getNumber()), getBoolean(), getPrecision());
+                return OrientedPoint.fromPointAndDirection(Vector1D.of(getNumber()), getBoolean(), getPrecision());
             }
 
         };
@@ -394,7 +394,7 @@ public class EuclideanTestUtils {
 
             OrientedPoint hyper = (OrientedPoint) cut.getHyperplane();
             write("cut = { hyperplane: ");
-            if (hyper.isDirect()) {
+            if (hyper.isPositiveFacing()) {
                 write("[" + hyper.getLocation().getX() + ", inf)");
             } else {
                 write("(-inf, " + hyper.getLocation().getX() + "]");
