@@ -178,9 +178,9 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
         final boolean direct = Math.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
         final Vector1D x      = thisLine.toSubSpace(crossing);
         final SubHyperplane<Vector1D> subPlus  =
-                new OrientedPoint(x, !direct, precision).wholeHyperplane();
+                OrientedPoint.fromPointAndDirection(x, !direct, precision).wholeHyperplane();
         final SubHyperplane<Vector1D> subMinus =
-                new OrientedPoint(x,  direct, precision).wholeHyperplane();
+                OrientedPoint.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
 
         final BSPTree<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
         final BSPTree<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?

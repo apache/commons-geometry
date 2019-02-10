@@ -496,7 +496,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
             final Line transformedLine = (Line) transformed;
             final Vector1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
-            return new OrientedPoint(newLoc, op.isDirect(), originalLine.precision).wholeHyperplane();
+            return OrientedPoint.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
         }
 
     }

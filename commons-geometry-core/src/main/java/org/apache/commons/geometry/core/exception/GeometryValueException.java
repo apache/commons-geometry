@@ -16,25 +16,18 @@
  */
 package org.apache.commons.geometry.core.exception;
 
-/** Exception thrown when an illegal vector norm value is encountered
- * in an operation.
+/** Exception thrown to indicate that a value used in a geometric operation
+ * is not valid.
  */
-public class IllegalNormException extends GeometryValueException {
+public class GeometryValueException extends GeometryException {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 20180909L;
+    private static final long serialVersionUID = 20190210L;
 
-    /** Simple constructor accepting the illegal norm value.
-     * @param norm the illegal norm value
+    /** Simple constructor with error message.
+     * @param msg exception message string
      */
-    public IllegalNormException(double norm) {
-        super("Illegal norm: " + norm);
-    }
-
-    /** Constructor accepting an error message.
-     * @param msg the error message
-     */
-    public IllegalNormException(String msg) {
+    public GeometryValueException(String msg) {
         super(msg);
     }
 }

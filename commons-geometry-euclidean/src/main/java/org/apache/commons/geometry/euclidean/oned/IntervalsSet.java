@@ -106,14 +106,14 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
             }
             // the tree must be open on the negative infinity side
             final SubHyperplane<Vector1D> upperCut =
-                new OrientedPoint(Vector1D.of(upper), true, precision).wholeHyperplane();
+                OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
             return new BSPTree<>(upperCut,
                                new BSPTree<Vector1D>(Boolean.FALSE),
                                new BSPTree<Vector1D>(Boolean.TRUE),
                                null);
         }
         final SubHyperplane<Vector1D> lowerCut =
-            new OrientedPoint(Vector1D.of(lower), false, precision).wholeHyperplane();
+            OrientedPoint.createNegativeFacing(Vector1D.of(lower), precision).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
             return new BSPTree<>(lowerCut,
@@ -124,7 +124,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
 
         // the tree must be bounded on the two sides
         final SubHyperplane<Vector1D> upperCut =
-            new OrientedPoint(Vector1D.of(upper), true, precision).wholeHyperplane();
+            OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
         return new BSPTree<>(lowerCut,
                                         new BSPTree<Vector1D>(Boolean.FALSE),
                                         new BSPTree<>(upperCut,
@@ -177,7 +177,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
             inf  = op.getLocation().getX();
-            node = op.isDirect() ? node.getMinus() : node.getPlus();
+            node = op.isPositiveFacing() ? node.getMinus() : node.getPlus();
         }
         return ((Boolean) node.getAttribute()) ? Double.NEGATIVE_INFINITY : inf;
     }
@@ -194,7 +194,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
             sup  = op.getLocation().getX();
-            node = op.isDirect() ? node.getPlus() : node.getMinus();
+            node = op.isPositiveFacing() ? node.getPlus() : node.getMinus();
         }
         return ((Boolean) node.getAttribute()) ? Double.POSITIVE_INFINITY : sup;
     }
@@ -484,7 +484,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @return true if the oriented point is direct
      */
     private boolean isDirect(final BSPTree<Vector1D> node) {
-        return ((OrientedPoint) node.getCut().getHyperplane()).isDirect();
+        return ((OrientedPoint) node.getCut().getHyperplane()).isPositiveFacing();
     }
 
     /** Get the abscissa of an internal node.
