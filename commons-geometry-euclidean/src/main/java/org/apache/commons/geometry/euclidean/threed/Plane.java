@@ -277,8 +277,8 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     public boolean isSimilarTo(final Plane plane) {
         final double angle = w.angle(plane.w);
 
-        return ((precision.isZero(angle)) && precision.areEqual(originOffset, plane.originOffset)) ||
-                ((precision.areEqual(angle, Math.PI)) && precision.areEqual(originOffset, -plane.originOffset));
+        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
+                ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
     }
 
     /** Rotate the plane around the specified point.
@@ -326,7 +326,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     public Vector3D intersection(final Line line) {
         final Vector3D direction = line.getDirection();
         final double   dot       = w.dot(direction);
-        if (precision.isZero(dot)) {
+        if (precision.eqZero(dot)) {
             return null;
         }
         final Vector3D point = line.toSpace(Vector1D.ZERO);
@@ -341,7 +341,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      */
     public Line intersection(final Plane other) {
         final Vector3D direction = w.cross(other.w);
-        if (precision.isZero(direction.norm())) {
+        if (precision.eqZero(direction.norm())) {
             return null;
         }
         final Vector3D point = intersection(this, other, new Plane(direction, precision));
@@ -412,7 +412,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
      * @return true if p belongs to the plane
      */
     public boolean contains(final Vector3D p) {
-        return precision.isZero(getOffset(p));
+        return precision.eqZero(getOffset(p));
     }
 
     /** Get the offset (oriented distance) of a parallel plane.

@@ -126,13 +126,13 @@ public class EpsilonDoublePrecisionContextTest {
         double maxZero = ctx.getMaxZero();
 
         // act/assert
-        Assert.assertTrue(ctx.isZero(maxZero));
-        Assert.assertTrue(ctx.isZero(nextDown(maxZero, 1)));
-        Assert.assertFalse(ctx.isZero(nextUp(maxZero, 1)));
+        Assert.assertTrue(ctx.eqZero(maxZero));
+        Assert.assertTrue(ctx.eqZero(nextDown(maxZero, 1)));
+        Assert.assertFalse(ctx.eqZero(nextUp(maxZero, 1)));
 
-        Assert.assertTrue(ctx.isZero(-maxZero));
-        Assert.assertTrue(ctx.isZero(nextUp(-maxZero, 1)));
-        Assert.assertFalse(ctx.isZero(nextDown(-maxZero, 1)));
+        Assert.assertTrue(ctx.eqZero(-maxZero));
+        Assert.assertTrue(ctx.eqZero(nextUp(-maxZero, 1)));
+        Assert.assertFalse(ctx.eqZero(nextDown(-maxZero, 1)));
     }
 
     @Test

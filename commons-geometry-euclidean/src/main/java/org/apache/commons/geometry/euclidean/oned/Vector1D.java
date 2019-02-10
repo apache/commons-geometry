@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -217,6 +218,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      */
     public Vector1D transform(AffineTransformMatrix1D transform) {
         return transform.apply(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Vector1D vec, final DoublePrecisionContext precision) {
+        return precision.eq(x, vec.x);
     }
 
     /**

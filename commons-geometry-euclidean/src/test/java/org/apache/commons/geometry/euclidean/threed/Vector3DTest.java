@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.apache.commons.rng.UniformRandomProvider;
@@ -931,6 +933,66 @@ public class Vector3DTest {
         // act/assert
         checkVector(v1.transform(transform), 3, 6, 9);
         checkVector(v2.transform(transform), -7, -8, -9);
+    }
+
+    @Test
+    public void testPrecisionEquals() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        Vector3D vec = Vector3D.of(1, -2, 3);
+
+        // act/assert
+        Assert.assertTrue(vec.equals(vec, smallEps));
+        Assert.assertTrue(vec.equals(vec, largeEps));
+
+        Assert.assertTrue(vec.equals(Vector3D.of(1.0000007, -2.0000009, 3.0000009), smallEps));
+        Assert.assertTrue(vec.equals(Vector3D.of(1.0000007, -2.0000009, 3.0000009), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector3D.of(1.004, -2, 3), smallEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -2.004, 3), smallEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 2.999), smallEps));
+        Assert.assertTrue(vec.equals(Vector3D.of(1.004, -2.004, 2.999), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector3D.of(2, -2, 3), smallEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -3, 3), smallEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 4), smallEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(2, -3, 4), smallEps));
+
+        Assert.assertFalse(vec.equals(Vector3D.of(2, -2, 3), largeEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -3, 3), largeEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 4), largeEps));
+        Assert.assertFalse(vec.equals(Vector3D.of(2, -3, 4), largeEps));
+    }
+
+    @Test
+    public void testIsZero() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        // act/assert
+        Assert.assertTrue(Vector3D.of(0.0, -0.0, 0.0).isZero(smallEps));
+        Assert.assertTrue(Vector3D.of(-0.0, 0.0, -0.0).isZero(largeEps));
+
+        Assert.assertTrue(Vector3D.of(-1e-7, 1e-7, -1e-8).isZero(smallEps));
+        Assert.assertTrue(Vector3D.of(1e-7, -1e-7, 1e-8).isZero(largeEps));
+
+        Assert.assertFalse(Vector3D.of(1e-2, 0.0, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector3D.of(0.0, 1e-2, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector3D.of(0.0, 0.0, 1e-2).isZero(smallEps));
+        Assert.assertTrue(Vector3D.of(1e-2, -1e-2, 1e-2).isZero(largeEps));
+
+        Assert.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(smallEps));
+        Assert.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(smallEps));
+
+        Assert.assertFalse(Vector3D.of(0.2, 0.0, 0.0).isZero(largeEps));
+        Assert.assertFalse(Vector3D.of(0.0, 0.2, 0.0).isZero(largeEps));
+        Assert.assertFalse(Vector3D.of(0.0, 0.0, 0.2).isZero(largeEps));
+        Assert.assertFalse(Vector3D.of(0.2, 0.2, 0.2).isZero(largeEps));
     }
 
     @Test

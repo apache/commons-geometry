@@ -137,7 +137,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         if (hull.size() == 1) {
             // ensure that we do not add an identical point
             final Vector2D p1 = hull.get(0);
-            if (precision.isZero(p1.distance(point))) {
+            if (precision.eqZero(p1.distance(point))) {
                 return;
             }
         }
@@ -148,11 +148,11 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
             final Vector2D p2 = hull.get(size - 1);
 
             final double offset = new Line(p1, p2, precision).getOffset(point);
-            if (precision.isZero(offset)) {
+            if (precision.eqZero(offset)) {
                 // the point is collinear to the line (p1, p2)
 
                 final double distanceToCurrent = p1.distance(point);
-                if (precision.isZero(distanceToCurrent) || precision.isZero(p2.distance(point))) {
+                if (precision.eqZero(distanceToCurrent) || precision.eqZero(p2.distance(point))) {
                     // the point is assumed to be identical to either p1 or p2
                     return;
                 }

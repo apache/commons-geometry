@@ -231,7 +231,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      */
     public Vector2D intersection(final Line other) {
         final double d = LinearCombination.value(sin, other.cos, -other.sin, cos);
-        if (precision.isZero(d)) {
+        if (precision.eqZero(d)) {
             return null;
         }
         return Vector2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
@@ -311,7 +311,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * @return true if p belongs to the line
      */
     public boolean contains(final Vector2D p) {
-        return precision.isZero(getOffset(p));
+        return precision.eqZero(getOffset(p));
     }
 
     /** Compute the distance between the instance and a point.
@@ -332,7 +332,7 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      * (they can have either the same or opposite orientations)
      */
     public boolean isParallelTo(final Line line) {
-        return precision.isZero(LinearCombination.value(sin, line.cos, -cos, line.sin));
+        return precision.eqZero(LinearCombination.value(sin, line.cos, -cos, line.sin));
     }
 
     /** Translate the line to force it passing by a point.

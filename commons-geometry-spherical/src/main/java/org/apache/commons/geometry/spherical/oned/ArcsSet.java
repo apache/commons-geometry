@@ -818,7 +818,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 final int    j  = (i + 1) % limits.size();
                 final double lA = limits.get(i);
                 final double lB = PlaneAngleRadians.normalize(limits.get(j), lA);
-                if (getPrecision().areEqual(lB, lA)) {
+                if (getPrecision().eq(lB, lA)) {
                     // the two limits are too close to each other, we remove both of them
                     if (j > 0) {
                         // regular case, the two entries are consecutive ones

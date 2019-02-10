@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -765,6 +767,56 @@ public class Vector2DTest {
         // act/assert
         checkVector(v1.transform(transform), 3, 6);
         checkVector(v2.transform(transform), -7, -8);
+    }
+
+    @Test
+    public void testPrecisionEquals() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        Vector2D vec = Vector2D.of(1, -2);
+
+        // act/assert
+        Assert.assertTrue(vec.equals(vec, smallEps));
+        Assert.assertTrue(vec.equals(vec, largeEps));
+
+        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), smallEps));
+        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector2D.of(1.004, -2), smallEps));
+        Assert.assertFalse(vec.equals(Vector2D.of(1, -2.004), smallEps));
+        Assert.assertTrue(vec.equals(Vector2D.of(1.004, -2.004), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), smallEps));
+        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), smallEps));
+        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), largeEps));
+        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), largeEps));
+    }
+
+    @Test
+    public void testIsZero() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        // act/assert
+        Assert.assertTrue(Vector2D.of(0.0, -0.0).isZero(smallEps));
+        Assert.assertTrue(Vector2D.of(-0.0, 0.0).isZero(largeEps));
+
+        Assert.assertTrue(Vector2D.of(-1e-7, 1e-7).isZero(smallEps));
+        Assert.assertTrue(Vector2D.of(1e-7, 1e-7).isZero(largeEps));
+
+        Assert.assertFalse(Vector2D.of(1e-2, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector2D.of(0.0, 1e-2).isZero(smallEps));
+        Assert.assertTrue(Vector2D.of(1e-2, -1e-2).isZero(largeEps));
+
+        Assert.assertFalse(Vector2D.of(0.2, 0.0).isZero(smallEps));
+        Assert.assertFalse(Vector2D.of(0.0, 0.2).isZero(smallEps));
+        Assert.assertFalse(Vector2D.of(0.2, 0.2).isZero(smallEps));
+        Assert.assertFalse(Vector2D.of(-0.2, 0.0).isZero(largeEps));
+        Assert.assertFalse(Vector2D.of(0.0, -0.2).isZero(largeEps));
+        Assert.assertFalse(Vector2D.of(-0.2, -0.2).isZero(largeEps));
     }
 
     @Test

@@ -53,7 +53,7 @@ public class SubCircle extends AbstractSubHyperplane<S2Point, S1Point> {
         final double angle = thisCircle.getPole().angle(otherCircle.getPole());
         final DoublePrecisionContext precision = thisCircle.getPrecision();
 
-        if (precision.isZero(angle) || precision.compare(angle, Math.PI) >= 0) {
+        if (precision.eqZero(angle) || precision.compare(angle, Math.PI) >= 0) {
             // the two circles are aligned or opposite
             return new SplitSubHyperplane<>(null, null);
         } else {

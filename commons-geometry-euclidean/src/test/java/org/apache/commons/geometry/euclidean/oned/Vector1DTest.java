@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
@@ -461,6 +463,48 @@ public class Vector1DTest {
         // act/assert
         checkVector(v1.transform(transform), 3);
         checkVector(v2.transform(transform), -7);
+    }
+
+    @Test
+    public void testPrecisionEquals() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        Vector1D vec = Vector1D.of(1);
+
+        // act/assert
+        Assert.assertTrue(vec.equals(vec, smallEps));
+        Assert.assertTrue(vec.equals(vec, largeEps));
+
+        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), smallEps));
+        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector1D.of(1.004), smallEps));
+        Assert.assertTrue(vec.equals(Vector1D.of(1.004), largeEps));
+
+        Assert.assertFalse(vec.equals(Vector1D.of(2), smallEps));
+        Assert.assertFalse(vec.equals(Vector1D.of(-2), largeEps));
+    }
+
+    @Test
+    public void testIsZero() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-6);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(1e-1);
+
+        // act/assert
+        Assert.assertTrue(Vector1D.of(0.0).isZero(smallEps));
+        Assert.assertTrue(Vector1D.of(-0.0).isZero(largeEps));
+
+        Assert.assertTrue(Vector1D.of(1e-7).isZero(smallEps));
+        Assert.assertTrue(Vector1D.of(-1e-7).isZero(largeEps));
+
+        Assert.assertFalse(Vector1D.of(1e-2).isZero(smallEps));
+        Assert.assertTrue(Vector1D.of(-1e-2).isZero(largeEps));
+
+        Assert.assertFalse(Vector1D.of(0.2).isZero(smallEps));
+        Assert.assertFalse(Vector1D.of(-0.2).isZero(largeEps));
     }
 
     @Test
