@@ -281,32 +281,24 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         return dir.getComponent(this, true, Vector2D::normalize);
     }
 
-    /**
-     * Compute the cross-product of the instance and the given vector.
-     * <p>
-     * The cross product can be used to determine the location of a point
-     * with regard to the line formed by (p1, p2) and is calculated as:
-     * \[
-     *    P = (x_2 - x_1)(y_3 - y_1) - (y_2 - y_1)(x_3 - x_1)
-     * \]
-     * with \(p3 = (x_3, y_3)\) being this instance.
-     * <p>
-     * If the result is 0, the points are collinear, i.e. lie on a single straight line L;
-     * if it is positive, this point lies to the left, otherwise to the right of the line
-     * formed by (p1, p2).
+    /** Compute the signed area of the parallelogram with sides formed by this instance
+     * and the given vector.
      *
-     * @param p1 first point of the line
-     * @param p2 second point of the line
-     * @return the cross-product
-     *
-     * @see <a href="http://mathworld.wolfram.com/CrossProduct.html">Cross product (Mathworld)</a>
+     * <p>The parallelogram in question can be visualized by taking the current instance as the
+     * first side and placing {@code v} at the end of it to create the second. The other sides
+     * are formed by lines parallel to these two vectors. If {@code v} points to the <em>left</em> of
+     * the current instance (ie, the parallelogram is wound counter-clockwise), then the
+     * returned area is positive. If {@code v} points to the <em>right</em> of the current instance,
+     * (ie, the parallelogram is wound clockwise), then the returned area is negative. If
+     * the vectors are collinear (ie, they lie on the same line), then 0 is returned. The area of
+     * the triangle formed by the two vectors is exactly half of the returned value.
+     * @param v vector representing the second side of the constructed parallelogram
+     * @return the signed area of the parallelogram formed by this instance and the given vector
      */
-    public double cross(final Vector2D p1, final Vector2D p2) {
-        final double x1 = p2.x - p1.x;
-        final double y1 = y - p1.y;
-        final double x2 = x - p1.x;
-        final double y2 = p2.y - p1.y;
-        return LinearCombination.value(x1, y1, -x2, y2);
+    public double signedArea(final Vector2D v) {
+        return LinearCombination.value(
+                x, v.y,
+                -y, v.x);
     }
 
     /** Apply the given transform to this vector, returning the result as a

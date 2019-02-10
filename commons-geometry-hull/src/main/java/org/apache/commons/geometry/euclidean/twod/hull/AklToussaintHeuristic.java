@@ -129,7 +129,7 @@ public final class AklToussaintHeuristic {
         }
 
         // get the location of the point relative to the first two vertices
-        final double last = v0.cross(v1, v2);
+        final double last = signedAreaPoints(v1, v2, v0);
         final int size = quadrilateralPoints.size();
         // loop through the rest of the vertices
         for (int i = 1; i < size; i++) {
@@ -143,11 +143,22 @@ public final class AklToussaintHeuristic {
             // do side of line test: multiply the last location with this location
             // if they are the same sign then the operation will yield a positive result
             // -x * -y = +xy, x * y = +xy, -x * y = -xy, x * -y = -xy
-            if (last * v0.cross(v1, v2) < 0) {
+            if (last * signedAreaPoints(v1, v2, v0) < 0) {
                 return false;
             }
         }
         return true;
+    }
+
+    /** Compute the signed area of the parallelogram formed by vectors between the given points. The first
+     * vector points from {@code p0} to {@code p1} and the second from {@code p0} to {@code p3}.
+     * @param p0 first point
+     * @param p1 second point
+     * @param p2 third point
+     * @return signed area of parallelogram formed by vectors between the given points
+     */
+    private static double signedAreaPoints(final Vector2D p0, final Vector2D p1, final Vector2D p2) {
+        return p0.vectorTo(p1).signedArea(p0.vectorTo(p2));
     }
 
 }
