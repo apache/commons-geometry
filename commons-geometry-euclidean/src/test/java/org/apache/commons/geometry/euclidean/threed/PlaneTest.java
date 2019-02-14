@@ -152,6 +152,20 @@ public class PlaneTest {
         Assert.assertEquals(reference.getY(), p.getY(), TEST_EPS);
         Assert.assertEquals(reference.getZ(), p.getZ(), TEST_EPS);
     }
+    
+    @Test
+    public void testLineIntersectingPlane()
+    {
+        Plane plane = new Plane(Vector3D.of(0.0,0.0, 1.0), TEST_PRECISION);
+        Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
+        Vector3D secondPointOnLine = Vector3D.of(0.5, 2.0, 0);
+        Line line = new Line(firstPointOnLine, secondPointOnLine, TEST_PRECISION);
+        Assert.assertTrue(plane.isParallel(line));
+        double expectedDistance = 0.0;
+        Assert.assertEquals(expectedDistance, plane.getOffset(line).get(), TEST_EPS);
+        Assert.assertTrue(plane.isOnPlane(line));
+    }
+
 
     @Test
     public void testSimilar() {

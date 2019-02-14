@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Optional;
+
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -105,7 +107,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     }
 
     /** Copy the instance.
-     * <p>The instance created is completely independant of the original
+     * <p>The instance created is completely independent of the original
      * one. A deep copy is used, none of the underlying objects are
      * shared (except for immutable objects).</p>
      * @return a new hyperplane, copy of the instance
@@ -127,7 +129,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
     }
 
     /** Reset the instance from another one.
-     * <p>The updated instance is completely independant of the original
+     * <p>The updated instance is completely independent of the original
      * one. A deep reset is used none of the underlying object is
      * shared.</p>
      * @param original plane to reset from
@@ -140,7 +142,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
         w            = original.w;
     }
 
-    /** Set the normal vactor.
+    /** Set the normal vector.
      * @param normal normal direction to the plane (will be copied)
      * @exception IllegalNormException if the normal norm zero, NaN, or infinite
      */
@@ -170,7 +172,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
 
     /** Get the normalized normal vector.
      * <p>The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized
      * frame).</p>
      * @return normalized normal vector
      * @see #getU
@@ -182,7 +184,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
 
     /** Get the plane first canonical vector.
      * <p>The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized
      * frame).</p>
      * @return normalized first canonical vector
      * @see #getV
@@ -194,7 +196,7 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
 
     /** Get the plane second canonical vector.
      * <p>The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized
      * frame).</p>
      * @return normalized second canonical vector
      * @see #getU
@@ -452,4 +454,51 @@ public class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D
         return (((Plane) other).w).dot(w) > 0.0;
     }
 
+    /** Check, if the line is parallel to the instance.
+     * @param line line to check.
+     * @return true if the line is parallel to the instance, false otherwise.
+     */
+    public boolean isParallel(Line line) {
+        final Vector3D direction = line.getDirection();
+        final double   dot       = w.dot(direction);
+        if (precision.eqZero(dot)) {
+            return true;
+        }
+        return false;
+    }
+
+    /** Returns the optional distance of the given line to the plane instance. 
+     *  Returns Optional.empty, if the line is not parallel to the plane instance
+     * @param line to calculate the distance to the plane instance
+     * @return the optional distance or Optional.empty, if the line is not parallel to the plane instance.
+     */
+    public Optional<Double> getOffset(Line line) {
+        if (!isParallel(line))
+        {
+            return Optional.empty();
+        }
+        return Optional.of(getOffset(line.getOrigin()));
+    }
+
+    /**
+     * Checks if the line lies on the plane.
+     * @param line the line to check.
+     * @return true, if the line lies on the plane. That is: it is parallel to the plane
+     *         and the offset to the plane is 0.0
+     */    
+    public boolean isOnPlane(Line line) {
+        Optional<Double> offset = getOffset(line);
+        if (offset.isPresent() && precision.eqZero(offset.get()))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Plane [originOffset=" + originOffset + ", origin=" + origin + ", u=" + u + ", v=" + v + ", w=" + w
+                + ", precision=" + precision + "]";
+    }
 }

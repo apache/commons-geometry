@@ -512,7 +512,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
             // only return the facet here if it exists and intersects the plane
             // (ie, is not parallel it)
-            if (facet != null && plane.intersection(line) != null) {
+            if (facet != null && !plane.isParallel(line)) {
                 return facet;
             }
         }
