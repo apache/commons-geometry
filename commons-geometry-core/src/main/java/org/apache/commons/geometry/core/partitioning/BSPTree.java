@@ -193,6 +193,14 @@ public class BSPTree<P extends Point<P>> {
         return cut;
     }
 
+    /** 
+     * Returns if this node is a leaf, that is: cut is null
+     * @return true if this node is a leaf.
+     */
+    public boolean isLeaf() {
+        return cut == null;
+    }
+
     /** Get the tree on the plus side of the cut hyperplane.
      * @return tree on the plus side of the cut hyperplane, null if this
      * is a leaf tree

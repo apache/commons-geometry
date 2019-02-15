@@ -74,7 +74,7 @@ class Characterization<P extends Point<P>> {
      */
     private void characterize(final BSPTree<P> node, final SubHyperplane<P> sub,
                               final List<BSPTree<P>> splitters) {
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             // we have reached a leaf node
             final boolean inside = (Boolean) node.getAttribute();
             if (inside) {

@@ -58,7 +58,7 @@ class InsideFinder<P extends Point<P>> {
      */
     public void recurseSides(final BSPTree<P> node, final SubHyperplane<P> sub) {
 
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             if ((Boolean) node.getAttribute()) {
                 // this is an inside cell expanding across the hyperplane
                 plusFound  = true;

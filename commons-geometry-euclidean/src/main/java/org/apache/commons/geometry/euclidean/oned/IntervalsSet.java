@@ -174,7 +174,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     public double getInf() {
         BSPTree<Vector1D> node = getTree(false);
         double  inf  = Double.POSITIVE_INFINITY;
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
             inf  = op.getLocation().getX();
             node = op.isPositiveFacing() ? node.getMinus() : node.getPlus();
@@ -191,7 +191,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     public double getSup() {
         BSPTree<Vector1D> node = getTree(false);
         double  sup  = Double.NEGATIVE_INFINITY;
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
             sup  = op.getLocation().getX();
             node = op.isPositiveFacing() ? node.getPlus() : node.getMinus();
@@ -295,7 +295,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
 
         // start search at the tree root
         BSPTree<Vector1D> node = getTree(false);
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             return null;
         }
 
@@ -402,7 +402,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     private BSPTree<Vector1D> leafBefore(BSPTree<Vector1D> node) {
 
         node = childBefore(node);
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             node = childAfter(node);
         }
 
@@ -417,7 +417,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     private BSPTree<Vector1D> leafAfter(BSPTree<Vector1D> node) {
 
         node = childAfter(node);
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             node = childBefore(node);
         }
 

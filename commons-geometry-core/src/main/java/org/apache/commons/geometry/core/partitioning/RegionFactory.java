@@ -202,7 +202,7 @@ public class RegionFactory<P extends Point<P>> {
                                          final Map<BSPTree<P>, BSPTree<P>> map) {
 
         final BSPTree<P> transformedNode;
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             transformedNode = new BSPTree<>(((Boolean) node.getAttribute()) ? Boolean.FALSE : Boolean.TRUE);
         } else {
 

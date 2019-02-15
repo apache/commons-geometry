@@ -233,7 +233,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
 
         // start search at the tree root
         BSPTree<S1Point> node = getTree(false);
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             return null;
         }
 
@@ -340,7 +340,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     private BSPTree<S1Point> leafBefore(BSPTree<S1Point> node) {
 
         node = childBefore(node);
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             node = childAfter(node);
         }
 
@@ -355,7 +355,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     private BSPTree<S1Point> leafAfter(BSPTree<S1Point> node) {
 
         node = childAfter(node);
-        while (node.getCut() != null) {
+        while (!node.isLeaf()) {
             node = childBefore(node);
         }
 
@@ -787,7 +787,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
 
         final LimitAngle limit = new LimitAngle(S1Point.of(alpha), !isStart, getPrecision());
         final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getPrecision());
-        if (node.getCut() != null) {
+        if (!node.isLeaf()) {
             // this should never happen
             throw new GeometryInternalError();
         }

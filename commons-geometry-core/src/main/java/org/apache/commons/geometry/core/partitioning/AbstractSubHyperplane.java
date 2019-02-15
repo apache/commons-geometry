@@ -150,7 +150,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
                                         final Map<BSPTree<S>, BSPTree<S>> map) {
 
         final BSPTree<S> transformedNode;
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             transformedNode = new BSPTree<>(node.getAttribute());
         } else {
 

@@ -262,7 +262,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
         // interface because we can stop visiting the tree as soon as we
         // have found an inside cell
 
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             // if we find an inside node, the region is not empty
             return !((Boolean) node.getAttribute());
         }
@@ -286,7 +286,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
         // interface because we can stop visiting the tree as soon as we
         // have found an outside cell
 
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             // if we find an outside node, the region does not cover full space
             return (Boolean) node.getAttribute();
         }
@@ -407,7 +407,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      */
     private SubHyperplane<P> recurseIntersection(final BSPTree<P> node, final SubHyperplane<P> sub) {
 
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             return (Boolean) node.getAttribute() ? sub.copySelf() : null;
         }
 
@@ -486,7 +486,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
                                         final Map<BSPTree<P>, BSPTree<P>> map) {
 
         final BSPTree<P> transformedNode;
-        if (node.getCut() == null) {
+        if (node.isLeaf()) {
             transformedNode = new BSPTree<>(node.getAttribute());
         } else {
 
