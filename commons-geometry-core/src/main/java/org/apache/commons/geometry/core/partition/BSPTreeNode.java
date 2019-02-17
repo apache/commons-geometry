@@ -20,9 +20,13 @@ import org.apache.commons.geometry.core.Point;
 
 public interface BSPTreeNode<P extends Point<P>> {
 
-    Hyperplane<P> getCut();
+    BSPTreeNode<P> getParent();
+
+    ConvexSubHyperplane<P> getCut();
 
     BSPTreeNode<P> getPlus();
 
     BSPTreeNode<P> getMinus();
+
+    BSPTreeNode<P> find(P p);
 }

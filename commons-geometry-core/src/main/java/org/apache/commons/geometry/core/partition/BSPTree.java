@@ -20,5 +20,11 @@ import org.apache.commons.geometry.core.Point;
 
 public interface BSPTree<P extends Point<P>, N extends BSPTreeNode<P>> {
 
+    N getRoot();
 
+    N find(P point);
+
+    N createNode();
+
+    N insertCut(N node, Hyperplane<P> cut);
 }
