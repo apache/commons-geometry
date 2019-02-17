@@ -23,8 +23,8 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
-import org.apache.commons.geometry.core.partitioning.Embedding;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Embedding_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -34,7 +34,10 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /**
  * The class represents a plane in a three dimensional space.
  */
-public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D> {
+public class Plane implements Hyperplane_Old<Vector3D>, Embedding_Old<Vector3D, Vector2D> {
+
+    /** Offset of the origin with respect to the plane. */
+    private double originOffset;
 
     /** First normalized vector of the plane frame (in plane). */
     private final Vector3D u;
@@ -677,8 +680,8 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      *         orientation
      */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Vector3D> other) {
-        return (((Plane) other).w).dot(w) > 0;
+    public boolean sameOrientationAs(final Hyperplane_Old<Vector3D> other) {
+        return (((Plane) other).w).dot(w) > 0.0;
     }
 
     @Override

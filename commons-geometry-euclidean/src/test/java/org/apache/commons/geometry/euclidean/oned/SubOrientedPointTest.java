@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.partitioning.Side;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane.SplitSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Side_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old.SplitSubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
@@ -61,7 +61,7 @@ public class SubOrientedPointTest {
         IntervalsSet intervals = new IntervalsSet(2, 3, TEST_PRECISION);
 
         // act
-        SubHyperplane<Vector1D> result = pt.buildNew(hyperplane, intervals);
+        SubHyperplane_Old<Vector1D> result = pt.buildNew(hyperplane, intervals);
 
         // assert
         Assert.assertTrue(result instanceof SubOrientedPoint);
@@ -82,7 +82,7 @@ public class SubOrientedPointTest {
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
 
         // assert
-        Assert.assertEquals(Side.MINUS, split.getSide());
+        Assert.assertEquals(Side_Old.MINUS, split.getSide());
 
         SubOrientedPoint minusSub = ((SubOrientedPoint) split.getMinus());
         Assert.assertNotNull(minusSub);
@@ -108,7 +108,7 @@ public class SubOrientedPointTest {
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
 
         // assert
-        Assert.assertEquals(Side.PLUS, split.getSide());
+        Assert.assertEquals(Side_Old.PLUS, split.getSide());
 
         Assert.assertNull(split.getMinus());
 
@@ -134,7 +134,7 @@ public class SubOrientedPointTest {
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
 
         // assert
-        Assert.assertEquals(Side.HYPER, split.getSide());
+        Assert.assertEquals(Side_Old.HYPER, split.getSide());
 
         Assert.assertNull(split.getMinus());
         Assert.assertNull(split.getPlus());

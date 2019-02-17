@@ -62,7 +62,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 public class BSPTree_Old<P extends Point<P>> {
 
     /** Cut sub-hyperplane. */
-    private SubHyperplane<P> cut;
+    private SubHyperplane_Old<P> cut;
 
     /** Tree at the plus side of the cut hyperplane. */
     private BSPTree_Old<P> plus;
@@ -110,7 +110,7 @@ public class BSPTree_Old<P extends Point<P>> {
      * @param attribute attribute associated with the node (may be null)
      * @see #insertCut
      */
-    public BSPTree_Old(final SubHyperplane<P> cut, final BSPTree_Old<P> plus, final BSPTree_Old<P> minus,
+    public BSPTree_Old(final SubHyperplane_Old<P> cut, final BSPTree_Old<P> plus, final BSPTree_Old<P> minus,
                    final Object attribute) {
         this.cut       = cut;
         this.plus      = plus;
@@ -134,7 +134,7 @@ public class BSPTree_Old<P extends Point<P>> {
      * <p>This method is mainly useful when called on leaf nodes
      * (i.e. nodes for which {@link #getCut getCut} returns
      * {@code null}), in this case it provides a way to build a
-     * tree top-down (whereas the {@link #BSPTree(SubHyperplane,
+     * tree top-down (whereas the {@link #BSPTree(SubHyperplane_Old,
      * BSPTree_Old, BSPTree_Old, Object) 4 arguments constructor} is devoted to
      * build trees bottom-up).</p>
      * @param hyperplane hyperplane to insert, it will be chopped in
@@ -142,16 +142,16 @@ public class BSPTree_Old<P extends Point<P>> {
      * instance
      * @return true if a cut sub-hyperplane has been inserted (i.e. if
      * the cell now has two leaf child nodes)
-     * @see #BSPTree(SubHyperplane, BSPTree_Old, BSPTree_Old, Object)
+     * @see #BSPTree(SubHyperplane_Old, BSPTree_Old, BSPTree_Old, Object)
      */
-    public boolean insertCut(final Hyperplane<P> hyperplane) {
+    public boolean insertCut(final Hyperplane_Old<P> hyperplane) {
 
         if (cut != null) {
             plus.parent  = null;
             minus.parent = null;
         }
 
-        final SubHyperplane<P> chopped = fitToCell(hyperplane.wholeHyperplane());
+        final SubHyperplane_Old<P> chopped = fitToCell(hyperplane.wholeHyperplane());
         if (chopped == null || chopped.isEmpty()) {
             cut          = null;
             plus         = null;
@@ -189,7 +189,7 @@ public class BSPTree_Old<P extends Point<P>> {
     /** Get the cut sub-hyperplane.
      * @return cut sub-hyperplane, null if this is a leaf tree
      */
-    public SubHyperplane<P> getCut() {
+    public SubHyperplane_Old<P> getCut() {
         return cut;
     }
 
@@ -289,8 +289,8 @@ public class BSPTree_Old<P extends Point<P>> {
      * @return a new sub-hyperplane, guaranteed to have no part outside
      * of the instance cell
      */
-    private SubHyperplane<P> fitToCell(final SubHyperplane<P> sub) {
-        SubHyperplane<P> s = sub;
+    private SubHyperplane_Old<P> fitToCell(final SubHyperplane_Old<P> sub) {
+        SubHyperplane_Old<P> s = sub;
         for (BSPTree_Old<P> tree = this; tree.parent != null && s != null; tree = tree.parent) {
             if (tree == tree.parent.plus) {
                 s = s.split(tree.parent.cut.getHyperplane()).getPlus();
@@ -550,20 +550,20 @@ public class BSPTree_Old<P extends Point<P>> {
      * sub-hyperplane, the two parts of the split instance as its two
      * sub-trees and a null parent
      */
-    public BSPTree_Old<P> split(final SubHyperplane<P> sub) {
+    public BSPTree_Old<P> split(final SubHyperplane_Old<P> sub) {
 
         if (cut == null) {
             return new BSPTree_Old<>(sub, copySelf(), new BSPTree_Old<P>(attribute), null);
         }
 
-        final Hyperplane<P> cHyperplane = cut.getHyperplane();
-        final Hyperplane<P> sHyperplane = sub.getHyperplane();
-        final SubHyperplane.SplitSubHyperplane<P> subParts = sub.split(cHyperplane);
+        final Hyperplane_Old<P> cHyperplane = cut.getHyperplane();
+        final Hyperplane_Old<P> sHyperplane = sub.getHyperplane();
+        final SubHyperplane_Old.SplitSubHyperplane<P> subParts = sub.split(cHyperplane);
         switch (subParts.getSide()) {
         case PLUS :
         { // the partitioning sub-hyperplane is entirely in the plus sub-tree
             final BSPTree_Old<P> split = plus.split(sub);
-            if (cut.split(sHyperplane).getSide() == Side.PLUS) {
+            if (cut.split(sHyperplane).getSide() == Side_Old.PLUS) {
                 split.plus =
                     new BSPTree_Old<>(cut.copySelf(), split.plus, minus.copySelf(), attribute);
                 split.plus.condense();
@@ -579,7 +579,7 @@ public class BSPTree_Old<P extends Point<P>> {
         case MINUS :
         { // the partitioning sub-hyperplane is entirely in the minus sub-tree
             final BSPTree_Old<P> split = minus.split(sub);
-            if (cut.split(sHyperplane).getSide() == Side.PLUS) {
+            if (cut.split(sHyperplane).getSide() == Side_Old.PLUS) {
                 split.plus =
                     new BSPTree_Old<>(cut.copySelf(), plus.copySelf(), split.plus, attribute);
                 split.plus.condense();
@@ -594,7 +594,7 @@ public class BSPTree_Old<P extends Point<P>> {
         }
         case BOTH :
         {
-            final SubHyperplane.SplitSubHyperplane<P> cutParts = cut.split(sHyperplane);
+            final SubHyperplane_Old.SplitSubHyperplane<P> cutParts = cut.split(sHyperplane);
             final BSPTree_Old<P> split =
                 new BSPTree_Old<>(sub, plus.split(subParts.getPlus()), minus.split(subParts.getMinus()),
                                null);
@@ -648,7 +648,7 @@ public class BSPTree_Old<P extends Point<P>> {
             for (BSPTree_Old<P> tree = this; tree.parent != null; tree = tree.parent) {
 
                 // this is an hyperplane of some parent node
-                final Hyperplane<P> hyperplane = tree.parent.cut.getHyperplane();
+                final Hyperplane_Old<P> hyperplane = tree.parent.cut.getHyperplane();
 
                 // chop off the parts of the inserted tree that extend
                 // on the wrong side of this parent hyperplane
@@ -711,7 +711,7 @@ public class BSPTree_Old<P extends Point<P>> {
 
         // build the pruned tree bottom-up
         for (BSPTree_Old<P> current = this; current.parent != null; current = current.parent) {
-            final SubHyperplane<P> parentCut = current.parent.cut.copySelf();
+            final SubHyperplane_Old<P> parentCut = current.parent.cut.copySelf();
             final BSPTree_Old<P>       sibling   = new BSPTree_Old<>(otherLeafsAttributes);
             if (current == current.parent.plus) {
                 tree = new BSPTree_Old<>(parentCut, tree, sibling, internalAttributes);
@@ -732,7 +732,7 @@ public class BSPTree_Old<P extends Point<P>> {
      * @param vanishingHandler handler to use for handling very rare corner
      * cases of vanishing cut sub-hyperplanes in internal nodes during merging
      */
-    private void chopOffMinus(final Hyperplane<P> hyperplane, final VanishingCutHandler<P> vanishingHandler) {
+    private void chopOffMinus(final Hyperplane_Old<P> hyperplane, final VanishingCutHandler<P> vanishingHandler) {
         if (cut != null) {
 
             cut = cut.split(hyperplane).getPlus();
@@ -759,7 +759,7 @@ public class BSPTree_Old<P extends Point<P>> {
      * @param vanishingHandler handler to use for handling very rare corner
      * cases of vanishing cut sub-hyperplanes in internal nodes during merging
      */
-    private void chopOffPlus(final Hyperplane<P> hyperplane, final VanishingCutHandler<P> vanishingHandler) {
+    private void chopOffPlus(final Hyperplane_Old<P> hyperplane, final VanishingCutHandler<P> vanishingHandler) {
         if (cut != null) {
 
             cut = cut.split(hyperplane).getMinus();

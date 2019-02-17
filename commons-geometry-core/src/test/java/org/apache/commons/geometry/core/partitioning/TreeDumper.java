@@ -61,7 +61,7 @@ public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor_O
     /** Format a string representation of the hyperplane underlying a cut sub-hyperplane.
      * @param hyperplane hyperplane to format
      */
-    protected abstract void formatHyperplane(Hyperplane<P> hyperplane);
+    protected abstract void formatHyperplane(Hyperplane_Old<P> hyperplane);
 
     /** {@inheritDoc} */
     @Override

@@ -19,13 +19,13 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
@@ -33,14 +33,14 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** This class represents a sub-hyperplane for {@link Line}.
  */
-public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
+public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubLine(final Hyperplane<Vector2D> hyperplane,
-                   final Region<Vector1D> remainingRegion) {
+    public SubLine(final Hyperplane_Old<Vector2D> hyperplane,
+                   final Region_Old<Vector1D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
@@ -146,14 +146,14 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Vector2D, Vector1D> buildNew(final Hyperplane<Vector2D> hyperplane,
-                                                                       final Region<Vector1D> remainingRegion) {
+    protected AbstractSubHyperplane_Old<Vector2D, Vector1D> buildNew(final Hyperplane_Old<Vector2D> hyperplane,
+                                                                       final Region_Old<Vector1D> remainingRegion) {
         return new SubLine(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<Vector2D> split(final Hyperplane<Vector2D> hyperplane) {
+    public SplitSubHyperplane<Vector2D> split(final Hyperplane_Old<Vector2D> hyperplane) {
 
         final Line    thisLine  = (Line) getHyperplane();
         final Line    otherLine = (Line) hyperplane;
@@ -177,9 +177,9 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
         // the lines do intersect
         final boolean direct = Math.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
         final Vector1D x      = thisLine.toSubSpace(crossing);
-        final SubHyperplane<Vector1D> subPlus  =
+        final SubHyperplane_Old<Vector1D> subPlus  =
                 OrientedPoint.fromPointAndDirection(x, !direct, precision).wholeHyperplane();
-        final SubHyperplane<Vector1D> subMinus =
+        final SubHyperplane_Old<Vector1D> subMinus =
                 OrientedPoint.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
 
         final BSPTree_Old<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);

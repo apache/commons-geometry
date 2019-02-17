@@ -21,10 +21,10 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.Point;
 
-/** This class implements the dimension-independent parts of {@link SubHyperplane}.
+/** This class implements the dimension-independent parts of {@link SubHyperplane_Old}.
 
  * <p>sub-hyperplanes are obtained when parts of an {@link
- * Hyperplane hyperplane} are chopped off by other hyperplanes that
+ * Hyperplane_Old hyperplane} are chopped off by other hyperplanes that
  * intersect it. The remaining part is a convex region. Such objects
  * appear in {@link BSPTree_Old BSP trees} as the intersection of a cut
  * hyperplane with the convex region which it splits, the chopping
@@ -33,21 +33,21 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type defining the space
  * @param <S> Point type defining the sub-space
  */
-public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<S>>
-    implements SubHyperplane<P> {
+public abstract class AbstractSubHyperplane_Old<P extends Point<P>, S extends Point<S>>
+    implements SubHyperplane_Old<P> {
 
     /** Underlying hyperplane. */
-    private final Hyperplane<P> hyperplane;
+    private final Hyperplane_Old<P> hyperplane;
 
     /** Remaining region of the hyperplane. */
-    private final Region<S> remainingRegion;
+    private final Region_Old<S> remainingRegion;
 
     /** Build a sub-hyperplane from an hyperplane and a region.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    protected AbstractSubHyperplane(final Hyperplane<P> hyperplane,
-                                    final Region<S> remainingRegion) {
+    protected AbstractSubHyperplane_Old(final Hyperplane_Old<P> hyperplane,
+                                    final Region_Old<S> remainingRegion) {
         this.hyperplane      = hyperplane;
         this.remainingRegion = remainingRegion;
     }
@@ -57,12 +57,12 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * @param remaining remaining region of the hyperplane
      * @return a new sub-hyperplane
      */
-    protected abstract AbstractSubHyperplane<P, S> buildNew(final Hyperplane<P> hyper,
-                                                            final Region<S> remaining);
+    protected abstract AbstractSubHyperplane_Old<P, S> buildNew(final Hyperplane_Old<P> hyper,
+                                                            final Region_Old<S> remaining);
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSubHyperplane<P, S> copySelf() {
+    public AbstractSubHyperplane_Old<P, S> copySelf() {
         return buildNew(hyperplane.copySelf(), remainingRegion);
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * @return underlying hyperplane
      */
     @Override
-    public Hyperplane<P> getHyperplane() {
+    public Hyperplane_Old<P> getHyperplane() {
         return hyperplane;
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * corresponding region is a convex 2D polygon.</p>
      * @return remaining region of the hyperplane
      */
-    public Region<S> getRemainingRegion() {
+    public Region_Old<S> getRemainingRegion() {
         return remainingRegion;
     }
 
@@ -93,11 +93,11 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
 
     /** {@inheritDoc} */
     @Override
-    public AbstractSubHyperplane<P, S> reunite(final SubHyperplane<P> other) {
+    public AbstractSubHyperplane_Old<P, S> reunite(final SubHyperplane_Old<P> other) {
         @SuppressWarnings("unchecked")
-        AbstractSubHyperplane<P, S> o = (AbstractSubHyperplane<P, S>) other;
+        AbstractSubHyperplane_Old<P, S> o = (AbstractSubHyperplane_Old<P, S>) other;
         return buildNew(hyperplane,
-                        new RegionFactory<S>().union(remainingRegion, o.remainingRegion));
+                        new RegionFactory_Old<S>().union(remainingRegion, o.remainingRegion));
     }
 
     /** Apply a transform to the instance.
@@ -110,8 +110,8 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * @param transform D-dimension transform to apply
      * @return the transformed instance
      */
-    public AbstractSubHyperplane<P, S> applyTransform(final Transform<P, S> transform) {
-        final Hyperplane<P> tHyperplane = transform.apply(hyperplane);
+    public AbstractSubHyperplane_Old<P, S> applyTransform(final Transform_Old<P, S> transform) {
+        final Hyperplane_Old<P> tHyperplane = transform.apply(hyperplane);
 
         // transform the tree, except for boundary attribute splitters
         final Map<BSPTree_Old<S>, BSPTree_Old<S>> map = new HashMap<>();
@@ -122,10 +122,10 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
         for (final Map.Entry<BSPTree_Old<S>, BSPTree_Old<S>> entry : map.entrySet()) {
             if (entry.getKey().getCut() != null) {
                 @SuppressWarnings("unchecked")
-                BoundaryAttribute<S> original = (BoundaryAttribute<S>) entry.getKey().getAttribute();
+                BoundaryAttribute_Old<S> original = (BoundaryAttribute_Old<S>) entry.getKey().getAttribute();
                 if (original != null) {
                     @SuppressWarnings("unchecked")
-                    BoundaryAttribute<S> transformed = (BoundaryAttribute<S>) entry.getValue().getAttribute();
+                    BoundaryAttribute_Old<S> transformed = (BoundaryAttribute_Old<S>) entry.getValue().getAttribute();
                     for (final BSPTree_Old<S> splitter : original.getSplitters()) {
                         transformed.getSplitters().add(map.get(splitter));
                     }
@@ -145,8 +145,8 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * @return a new tree
      */
     private BSPTree_Old<S> recurseTransform(final BSPTree_Old<S> node,
-                                        final Hyperplane<P> transformed,
-                                        final Transform<P, S> transform,
+                                        final Hyperplane_Old<P> transformed,
+                                        final Transform_Old<P, S> transform,
                                         final Map<BSPTree_Old<S>, BSPTree_Old<S>> map) {
 
         final BSPTree_Old<S> transformedNode;
@@ -155,14 +155,14 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
         } else {
 
             @SuppressWarnings("unchecked")
-            BoundaryAttribute<S> attribute = (BoundaryAttribute<S>) node.getAttribute();
+            BoundaryAttribute_Old<S> attribute = (BoundaryAttribute_Old<S>) node.getAttribute();
             if (attribute != null) {
-                final SubHyperplane<S> tPO = (attribute.getPlusOutside() == null) ?
+                final SubHyperplane_Old<S> tPO = (attribute.getPlusOutside() == null) ?
                     null : transform.apply(attribute.getPlusOutside(), hyperplane, transformed);
-                final SubHyperplane<S> tPI = (attribute.getPlusInside() == null) ?
+                final SubHyperplane_Old<S> tPI = (attribute.getPlusInside() == null) ?
                     null : transform.apply(attribute.getPlusInside(), hyperplane, transformed);
                 // we start with an empty list of splitters, it will be filled in out of recursion
-                attribute = new BoundaryAttribute<>(tPO, tPI, new NodesSet<S>());
+                attribute = new BoundaryAttribute_Old<>(tPO, tPI, new NodesSet_Old<S>());
             }
 
             transformedNode = new BSPTree_Old<>(transform.apply(node.getCut(), hyperplane, transformed),
@@ -178,7 +178,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
 
     /** {@inheritDoc} */
     @Override
-    public abstract SplitSubHyperplane<P> split(Hyperplane<P> hyper);
+    public abstract SplitSubHyperplane<P> split(Hyperplane_Old<P> hyper);
 
     /** {@inheritDoc} */
     @Override

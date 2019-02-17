@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 
-/** Local class for building an {@link AbstractRegion} tree.
+/** Local class for building an {@link AbstractRegion_Old} tree.
  * @param <P> Point type defining the space
  */
 public abstract class TreeBuilder<P extends Point<P>> {
@@ -162,7 +162,7 @@ public abstract class TreeBuilder<P extends Point<P>> {
      * @return next hyperplane from the stream
      * @exception ParseException if the string cannot be parsed
      */
-    protected abstract Hyperplane<P> parseHyperplane()
+    protected abstract Hyperplane_Old<P> parseHyperplane()
         throws ParseException;
 
 }

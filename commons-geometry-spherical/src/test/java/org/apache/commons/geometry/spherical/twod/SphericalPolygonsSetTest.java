@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
@@ -62,7 +62,7 @@ public class SphericalPolygonsSetTest {
     @Test
     public void testEmpty() {
         SphericalPolygonsSet empty =
-            (SphericalPolygonsSet) new RegionFactory<S2Point>().getComplement(new SphericalPolygonsSet(TEST_PRECISION));
+            (SphericalPolygonsSet) new RegionFactory_Old<S2Point>().getComplement(new SphericalPolygonsSet(TEST_PRECISION));
         UnitSphereSampler random =
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x76d9205d6167b6ddl));
@@ -102,7 +102,7 @@ public class SphericalPolygonsSetTest {
         Assert.assertEquals(0.5 * Math.PI, southCap.getRadius(), TEST_EPS);
 
         EnclosingBall<S2Point> northCap =
-                ((SphericalPolygonsSet) new RegionFactory<S2Point>().getComplement(south)).getEnclosingCap();
+                ((SphericalPolygonsSet) new RegionFactory_Old<S2Point>().getComplement(south)).getEnclosingCap();
         Assert.assertEquals(0.0, S2Point.PLUS_K.distance(northCap.getCenter()), TEST_EPS);
         Assert.assertEquals(0.5 * Math.PI, northCap.getRadius(), TEST_EPS);
 
@@ -113,7 +113,7 @@ public class SphericalPolygonsSetTest {
         double tol = 0.01;
         double sinTol = Math.sin(tol);
         DoublePrecisionContext precision = createPrecision(tol);
-        RegionFactory<S2Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S2Point> factory = new RegionFactory_Old<>();
         SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.PLUS_X, precision);
         SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.PLUS_Y, precision);
         SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.PLUS_Z, precision);
@@ -204,7 +204,7 @@ public class SphericalPolygonsSetTest {
         double tol = 0.01;
         double sinTol = Math.sin(tol);
         DoublePrecisionContext precision = createPrecision(tol);
-        RegionFactory<S2Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S2Point> factory = new RegionFactory_Old<>();
         SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.PLUS_X, precision);
         SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.PLUS_Y, precision);
         SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.PLUS_Z, precision);
@@ -275,7 +275,7 @@ public class SphericalPolygonsSetTest {
     public void testModeratlyComplexShape() {
         double tol = 0.01;
         DoublePrecisionContext precision = createPrecision(tol);
-        List<SubHyperplane<S2Point>> boundary = new ArrayList<>();
+        List<SubHyperplane_Old<S2Point>> boundary = new ArrayList<>();
         boundary.add(create(Vector3D.MINUS_Y, Vector3D.PLUS_X,  Vector3D.PLUS_Z,  precision, 0.0, 0.5 * Math.PI));
         boundary.add(create(Vector3D.MINUS_X, Vector3D.PLUS_Z,  Vector3D.PLUS_Y,  precision, 0.0, 0.5 * Math.PI));
         boundary.add(create(Vector3D.PLUS_Z,  Vector3D.PLUS_Y,  Vector3D.MINUS_X, precision, 0.0, 0.5 * Math.PI));
@@ -333,7 +333,7 @@ public class SphericalPolygonsSetTest {
         double tol = 0.01;
         double sinTol = Math.sin(tol);
         DoublePrecisionContext precision = createPrecision(tol);
-        List<SubHyperplane<S2Point>> boundary = new ArrayList<>();
+        List<SubHyperplane_Old<S2Point>> boundary = new ArrayList<>();
 
         // first part: +X, +Y, +Z octant
         boundary.add(create(Vector3D.PLUS_Y,  Vector3D.PLUS_Z,  Vector3D.PLUS_X,  precision, 0.0, 0.5 * Math.PI));
@@ -385,7 +385,7 @@ public class SphericalPolygonsSetTest {
                                                               S2Point.of(Math.PI / 3, Math.PI / 3),
                                                               S2Point.of(Math.PI / 4, Math.PI / 6));
         SphericalPolygonsSet hexaWithHole =
-                (SphericalPolygonsSet) new RegionFactory<S2Point>().difference(hexa, hole);
+                (SphericalPolygonsSet) new RegionFactory_Old<S2Point>().difference(hexa, hole);
 
         for (double phi = center.getPolar() - alpha + 0.1; phi < center.getPolar() + alpha - 0.1; phi += 0.07) {
             Location l = hexaWithHole.checkPoint(S2Point.of(Math.PI / 4, phi));
@@ -418,7 +418,7 @@ public class SphericalPolygonsSetTest {
         SphericalPolygonsSet triOut    = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.25, 3, precision);
         SphericalPolygonsSet triIn     = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.15, 3, precision);
 
-        RegionFactory<S2Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S2Point> factory = new RegionFactory_Old<>();
         SphericalPolygonsSet hexa   = (SphericalPolygonsSet) factory.difference(hexaOut,   hexaIn);
         SphericalPolygonsSet penta  = (SphericalPolygonsSet) factory.difference(pentaOut,  pentaIn);
         SphericalPolygonsSet quadri = (SphericalPolygonsSet) factory.difference(quadriOut, quadriIn);
@@ -479,7 +479,7 @@ public class SphericalPolygonsSetTest {
           { 42.15249,  9.56001 }, { 43.00998,  9.39000 }, { 42.62812,  8.74600 }, { 42.25651,  8.54421 },
           { 41.58361,  8.77572 }, { 41.38000,  9.22975 }
         });
-        RegionFactory<S2Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S2Point> factory = new RegionFactory_Old<>();
         SphericalPolygonsSet zone = (SphericalPolygonsSet) factory.union(continental, corsica);
         EnclosingBall<S2Point> enclosing = zone.getEnclosingCap();
         Vector3D enclosingCenter = enclosing.getCenter().getVector();
@@ -537,7 +537,7 @@ public class SphericalPolygonsSetTest {
 
     private SubCircle create(Vector3D pole, Vector3D x, Vector3D y,
                              DoublePrecisionContext precision, double ... limits) {
-        RegionFactory<S1Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S1Point> factory = new RegionFactory_Old<>();
         Circle circle = new Circle(pole, precision);
         Circle phased =
                 (Circle) Circle.getTransform(QuaternionRotation.createBasisRotation(circle.getXAxis(), circle.getYAxis(), x, y)).apply(circle);

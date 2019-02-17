@@ -23,11 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.AbstractRegion;
+import org.apache.commons.geometry.core.partitioning.AbstractRegion_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
@@ -38,7 +38,7 @@ import org.apache.commons.geometry.spherical.oned.S1Point;
 
 /** This class represents a region on the 2-sphere: a set of spherical polygons.
  */
-public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
+public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, S1Point> {
 
     /** Boundary defined as an array of closed loops start vertices. */
     private List<Vertex> loops;
@@ -110,7 +110,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * collection of {@link SubHyperplane SubHyperplane} objects
      * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final Collection<SubHyperplane<S2Point>> boundary, final DoublePrecisionContext precision) {
+    public SphericalPolygonsSet(final Collection<SubHyperplane_Old<S2Point>> boundary, final DoublePrecisionContext precision) {
         super(boundary, precision);
     }
 
@@ -512,7 +512,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
                     new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
             for (Vector3D outsidePoint : getOutsidePoints()) {
                 final S2Point outsideS2 = S2Point.ofVector(outsidePoint);
-                final BoundaryProjection<S2Point> projection = projectToBoundary(outsideS2);
+                final BoundaryProjection_Old<S2Point> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
                     enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
                                                                        Math.PI - projection.getOffset(),
@@ -549,7 +549,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      */
     private List<Vector3D> getOutsidePoints() {
         final SphericalPolygonsSet complement =
-                (SphericalPolygonsSet) new RegionFactory<S2Point>().getComplement(this);
+                (SphericalPolygonsSet) new RegionFactory_Old<S2Point>().getComplement(this);
         final PropertiesComputer pc = new PropertiesComputer(getPrecision());
         complement.getTree(true).visit(pc);
         return pc.getConvexCellsInsidePoints();

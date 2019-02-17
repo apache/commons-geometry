@@ -24,11 +24,11 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
-import org.apache.commons.geometry.core.partitioning.AbstractRegion;
+import org.apache.commons.geometry.core.partitioning.AbstractRegion_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
-import org.apache.commons.geometry.core.partitioning.Side;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.core.partitioning.Side_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;
@@ -42,7 +42,7 @@ import org.apache.commons.numbers.core.Precision;
  * interface, but its use is discouraged.
  * </p>
  */
-public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterable<double[]> {
+public class ArcsSet extends AbstractRegion_Old<S1Point, S1Point> implements Iterable<double[]> {
 
     /** Build an arcs set representing the whole circle.
      * @param precision precision context used to compare floating point values
@@ -107,7 +107,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final Collection<SubHyperplane<S1Point>> boundary, final DoublePrecisionContext precision) {
+    public ArcsSet(final Collection<SubHyperplane_Old<S1Point>> boundary, final DoublePrecisionContext precision) {
         super(boundary, precision);
         check2PiConsistency();
     }
@@ -132,12 +132,12 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         // this is a regular arc, covering only part of the circle
         final double normalizedLower = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(lower);
         final double normalizedUpper = normalizedLower + (upper - lower);
-        final SubHyperplane<S1Point> lowerCut =
+        final SubHyperplane_Old<S1Point> lowerCut =
                 new LimitAngle(S1Point.of(normalizedLower), false, precision).wholeHyperplane();
 
         if (normalizedUpper <= Geometry.TWO_PI) {
             // simple arc starting after 0 and ending before 2 \pi
-            final SubHyperplane<S1Point> upperCut =
+            final SubHyperplane_Old<S1Point> upperCut =
                     new LimitAngle(S1Point.of(normalizedUpper), true, precision).wholeHyperplane();
             return new BSPTree_Old<>(lowerCut,
                                          new BSPTree_Old<S1Point>(Boolean.FALSE),
@@ -148,7 +148,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                                          null);
         } else {
             // arc wrapping around 2 \pi
-            final SubHyperplane<S1Point> upperCut =
+            final SubHyperplane_Old<S1Point> upperCut =
                     new LimitAngle(S1Point.of(normalizedUpper - Geometry.TWO_PI), true, precision).wholeHyperplane();
             return new BSPTree_Old<>(lowerCut,
                                          new BSPTree_Old<>(upperCut,
@@ -467,7 +467,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
 
     /** {@inheritDoc} */
     @Override
-    public BoundaryProjection<S1Point> projectToBoundary(final S1Point point) {
+    public BoundaryProjection_Old<S1Point> projectToBoundary(final S1Point point) {
 
         // get position of test point
         final double alpha = point.getAzimuth();
@@ -493,9 +493,9 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                         final double previousOffset = alpha - previous;
                         final double currentOffset  = a[0] - alpha;
                         if (previousOffset < currentOffset) {
-                            return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
+                            return new BoundaryProjection_Old<>(point, S1Point.of(previous), previousOffset);
                         } else {
-                            return new BoundaryProjection<>(point, S1Point.of(a[0]), currentOffset);
+                            return new BoundaryProjection_Old<>(point, S1Point.of(a[0]), currentOffset);
                         }
                     }
                 } else if (alpha <= a[1]) {
@@ -504,9 +504,9 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                     final double offset0 = a[0] - alpha;
                     final double offset1 = alpha - a[1];
                     if (offset0 < offset1) {
-                        return new BoundaryProjection<>(point, S1Point.of(a[1]), offset1);
+                        return new BoundaryProjection_Old<>(point, S1Point.of(a[1]), offset1);
                     } else {
-                        return new BoundaryProjection<>(point, S1Point.of(a[0]), offset0);
+                        return new BoundaryProjection_Old<>(point, S1Point.of(a[0]), offset0);
                     }
                 }
             }
@@ -516,7 +516,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         if (Double.isNaN(previous)) {
 
             // there are no points at all in the arcs set
-            return new BoundaryProjection<>(point, null, Geometry.TWO_PI);
+            return new BoundaryProjection_Old<>(point, null, Geometry.TWO_PI);
 
         } else {
 
@@ -527,18 +527,18 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                 final double previousOffset = alpha - (previous - Geometry.TWO_PI);
                 final double currentOffset  = first - alpha;
                 if (previousOffset < currentOffset) {
-                    return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
+                    return new BoundaryProjection_Old<>(point, S1Point.of(previous), previousOffset);
                 } else {
-                    return new BoundaryProjection<>(point, S1Point.of(first), currentOffset);
+                    return new BoundaryProjection_Old<>(point, S1Point.of(first), currentOffset);
                 }
             } else {
                 // the test point is between last and 2\pi
                 final double previousOffset = alpha - previous;
                 final double currentOffset  = first + Geometry.TWO_PI - alpha;
                 if (previousOffset < currentOffset) {
-                    return new BoundaryProjection<>(point, S1Point.of(previous), previousOffset);
+                    return new BoundaryProjection_Old<>(point, S1Point.of(previous), previousOffset);
                 } else {
-                    return new BoundaryProjection<>(point, S1Point.of(first), currentOffset);
+                    return new BoundaryProjection_Old<>(point, S1Point.of(first), currentOffset);
                 }
             }
 
@@ -701,7 +701,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @deprecated as of 3.6, replaced with {@link #split(Arc)}.{@link Split#getSide()}
      */
     @Deprecated
-    public Side side(final Arc arc) {
+    public Side_Old side(final Arc arc) {
         return split(arc).getSide();
     }
 
@@ -908,17 +908,17 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
          * return non-null or {@link Side#HYPER} if both {@link #getPlus()} and
          * {@link #getMinus()} return null
          */
-        public Side getSide() {
+        public Side_Old getSide() {
             if (plus != null) {
                 if (minus != null) {
-                    return Side.BOTH;
+                    return Side_Old.BOTH;
                 } else {
-                    return Side.PLUS;
+                    return Side_Old.PLUS;
                 }
             } else if (minus != null) {
-                return Side.MINUS;
+                return Side_Old.MINUS;
             } else {
-                return Side.HYPER;
+                return Side_Old.HYPER;
             }
         }
     }

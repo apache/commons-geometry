@@ -16,9 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.Objects;
-
-import org.apache.commons.geometry.core.partitioning.Embedding;
+import org.apache.commons.geometry.core.partitioning.Embedding_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -33,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>0
  */
-public class Line implements Embedding<Vector3D, Vector1D> {
+public class Line implements Embedding_Old<Vector3D, Vector1D> {
 
     /** Line direction. */
     private Vector3D direction;

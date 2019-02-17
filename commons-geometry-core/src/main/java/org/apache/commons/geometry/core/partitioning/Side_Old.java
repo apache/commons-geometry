@@ -14,31 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.hull;
+package org.apache.commons.geometry.core.partitioning;
 
-import java.io.Serializable;
-
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Region_Old;
-
-/**
- * This class represents a convex hull.
- *
- * @param <P> Point type.
+/** Enumerate representing the location of an element with respect to an
+ * {@link Hyperplane_Old hyperplane} of a space.
  */
-public interface ConvexHull<P extends Point<P>> extends Serializable {
+public enum Side_Old {
 
-    /**
-     * Get the vertices of the convex hull.
-     * @return vertices of the convex hull
-     */
-    P[] getVertices();
+    /** Code for the plus side of the hyperplane. */
+    PLUS,
 
-    /**
-     * Returns a new region that is enclosed by the convex hull.
-     * @return the region enclosed by the convex hull
-     * @throws IllegalStateException if the number of vertices is not enough to
-     * build a region in the respective space
-     */
-    Region_Old<P> createRegion() throws IllegalStateException;
+    /** Code for the minus side of the hyperplane. */
+    MINUS,
+
+    /** Code for elements crossing the hyperplane from plus to minus side. */
+    BOTH,
+
+    /** Code for the hyperplane itself. */
+    HYPER;
+
 }

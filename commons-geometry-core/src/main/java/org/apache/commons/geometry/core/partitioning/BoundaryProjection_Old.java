@@ -26,9 +26,9 @@ import org.apache.commons.geometry.core.Point;
  * <p>Instances of this class are guaranteed to be immutable</p>
  *
  * @param <P> Point type defining the space
- * @see AbstractRegion#projectToBoundary(Point)
+ * @see AbstractRegion_Old#projectToBoundary(Point)
  */
-public class BoundaryProjection<P extends Point<P>> {
+public class BoundaryProjection_Old<P extends Point<P>> {
 
     /** Original point. */
     private final P original;
@@ -44,7 +44,7 @@ public class BoundaryProjection<P extends Point<P>> {
      * @param projected projected point
      * @param offset offset of the point with respect to the boundary it is projected on
      */
-    public BoundaryProjection(final P original, final P projected, final double offset) {
+    public BoundaryProjection_Old(final P original, final P projected, final double offset) {
         this.original  = original;
         this.projected = projected;
         this.offset    = offset;

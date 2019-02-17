@@ -18,12 +18,12 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -142,8 +142,8 @@ public class OutlineExtractor {
         @Override
         public void visitInternalNode(final BSPTree_Old<Vector3D> node) {
             @SuppressWarnings("unchecked")
-            final BoundaryAttribute<Vector3D> attribute =
-                (BoundaryAttribute<Vector3D>) node.getAttribute();
+            final BoundaryAttribute_Old<Vector3D> attribute =
+                (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
             if (attribute.getPlusOutside() != null) {
                 addContribution(attribute.getPlusOutside(), false);
             }
@@ -161,12 +161,12 @@ public class OutlineExtractor {
          * @param facet boundary facet
          * @param reversed if true, the facet has the inside on its plus side
          */
-        private void addContribution(final SubHyperplane<Vector3D> facet, final boolean reversed) {
+        private void addContribution(final SubHyperplane_Old<Vector3D> facet, final boolean reversed) {
 
             // extract the vertices of the facet
             @SuppressWarnings("unchecked")
-            final AbstractSubHyperplane<Vector3D, Vector2D> absFacet =
-                (AbstractSubHyperplane<Vector3D, Vector2D>) facet;
+            final AbstractSubHyperplane_Old<Vector3D, Vector2D> absFacet =
+                (AbstractSubHyperplane_Old<Vector3D, Vector2D>) facet;
             final Plane plane    = (Plane) facet.getHyperplane();
 
             final double scal = plane.getNormal().dot(w);
@@ -200,7 +200,7 @@ public class OutlineExtractor {
                 }
 
                 // compute the projection of the facet in the outline plane
-                final ArrayList<SubHyperplane<Vector2D>> edges = new ArrayList<>();
+                final ArrayList<SubHyperplane_Old<Vector2D>> edges = new ArrayList<>();
                 for (Vector2D[] loop : vertices) {
                     final boolean closed = loop[0] != null;
                     int previous         = closed ? (loop.length - 1) : 1;
@@ -215,7 +215,7 @@ public class OutlineExtractor {
                                                                  current3D.dot(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
                             org.apache.commons.geometry.euclidean.twod.Line.fromPoints(pPoint, cPoint, precision);
-                        SubHyperplane<Vector2D> edge = line.wholeHyperplane();
+                        SubHyperplane_Old<Vector2D> edge = line.wholeHyperplane();
 
                         if (closed || (previous != 1)) {
                             // the previous point is a real vertex
@@ -246,7 +246,7 @@ public class OutlineExtractor {
                 final PolygonsSet projectedFacet = new PolygonsSet(edges, precision);
 
                 // add the contribution of the facet to the global outline
-                projected = (PolygonsSet) new RegionFactory<Vector2D>().union(projected, projectedFacet);
+                projected = (PolygonsSet) new RegionFactory_Old<Vector2D>().union(projected, projectedFacet);
 
             }
         }

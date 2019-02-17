@@ -22,12 +22,12 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -59,7 +59,7 @@ public class PolygonsSetTest {
         Assert.assertTrue(poly.isFull());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.NaN, poly.getBarycenter(), TEST_EPS);
 
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
                 Vector2D.ZERO,
                 Vector2D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
@@ -74,7 +74,7 @@ public class PolygonsSetTest {
     @Test
     public void testEmpty() {
         // act
-        PolygonsSet poly = (PolygonsSet) new RegionFactory<Vector2D>().getComplement(new PolygonsSet(TEST_PRECISION));
+        PolygonsSet poly = (PolygonsSet) new RegionFactory_Old<Vector2D>().getComplement(new PolygonsSet(TEST_PRECISION));
 
         // assert
         Assert.assertSame(TEST_PRECISION, poly.getPrecision());
@@ -85,7 +85,7 @@ public class PolygonsSetTest {
         Assert.assertFalse(poly.isFull());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.NaN, poly.getBarycenter(), TEST_EPS);
 
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
                 Vector2D.ZERO,
                 Vector2D.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
@@ -103,7 +103,7 @@ public class PolygonsSetTest {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line.wholeHyperplane());
 
         // act
@@ -125,13 +125,13 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(1, -1),
                 Vector2D.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(-1, 1),
                 Vector2D.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
-        checkPoints(Region.Location.BOUNDARY, poly, Vector2D.ZERO);
+        checkPoints(Region_Old.Location.BOUNDARY, poly, Vector2D.ZERO);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class PolygonsSetTest {
         Line line1 = Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
         Line line2 = Line.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, 0), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
         boundaries.add(line2.wholeHyperplane());
 
@@ -163,13 +163,13 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(-1, 0),
                 Vector2D.of(-Float.MAX_VALUE, Float.MAX_VALUE / 2.0));
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(1, 0),
                 Vector2D.of(Float.MAX_VALUE, Float.MAX_VALUE / 2.0));
-        checkPoints(Region.Location.BOUNDARY, poly, Vector2D.ZERO);
+        checkPoints(Region_Old.Location.BOUNDARY, poly, Vector2D.ZERO);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class PolygonsSetTest {
         Line line1 = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), TEST_PRECISION);
         Line line2 = Line.fromPoints(Vector2D.of(0, -1), Vector2D.of(1, -1), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
         boundaries.add(line2.wholeHyperplane());
 
@@ -206,14 +206,14 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(0, 0),
                 Vector2D.of(0, 0.9),
                 Vector2D.of(0, -0.9));
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(0, 1.1),
                 Vector2D.of(0, -1.1));
-        checkPoints(Region.Location.BOUNDARY, poly,
+        checkPoints(Region_Old.Location.BOUNDARY, poly,
                 Vector2D.of(0, 1),
                 Vector2D.of(0, -1));
     }
@@ -224,7 +224,7 @@ public class PolygonsSetTest {
         Line line1 = Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 1), TEST_PRECISION);
         Line line2 = Line.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -1), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
         boundaries.add(line2.wholeHyperplane());
 
@@ -252,14 +252,14 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(0, 0),
                 Vector2D.of(0, 0.9),
                 Vector2D.of(0, -0.9));
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(0, 1.1),
                 Vector2D.of(0, -1.1));
-        checkPoints(Region.Location.BOUNDARY, poly,
+        checkPoints(Region_Old.Location.BOUNDARY, poly,
                 Vector2D.of(0, 1),
                 Vector2D.of(0, -1));
     }
@@ -270,7 +270,7 @@ public class PolygonsSetTest {
         Line line1 = Line.fromPoints(Vector2D.of(3, 3), Vector2D.of(0, 3), TEST_PRECISION);
         Line line2 = Line.fromPoints(Vector2D.of(0, -3), Vector2D.of(3, -3), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
         boundaries.add(line2.wholeHyperplane());
         boundaries.add(buildSegment(Vector2D.of(0, 3), Vector2D.of(0, -3)));
@@ -296,15 +296,15 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(0.1, 2.9),
                 Vector2D.of(0.1, 0),
                 Vector2D.of(0.1, -2.9));
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(0, 3.1),
                 Vector2D.of(-0.5, 0),
                 Vector2D.of(0, -3.1));
-        checkPoints(Region.Location.BOUNDARY, poly,
+        checkPoints(Region_Old.Location.BOUNDARY, poly,
                 Vector2D.of(3, 3),
                 Vector2D.of(0, 0),
                 Vector2D.of(3, -3));
@@ -320,7 +320,7 @@ public class PolygonsSetTest {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(3, 0), Vector2D.of(3, 3), TEST_PRECISION);
 
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(buildSegment(Vector2D.of(0, 3), Vector2D.of(0, 0)));
         boundaries.add(buildSegment(Vector2D.of(0, 0), Vector2D.of(3, 0)));
         boundaries.add(new SubLine(line, new IntervalsSet(0, Double.POSITIVE_INFINITY, TEST_PRECISION)));
@@ -346,19 +346,19 @@ public class PolygonsSetTest {
             }
         }, poly.getVertices());
 
-        checkPoints(Region.Location.INSIDE, poly,
+        checkPoints(Region_Old.Location.INSIDE, poly,
                 Vector2D.of(0.1, Float.MAX_VALUE),
                 Vector2D.of(0.1, 0.1),
                 Vector2D.of(1.5, 0.1),
                 Vector2D.of(2.9, 0.1),
                 Vector2D.of(2.9, Float.MAX_VALUE));
-        checkPoints(Region.Location.OUTSIDE, poly,
+        checkPoints(Region_Old.Location.OUTSIDE, poly,
                 Vector2D.of(-0.1, Float.MAX_VALUE),
                 Vector2D.of(-0.1, 0.1),
                 Vector2D.of(1.5, -0.1),
                 Vector2D.of(3.1, 0.1),
                 Vector2D.of(3.1, Float.MAX_VALUE));
-        checkPoints(Region.Location.BOUNDARY, poly,
+        checkPoints(Region_Old.Location.BOUNDARY, poly,
                 Vector2D.of(0, 1),
                 Vector2D.of(1, 0),
                 Vector2D.of(3, 1));
@@ -385,17 +385,17 @@ public class PolygonsSetTest {
             }
         }, box.getVertices());
 
-        checkPoints(Region.Location.INSIDE, box,
+        checkPoints(Region_Old.Location.INSIDE, box,
                 Vector2D.of(0.1, 0),
                 Vector2D.of(1.9, 0),
                 Vector2D.of(1, 0.9),
                 Vector2D.of(1, -0.9));
-        checkPoints(Region.Location.OUTSIDE, box,
+        checkPoints(Region_Old.Location.OUTSIDE, box,
                 Vector2D.of(-0.1, 0),
                 Vector2D.of(2.1, 0),
                 Vector2D.of(1, -1.1),
                 Vector2D.of(1, 1.1));
-        checkPoints(Region.Location.BOUNDARY, box,
+        checkPoints(Region_Old.Location.BOUNDARY, box,
                 Vector2D.of(0, 0),
                 Vector2D.of(2, 0),
                 Vector2D.of(1, 1),
@@ -405,7 +405,7 @@ public class PolygonsSetTest {
     @Test
     public void testInvertedBox() {
         // arrange
-        List<SubHyperplane<Vector2D>> boundaries = new ArrayList<SubHyperplane<Vector2D>>();
+        List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(buildSegment(Vector2D.of(0, -1), Vector2D.of(0, 1)));
         boundaries.add(buildSegment(Vector2D.of(2, 1), Vector2D.of(2, -1)));
         boundaries.add(buildSegment(Vector2D.of(0, 1), Vector2D.of(2, 1)));
@@ -430,17 +430,17 @@ public class PolygonsSetTest {
             }
         }, box.getVertices());
 
-        checkPoints(Region.Location.OUTSIDE, box,
+        checkPoints(Region_Old.Location.OUTSIDE, box,
                 Vector2D.of(0.1, 0),
                 Vector2D.of(1.9, 0),
                 Vector2D.of(1, 0.9),
                 Vector2D.of(1, -0.9));
-        checkPoints(Region.Location.INSIDE, box,
+        checkPoints(Region_Old.Location.INSIDE, box,
                 Vector2D.of(-0.1, 0),
                 Vector2D.of(2.1, 0),
                 Vector2D.of(1, -1.1),
                 Vector2D.of(1, 1.1));
-        checkPoints(Region.Location.BOUNDARY, box,
+        checkPoints(Region_Old.Location.BOUNDARY, box,
                 Vector2D.of(0, 0),
                 Vector2D.of(2, 0),
                 Vector2D.of(1, 1),
@@ -469,13 +469,13 @@ public class PolygonsSetTest {
         PolygonsSet set = buildSet(vertices);
 
         // assert
-        checkPoints(Region.Location.INSIDE, set,
+        checkPoints(Region_Old.Location.INSIDE, set,
             Vector2D.of(30.0, 15.0),
             Vector2D.of(15.0, 20.0),
             Vector2D.of(24.0, 25.0),
             Vector2D.of(35.0, 30.0),
             Vector2D.of(19.0, 17.0));
-        checkPoints(Region.Location.OUTSIDE, set,
+        checkPoints(Region_Old.Location.OUTSIDE, set,
             Vector2D.of(50.0, 30.0),
             Vector2D.of(30.0, 35.0),
             Vector2D.of(10.0, 25.0),
@@ -483,7 +483,7 @@ public class PolygonsSetTest {
             Vector2D.of(40.0, 10.0),
             Vector2D.of(50.0, 15.0),
             Vector2D.of(30.0, 22.0));
-        checkPoints(Region.Location.BOUNDARY, set,
+        checkPoints(Region_Old.Location.BOUNDARY, set,
             Vector2D.of(30.0, 32.0),
             Vector2D.of(34.0, 20.0));
 
@@ -539,7 +539,7 @@ public class PolygonsSetTest {
         PolygonsSet set = buildSet(vertices);
 
         // assert
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(0.5, 0.5),
             Vector2D.of(1.5, 0.5),
             Vector2D.of(2.5, 0.5),
@@ -550,13 +550,13 @@ public class PolygonsSetTest {
             Vector2D.of(2.5, 2.5),
             Vector2D.of(0.5, 1.0)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of(1.5, 1.5),
             Vector2D.of(3.5, 1.0),
             Vector2D.of(4.0, 1.5),
             Vector2D.of(6.0, 6.0)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(1.5, 0.0),
             Vector2D.of(1.5, 1.0),
@@ -568,7 +568,7 @@ public class PolygonsSetTest {
 
         for (double x = -0.999; x < 3.999; x += 0.11) {
             Vector2D v = Vector2D.of(x, x + 0.5);
-            BoundaryProjection<Vector2D> projection = set.projectToBoundary(v);
+            BoundaryProjection_Old<Vector2D> projection = set.projectToBoundary(v);
             Assert.assertTrue(projection.getOriginal() == v);
             Vector2D p = projection.getProjected();
             if (x < -0.5) {
@@ -618,18 +618,18 @@ public class PolygonsSetTest {
         PolygonsSet set = buildSet(vertices);
 
         // assert
-        Assert.assertEquals(Region.Location.INSIDE, set.checkPoint(Vector2D.of(1.0, 1.5)));
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        Assert.assertEquals(Region_Old.Location.INSIDE, set.checkPoint(Vector2D.of(1.0, 1.5)));
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(1.0, 1.5),
             Vector2D.of(4.5, 0.8)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of(1.0, 0.0),
             Vector2D.of(3.5, 1.2),
             Vector2D.of(2.5, 1.0),
             Vector2D.of(3.0, 4.0)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(3.5, 0.5),
             Vector2D.of(0.0, 1.0)
@@ -769,7 +769,7 @@ public class PolygonsSetTest {
 
         // act
         PolygonsSet set =
-            (PolygonsSet) new RegionFactory<Vector2D>().union(set1.copySelf(),
+            (PolygonsSet) new RegionFactory_Old<Vector2D>().union(set1.copySelf(),
                                                                  set2.copySelf());
 
         // assert
@@ -811,7 +811,7 @@ public class PolygonsSetTest {
         PolygonsSet set2 = buildSet(vertices2);
 
         // act
-        PolygonsSet set  = (PolygonsSet) new RegionFactory<Vector2D>().union(set1.copySelf(),
+        PolygonsSet set  = (PolygonsSet) new RegionFactory_Old<Vector2D>().union(set1.copySelf(),
                                                                                 set2.copySelf());
 
         // assert
@@ -830,7 +830,7 @@ public class PolygonsSetTest {
             }
         }, set.getVertices());
 
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(0.5, 0.5),
             Vector2D.of(2.0, 2.0),
@@ -842,13 +842,13 @@ public class PolygonsSetTest {
             Vector2D.of(2.5, 1.5),
             Vector2D.of(2.5, 2.5)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of(-0.5, 0.5),
             Vector2D.of( 0.5, 2.5),
             Vector2D.of( 2.5, 0.5),
             Vector2D.of( 3.5, 2.5)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(0.0, 0.0),
             Vector2D.of(0.5, 2.0),
             Vector2D.of(2.0, 0.5),
@@ -880,7 +880,7 @@ public class PolygonsSetTest {
         PolygonsSet set2 = buildSet(vertices2);
 
         // act
-        PolygonsSet set  = (PolygonsSet) new RegionFactory<Vector2D>().intersection(set1.copySelf(),
+        PolygonsSet set  = (PolygonsSet) new RegionFactory_Old<Vector2D>().intersection(set1.copySelf(),
                                                                                        set2.copySelf());
 
         // assert
@@ -895,16 +895,16 @@ public class PolygonsSetTest {
             }
         }, set.getVertices());
 
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(1.5, 1.5)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of(0.5, 1.5),
             Vector2D.of(2.5, 1.5),
             Vector2D.of(1.5, 0.5),
             Vector2D.of(0.5, 0.5)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(2.0, 2.0),
             Vector2D.of(1.0, 1.5),
@@ -935,7 +935,7 @@ public class PolygonsSetTest {
         PolygonsSet set2 = buildSet(vertices2);
 
         // act
-        PolygonsSet set  = (PolygonsSet) new RegionFactory<Vector2D>().xor(set1.copySelf(),
+        PolygonsSet set  = (PolygonsSet) new RegionFactory_Old<Vector2D>().xor(set1.copySelf(),
                                                                               set2.copySelf());
 
         // assert
@@ -960,7 +960,7 @@ public class PolygonsSetTest {
             }
         }, set.getVertices());
 
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(0.5, 0.5),
             Vector2D.of(2.5, 2.5),
             Vector2D.of(0.5, 1.5),
@@ -969,14 +969,14 @@ public class PolygonsSetTest {
             Vector2D.of(2.5, 1.5),
             Vector2D.of(2.5, 2.5)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of(-0.5, 0.5),
             Vector2D.of( 0.5, 2.5),
             Vector2D.of( 2.5, 0.5),
             Vector2D.of( 1.5, 1.5),
             Vector2D.of( 3.5, 2.5)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(2.0, 2.0),
             Vector2D.of(1.5, 1.0),
@@ -1012,7 +1012,7 @@ public class PolygonsSetTest {
         PolygonsSet set2 = buildSet(vertices2);
 
         // act
-        PolygonsSet set  = (PolygonsSet) new RegionFactory<Vector2D>().difference(set1.copySelf(),
+        PolygonsSet set  = (PolygonsSet) new RegionFactory_Old<Vector2D>().difference(set1.copySelf(),
                                                                                      set2.copySelf());
 
         // assert
@@ -1029,12 +1029,12 @@ public class PolygonsSetTest {
             }
         }, set.getVertices());
 
-        checkPoints(Region.Location.INSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, set, new Vector2D[] {
             Vector2D.of(0.5, 0.5),
             Vector2D.of(0.5, 1.5),
             Vector2D.of(1.5, 0.5)
         });
-        checkPoints(Region.Location.OUTSIDE, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, set, new Vector2D[] {
             Vector2D.of( 2.5, 2.5),
             Vector2D.of(-0.5, 0.5),
             Vector2D.of( 0.5, 2.5),
@@ -1049,7 +1049,7 @@ public class PolygonsSetTest {
             Vector2D.of( 2.5, 2.5),
             Vector2D.of( 3.0, 2.5)
         });
-        checkPoints(Region.Location.BOUNDARY, set, new Vector2D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, set, new Vector2D[] {
             Vector2D.of(1.0, 1.0),
             Vector2D.of(1.5, 1.0),
             Vector2D.of(0.0, 0.0),
@@ -1081,7 +1081,7 @@ public class PolygonsSetTest {
         PolygonsSet set2 = buildSet(vertices2);
 
         // act
-        PolygonsSet diff = (PolygonsSet) new RegionFactory<Vector2D>().difference(set1.copySelf(), set2.copySelf());
+        PolygonsSet diff = (PolygonsSet) new RegionFactory_Old<Vector2D>().difference(set1.copySelf(), set2.copySelf());
 
         // assert
         Assert.assertEquals(0.0, diff.getSize(), TEST_EPS);
@@ -1124,7 +1124,7 @@ public class PolygonsSetTest {
                     TEST_PRECISION);
 
         // assert
-        Assert.assertEquals(Region.Location.OUTSIDE,
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,
                             slice.checkPoint(Vector2D.of(0.1, 0.5)));
         Assert.assertEquals(11.0 / 3.0, slice.getBoundarySize(), TEST_EPS);
     }
@@ -1250,11 +1250,11 @@ public class PolygonsSetTest {
 
         // act
         PolygonsSet c =
-            (PolygonsSet) new RegionFactory<Vector2D>().union(new PolygonsSet(a9, TEST_PRECISION),
+            (PolygonsSet) new RegionFactory_Old<Vector2D>().union(new PolygonsSet(a9, TEST_PRECISION),
                                                                  new PolygonsSet(b6, TEST_PRECISION));
 
         // assert
-        checkPoints(Region.Location.INSIDE, c, new Vector2D[] {
+        checkPoints(Region_Old.Location.INSIDE, c, new Vector2D[] {
             Vector2D.of(0.83, -0.06),
             Vector2D.of(0.83, -0.15),
             Vector2D.of(0.88, -0.15),
@@ -1264,7 +1264,7 @@ public class PolygonsSetTest {
             Vector2D.of(0.91, -0.10)
         });
 
-        checkPoints(Region.Location.OUTSIDE, c, new Vector2D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, c, new Vector2D[] {
             Vector2D.of(0.80, -0.10),
             Vector2D.of(0.83, -0.50),
             Vector2D.of(0.83, -0.20),
@@ -1523,7 +1523,7 @@ public class PolygonsSetTest {
         };
         PolygonsSet set2 = new PolygonsSet(TEST_PRECISION, vertices2);
         PolygonsSet set  = (PolygonsSet) new
-                RegionFactory<Vector2D>().difference(set1.copySelf(),
+                RegionFactory_Old<Vector2D>().difference(set1.copySelf(),
                                                         set2.copySelf());
 
         Vector2D[][] vertices = set.getVertices();
@@ -1579,7 +1579,7 @@ public class PolygonsSetTest {
         // if tolerance is smaller than rectangle width, the rectangle is computed accurately
 
         // arrange
-        RegionFactory<Vector2D> factory = new RegionFactory<>();
+        RegionFactory_Old<Vector2D> factory = new RegionFactory_Old<>();
         Vector2D pA = Vector2D.of(0.0,        1.0);
         Vector2D pB = Vector2D.of(0.0,        0.0);
         Vector2D pC = Vector2D.of(1.0 / 64.0, 0.0);
@@ -1587,7 +1587,7 @@ public class PolygonsSetTest {
 
         // if tolerance is smaller than rectangle width, the rectangle is computed accurately
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1.0 / 256);
-        Hyperplane<Vector2D>[] h1 = new Line[] {
+        Hyperplane_Old<Vector2D>[] h1 = new Line[] {
             Line.fromPoints(pA, pB, precision),
             Line.fromPoints(pB, pC, precision),
             Line.fromPoints(pC, pD, precision),
@@ -1595,11 +1595,11 @@ public class PolygonsSetTest {
         };
 
         // act
-        Region<Vector2D> accuratePolygon = factory.buildConvex(h1);
+        Region_Old<Vector2D> accuratePolygon = factory.buildConvex(h1);
 
         // assert
         Assert.assertEquals(1.0 / 64.0, accuratePolygon.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertPositiveInfinity(new RegionFactory<Vector2D>().getComplement(accuratePolygon).getSize());
+        EuclideanTestUtils.assertPositiveInfinity(new RegionFactory_Old<Vector2D>().getComplement(accuratePolygon).getSize());
         Assert.assertEquals(2 * (1.0 + 1.0 / 64.0), accuratePolygon.getBoundarySize(), TEST_EPS);
     }
 
@@ -1610,7 +1610,7 @@ public class PolygonsSetTest {
         // this has been fixed in 3.4 (issue MATH-1174)
 
         // arrange
-        RegionFactory<Vector2D> factory = new RegionFactory<>();
+        RegionFactory_Old<Vector2D> factory = new RegionFactory_Old<>();
         Vector2D pA = Vector2D.of(0.0,        1.0);
         Vector2D pB = Vector2D.of(0.0,        0.0);
         Vector2D pC = Vector2D.of(1.0 / 64.0, 0.0);
@@ -1618,7 +1618,7 @@ public class PolygonsSetTest {
 
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1.0 / 16);
 
-        Hyperplane<Vector2D>[] h2 = new Line[] {
+        Hyperplane_Old<Vector2D>[] h2 = new Line[] {
                 Line.fromPointAndDirection(pA, Vector2D.MINUS_Y, precision),
                 Line.fromPointAndDirection(pB, Vector2D.PLUS_X, precision),
                 Line.fromPointAndDirection(pC, Vector2D.PLUS_Y, precision),
@@ -1626,7 +1626,7 @@ public class PolygonsSetTest {
             };
 
         // act
-        Region<Vector2D> degeneratedPolygon = factory.buildConvex(h2);
+        Region_Old<Vector2D> degeneratedPolygon = factory.buildConvex(h2);
 
         // assert
         Assert.assertEquals(0.0, degeneratedPolygon.getSize(), TEST_EPS);
@@ -1636,7 +1636,7 @@ public class PolygonsSetTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInconsistentHyperplanes() {
         // act
-        new RegionFactory<Vector2D>().buildConvex(Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(0, 1), TEST_PRECISION),
+        new RegionFactory_Old<Vector2D>().buildConvex(Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(0, 1), TEST_PRECISION),
                                                      Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 0), TEST_PRECISION));
     }
 
@@ -1709,7 +1709,7 @@ public class PolygonsSetTest {
     }
 
     private PolygonsSet buildSet(Vector2D[][] vertices) {
-        ArrayList<SubHyperplane<Vector2D>> edges = new ArrayList<>();
+        ArrayList<SubHyperplane_Old<Vector2D>> edges = new ArrayList<>();
         for (int i = 0; i < vertices.length; ++i) {
             int l = vertices[i].length;
             for (int j = 0; j < l; ++j) {
@@ -1719,7 +1719,7 @@ public class PolygonsSetTest {
         return new PolygonsSet(edges, TEST_PRECISION);
     }
 
-    private SubHyperplane<Vector2D> buildLine(Vector2D start, Vector2D end) {
+    private SubHyperplane_Old<Vector2D> buildLine(Vector2D start, Vector2D end) {
         return Line.fromPoints(start, end, TEST_PRECISION).wholeHyperplane();
     }
 
@@ -1728,7 +1728,7 @@ public class PolygonsSetTest {
         return (l0.toSubSpace(p)).getX();
     }
 
-    private SubHyperplane<Vector2D> buildHalfLine(Vector2D start, Vector2D end,
+    private SubHyperplane_Old<Vector2D> buildHalfLine(Vector2D start, Vector2D end,
                                                      boolean startIsVirtual) {
         Line   line  = Line.fromPoints(start, end, TEST_PRECISION);
         double lower = startIsVirtual ? Double.NEGATIVE_INFINITY : (line.toSubSpace(start)).getX();
@@ -1736,14 +1736,14 @@ public class PolygonsSetTest {
         return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));
     }
 
-    private SubHyperplane<Vector2D> buildSegment(Vector2D start, Vector2D end) {
+    private SubHyperplane_Old<Vector2D> buildSegment(Vector2D start, Vector2D end) {
         Line   line  = Line.fromPoints(start, end, TEST_PRECISION);
         double lower = (line.toSubSpace(start)).getX();
         double upper = (line.toSubSpace(end)).getX();
         return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));
     }
 
-    private void checkPoints(Region.Location expected, PolygonsSet poly, Vector2D ... points) {
+    private void checkPoints(Region_Old.Location expected, PolygonsSet poly, Vector2D ... points) {
         for (int i = 0; i < points.length; ++i) {
             Assert.assertEquals("Incorrect location for " + points[i], expected, poly.checkPoint(points[i]));
         }

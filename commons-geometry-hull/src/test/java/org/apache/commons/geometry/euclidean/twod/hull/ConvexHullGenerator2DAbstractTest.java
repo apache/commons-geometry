@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
@@ -337,7 +337,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         };
 
         ConvexHull2D convHull = generator.generate(points);
-        Region<Vector2D> hullRegion = convHull.createRegion();
+        Region_Old<Vector2D> hullRegion = convHull.createRegion();
 
         Assert.assertEquals(274.0, hullRegion.getSize(), 1.0e-12);
         double perimeter = 0;
@@ -422,7 +422,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
                                                      final boolean includesCollinearPoints) {
 
         final Collection<Vector2D> hullVertices = Arrays.asList(hull.getVertices());
-        final Region<Vector2D> region = hull.createRegion();
+        final Region_Old<Vector2D> region = hull.createRegion();
 
         for (final Vector2D p : points) {
             Location location = region.checkPoint(p);

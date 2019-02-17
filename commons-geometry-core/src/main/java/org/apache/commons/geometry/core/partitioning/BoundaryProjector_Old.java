@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 
 /** Local tree visitor to compute projection on boundary.
  * @param <P> Point type defining the space
  * @param <S> Point type defining the sub-space
  */
-class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTreeVisitor_Old<P> {
+class BoundaryProjector_Old<P extends Point<P>, S extends Point<S>> implements BSPTreeVisitor_Old<P> {
 
     /** Original point. */
     private final P original;
@@ -43,7 +43,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
     /** Simple constructor.
      * @param original original point
      */
-    BoundaryProjector(final P original) {
+    BoundaryProjector_Old(final P original) {
         this.original  = original;
         this.projected = null;
         this.leaf      = null;
@@ -67,7 +67,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
     public void visitInternalNode(final BSPTree_Old<P> node) {
 
         // project the point on the cut sub-hyperplane
-        final Hyperplane<P> hyperplane = node.getCut().getHyperplane();
+        final Hyperplane_Old<P> hyperplane = node.getCut().getHyperplane();
         final double signedOffset = hyperplane.getOffset(original);
         if (Math.abs(signedOffset) < offset) {
 
@@ -75,11 +75,11 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
             final P regular = hyperplane.project(original);
 
             // get boundary parts
-            final List<Region<S>> boundaryParts = boundaryRegions(node);
+            final List<Region_Old<S>> boundaryParts = boundaryRegions(node);
 
             // check if regular projection really belongs to the boundary
             boolean regularFound = false;
-            for (final Region<S> part : boundaryParts) {
+            for (final Region_Old<S> part : boundaryParts) {
                 if (!regularFound && belongsToPart(regular, hyperplane, part)) {
                     // the projected point lies in the boundary
                     projected    = regular;
@@ -92,7 +92,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
                 // the regular projected point is not on boundary,
                 // so we have to check further if a singular point
                 // (i.e. a vertex in 2D case) is a possible projection
-                for (final Region<S> part : boundaryParts) {
+                for (final Region_Old<S> part : boundaryParts) {
                     final P spI = singularProjection(regular, hyperplane, part);
                     if (spI != null) {
                         final double distance = original.distance(spI);
@@ -122,12 +122,12 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
     /** Get the projection.
      * @return projection
      */
-    public BoundaryProjection<P> getProjection() {
+    public BoundaryProjection_Old<P> getProjection() {
 
         // fix offset sign
         offset = Math.copySign(offset, (Boolean) leaf.getAttribute() ? -1 : +1);
 
-        return new BoundaryProjection<>(original, projected, offset);
+        return new BoundaryProjection_Old<>(original, projected, offset);
 
     }
 
@@ -135,12 +135,12 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
      * @param node internal node
      * @return regions in the node sub-hyperplane
      */
-    private List<Region<S>> boundaryRegions(final BSPTree_Old<P> node) {
+    private List<Region_Old<S>> boundaryRegions(final BSPTree_Old<P> node) {
 
-        final List<Region<S>> regions = new ArrayList<>(2);
+        final List<Region_Old<S>> regions = new ArrayList<>(2);
 
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<P> ba = (BoundaryAttribute<P>) node.getAttribute();
+        final BoundaryAttribute_Old<P> ba = (BoundaryAttribute_Old<P>) node.getAttribute();
         addRegion(ba.getPlusInside(),  regions);
         addRegion(ba.getPlusOutside(), regions);
 
@@ -152,10 +152,10 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
      * @param sub sub-hyperplane defining the region
      * @param list to fill up
      */
-    private void addRegion(final SubHyperplane<P> sub, final List<Region<S>> list) {
+    private void addRegion(final SubHyperplane_Old<P> sub, final List<Region_Old<S>> list) {
         if (sub != null) {
             @SuppressWarnings("unchecked")
-            final Region<S> region = ((AbstractSubHyperplane<P, S>) sub).getRemainingRegion();
+            final Region_Old<S> region = ((AbstractSubHyperplane_Old<P, S>) sub).getRemainingRegion();
             if (region != null) {
                 list.add(region);
             }
@@ -168,12 +168,12 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
      * @param part boundary part
      * @return true if point lies on the boundary part
      */
-    private boolean belongsToPart(final P point, final Hyperplane<P> hyperplane,
-                                  final Region<S> part) {
+    private boolean belongsToPart(final P point, final Hyperplane_Old<P> hyperplane,
+                                  final Region_Old<S> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")
-        final Embedding<P, S> embedding = (Embedding<P, S>) hyperplane;
+        final Embedding_Old<P, S> embedding = (Embedding_Old<P, S>) hyperplane;
         return part.checkPoint(embedding.toSubSpace(point)) != Location.OUTSIDE;
 
     }
@@ -184,13 +184,13 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
      * @param part boundary part
      * @return projection to a singular point of boundary part (may be null)
      */
-    private P singularProjection(final P point, final Hyperplane<P> hyperplane,
-                                        final Region<S> part) {
+    private P singularProjection(final P point, final Hyperplane_Old<P> hyperplane,
+                                        final Region_Old<S> part) {
 
         // there is a non-null sub-space, we can dive into smaller dimensions
         @SuppressWarnings("unchecked")
-        final Embedding<P, S> embedding = (Embedding<P, S>) hyperplane;
-        final BoundaryProjection<S> bp = part.projectToBoundary(embedding.toSubSpace(point));
+        final Embedding_Old<P, S> embedding = (Embedding_Old<P, S>) hyperplane;
+        final BoundaryProjection_Old<S> bp = part.projectToBoundary(embedding.toSubSpace(point));
 
         // back to initial dimension
         return (bp.getProjected() == null) ? null : embedding.toSpace(bp.getProjected());

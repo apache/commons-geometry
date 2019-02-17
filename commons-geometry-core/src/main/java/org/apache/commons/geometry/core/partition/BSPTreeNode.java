@@ -14,23 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partitioning;
+package org.apache.commons.geometry.core.partition;
 
-/** Enumerate representing the location of an element with respect to an
- * {@link Hyperplane hyperplane} of a space.
- */
-public enum Side {
+import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 
-    /** Code for the plus side of the hyperplane. */
-    PLUS,
+public interface BSPTreeNode<P extends Point<P>> {
 
-    /** Code for the minus side of the hyperplane. */
-    MINUS,
-
-    /** Code for elements crossing the hyperplane from plus to minus side. */
-    BOTH,
-
-    /** Code for the hyperplane itself. */
-    HYPER;
+    Hyperplane_Old<P> getCut();
 
 }

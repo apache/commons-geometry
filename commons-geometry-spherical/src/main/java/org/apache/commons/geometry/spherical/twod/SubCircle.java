@@ -16,40 +16,40 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
 
-/** This class represents a sub-hyperplane for {@link Circle}.
+/** This class represents a sub-Hyperplane_Old for {@link Circle}.
  */
-public class SubCircle extends AbstractSubHyperplane<S2Point, S1Point> {
+public class SubCircle extends AbstractSubHyperplane_Old<S2Point, S1Point> {
 
     /** Simple constructor.
-     * @param hyperplane underlying hyperplane
-     * @param remainingRegion remaining region of the hyperplane
+     * @param Hyperplane_Old underlying Hyperplane_Old
+     * @param remainingRegion remaining region of the Hyperplane_Old
      */
-    public SubCircle(final Hyperplane<S2Point> hyperplane,
-                     final Region<S1Point> remainingRegion) {
-        super(hyperplane, remainingRegion);
+    public SubCircle(final Hyperplane_Old<S2Point> Hyperplane_Old,
+                     final Region_Old<S1Point> remainingRegion) {
+        super(Hyperplane_Old, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<S2Point, S1Point> buildNew(final Hyperplane<S2Point> hyperplane,
-                                                                 final Region<S1Point> remainingRegion) {
-        return new SubCircle(hyperplane, remainingRegion);
+    protected AbstractSubHyperplane_Old<S2Point, S1Point> buildNew(final Hyperplane_Old<S2Point> Hyperplane_Old,
+                                                                 final Region_Old<S1Point> remainingRegion) {
+        return new SubCircle(Hyperplane_Old, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<S2Point> split(final Hyperplane<S2Point> hyperplane) {
+    public SplitSubHyperplane<S2Point> split(final Hyperplane_Old<S2Point> Hyperplane_Old) {
 
         final Circle thisCircle   = (Circle) getHyperplane();
-        final Circle otherCircle  = (Circle) hyperplane;
+        final Circle otherCircle  = (Circle) Hyperplane_Old;
         final double angle = thisCircle.getPole().angle(otherCircle.getPole());
         final DoublePrecisionContext precision = thisCircle.getPrecision();
 

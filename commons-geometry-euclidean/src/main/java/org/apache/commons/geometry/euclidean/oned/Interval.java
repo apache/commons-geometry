@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 
 /** This class represents a 1D interval.
  * @see IntervalsSet

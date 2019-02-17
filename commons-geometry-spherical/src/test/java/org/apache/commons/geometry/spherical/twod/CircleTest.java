@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -165,7 +165,7 @@ public class CircleTest {
 
             QuaternionRotation r = QuaternionRotation.fromAxisAngle(Vector3D.of(sphRandom.nextVector()),
                                       Math.PI * random.nextDouble());
-            Transform<S2Point, S1Point> t = Circle.getTransform(r);
+            Transform_Old<S2Point, S1Point> t = Circle.getTransform(r);
 
             S2Point  p = S2Point.ofVector(Vector3D.of(sphRandom.nextVector()));
             S2Point tp = t.apply(p);

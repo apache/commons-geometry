@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.core.Precision;

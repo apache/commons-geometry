@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -981,14 +981,14 @@ public class LineTest {
     public void testLineTransform() {
 
         Line l1 = Line.fromPoints(Vector2D.of(1.0 ,1.0), Vector2D.of(4.0 ,1.0), TEST_PRECISION);
-        Transform<Vector2D, Vector1D> t1 =
+        Transform_Old<Vector2D, Vector1D> t1 =
             Line.getTransform(Vector2D.of(0.0, 0.5), Vector2D.of(-1.0, 0.0), Vector2D.of(1.0, 1.5));
         Assert.assertEquals(0.5 * Math.PI,
                             ((Line) t1.apply(l1)).getAngle(),
                             1.0e-10);
 
         Line l2 = Line.fromPoints(Vector2D.of(0.0, 0.0), Vector2D.of(1.0, 1.0), TEST_PRECISION);
-        Transform<Vector2D, Vector1D> t2 =
+        Transform_Old<Vector2D, Vector1D> t2 =
             Line.getTransform(Vector2D.of(0.0, 0.5), Vector2D.of(-1.0, 0.0), Vector2D.of(1.0, 1.5));
         Assert.assertEquals(Math.atan2(1.0, -2.0),
                             ((Line) t2.apply(l2)).getAngle(),

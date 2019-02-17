@@ -23,17 +23,17 @@ import java.util.List;
 import org.apache.commons.geometry.core.Point;
 
 /** Set of {@link BSPTree_Old BSP tree} nodes.
- * @see BoundaryAttribute
+ * @see BoundaryAttribute_Old
  * @param <P> Point type defining the space
  */
-public class NodesSet<P extends Point<P>> implements Iterable<BSPTree_Old<P>> {
+public class NodesSet_Old<P extends Point<P>> implements Iterable<BSPTree_Old<P>> {
 
     /** List of sub-hyperplanes. */
     private final List<BSPTree_Old<P>> list;
 
     /** Simple constructor.
      */
-    public NodesSet() {
+    public NodesSet_Old() {
         list = new ArrayList<>();
     }
 

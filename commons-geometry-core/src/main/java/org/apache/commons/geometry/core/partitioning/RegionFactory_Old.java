@@ -21,21 +21,21 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old.VanishingCutHandler;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane.SplitSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old.SplitSubHyperplane;
 
-/** This class is a factory for {@link Region}.
+/** This class is a factory for {@link Region_Old}.
 
  * @param <P> Point type defining the space
  */
-public class RegionFactory<P extends Point<P>> {
+public class RegionFactory_Old<P extends Point<P>> {
 
     /** Visitor removing internal nodes attributes. */
     private final NodesCleaner nodeCleaner;
 
     /** Simple constructor.
      */
-    public RegionFactory() {
+    public RegionFactory_Old() {
         nodeCleaner = new NodesCleaner();
     }
 
@@ -44,18 +44,18 @@ public class RegionFactory<P extends Point<P>> {
      * @return a new convex region, or null if the collection is empty
      */
     @SafeVarargs
-    public final Region<P> buildConvex(final Hyperplane<P> ... hyperplanes) {
+    public final Region_Old<P> buildConvex(final Hyperplane_Old<P> ... hyperplanes) {
         if ((hyperplanes == null) || (hyperplanes.length == 0)) {
             return null;
         }
 
         // use the first hyperplane to build the right class
-        final Region<P> region = hyperplanes[0].wholeSpace();
+        final Region_Old<P> region = hyperplanes[0].wholeSpace();
 
         // chop off parts of the space
         BSPTree_Old<P> node = region.getTree(false);
         node.setAttribute(Boolean.TRUE);
-        for (final Hyperplane<P> hyperplane : hyperplanes) {
+        for (final Hyperplane_Old<P> hyperplane : hyperplanes) {
             if (node.insertCut(hyperplane)) {
                 node.setAttribute(null);
                 node.getPlus().setAttribute(Boolean.FALSE);
@@ -65,9 +65,9 @@ public class RegionFactory<P extends Point<P>> {
                 // the hyperplane could not be inserted in the current leaf node
                 // either it is completely outside (which means the input hyperplanes
                 // are wrong), or it is parallel to a previous hyperplane
-                SubHyperplane<P> s = hyperplane.wholeHyperplane();
+                SubHyperplane_Old<P> s = hyperplane.wholeHyperplane();
                 for (BSPTree_Old<P> tree = node; tree.getParent() != null && s != null; tree = tree.getParent()) {
-                    final Hyperplane<P>         other = tree.getParent().getCut().getHyperplane();
+                    final Hyperplane_Old<P>         other = tree.getParent().getCut().getHyperplane();
                     final SplitSubHyperplane<P> split = s.split(other);
                     switch (split.getSide()) {
                         case HYPER :
@@ -101,7 +101,7 @@ public class RegionFactory<P extends Point<P>> {
      * parts of it will be reused in the new region)
      * @return a new region, result of {@code region1 union region2}
      */
-    public Region<P> union(final Region<P> region1, final Region<P> region2) {
+    public Region_Old<P> union(final Region_Old<P> region1, final Region_Old<P> region2) {
         final BSPTree_Old<P> tree =
             region1.getTree(false).merge(region2.getTree(false), new UnionMerger());
         tree.visit(nodeCleaner);
@@ -115,7 +115,7 @@ public class RegionFactory<P extends Point<P>> {
      * parts of it will be reused in the new region)
      * @return a new region, result of {@code region1 intersection region2}
      */
-    public Region<P> intersection(final Region<P> region1, final Region<P> region2) {
+    public Region_Old<P> intersection(final Region_Old<P> region1, final Region_Old<P> region2) {
         final BSPTree_Old<P> tree =
             region1.getTree(false).merge(region2.getTree(false), new IntersectionMerger());
         tree.visit(nodeCleaner);
@@ -129,7 +129,7 @@ public class RegionFactory<P extends Point<P>> {
      * parts of it will be reused in the new region)
      * @return a new region, result of {@code region1 xor region2}
      */
-    public Region<P> xor(final Region<P> region1, final Region<P> region2) {
+    public Region_Old<P> xor(final Region_Old<P> region1, final Region_Old<P> region2) {
         final BSPTree_Old<P> tree =
             region1.getTree(false).merge(region2.getTree(false), new XorMerger());
         tree.visit(nodeCleaner);
@@ -143,7 +143,7 @@ public class RegionFactory<P extends Point<P>> {
      * parts of it will be reused in the new region)
      * @return a new region, result of {@code region1 minus region2}
      */
-    public Region<P> difference(final Region<P> region1, final Region<P> region2) {
+    public Region_Old<P> difference(final Region_Old<P> region1, final Region_Old<P> region2) {
         final BSPTree_Old<P> tree =
             region1.getTree(false).merge(region2.getTree(false), new DifferenceMerger(region1, region2));
         tree.visit(nodeCleaner);
@@ -160,7 +160,7 @@ public class RegionFactory<P extends Point<P>> {
      * region independent region will be built
      * @return a new region, complement of the specified one
      */
-    public Region<P> getComplement(final Region<P> region) {
+    public Region_Old<P> getComplement(final Region_Old<P> region) {
         return region.buildNew(recurseComplement(region.getTree(false)));
     }
 
@@ -178,10 +178,10 @@ public class RegionFactory<P extends Point<P>> {
         for (final Map.Entry<BSPTree_Old<P>, BSPTree_Old<P>> entry : map.entrySet()) {
             if (entry.getKey().getCut() != null) {
                 @SuppressWarnings("unchecked")
-                BoundaryAttribute<P> original = (BoundaryAttribute<P>) entry.getKey().getAttribute();
+                BoundaryAttribute_Old<P> original = (BoundaryAttribute_Old<P>) entry.getKey().getAttribute();
                 if (original != null) {
                     @SuppressWarnings("unchecked")
-                    BoundaryAttribute<P> transformed = (BoundaryAttribute<P>) entry.getValue().getAttribute();
+                    BoundaryAttribute_Old<P> transformed = (BoundaryAttribute_Old<P>) entry.getValue().getAttribute();
                     for (final BSPTree_Old<P> splitter : original.getSplitters()) {
                         transformed.getSplitters().add(map.get(splitter));
                     }
@@ -207,14 +207,14 @@ public class RegionFactory<P extends Point<P>> {
         } else {
 
             @SuppressWarnings("unchecked")
-            BoundaryAttribute<P> attribute = (BoundaryAttribute<P>) node.getAttribute();
+            BoundaryAttribute_Old<P> attribute = (BoundaryAttribute_Old<P>) node.getAttribute();
             if (attribute != null) {
-                final SubHyperplane<P> plusOutside =
+                final SubHyperplane_Old<P> plusOutside =
                         (attribute.getPlusInside() == null) ? null : attribute.getPlusInside().copySelf();
-                final SubHyperplane<P> plusInside  =
+                final SubHyperplane_Old<P> plusInside  =
                         (attribute.getPlusOutside() == null) ? null : attribute.getPlusOutside().copySelf();
                 // we start with an empty list of splitters, it will be filled in out of recursion
-                attribute = new BoundaryAttribute<>(plusOutside, plusInside, new NodesSet<P>());
+                attribute = new BoundaryAttribute_Old<>(plusOutside, plusInside, new NodesSet_Old<P>());
             }
 
             transformedNode = new BSPTree_Old<>(node.getCut().copySelf(),
@@ -285,16 +285,16 @@ public class RegionFactory<P extends Point<P>> {
     private class DifferenceMerger implements BSPTree_Old.LeafMerger<P>, VanishingCutHandler<P> {
 
         /** Region to subtract from. */
-        private final Region<P> region1;
+        private final Region_Old<P> region1;
 
         /** Region to subtract. */
-        private final Region<P> region2;
+        private final Region_Old<P> region2;
 
         /** Simple constructor.
          * @param region1 region to subtract from
          * @param region2 region to subtract
          */
-        DifferenceMerger(final Region<P> region1, final Region<P> region2) {
+        DifferenceMerger(final Region_Old<P> region1, final Region_Old<P> region2) {
             this.region1 = region1.copySelf();
             this.region2 = region2.copySelf();
         }
@@ -323,7 +323,7 @@ public class RegionFactory<P extends Point<P>> {
         public BSPTree_Old<P> fixNode(final BSPTree_Old<P> node) {
             // get a representative point in the degenerate cell
             final BSPTree_Old<P> cell = node.pruneAroundConvexCell(Boolean.TRUE, Boolean.FALSE, null);
-            final Region<P> r = region1.buildNew(cell);
+            final Region_Old<P> r = region1.buildNew(cell);
             final P p = r.getBarycenter();
             return new BSPTree_Old<>(region1.checkPoint(p) == Location.INSIDE &&
                                   region2.checkPoint(p) == Location.OUTSIDE);

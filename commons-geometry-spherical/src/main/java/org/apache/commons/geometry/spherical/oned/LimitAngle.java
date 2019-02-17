@@ -16,14 +16,14 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane on the circle.
  * <p>An hyperplane on the 1-sphere is an angle with an orientation.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class LimitAngle implements Hyperplane<S1Point> {
+public class LimitAngle implements Hyperplane_Old<S1Point> {
 
     /** Angle location. */
     private final S1Point location;
@@ -107,7 +107,7 @@ public class LimitAngle implements Hyperplane<S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<S1Point> other) {
+    public boolean sameOrientationAs(final Hyperplane_Old<S1Point> other) {
         return !(direct ^ ((LimitAngle) other).direct);
     }
 

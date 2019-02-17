@@ -30,7 +30,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -194,7 +194,7 @@ public class OBJWriter {
         @SuppressWarnings("unchecked")
         @Override
         public void visitInternalNode(BSPTree_Old<Vector3D> node) {
-            BoundaryAttribute<Vector3D> attr = (BoundaryAttribute<Vector3D>) node.getAttribute();
+            BoundaryAttribute_Old<Vector3D> attr = (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
 
             if (attr.getPlusOutside() != null) {
                 addBoundary((SubPlane) attr.getPlusOutside());

@@ -19,7 +19,7 @@ package org.apache.commons.geometry.spherical;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -43,8 +43,8 @@ public class SphericalTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<S1Point> hyperplane) {
-                final LimitAngle h = (LimitAngle) hyperplane;
+            protected void formatHyperplane(final Hyperplane_Old<S1Point> Hyperplane_Old) {
+                final LimitAngle h = (LimitAngle) Hyperplane_Old;
                 getFormatter().format("%22.15e %b %s",
                                       h.getLocation().getAzimuth(), h.isDirect(), h.getPrecision().toString());
             }
@@ -63,8 +63,8 @@ public class SphericalTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<S2Point> hyperplane) {
-                final Circle h = (Circle) hyperplane;
+            protected void formatHyperplane(final Hyperplane_Old<S2Point> Hyperplane_Old) {
+                final Circle h = (Circle) Hyperplane_Old;
                 getFormatter().format("%22.15e %22.15e %22.15e %s",
                                       h.getPole().getX(), h.getPole().getY(), h.getPole().getZ(),
                                       h.getPrecision().toString());

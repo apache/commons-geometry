@@ -45,7 +45,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -1), Vector2D.of(0, 1));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -64,7 +64,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -1), Vector2D.of(0, 1));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(false, ch.touchInside());
@@ -85,7 +85,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -1), Vector2D.of(0, -2));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(false, ch.touchInside());
@@ -106,7 +106,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, 1), Vector2D.of(0, 2));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -127,7 +127,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -1), Vector2D.of(0, 1));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -165,7 +165,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -2), Vector2D.of(0, 2));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -206,7 +206,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, -2), Vector2D.of(0, 2));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -244,7 +244,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(0, 0), Vector2D.of(1, 0));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -265,7 +265,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(1, 0), Vector2D.of(0, 0));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -287,7 +287,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(-2, 0), Vector2D.of(2, 0));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -325,7 +325,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(2, 0), Vector2D.of(-2, 0));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -362,7 +362,7 @@ public class CharacterizationTest {
         SubLine sub = buildSubLine(Vector2D.of(2, 0), Vector2D.of(-2, 0));
 
         // act
-        Characterization<Vector2D> ch = new Characterization<>(tree, sub);
+        Characterization_Old<Vector2D> ch = new Characterization_Old<>(tree, sub);
 
         // assert
         Assert.assertEquals(true, ch.touchInside());
@@ -396,7 +396,7 @@ public class CharacterizationTest {
         }
     }
 
-    private int size(NodesSet<Vector2D> nodes) {
+    private int size(NodesSet_Old<Vector2D> nodes) {
         Iterator<BSPTree_Old<Vector2D>> it = nodes.iterator();
 
         int size = 0;

@@ -52,7 +52,7 @@
  * single part, but by several convex ones. This is the property that
  * allows BSP-trees to represent non-convex polytopes despites all parts
  * are convex. The {@link
- * org.apache.commons.geometry.core.partitioning.Region Region} class is
+ * org.apache.commons.geometry.core.partitioning.Region_Old Region} class is
  * devoted to this representation, it is build on top of the {@link
  * org.apache.commons.geometry.core.partitioning.BSPTree_Old BSPTree} class using
  * boolean objects as the leaf nodes attributes to represent the

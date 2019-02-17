@@ -23,15 +23,15 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.AbstractRegion;
+import org.apache.commons.geometry.core.partitioning.AbstractRegion_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -41,7 +41,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a 3D region: a set of polyhedrons.
  */
-public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
+public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
 
     /** Build a polyhedrons set representing the whole real line.
      * @param precision precision context used to compare floating point values
@@ -76,7 +76,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
     /** Build a polyhedrons set from a Boundary REPresentation (B-rep) specified by sub-hyperplanes.
      * <p>The boundary is provided as a collection of {@link
-     * SubHyperplane sub-hyperplanes}. Each sub-hyperplane has the
+     * SubHyperplane_Old sub-hyperplanes}. Each sub-hyperplane has the
      * interior part of the region on its minus side and the exterior on
      * its plus side.</p>
      * <p>The boundary elements can be in any order, and can form
@@ -86,15 +86,15 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * (their topological connections are not used here). However, if the
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
-     * calls to the {@link Region#checkPoint(Point) checkPoint} method will
+     * calls to the {@link Region_Old#checkPoint(Point) checkPoint} method will
      * not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
      * @param boundary collection of boundary elements, as a
-     * collection of {@link SubHyperplane SubHyperplane} objects
+     * collection of {@link SubHyperplane_Old SubHyperplane} objects
      * @param precision precision context used to compare floating point values
      */
-    public PolyhedronsSet(final Collection<SubHyperplane<Vector3D>> boundary,
+    public PolyhedronsSet(final Collection<SubHyperplane_Old<Vector3D>> boundary,
                           final DoublePrecisionContext precision) {
         super(boundary, precision);
     }
@@ -161,8 +161,8 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         final Plane pyMax = new Plane(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
         final Plane pzMin = new Plane(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
         final Plane pzMax = new Plane(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
-        final Region<Vector3D> boundary =
-        new RegionFactory<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
+        final Region_Old<Vector3D> boundary =
+        new RegionFactory_Old<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
     }
 
@@ -173,7 +173,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * @return boundary as a list of sub-hyperplanes
      * @exception IllegalArgumentException if some basic sanity checks fail
      */
-    private static List<SubHyperplane<Vector3D>> buildBoundary(final List<Vector3D> vertices,
+    private static List<SubHyperplane_Old<Vector3D>> buildBoundary(final List<Vector3D> vertices,
                                                                   final List<int[]> facets,
                                                                   final DoublePrecisionContext precision) {
 
@@ -213,7 +213,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
             }
         }
 
-        final List<SubHyperplane<Vector3D>> boundary = new ArrayList<>();
+        final List<SubHyperplane_Old<Vector3D>> boundary = new ArrayList<>();
 
         for (final int[] facet : facets) {
 
@@ -418,8 +418,8 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         @Override
         public void visitInternalNode(final BSPTree_Old<Vector3D> node) {
             @SuppressWarnings("unchecked")
-            final BoundaryAttribute<Vector3D> attribute =
-                (BoundaryAttribute<Vector3D>) node.getAttribute();
+            final BoundaryAttribute_Old<Vector3D> attribute =
+                (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
             if (attribute.getPlusOutside() != null) {
                 addContribution(attribute.getPlusOutside(), false);
             }
@@ -437,9 +437,9 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
          * @param facet boundary facet
          * @param reversed if true, the facet has the inside on its plus side
          */
-        private void addContribution(final SubHyperplane<Vector3D> facet, final boolean reversed) {
+        private void addContribution(final SubHyperplane_Old<Vector3D> facet, final boolean reversed) {
 
-            final Region<Vector2D> polygon = ((SubPlane) facet).getRemainingRegion();
+            final Region_Old<Vector2D> polygon = ((SubPlane) facet).getRemainingRegion();
             final double area = polygon.getSize();
 
             if (Double.isInfinite(area)) {
@@ -469,7 +469,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * given point, or null if the line does not intersect any
      * sub-hyperplane
      */
-    public SubHyperplane<Vector3D> firstIntersection(final Vector3D point, final Line line) {
+    public SubHyperplane_Old<Vector3D> firstIntersection(final Vector3D point, final Line line) {
         return recurseFirstIntersection(getTree(true), point, line);
     }
 
@@ -481,11 +481,11 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * given point, or null if the line does not intersect any
      * sub-hyperplane
      */
-    private SubHyperplane<Vector3D> recurseFirstIntersection(final BSPTree_Old<Vector3D> node,
+    private SubHyperplane_Old<Vector3D> recurseFirstIntersection(final BSPTree_Old<Vector3D> node,
                                                                 final Vector3D point,
                                                                 final Line line) {
 
-        final SubHyperplane<Vector3D> cut = node.getCut();
+        final SubHyperplane_Old<Vector3D> cut = node.getCut();
         if (cut == null) {
             return null;
         }
@@ -508,7 +508,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         if (in) {
             // search in the cut hyperplane
-            final SubHyperplane<Vector3D> facet = boundaryFacet(point, node);
+            final SubHyperplane_Old<Vector3D> facet = boundaryFacet(point, node);
 
             // only return the facet here if it exists and intersects the plane
             // (ie, is not parallel it)
@@ -518,7 +518,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         }
 
         // search in the near branch
-        final SubHyperplane<Vector3D> crossed = recurseFirstIntersection(near, point, line);
+        final SubHyperplane_Old<Vector3D> crossed = recurseFirstIntersection(near, point, line);
         if (crossed != null) {
             return crossed;
         }
@@ -527,7 +527,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
             // search in the cut hyperplane
             final Vector3D hit3D = plane.intersection(line);
             if (hit3D != null && line.getAbscissa(hit3D) > line.getAbscissa(point)) {
-                final SubHyperplane<Vector3D> facet = boundaryFacet(hit3D, node);
+                final SubHyperplane_Old<Vector3D> facet = boundaryFacet(hit3D, node);
                 if (facet != null) {
                     return facet;
                 }
@@ -545,12 +545,12 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
      * @return the boundary facet this points belongs to (or null if it
      * does not belong to any boundary facet)
      */
-    private SubHyperplane<Vector3D> boundaryFacet(final Vector3D point,
+    private SubHyperplane_Old<Vector3D> boundaryFacet(final Vector3D point,
                                                      final BSPTree_Old<Vector3D> node) {
         final Vector2D Vector2D = ((Plane) node.getCut().getHyperplane()).toSubSpace(point);
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<Vector3D> attribute =
-            (BoundaryAttribute<Vector3D>) node.getAttribute();
+        final BoundaryAttribute_Old<Vector3D> attribute =
+            (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
         if ((attribute.getPlusOutside() != null) &&
             (((SubPlane) attribute.getPlusOutside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
             return attribute.getPlusOutside();
@@ -573,7 +573,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
     }
 
     /** 3D rotation as a Transform. */
-    private static class RotationTransform implements Transform<Vector3D, Vector2D> {
+    private static class RotationTransform implements Transform_Old<Vector3D, Vector2D> {
 
         /** Center point of the rotation. */
         private final Vector3D   center;
@@ -585,7 +585,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         private Plane cachedOriginal;
 
         /** Cached 2D transform valid inside the cached original hyperplane. */
-        private Transform<Vector2D, Vector1D>  cachedTransform;
+        private Transform_Old<Vector2D, Vector1D>  cachedTransform;
 
         /** Build a rotation transform.
          * @param center center point of the rotation
@@ -605,15 +605,15 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Plane apply(final Hyperplane<Vector3D> hyperplane) {
+        public Plane apply(final Hyperplane_Old<Vector3D> hyperplane) {
             return ((Plane) hyperplane).rotate(center, rotation);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Vector2D> apply(final SubHyperplane<Vector2D> sub,
-                                                final Hyperplane<Vector3D> original,
-                                                final Hyperplane<Vector3D> transformed) {
+        public SubHyperplane_Old<Vector2D> apply(final SubHyperplane_Old<Vector2D> sub,
+                                                final Hyperplane_Old<Vector3D> original,
+                                                final Hyperplane_Old<Vector3D> transformed) {
             if (original != cachedOriginal) {
                 // we have changed hyperplane, reset the in-hyperplane transform
 
@@ -648,7 +648,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
     }
 
     /** 3D translation as a transform. */
-    private static class TranslationTransform implements Transform<Vector3D, Vector2D> {
+    private static class TranslationTransform implements Transform_Old<Vector3D, Vector2D> {
 
         /** Translation vector. */
         private final Vector3D   translation;
@@ -657,7 +657,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         private Plane cachedOriginal;
 
         /** Cached 2D transform valid inside the cached original hyperplane. */
-        private Transform<Vector2D, Vector1D>  cachedTransform;
+        private Transform_Old<Vector2D, Vector1D>  cachedTransform;
 
         /** Build a translation transform.
          * @param translation translation vector
@@ -674,15 +674,15 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Plane apply(final Hyperplane<Vector3D> hyperplane) {
+        public Plane apply(final Hyperplane_Old<Vector3D> hyperplane) {
             return ((Plane) hyperplane).translate(translation);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Vector2D> apply(final SubHyperplane<Vector2D> sub,
-                                                final Hyperplane<Vector3D> original,
-                                                final Hyperplane<Vector3D> transformed) {
+        public SubHyperplane_Old<Vector2D> apply(final SubHyperplane_Old<Vector2D> sub,
+                                                final Hyperplane_Old<Vector3D> original,
+                                                final Hyperplane_Old<Vector3D> transformed) {
             if (original != cachedOriginal) {
                 // we have changed hyperplane, reset the in-hyperplane transform
 

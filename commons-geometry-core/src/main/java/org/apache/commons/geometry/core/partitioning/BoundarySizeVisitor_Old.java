@@ -21,14 +21,14 @@ import org.apache.commons.geometry.core.Point;
 /** Visitor computing the boundary size.
  * @param <P> Point type defining the space
  */
-class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
+class BoundarySizeVisitor_Old<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
 
     /** Size of the boundary. */
     private double boundarySize;
 
     /** Simple constructor.
      */
-    BoundarySizeVisitor() {
+    BoundarySizeVisitor_Old() {
         boundarySize = 0;
     }
 
@@ -42,8 +42,8 @@ class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
     @Override
     public void visitInternalNode(final BSPTree_Old<P> node) {
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<P> attribute =
-            (BoundaryAttribute<P>) node.getAttribute();
+        final BoundaryAttribute_Old<P> attribute =
+            (BoundaryAttribute_Old<P>) node.getAttribute();
         if (attribute.getPlusOutside() != null) {
             boundarySize += attribute.getPlusOutside().getSize();
         }

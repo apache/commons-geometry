@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.Point;
 
  * <p>Sub-spaces are the lower dimensions subsets of a n-dimensions
  * space. The (n-1)-dimension sub-spaces are specific sub-spaces known
- * as {@link Hyperplane hyperplanes}. This interface can be used regardless
+ * as {@link Hyperplane_Old hyperplanes}. This interface can be used regardless
  * of the dimensions differences. For example, a line in 3D Euclidean space
  * can map directly from 3 dimensions to 1.</p>
 
@@ -39,9 +39,9 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type defining the embedding space.
  * @param <S> Point type defining the embedded sub-space.
 
- * @see Hyperplane
+ * @see Hyperplane_Old
  */
-public interface Embedding<P extends Point<P>, S extends Point<S>> {
+public interface Embedding_Old<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a space point into a sub-space point.
      * @param point n-dimension point of the space

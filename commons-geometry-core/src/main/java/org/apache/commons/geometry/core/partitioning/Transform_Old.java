@@ -35,12 +35,12 @@ import org.apache.commons.geometry.core.Point;
  *   <li>
  *     the transform can be applied to a (D-1)-dimension
  *     hyperplane in the D-dimension space using its
- *     {@link #apply(Hyperplane)} method
+ *     {@link #apply(Hyperplane_Old)} method
  *   </li>
  *   <li>
  *     the transform can be applied to a (D-2)-dimension
  *     sub-hyperplane in a (D-1)-dimension hyperplane using
- *     its {@link #apply(SubHyperplane, Hyperplane, Hyperplane)}
+ *     its {@link #apply(SubHyperplane_Old, Hyperplane_Old, Hyperplane_Old)}
  *     method
  *   </li>
  * </ul>
@@ -48,7 +48,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type defining the embedding space.
  * @param <S> Point type defining the embedded sub-space.
  */
-public interface Transform<P extends Point<P>, S extends Point<S>> {
+public interface Transform_Old<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a point of a space.
      * @param point point to transform
@@ -60,7 +60,7 @@ public interface Transform<P extends Point<P>, S extends Point<S>> {
      * @param hyperplane hyperplane to transform
      * @return a new object representing the transformed hyperplane
      */
-    Hyperplane<P> apply(Hyperplane<P> hyperplane);
+    Hyperplane_Old<P> apply(Hyperplane_Old<P> hyperplane);
 
     /** Transform a sub-hyperplane embedded in an hyperplane.
      * @param sub sub-hyperplane to transform
@@ -72,6 +72,6 @@ public interface Transform<P extends Point<P>, S extends Point<S>> {
      * <em>has</em> been applied to it)
      * @return a new object representing the transformed sub-hyperplane
      */
-    SubHyperplane<S> apply(SubHyperplane<S> sub, Hyperplane<P> original, Hyperplane<P> transformed);
+    SubHyperplane_Old<S> apply(SubHyperplane_Old<S> sub, Hyperplane_Old<P> original, Hyperplane_Old<P> transformed);
 
 }

@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.numbers.core.Precision;
@@ -36,12 +36,12 @@ public class ArcTest {
         Arc arc = new Arc(2.3, 5.7, TEST_PRECISION);
         Assert.assertEquals(3.4, arc.getSize(), TEST_EPS);
         Assert.assertEquals(4.0, arc.getBarycenter(), TEST_EPS);
-        Assert.assertEquals(Region.Location.BOUNDARY, arc.checkPoint(2.3));
-        Assert.assertEquals(Region.Location.BOUNDARY, arc.checkPoint(5.7));
-        Assert.assertEquals(Region.Location.OUTSIDE,  arc.checkPoint(1.2));
-        Assert.assertEquals(Region.Location.OUTSIDE,  arc.checkPoint(8.5));
-        Assert.assertEquals(Region.Location.INSIDE,   arc.checkPoint(8.7));
-        Assert.assertEquals(Region.Location.INSIDE,   arc.checkPoint(3.0));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, arc.checkPoint(2.3));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, arc.checkPoint(5.7));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  arc.checkPoint(1.2));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  arc.checkPoint(8.5));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   arc.checkPoint(8.7));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   arc.checkPoint(3.0));
         Assert.assertEquals(2.3, arc.getInf(), TEST_EPS);
         Assert.assertEquals(5.7, arc.getSup(), TEST_EPS);
         Assert.assertEquals(4.0, arc.getBarycenter(), TEST_EPS);
@@ -55,24 +55,24 @@ public class ArcTest {
 
     @Test
     public void testTolerance() {
-        Assert.assertEquals(Region.Location.OUTSIDE,  new Arc(2.3, 5.7, createPrecision(1.0)).checkPoint(1.2));
-        Assert.assertEquals(Region.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(1.2)).checkPoint(1.2));
-        Assert.assertEquals(Region.Location.OUTSIDE,  new Arc(2.3, 5.7, createPrecision(0.7)).checkPoint(6.5));
-        Assert.assertEquals(Region.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(0.9)).checkPoint(6.5));
-        Assert.assertEquals(Region.Location.INSIDE,   new Arc(2.3, 5.7, createPrecision(0.6)).checkPoint(3.0));
-        Assert.assertEquals(Region.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(0.8)).checkPoint(3.0));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  new Arc(2.3, 5.7, createPrecision(1.0)).checkPoint(1.2));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(1.2)).checkPoint(1.2));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  new Arc(2.3, 5.7, createPrecision(0.7)).checkPoint(6.5));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(0.9)).checkPoint(6.5));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   new Arc(2.3, 5.7, createPrecision(0.6)).checkPoint(3.0));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, new Arc(2.3, 5.7, createPrecision(0.8)).checkPoint(3.0));
     }
 
     @Test
     public void testFullCircle() {
         Arc arc = new Arc(9.0, 9.0, TEST_PRECISION);
         // no boundaries on a full circle
-        Assert.assertEquals(Region.Location.INSIDE, arc.checkPoint(9.0));
+        Assert.assertEquals(Region_Old.Location.INSIDE, arc.checkPoint(9.0));
         Assert.assertEquals(.0, arc.getInf(), TEST_EPS);
         Assert.assertEquals(Geometry.TWO_PI, arc.getSup(), TEST_EPS);
         Assert.assertEquals(2.0 * Math.PI, arc.getSize(), TEST_EPS);
         for (double alpha = -20.0; alpha <= 20.0; alpha += 0.1) {
-            Assert.assertEquals(Region.Location.INSIDE, arc.checkPoint(alpha));
+            Assert.assertEquals(Region_Old.Location.INSIDE, arc.checkPoint(alpha));
         }
     }
 

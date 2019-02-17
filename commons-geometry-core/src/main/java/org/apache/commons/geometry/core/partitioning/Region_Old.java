@@ -28,7 +28,7 @@ import org.apache.commons.geometry.core.Point;
  * may be points on the <em>boundary</em> of the region.</p>
 
  * <p>This implementation is limited to regions for which the boundary
- * is composed of several {@link SubHyperplane sub-hyperplanes},
+ * is composed of several {@link SubHyperplane_Old sub-hyperplanes},
  * including regions with no boundary at all: the whole space and the
  * empty region. They are not necessarily finite and not necessarily
  * path-connected. They can contain holes.</p>
@@ -47,7 +47,7 @@ import org.apache.commons.geometry.core.Point;
 
  * @param <P> Point type defining the space
  */
-public interface Region<P extends Point<P>> {
+public interface Region_Old<P extends Point<P>> {
 
     /** Enumerate for the location of a point with respect to the region. */
     enum Location {
@@ -77,7 +77,7 @@ public interface Region<P extends Point<P>> {
      * @param newTree inside/outside BSP tree representing the new region
      * @return the built region
      */
-    Region<P> buildNew(BSPTree_Old<P> newTree);
+    Region_Old<P> buildNew(BSPTree_Old<P> newTree);
 
     /** Copy the instance.
      * <p>The instance created is completely independant of the original
@@ -86,7 +86,7 @@ public interface Region<P extends Point<P>> {
      * attributes and immutable objects).</p>
      * @return a new region, copy of the instance
      */
-    Region<P> copySelf();
+    Region_Old<P> copySelf();
 
     /** Check if the instance is empty.
      * @return true if the instance is empty
@@ -95,7 +95,7 @@ public interface Region<P extends Point<P>> {
 
     /** Check if the sub-tree starting at a given node is empty.
      * @param node root node of the sub-tree (<em>must</em> have {@link
-     * Region Region} tree semantics, i.e. the leaf nodes must have
+     * Region_Old Region} tree semantics, i.e. the leaf nodes must have
      * {@code Boolean} attributes representing an inside/outside
      * property)
      * @return true if the sub-tree starting at the given node is empty
@@ -109,7 +109,7 @@ public interface Region<P extends Point<P>> {
 
     /** Check if the sub-tree starting at a given node covers the full space.
      * @param node root node of the sub-tree (<em>must</em> have {@link
-     * Region Region} tree semantics, i.e. the leaf nodes must have
+     * Region_Old Region} tree semantics, i.e. the leaf nodes must have
      * {@code Boolean} attributes representing an inside/outside
      * property)
      * @return true if the sub-tree starting at the given node covers the full space
@@ -120,7 +120,7 @@ public interface Region<P extends Point<P>> {
      * @param region region to check against the instance
      * @return true if the instance contains the specified tree
      */
-    boolean contains(final Region<P> region);
+    boolean contains(final Region_Old<P> region);
 
     /** Check a point with respect to the region.
      * @param point point to check
@@ -133,7 +133,7 @@ public interface Region<P extends Point<P>> {
      * @param point point to check
      * @return projection of the point on the boundary
      */
-    BoundaryProjection<P> projectToBoundary(final P point);
+    BoundaryProjection_Old<P> projectToBoundary(final P point);
 
     /** Get the underlying BSP tree.
 
@@ -146,14 +146,14 @@ public interface Region<P extends Point<P>> {
 
      * <p>In addition to the leaf attributes, the internal nodes which
      * correspond to cells split by cut sub-hyperplanes may contain
-     * {@link BoundaryAttribute BoundaryAttribute} objects representing
+     * {@link BoundaryAttribute_Old BoundaryAttribute} objects representing
      * the parts of the corresponding cut sub-hyperplane that belong to
      * the boundary. When the boundary attributes have been computed,
      * all internal nodes are guaranteed to have non-null
-     * attributes, however some {@link BoundaryAttribute
+     * attributes, however some {@link BoundaryAttribute_Old
      * BoundaryAttribute} instances may have their {@link
-     * BoundaryAttribute#getPlusInside() getPlusInside} and {@link
-     * BoundaryAttribute#getPlusOutside() getPlusOutside} methods both
+     * BoundaryAttribute_Old#getPlusInside() getPlusInside} and {@link
+     * BoundaryAttribute_Old#getPlusOutside() getPlusOutside} methods both
      * returning null if the corresponding cut sub-hyperplane does not
      * have any parts belonging to the boundary.</p>
 
@@ -172,7 +172,7 @@ public interface Region<P extends Point<P>> {
      * included even if the argument is false, if they have already been
      * computed due to a previous call)
      * @return underlying BSP tree
-     * @see BoundaryAttribute
+     * @see BoundaryAttribute_Old
      */
     BSPTree_Old<P> getTree(final boolean includeBoundaryAttributes);
 
@@ -199,6 +199,6 @@ public interface Region<P extends Point<P>> {
      * @param sub sub-hyperplane traversing the region
      * @return filtered sub-hyperplane
      */
-    SubHyperplane<P> intersection(final SubHyperplane<P> sub);
+    SubHyperplane_Old<P> intersection(final SubHyperplane_Old<P> sub);
 
 }

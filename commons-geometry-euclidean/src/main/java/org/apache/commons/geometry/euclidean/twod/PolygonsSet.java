@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.AbstractRegion;
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractRegion_Old;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Side;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Side_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
 
 /** This class represents a 2D region: a set of polygons.
  */
-public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
+public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
 
     /** Vertices organized as boundary loops. */
     private Vector2D[][] vertices;
@@ -74,7 +74,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
 
     /** Build a polygons set from a Boundary REPresentation (B-rep).
      * <p>The boundary is provided as a collection of {@link
-     * SubHyperplane sub-hyperplanes}. Each sub-hyperplane has the
+     * SubHyperplane_Old sub-hyperplanes}. Each sub-hyperplane has the
      * interior part of the region on its minus side and the exterior on
      * its plus side.</p>
      * <p>The boundary elements can be in any order, and can form
@@ -85,15 +85,15 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * boundary does not really separate an inside open from an outside
      * open (open having here its topological meaning), then subsequent
      * calls to the {@link
-     * org.apache.commons.geometry.core.partitioning.Region#checkPoint(org.apache.commons.geometry.core.Point)
+     * org.apache.commons.geometry.core.partitioning.Region_Old#checkPoint(org.apache.commons.geometry.core.Point)
      * checkPoint} method will not be meaningful anymore.</p>
      * <p>If the boundary is empty, the region will represent the whole
      * space.</p>
      * @param boundary collection of boundary elements, as a
-     * collection of {@link SubHyperplane SubHyperplane} objects
+     * collection of {@link SubHyperplane_Old SubHyperplane} objects
      * @param precision precision context used to compare floating point values
      */
-    public PolygonsSet(final Collection<SubHyperplane<Vector2D>> boundary, final DoublePrecisionContext precision) {
+    public PolygonsSet(final Collection<SubHyperplane_Old<Vector2D>> boundary, final DoublePrecisionContext precision) {
         super(boundary, precision);
     }
 
@@ -119,7 +119,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * forming several disconnected paths (such as polygons with holes).</p>
      * <p>For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #PolygonsSet(Collection, DoublePrecisionContext) general
-     * constructor} using {@link SubHyperplane subhyperplanes}.</p>
+     * constructor} using {@link SubHyperplane_Old subhyperplanes}.</p>
      * <p>If the list is empty, the region will represent the whole
      * space.</p>
      * <p>
@@ -179,7 +179,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
      * forming several disconnected paths (such as polygons with holes).</p>
      * <p>For cases where this simple constructor applies, it is expected to
      * be numerically more robust than the {@link #PolygonsSet(Collection,double) general
-     * constructor} using {@link SubHyperplane subhyperplanes}.</p>
+     * constructor} using {@link SubHyperplane_Old subhyperplanes}.</p>
      * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
@@ -283,13 +283,13 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             if (edge != inserted) {
                 final double startOffset = inserted.getLine().getOffset(edge.getStart().getLocation());
                 final double endOffset   = inserted.getLine().getOffset(edge.getEnd().getLocation());
-                Side startSide = precision.eqZero(Math.abs(startOffset)) ?
-                                 Side.HYPER : ((startOffset < 0) ? Side.MINUS : Side.PLUS);
-                Side endSide   = precision.eqZero(endOffset) ?
-                                 Side.HYPER : ((endOffset < 0) ? Side.MINUS : Side.PLUS);
+                Side_Old startSide = precision.eqZero(Math.abs(startOffset)) ?
+                                 Side_Old.HYPER : ((startOffset < 0) ? Side_Old.MINUS : Side_Old.PLUS);
+                Side_Old endSide   = precision.eqZero(endOffset) ?
+                                 Side_Old.HYPER : ((endOffset < 0) ? Side_Old.MINUS : Side_Old.PLUS);
                 switch (startSide) {
                     case PLUS:
-                        if (endSide == Side.MINUS) {
+                        if (endSide == Side_Old.MINUS) {
                             // we need to insert a split point on the hyperplane
                             final Vertex splitPoint = edge.split(inserted.getLine());
                             minusList.add(splitPoint.getOutgoing());
@@ -299,7 +299,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                         }
                         break;
                     case MINUS:
-                        if (endSide == Side.PLUS) {
+                        if (endSide == Side_Old.PLUS) {
                             // we need to insert a split point on the hyperplane
                             final Vertex splitPoint = edge.split(inserted.getLine());
                             minusList.add(splitPoint.getIncoming());
@@ -309,9 +309,9 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                         }
                         break;
                     default:
-                        if (endSide == Side.PLUS) {
+                        if (endSide == Side_Old.PLUS) {
                             plusList.add(edge);
-                        } else if (endSide == Side.MINUS) {
+                        } else if (endSide == Side_Old.MINUS) {
                             minusList.add(edge);
                         }
                         break;
@@ -739,7 +739,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
         int connected = 0;
         for (final ConnectableSegment segment : segments) {
             if (segment.getNext() == null && segment.getEndNode() != null) {
-                final Hyperplane<Vector2D> hyperplane = segment.getNode().getCut().getHyperplane();
+                final Hyperplane_Old<Vector2D> hyperplane = segment.getNode().getCut().getHyperplane();
                 final BSPTree_Old<Vector2D> end  = segment.getEndNode();
                 for (final ConnectableSegment candidateNext : segments) {
                     if (candidateNext.getPrevious()                      == null &&
@@ -1011,7 +1011,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
         @Override
         public void visitInternalNode(final BSPTree_Old<Vector2D> node) {
             @SuppressWarnings("unchecked")
-            final BoundaryAttribute<Vector2D> attribute = (BoundaryAttribute<Vector2D>) node.getAttribute();
+            final BoundaryAttribute_Old<Vector2D> attribute = (BoundaryAttribute_Old<Vector2D>) node.getAttribute();
             final Iterable<BSPTree_Old<Vector2D>> splitters = attribute.getSplitters();
             if (attribute.getPlusOutside() != null) {
                 addContribution(attribute.getPlusOutside(), node, splitters, false);
@@ -1032,13 +1032,13 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
          * @param splitters splitters for the boundary facet
          * @param reversed if true, the facet has the inside on its plus side
          */
-        private void addContribution(final SubHyperplane<Vector2D> sub,
+        private void addContribution(final SubHyperplane_Old<Vector2D> sub,
                                      final BSPTree_Old<Vector2D> node,
                                      final Iterable<BSPTree_Old<Vector2D>> splitters,
                                      final boolean reversed) {
             @SuppressWarnings("unchecked")
-            final AbstractSubHyperplane<Vector2D, Vector1D> absSub =
-                (AbstractSubHyperplane<Vector2D, Vector1D>) sub;
+            final AbstractSubHyperplane_Old<Vector2D, Vector1D> absSub =
+                (AbstractSubHyperplane_Old<Vector2D, Vector1D>) sub;
             final Line line      = (Line) sub.getHyperplane();
             final List<Interval> intervals = ((IntervalsSet) absSub.getRemainingRegion()).asList();
             for (final Interval i : intervals) {

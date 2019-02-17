@@ -16,11 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -28,21 +28,21 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a sub-hyperplane for {@link Plane}.
  */
-public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
+public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubPlane(final Hyperplane<Vector3D> hyperplane,
-                    final Region<Vector2D> remainingRegion) {
+    public SubPlane(final Hyperplane_Old<Vector3D> hyperplane,
+                    final Region_Old<Vector2D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Vector3D, Vector2D> buildNew(final Hyperplane<Vector3D> hyperplane,
-                                                                       final Region<Vector2D> remainingRegion) {
+    protected AbstractSubHyperplane_Old<Vector3D, Vector2D> buildNew(final Hyperplane_Old<Vector3D> hyperplane,
+                                                                       final Region_Old<Vector2D> remainingRegion) {
         return new SubPlane(hyperplane, remainingRegion);
     }
 
@@ -53,7 +53,7 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
      * instance on the minus side of the instance
      */
     @Override
-    public SplitSubHyperplane<Vector3D> split(Hyperplane<Vector3D> hyperplane) {
+    public SplitSubHyperplane<Vector3D> split(Hyperplane_Old<Vector3D> hyperplane) {
 
         final Plane otherPlane = (Plane) hyperplane;
         final Plane thisPlane  = (Plane) getHyperplane();
@@ -83,9 +83,9 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
             p           = q;
             q           = tmp;
         }
-        final SubHyperplane<Vector2D> l2DMinus =
+        final SubHyperplane_Old<Vector2D> l2DMinus =
             org.apache.commons.geometry.euclidean.twod.Line.fromPoints(p, q, precision).wholeHyperplane();
-        final SubHyperplane<Vector2D> l2DPlus =
+        final SubHyperplane_Old<Vector2D> l2DPlus =
             org.apache.commons.geometry.euclidean.twod.Line.fromPoints(q, p, precision).wholeHyperplane();
 
         final BSPTree_Old<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);

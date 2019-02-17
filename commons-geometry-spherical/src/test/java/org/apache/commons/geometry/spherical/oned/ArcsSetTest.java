@@ -23,11 +23,11 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.Side;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.Side_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.numbers.core.Precision;
@@ -46,12 +46,12 @@ public class ArcsSetTest {
         ArcsSet set = new ArcsSet(2.3, 5.7, TEST_PRECISION);
         Assert.assertEquals(3.4, set.getSize(), TEST_EPS);
         Assert.assertSame(TEST_PRECISION, set.getPrecision());
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(2.3)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(5.7)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(1.2)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(8.5)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(8.7)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(3.0)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(2.3)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(5.7)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(1.2)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(8.5)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(8.7)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(3.0)));
         Assert.assertEquals(1, set.asList().size());
         Assert.assertEquals(2.3, set.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.7, set.asList().get(0).getSup(), TEST_EPS);
@@ -62,12 +62,12 @@ public class ArcsSetTest {
         ArcsSet set = new ArcsSet(5.7 - Geometry.TWO_PI, 2.3, TEST_PRECISION);
         Assert.assertEquals(Geometry.TWO_PI - 3.4, set.getSize(), TEST_EPS);
         Assert.assertSame(TEST_PRECISION, set.getPrecision());
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(2.3)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(5.7)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(1.2)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(8.5)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(8.7)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(3.0)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(2.3)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(5.7)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(1.2)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(8.5)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(8.7)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(3.0)));
         Assert.assertEquals(1, set.asList().size());
         Assert.assertEquals(5.7, set.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(2.3 + Geometry.TWO_PI, set.asList().get(0).getSup(), TEST_EPS);
@@ -125,9 +125,9 @@ public class ArcsSetTest {
     public void testFullEqualEndPoints() {
         ArcsSet set = new ArcsSet(1.0, 1.0, TEST_PRECISION);
         Assert.assertSame(TEST_PRECISION, set.getPrecision());
-        Assert.assertEquals(Region.Location.INSIDE, set.checkPoint(S1Point.of(9.0)));
+        Assert.assertEquals(Region_Old.Location.INSIDE, set.checkPoint(S1Point.of(9.0)));
         for (double alpha = -20.0; alpha <= 20.0; alpha += 0.1) {
-            Assert.assertEquals(Region.Location.INSIDE, set.checkPoint(S1Point.of(alpha)));
+            Assert.assertEquals(Region_Old.Location.INSIDE, set.checkPoint(S1Point.of(alpha)));
         }
         Assert.assertEquals(1, set.asList().size());
         Assert.assertEquals(0.0, set.asList().get(0).getInf(), TEST_EPS);
@@ -139,9 +139,9 @@ public class ArcsSetTest {
     public void testFullCircle() {
         ArcsSet set = new ArcsSet(TEST_PRECISION);
         Assert.assertSame(TEST_PRECISION, set.getPrecision());
-        Assert.assertEquals(Region.Location.INSIDE, set.checkPoint(S1Point.of(9.0)));
+        Assert.assertEquals(Region_Old.Location.INSIDE, set.checkPoint(S1Point.of(9.0)));
         for (double alpha = -20.0; alpha <= 20.0; alpha += 0.1) {
-            Assert.assertEquals(Region.Location.INSIDE, set.checkPoint(S1Point.of(alpha)));
+            Assert.assertEquals(Region_Old.Location.INSIDE, set.checkPoint(S1Point.of(alpha)));
         }
         Assert.assertEquals(1, set.asList().size());
         Assert.assertEquals(0.0, set.asList().get(0).getInf(), TEST_EPS);
@@ -151,7 +151,7 @@ public class ArcsSetTest {
 
     @Test
     public void testEmpty() {
-        ArcsSet empty = (ArcsSet) new RegionFactory<S1Point>().getComplement(new ArcsSet(TEST_PRECISION));
+        ArcsSet empty = (ArcsSet) new RegionFactory_Old<S1Point>().getComplement(new ArcsSet(TEST_PRECISION));
         Assert.assertSame(TEST_PRECISION, empty.getPrecision());
         Assert.assertEquals(0.0, empty.getSize(), TEST_EPS);
         Assert.assertTrue(empty.asList().isEmpty());
@@ -169,7 +169,7 @@ public class ArcsSetTest {
 
     @Test
     public void testSpecialConstruction() {
-        List<SubHyperplane<S1Point>> boundary = new ArrayList<>();
+        List<SubHyperplane_Old<S1Point>> boundary = new ArrayList<>();
         boundary.add(new LimitAngle(S1Point.of(0.0), false, TEST_PRECISION).wholeHyperplane());
         boundary.add(new LimitAngle(S1Point.of(Geometry.TWO_PI - 1.0e-11), true, TEST_PRECISION).wholeHyperplane());
         ArcsSet set = new ArcsSet(boundary, TEST_PRECISION);
@@ -195,7 +195,7 @@ public class ArcsSetTest {
         Assert.assertEquals(3.0, bList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, bList.get(0).getSup(), TEST_EPS);
 
-        ArcsSet aMb = (ArcsSet) new RegionFactory<S1Point>().difference(a, b);
+        ArcsSet aMb = (ArcsSet) new RegionFactory_Old<S1Point>().difference(a, b);
         for (int k = -2; k < 3; ++k) {
             Assert.assertEquals(Location.OUTSIDE,  aMb.checkPoint(S1Point.of(0.0 + k * Geometry.TWO_PI)));
             Assert.assertEquals(Location.OUTSIDE,  aMb.checkPoint(S1Point.of(0.9 + k * Geometry.TWO_PI)));
@@ -226,7 +226,7 @@ public class ArcsSetTest {
     @Test
     public void testIntersection() {
 
-        ArcsSet a   = (ArcsSet) new RegionFactory<S1Point>().union(new ArcsSet(1.0, 3.0, TEST_PRECISION),
+        ArcsSet a   = (ArcsSet) new RegionFactory_Old<S1Point>().union(new ArcsSet(1.0, 3.0, TEST_PRECISION),
                                                                     new ArcsSet(5.0, 6.0, TEST_PRECISION));
         List<Arc> aList = a.asList();
         Assert.assertEquals(2,   aList.size());
@@ -241,7 +241,7 @@ public class ArcsSetTest {
         Assert.assertEquals(0.0, bList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.5, bList.get(0).getSup(), TEST_EPS);
 
-        ArcsSet aMb = (ArcsSet) new RegionFactory<S1Point>().intersection(a, b);
+        ArcsSet aMb = (ArcsSet) new RegionFactory_Old<S1Point>().intersection(a, b);
         for (int k = -2; k < 3; ++k) {
             Assert.assertEquals(Location.OUTSIDE,  aMb.checkPoint(S1Point.of(0.0 + k * Geometry.TWO_PI)));
             Assert.assertEquals(Location.BOUNDARY, aMb.checkPoint(S1Point.of(1.0 + k * Geometry.TWO_PI)));
@@ -270,22 +270,22 @@ public class ArcsSetTest {
 
     @Test
     public void testMultiple() {
-        RegionFactory<S1Point> factory = new RegionFactory<>();
+        RegionFactory_Old<S1Point> factory = new RegionFactory_Old<>();
         ArcsSet set = (ArcsSet)
         factory.intersection(factory.union(factory.difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
                                                               new ArcsSet(3.0, 5.0, TEST_PRECISION)),
                                                               new ArcsSet(0.5, 2.0, TEST_PRECISION)),
                                                               new ArcsSet(0.0, 5.5, TEST_PRECISION));
         Assert.assertEquals(3.0, set.getSize(), TEST_EPS);
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(0.0)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(4.0)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(S1Point.of(6.0)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(1.2)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(S1Point.of(5.25)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(0.5)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(3.0)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(5.0)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(S1Point.of(5.5)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(0.0)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(4.0)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(S1Point.of(6.0)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(1.2)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(S1Point.of(5.25)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(0.5)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(3.0)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(5.0)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(S1Point.of(5.5)));
 
         List<Arc> list = set.asList();
         Assert.assertEquals(2, list.size());
@@ -304,7 +304,7 @@ public class ArcsSetTest {
 
     @Test
     public void testIteration() {
-        ArcsSet set = (ArcsSet) new RegionFactory<S1Point>().difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
+        ArcsSet set = (ArcsSet) new RegionFactory_Old<S1Point>().difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
                                                                          new ArcsSet(3.0, 5.0, TEST_PRECISION));
         Iterator<double[]> iterator = set.iterator();
         try {
@@ -385,28 +385,28 @@ public class ArcsSetTest {
 
     @Test
     public void testSide() {
-        ArcsSet set = (ArcsSet) new RegionFactory<S1Point>().difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
+        ArcsSet set = (ArcsSet) new RegionFactory_Old<S1Point>().difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
                                                                          new ArcsSet(3.0, 5.0, TEST_PRECISION));
         for (int k = -2; k < 3; ++k) {
-            Assert.assertEquals(Side.MINUS, set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.MINUS, set.split(new Arc(0.5 + k * Geometry.TWO_PI,
                                                               6.1 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.PLUS,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
                                                               0.8 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.PLUS,  set.split(new Arc(6.2 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(6.2 + k * Geometry.TWO_PI,
                                                               6.3 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.PLUS,  set.split(new Arc(3.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(3.5 + k * Geometry.TWO_PI,
                                                               4.5 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.BOTH,  set.split(new Arc(2.9 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(2.9 + k * Geometry.TWO_PI,
                                                               4.5 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
                                                               1.2 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
                                                               5.9 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
         }
@@ -418,10 +418,10 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s16 = new ArcsSet(1.0, 6.0, TEST_PRECISION);
 
-        Assert.assertEquals(Side.BOTH,  s16.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.BOTH,  s16.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.MINUS, s35.split(new Arc(1.0, 6.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.PLUS,  s35.split(new Arc(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.MINUS, s35.split(new Arc(1.0, 6.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.PLUS,  s35.split(new Arc(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
 
     }
 
@@ -430,17 +430,17 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s46 = new ArcsSet(4.0, 6.0, TEST_PRECISION);
 
-        Assert.assertEquals(Side.BOTH,  s46.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.BOTH,  s46.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.BOTH, s35.split(new Arc(4.0, 6.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side.BOTH,  s35.split(new Arc(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH, s35.split(new Arc(4.0, 6.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s35.split(new Arc(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
     }
 
     @Test
     public void testSideHyper() {
-        ArcsSet sub = (ArcsSet) new RegionFactory<S1Point>().getComplement(new ArcsSet(TEST_PRECISION));
+        ArcsSet sub = (ArcsSet) new RegionFactory_Old<S1Point>().getComplement(new ArcsSet(TEST_PRECISION));
         Assert.assertTrue(sub.isEmpty());
-        Assert.assertEquals(Side.HYPER,  sub.split(new Arc(2.0, 3.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.HYPER,  sub.split(new Arc(2.0, 3.0, TEST_PRECISION)).getSide());
     }
 
     @Test
@@ -593,7 +593,7 @@ public class ArcsSetTest {
         ArcsSet.Split split = set.split(arc);
         Assert.assertNotNull(split.getMinus());
         Assert.assertNull(split.getPlus());
-        Assert.assertEquals(Side.MINUS, set.split(arc).getSide());
+        Assert.assertEquals(Side_Old.MINUS, set.split(arc).getSide());
     }
 
 }

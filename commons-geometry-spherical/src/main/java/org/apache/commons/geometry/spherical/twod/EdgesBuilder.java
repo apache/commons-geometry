@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
@@ -68,7 +68,7 @@ class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
     public void visitInternalNode(final BSPTree_Old<S2Point> node) {
         nodeToEdgesList.put(node, new ArrayList<Edge>());
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute<S2Point> attribute = (BoundaryAttribute<S2Point>) node.getAttribute();
+        final BoundaryAttribute_Old<S2Point> attribute = (BoundaryAttribute_Old<S2Point>) node.getAttribute();
         if (attribute.getPlusOutside() != null) {
             addContribution((SubCircle) attribute.getPlusOutside(), false, node);
         }

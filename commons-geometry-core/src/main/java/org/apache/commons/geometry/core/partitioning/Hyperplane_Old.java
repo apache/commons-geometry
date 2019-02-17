@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
  * <p>The most prominent place where hyperplane appears in space
  * partitioning is as cutters. Each partitioning node in a {@link
- * BSPTree_Old BSP tree} has a cut {@link SubHyperplane sub-hyperplane}
+ * BSPTree_Old BSP tree} has a cut {@link SubHyperplane_Old sub-hyperplane}
  * which is either an hyperplane or a part of an hyperplane. In an
  * n-dimensions Euclidean space, an hyperplane is an (n-1)-dimensions
  * hyperplane (for example a traditional plane in the 3D Euclidean
@@ -39,7 +39,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
  * @param <P> Point type defining the space
  */
-public interface Hyperplane<P extends Point<P>> {
+public interface Hyperplane_Old<P extends Point<P>> {
 
     /** Copy the instance.
      * <p>The instance created is completely independant of the original
@@ -47,7 +47,7 @@ public interface Hyperplane<P extends Point<P>> {
      * shared (except for immutable objects).</p>
      * @return a new hyperplane, copy of the instance
      */
-    Hyperplane<P> copySelf();
+    Hyperplane_Old<P> copySelf();
 
     /** Get the offset (oriented distance) of a point.
      * <p>The offset is 0 if the point is on the underlying hyperplane,
@@ -81,16 +81,16 @@ public interface Hyperplane<P extends Point<P>> {
      * @return true if the instance and the other hyperplane have
      * the same orientation
      */
-    boolean sameOrientationAs(Hyperplane<P> other);
+    boolean sameOrientationAs(Hyperplane_Old<P> other);
 
     /** Build a sub-hyperplane covering the whole hyperplane.
      * @return a sub-hyperplane covering the whole hyperplane
      */
-    SubHyperplane<P> wholeHyperplane();
+    SubHyperplane_Old<P> wholeHyperplane();
 
     /** Build a region covering the whole space.
      * @return a region containing the instance
      */
-    Region<P> wholeSpace();
+    Region_Old<P> wholeSpace();
 
 }

@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.Point;
  * other parts have been chopped off.
 
  * <p>sub-hyperplanes are obtained when parts of an {@link
- * Hyperplane hyperplane} are chopped off by other hyperplanes that
+ * Hyperplane_Old hyperplane} are chopped off by other hyperplanes that
  * intersect it. The remaining part is a convex region. Such objects
  * appear in {@link BSPTree_Old BSP trees} as the intersection of a cut
  * hyperplane with the convex region which it splits, the chopping
@@ -37,7 +37,7 @@ import org.apache.commons.geometry.core.Point;
 
  * @param <P> Point type defining the embedding space.
  */
-public interface SubHyperplane<P extends Point<P>> {
+public interface SubHyperplane_Old<P extends Point<P>> {
 
     /** Copy the instance.
      * <p>The instance created is completely independent of the original
@@ -46,12 +46,12 @@ public interface SubHyperplane<P extends Point<P>> {
      * objects).</p>
      * @return a new sub-hyperplane, copy of the instance
      */
-    SubHyperplane<P> copySelf();
+    SubHyperplane_Old<P> copySelf();
 
     /** Get the underlying hyperplane.
      * @return underlying hyperplane
      */
-    Hyperplane<P> getHyperplane();
+    Hyperplane_Old<P> getHyperplane();
 
     /** Check if the instance is empty.
      * @return true if the instance is empty
@@ -70,14 +70,14 @@ public interface SubHyperplane<P extends Point<P>> {
      * on the plus side of the hyperplane and the part of the
      * instance on the minus side of the hyperplane
      */
-    SplitSubHyperplane<P> split(Hyperplane<P> hyperplane);
+    SplitSubHyperplane<P> split(Hyperplane_Old<P> hyperplane);
 
     /** Compute the union of the instance and another sub-hyperplane.
      * @param other other sub-hyperplane to union (<em>must</em> be in the
      * same hyperplane as the instance)
      * @return a new sub-hyperplane, union of the instance and other
      */
-    SubHyperplane<P> reunite(SubHyperplane<P> other);
+    SubHyperplane_Old<P> reunite(SubHyperplane_Old<P> other);
 
     /** Class holding the results of the {@link #split split} method.
      * @param <U> Type of the embedding space.
@@ -85,10 +85,10 @@ public interface SubHyperplane<P extends Point<P>> {
     class SplitSubHyperplane<U extends Point<U>> {
 
         /** Part of the sub-hyperplane on the plus side of the splitting hyperplane. */
-        private final SubHyperplane<U> plus;
+        private final SubHyperplane_Old<U> plus;
 
         /** Part of the sub-hyperplane on the minus side of the splitting hyperplane. */
-        private final SubHyperplane<U> minus;
+        private final SubHyperplane_Old<U> minus;
 
         /** Build a SplitSubHyperplane from its parts.
          * @param plus part of the sub-hyperplane on the plus side of the
@@ -96,8 +96,8 @@ public interface SubHyperplane<P extends Point<P>> {
          * @param minus part of the sub-hyperplane on the minus side of the
          * splitting hyperplane
          */
-        public SplitSubHyperplane(final SubHyperplane<U> plus,
-                                  final SubHyperplane<U> minus) {
+        public SplitSubHyperplane(final SubHyperplane_Old<U> plus,
+                                  final SubHyperplane_Old<U> minus) {
             this.plus  = plus;
             this.minus = minus;
         }
@@ -105,35 +105,35 @@ public interface SubHyperplane<P extends Point<P>> {
         /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.
          * @return part of the sub-hyperplane on the plus side of the splitting hyperplane
          */
-        public SubHyperplane<U> getPlus() {
+        public SubHyperplane_Old<U> getPlus() {
             return plus;
         }
 
         /** Get the part of the sub-hyperplane on the minus side of the splitting hyperplane.
          * @return part of the sub-hyperplane on the minus side of the splitting hyperplane
          */
-        public SubHyperplane<U> getMinus() {
+        public SubHyperplane_Old<U> getMinus() {
             return minus;
         }
 
         /** Get the side of the split sub-hyperplane with respect to its splitter.
-         * @return {@link Side#PLUS} if only {@link #getPlus()} is neither null nor empty,
-         * {@link Side#MINUS} if only {@link #getMinus()} is neither null nor empty,
-         * {@link Side#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
-         * are neither null nor empty or {@link Side#HYPER} if both {@link #getPlus()} and
+         * @return {@link Side_Old#PLUS} if only {@link #getPlus()} is neither null nor empty,
+         * {@link Side_Old#MINUS} if only {@link #getMinus()} is neither null nor empty,
+         * {@link Side_Old#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
+         * are neither null nor empty or {@link Side_Old#HYPER} if both {@link #getPlus()} and
          * {@link #getMinus()} are either null or empty
          */
-        public Side getSide() {
+        public Side_Old getSide() {
             if (plus != null && !plus.isEmpty()) {
                 if (minus != null && !minus.isEmpty()) {
-                    return Side.BOTH;
+                    return Side_Old.BOTH;
                 } else {
-                    return Side.PLUS;
+                    return Side_Old.PLUS;
                 }
             } else if (minus != null && !minus.isEmpty()) {
-                return Side.MINUS;
+                return Side_Old.MINUS;
             } else {
-                return Side.HYPER;
+                return Side_Old.HYPER;
             }
         }
 

@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.io.Serializable;
 
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Segment;
@@ -152,11 +152,11 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Region<Vector2D> createRegion() {
+    public Region_Old<Vector2D> createRegion() {
         if (vertices.length < 3) {
             throw new IllegalStateException("Region generation requires at least 3 vertices but found only " + vertices.length);
         }
-        final RegionFactory<Vector2D> factory = new RegionFactory<>();
+        final RegionFactory_Old<Vector2D> factory = new RegionFactory_Old<>();
         final Segment[] segments = retrieveLineSegments();
         final Line[] lineArray = new Line[segments.length];
         for (int i = 0; i < segments.length; i++) {

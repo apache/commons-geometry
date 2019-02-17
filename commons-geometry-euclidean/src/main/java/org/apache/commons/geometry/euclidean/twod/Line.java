@@ -20,10 +20,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partitioning.Embedding;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.partitioning.Embedding_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
@@ -57,7 +57,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * points with negative offsets and the right half plane is the set of
  * points with positive offsets.</p>
  */
-public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>, Serializable {
+public final class Line implements Hyperplane_Old<Vector2D>, Embedding_Old<Vector2D, Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190120L;
@@ -248,7 +248,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Vector2D> other) {
+    public boolean sameOrientationAs(final Hyperplane_Old<Vector2D> other) {
         final Line otherLine = (Line) other;
         return direction.dot(otherLine.direction) >= 0.0;
     }
@@ -325,7 +325,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @param transform transform to apply to this instance
      * @return a new transformed line
      */
-    public Line transform(final Transform<Vector2D, Vector1D> transform) {
+    public Line transform(final Transform_Old<Vector2D, Vector1D> transform) {
         final Vector2D origin = getOrigin();
 
         final Vector2D p1 = transform.apply(origin);
@@ -427,7 +427,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
     // TODO: Remove this method and associated class after the Transform interface has been simplified.
     // See GEOMETRY-24.
 
-    /** Create a {@link Transform} instance from a set of column vectors. The returned object can be used
+    /** Create a {@link Transform_Old} instance from a set of column vectors. The returned object can be used
      * to transform {@link SubLine} instances.
      * @param u first column vector; this corresponds to the first basis vector
      *      in the coordinate frame
@@ -436,15 +436,15 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @param t third column vector; this corresponds to the translation of the transform
      * @return a new transform instance
      */
-    public static Transform<Vector2D, Vector1D> getTransform(final Vector2D u, final Vector2D v, final Vector2D t) {
+    public static Transform_Old<Vector2D, Vector1D> getTransform(final Vector2D u, final Vector2D v, final Vector2D t) {
         final AffineTransformMatrix2D matrix = AffineTransformMatrix2D.fromColumnVectors(u, v, t);
         return new LineTransform(matrix);
     }
 
     /** Class wrapping an {@link AffineTransformMatrix2D} with the methods necessary to fulfill the full
-     * {@link Transform} interface.
+     * {@link Transform_Old} interface.
      */
-    private static class LineTransform implements Transform<Vector2D, Vector1D> {
+    private static class LineTransform implements Transform_Old<Vector2D, Vector1D> {
 
         /** Transform matrix */
         private final AffineTransformMatrix2D matrix;
@@ -464,16 +464,16 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
 
         /** {@inheritDoc} */
         @Override
-        public Line apply(final Hyperplane<Vector2D> hyperplane) {
+        public Line apply(final Hyperplane_Old<Vector2D> hyperplane) {
             final Line line = (Line) hyperplane;
             return line.transform(matrix);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Vector1D> apply(final SubHyperplane<Vector1D> sub,
-                                                final Hyperplane<Vector2D> original,
-                                                final Hyperplane<Vector2D> transformed) {
+        public SubHyperplane_Old<Vector1D> apply(final SubHyperplane_Old<Vector1D> sub,
+                                                final Hyperplane_Old<Vector2D> original,
+                                                final Hyperplane_Old<Vector2D> transformed) {
             final OrientedPoint op = (OrientedPoint) sub.getHyperplane();
             final Line originalLine  = (Line) original;
             final Line transformedLine = (Line) transformed;

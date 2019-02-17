@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
@@ -67,7 +67,7 @@ public class SubLineTest {
     @Test
     public void testNoSegments() {
         SubLine empty = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
-                                    (IntervalsSet) new RegionFactory<Vector1D>().getComplement(new IntervalsSet(TEST_PRECISION)));
+                                    (IntervalsSet) new RegionFactory_Old<Vector1D>().getComplement(new IntervalsSet(TEST_PRECISION)));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(0, segments.size());
     }
@@ -75,7 +75,7 @@ public class SubLineTest {
     @Test
     public void testSeveralSegments() {
         SubLine twoSubs = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
-                                      (IntervalsSet) new RegionFactory<Vector1D>().union(new IntervalsSet(1, 2, TEST_PRECISION),
+                                      (IntervalsSet) new RegionFactory_Old<Vector1D>().union(new IntervalsSet(1, 2, TEST_PRECISION),
                                                                                             new IntervalsSet(3, 4, TEST_PRECISION)));
         List<Segment> segments = twoSubs.getSegments();
         Assert.assertEquals(2, segments.size());

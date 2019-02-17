@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents sub-hyperplane for {@link OrientedPoint}.
@@ -26,14 +26,14 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class SubOrientedPoint extends AbstractSubHyperplane<Vector1D, Vector1D> {
+public class SubOrientedPoint extends AbstractSubHyperplane_Old<Vector1D, Vector1D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubOrientedPoint(final Hyperplane<Vector1D> hyperplane,
-                            final Region<Vector1D> remainingRegion) {
+    public SubOrientedPoint(final Hyperplane_Old<Vector1D> hyperplane,
+                            final Region_Old<Vector1D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
@@ -51,14 +51,14 @@ public class SubOrientedPoint extends AbstractSubHyperplane<Vector1D, Vector1D> 
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Vector1D, Vector1D> buildNew(final Hyperplane<Vector1D> hyperplane,
-                                                                       final Region<Vector1D> remainingRegion) {
+    protected AbstractSubHyperplane_Old<Vector1D, Vector1D> buildNew(final Hyperplane_Old<Vector1D> hyperplane,
+                                                                       final Region_Old<Vector1D> remainingRegion) {
         return new SubOrientedPoint(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<Vector1D> split(final Hyperplane<Vector1D> hyperplane) {
+    public SplitSubHyperplane<Vector1D> split(final Hyperplane_Old<Vector1D> hyperplane) {
         final OrientedPoint thisHyperplane = (OrientedPoint) getHyperplane();
         final double global = hyperplane.getOffset(thisHyperplane.getLocation());
 

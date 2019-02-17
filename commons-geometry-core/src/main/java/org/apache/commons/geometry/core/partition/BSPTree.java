@@ -14,31 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.hull;
+package org.apache.commons.geometry.core.partition;
 
-import java.io.Serializable;
+public interface BSPTree {
 
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Region_Old;
-
-/**
- * This class represents a convex hull.
- *
- * @param <P> Point type.
- */
-public interface ConvexHull<P extends Point<P>> extends Serializable {
-
-    /**
-     * Get the vertices of the convex hull.
-     * @return vertices of the convex hull
-     */
-    P[] getVertices();
-
-    /**
-     * Returns a new region that is enclosed by the convex hull.
-     * @return the region enclosed by the convex hull
-     * @throws IllegalStateException if the number of vertices is not enough to
-     * build a region in the respective space
-     */
-    Region_Old<P> createRegion() throws IllegalStateException;
 }

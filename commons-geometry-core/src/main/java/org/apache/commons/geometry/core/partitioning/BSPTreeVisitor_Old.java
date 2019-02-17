@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.Point;
  *     the first one is in a node-oriented way using the {@link
  *     BSPTree_Old#getPlus}, {@link BSPTree_Old#getMinus} and {@link
  *     BSPTree_Old#getParent} methods. Terminal nodes without associated
- *     {@link SubHyperplane sub-hyperplanes} can be visited this way,
+ *     {@link SubHyperplane_Old sub-hyperplanes} can be visited this way,
  *     there is no constraint in the visit order, and it is possible
  *     to visit either all nodes or only a subset of the nodes
  *   </li>
@@ -43,7 +43,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point type defining the space
 
  * @see BSPTree_Old
- * @see SubHyperplane
+ * @see SubHyperplane_Old
  */
 public interface BSPTreeVisitor_Old<P extends Point<P>> {
 

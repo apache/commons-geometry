@@ -22,10 +22,10 @@ import org.apache.commons.geometry.core.Point;
  * on the plus and minus sides of an hyperplane.
  * @param <P> Point type defining the space
  */
-class InsideFinder<P extends Point<P>> {
+class InsideFinder_Old<P extends Point<P>> {
 
     /** Region on which to operate. */
-    private final Region<P> region;
+    private final Region_Old<P> region;
 
     /** Indicator of inside leaf nodes found on the plus side. */
     private boolean plusFound;
@@ -36,7 +36,7 @@ class InsideFinder<P extends Point<P>> {
     /** Simple constructor.
      * @param region region on which to operate
      */
-    InsideFinder(final Region<P> region) {
+    InsideFinder_Old(final Region_Old<P> region) {
         this.region = region;
         plusFound  = false;
         minusFound = false;
@@ -56,7 +56,7 @@ class InsideFinder<P extends Point<P>> {
      * @param node current BSP tree node
      * @param sub sub-hyperplane
      */
-    public void recurseSides(final BSPTree_Old<P> node, final SubHyperplane<P> sub) {
+    public void recurseSides(final BSPTree_Old<P> node, final SubHyperplane_Old<P> sub) {
 
         if (node.getCut() == null) {
             if ((Boolean) node.getAttribute()) {
@@ -67,12 +67,12 @@ class InsideFinder<P extends Point<P>> {
             return;
         }
 
-        final Hyperplane<P> hyperplane = node.getCut().getHyperplane();
-        final SubHyperplane.SplitSubHyperplane<P> split = sub.split(hyperplane);
+        final Hyperplane_Old<P> hyperplane = node.getCut().getHyperplane();
+        final SubHyperplane_Old.SplitSubHyperplane<P> split = sub.split(hyperplane);
         switch (split.getSide()) {
         case PLUS :
             // the sub-hyperplane is entirely in the plus sub-tree
-            if (node.getCut().split(sub.getHyperplane()).getSide() == Side.PLUS) {
+            if (node.getCut().split(sub.getHyperplane()).getSide() == Side_Old.PLUS) {
                 if (!region.isEmpty(node.getMinus())) {
                     plusFound  = true;
                 }
@@ -87,7 +87,7 @@ class InsideFinder<P extends Point<P>> {
             break;
         case MINUS :
             // the sub-hyperplane is entirely in the minus sub-tree
-            if (node.getCut().split(sub.getHyperplane()).getSide() == Side.PLUS) {
+            if (node.getCut().split(sub.getHyperplane()).getSide() == Side_Old.PLUS) {
                 if (!region.isEmpty(node.getPlus())) {
                     plusFound  = true;
                 }

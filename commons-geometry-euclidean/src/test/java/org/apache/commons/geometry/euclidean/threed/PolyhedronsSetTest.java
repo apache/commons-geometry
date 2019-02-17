@@ -26,11 +26,11 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
+import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -63,7 +63,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertTrue(polySet.isFull());
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(0, 0, 0),
@@ -84,7 +84,7 @@ public class PolyhedronsSetTest {
         Assert.assertTrue(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(0, 0, 0),
@@ -95,8 +95,8 @@ public class PolyhedronsSetTest {
     @Test
     public void testHalfSpace() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.add(new SubPlane(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION),
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
+        boundaries.add(new SubPlane(new Plane(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION),
                 new PolygonsSet(TEST_PRECISION)));
 
         // act
@@ -110,11 +110,11 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100));
-        checkPoints(Region.Location.BOUNDARY, polySet, Vector3D.of(0, 0, 0));
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.BOUNDARY, polySet, Vector3D.of(0, 0, 0));
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
@@ -122,11 +122,11 @@ public class PolyhedronsSetTest {
     @Test
     public void testInvertedRegion() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
         PolyhedronsSet box = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         // act
-        PolyhedronsSet polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(box);
+        PolyhedronsSet polySet = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().getComplement(box);
 
         // assert
         Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
@@ -136,19 +136,19 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(0, 0, 0));
     }
 
     @Test
     public void testCreateFromBoundaries_noBoundaries_treeRepresentsWholeSpace() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
@@ -165,7 +165,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_unitBox() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS);
 
         // act
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
@@ -178,7 +178,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, -1, 0),
@@ -195,7 +195,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(-1, -1, 1),
                 Vector3D.of(-1, -1, -1));
 
-        checkPoints(Region.Location.BOUNDARY, polySet,
+        checkPoints(Region_Old.Location.BOUNDARY, polySet,
                 Vector3D.of(0.5, 0, 0),
                 Vector3D.of(-0.5, 0, 0),
                 Vector3D.of(0, 0.5, 0),
@@ -212,7 +212,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(-0.5, -0.5, 0.5),
                 Vector3D.of(-0.5, -0.5, -0.5));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
 
                 Vector3D.of(0.4, 0.4, 0.4),
@@ -228,7 +228,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_twoBoxes_disjoint() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
         boundaries.addAll(createBoxBoundaries(Vector3D.ZERO, 1.0, TEST_EPS));
         boundaries.addAll(createBoxBoundaries(Vector3D.of(2, 0, 0), 1.0, TEST_EPS));
 
@@ -243,12 +243,12 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(3, 0, 0));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(2, 0, 0));
     }
@@ -256,7 +256,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedSide() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
         boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
         boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 0, 0), 1.0, TEST_EPS));
 
@@ -271,11 +271,11 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(2, 0, 0));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 0, 0));
     }
@@ -285,7 +285,7 @@ public class PolyhedronsSetTest {
         // arrange
         double eps = 1e-6;
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
         boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, eps));
         boundaries.addAll(createBoxBoundaries(Vector3D.of(1 + 1e-7, 0, 0), 1.0, eps));
 
@@ -300,11 +300,11 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(2, 0, 0));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 0, 0));
     }
@@ -312,7 +312,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedEdge() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
         boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
         boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 0), 1.0, TEST_EPS));
 
@@ -327,13 +327,13 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, 1, 0),
                 Vector3D.of(2, 1, 0));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 1, 0));
     }
@@ -341,7 +341,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testCreateFromBoundaries_twoBoxes_sharedPoint() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
         boundaries.addAll(createBoxBoundaries(Vector3D.of(0, 0, 0), 1.0, TEST_EPS));
         boundaries.addAll(createBoxBoundaries(Vector3D.of(1, 1, 1), 1.0, TEST_EPS));
 
@@ -356,13 +356,13 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, 1, 1),
                 Vector3D.of(2, 1, 1));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 1, 1));
     }
@@ -383,13 +383,13 @@ public class PolyhedronsSetTest {
                 boolean yOK = (y >= 0.0) && (y <= 1.0);
                 for (double z = -0.25; z < 1.25; z += 0.1) {
                     boolean zOK = (z >= 0.0) && (z <= 1.0);
-                    Region.Location expected =
-                        (xOK && yOK && zOK) ? Region.Location.INSIDE : Region.Location.OUTSIDE;
+                    Region_Old.Location expected =
+                        (xOK && yOK && zOK) ? Region_Old.Location.INSIDE : Region_Old.Location.OUTSIDE;
                     Assert.assertEquals(expected, tree.checkPoint(Vector3D.of(x, y, z)));
                 }
             }
         }
-        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, tree, new Vector3D[] {
             Vector3D.of(0.0, 0.5, 0.5),
             Vector3D.of(1.0, 0.5, 0.5),
             Vector3D.of(0.5, 0.0, 0.5),
@@ -397,7 +397,7 @@ public class PolyhedronsSetTest {
             Vector3D.of(0.5, 0.5, 0.0),
             Vector3D.of(0.5, 0.5, 1.0)
         });
-        checkPoints(Region.Location.OUTSIDE, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, tree, new Vector3D[] {
             Vector3D.of(0.0, 1.2, 1.2),
             Vector3D.of(1.0, 1.2, 1.2),
             Vector3D.of(1.2, 0.0, 1.2),
@@ -413,7 +413,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet tree = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
 
         // act
-        tree = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(tree);
+        tree = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().getComplement(tree);
 
         // assert
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
@@ -430,13 +430,13 @@ public class PolyhedronsSetTest {
                 boolean yOK = (y < 0.0) || (y > 1.0);
                 for (double z = -0.25; z < 1.25; z += 0.1) {
                     boolean zOK = (z < 0.0) || (z > 1.0);
-                    Region.Location expected =
-                        (xOK || yOK || zOK) ? Region.Location.INSIDE : Region.Location.OUTSIDE;
+                    Region_Old.Location expected =
+                        (xOK || yOK || zOK) ? Region_Old.Location.INSIDE : Region_Old.Location.OUTSIDE;
                     Assert.assertEquals(expected, tree.checkPoint(Vector3D.of(x, y, z)));
                 }
             }
         }
-        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, tree, new Vector3D[] {
             Vector3D.of(0.0, 0.5, 0.5),
             Vector3D.of(1.0, 0.5, 0.5),
             Vector3D.of(0.5, 0.0, 0.5),
@@ -444,7 +444,7 @@ public class PolyhedronsSetTest {
             Vector3D.of(0.5, 0.5, 0.0),
             Vector3D.of(0.5, 0.5, 1.0)
         });
-        checkPoints(Region.Location.INSIDE, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.INSIDE, tree, new Vector3D[] {
             Vector3D.of(0.0, 1.2, 1.2),
             Vector3D.of(1.0, 1.2, 1.2),
             Vector3D.of(1.2, 0.0, 1.2),
@@ -464,11 +464,11 @@ public class PolyhedronsSetTest {
 
         // act
         PolyhedronsSet tree =
-            (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
-                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
-                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
-                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
+            (PolyhedronsSet) new RegionFactory_Old<Vector3D>().buildConvex(
+                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
+                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
+                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
+                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
@@ -476,14 +476,14 @@ public class PolyhedronsSetTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_EPS);
 
         double third = 1.0 / 3.0;
-        checkPoints(Region.Location.BOUNDARY, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.BOUNDARY, tree, new Vector3D[] {
             vertex1, vertex2, vertex3, vertex4,
             Vector3D.linearCombination(third, vertex1, third, vertex2, third, vertex3),
             Vector3D.linearCombination(third, vertex2, third, vertex3, third, vertex4),
             Vector3D.linearCombination(third, vertex3, third, vertex4, third, vertex1),
             Vector3D.linearCombination(third, vertex4, third, vertex1, third, vertex2)
         });
-        checkPoints(Region.Location.OUTSIDE, tree, new Vector3D[] {
+        checkPoints(Region_Old.Location.OUTSIDE, tree, new Vector3D[] {
             Vector3D.of(1, 2, 4),
             Vector3D.of(2, 2, 3),
             Vector3D.of(2, 3, 4),
@@ -508,7 +508,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(polySet.isEmpty());
         Assert.assertFalse(polySet.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, polySet,
+        checkPoints(Region_Old.Location.OUTSIDE, polySet,
                 Vector3D.of(-0.1, 2, 3),
                 Vector3D.of(2.1, 2, 3),
                 Vector3D.of(1, 0.9, 3),
@@ -517,7 +517,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(1, 2, 4.1),
                 Vector3D.of(1.6, 2.6, 3.6));
 
-        checkPoints(Region.Location.INSIDE, polySet,
+        checkPoints(Region_Old.Location.INSIDE, polySet,
                 Vector3D.of(1, 2, 3),
                 Vector3D.of(0.1, 2, 3),
                 Vector3D.of(1.9, 2, 3),
@@ -538,11 +538,11 @@ public class PolyhedronsSetTest {
 
         // act
         PolyhedronsSet tree =
-            (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
-                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
-                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
-                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
+            (PolyhedronsSet) new RegionFactory_Old<Vector3D>().buildConvex(
+                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
+                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
+                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
+                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Vector3D barycenter = tree.getBarycenter();
@@ -584,8 +584,8 @@ public class PolyhedronsSetTest {
             @Override
             public void visitInternalNode(BSPTree_Old<Vector3D> node) {
                 @SuppressWarnings("unchecked")
-                BoundaryAttribute<Vector3D> attribute =
-                    (BoundaryAttribute<Vector3D>) node.getAttribute();
+                BoundaryAttribute_Old<Vector3D> attribute =
+                    (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
                 if (attribute.getPlusOutside() != null) {
                     checkFacet((SubPlane) attribute.getPlusOutside());
                 }
@@ -650,7 +650,7 @@ public class PolyhedronsSetTest {
             new PolyhedronsSet(x - w, x + w, y - l, y + l, z - w, z + w, TEST_PRECISION);
         PolyhedronsSet zBeam =
             new PolyhedronsSet(x - w, x + w, y - w, y + w, z - l, z + l, TEST_PRECISION);
-        RegionFactory<Vector3D> factory = new RegionFactory<>();
+        RegionFactory_Old<Vector3D> factory = new RegionFactory_Old<>();
 
         // act
         PolyhedronsSet tree = (PolyhedronsSet) factory.union(xBeam, factory.union(yBeam, zBeam));
@@ -682,7 +682,7 @@ public class PolyhedronsSetTest {
             1, 5, 6, 1, 6, 2,
             2, 6, 7, 2, 7, 3,
             4, 0, 3, 4, 3, 7};
-        ArrayList<SubHyperplane<Vector3D>> subHyperplaneList = new ArrayList<>();
+        ArrayList<SubHyperplane_Old<Vector3D>> subHyperplaneList = new ArrayList<>();
         for (int idx = 0; idx < indices.length; idx += 3) {
             int idxA = indices[idx] * 3;
             int idxB = indices[idx + 1] * 3;
@@ -691,8 +691,8 @@ public class PolyhedronsSetTest {
             Vector3D v_2 = Vector3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
             Vector3D v_3 = Vector3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
             Vector3D[] vertices = {v_1, v_2, v_3};
-            Plane polyPlane = Plane.fromPoints(v_1, v_2, v_3, TEST_PRECISION);
-            ArrayList<SubHyperplane<Vector2D>> lines = new ArrayList<>();
+            Plane polyPlane = new Plane(v_1, v_2, v_3, TEST_PRECISION);
+            ArrayList<SubHyperplane_Old<Vector2D>> lines = new ArrayList<>();
 
             Vector2D[] projPts = new Vector2D[vertices.length];
             for (int ptIdx = 0; ptIdx < projPts.length; ptIdx++) {
@@ -704,7 +704,7 @@ public class PolyhedronsSetTest {
                 lineInPlane = new SubLine(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_PRECISION);
                 lines.add(lineInPlane);
             }
-            Region<Vector2D> polyRegion = new PolygonsSet(lines, TEST_PRECISION);
+            Region_Old<Vector2D> polyRegion = new PolygonsSet(lines, TEST_PRECISION);
             SubPlane polygon = new SubPlane(polyPlane, polyRegion);
             subHyperplaneList.add(polygon);
         }
@@ -786,7 +786,7 @@ public class PolyhedronsSetTest {
 
         Assert.assertEquals(8.0, parsed.getSize(), TEST_EPS);
         Assert.assertEquals(24.0, parsed.getBoundarySize(), TEST_EPS);
-        Assert.assertTrue(new RegionFactory<Vector3D>().difference(polyset, parsed).isEmpty());
+        Assert.assertTrue(new RegionFactory_Old<Vector3D>().difference(polyset, parsed).isEmpty());
     }
 
     @Test
@@ -893,7 +893,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testFirstIntersection() {
         // arrange
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 2.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(Vector3D.ZERO, 2.0, TEST_EPS);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         Line xPlus = new Line(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
@@ -945,7 +945,7 @@ public class PolyhedronsSetTest {
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
 
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         Line upDiagonal = new Line(lowerCorner, upperCorner, TEST_PRECISION);
@@ -980,7 +980,7 @@ public class PolyhedronsSetTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
@@ -1009,7 +1009,7 @@ public class PolyhedronsSetTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         Vector3D pt = Vector3D.of(0.5, 0.5, 0);
@@ -1033,7 +1033,7 @@ public class PolyhedronsSetTest {
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
 
-        List<SubHyperplane<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
+        List<SubHyperplane_Old<Vector3D>> boundaries = createBoxBoundaries(center, 1.0, TEST_EPS);
         PolyhedronsSet polySet = new PolyhedronsSet(boundaries, TEST_PRECISION);
 
         Line intoBoxLine = new Line(lowerCorner, upperCorner, TEST_PRECISION);
@@ -1066,7 +1066,7 @@ public class PolyhedronsSetTest {
                                               2 * random.nextDouble() - 1,
                                               2 * random.nextDouble() - 1).normalize();
             Line line = new Line(origin, origin.add(direction), polyset.getPrecision());
-            SubHyperplane<Vector3D> plane = polyset.firstIntersection(origin, line);
+            SubHyperplane_Old<Vector3D> plane = polyset.firstIntersection(origin, line);
             if (plane != null) {
                 Vector3D intersectionPoint = ((Plane)plane.getHyperplane()).intersection(line);
                 double dotProduct = direction.dot(intersectionPoint.subtract(origin));
@@ -1085,7 +1085,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().union(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().union(box, sphere);
 
         // OBJWriter.write("union.obj", result);
 
@@ -1097,7 +1097,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, -0.1, 0.5),
@@ -1105,7 +1105,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 1.6));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.5, 0.5),
                 Vector3D.of(0.9, 0.5, 0.5),
                 Vector3D.of(0.5, 0.1, 0.5),
@@ -1123,7 +1123,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().union(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().union(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
@@ -1132,7 +1132,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1140,7 +1140,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0, 0, -1.1),
                 Vector3D.of(0, 0, 1.1));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(-0.9, 0, 0),
                 Vector3D.of(0.9, 0, 0),
                 Vector3D.of(0, -0.9, 0),
@@ -1160,7 +1160,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().intersection(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().intersection(box, sphere);
 
         // OBJWriter.write("intersection.obj", result);
 
@@ -1171,7 +1171,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, 0.5, 1.0),
                 Vector3D.of(1.1, 0.5, 1.0),
                 Vector3D.of(0.5, -0.1, 1.0),
@@ -1179,7 +1179,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0.5, 0.5, 0.4),
                 Vector3D.of(0.5, 0.5, 1.1));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.5, 0.9),
                 Vector3D.of(0.9, 0.5, 0.9),
                 Vector3D.of(0.5, 0.1, 0.9),
@@ -1197,7 +1197,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().intersection(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().intersection(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
@@ -1206,7 +1206,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1214,7 +1214,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0, 0, -1.1),
                 Vector3D.of(0, 0, 1.1));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(-0.9, 0, 0),
                 Vector3D.of(0.9, 0, 0),
                 Vector3D.of(0, -0.9, 0),
@@ -1238,7 +1238,7 @@ public class PolyhedronsSetTest {
                 0.5, size + 0.5, TEST_PRECISION);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(box1, box2);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().xor(box1, box2);
 
         // OBJWriter.write("xor_twoCubes.obj", result);
 
@@ -1249,18 +1249,18 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, -0.1, -0.1),
                 Vector3D.of(0.75, 0.75, 0.75),
                 Vector3D.of(1.6, 1.6, 1.6));
 
-        checkPoints(Region.Location.BOUNDARY, result,
+        checkPoints(Region_Old.Location.BOUNDARY, result,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(0.5, 0.5, 0.5),
                 Vector3D.of(1, 1, 1),
                 Vector3D.of(1.5, 1.5, 1.5));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.1, 0.1),
                 Vector3D.of(0.4, 0.4, 0.4),
                 Vector3D.of(1.1, 1.1, 1.1),
@@ -1277,7 +1277,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().xor(box, sphere);
 
         // OBJWriter.write("xor_cubeAndSphere.obj", result);
 
@@ -1289,7 +1289,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, -0.1, 0.5),
@@ -1298,7 +1298,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0.5, 0.5, 1.6),
                 Vector3D.of(0.5, 0.5, 0.9));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.5, 0.5),
                 Vector3D.of(0.9, 0.5, 0.5),
                 Vector3D.of(0.5, 0.1, 0.5),
@@ -1315,7 +1315,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().xor(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().xor(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
@@ -1324,7 +1324,7 @@ public class PolyhedronsSetTest {
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1350,7 +1350,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().difference(box, sphere);
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().difference(box, sphere);
 
         // OBJWriter.write("difference.obj", result);
 
@@ -1361,7 +1361,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, 0.5, 1.0),
                 Vector3D.of(1.1, 0.5, 1.0),
                 Vector3D.of(0.5, -0.1, 1.0),
@@ -1369,7 +1369,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 0.6));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.5, 0.4),
                 Vector3D.of(0.9, 0.5, 0.4),
                 Vector3D.of(0.5, 0.1, 0.4),
@@ -1386,7 +1386,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
 
         // act
-        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory<Vector3D>().difference(sphere, sphere.copySelf());
+        PolyhedronsSet result = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().difference(sphere, sphere.copySelf());
 
         // assert
         Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
@@ -1395,7 +1395,7 @@ public class PolyhedronsSetTest {
         Assert.assertTrue(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1422,7 +1422,7 @@ public class PolyhedronsSetTest {
         PolyhedronsSet sphereToRemove1 = createSphere(Vector3D.of(size * 0.5, 0, size * 0.5), radius, 8, 16);
         PolyhedronsSet sphereToRemove2 = createSphere(Vector3D.of(size * 0.5, 1, size * 0.5), radius, 8, 16);
 
-        RegionFactory<Vector3D> factory = new RegionFactory<Vector3D>();
+        RegionFactory_Old<Vector3D> factory = new RegionFactory_Old<Vector3D>();
 
         // act
         PolyhedronsSet result = (PolyhedronsSet) factory.union(box, sphereToAdd);
@@ -1439,7 +1439,7 @@ public class PolyhedronsSetTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        checkPoints(Region.Location.OUTSIDE, result,
+        checkPoints(Region_Old.Location.OUTSIDE, result,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, 0.4, 0.5),
@@ -1447,7 +1447,7 @@ public class PolyhedronsSetTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 1.6));
 
-        checkPoints(Region.Location.INSIDE, result,
+        checkPoints(Region_Old.Location.INSIDE, result,
                 Vector3D.of(0.1, 0.5, 0.1),
                 Vector3D.of(0.9, 0.5, 0.1),
                 Vector3D.of(0.5, 0.4, 0.1),
@@ -1474,7 +1474,7 @@ public class PolyhedronsSetTest {
     public void testProjectToBoundary_invertedRegion() {
         // arrange
         PolyhedronsSet polySet = new PolyhedronsSet(0, 1, 0, 1, 0, 1, TEST_PRECISION);
-        polySet = (PolyhedronsSet) new RegionFactory<Vector3D>().getComplement(polySet);
+        polySet = (PolyhedronsSet) new RegionFactory_Old<Vector3D>().getComplement(polySet);
 
         // act/assert
         checkProjectToBoundary(polySet, Vector3D.of(0.4, 0.5, 0.5),
@@ -1487,7 +1487,7 @@ public class PolyhedronsSetTest {
 
     private void checkProjectToBoundary(PolyhedronsSet poly, Vector3D toProject,
             Vector3D expectedPoint, double expectedOffset) {
-        BoundaryProjection<Vector3D> proj = poly.projectToBoundary(toProject);
+        BoundaryProjection_Old<Vector3D> proj = poly.projectToBoundary(toProject);
 
         EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(expectedPoint, proj.getProjected(), TEST_EPS);
@@ -1505,14 +1505,14 @@ public class PolyhedronsSetTest {
         }
     }
 
-    private void checkPoints(Region.Location expected, PolyhedronsSet poly, Vector3D ... points) {
+    private void checkPoints(Region_Old.Location expected, PolyhedronsSet poly, Vector3D ... points) {
         for (int i = 0; i < points.length; ++i) {
             Assert.assertEquals("Incorrect location for " + points[i], expected, poly.checkPoint(points[i]));
         }
     }
 
-    private List<SubHyperplane<Vector3D>> createBoxBoundaries(Vector3D center, double size, double eps) {
-        List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
+    private List<SubHyperplane_Old<Vector3D>> createBoxBoundaries(Vector3D center, double size, double eps) {
+        List<SubHyperplane_Old<Vector3D>> boundaries = new ArrayList<>();
 
         double offset = size * 0.5;
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
@@ -1625,10 +1625,10 @@ public class PolyhedronsSetTest {
             }
         }
 
-        return (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(planes.toArray(new Plane[0]));
+        return (PolyhedronsSet) new RegionFactory_Old<Vector3D>().buildConvex(planes.toArray(new Plane[0]));
     }
 
-    private void assertSubPlaneNormal(Vector3D expectedNormal, SubHyperplane<Vector3D> sub) {
+    private void assertSubPlaneNormal(Vector3D expectedNormal, SubHyperplane_Old<Vector3D> sub) {
         Vector3D norm = ((Plane) sub.getHyperplane()).getNormal();
         EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, norm, TEST_EPS);
     }

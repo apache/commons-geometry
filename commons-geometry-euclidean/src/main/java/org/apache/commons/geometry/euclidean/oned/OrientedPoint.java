@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Transform;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.
@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
+public final class OrientedPoint implements Hyperplane_Old<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -95,11 +95,11 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         return new OrientedPoint(location, !positiveFacing, precision);
     }
 
-    /** Return a new instance transformed by the given {@link Transform}.
+    /** Return a new instance transformed by the given {@link Transform_Old}.
      * @param transform transform object
      * @return a transformed instance
      */
-    public OrientedPoint transform(final Transform<Vector1D, Vector1D> transform) {
+    public OrientedPoint transform(final Transform_Old<Vector1D, Vector1D> transform) {
         Vector1D transformedLocation = transform.apply(location);
         Vector1D transformedPlusDirPt = transform.apply(location.add(getDirection()));
 
@@ -131,9 +131,9 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * <p>Since this class represent zero dimension spaces which does
      * not have lower dimension sub-spaces, this method returns a dummy
      * implementation of a {@link
-     * org.apache.commons.geometry.core.partitioning.SubHyperplane SubHyperplane}.
+     * org.apache.commons.geometry.core.partitioning.SubHyperplane_Old SubHyperplane}.
      * This implementation is only used to allow the {@link
-     * org.apache.commons.geometry.core.partitioning.SubHyperplane
+     * org.apache.commons.geometry.core.partitioning.SubHyperplane_Old
      * SubHyperplane} class implementation to work properly, it should
      * <em>not</em> be used otherwise.</p>
      * @return a dummy sub hyperplane
@@ -154,7 +154,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Vector1D> other) {
+    public boolean sameOrientationAs(final Hyperplane_Old<Vector1D> other) {
         return positiveFacing == ((OrientedPoint) other).positiveFacing;
     }
 

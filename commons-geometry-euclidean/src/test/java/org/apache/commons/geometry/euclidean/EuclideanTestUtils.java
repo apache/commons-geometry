@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
 import org.apache.commons.geometry.core.partitioning.TreePrinter;
@@ -221,7 +221,7 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Vector1D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane_Old<Vector1D> hyperplane) {
                 final OrientedPoint h = (OrientedPoint) hyperplane;
                 getFormatter().format("%22.15e %b", h.getLocation().getX(), h.isPositiveFacing());
             }
@@ -242,7 +242,7 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Vector2D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane_Old<Vector2D> hyperplane) {
                 final Line h = (Line) hyperplane;
                 final Vector2D p = h.toSpace(Vector1D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e",
@@ -265,7 +265,7 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            protected void formatHyperplane(final Hyperplane<Vector3D> hyperplane) {
+            protected void formatHyperplane(final Hyperplane_Old<Vector3D> hyperplane) {
                 final Plane h = (Plane) hyperplane;
                 final Vector3D p = h.toSpace(Vector2D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e %22.15e %22.15e %22.15e",

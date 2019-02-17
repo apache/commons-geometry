@@ -16,21 +16,21 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
 
 /** This class represents sub-hyperplane for {@link LimitAngle}.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class SubLimitAngle extends AbstractSubHyperplane<S1Point, S1Point> {
+public class SubLimitAngle extends AbstractSubHyperplane_Old<S1Point, S1Point> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubLimitAngle(final Hyperplane<S1Point> hyperplane,
-                         final Region<S1Point> remainingRegion) {
+    public SubLimitAngle(final Hyperplane_Old<S1Point> hyperplane,
+                         final Region_Old<S1Point> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
 
@@ -48,14 +48,14 @@ public class SubLimitAngle extends AbstractSubHyperplane<S1Point, S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<S1Point, S1Point> buildNew(final Hyperplane<S1Point> hyperplane,
-                                                                 final Region<S1Point> remainingRegion) {
+    protected AbstractSubHyperplane_Old<S1Point, S1Point> buildNew(final Hyperplane_Old<S1Point> hyperplane,
+                                                                 final Region_Old<S1Point> remainingRegion) {
         return new SubLimitAngle(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<S1Point> split(final Hyperplane<S1Point> hyperplane) {
+    public SplitSubHyperplane<S1Point> split(final Hyperplane_Old<S1Point> hyperplane) {
         final double global = hyperplane.getOffset(((LimitAngle) getHyperplane()).getLocation());
         return (global < -1.0e-10) ?
                                     new SplitSubHyperplane<>(null, this) :

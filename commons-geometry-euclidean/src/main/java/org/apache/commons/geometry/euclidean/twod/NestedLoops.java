@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 
@@ -50,7 +50,7 @@ class NestedLoops {
     private List<NestedLoops> surrounded;
 
     /** Polygon enclosing a finite region. */
-    private Region<Vector2D> polygon;
+    private Region_Old<Vector2D> polygon;
 
     /** Indicator for original loop orientation. */
     private boolean originalIsClockwise;
@@ -88,7 +88,7 @@ class NestedLoops {
         this.precision  = precision;
 
         // build the polygon defined by the loop
-        final ArrayList<SubHyperplane<Vector2D>> edges = new ArrayList<>();
+        final ArrayList<SubHyperplane_Old<Vector2D>> edges = new ArrayList<>();
         Vector2D current = loop[loop.length - 1];
         for (int i = 0; i < loop.length; ++i) {
             final Vector2D previous = current;
@@ -104,7 +104,7 @@ class NestedLoops {
 
         // ensure the polygon encloses a finite region of the plane
         if (Double.isInfinite(polygon.getSize())) {
-            polygon = new RegionFactory<Vector2D>().getComplement(polygon);
+            polygon = new RegionFactory_Old<Vector2D>().getComplement(polygon);
             originalIsClockwise = false;
         } else {
             originalIsClockwise = true;
@@ -146,7 +146,7 @@ class NestedLoops {
         }
 
         // we should be separate from the remaining children
-        RegionFactory<Vector2D> factory = new RegionFactory<>();
+        RegionFactory_Old<Vector2D> factory = new RegionFactory_Old<>();
         for (final NestedLoops child : surrounded) {
             if (!factory.intersection(node.polygon, child.polygon).isEmpty()) {
                 throw new IllegalArgumentException("Some outline boundary loops cross each other");

@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -60,9 +60,9 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -88,9 +88,9 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -110,12 +110,12 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.INSIDE, set, 10.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.INSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -135,12 +135,12 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 10.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -160,13 +160,13 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, -2.0);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 10.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, -2.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -186,17 +186,17 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(1.0, 1.0, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 1.0);
-        assertLocation(Region.Location.OUTSIDE, set, 2.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 1.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 2.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_wholeNumberLine() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
 
         // act
         IntervalsSet set = new IntervalsSet(boundaries, TEST_PRECISION);
@@ -219,15 +219,15 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_openInterval_positive() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(9.0, false));
 
         // act
@@ -245,18 +245,18 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.INSIDE, set, 10.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.INSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_openInterval_negative() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(9.0, true));
 
         // act
@@ -274,18 +274,18 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 10.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_singleClosedInterval() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(-1.0, false));
         boundaries.add(subOrientedPoint(9.0, true));
 
@@ -304,19 +304,19 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, -2.0);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 10.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, -2.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_multipleClosedIntervals() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(-1.0, false));
         boundaries.add(subOrientedPoint(2.0, true));
         boundaries.add(subOrientedPoint(5.0, false));
@@ -338,21 +338,21 @@ public class IntervalsSetTest {
         assertInterval(-1.0, 2.0, intervals.get(0), TEST_EPS);
         assertInterval(5.0, 9.0, intervals.get(1), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.OUTSIDE, set, -2.0);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.OUTSIDE, set, 3.0);
-        assertLocation(Region.Location.INSIDE, set, 6.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 10.0);
-        assertLocation(Region.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.OUTSIDE, set, -2.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 3.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 6.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 10.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
     public void testFromBoundaries_mixedOpenAndClosedIntervals() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(-2.0, true));
         boundaries.add(subOrientedPoint(-1.0, false));
         boundaries.add(subOrientedPoint(2.0, true));
@@ -378,17 +378,17 @@ public class IntervalsSetTest {
         assertInterval(5.0, 9.0, intervals.get(2), TEST_EPS);
         assertInterval(10.0, Double.POSITIVE_INFINITY, intervals.get(3), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
-        assertLocation(Region.Location.INSIDE, set, -3);
-        assertLocation(Region.Location.OUTSIDE, set, -1.5);
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.OUTSIDE, set, 3.0);
-        assertLocation(Region.Location.INSIDE, set, 6.0);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 - 1e-16);
-        assertLocation(Region.Location.BOUNDARY, set, 9.0 + 1e-16);
-        assertLocation(Region.Location.OUTSIDE, set, 9.5);
-        assertLocation(Region.Location.INSIDE, set, 11.0);
-        assertLocation(Region.Location.INSIDE, set, Double.POSITIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.NEGATIVE_INFINITY);
+        assertLocation(Region_Old.Location.INSIDE, set, -3);
+        assertLocation(Region_Old.Location.OUTSIDE, set, -1.5);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 3.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 6.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 - 1e-16);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 9.0 + 1e-16);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 9.5);
+        assertLocation(Region_Old.Location.INSIDE, set, 11.0);
+        assertLocation(Region_Old.Location.INSIDE, set, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -398,7 +398,7 @@ public class IntervalsSetTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
         double first = 1.0;
         double second = 1.0 + eps;
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(first, true, precision));
         boundaries.add(subOrientedPoint(second, false, precision));
 
@@ -417,9 +417,9 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, first, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.INSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 1.0);
-        assertLocation(Region.Location.OUTSIDE, set, 2.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 1.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 2.0);
     }
 
     @Test
@@ -429,7 +429,7 @@ public class IntervalsSetTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
         double first = 1.0;
         double second = 1.0 - 1e-4;
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(first, false, precision));
         boundaries.add(subOrientedPoint(second, true, precision));
 
@@ -448,15 +448,15 @@ public class IntervalsSetTest {
         Assert.assertEquals(1, intervals.size());
         assertInterval(first, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, 0.0);
-        assertLocation(Region.Location.BOUNDARY, set, 1.0);
-        assertLocation(Region.Location.INSIDE, set, 2.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 1.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 2.0);
     }
 
     @Test
     public void testProjectToBoundary() {
         // arrange
-        List<SubHyperplane<Vector1D>> boundaries = new ArrayList<>();
+        List<SubHyperplane_Old<Vector1D>> boundaries = new ArrayList<>();
         boundaries.add(subOrientedPoint(-2.0, true));
         boundaries.add(subOrientedPoint(-1.0, false));
         boundaries.add(subOrientedPoint(2.0, true));
@@ -499,11 +499,11 @@ public class IntervalsSetTest {
         IntervalsSet set = new IntervalsSet(2.3, 5.7, TEST_PRECISION);
         Assert.assertEquals(3.4, set.getSize(), 1.0e-10);
         Assert.assertEquals(4.0, set.getBarycenter().getX(), 1.0e-10);
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(Vector1D.of(2.3)));
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(Vector1D.of(5.7)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(Vector1D.of(1.2)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(Vector1D.of(8.7)));
-        Assert.assertEquals(Region.Location.INSIDE,   set.checkPoint(Vector1D.of(3.0)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(Vector1D.of(2.3)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(Vector1D.of(5.7)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(Vector1D.of(1.2)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(Vector1D.of(8.7)));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   set.checkPoint(Vector1D.of(3.0)));
         Assert.assertEquals(2.3, set.getInf(), 1.0e-10);
         Assert.assertEquals(5.7, set.getSup(), 1.0e-10);
     }
@@ -511,17 +511,17 @@ public class IntervalsSetTest {
     @Test
     public void testInfinite() {
         IntervalsSet set = new IntervalsSet(9.0, Double.POSITIVE_INFINITY, TEST_PRECISION);
-        Assert.assertEquals(Region.Location.BOUNDARY, set.checkPoint(Vector1D.of(9.0)));
-        Assert.assertEquals(Region.Location.OUTSIDE,  set.checkPoint(Vector1D.of(8.4)));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(Vector1D.of(9.0)));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  set.checkPoint(Vector1D.of(8.4)));
         for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region.Location.INSIDE,
+            Assert.assertEquals(Region_Old.Location.INSIDE,
                                 set.checkPoint(Vector1D.of(Math.pow(10.0, e))));
         }
         Assert.assertTrue(Double.isInfinite(set.getSize()));
         Assert.assertEquals(9.0, set.getInf(), 1.0e-10);
         Assert.assertTrue(Double.isInfinite(set.getSup()));
 
-        set = (IntervalsSet) new RegionFactory<Vector1D>().getComplement(set);
+        set = (IntervalsSet) new RegionFactory_Old<Vector1D>().getComplement(set);
         Assert.assertEquals(9.0, set.getSup(), 1.0e-10);
         Assert.assertTrue(Double.isInfinite(set.getInf()));
 
@@ -530,7 +530,7 @@ public class IntervalsSetTest {
     @Test
     public void testBooleanOperations() {
         // arrange
-        RegionFactory<Vector1D> factory = new RegionFactory<>();
+        RegionFactory_Old<Vector1D> factory = new RegionFactory_Old<>();
 
         // act
         IntervalsSet set = (IntervalsSet)
@@ -546,15 +546,15 @@ public class IntervalsSetTest {
         Assert.assertEquals(5.0, set.getSize(), TEST_EPS);
         Assert.assertEquals(5.9, set.getBarycenter().getX(), TEST_EPS);
 
-        assertLocation(Region.Location.OUTSIDE, set, 0.0);
-        assertLocation(Region.Location.OUTSIDE, set, 4.0);
-        assertLocation(Region.Location.OUTSIDE, set, 8.0);
-        assertLocation(Region.Location.OUTSIDE, set, 12.0);
-        assertLocation(Region.Location.INSIDE, set, 1.2);
-        assertLocation(Region.Location.INSIDE, set, 5.9);
-        assertLocation(Region.Location.INSIDE, set, 9.01);
-        assertLocation(Region.Location.BOUNDARY, set, 5.0);
-        assertLocation(Region.Location.BOUNDARY, set, 11.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 0.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 4.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 8.0);
+        assertLocation(Region_Old.Location.OUTSIDE, set, 12.0);
+        assertLocation(Region_Old.Location.INSIDE, set, 1.2);
+        assertLocation(Region_Old.Location.INSIDE, set, 5.9);
+        assertLocation(Region_Old.Location.INSIDE, set, 9.01);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 5.0);
+        assertLocation(Region_Old.Location.BOUNDARY, set, 11.0);
 
         List<Interval> list = set.asList();
         Assert.assertEquals(3, list.size());
@@ -563,7 +563,7 @@ public class IntervalsSetTest {
         assertInterval(9.0, 11.0, list.get(2), TEST_EPS);
     }
 
-    private void assertLocation(Region.Location location, IntervalsSet set, double pt) {
+    private void assertLocation(Region_Old.Location location, IntervalsSet set, double pt) {
         Assert.assertEquals(location, set.checkPoint(Vector1D.of(pt)));
     }
 
@@ -574,7 +574,7 @@ public class IntervalsSetTest {
 
     private void assertProjection(Vector1D expectedProjection, double expectedOffset,
             IntervalsSet set, Vector1D toProject) {
-        BoundaryProjection<Vector1D> proj = set.projectToBoundary(toProject);
+        BoundaryProjection_Old<Vector1D> proj = set.projectToBoundary(toProject);
 
         EuclideanTestUtils.assertCoordinatesEqual(toProject, proj.getOriginal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(expectedProjection, proj.getProjected(), TEST_EPS);

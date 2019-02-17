@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
@@ -62,23 +62,23 @@ public class IntervalTest {
         Interval interval = new Interval(2.3, 5.7);
 
         // act/assert
-        Assert.assertEquals(Region.Location.OUTSIDE,  interval.checkPoint(1.2, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(1.2, TEST_TOLERANCE));
 
-        Assert.assertEquals(Region.Location.OUTSIDE, interval.checkPoint(2.2, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(2.3, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(2.4, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(2.2, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.3, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(2.4, TEST_TOLERANCE));
 
-        Assert.assertEquals(Region.Location.INSIDE,   interval.checkPoint(3.0, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.INSIDE,   interval.checkPoint(3.0, TEST_TOLERANCE));
 
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(5.6, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(5.7, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.OUTSIDE, interval.checkPoint(5.8, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(5.6, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(5.7, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(5.8, TEST_TOLERANCE));
 
-        Assert.assertEquals(Region.Location.OUTSIDE,  interval.checkPoint(8.7, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(8.7, TEST_TOLERANCE));
 
-        Assert.assertEquals(Region.Location.OUTSIDE, interval.checkPoint(Double.NEGATIVE_INFINITY, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.OUTSIDE, interval.checkPoint(Double.POSITIVE_INFINITY, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(Double.NaN, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(Double.NEGATIVE_INFINITY, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(Double.POSITIVE_INFINITY, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(Double.NaN, TEST_TOLERANCE));
     }
 
     @Test
@@ -87,17 +87,17 @@ public class IntervalTest {
         Interval interval = new Interval(2.3, 5.7);
 
         // act/assert
-        Assert.assertEquals(Region.Location.OUTSIDE, interval.checkPoint(2.29, 1e-3));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(2.29, 1e-2));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(2.29, 1e-1));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(2.29, 1));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(2.29, 2));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(2.29, 1e-3));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1e-2));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1e-1));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 2));
 
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(4.0, 1e-3));
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(4.0, 1e-2));
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(4.0, 1e-1));
-        Assert.assertEquals(Region.Location.INSIDE, interval.checkPoint(4.0, 1));
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(4.0, 2));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-3));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-2));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-1));
+        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(4.0, 2));
     }
 
     @Test
@@ -106,10 +106,10 @@ public class IntervalTest {
         Interval interval = new Interval(Double.NEGATIVE_INFINITY, 9);
 
         // assert
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.OUTSIDE,  interval.checkPoint(9.4, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(9.4, TEST_TOLERANCE));
         for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region.Location.INSIDE,
+            Assert.assertEquals(Region_Old.Location.INSIDE,
                                 interval.checkPoint(-1 * Math.pow(10.0, e), TEST_TOLERANCE));
         }
         EuclideanTestUtils.assertPositiveInfinity(interval.getSize());
@@ -123,10 +123,10 @@ public class IntervalTest {
         Interval interval = new Interval(9.0, Double.POSITIVE_INFINITY);
 
         // assert
-        Assert.assertEquals(Region.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
-        Assert.assertEquals(Region.Location.OUTSIDE,  interval.checkPoint(8.4, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
+        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(8.4, TEST_TOLERANCE));
         for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region.Location.INSIDE,
+            Assert.assertEquals(Region_Old.Location.INSIDE,
                                 interval.checkPoint(Math.pow(10.0, e), TEST_TOLERANCE));
         }
         EuclideanTestUtils.assertPositiveInfinity(interval.getSize());
@@ -141,7 +141,7 @@ public class IntervalTest {
 
         // assert
         for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region.Location.INSIDE,
+            Assert.assertEquals(Region_Old.Location.INSIDE,
                                 interval.checkPoint(Math.pow(10.0, e), TEST_TOLERANCE));
         }
         EuclideanTestUtils.assertPositiveInfinity(interval.getSize());

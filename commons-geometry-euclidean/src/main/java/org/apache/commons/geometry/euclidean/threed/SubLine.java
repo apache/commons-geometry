@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
