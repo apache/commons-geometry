@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
  * <p>The most prominent place where hyperplane appears in space
  * partitioning is as cutters. Each partitioning node in a {@link
- * BSPTree BSP tree} has a cut {@link SubHyperplane sub-hyperplane}
+ * BSPTree_Old BSP tree} has a cut {@link SubHyperplane sub-hyperplane}
  * which is either an hyperplane or a part of an hyperplane. In an
  * n-dimensions Euclidean space, an hyperplane is an (n-1)-dimensions
  * hyperplane (for example a traditional plane in the 3D Euclidean

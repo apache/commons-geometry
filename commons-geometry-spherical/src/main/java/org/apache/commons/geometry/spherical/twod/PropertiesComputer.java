@@ -21,14 +21,14 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Visitor computing geometrical properties.
  */
-class PropertiesComputer implements BSPTreeVisitor<S2Point> {
+class PropertiesComputer implements BSPTreeVisitor_Old<S2Point> {
 
     /** Precision context used to determine floating point equality. */
     private final DoublePrecisionContext precision;
@@ -54,19 +54,19 @@ class PropertiesComputer implements BSPTreeVisitor<S2Point> {
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<S2Point> node) {
+    public Order visitOrder(final BSPTree_Old<S2Point> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<S2Point> node) {
+    public void visitInternalNode(final BSPTree_Old<S2Point> node) {
         // nothing to do here
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<S2Point> node) {
+    public void visitLeafNode(final BSPTree_Old<S2Point> node) {
         if ((Boolean) node.getAttribute()) {
 
             // transform this inside leaf cell into a simple convex polygon

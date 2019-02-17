@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.Point;
 /** Dumping visitor.
  * @param <P> Point type defining the space
  */
-public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P> {
+public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
     /** Builder for the string representation of the dumped tree. */
     private final StringBuilder dump;
 
@@ -65,13 +65,13 @@ public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<P> node) {
+    public Order visitOrder(final BSPTree_Old<P> node) {
         return Order.SUB_MINUS_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<P> node) {
+    public void visitInternalNode(final BSPTree_Old<P> node) {
         formatter.format("%s %s internal ", prefix, type(node));
         formatHyperplane(node.getCut().getHyperplane());
         formatter.format("%n");
@@ -80,10 +80,10 @@ public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<P> node) {
+    public void visitLeafNode(final BSPTree_Old<P> node) {
         formatter.format("%s %s leaf %s%n",
                          prefix, type(node), node.getAttribute());
-        for (BSPTree<P> n = node;
+        for (BSPTree_Old<P> n = node;
              n.getParent() != null && n == n.getParent().getPlus();
              n = n.getParent()) {
             prefix = prefix.substring(0, prefix.length() - 2);
@@ -95,7 +95,7 @@ public abstract class TreeDumper<P extends Point<P>> implements BSPTreeVisitor<P
      * @return "plus " or "minus" depending on the node being the plus or minus
      * child of its parent ("plus " is arbitrarily returned for the root node)
      */
-    private String type(final BSPTree<P> node) {
+    private String type(final BSPTree_Old<P> node) {
         return (node.getParent() != null && node == node.getParent().getMinus()) ? "minus" : "plus ";
     }
 }

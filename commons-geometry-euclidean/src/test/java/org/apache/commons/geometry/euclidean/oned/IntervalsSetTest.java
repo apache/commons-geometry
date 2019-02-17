@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
@@ -50,7 +50,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        BSPTree<Vector1D> tree = set.getTree(true);
+        BSPTree_Old<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
         Assert.assertNull(tree.getCut());
         Assert.assertNull(tree.getMinus());
@@ -78,7 +78,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        BSPTree<Vector1D> tree = set.getTree(true);
+        BSPTree_Old<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
         Assert.assertNull(tree.getCut());
         Assert.assertNull(tree.getMinus());
@@ -209,7 +209,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        BSPTree<Vector1D> tree = set.getTree(true);
+        BSPTree_Old<Vector1D> tree = set.getTree(true);
         Assert.assertEquals(Boolean.TRUE, tree.getAttribute());
         Assert.assertNull(tree.getCut());
         Assert.assertNull(tree.getMinus());

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
 import org.apache.commons.geometry.core.partitioning.TreeDumper;
@@ -350,46 +350,46 @@ public class EuclideanTestUtils {
     }
 
     /**
-     * Prints a string representation of the given 1D {@link BSPTree} to the
+     * Prints a string representation of the given 1D {@link BSPTree_Old} to the
      * console. This is intended for quick debugging of small trees.
      *
      * @param tree
      */
-    public static void printTree1D(BSPTree<Vector1D> tree) {
+    public static void printTree1D(BSPTree_Old<Vector1D> tree) {
         TreePrinter1D printer = new TreePrinter1D();
         System.out.println(printer.writeAsString(tree));
     }
 
     /**
-     * Prints a string representation of the given 2D {@link BSPTree} to the
+     * Prints a string representation of the given 2D {@link BSPTree_Old} to the
      * console. This is intended for quick debugging of small trees.
      *
      * @param tree
      */
-    public static void printTree2D(BSPTree<Vector2D> tree) {
+    public static void printTree2D(BSPTree_Old<Vector2D> tree) {
         TreePrinter2D printer = new TreePrinter2D();
         System.out.println(printer.writeAsString(tree));
     }
 
     /**
-     * Prints a string representation of the given 3D {@link BSPTree} to the
+     * Prints a string representation of the given 3D {@link BSPTree_Old} to the
      * console. This is intended for quick debugging of small trees.
      *
      * @param tree
      */
-    public static void printTree3D(BSPTree<Vector3D> tree) {
+    public static void printTree3D(BSPTree_Old<Vector3D> tree) {
         TreePrinter3D printer = new TreePrinter3D();
         System.out.println(printer.writeAsString(tree));
     }
 
     /**
-     * Class for creating string representations of 1D {@link BSPTree}s.
+     * Class for creating string representations of 1D {@link BSPTree_Old}s.
      */
     public static class TreePrinter1D extends TreePrinter<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Vector1D> node) {
+        protected void writeInternalNode(BSPTree_Old<Vector1D> node) {
             SubOrientedPoint cut = (SubOrientedPoint) node.getCut();
 
             OrientedPoint hyper = (OrientedPoint) cut.getHyperplane();
@@ -422,13 +422,13 @@ public class EuclideanTestUtils {
     }
 
     /**
-     * Class for creating string representations of 2D {@link BSPTree}s.
+     * Class for creating string representations of 2D {@link BSPTree_Old}s.
      */
     public static class TreePrinter2D extends TreePrinter<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Vector2D> node) {
+        protected void writeInternalNode(BSPTree_Old<Vector2D> node) {
             SubLine cut = (SubLine) node.getCut();
             Line line = (Line) cut.getHyperplane();
             IntervalsSet remainingRegion = (IntervalsSet) cut.getRemainingRegion();
@@ -451,13 +451,13 @@ public class EuclideanTestUtils {
     }
 
     /**
-     * Class for creating string representations of 3D {@link BSPTree}s.
+     * Class for creating string representations of 3D {@link BSPTree_Old}s.
      */
     public static class TreePrinter3D extends TreePrinter<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
-        protected void writeInternalNode(BSPTree<Vector3D> node) {
+        protected void writeInternalNode(BSPTree_Old<Vector3D> node) {
             SubPlane cut = (SubPlane) node.getCut();
             Plane plane = (Plane) cut.getHyperplane();
             PolygonsSet polygon = (PolygonsSet) cut.getRemainingRegion();

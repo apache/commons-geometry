@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.AbstractRegion;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -55,9 +55,9 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @param precision precision context used to compare floating point values
      */
     public SphericalPolygonsSet(final Vector3D pole, final DoublePrecisionContext precision) {
-        super(new BSPTree<>(new Circle(pole, precision).wholeHyperplane(),
-                                    new BSPTree<S2Point>(Boolean.FALSE),
-                                    new BSPTree<S2Point>(Boolean.TRUE),
+        super(new BSPTree_Old<>(new Circle(pole, precision).wholeHyperplane(),
+                                    new BSPTree_Old<S2Point>(Boolean.FALSE),
+                                    new BSPTree_Old<S2Point>(Boolean.TRUE),
                                     null),
               precision);
     }
@@ -85,7 +85,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @param tree inside/outside BSP tree representing the region
      * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final BSPTree<S2Point> tree, final DoublePrecisionContext precision) {
+    public SphericalPolygonsSet(final BSPTree_Old<S2Point> tree, final DoublePrecisionContext precision) {
         super(tree, precision);
     }
 
@@ -186,13 +186,13 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree<S2Point> verticesToTree(final DoublePrecisionContext precision,
+    private static BSPTree_Old<S2Point> verticesToTree(final DoublePrecisionContext precision,
                                                     final S2Point ... vertices) {
 
         final int n = vertices.length;
         if (n == 0) {
             // the tree represents the whole space
-            return new BSPTree<>(Boolean.TRUE);
+            return new BSPTree_Old<>(Boolean.TRUE);
         }
 
         // build the vertices
@@ -235,7 +235,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
 
         // build the tree top-down
-        final BSPTree<S2Point> tree = new BSPTree<>();
+        final BSPTree_Old<S2Point> tree = new BSPTree_Old<>();
         insertEdges(precision, tree, edges);
 
         return tree;
@@ -250,7 +250,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
      * (excluding edges not belonging to the cell defined by this node)
      */
     private static void insertEdges(final DoublePrecisionContext precision,
-                                    final BSPTree<S2Point> node,
+                                    final BSPTree_Old<S2Point> node,
                                     final List<Edge> edges) {
 
         // find an edge with an hyperplane that can be inserted in the node
@@ -266,7 +266,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         if (inserted == null) {
             // no suitable edge was found, the node remains a leaf node
             // we need to set its inside/outside boolean indicator
-            final BSPTree<S2Point> parent = node.getParent();
+            final BSPTree_Old<S2Point> parent = node.getParent();
             if (parent == null || node == parent.getMinus()) {
                 node.setAttribute(Boolean.TRUE);
             } else {
@@ -301,7 +301,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    public SphericalPolygonsSet buildNew(final BSPTree<S2Point> tree) {
+    public SphericalPolygonsSet buildNew(final BSPTree_Old<S2Point> tree) {
         return new SphericalPolygonsSet(tree, getPrecision());
     }
 
@@ -312,7 +312,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
     @Override
     protected void computeGeometricalProperties() {
 
-        final BSPTree<S2Point> tree = getTree(true);
+        final BSPTree_Old<S2Point> tree = getTree(true);
 
         if (tree.getCut() == null) {
 
@@ -370,7 +370,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
             } else {
 
                 // sort the arcs according to their start point
-                final BSPTree<S2Point> root = getTree(true);
+                final BSPTree_Old<S2Point> root = getTree(true);
                 final EdgesBuilder visitor = new EdgesBuilder(root, getPrecision());
                 root.visit(visitor);
                 final List<Edge> edges = visitor.getEdges();
@@ -468,7 +468,7 @@ public class SphericalPolygonsSet extends AbstractRegion<S2Point, S1Point> {
         }
 
         // as the polygons is neither empty nor full, it has some boundaries and cut hyperplanes
-        final BSPTree<S2Point> root = getTree(false);
+        final BSPTree_Old<S2Point> root = getTree(false);
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();

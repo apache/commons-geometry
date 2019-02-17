@@ -27,17 +27,17 @@ import org.apache.commons.geometry.core.Point;
  *
  * @param <P> Point type defining the space.
  */
-class BoundaryBuilder<P extends Point<P>> implements BSPTreeVisitor<P> {
+class BoundaryBuilder<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(BSPTree<P> node) {
+    public Order visitOrder(BSPTree_Old<P> node) {
         return Order.PLUS_MINUS_SUB;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(BSPTree<P> node) {
+    public void visitInternalNode(BSPTree_Old<P> node) {
 
         SubHyperplane<P> plusOutside = null;
         SubHyperplane<P> plusInside  = null;
@@ -81,7 +81,7 @@ class BoundaryBuilder<P extends Point<P>> implements BSPTreeVisitor<P> {
 
         if (splitters != null) {
             // the parent nodes are natural splitters for boundary sub-hyperplanes
-            for (BSPTree<P> up = node.getParent(); up != null; up = up.getParent()) {
+            for (BSPTree_Old<P> up = node.getParent(); up != null; up = up.getParent()) {
                 splitters.add(up);
             }
         }
@@ -93,7 +93,7 @@ class BoundaryBuilder<P extends Point<P>> implements BSPTreeVisitor<P> {
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(BSPTree<P> node) {
+    public void visitLeafNode(BSPTree_Old<P> node) {
     }
 
 }

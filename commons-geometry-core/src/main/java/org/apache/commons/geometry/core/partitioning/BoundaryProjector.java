@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.partitioning.Region.Location;
  * @param <P> Point type defining the space
  * @param <S> Point type defining the sub-space
  */
-class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTreeVisitor<P> {
+class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTreeVisitor_Old<P> {
 
     /** Original point. */
     private final P original;
@@ -35,7 +35,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
     private P projected;
 
     /** Leaf node closest to the test point. */
-    private BSPTree<P> leaf;
+    private BSPTree_Old<P> leaf;
 
     /** Current offset. */
     private double offset;
@@ -52,7 +52,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree<P> node) {
+    public Order visitOrder(final BSPTree_Old<P> node) {
         // we want to visit the tree so that the first encountered
         // leaf is the one closest to the test point
         if (node.getCut().getHyperplane().getOffset(original) <= 0) {
@@ -64,7 +64,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree<P> node) {
+    public void visitInternalNode(final BSPTree_Old<P> node) {
 
         // project the point on the cut sub-hyperplane
         final Hyperplane<P> hyperplane = node.getCut().getHyperplane();
@@ -111,7 +111,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree<P> node) {
+    public void visitLeafNode(final BSPTree_Old<P> node) {
         if (leaf == null) {
             // this is the first leaf we visit,
             // it is the closest one to the original point
@@ -135,7 +135,7 @@ class BoundaryProjector<P extends Point<P>, S extends Point<S>> implements BSPTr
      * @param node internal node
      * @return regions in the node sub-hyperplane
      */
-    private List<Region<S>> boundaryRegions(final BSPTree<P> node) {
+    private List<Region<S>> boundaryRegions(final BSPTree_Old<P> node) {
 
         final List<Region<S>> regions = new ArrayList<>(2);
 

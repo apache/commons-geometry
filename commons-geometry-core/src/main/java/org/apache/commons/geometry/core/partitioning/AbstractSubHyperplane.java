@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.Point;
  * <p>sub-hyperplanes are obtained when parts of an {@link
  * Hyperplane hyperplane} are chopped off by other hyperplanes that
  * intersect it. The remaining part is a convex region. Such objects
- * appear in {@link BSPTree BSP trees} as the intersection of a cut
+ * appear in {@link BSPTree_Old BSP trees} as the intersection of a cut
  * hyperplane with the convex region which it splits, the chopping
  * hyperplanes are the cut hyperplanes closer to the tree root.</p>
 
@@ -114,19 +114,19 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
         final Hyperplane<P> tHyperplane = transform.apply(hyperplane);
 
         // transform the tree, except for boundary attribute splitters
-        final Map<BSPTree<S>, BSPTree<S>> map = new HashMap<>();
-        final BSPTree<S> tTree =
+        final Map<BSPTree_Old<S>, BSPTree_Old<S>> map = new HashMap<>();
+        final BSPTree_Old<S> tTree =
             recurseTransform(remainingRegion.getTree(false), tHyperplane, transform, map);
 
         // set up the boundary attributes splitters
-        for (final Map.Entry<BSPTree<S>, BSPTree<S>> entry : map.entrySet()) {
+        for (final Map.Entry<BSPTree_Old<S>, BSPTree_Old<S>> entry : map.entrySet()) {
             if (entry.getKey().getCut() != null) {
                 @SuppressWarnings("unchecked")
                 BoundaryAttribute<S> original = (BoundaryAttribute<S>) entry.getKey().getAttribute();
                 if (original != null) {
                     @SuppressWarnings("unchecked")
                     BoundaryAttribute<S> transformed = (BoundaryAttribute<S>) entry.getValue().getAttribute();
-                    for (final BSPTree<S> splitter : original.getSplitters()) {
+                    for (final BSPTree_Old<S> splitter : original.getSplitters()) {
                         transformed.getSplitters().add(map.get(splitter));
                     }
                 }
@@ -144,14 +144,14 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
      * @param map transformed nodes map
      * @return a new tree
      */
-    private BSPTree<S> recurseTransform(final BSPTree<S> node,
+    private BSPTree_Old<S> recurseTransform(final BSPTree_Old<S> node,
                                         final Hyperplane<P> transformed,
                                         final Transform<P, S> transform,
-                                        final Map<BSPTree<S>, BSPTree<S>> map) {
+                                        final Map<BSPTree_Old<S>, BSPTree_Old<S>> map) {
 
-        final BSPTree<S> transformedNode;
+        final BSPTree_Old<S> transformedNode;
         if (node.getCut() == null) {
-            transformedNode = new BSPTree<>(node.getAttribute());
+            transformedNode = new BSPTree_Old<>(node.getAttribute());
         } else {
 
             @SuppressWarnings("unchecked")
@@ -165,7 +165,7 @@ public abstract class AbstractSubHyperplane<P extends Point<P>, S extends Point<
                 attribute = new BoundaryAttribute<>(tPO, tPI, new NodesSet<S>());
             }
 
-            transformedNode = new BSPTree<>(transform.apply(node.getCut(), hyperplane, transformed),
+            transformedNode = new BSPTree_Old<>(transform.apply(node.getCut(), hyperplane, transformed),
                     recurseTransform(node.getPlus(),  transformed, transform, map),
                     recurseTransform(node.getMinus(), transformed, transform, map),
                     attribute);

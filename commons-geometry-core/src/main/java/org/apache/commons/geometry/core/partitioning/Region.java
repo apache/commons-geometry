@@ -77,7 +77,7 @@ public interface Region<P extends Point<P>> {
      * @param newTree inside/outside BSP tree representing the new region
      * @return the built region
      */
-    Region<P> buildNew(BSPTree<P> newTree);
+    Region<P> buildNew(BSPTree_Old<P> newTree);
 
     /** Copy the instance.
      * <p>The instance created is completely independant of the original
@@ -100,7 +100,7 @@ public interface Region<P extends Point<P>> {
      * property)
      * @return true if the sub-tree starting at the given node is empty
      */
-    boolean isEmpty(final BSPTree<P> node);
+    boolean isEmpty(final BSPTree_Old<P> node);
 
     /** Check if the instance covers the full space.
      * @return true if the instance covers the full space
@@ -114,7 +114,7 @@ public interface Region<P extends Point<P>> {
      * property)
      * @return true if the sub-tree starting at the given node covers the full space
      */
-    boolean isFull(final BSPTree<P> node);
+    boolean isFull(final BSPTree_Old<P> node);
 
     /** Check if the instance entirely contains another region.
      * @param region region to check against the instance
@@ -174,7 +174,7 @@ public interface Region<P extends Point<P>> {
      * @return underlying BSP tree
      * @see BoundaryAttribute
      */
-    BSPTree<P> getTree(final boolean includeBoundaryAttributes);
+    BSPTree_Old<P> getTree(final boolean includeBoundaryAttributes);
 
     /** Get the size of the boundary.
      * @return the size of the boundary (this is 0 in 1D, a length in

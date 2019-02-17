@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Region;
@@ -74,7 +74,7 @@ public class PolyhedronsSetTest {
     @Test
     public void testEmptyRegion() {
         // act
-        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree<Vector3D>(Boolean.FALSE), TEST_PRECISION);
+        PolyhedronsSet polySet = new PolyhedronsSet(new BSPTree_Old<Vector3D>(Boolean.FALSE), TEST_PRECISION);
 
         // assert
         Assert.assertSame(TEST_PRECISION, polySet.getPrecision());
@@ -574,15 +574,15 @@ public class PolyhedronsSetTest {
                                                                 1.0, c,
                                                                 1.0, r.apply(vertex4.subtract(c)))
         };
-        tree.getTree(true).visit(new BSPTreeVisitor<Vector3D>() {
+        tree.getTree(true).visit(new BSPTreeVisitor_Old<Vector3D>() {
 
             @Override
-            public Order visitOrder(BSPTree<Vector3D> node) {
+            public Order visitOrder(BSPTree_Old<Vector3D> node) {
                 return Order.MINUS_SUB_PLUS;
             }
 
             @Override
-            public void visitInternalNode(BSPTree<Vector3D> node) {
+            public void visitInternalNode(BSPTree_Old<Vector3D> node) {
                 @SuppressWarnings("unchecked")
                 BoundaryAttribute<Vector3D> attribute =
                     (BoundaryAttribute<Vector3D>) node.getAttribute();
@@ -595,7 +595,7 @@ public class PolyhedronsSetTest {
             }
 
             @Override
-            public void visitLeafNode(BSPTree<Vector3D> node) {
+            public void visitLeafNode(BSPTree_Old<Vector3D> node) {
             }
 
             private void checkFacet(SubPlane facet) {
@@ -731,7 +731,7 @@ public class PolyhedronsSetTest {
         // the following is a wrong usage of the constructor.
         // as explained in the javadoc, the failure is NOT detected at construction
         // time but occurs later on
-        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree<Vector3D>(), TEST_PRECISION);
+        PolyhedronsSet ps = new PolyhedronsSet(new BSPTree_Old<Vector3D>(), TEST_PRECISION);
         Assert.assertNotNull(ps);
         try {
             ps.checkPoint(Vector3D.ZERO);

@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.Point;
 /** Visitor computing the boundary size.
  * @param <P> Point type defining the space
  */
-class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor<P> {
+class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor_Old<P> {
 
     /** Size of the boundary. */
     private double boundarySize;
@@ -34,13 +34,13 @@ class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor<P> {
 
     /** {@inheritDoc}*/
     @Override
-    public Order visitOrder(final BSPTree<P> node) {
+    public Order visitOrder(final BSPTree_Old<P> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc}*/
     @Override
-    public void visitInternalNode(final BSPTree<P> node) {
+    public void visitInternalNode(final BSPTree_Old<P> node) {
         @SuppressWarnings("unchecked")
         final BoundaryAttribute<P> attribute =
             (BoundaryAttribute<P>) node.getAttribute();
@@ -54,7 +54,7 @@ class BoundarySizeVisitor<P extends Point<P>> implements BSPTreeVisitor<P> {
 
     /** {@inheritDoc}*/
     @Override
-    public void visitLeafNode(final BSPTree<P> node) {
+    public void visitLeafNode(final BSPTree_Old<P> node) {
     }
 
     /** Get the size of the boundary.

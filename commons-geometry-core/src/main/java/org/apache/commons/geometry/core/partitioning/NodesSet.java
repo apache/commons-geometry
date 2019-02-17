@@ -22,14 +22,14 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Set of {@link BSPTree BSP tree} nodes.
+/** Set of {@link BSPTree_Old BSP tree} nodes.
  * @see BoundaryAttribute
  * @param <P> Point type defining the space
  */
-public class NodesSet<P extends Point<P>> implements Iterable<BSPTree<P>> {
+public class NodesSet<P extends Point<P>> implements Iterable<BSPTree_Old<P>> {
 
     /** List of sub-hyperplanes. */
-    private final List<BSPTree<P>> list;
+    private final List<BSPTree_Old<P>> list;
 
     /** Simple constructor.
      */
@@ -40,9 +40,9 @@ public class NodesSet<P extends Point<P>> implements Iterable<BSPTree<P>> {
     /** Add a node if not already known.
      * @param node node to add
      */
-    public void add(final BSPTree<P> node) {
+    public void add(final BSPTree_Old<P> node) {
 
-        for (final BSPTree<P> existing : list) {
+        for (final BSPTree_Old<P> existing : list) {
             if (node == existing) {
                 // the node is already known, don't add it
                 return;
@@ -57,15 +57,15 @@ public class NodesSet<P extends Point<P>> implements Iterable<BSPTree<P>> {
     /** Add nodes if they are not already known.
      * @param iterator nodes iterator
      */
-    public void addAll(final Iterable<BSPTree<P>> iterator) {
-        for (final BSPTree<P> node : iterator) {
+    public void addAll(final Iterable<BSPTree_Old<P>> iterator) {
+        for (final BSPTree_Old<P> node : iterator) {
             add(node);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<BSPTree<P>> iterator() {
+    public Iterator<BSPTree_Old<P>> iterator() {
         return list.iterator();
     }
 

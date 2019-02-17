@@ -19,8 +19,8 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.ArrayList;
 
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -116,7 +116,7 @@ public class OutlineExtractor {
     }
 
     /** Visitor projecting the boundary facets on a plane. */
-    private class BoundaryProjector implements BSPTreeVisitor<Vector3D> {
+    private class BoundaryProjector implements BSPTreeVisitor_Old<Vector3D> {
 
         /** Projection of the polyhedrons set on the plane. */
         private PolygonsSet projected;
@@ -128,19 +128,19 @@ public class OutlineExtractor {
          * @param precision precision context used to compare floating point values
          */
         BoundaryProjector(final DoublePrecisionContext precision) {
-            this.projected = new PolygonsSet(new BSPTree<Vector2D>(Boolean.FALSE), precision);
+            this.projected = new PolygonsSet(new BSPTree_Old<Vector2D>(Boolean.FALSE), precision);
             this.precision = precision;
         }
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(final BSPTree<Vector3D> node) {
+        public Order visitOrder(final BSPTree_Old<Vector3D> node) {
             return Order.MINUS_SUB_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitInternalNode(final BSPTree<Vector3D> node) {
+        public void visitInternalNode(final BSPTree_Old<Vector3D> node) {
             @SuppressWarnings("unchecked")
             final BoundaryAttribute<Vector3D> attribute =
                 (BoundaryAttribute<Vector3D>) node.getAttribute();
@@ -154,7 +154,7 @@ public class OutlineExtractor {
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(final BSPTree<Vector3D> node) {
+        public void visitLeafNode(final BSPTree_Old<Vector3D> node) {
         }
 
         /** Add he contribution of a boundary facet.

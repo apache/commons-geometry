@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
 import org.apache.commons.geometry.core.partitioning.RegionFactory;
@@ -338,7 +338,7 @@ public class ArcsSetTest {
 
     @Test
     public void testEmptyTree() {
-        Assert.assertEquals(Geometry.TWO_PI, new ArcsSet(new BSPTree<S1Point>(Boolean.TRUE), TEST_PRECISION).getSize(), TEST_EPS);
+        Assert.assertEquals(Geometry.TWO_PI, new ArcsSet(new BSPTree_Old<S1Point>(Boolean.TRUE), TEST_PRECISION).getSize(), TEST_EPS);
     }
 
     @Test
@@ -346,11 +346,11 @@ public class ArcsSetTest {
         for (int k = -2; k < 3; ++k) {
             SubLimitAngle l1  = new LimitAngle(S1Point.of(1.0 + k * Geometry.TWO_PI), false, TEST_PRECISION).wholeHyperplane();
             SubLimitAngle l2  = new LimitAngle(S1Point.of(1.5 + k * Geometry.TWO_PI), true,  TEST_PRECISION).wholeHyperplane();
-            ArcsSet set = new ArcsSet(new BSPTree<>(l1,
-                                                            new BSPTree<S1Point>(Boolean.FALSE),
-                                                            new BSPTree<>(l2,
-                                                                                  new BSPTree<S1Point>(Boolean.FALSE),
-                                                                                  new BSPTree<S1Point>(Boolean.TRUE),
+            ArcsSet set = new ArcsSet(new BSPTree_Old<>(l1,
+                                                            new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                                            new BSPTree_Old<>(l2,
+                                                                                  new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                                                                  new BSPTree_Old<S1Point>(Boolean.TRUE),
                                                                                   null),
                                                             null),
                     TEST_PRECISION);
@@ -370,14 +370,14 @@ public class ArcsSetTest {
         SubLimitAngle l1 = new LimitAngle(S1Point.of(1.0), false, TEST_PRECISION).wholeHyperplane();
         SubLimitAngle l2 = new LimitAngle(S1Point.of(2.0), true,  TEST_PRECISION).wholeHyperplane();
         SubLimitAngle l3 = new LimitAngle(S1Point.of(3.0), false, TEST_PRECISION).wholeHyperplane();
-        new ArcsSet(new BSPTree<>(l1,
-                                          new BSPTree<S1Point>(Boolean.FALSE),
-                                          new BSPTree<>(l2,
-                                                                new BSPTree<>(l3,
-                                                                                      new BSPTree<S1Point>(Boolean.FALSE),
-                                                                                      new BSPTree<S1Point>(Boolean.TRUE),
+        new ArcsSet(new BSPTree_Old<>(l1,
+                                          new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                          new BSPTree_Old<>(l2,
+                                                                new BSPTree_Old<>(l3,
+                                                                                      new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                                                                      new BSPTree_Old<S1Point>(Boolean.TRUE),
                                                                                       null),
-                                                                new BSPTree<S1Point>(Boolean.TRUE),
+                                                                new BSPTree_Old<S1Point>(Boolean.TRUE),
                                                                 null),
                                           null),
                 TEST_PRECISION);

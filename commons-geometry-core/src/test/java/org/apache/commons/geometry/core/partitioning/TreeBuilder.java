@@ -52,7 +52,7 @@ public abstract class TreeBuilder<P extends Point<P>> {
     private static final String FALSE     = "false";
 
     /** Tree root. */
-    private BSPTree<P> root;
+    private BSPTree_Old<P> root;
 
     /** Precision. */
     private final DoublePrecisionContext precision;
@@ -83,7 +83,7 @@ public abstract class TreeBuilder<P extends Point<P>> {
         tokenizer = new StringTokenizer(str);
         getWord(type);
         getWord(PLUS);
-        root = new BSPTree<>();
+        root = new BSPTree_Old<>();
         parseTree(root);
         if (tokenizer.hasMoreTokens()) {
             throw new ParseException("unexpected " + tokenizer.nextToken(), 0);
@@ -94,7 +94,7 @@ public abstract class TreeBuilder<P extends Point<P>> {
      * @param node start node
      * @exception ParseException if the string cannot be parsed
      */
-    private void parseTree(final BSPTree<P> node)
+    private void parseTree(final BSPTree_Old<P> node)
         throws ParseException {
         if (INTERNAL.equals(getWord(INTERNAL, LEAF))) {
             // this is an internal node, it has a cut sub-hyperplane (stored as a whole hyperplane)
@@ -147,7 +147,7 @@ public abstract class TreeBuilder<P extends Point<P>> {
     /** Get the built tree.
      * @return built tree
      */
-    public BSPTree<P> getTree() {
+    public BSPTree_Old<P> getTree() {
         return root;
     }
 

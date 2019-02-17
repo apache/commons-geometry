@@ -56,7 +56,7 @@ class InsideFinder<P extends Point<P>> {
      * @param node current BSP tree node
      * @param sub sub-hyperplane
      */
-    public void recurseSides(final BSPTree<P> node, final SubHyperplane<P> sub) {
+    public void recurseSides(final BSPTree_Old<P> node, final SubHyperplane<P> sub) {
 
         if (node.getCut() == null) {
             if ((Boolean) node.getAttribute()) {

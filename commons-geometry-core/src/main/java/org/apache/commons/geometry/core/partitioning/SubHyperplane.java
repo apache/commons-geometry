@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.Point;
  * <p>sub-hyperplanes are obtained when parts of an {@link
  * Hyperplane hyperplane} are chopped off by other hyperplanes that
  * intersect it. The remaining part is a convex region. Such objects
- * appear in {@link BSPTree BSP trees} as the intersection of a cut
+ * appear in {@link BSPTree_Old BSP trees} as the intersection of a cut
  * hyperplane with the convex region which it splits, the chopping
  * hyperplanes are the cut hyperplanes closer to the tree root.</p>
 

@@ -51,12 +51,12 @@ class Characterization<P extends Point<P>> {
      * @param node current BSP tree node
      * @param sub sub-hyperplane to characterize
      */
-    Characterization(final BSPTree<P> node, final SubHyperplane<P> sub) {
+    Characterization(final BSPTree_Old<P> node, final SubHyperplane<P> sub) {
         outsideTouching  = null;
         insideTouching   = null;
         outsideSplitters = new NodesSet<>();
         insideSplitters  = new NodesSet<>();
-        characterize(node, sub, new ArrayList<BSPTree<P>>());
+        characterize(node, sub, new ArrayList<BSPTree_Old<P>>());
     }
 
     /** Filter the parts of an hyperplane belonging to the boundary.
@@ -72,8 +72,8 @@ class Characterization<P extends Point<P>> {
      * @param sub sub-hyperplane to characterize
      * @param splitters nodes that did split the current one
      */
-    private void characterize(final BSPTree<P> node, final SubHyperplane<P> sub,
-                              final List<BSPTree<P>> splitters) {
+    private void characterize(final BSPTree_Old<P> node, final SubHyperplane<P> sub,
+                              final List<BSPTree_Old<P>> splitters) {
         if (node.getCut() == null) {
             // we have reached a leaf node
             final boolean inside = (Boolean) node.getAttribute();
@@ -118,7 +118,7 @@ class Characterization<P extends Point<P>> {
      * @param splitters sub-hyperplanes that did split the current one
      */
     private void addOutsideTouching(final SubHyperplane<P> sub,
-                                    final List<BSPTree<P>> splitters) {
+                                    final List<BSPTree_Old<P>> splitters) {
         if (outsideTouching == null) {
             outsideTouching = sub;
         } else {
@@ -132,7 +132,7 @@ class Characterization<P extends Point<P>> {
      * @param splitters sub-hyperplanes that did split the current one
      */
     private void addInsideTouching(final SubHyperplane<P> sub,
-                                   final List<BSPTree<P>> splitters) {
+                                   final List<BSPTree_Old<P>> splitters) {
         if (insideTouching == null) {
             insideTouching = sub;
         } else {

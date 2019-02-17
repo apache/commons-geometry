@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -88,15 +88,15 @@ public class SubPlane extends AbstractSubHyperplane<Vector3D, Vector2D> {
         final SubHyperplane<Vector2D> l2DPlus =
             org.apache.commons.geometry.euclidean.twod.Line.fromPoints(q, p, precision).wholeHyperplane();
 
-        final BSPTree<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
-        final BSPTree<Vector2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
-                                               new BSPTree<Vector2D>(Boolean.FALSE) :
-                                               new BSPTree<>(l2DPlus, new BSPTree<Vector2D>(Boolean.FALSE),
+        final BSPTree_Old<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
+        final BSPTree_Old<Vector2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
+                                               new BSPTree_Old<Vector2D>(Boolean.FALSE) :
+                                               new BSPTree_Old<>(l2DPlus, new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                                                         splitTree.getPlus(), null);
 
-        final BSPTree<Vector2D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
-                                               new BSPTree<Vector2D>(Boolean.FALSE) :
-                                                   new BSPTree<>(l2DMinus, new BSPTree<Vector2D>(Boolean.FALSE),
+        final BSPTree_Old<Vector2D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
+                                               new BSPTree_Old<Vector2D>(Boolean.FALSE) :
+                                                   new BSPTree_Old<>(l2DMinus, new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                                                             splitTree.getMinus(), null);
 
         return new SplitSubHyperplane<>(new SubPlane(thisPlane.copySelf(), new PolygonsSet(plusTree, precision)),

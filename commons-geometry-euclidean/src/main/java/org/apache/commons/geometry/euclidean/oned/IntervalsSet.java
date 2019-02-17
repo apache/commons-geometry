@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.partitioning.AbstractRegion;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -60,7 +60,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param tree inside/outside BSP tree representing the intervals set
      * @param precision precision context used to compare floating point values
      */
-    public IntervalsSet(final BSPTree<Vector1D> tree, final DoublePrecisionContext precision) {
+    public IntervalsSet(final BSPTree_Old<Vector1D> tree, final DoublePrecisionContext precision) {
         super(tree, precision);
     }
 
@@ -97,39 +97,39 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param precision precision context used to compare floating point values
      * @return the built tree
      */
-    private static BSPTree<Vector1D> buildTree(final double lower, final double upper,
+    private static BSPTree_Old<Vector1D> buildTree(final double lower, final double upper,
                                                   final DoublePrecisionContext precision) {
         if (Double.isInfinite(lower) && (lower < 0)) {
             if (Double.isInfinite(upper) && (upper > 0)) {
                 // the tree must cover the whole real line
-                return new BSPTree<>(Boolean.TRUE);
+                return new BSPTree_Old<>(Boolean.TRUE);
             }
             // the tree must be open on the negative infinity side
             final SubHyperplane<Vector1D> upperCut =
                 OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
-            return new BSPTree<>(upperCut,
-                               new BSPTree<Vector1D>(Boolean.FALSE),
-                               new BSPTree<Vector1D>(Boolean.TRUE),
+            return new BSPTree_Old<>(upperCut,
+                               new BSPTree_Old<Vector1D>(Boolean.FALSE),
+                               new BSPTree_Old<Vector1D>(Boolean.TRUE),
                                null);
         }
         final SubHyperplane<Vector1D> lowerCut =
             OrientedPoint.createNegativeFacing(Vector1D.of(lower), precision).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
-            return new BSPTree<>(lowerCut,
-                                            new BSPTree<Vector1D>(Boolean.FALSE),
-                                            new BSPTree<Vector1D>(Boolean.TRUE),
+            return new BSPTree_Old<>(lowerCut,
+                                            new BSPTree_Old<Vector1D>(Boolean.FALSE),
+                                            new BSPTree_Old<Vector1D>(Boolean.TRUE),
                                             null);
         }
 
         // the tree must be bounded on the two sides
         final SubHyperplane<Vector1D> upperCut =
             OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
-        return new BSPTree<>(lowerCut,
-                                        new BSPTree<Vector1D>(Boolean.FALSE),
-                                        new BSPTree<>(upperCut,
-                                                                 new BSPTree<Vector1D>(Boolean.FALSE),
-                                                                 new BSPTree<Vector1D>(Boolean.TRUE),
+        return new BSPTree_Old<>(lowerCut,
+                                        new BSPTree_Old<Vector1D>(Boolean.FALSE),
+                                        new BSPTree_Old<>(upperCut,
+                                                                 new BSPTree_Old<Vector1D>(Boolean.FALSE),
+                                                                 new BSPTree_Old<Vector1D>(Boolean.TRUE),
                                                                  null),
                                         null);
 
@@ -137,7 +137,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
 
     /** {@inheritDoc} */
     @Override
-    public IntervalsSet buildNew(final BSPTree<Vector1D> tree) {
+    public IntervalsSet buildNew(final BSPTree_Old<Vector1D> tree) {
         return new IntervalsSet(tree, getPrecision());
     }
 
@@ -172,7 +172,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * instance is empty)
      */
     public double getInf() {
-        BSPTree<Vector1D> node = getTree(false);
+        BSPTree_Old<Vector1D> node = getTree(false);
         double  inf  = Double.POSITIVE_INFINITY;
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
@@ -189,7 +189,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * instance is empty)
      */
     public double getSup() {
-        BSPTree<Vector1D> node = getTree(false);
+        BSPTree_Old<Vector1D> node = getTree(false);
         double  sup  = Double.NEGATIVE_INFINITY;
         while (node.getCut() != null) {
             final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
@@ -271,15 +271,15 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param root tree root
      * @return first leaf node
      */
-    private BSPTree<Vector1D> getFirstLeaf(final BSPTree<Vector1D> root) {
+    private BSPTree_Old<Vector1D> getFirstLeaf(final BSPTree_Old<Vector1D> root) {
 
         if (root.getCut() == null) {
             return root;
         }
 
         // find the smallest internal node
-        BSPTree<Vector1D> smallest = null;
-        for (BSPTree<Vector1D> n = root; n != null; n = previousInternalNode(n)) {
+        BSPTree_Old<Vector1D> smallest = null;
+        for (BSPTree_Old<Vector1D> n = root; n != null; n = previousInternalNode(n)) {
             smallest = n;
         }
 
@@ -291,10 +291,10 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @return smallest internal node,
      * or null if there are no internal nodes (i.e. the set is either empty or covers the real line)
      */
-    private BSPTree<Vector1D> getFirstIntervalBoundary() {
+    private BSPTree_Old<Vector1D> getFirstIntervalBoundary() {
 
         // start search at the tree root
-        BSPTree<Vector1D> node = getTree(false);
+        BSPTree_Old<Vector1D> node = getTree(false);
         if (node.getCut() == null) {
             return null;
         }
@@ -315,7 +315,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node to check
      * @return true if the node corresponds to the start abscissa of an interval
      */
-    private boolean isIntervalStart(final BSPTree<Vector1D> node) {
+    private boolean isIntervalStart(final BSPTree_Old<Vector1D> node) {
 
         if ((Boolean) leafBefore(node).getAttribute()) {
             // it has an inside cell before it, it may end an interval but not start it
@@ -337,7 +337,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node to check
      * @return true if the node corresponds to the end abscissa of an interval
      */
-    private boolean isIntervalEnd(final BSPTree<Vector1D> node) {
+    private boolean isIntervalEnd(final BSPTree_Old<Vector1D> node) {
 
         if (!(Boolean) leafBefore(node).getAttribute()) {
             // it has an outside cell before it, it may start an interval but not end it
@@ -360,7 +360,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @return next internal node in ascending order, or null
      * if this is the last internal node
      */
-    private BSPTree<Vector1D> nextInternalNode(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> nextInternalNode(BSPTree_Old<Vector1D> node) {
 
         if (childAfter(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -380,7 +380,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @return previous internal node in ascending order, or null
      * if this is the first internal node
      */
-    private BSPTree<Vector1D> previousInternalNode(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> previousInternalNode(BSPTree_Old<Vector1D> node) {
 
         if (childBefore(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -399,7 +399,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node at which the sub-tree starts
      * @return leaf node just before the internal node
      */
-    private BSPTree<Vector1D> leafBefore(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> leafBefore(BSPTree_Old<Vector1D> node) {
 
         node = childBefore(node);
         while (node.getCut() != null) {
@@ -414,7 +414,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node at which the sub-tree starts
      * @return leaf node just after the internal node
      */
-    private BSPTree<Vector1D> leafAfter(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> leafAfter(BSPTree_Old<Vector1D> node) {
 
         node = childAfter(node);
         while (node.getCut() != null) {
@@ -429,8 +429,8 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node child node considered
      * @return true is the node has a parent end is before it in ascending order
      */
-    private boolean isBeforeParent(final BSPTree<Vector1D> node) {
-        final BSPTree<Vector1D> parent = node.getParent();
+    private boolean isBeforeParent(final BSPTree_Old<Vector1D> node) {
+        final BSPTree_Old<Vector1D> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -442,8 +442,8 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node child node considered
      * @return true is the node has a parent end is after it in ascending order
      */
-    private boolean isAfterParent(final BSPTree<Vector1D> node) {
-        final BSPTree<Vector1D> parent = node.getParent();
+    private boolean isAfterParent(final BSPTree_Old<Vector1D> node) {
+        final BSPTree_Old<Vector1D> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -455,7 +455,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node at which the sub-tree starts
      * @return child node just before the internal node
      */
-    private BSPTree<Vector1D> childBefore(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> childBefore(BSPTree_Old<Vector1D> node) {
         if (isDirect(node)) {
             // smaller abscissas are on minus side, larger abscissas are on plus side
             return node.getMinus();
@@ -469,7 +469,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node at which the sub-tree starts
      * @return child node just after the internal node
      */
-    private BSPTree<Vector1D> childAfter(BSPTree<Vector1D> node) {
+    private BSPTree_Old<Vector1D> childAfter(BSPTree_Old<Vector1D> node) {
         if (isDirect(node)) {
             // smaller abscissas are on minus side, larger abscissas are on plus side
             return node.getPlus();
@@ -483,7 +483,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node to check
      * @return true if the oriented point is direct
      */
-    private boolean isDirect(final BSPTree<Vector1D> node) {
+    private boolean isDirect(final BSPTree_Old<Vector1D> node) {
         return ((OrientedPoint) node.getCut().getHyperplane()).isPositiveFacing();
     }
 
@@ -491,7 +491,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
      * @param node internal node to check
      * @return abscissa
      */
-    private double getAngle(final BSPTree<Vector1D> node) {
+    private double getAngle(final BSPTree_Old<Vector1D> node) {
         return ((OrientedPoint) node.getCut().getHyperplane()).getLocation().getX();
     }
 
@@ -512,7 +512,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
     private class SubIntervalsIterator implements Iterator<double[]> {
 
         /** Current node. */
-        private BSPTree<Vector1D> current;
+        private BSPTree_Old<Vector1D> current;
 
         /** Sub-interval no yet returned. */
         private double[] pending;
@@ -549,7 +549,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
         private void selectPending() {
 
             // look for the start of the interval
-            BSPTree<Vector1D> start = current;
+            BSPTree_Old<Vector1D> start = current;
             while (start != null && !isIntervalStart(start)) {
                 start = nextInternalNode(start);
             }
@@ -562,7 +562,7 @@ public class IntervalsSet extends AbstractRegion<Vector1D, Vector1D> implements 
             }
 
             // look for the end of the interval
-            BSPTree<Vector1D> end = start;
+            BSPTree_Old<Vector1D> end = start;
             while (end != null && !isIntervalEnd(end)) {
                 end = nextInternalNode(end);
             }

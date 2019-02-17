@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryAttribute;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -142,7 +142,7 @@ public class OBJWriter {
     /** Class for converting a 3D BSPTree into a list of vertices
      * and face vertex indices.
      */
-    private static class MeshBuilder implements BSPTreeVisitor<Vector3D> {
+    private static class MeshBuilder implements BSPTreeVisitor_Old<Vector3D> {
 
         /** Precision context to deteremine floating-point equality */
         private final DoublePrecisionContext precision;
@@ -186,14 +186,14 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(BSPTree<Vector3D> node) {
+        public Order visitOrder(BSPTree_Old<Vector3D> node) {
             return Order.SUB_MINUS_PLUS;
         }
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
-        public void visitInternalNode(BSPTree<Vector3D> node) {
+        public void visitInternalNode(BSPTree_Old<Vector3D> node) {
             BoundaryAttribute<Vector3D> attr = (BoundaryAttribute<Vector3D>) node.getAttribute();
 
             if (attr.getPlusOutside() != null) {
@@ -206,7 +206,7 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(BSPTree<Vector3D> node) {
+        public void visitLeafNode(BSPTree_Old<Vector3D> node) {
             // do nothing
         }
 
@@ -255,7 +255,7 @@ public class OBJWriter {
 
     /** Visitor for extracting a collection of triangles from a 2D BSPTree.
      */
-    private static class TriangleExtractor implements BSPTreeVisitor<Vector2D> {
+    private static class TriangleExtractor implements BSPTreeVisitor_Old<Vector2D> {
 
         /** Precision context to deteremine floating-point equality */
         private final DoublePrecisionContext precision;
@@ -279,19 +279,19 @@ public class OBJWriter {
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(BSPTree<Vector2D> node) {
+        public Order visitOrder(BSPTree_Old<Vector2D> node) {
             return Order.SUB_MINUS_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitInternalNode(BSPTree<Vector2D> node) {
+        public void visitInternalNode(BSPTree_Old<Vector2D> node) {
             // do nothing
         }
 
         /** {@inheritDoc} */
         @Override
-        public void visitLeafNode(BSPTree<Vector2D> node) {
+        public void visitLeafNode(BSPTree_Old<Vector2D> node) {
             if ((Boolean) node.getAttribute()) {
                 PolygonsSet convexPoly = new PolygonsSet(node.pruneAroundConvexCell(Boolean.TRUE,
                         Boolean.FALSE, null), precision);

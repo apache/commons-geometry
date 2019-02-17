@@ -18,15 +18,15 @@ package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
 
-/** This interface is used to visit {@link BSPTree BSP tree} nodes.
+/** This interface is used to visit {@link BSPTree_Old BSP tree} nodes.
 
- * <p>Navigation through {@link BSPTree BSP trees} can be done using
+ * <p>Navigation through {@link BSPTree_Old BSP trees} can be done using
  * two different point of views:</p>
  * <ul>
  *   <li>
  *     the first one is in a node-oriented way using the {@link
- *     BSPTree#getPlus}, {@link BSPTree#getMinus} and {@link
- *     BSPTree#getParent} methods. Terminal nodes without associated
+ *     BSPTree_Old#getPlus}, {@link BSPTree_Old#getMinus} and {@link
+ *     BSPTree_Old#getParent} methods. Terminal nodes without associated
  *     {@link SubHyperplane sub-hyperplanes} can be visited this way,
  *     there is no constraint in the visit order, and it is possible
  *     to visit either all nodes or only a subset of the nodes
@@ -42,10 +42,10 @@ import org.apache.commons.geometry.core.Point;
 
  * @param <P> Point type defining the space
 
- * @see BSPTree
+ * @see BSPTree_Old
  * @see SubHyperplane
  */
-public interface BSPTreeVisitor<P extends Point<P>> {
+public interface BSPTreeVisitor_Old<P extends Point<P>> {
 
     /** Enumerate for visit order with respect to plus sub-tree, minus sub-tree and cut sub-hyperplane. */
     enum Order {
@@ -92,7 +92,7 @@ public interface BSPTreeVisitor<P extends Point<P>> {
      * {@link Order#MINUS_PLUS_SUB}, {@link Order#MINUS_SUB_PLUS},
      * {@link Order#SUB_PLUS_MINUS}, {@link Order#SUB_MINUS_PLUS}
      */
-    Order visitOrder(BSPTree<P> node);
+    Order visitOrder(BSPTree_Old<P> node);
 
     /** Visit a BSP tree node node having a non-null sub-hyperplane.
      * <p>It is guaranteed that this method will be called after {@link
@@ -101,12 +101,12 @@ public interface BSPTreeVisitor<P extends Point<P>> {
      * @param node BSP node guaranteed to have a non null cut sub-hyperplane
      * @see #visitLeafNode
      */
-    void visitInternalNode(BSPTree<P> node);
+    void visitInternalNode(BSPTree_Old<P> node);
 
     /** Visit a leaf BSP tree node node having a null sub-hyperplane.
      * @param node leaf BSP node having a null sub-hyperplane
      * @see #visitInternalNode
      */
-    void visitLeafNode(BSPTree<P> node);
+    void visitLeafNode(BSPTree_Old<P> node);
 
 }

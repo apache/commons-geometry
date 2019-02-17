@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
 import org.apache.commons.geometry.core.partitioning.Region.Location;
@@ -182,14 +182,14 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
         final SubHyperplane<Vector1D> subMinus =
                 OrientedPoint.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
 
-        final BSPTree<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
-        final BSPTree<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
-                                               new BSPTree<Vector1D>(Boolean.FALSE) :
-                                               new BSPTree<>(subPlus, new BSPTree<Vector1D>(Boolean.FALSE),
+        final BSPTree_Old<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
+        final BSPTree_Old<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
+                                               new BSPTree_Old<Vector1D>(Boolean.FALSE) :
+                                               new BSPTree_Old<>(subPlus, new BSPTree_Old<Vector1D>(Boolean.FALSE),
                                                                         splitTree.getPlus(), null);
-        final BSPTree<Vector1D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
-                                               new BSPTree<Vector1D>(Boolean.FALSE) :
-                                               new BSPTree<>(subMinus, new BSPTree<Vector1D>(Boolean.FALSE),
+        final BSPTree_Old<Vector1D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
+                                               new BSPTree_Old<Vector1D>(Boolean.FALSE) :
+                                               new BSPTree_Old<>(subMinus, new BSPTree_Old<Vector1D>(Boolean.FALSE),
                                                                         splitTree.getMinus(), null);
         return new SplitSubHyperplane<>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree, precision)),
                                                    new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree, precision)));

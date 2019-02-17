@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.core.partitioning.AbstractRegion;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Side;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -80,7 +80,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @exception IllegalArgumentException if the tree leaf nodes are not
      * consistent across the \( 0, 2 \pi \) crossing
      */
-    public ArcsSet(final BSPTree<S1Point> tree, final DoublePrecisionContext precision) {
+    public ArcsSet(final BSPTree_Old<S1Point> tree, final DoublePrecisionContext precision) {
         super(tree, precision);
         check2PiConsistency();
     }
@@ -119,12 +119,12 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @return the built tree
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    private static BSPTree<S1Point> buildTree(final double lower, final double upper,
+    private static BSPTree_Old<S1Point> buildTree(final double lower, final double upper,
                                                final DoublePrecisionContext precision) {
 
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
             // the tree must cover the whole circle
-            return new BSPTree<>(Boolean.TRUE);
+            return new BSPTree_Old<>(Boolean.TRUE);
         } else  if (lower > upper) {
             throw new IllegalArgumentException("Endpoints do not specify an interval: [" + lower + ", " +  upper + "]");
         }
@@ -139,23 +139,23 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
             // simple arc starting after 0 and ending before 2 \pi
             final SubHyperplane<S1Point> upperCut =
                     new LimitAngle(S1Point.of(normalizedUpper), true, precision).wholeHyperplane();
-            return new BSPTree<>(lowerCut,
-                                         new BSPTree<S1Point>(Boolean.FALSE),
-                                         new BSPTree<>(upperCut,
-                                                               new BSPTree<S1Point>(Boolean.FALSE),
-                                                               new BSPTree<S1Point>(Boolean.TRUE),
+            return new BSPTree_Old<>(lowerCut,
+                                         new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                         new BSPTree_Old<>(upperCut,
+                                                               new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                                               new BSPTree_Old<S1Point>(Boolean.TRUE),
                                                                null),
                                          null);
         } else {
             // arc wrapping around 2 \pi
             final SubHyperplane<S1Point> upperCut =
                     new LimitAngle(S1Point.of(normalizedUpper - Geometry.TWO_PI), true, precision).wholeHyperplane();
-            return new BSPTree<>(lowerCut,
-                                         new BSPTree<>(upperCut,
-                                                               new BSPTree<S1Point>(Boolean.FALSE),
-                                                               new BSPTree<S1Point>(Boolean.TRUE),
+            return new BSPTree_Old<>(lowerCut,
+                                         new BSPTree_Old<>(upperCut,
+                                                               new BSPTree_Old<S1Point>(Boolean.FALSE),
+                                                               new BSPTree_Old<S1Point>(Boolean.TRUE),
                                                                null),
-                                         new BSPTree<S1Point>(Boolean.TRUE),
+                                         new BSPTree_Old<S1Point>(Boolean.TRUE),
                                          null);
         }
 
@@ -168,7 +168,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     private void check2PiConsistency() {
 
         // start search at the tree root
-        BSPTree<S1Point> root = getTree(false);
+        BSPTree_Old<S1Point> root = getTree(false);
         if (root.getCut() == null) {
             return;
         }
@@ -189,15 +189,15 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param root tree root
      * @return first leaf node (i.e. node corresponding to the region just after 0.0 radians)
      */
-    private BSPTree<S1Point> getFirstLeaf(final BSPTree<S1Point> root) {
+    private BSPTree_Old<S1Point> getFirstLeaf(final BSPTree_Old<S1Point> root) {
 
         if (root.getCut() == null) {
             return root;
         }
 
         // find the smallest internal node
-        BSPTree<S1Point> smallest = null;
-        for (BSPTree<S1Point> n = root; n != null; n = previousInternalNode(n)) {
+        BSPTree_Old<S1Point> smallest = null;
+        for (BSPTree_Old<S1Point> n = root; n != null; n = previousInternalNode(n)) {
             smallest = n;
         }
 
@@ -209,15 +209,15 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param root tree root
      * @return last leaf node (i.e. node corresponding to the region just before \( 2 \pi \) radians)
      */
-    private BSPTree<S1Point> getLastLeaf(final BSPTree<S1Point> root) {
+    private BSPTree_Old<S1Point> getLastLeaf(final BSPTree_Old<S1Point> root) {
 
         if (root.getCut() == null) {
             return root;
         }
 
         // find the largest internal node
-        BSPTree<S1Point> largest = null;
-        for (BSPTree<S1Point> n = root; n != null; n = nextInternalNode(n)) {
+        BSPTree_Old<S1Point> largest = null;
+        for (BSPTree_Old<S1Point> n = root; n != null; n = nextInternalNode(n)) {
             largest = n;
         }
 
@@ -229,10 +229,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @return smallest internal node (i.e. first after 0.0 radians, in trigonometric direction),
      * or null if there are no internal nodes (i.e. the set is either empty or covers the full circle)
      */
-    private BSPTree<S1Point> getFirstArcStart() {
+    private BSPTree_Old<S1Point> getFirstArcStart() {
 
         // start search at the tree root
-        BSPTree<S1Point> node = getTree(false);
+        BSPTree_Old<S1Point> node = getTree(false);
         if (node.getCut() == null) {
             return null;
         }
@@ -253,7 +253,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node to check
      * @return true if the node corresponds to the start angle of an arc
      */
-    private boolean isArcStart(final BSPTree<S1Point> node) {
+    private boolean isArcStart(final BSPTree_Old<S1Point> node) {
 
         if ((Boolean) leafBefore(node).getAttribute()) {
             // it has an inside cell before it, it may end an arc but not start it
@@ -275,7 +275,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node to check
      * @return true if the node corresponds to the end angle of an arc
      */
-    private boolean isArcEnd(final BSPTree<S1Point> node) {
+    private boolean isArcEnd(final BSPTree_Old<S1Point> node) {
 
         if (!(Boolean) leafBefore(node).getAttribute()) {
             // it has an outside cell before it, it may start an arc but not end it
@@ -298,7 +298,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @return next internal node in trigonometric order, or null
      * if this is the last internal node
      */
-    private BSPTree<S1Point> nextInternalNode(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> nextInternalNode(BSPTree_Old<S1Point> node) {
 
         if (childAfter(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -318,7 +318,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @return previous internal node in trigonometric order, or null
      * if this is the first internal node
      */
-    private BSPTree<S1Point> previousInternalNode(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> previousInternalNode(BSPTree_Old<S1Point> node) {
 
         if (childBefore(node).getCut() != null) {
             // the next node is in the sub-tree
@@ -337,7 +337,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node at which the sub-tree starts
      * @return leaf node just before the internal node
      */
-    private BSPTree<S1Point> leafBefore(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> leafBefore(BSPTree_Old<S1Point> node) {
 
         node = childBefore(node);
         while (node.getCut() != null) {
@@ -352,7 +352,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node at which the sub-tree starts
      * @return leaf node just after the internal node
      */
-    private BSPTree<S1Point> leafAfter(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> leafAfter(BSPTree_Old<S1Point> node) {
 
         node = childAfter(node);
         while (node.getCut() != null) {
@@ -367,8 +367,8 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node child node considered
      * @return true is the node has a parent end is before it in trigonometric order
      */
-    private boolean isBeforeParent(final BSPTree<S1Point> node) {
-        final BSPTree<S1Point> parent = node.getParent();
+    private boolean isBeforeParent(final BSPTree_Old<S1Point> node) {
+        final BSPTree_Old<S1Point> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -380,8 +380,8 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node child node considered
      * @return true is the node has a parent end is after it in trigonometric order
      */
-    private boolean isAfterParent(final BSPTree<S1Point> node) {
-        final BSPTree<S1Point> parent = node.getParent();
+    private boolean isAfterParent(final BSPTree_Old<S1Point> node) {
+        final BSPTree_Old<S1Point> parent = node.getParent();
         if (parent == null) {
             return false;
         } else {
@@ -393,7 +393,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node at which the sub-tree starts
      * @return child node just before the internal node
      */
-    private BSPTree<S1Point> childBefore(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> childBefore(BSPTree_Old<S1Point> node) {
         if (isDirect(node)) {
             // smaller angles are on minus side, larger angles are on plus side
             return node.getMinus();
@@ -407,7 +407,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node at which the sub-tree starts
      * @return child node just after the internal node
      */
-    private BSPTree<S1Point> childAfter(BSPTree<S1Point> node) {
+    private BSPTree_Old<S1Point> childAfter(BSPTree_Old<S1Point> node) {
         if (isDirect(node)) {
             // smaller angles are on minus side, larger angles are on plus side
             return node.getPlus();
@@ -421,7 +421,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node to check
      * @return true if the limit angle is direct
      */
-    private boolean isDirect(final BSPTree<S1Point> node) {
+    private boolean isDirect(final BSPTree_Old<S1Point> node) {
         return ((LimitAngle) node.getCut().getHyperplane()).isDirect();
     }
 
@@ -429,13 +429,13 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param node internal node to check
      * @return limit angle
      */
-    private double getAngle(final BSPTree<S1Point> node) {
+    private double getAngle(final BSPTree_Old<S1Point> node) {
         return ((LimitAngle) node.getCut().getHyperplane()).getLocation().getAzimuth();
     }
 
     /** {@inheritDoc} */
     @Override
-    public ArcsSet buildNew(final BSPTree<S1Point> tree) {
+    public ArcsSet buildNew(final BSPTree_Old<S1Point> tree) {
         return new ArcsSet(tree, getPrecision());
     }
 
@@ -578,10 +578,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
     private class SubArcsIterator implements Iterator<double[]> {
 
         /** Start of the first arc. */
-        private final BSPTree<S1Point> firstStart;
+        private final BSPTree_Old<S1Point> firstStart;
 
         /** Current node. */
-        private BSPTree<S1Point> current;
+        private BSPTree_Old<S1Point> current;
 
         /** Sub-arc no yet returned. */
         private double[] pending;
@@ -613,7 +613,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
         private void selectPending() {
 
             // look for the start of the arc
-            BSPTree<S1Point> start = current;
+            BSPTree_Old<S1Point> start = current;
             while (start != null && !isArcStart(start)) {
                 start = nextInternalNode(start);
             }
@@ -626,7 +626,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
             }
 
             // look for the end of the arc
-            BSPTree<S1Point> end = start;
+            BSPTree_Old<S1Point> end = start;
             while (end != null && !isArcEnd(end)) {
                 end = nextInternalNode(end);
             }
@@ -783,10 +783,10 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
      * @param alpha arc limit
      * @param isStart if true, the limit is the start of an arc
      */
-    private void addArcLimit(final BSPTree<S1Point> tree, final double alpha, final boolean isStart) {
+    private void addArcLimit(final BSPTree_Old<S1Point> tree, final double alpha, final boolean isStart) {
 
         final LimitAngle limit = new LimitAngle(S1Point.of(alpha), !isStart, getPrecision());
-        final BSPTree<S1Point> node = tree.getCell(limit.getLocation(), getPrecision());
+        final BSPTree_Old<S1Point> node = tree.getCell(limit.getLocation(), getPrecision());
         if (node.getCut() != null) {
             // this should never happen
             throw new GeometryInternalError();
@@ -834,7 +834,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
                             // the ends were the only limits, is it a full circle or an empty circle?
                             if (lEnd - lStart > Geometry.PI) {
                                 // it was full circle
-                                return new ArcsSet(new BSPTree<S1Point>(Boolean.TRUE), getPrecision());
+                                return new ArcsSet(new BSPTree_Old<S1Point>(Boolean.TRUE), getPrecision());
                             } else {
                                 // it was an empty circle
                                 return null;
@@ -850,7 +850,7 @@ public class ArcsSet extends AbstractRegion<S1Point, S1Point> implements Iterabl
             }
 
             // build the tree by adding all angular sectors
-            BSPTree<S1Point> tree = new BSPTree<>(Boolean.FALSE);
+            BSPTree_Old<S1Point> tree = new BSPTree_Old<>(Boolean.FALSE);
             for (int i = 0; i < limits.size() - 1; i += 2) {
                 addArcLimit(tree, limits.get(i),     true);
                 addArcLimit(tree, limits.get(i + 1), false);

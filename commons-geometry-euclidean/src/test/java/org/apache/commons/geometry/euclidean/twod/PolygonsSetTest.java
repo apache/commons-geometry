@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.partitioning.BoundaryProjection;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Region;
@@ -1108,9 +1108,9 @@ public class PolygonsSetTest {
         hyp[4] = (SubLine) hyp[4].split(hyp[3].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
         hyp[5] = (SubLine) hyp[5].split(hyp[4].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
         hyp[6] = (SubLine) hyp[6].split(hyp[3].getHyperplane()).getMinus().split(hyp[1].getHyperplane()).getMinus();
-        BSPTree<Vector2D> tree = new BSPTree<>(Boolean.TRUE);
+        BSPTree_Old<Vector2D> tree = new BSPTree_Old<>(Boolean.TRUE);
         for (int i = hyp.length - 1; i >= 0; --i) {
-            tree = new BSPTree<>(hyp[i], new BSPTree<Vector2D>(Boolean.FALSE), tree, null);
+            tree = new BSPTree_Old<>(hyp[i], new BSPTree_Old<Vector2D>(Boolean.FALSE), tree, null);
         }
         PolygonsSet set = new PolygonsSet(tree, TEST_PRECISION);
         SubLine splitter =
@@ -1118,9 +1118,9 @@ public class PolygonsSetTest {
 
         // act
         PolygonsSet slice =
-            new PolygonsSet(new BSPTree<>(splitter,
+            new PolygonsSet(new BSPTree_Old<>(splitter,
                                                      set.getTree(false).split(splitter).getPlus(),
-                                                     new BSPTree<Vector2D>(Boolean.FALSE), null),
+                                                     new BSPTree_Old<Vector2D>(Boolean.FALSE), null),
                     TEST_PRECISION);
 
         // assert
@@ -1165,88 +1165,88 @@ public class PolygonsSetTest {
     @Test
     public void testBug20040520() {
         // arrange
-        BSPTree<Vector2D> a0 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.85, -0.05),
+        BSPTree_Old<Vector2D> a0 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.85, -0.05),
                                                   Vector2D.of(0.90, -0.10)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE),
-                                                  new BSPTree<Vector2D>(Boolean.TRUE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.TRUE),
                                                   null);
-        BSPTree<Vector2D> a1 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.85, -0.10),
+        BSPTree_Old<Vector2D> a1 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.85, -0.10),
                                                   Vector2D.of(0.90, -0.10)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE), a0, null);
-        BSPTree<Vector2D> a2 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.90, -0.05),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE), a0, null);
+        BSPTree_Old<Vector2D> a2 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.90, -0.05),
                                                   Vector2D.of(0.85, -0.05)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE), a1, null);
-        BSPTree<Vector2D> a3 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.82, -0.05),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE), a1, null);
+        BSPTree_Old<Vector2D> a3 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.82, -0.05),
                                                   Vector2D.of(0.82, -0.08)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE),
-                                                  new BSPTree<Vector2D>(Boolean.TRUE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.TRUE),
                                                   null);
-        BSPTree<Vector2D> a4 =
-            new BSPTree<>(buildHalfLine(Vector2D.of(0.85, -0.05),
+        BSPTree_Old<Vector2D> a4 =
+            new BSPTree_Old<>(buildHalfLine(Vector2D.of(0.85, -0.05),
                                                    Vector2D.of(0.80, -0.05),
                                                    false),
-                                                   new BSPTree<Vector2D>(Boolean.FALSE), a3, null);
-        BSPTree<Vector2D> a5 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.82, -0.08),
+                                                   new BSPTree_Old<Vector2D>(Boolean.FALSE), a3, null);
+        BSPTree_Old<Vector2D> a5 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.82, -0.08),
                                                   Vector2D.of(0.82, -0.18)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE),
-                                                  new BSPTree<Vector2D>(Boolean.TRUE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.TRUE),
                                                   null);
-        BSPTree<Vector2D> a6 =
-            new BSPTree<>(buildHalfLine(Vector2D.of(0.82, -0.18),
+        BSPTree_Old<Vector2D> a6 =
+            new BSPTree_Old<>(buildHalfLine(Vector2D.of(0.82, -0.18),
                                                    Vector2D.of(0.85, -0.15),
                                                    true),
-                                                   new BSPTree<Vector2D>(Boolean.FALSE), a5, null);
-        BSPTree<Vector2D> a7 =
-            new BSPTree<>(buildHalfLine(Vector2D.of(0.85, -0.05),
+                                                   new BSPTree_Old<Vector2D>(Boolean.FALSE), a5, null);
+        BSPTree_Old<Vector2D> a7 =
+            new BSPTree_Old<>(buildHalfLine(Vector2D.of(0.85, -0.05),
                                                    Vector2D.of(0.82, -0.08),
                                                    false),
                                                    a4, a6, null);
-        BSPTree<Vector2D> a8 =
-            new BSPTree<>(buildLine(Vector2D.of(0.85, -0.25),
+        BSPTree_Old<Vector2D> a8 =
+            new BSPTree_Old<>(buildLine(Vector2D.of(0.85, -0.25),
                                                Vector2D.of(0.85,  0.05)),
                                                a2, a7, null);
-        BSPTree<Vector2D> a9 =
-            new BSPTree<>(buildLine(Vector2D.of(0.90,  0.05),
+        BSPTree_Old<Vector2D> a9 =
+            new BSPTree_Old<>(buildLine(Vector2D.of(0.90,  0.05),
                                                Vector2D.of(0.90, -0.50)),
-                                               a8, new BSPTree<Vector2D>(Boolean.FALSE), null);
+                                               a8, new BSPTree_Old<Vector2D>(Boolean.FALSE), null);
 
-        BSPTree<Vector2D> b0 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.92, -0.12),
+        BSPTree_Old<Vector2D> b0 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.92, -0.12),
                                                   Vector2D.of(0.92, -0.08)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE), new BSPTree<Vector2D>(Boolean.TRUE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE), new BSPTree_Old<Vector2D>(Boolean.TRUE),
                                                   null);
-        BSPTree<Vector2D> b1 =
-            new BSPTree<>(buildHalfLine(Vector2D.of(0.92, -0.08),
+        BSPTree_Old<Vector2D> b1 =
+            new BSPTree_Old<>(buildHalfLine(Vector2D.of(0.92, -0.08),
                                                    Vector2D.of(0.90, -0.10),
                                                    true),
-                                                   new BSPTree<Vector2D>(Boolean.FALSE), b0, null);
-        BSPTree<Vector2D> b2 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.92, -0.18),
+                                                   new BSPTree_Old<Vector2D>(Boolean.FALSE), b0, null);
+        BSPTree_Old<Vector2D> b2 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.92, -0.18),
                                                   Vector2D.of(0.92, -0.12)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE), new BSPTree<Vector2D>(Boolean.TRUE),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE), new BSPTree_Old<Vector2D>(Boolean.TRUE),
                                                   null);
-        BSPTree<Vector2D> b3 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.85, -0.15),
+        BSPTree_Old<Vector2D> b3 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.85, -0.15),
                                                   Vector2D.of(0.90, -0.20)),
-                                                  new BSPTree<Vector2D>(Boolean.FALSE), b2, null);
-        BSPTree<Vector2D> b4 =
-            new BSPTree<>(buildSegment(Vector2D.of(0.95, -0.15),
+                                                  new BSPTree_Old<Vector2D>(Boolean.FALSE), b2, null);
+        BSPTree_Old<Vector2D> b4 =
+            new BSPTree_Old<>(buildSegment(Vector2D.of(0.95, -0.15),
                                                   Vector2D.of(0.85, -0.05)),
                                                   b1, b3, null);
-        BSPTree<Vector2D> b5 =
-            new BSPTree<>(buildHalfLine(Vector2D.of(0.85, -0.05),
+        BSPTree_Old<Vector2D> b5 =
+            new BSPTree_Old<>(buildHalfLine(Vector2D.of(0.85, -0.05),
                                                    Vector2D.of(0.85, -0.25),
                                                    true),
-                                                   new BSPTree<Vector2D>(Boolean.FALSE), b4, null);
-        BSPTree<Vector2D> b6 =
-            new BSPTree<>(buildLine(Vector2D.of(0.0, -1.10),
+                                                   new BSPTree_Old<Vector2D>(Boolean.FALSE), b4, null);
+        BSPTree_Old<Vector2D> b6 =
+            new BSPTree_Old<>(buildLine(Vector2D.of(0.0, -1.10),
                                                Vector2D.of(1.0, -0.10)),
-                                               new BSPTree<Vector2D>(Boolean.FALSE), b5, null);
+                                               new BSPTree_Old<Vector2D>(Boolean.FALSE), b5, null);
 
         // act
         PolygonsSet c =
@@ -1305,33 +1305,33 @@ public class PolygonsSetTest {
                      Vector2D.of(1.0, 2.0), TEST_PRECISION)
         };
 
-        BSPTree<Vector2D> node1 =
-            new BSPTree<>(new SubLine(l[0],
+        BSPTree_Old<Vector2D> node1 =
+            new BSPTree_Old<>(new SubLine(l[0],
                                                  new IntervalsSet(intersectionAbscissa(l[0], l[1]),
                                                                   intersectionAbscissa(l[0], l[2]),
                                                                   TEST_PRECISION)),
-                                     new BSPTree<Vector2D>(Boolean.TRUE),
-                                     new BSPTree<Vector2D>(Boolean.FALSE),
+                                     new BSPTree_Old<Vector2D>(Boolean.TRUE),
+                                     new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
-        BSPTree<Vector2D> node2 =
-            new BSPTree<>(new SubLine(l[1],
+        BSPTree_Old<Vector2D> node2 =
+            new BSPTree_Old<>(new SubLine(l[1],
                                                  new IntervalsSet(intersectionAbscissa(l[1], l[2]),
                                                                   intersectionAbscissa(l[1], l[3]),
                                                                   TEST_PRECISION)),
                                      node1,
-                                     new BSPTree<Vector2D>(Boolean.FALSE),
+                                     new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
-        BSPTree<Vector2D> node3 =
-            new BSPTree<>(new SubLine(l[2],
+        BSPTree_Old<Vector2D> node3 =
+            new BSPTree_Old<>(new SubLine(l[2],
                                                  new IntervalsSet(intersectionAbscissa(l[2], l[3]),
                                                  Double.POSITIVE_INFINITY, TEST_PRECISION)),
                                      node2,
-                                     new BSPTree<Vector2D>(Boolean.FALSE),
+                                     new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
-        BSPTree<Vector2D> node4 =
-            new BSPTree<>(l[3].wholeHyperplane(),
+        BSPTree_Old<Vector2D> node4 =
+            new BSPTree_Old<>(l[3].wholeHyperplane(),
                                      node3,
-                                     new BSPTree<Vector2D>(Boolean.FALSE),
+                                     new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
 
         // act
@@ -1544,7 +1544,7 @@ public class PolygonsSetTest {
         // the following is a wrong usage of the constructor.
         // as explained in the javadoc, the failure is NOT detected at construction
         // time but occurs later on
-        PolygonsSet ps = new PolygonsSet(new BSPTree<Vector2D>(), TEST_PRECISION);
+        PolygonsSet ps = new PolygonsSet(new BSPTree_Old<Vector2D>(), TEST_PRECISION);
         Assert.assertNotNull(ps);
         try {
             ps.getSize();
@@ -1682,17 +1682,17 @@ public class PolygonsSetTest {
         public void count(PolygonsSet polygonsSet) {
             leafNodes     = 0;
             internalNodes = 0;
-            polygonsSet.getTree(false).visit(new BSPTreeVisitor<Vector2D>() {
+            polygonsSet.getTree(false).visit(new BSPTreeVisitor_Old<Vector2D>() {
                 @Override
-                public Order visitOrder(BSPTree<Vector2D> node) {
+                public Order visitOrder(BSPTree_Old<Vector2D> node) {
                     return Order.SUB_PLUS_MINUS;
                 }
                 @Override
-                public void visitInternalNode(BSPTree<Vector2D> node) {
+                public void visitInternalNode(BSPTree_Old<Vector2D> node) {
                     ++internalNodes;
                 }
                 @Override
-                public void visitLeafNode(BSPTree<Vector2D> node) {
+                public void visitLeafNode(BSPTree_Old<Vector2D> node) {
                     ++leafNodes;
                 }
 

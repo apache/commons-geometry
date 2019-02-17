@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> implements Region<P> {
 
     /** Inside/Outside BSP tree. */
-    private BSPTree<P> tree;
+    private BSPTree_Old<P> tree;
 
     /** Precision context used to determine floating point equality. */
     private final DoublePrecisionContext precision;
@@ -50,7 +50,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * @param precision precision context used to compare floating point numbers
      */
     protected AbstractRegion(final DoublePrecisionContext precision) {
-        this.tree      = new BSPTree<>(Boolean.TRUE);
+        this.tree      = new BSPTree_Old<>(Boolean.TRUE);
         this.precision = precision;
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * @param tree inside/outside BSP tree representing the region
      * @param precision precision context used to compare floating point values
      */
-    protected AbstractRegion(final BSPTree<P> tree, final DoublePrecisionContext precision) {
+    protected AbstractRegion(final BSPTree_Old<P> tree, final DoublePrecisionContext precision) {
         this.tree      = tree;
         this.precision = precision;
     }
@@ -99,7 +99,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
         if (boundary.size() == 0) {
 
             // the tree represents the whole space
-            tree = new BSPTree<>(Boolean.TRUE);
+            tree = new BSPTree_Old<>(Boolean.TRUE);
 
         } else {
 
@@ -118,26 +118,26 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
             ordered.addAll(boundary);
 
             // build the tree top-down
-            tree = new BSPTree<>();
+            tree = new BSPTree_Old<>();
             insertCuts(tree, ordered);
 
             // set up the inside/outside flags
-            tree.visit(new BSPTreeVisitor<P>() {
+            tree.visit(new BSPTreeVisitor_Old<P>() {
 
                 /** {@inheritDoc} */
                 @Override
-                public Order visitOrder(final BSPTree<P> node) {
+                public Order visitOrder(final BSPTree_Old<P> node) {
                     return Order.PLUS_SUB_MINUS;
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public void visitInternalNode(final BSPTree<P> node) {
+                public void visitInternalNode(final BSPTree_Old<P> node) {
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public void visitLeafNode(final BSPTree<P> node) {
+                public void visitLeafNode(final BSPTree_Old<P> node) {
                     if (node.getParent() == null || node == node.getParent().getMinus()) {
                         node.setAttribute(Boolean.TRUE);
                     } else {
@@ -158,14 +158,14 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     public AbstractRegion(final Hyperplane<P>[] hyperplanes, final DoublePrecisionContext precision) {
         this.precision = precision;
         if ((hyperplanes == null) || (hyperplanes.length == 0)) {
-            tree = new BSPTree<>(Boolean.FALSE);
+            tree = new BSPTree_Old<>(Boolean.FALSE);
         } else {
 
             // use the first hyperplane to build the right class
             tree = hyperplanes[0].wholeSpace().getTree(false);
 
             // chop off parts of the space
-            BSPTree<P> node = tree;
+            BSPTree_Old<P> node = tree;
             node.setAttribute(Boolean.TRUE);
             for (final Hyperplane<P> hyperplane : hyperplanes) {
                 if (node.insertCut(hyperplane)) {
@@ -182,7 +182,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
 
     /** {@inheritDoc} */
     @Override
-    public abstract AbstractRegion<P, S> buildNew(BSPTree<P> newTree);
+    public abstract AbstractRegion<P, S> buildNew(BSPTree_Old<P> newTree);
 
     /** Get the object used to determine floating point equality for this region.
      * @return the floating point precision context for the instance
@@ -197,7 +197,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * @param boundary collection of edges belonging to the cell defined
      * by the node
      */
-    private void insertCuts(final BSPTree<P> node, final Collection<SubHyperplane<P>> boundary) {
+    private void insertCuts(final BSPTree_Old<P> node, final Collection<SubHyperplane<P>> boundary) {
 
         final Iterator<SubHyperplane<P>> iterator = boundary.iterator();
 
@@ -256,7 +256,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
 
     /** {@inheritDoc} */
     @Override
-    public boolean isEmpty(final BSPTree<P> node) {
+    public boolean isEmpty(final BSPTree_Old<P> node) {
 
         // we use a recursive function rather than the BSPTreeVisitor
         // interface because we can stop visiting the tree as soon as we
@@ -280,7 +280,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFull(final BSPTree<P> node) {
+    public boolean isFull(final BSPTree_Old<P> node) {
 
         // we use a recursive function rather than the BSPTreeVisitor
         // interface because we can stop visiting the tree as soon as we
@@ -324,8 +324,8 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * Region.Location#INSIDE INSIDE}, {@link Region.Location#OUTSIDE
      * OUTSIDE} or {@link Region.Location#BOUNDARY BOUNDARY}
      */
-    protected Location checkPoint(final BSPTree<P> node, final P point) {
-        final BSPTree<P> cell = node.getCell(point, precision);
+    protected Location checkPoint(final BSPTree_Old<P> node, final P point) {
+        final BSPTree_Old<P> cell = node.getCell(point, precision);
         if (cell.getCut() == null) {
             // the point is in the interior of a cell, just check the attribute
             return ((Boolean) cell.getAttribute()) ? Location.INSIDE : Location.OUTSIDE;
@@ -340,7 +340,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
 
     /** {@inheritDoc} */
     @Override
-    public BSPTree<P> getTree(final boolean includeBoundaryAttributes) {
+    public BSPTree_Old<P> getTree(final boolean includeBoundaryAttributes) {
         if (includeBoundaryAttributes && (tree.getCut() != null) && (tree.getAttribute() == null)) {
             // compute the boundary attributes
             tree.visit(new BoundaryBuilder<P>());
@@ -405,7 +405,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * @param sub sub-hyperplane traversing the region
      * @return filtered sub-hyperplane
      */
-    private SubHyperplane<P> recurseIntersection(final BSPTree<P> node, final SubHyperplane<P> sub) {
+    private SubHyperplane<P> recurseIntersection(final BSPTree_Old<P> node, final SubHyperplane<P> sub) {
 
         if (node.getCut() == null) {
             return (Boolean) node.getAttribute() ? sub.copySelf() : null;
@@ -453,18 +453,18 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
     public AbstractRegion<P, S> applyTransform(final Transform<P, S> transform) {
 
         // transform the tree, except for boundary attribute splitters
-        final Map<BSPTree<P>, BSPTree<P>> map = new HashMap<>();
-        final BSPTree<P> transformedTree = recurseTransform(getTree(false), transform, map);
+        final Map<BSPTree_Old<P>, BSPTree_Old<P>> map = new HashMap<>();
+        final BSPTree_Old<P> transformedTree = recurseTransform(getTree(false), transform, map);
 
         // set up the boundary attributes splitters
-        for (final Map.Entry<BSPTree<P>, BSPTree<P>> entry : map.entrySet()) {
+        for (final Map.Entry<BSPTree_Old<P>, BSPTree_Old<P>> entry : map.entrySet()) {
             if (entry.getKey().getCut() != null) {
                 @SuppressWarnings("unchecked")
                 BoundaryAttribute<P> original = (BoundaryAttribute<P>) entry.getKey().getAttribute();
                 if (original != null) {
                     @SuppressWarnings("unchecked")
                     BoundaryAttribute<P> transformed = (BoundaryAttribute<P>) entry.getValue().getAttribute();
-                    for (final BSPTree<P> splitter : original.getSplitters()) {
+                    for (final BSPTree_Old<P> splitter : original.getSplitters()) {
                         transformed.getSplitters().add(map.get(splitter));
                     }
                 }
@@ -482,12 +482,12 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
      * @return a new tree
      */
     @SuppressWarnings("unchecked")
-    private BSPTree<P> recurseTransform(final BSPTree<P> node, final Transform<P, S> transform,
-                                        final Map<BSPTree<P>, BSPTree<P>> map) {
+    private BSPTree_Old<P> recurseTransform(final BSPTree_Old<P> node, final Transform<P, S> transform,
+                                        final Map<BSPTree_Old<P>, BSPTree_Old<P>> map) {
 
-        final BSPTree<P> transformedNode;
+        final BSPTree_Old<P> transformedNode;
         if (node.getCut() == null) {
-            transformedNode = new BSPTree<>(node.getAttribute());
+            transformedNode = new BSPTree_Old<>(node.getAttribute());
         } else {
 
             final SubHyperplane<P>  sub = node.getCut();
@@ -502,7 +502,7 @@ public abstract class AbstractRegion<P extends Point<P>, S extends Point<S>> imp
                 attribute = new BoundaryAttribute<>(tPO, tPI, new NodesSet<P>());
             }
 
-            transformedNode = new BSPTree<>(tSub,
+            transformedNode = new BSPTree_Old<>(tSub,
                                              recurseTransform(node.getPlus(),  transform, map),
                                              recurseTransform(node.getMinus(), transform, map),
                                              attribute);
