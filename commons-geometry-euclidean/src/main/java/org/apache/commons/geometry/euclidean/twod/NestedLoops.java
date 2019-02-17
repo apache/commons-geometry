@@ -93,7 +93,7 @@ class NestedLoops {
         for (int i = 0; i < loop.length; ++i) {
             final Vector2D previous = current;
             current = loop[i];
-            final Line   line   = new Line(previous, current, precision);
+            final Line   line   = Line.fromPoints(previous, current, precision);
             final IntervalsSet region =
                 new IntervalsSet(line.toSubSpace(previous).getX(),
                                  line.toSubSpace(current).getX(),

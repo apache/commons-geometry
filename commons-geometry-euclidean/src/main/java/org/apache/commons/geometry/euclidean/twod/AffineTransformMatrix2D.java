@@ -414,6 +414,33 @@ public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vect
                 );
     }
 
+    /** Get a new transform create from the given column vectors. The returned transform
+     * does not include any translation component.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @return a new transform with the given column vectors
+     */
+    public static AffineTransformMatrix2D fromColumnVectors(final Vector2D u, final Vector2D v) {
+        return fromColumnVectors(u, v, Vector2D.ZERO);
+    }
+
+    /** Get a new transform created from the given column vectors.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @param t third column vector; this corresponds to the translation of the transform
+     * @return a new transform with the given column vectors
+     */
+    public static AffineTransformMatrix2D fromColumnVectors(final Vector2D u, final Vector2D v, final Vector2D t) {
+        return new AffineTransformMatrix2D(
+                    u.getX(), v.getX(), t.getX(),
+                    u.getY(), v.getY(), t.getY()
+                );
+    }
+
     /** Get the transform representing the identity matrix. This transform does not
      * modify point or vector values when applied.
      * @return transform representing the identity matrix

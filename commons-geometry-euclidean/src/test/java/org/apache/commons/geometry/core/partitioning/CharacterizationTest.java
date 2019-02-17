@@ -409,11 +409,11 @@ public class CharacterizationTest {
     }
 
     private Line buildLine(Vector2D p1, Vector2D p2) {
-        return new Line(p1, p2, TEST_PRECISION);
+        return Line.fromPoints(p1, p2, TEST_PRECISION);
     }
 
     private SubLine buildSubLine(Vector2D start, Vector2D end) {
-        Line line = new Line(start, end, TEST_PRECISION);
+        Line line = Line.fromPoints(start, end, TEST_PRECISION);
         double lower = (line.toSubSpace(start)).getX();
         double upper = (line.toSubSpace(end)).getX();
         return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));

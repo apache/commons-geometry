@@ -214,7 +214,7 @@ public class OutlineExtractor {
                         final Vector2D  cPoint    = Vector2D.of(current3D.dot(u),
                                                                  current3D.dot(v));
                         final org.apache.commons.geometry.euclidean.twod.Line line =
-                            new org.apache.commons.geometry.euclidean.twod.Line(pPoint, cPoint, precision);
+                            org.apache.commons.geometry.euclidean.twod.Line.fromPoints(pPoint, cPoint, precision);
                         SubHyperplane<Vector2D> edge = line.wholeHyperplane();
 
                         if (closed || (previous != 1)) {
@@ -222,7 +222,7 @@ public class OutlineExtractor {
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
                             final org.apache.commons.geometry.euclidean.twod.Line l =
-                                new org.apache.commons.geometry.euclidean.twod.Line(pPoint, angle, precision);
+                                org.apache.commons.geometry.euclidean.twod.Line.fromPointAndAngle(pPoint, angle, precision);
                             edge = edge.split(l).getPlus();
                         }
 
@@ -231,7 +231,7 @@ public class OutlineExtractor {
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
                             final org.apache.commons.geometry.euclidean.twod.Line l =
-                                new org.apache.commons.geometry.euclidean.twod.Line(cPoint, angle, precision);
+                                org.apache.commons.geometry.euclidean.twod.Line.fromPointAndAngle(cPoint, angle, precision);
                             edge = edge.split(l).getMinus();
                         }
 

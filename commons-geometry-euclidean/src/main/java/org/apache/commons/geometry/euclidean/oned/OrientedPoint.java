@@ -172,7 +172,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         int result = 1;
         result = (prime * result) + Objects.hashCode(location);
         result = (prime * result) + Boolean.hashCode(positiveFacing);
-        result = (prime * result) + Objects.hash(precision);
+        result = (prime * result) + Objects.hashCode(precision);
 
         return result;
     }

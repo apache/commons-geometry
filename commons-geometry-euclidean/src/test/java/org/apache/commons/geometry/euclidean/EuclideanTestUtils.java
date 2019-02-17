@@ -317,7 +317,7 @@ public class EuclideanTestUtils {
             @Override
             public Line parseHyperplane()
                 throws ParseException {
-                return new Line(Vector2D.of(getNumber(), getNumber()), getNumber(), getPrecision());
+                return Line.fromPointAndAngle(Vector2D.of(getNumber(), getNumber()), getNumber(), getPrecision());
             }
 
         };

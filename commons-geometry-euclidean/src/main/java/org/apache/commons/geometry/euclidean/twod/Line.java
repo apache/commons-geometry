@@ -16,6 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -29,225 +33,168 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents an oriented line in the 2D plane.
 
- * <p>An oriented line can be defined either by prolongating a line
- * segment between two points past these points, or by one point and
- * an angular direction (in trigonometric orientation).</p>
+ * <p>An oriented line can be defined either by extending a line
+ * segment between two points past these points, by specifying a
+ * point and a direction, or by specifying a point and an angle
+ * relative to the x-axis.</p>
 
- * <p>Since it is oriented the two half planes at its two sides are
- * unambiguously identified as a left half plane and a right half
+ * <p>Since the line oriented, the two half planes on its sides are
+ * unambiguously identified as the left half plane and the right half
  * plane. This can be used to identify the interior and the exterior
- * in a simple way by local properties only when part of a line is
- * used to define part of a polygon boundary.</p>
+ * in a simple way when a line is used to define a portion of a polygon
+ * boundary.</p>
 
  * <p>A line can also be used to completely define a reference frame
  * in the plane. It is sufficient to select one specific point in the
  * line (the orthogonal projection of the original reference frame on
- * the line) and to use the unit vector in the line direction and the
- * orthogonal vector oriented from left half plane to right half
- * plane. We define two coordinates by the process, the
- * <em>abscissa</em> along the line, and the <em>offset</em> across
- * the line. All points of the plane are uniquely identified by these
- * two coordinates. The line is the set of points at zero offset, the
- * left half plane is the set of points with negative offsets and the
- * right half plane is the set of points with positive offsets.</p>
+ * the line) and to use the unit vector in the line direction (see
+ * {@link #getDirection()} and the orthogonal vector oriented from the
+ * left half plane to the right half plane (see {@link #getOffsetDirection()}.
+ * We define two coordinates by the process, the <em>abscissa</em> along
+ * the line, and the <em>offset</em> across the line. All points of the
+ * plane are uniquely identified by these two coordinates. The line is
+ * the set of points at zero offset, the left half plane is the set of
+ * points with negative offsets and the right half plane is the set of
+ * points with positive offsets.</p>
  */
-public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D> {
-    /** Angle with respect to the abscissa axis. */
-    private double angle;
+public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>, Serializable {
 
-    /** Cosine of the line angle. */
-    private double cos;
+    /** Serializable UID. */
+    private static final long serialVersionUID = 20190120L;
 
-    /** Sine of the line angle. */
-    private double sin;
+    /** The direction of the line as a normalized vector. */
+    private final Vector2D direction;
 
-    /** Offset of the frame origin. */
-    private double originOffset;
+    /** The distance between the origin and the line. */
+    private final double originOffset;
 
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
-    /** Reverse line. */
-    private Line reverse;
-
-    /** Build a line from two points.
-     * <p>The line is oriented from p1 to p2</p>
-     * @param p1 first point
-     * @param p2 second point
-     * @param precision precision context used to compare floating point values
+    /** Simple constructor.
+     * @param direction The direction of the line.
+     * @param originOffset The signed distance between the line and the origin.
+     * @param precision Precision context used to compare floating point numbers.
      */
-    public Line(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
-        reset(p1, p2);
-        this.precision = precision;
-    }
-
-    /** Build a line from a point and an angle.
-     * @param p point belonging to the line
-     * @param angle angle of the line with respect to abscissa axis
-     * @param precision precision context used to compare floating point values
-     */
-    public Line(final Vector2D p, final double angle, final DoublePrecisionContext precision) {
-        reset(p, angle);
-        this.precision = precision;
-    }
-
-    /** Build a line from its internal characteristics.
-     * @param angle angle of the line with respect to abscissa axis
-     * @param cos cosine of the angle
-     * @param sin sine of the angle
-     * @param originOffset offset of the origin
-     * @param precision precision context used to compare floating point values
-     */
-    private Line(final double angle, final double cos, final double sin,
-                 final double originOffset, final DoublePrecisionContext precision) {
-        this.angle        = angle;
-        this.cos          = cos;
-        this.sin          = sin;
+    private Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
+        this.direction = direction;
         this.originOffset = originOffset;
-        this.precision    = precision;
-        this.reverse      = null;
+        this.precision = precision;
     }
 
-    /** Copy constructor.
-     * <p>The created instance is completely independent from the
-     * original instance, it is a deep copy.</p>
-     * @param line line to copy
+    /** Get the angle of the line in radians with respect to the abscissa (+x) axis. The
+     * returned angle is in the range {@code [0, 2pi)}.
+     * @return the angle of the line with respect to the abscissa (+x) axis in the range
+     *      {@code [0, 2pi)}
      */
-    public Line(final Line line) {
-        angle        = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(line.angle);
-        cos          = line.cos;
-        sin          = line.sin;
-        originOffset = line.originOffset;
-        precision    = line.precision;
-        reverse      = null;
+    public double getAngle() {
+        final double angle = Math.atan2(direction.getY(), direction.getX());
+        return PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(angle);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Line copySelf() {
-        return new Line(this);
-    }
-
-    /** Reset the instance as if built from two points.
-     * <p>The line is oriented from p1 to p2</p>
-     * @param p1 first point
-     * @param p2 second point
+    /** Get the direction of the line.
+     * @return the direction of the line
      */
-    public void reset(final Vector2D p1, final Vector2D p2) {
-        unlinkReverse();
-        final double dx = p2.getX() - p1.getX();
-        final double dy = p2.getY() - p1.getY();
-        final double d = Math.hypot(dx, dy);
-        if (d == 0.0) {
-            angle        = 0.0;
-            cos          = 1.0;
-            sin          = 0.0;
-            originOffset = p1.getY();
-        } else {
-            angle        = Math.PI + Math.atan2(-dy, -dx);
-            cos          = dx / d;
-            sin          = dy / d;
-            originOffset = LinearCombination.value(p2.getX(), p1.getY(), -p1.getX(), p2.getY()) / d;
-        }
+    public Vector2D getDirection() {
+        return direction;
     }
 
-    /** Reset the instance as if built from a line and an angle.
-     * @param p point belonging to the line
-     * @param alpha angle of the line with respect to abscissa axis
+    /** Get the offset direction of the line. This vector is perpendicular to the
+     * line and points in the direction of positive offset values, meaning that
+     * it points from the left side of the line to the right when one is looking
+     * along the line direction.
+     * @return the offset direction of the line.
      */
-    public void reset(final Vector2D p, final double alpha) {
-        unlinkReverse();
-        this.angle   = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(alpha);
-        cos          = Math.cos(this.angle);
-        sin          = Math.sin(this.angle);
-        originOffset = LinearCombination.value(cos, p.getY(), -sin, p.getX());
+    public Vector2D getOffsetDirection() {
+        return Vector2D.of(direction.getY(), -direction.getX());
     }
 
-    /** Revert the instance.
+    /** Get the line origin point. This is the projection of the 2D origin
+     * onto the line and also serves as the origin for the 1D embedded subspace.
+     * @return the origin point of the line
      */
-    public void revertSelf() {
-        unlinkReverse();
-        if (angle < Math.PI) {
-            angle += Math.PI;
-        } else {
-            angle -= Math.PI;
-        }
-        cos          = -cos;
-        sin          = -sin;
-        originOffset = -originOffset;
+    public Vector2D getOrigin() {
+        return toSpace(Vector1D.ZERO);
     }
 
-    /** Unset the link between an instance and its reverse.
+    /** Get the signed distance from the origin of the 2D space to the
+     * closest point on the line.
+     * @return the signed distance from the origin to the line
      */
-    private void unlinkReverse() {
-        if (reverse != null) {
-            reverse.reverse = null;
-        }
-        reverse = null;
-    }
-
-    /** Get the reverse of the instance.
-     * <p>Get a line with reversed orientation with respect to the
-     * instance.</p>
-     * <p>
-     * As long as neither the instance nor its reverse are modified
-     * (i.e. as long as none of the {@link #reset(Vector2D, Vector2D)},
-     * {@link #reset(Vector2D, double)}, {@link #revertSelf()},
-     * {@link #setAngle(double)} or {@link #setOriginOffset(double)}
-     * methods are called), then the line and its reverse remain linked
-     * together so that {@code line.getReverse().getReverse() == line}.
-     * When one of the line is modified, the link is deleted as both
-     * instance becomes independent.
-     * </p>
-     * @return a new line, with orientation opposite to the instance orientation
-     */
-    public Line getReverse() {
-        if (reverse == null) {
-            reverse = new Line((angle < Math.PI) ? (angle + Math.PI) : (angle - Math.PI),
-                               -cos, -sin, -originOffset, precision);
-            reverse.reverse = this;
-        }
-        return reverse;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D toSubSpace(final Vector2D point) {
-        return Vector1D.of(LinearCombination.value(cos, point.getX(), sin, point.getY()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D toSpace(final Vector1D point) {
-        final double abscissa = point.getX();
-        return Vector2D.of(LinearCombination.value(abscissa, cos, -originOffset, sin),
-                            LinearCombination.value(abscissa, sin,  originOffset, cos));
-    }
-
-    /** Get the intersection point of the instance and another line.
-     * @param other other line
-     * @return intersection point of the instance and the other line
-     * or null if there are no intersection points
-     */
-    public Vector2D intersection(final Line other) {
-        final double d = LinearCombination.value(sin, other.cos, -other.sin, cos);
-        if (precision.eqZero(d)) {
-            return null;
-        }
-        return Vector2D.of(LinearCombination.value(cos, other.originOffset, -other.cos, originOffset) / d,
-                            LinearCombination.value(sin, other.originOffset, -other.sin, originOffset) / d);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D project(Vector2D point) {
-        return toSpace(toSubSpace(point));
+    public double getOriginOffset() {
+        return originOffset;
     }
 
     /** {@inheritDoc} */
     @Override
     public DoublePrecisionContext getPrecision() {
         return precision;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Line copySelf() {
+        return this;
+    }
+
+    /** Get the reverse of the instance, meaning a line containing the same
+     * points but with the opposite orientation.
+     * @return a new line, with orientation opposite to the instance orientation
+     */
+    public Line reverse() {
+        return new Line(direction.negate(), -originOffset, precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D toSubSpace(final Vector2D point) {
+        return Vector1D.of(direction.dot(point));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D toSpace(final Vector1D point) {
+        final double abscissa = point.getX();
+
+        // The 2D coordinate is equal to the projection of the
+        // 2D origin onto the line plus the direction multiplied
+        // by the abscissa. We can combine everything into a single
+        // step below given that the origin location is equal to
+        // (-direction.y * originOffset, direction.x * originOffset).
+        return Vector2D.of(
+                    LinearCombination.value(abscissa, direction.getX(), -originOffset, direction.getY()),
+                    LinearCombination.value(abscissa, direction.getY(), originOffset, direction.getX())
+                );
+    }
+
+    /** Get the intersection point of the instance and another line.
+     * @param other other line
+     * @return intersection point of the instance and the other line
+     *      or null if there is no unique intersection point (ie, the lines
+     *      are parallel or coincident)
+     */
+    public Vector2D intersection(final Line other) {
+        final double area = this.direction.signedArea(other.direction);
+        if (precision.eqZero(area)) {
+            // lines are parallel
+            return null;
+        }
+
+        final double x = LinearCombination.value(
+                other.direction.getX(), originOffset,
+                -direction.getX(), other.originOffset) / area;
+
+        final double y = LinearCombination.value(
+                other.direction.getY(), originOffset,
+                -direction.getY(), other.originOffset) / area;
+
+        return Vector2D.of(x, y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D project(final Vector2D point) {
+        return toSpace(toSubSpace(point));
     }
 
     /** {@inheritDoc} */
@@ -265,45 +212,61 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
         return new PolygonsSet(precision);
     }
 
-    /** Get the offset (oriented distance) of a parallel line.
-     * <p>This method should be called only for parallel lines otherwise
-     * the result is not meaningful.</p>
-     * <p>The offset is 0 if both lines are the same, it is
-     * positive if the line is on the right side of the instance and
-     * negative if it is on the left side, according to its natural
-     * orientation.</p>
-     * @param line line to check
-     * @return offset of the line
-     */
-    public double getOffset(final Line line) {
-        return originOffset +
-               (LinearCombination.value(cos, line.cos, sin, line.sin) > 0 ? -line.originOffset : line.originOffset);
-    }
-
     /** {@inheritDoc} */
     @Override
     public double getOffset(final Vector2D point) {
-        return LinearCombination.value(sin, point.getX(), -cos, point.getY(), 1.0, originOffset);
+        return originOffset - direction.signedArea(point);
+    }
+
+    /** Get the offset (oriented distance) of a line. Since an infinite
+     * number of distances can be calculated between points on two different
+     * lines, this methods returns the value closest to zero. For intersecting
+     * lines, this will simply be zero. For parallel lines, this will be the
+     * perpendicular distance between the two lines, as a signed value.
+     *
+     * <p>The sign of the returned offset indicates the side of the line that the
+     * argument lies on. The offset is positive if the line lies on the right side
+     * of the instance and negative if the line lies on the left side
+     * of the instance.</p>
+     * @param line line to check
+     * @return offset of the line
+     * @see #distance(Line)
+     */
+    public double getOffset(final Line line) {
+        if (isParallel(line)) {
+            // since the lines are parallel, the offset between
+            // them is simply the difference between their origin offsets,
+            // with the second offset negated if the lines point if opposite
+            // directions
+            final double dot = direction.dot(line.direction);
+            return originOffset - (Math.signum(dot) * line.originOffset);
+        }
+
+        // the lines are not parallel, which means they intersect at some point
+        return 0.0;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean sameOrientationAs(final Hyperplane<Vector2D> other) {
-        final Line otherL = (Line) other;
-        return LinearCombination.value(sin, otherL.sin, cos, otherL.cos) >= 0.0;
+        final Line otherLine = (Line) other;
+        return direction.dot(otherLine.direction) >= 0.0;
     }
 
-    /** Get one point from the plane.
-     * @param abscissa desired abscissa for the point
-     * @param offset desired offset for the point
+    /** Get one point from the plane, relative to the coordinate system
+     * of the line. Note that the direction of increasing offsets points
+     * to the <em>right</em> of the line. This means that if one pictures
+     * the line (abscissa) direction as equivalent to the +x-axis, the offset
+     * direction will point along the -y axis.
+     * @param abscissa desired abscissa (distance along the line) for the point
+     * @param offset desired offset (distance perpendicular to the line) for the point
      * @return one point in the plane, with given abscissa and offset
-     * relative to the line
+     *      relative to the line
      */
-    public Vector2D getPointAt(final Vector1D abscissa, final double offset) {
-        final double x       = abscissa.getX();
-        final double dOffset = offset - originOffset;
-        return Vector2D.of(LinearCombination.value(x, cos,  dOffset, sin),
-                            LinearCombination.value(x, sin, -dOffset, cos));
+    public Vector2D pointAt(final double abscissa, final double offset) {
+        final double pointOffset = offset - originOffset;
+        return Vector2D.of(LinearCombination.value(abscissa, direction.getX(),  pointOffset, direction.getY()),
+                            LinearCombination.value(abscissa, direction.getY(), -pointOffset, direction.getX()));
     }
 
     /** Check if the line contains a point.
@@ -312,6 +275,16 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
      */
     public boolean contains(final Vector2D p) {
         return precision.eqZero(getOffset(p));
+    }
+
+    /** Check if this instance completely contains the other line.
+     * This will be true if the two instances represent the same line,
+     * with perhaps different directions.
+     * @param line line to check
+     * @return true if this instance contains all points in the given line
+     */
+    public boolean contains(final Line line) {
+        return isParallel(line) && precision.eqZero(getOffset(line));
     }
 
     /** Compute the distance between the instance and a point.
@@ -326,164 +299,174 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
         return Math.abs(getOffset(p));
     }
 
-    /** Check the instance is parallel to another line.
+    /** Compute the shortest distance between this instance and
+     * the given line. This value will simply be zero for intersecting
+     * lines.
+     * @param line line to compute the closest distance to
+     * @return the shortest distance between this instance and the
+     *      given line
+     * @see #getOffset(Line)
+     */
+    public double distance(final Line line) {
+        return Math.abs(getOffset(line));
+    }
+
+    /** Check if the instance is parallel to another line.
      * @param line other line to check
      * @return true if the instance is parallel to the other line
-     * (they can have either the same or opposite orientations)
+     *  (they can have either the same or opposite orientations)
      */
-    public boolean isParallelTo(final Line line) {
-        return precision.eqZero(LinearCombination.value(sin, line.cos, -cos, line.sin));
+    public boolean isParallel(final Line line) {
+        final double area = direction.signedArea(line.direction);
+        return precision.eqZero(area);
     }
 
-    /** Translate the line to force it passing by a point.
-     * @param p point by which the line should pass
+    /** Transform this instance with the given transform.
+     * @param transform transform to apply to this instance
+     * @return a new transformed line
      */
-    public void translateToPoint(final Vector2D p) {
-        originOffset = LinearCombination.value(cos, p.getY(), -sin, p.getX());
+    public Line transform(final Transform<Vector2D, Vector1D> transform) {
+        final Vector2D origin = getOrigin();
+
+        final Vector2D p1 = transform.apply(origin);
+        final Vector2D p2 = transform.apply(origin.add(direction));
+
+        return Line.fromPoints(p1, p2, precision);
     }
 
-    /** Get the angle of the line.
-     * @return the angle of the line with respect to the abscissa axis
-     */
-    public double getAngle() {
-        return PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(angle);
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        final int prime = 167;
+
+        int result = 1;
+        result = (prime * result) + Objects.hashCode(direction);
+        result = (prime * result) + Double.hashCode(originOffset);
+        result = (prime * result) + Objects.hashCode(precision);
+
+        return result;
     }
 
-    /** Set the angle of the line.
-     * @param angle new angle of the line with respect to the abscissa axis
-     */
-    public void setAngle(final double angle) {
-        unlinkReverse();
-        this.angle = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(angle);
-        cos        = Math.cos(this.angle);
-        sin        = Math.sin(this.angle);
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        else if (!(obj instanceof Line)) {
+            return false;
+        }
+
+        Line other = (Line) obj;
+
+        return Objects.equals(this.direction, other.direction) &&
+                Double.compare(this.originOffset, other.originOffset) == 0 &&
+                Objects.equals(this.precision, other.precision);
     }
 
-    /** Get the offset of the origin.
-     * @return the offset of the origin
-     */
-    public double getOriginOffset() {
-        return originOffset;
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[origin= ")
+            .append(getOrigin())
+            .append(", direction= ")
+            .append(direction)
+            .append(']');
+
+        return sb.toString();
     }
 
-    /** Set the offset of the origin.
-     * @param offset offset of the origin
+    /** Create a line from two points lying on the line. The line points in the direction
+     * from {@code p1} to {@code p2}.
+     * @param p1 first point
+     * @param p2 second point
+     * @param precision precision context used to compare floating point values
+     * @return new line containing {@code p1} and {@code p2} and pointing in the direction
+     *      from {@code p1} to {@code p2}
+     * @throws GeometryValueException If the vector between {@code p1} and {@code p2} has zero length,
+     *      as evaluated by the given precision context
      */
-    public void setOriginOffset(final double offset) {
-        unlinkReverse();
-        originOffset = offset;
+    public static Line fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
+        return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
     }
 
-    /** Get a {@link org.apache.commons.geometry.core.partitioning.Transform
-     * Transform} embedding an affine transform.
-     * @param cXX transform factor between input abscissa and output abscissa
-     * @param cYX transform factor between input abscissa and output ordinate
-     * @param cXY transform factor between input ordinate and output abscissa
-     * @param cYY transform factor between input ordinate and output ordinate
-     * @param cX1 transform addendum for output abscissa
-     * @param cY1 transform addendum for output ordinate
-     * @return a new transform that can be applied to either {@link
-     * Vector2D}, {@link Line Line} or {@link
-     * org.apache.commons.geometry.core.partitioning.SubHyperplane
-     * SubHyperplane} instances
-     * @exception IllegalArgumentException if the transform is non invertible
+    /** Create a line from a point and direction.
+     * @param pt point belonging to the line
+     * @param dir the direction of the line
+     * @param precision precision context used to compare floating point values
+     * @return new line containing {@code pt} and pointing in direction {@code dir}
+     * @throws GeometryValueException If {@code dir} has zero length, as evaluated by the
+     *      given precision context
      */
-    public static Transform<Vector2D, Vector1D> getTransform(final double cXX,
-                                                                   final double cYX,
-                                                                   final double cXY,
-                                                                   final double cYY,
-                                                                   final double cX1,
-                                                                   final double cY1)
-        throws IllegalArgumentException {
-        return new LineTransform(cXX, cYX, cXY, cYY, cX1, cY1);
+    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir, final DoublePrecisionContext precision) {
+        if (dir.isZero(precision)) {
+            throw new GeometryValueException("Line direction cannot be zero");
+        }
+
+        final Vector2D normalizedDir = dir.normalize();
+        final double originOffset = normalizedDir.signedArea(pt);
+
+        return new Line(normalizedDir, originOffset, precision);
     }
 
-    /** Class embedding an affine transform.
-     * <p>This class is used in order to apply an affine transform to a
-     * line. Using a specific object allow to perform some computations
-     * on the transform only once even if the same transform is to be
-     * applied to a large number of lines (for example to a large
-     * polygon)./<p>
+    /** Create a line from a point lying on the line and an angle relative to the abscissa (x) axis. Note that the
+     * line does not need to intersect the x-axis; the given angle is simply relative to it.
+     * @param pt point belonging to the line
+     * @param angle angle of the line with respect to abscissa (x) axis, in radians
+     * @param precision precision context used to compare floating point values
+     * @return new line containing {@code pt} and forming the given angle with the
+     *      abscissa (x) axis.
+     */
+    public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
+        final Vector2D dir = Vector2D.normalize(Math.cos(angle), Math.sin(angle));
+        return fromPointAndDirection(pt, dir, precision);
+    }
+
+    // TODO: Remove this method and associated class after the Transform interface has been simplified.
+    // See GEOMETRY-24.
+
+    /** Create a {@link Transform} instance from a set of column vectors. The returned object can be used
+     * to transform {@link SubLine} instances.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @param t third column vector; this corresponds to the translation of the transform
+     * @return a new transform instance
+     */
+    public static Transform<Vector2D, Vector1D> getTransform(final Vector2D u, final Vector2D v, final Vector2D t) {
+        final AffineTransformMatrix2D matrix = AffineTransformMatrix2D.fromColumnVectors(u, v, t);
+        return new LineTransform(matrix);
+    }
+
+    /** Class wrapping an {@link AffineTransformMatrix2D} with the methods necessary to fulfill the full
+     * {@link Transform} interface.
      */
     private static class LineTransform implements Transform<Vector2D, Vector1D> {
 
-        /** Transform factor between input abscissa and output abscissa. */
-        private final double cXX;
+        /** Transform matrix */
+        private final AffineTransformMatrix2D matrix;
 
-        /** Transform factor between input abscissa and output ordinate. */
-        private final double cYX;
-
-        /** Transform factor between input ordinate and output abscissa. */
-        private final double cXY;
-
-        /** Transform factor between input ordinate and output ordinate. */
-        private final double cYY;
-
-        /** Transform addendum for output abscissa. */
-        private final double cX1;
-
-        /** Transform addendum for output ordinate. */
-        private final double cY1;
-
-        /** cXY * cY1 - cYY * cX1. */
-        private final double c1Y;
-
-        /** cXX * cY1 - cYX * cX1. */
-        private final double c1X;
-
-        /** cXX * cYY - cYX * cXY. */
-        private final double c11;
-
-        /** Build an affine line transform from a n {@code AffineTransform}.
-         * @param cXX transform factor between input abscissa and output abscissa
-         * @param cYX transform factor between input abscissa and output ordinate
-         * @param cXY transform factor between input ordinate and output abscissa
-         * @param cYY transform factor between input ordinate and output ordinate
-         * @param cX1 transform addendum for output abscissa
-         * @param cY1 transform addendum for output ordinate
-         * @exception IllegalArgumentException if the transform is non invertible
+        /** Simple constructor.
+         * @param matrix transform matrix
          */
-        LineTransform(final double cXX, final double cYX, final double cXY,
-                      final double cYY, final double cX1, final double cY1)
-            throws IllegalArgumentException {
-
-            this.cXX = cXX;
-            this.cYX = cYX;
-            this.cXY = cXY;
-            this.cYY = cYY;
-            this.cX1 = cX1;
-            this.cY1 = cY1;
-
-            c1Y = LinearCombination.value(cXY, cY1, -cYY, cX1);
-            c1X = LinearCombination.value(cXX, cY1, -cYX, cX1);
-            c11 = LinearCombination.value(cXX, cYY, -cYX, cXY);
-
-            if (Math.abs(c11) < 1.0e-20) {
-                throw new IllegalArgumentException("Non-invertible affine transform collapses some lines into single points");
-            }
-
+        LineTransform(final AffineTransformMatrix2D matrix) {
+            this.matrix = matrix;
         }
 
         /** {@inheritDoc} */
         @Override
         public Vector2D apply(final Vector2D point) {
-            final double  x   = point.getX();
-            final double  y   = point.getY();
-            return Vector2D.of(LinearCombination.value(cXX, x, cXY, y, cX1, 1),
-                                LinearCombination.value(cYX, x, cYY, y, cY1, 1));
+            return matrix.apply(point);
         }
 
         /** {@inheritDoc} */
         @Override
         public Line apply(final Hyperplane<Vector2D> hyperplane) {
-            final Line   line    = (Line) hyperplane;
-            final double rOffset = LinearCombination.value(c1X, line.cos, c1Y, line.sin, c11, line.originOffset);
-            final double rCos    = LinearCombination.value(cXX, line.cos, cXY, line.sin);
-            final double rSin    = LinearCombination.value(cYX, line.cos, cYY, line.sin);
-            final double inv     = 1.0 / Math.sqrt(rSin * rSin + rCos * rCos);
-            return new Line(Math.PI + Math.atan2(-rSin, -rCos),
-                            inv * rCos, inv * rSin,
-                            inv * rOffset, line.precision);
+            final Line line = (Line) hyperplane;
+            return line.transform(matrix);
         }
 
         /** {@inheritDoc} */
@@ -491,14 +474,12 @@ public class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>
         public SubHyperplane<Vector1D> apply(final SubHyperplane<Vector1D> sub,
                                                 final Hyperplane<Vector2D> original,
                                                 final Hyperplane<Vector2D> transformed) {
-            final OrientedPoint op     = (OrientedPoint) sub.getHyperplane();
-            final Line originalLine    = (Line) original;
+            final OrientedPoint op = (OrientedPoint) sub.getHyperplane();
+            final Line originalLine  = (Line) original;
             final Line transformedLine = (Line) transformed;
             final Vector1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
             return OrientedPoint.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
         }
-
     }
-
 }
