@@ -37,7 +37,7 @@ public class SubLineTest {
     public void testEndPoints() {
         Vector2D p1 = Vector2D.of(-1, -7);
         Vector2D p2 = Vector2D.of(7, -1);
-        Segment segment = new Segment(p1, p2, new Line(p1, p2, TEST_PRECISION));
+        Segment segment = new Segment(p1, p2, Line.fromPoints(p1, p2, TEST_PRECISION));
         SubLine sub = new SubLine(segment);
         List<Segment> segments = sub.getSegments();
         Assert.assertEquals(1, segments.size());
@@ -47,7 +47,7 @@ public class SubLineTest {
 
     @Test
     public void testNoEndPoints() {
-        SubLine wholeLine = new Line(Vector2D.of(-1, 7), Vector2D.of(7, 1), TEST_PRECISION).wholeHyperplane();
+        SubLine wholeLine = Line.fromPoints(Vector2D.of(-1, 7), Vector2D.of(7, 1), TEST_PRECISION).wholeHyperplane();
         List<Segment> segments = wholeLine.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
@@ -62,7 +62,7 @@ public class SubLineTest {
 
     @Test
     public void testNoSegments() {
-        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new RegionFactory<Vector1D>().getComplement(new IntervalsSet(TEST_PRECISION)));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(0, segments.size());
@@ -70,7 +70,7 @@ public class SubLineTest {
 
     @Test
     public void testSeveralSegments() {
-        SubLine twoSubs = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine twoSubs = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new RegionFactory<Vector1D>().union(new IntervalsSet(1, 2, TEST_PRECISION),
                                                                            new IntervalsSet(3, 4, TEST_PRECISION)));
         List<Segment> segments = twoSubs.getSegments();
@@ -79,7 +79,7 @@ public class SubLineTest {
 
     @Test
     public void testHalfInfiniteNeg() {
-        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new IntervalsSet(Double.NEGATIVE_INFINITY, 0.0, TEST_PRECISION));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
@@ -92,7 +92,7 @@ public class SubLineTest {
 
     @Test
     public void testHalfInfinitePos() {
-        SubLine empty = new SubLine(new Line(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new IntervalsSet(0.0, Double.POSITIVE_INFINITY, TEST_PRECISION));
         List<Segment> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());

@@ -163,10 +163,10 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
         final Vector2D maxMin = Vector2D.of(xMax, yMin);
         final Vector2D maxMax = Vector2D.of(xMax, yMax);
         return new Line[] {
-            new Line(minMin, maxMin, precision),
-            new Line(maxMin, maxMax, precision),
-            new Line(maxMax, minMax, precision),
-            new Line(minMax, minMin, precision)
+            Line.fromPoints(minMin, maxMin, precision),
+            Line.fromPoints(maxMin, maxMax, precision),
+            Line.fromPoints(maxMax, minMax, precision),
+            Line.fromPoints(minMax, minMin, precision)
         };
     }
 
@@ -212,7 +212,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
             // with the current one
             Line line = start.sharedLineWith(end);
             if (line == null) {
-                line = new Line(start.getLocation(), end.getLocation(), precision);
+                line = Line.fromPoints(start.getLocation(), end.getLocation(), precision);
             }
 
             // create the edge and store it
@@ -738,12 +738,12 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
     private int splitEdgeConnections(final List<ConnectableSegment> segments) {
         int connected = 0;
         for (final ConnectableSegment segment : segments) {
-            if (segment.getNext() == null) {
+            if (segment.getNext() == null && segment.getEndNode() != null) {
                 final Hyperplane<Vector2D> hyperplane = segment.getNode().getCut().getHyperplane();
                 final BSPTree<Vector2D> end  = segment.getEndNode();
                 for (final ConnectableSegment candidateNext : segments) {
                     if (candidateNext.getPrevious()                      == null &&
-                        candidateNext.getNode().getCut().getHyperplane() == hyperplane &&
+                        candidateNext.getNode().getCut().getHyperplane().equals(hyperplane) &&
                         candidateNext.getStartNode()                     == end) {
                         // connect the two segments
                         segment.setNext(candidateNext);
@@ -1054,7 +1054,7 @@ public class PolygonsSet extends AbstractRegion<Vector2D, Vector1D> {
                 final BSPTree<Vector2D> endN   = selectClosest(endV, splitters);
 
                 if (reversed) {
-                    segments.add(new ConnectableSegment(endV, startV, line.getReverse(),
+                    segments.add(new ConnectableSegment(endV, startV, line.reverse(),
                                                         node, endN, startN));
                 } else {
                     segments.add(new ConnectableSegment(startV, endV, line,

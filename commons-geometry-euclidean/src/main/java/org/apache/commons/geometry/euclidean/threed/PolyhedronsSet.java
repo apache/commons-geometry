@@ -628,13 +628,10 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
                 cachedOriginal  = (Plane) original;
                 cachedTransform =
-                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(tP10.getX() - tP00.getX(),
-                                                                                           tP10.getY() - tP00.getY(),
-                                                                                           tP01.getX() - tP00.getX(),
-                                                                                           tP01.getY() - tP00.getY(),
-                                                                                           tP00.getX(),
-                                                                                           tP00.getY());
-
+                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(
+                                tP00.vectorTo(tP10),
+                                tP00.vectorTo(tP01),
+                                tP00);
             }
             return ((SubLine) sub).applyTransform(cachedTransform);
         }
@@ -695,10 +692,10 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
                 cachedOriginal  = (Plane) original;
                 cachedTransform =
-                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(1, 0, 0, 1,
-                                                                                           shift.getX(),
-                                                                                           shift.getY());
-
+                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(
+                                Vector2D.PLUS_X,
+                                Vector2D.PLUS_Y,
+                                shift);
             }
 
             return ((SubLine) sub).applyTransform(cachedTransform);

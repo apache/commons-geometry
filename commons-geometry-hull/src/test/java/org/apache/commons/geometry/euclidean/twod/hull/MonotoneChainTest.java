@@ -49,7 +49,7 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(40, 1));
 
         @SuppressWarnings("unused")
-        final ConvexHull2D hull = new MonotoneChain(true, new EpsilonDoublePrecisionContext(2)).generate(points);
+        final ConvexHull2D hull = new MonotoneChain(true, new EpsilonDoublePrecisionContext(1)).generate(points);
     }
 
 }

@@ -53,6 +53,39 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
+    public void testFromColumnVectors_twoVector() {
+        // arrange
+        Vector2D u = Vector2D.of(1, 2);
+        Vector2D v = Vector2D.of(3, 4);
+
+        // act
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.fromColumnVectors(u, v);
+
+        // assert
+        Assert.assertArrayEquals(new double[] {
+                1, 3, 0,
+                2, 4, 0
+        }, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testFromColumnVectors_threeVectors() {
+        // arrange
+        Vector2D u = Vector2D.of(1, 2);
+        Vector2D v = Vector2D.of(3, 4);
+        Vector2D t = Vector2D.of(5, 6);
+
+        // act
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.fromColumnVectors(u, v, t);
+
+        // assert
+        Assert.assertArrayEquals(new double[] {
+                1, 3, 5,
+                2, 4, 6
+        }, transform.toArray(), 0.0);
+    }
+
+    @Test
     public void testIdentity() {
         // act
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity();

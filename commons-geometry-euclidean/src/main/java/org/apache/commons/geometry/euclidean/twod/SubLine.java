@@ -50,7 +50,7 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
      * @param precision precision context used to compare floating point values
      */
     public SubLine(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        super(new Line(start, end, precision), buildIntervalSet(start, end, precision));
+        super(Line.fromPoints(start, end, precision), buildIntervalSet(start, end, precision));
     }
 
     /** Create a sub-line from a segment.
@@ -138,7 +138,7 @@ public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
      * @return an interval set
      */
     private static IntervalsSet buildIntervalSet(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        final Line line = new Line(start, end, precision);
+        final Line line = Line.fromPoints(start, end, precision);
         return new IntervalsSet(line.toSubSpace(start).getX(),
                                 line.toSubSpace(end).getX(),
                                 precision);

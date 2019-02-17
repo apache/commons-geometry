@@ -127,7 +127,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                 this.lineSegments = new Segment[1];
                 final Vector2D p1 = vertices[0];
                 final Vector2D p2 = vertices[1];
-                this.lineSegments[0] = new Segment(p1, p2, new Line(p1, p2, precision));
+                this.lineSegments[0] = new Segment(p1, p2, Line.fromPoints(p1, p2, precision));
             } else {
                 this.lineSegments = new Segment[size];
                 Vector2D firstPoint = null;
@@ -139,12 +139,12 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                         lastPoint = point;
                     } else {
                         this.lineSegments[index++] =
-                                new Segment(lastPoint, point, new Line(lastPoint, point, precision));
+                                new Segment(lastPoint, point, Line.fromPoints(lastPoint, point, precision));
                         lastPoint = point;
                     }
                 }
                 this.lineSegments[index] =
-                        new Segment(lastPoint, firstPoint, new Line(lastPoint, firstPoint, precision));
+                        new Segment(lastPoint, firstPoint, Line.fromPoints(lastPoint, firstPoint, precision));
             }
         }
         return lineSegments;
