@@ -17,10 +17,12 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 
 public interface BSPTreeNode<P extends Point<P>> {
 
-    Hyperplane_Old<P> getCut();
+    Hyperplane<P> getCut();
 
+    BSPTreeNode<P> getPlus();
+
+    BSPTreeNode<P> getMinus();
 }

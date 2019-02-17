@@ -16,9 +16,29 @@
  */
 package org.apache.commons.geometry.core.partition;
 
-import org.apache.commons.geometry.core.Point;
+/** Enumeration representing the location of an element with respect to a
+ * {@link Hyperplanehyperplane}.
+ */
+public enum Side {
 
-public interface BSPTree<P extends Point<P>, N extends BSPTreeNode<P>> {
+    /** Value indicating that an element lies on the plus side of a
+     * hyperplane.
+     */
+    PLUS,
 
+    /** Value indicating that an element lies on the minus side of a
+     * hyperplane.
+     */
+    MINUS,
+
+    /** Value indicating that an element cross the hyperplane and lies
+     * on both the plus and minus sides.
+     */
+    BOTH,
+
+    /** Value indicating that an element lies directly on the hyperplane
+     * itself.
+     */
+    HYPER;
 
 }

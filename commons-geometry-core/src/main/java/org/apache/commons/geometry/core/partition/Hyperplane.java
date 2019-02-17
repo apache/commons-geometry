@@ -18,7 +18,13 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
-public interface BSPTree<P extends Point<P>, N extends BSPTreeNode<P>> {
+public interface Hyperplane<P extends Point<P>> {
 
+    double offset(P point);
 
+    Side classify(P point);
+
+    P project(P point);
+
+    boolean sameOrientation(Hyperplane<P> other);
 }

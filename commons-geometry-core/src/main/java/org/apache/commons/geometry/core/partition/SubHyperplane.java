@@ -16,9 +16,23 @@
  */
 package org.apache.commons.geometry.core.partition;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
 
-public interface BSPTree<P extends Point<P>, N extends BSPTreeNode<P>> {
+public interface SubHyperplane<P extends Point<P>> {
 
+    Hyperplane<P> getHyperplane();
 
+    boolean isEmpty();
+
+    boolean isInfinite();
+
+    double size();
+
+    /** Convert this instance into a list of convex child
+     * subhyperplanes.
+     * @return
+     */
+    List<ConvexSubHyperplane<P>> toConvex();
 }

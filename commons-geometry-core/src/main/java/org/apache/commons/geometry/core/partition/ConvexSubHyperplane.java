@@ -18,7 +18,10 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
-public interface BSPTree<P extends Point<P>, N extends BSPTreeNode<P>> {
-
+/** Extension of the {@link SubHyperplane} interface with the additional restriction
+ * that instances represent convex regions of space.
+ * @param <P>
+ */
+public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P> {
 
 }
