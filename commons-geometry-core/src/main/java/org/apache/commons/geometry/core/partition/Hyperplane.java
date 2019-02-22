@@ -27,4 +27,6 @@ public interface Hyperplane<P extends Point<P>> {
     P project(P point);
 
     boolean sameOrientation(Hyperplane<P> other);
+
+    ConvexSubHyperplane<P> wholeHyperplane();
 }

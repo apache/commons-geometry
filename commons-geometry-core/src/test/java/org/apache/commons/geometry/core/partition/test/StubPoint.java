@@ -14,19 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.Point;
 
-public interface BSPTreeNode<P extends Point<P>> {
+/** Stub 1D point class for use in testing.
+ */
+public class StubPoint implements Point<StubPoint> {
 
-    BSPTreeNode<P> getParent();
+    private final double x;
 
-    ConvexSubHyperplane<P> getCut();
+    public StubPoint(final double x) {
+        this.x = x;
+    }
 
-    BSPTreeNode<P> getPlus();
+    public double getX() {
+        return x;
+    }
 
-    BSPTreeNode<P> getMinus();
+    @Override
+    public int getDimension() {
+        return 1;
+    }
 
-    BSPTreeNode<P> find(P p);
+    @Override
+    public boolean isNaN() {
+        return Double.isNaN(x);
+    }
+
+    @Override
+    public boolean isInfinite() {
+        return Double.isInfinite(x);
+    }
+
+    @Override
+    public double distance(StubPoint p) {
+        return Math.abs(p.x - x);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ")";
+    }
 }

@@ -23,4 +23,6 @@ import org.apache.commons.geometry.core.Point;
  * @param <P>
  */
 public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P> {
+
+    SplitConvexSubHyperplane<P> split(Hyperplane<P> splitter);
 }
