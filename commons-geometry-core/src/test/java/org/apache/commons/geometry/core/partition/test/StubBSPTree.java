@@ -1,5 +1,10 @@
 package org.apache.commons.geometry.core.partition.test;
 
-public class StubBSPTree {
+import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 
+public class StubBSPTree<T> extends AbstractBSPTree<StubPoint, T> {
+
+    public StubBSPTree() {
+        super(SimpleBSPTreeNode::new);
+    }
 }

@@ -71,6 +71,11 @@ public class StubHyperplane implements Hyperplane<StubPoint> {
     }
 
     @Override
+    public StubSubHyperplane wholeHyperplane() {
+        return new StubSubHyperplane(this);
+    }
+
+    @Override
     public String toString() {
         return "hyperplane[location=" + location + ", direction= " + direction + "]";
     }

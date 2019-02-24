@@ -20,46 +20,97 @@ import java.util.function.Function;
 
 import org.apache.commons.geometry.core.Point;
 
-public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.Node<P, N>> implements BSPTree<P, N> {
+public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T> {
 
-    private final Function<AbstractBSPTree<P, N>, N> nodeFactory;
+    public static interface AbstractBSPTreeNodeFactory<P extends Point<P>, T>
+        extends Function<AbstractBSPTree<P, T>, SimpleBSPTreeNode<P, T>> {
+    }
 
-    private final N root;
+    private final AbstractBSPTreeNodeFactory<P, T> nodeFactory;
 
-    protected AbstractBSPTree(final Function<AbstractBSPTree<P, N>, N> nodeFactory) {
+    private final SimpleBSPTreeNode<P, T> root;
+
+    protected AbstractBSPTree()
+    {
+        this(SimpleBSPTreeNode::new);
+    }
+
+    protected AbstractBSPTree(final AbstractBSPTreeNodeFactory<P, T> nodeFactory) {
         this.nodeFactory = nodeFactory;
         this.root = nodeFactory.apply(this);
     }
 
     @Override
-    public N getRoot() {
+    public BSPTreeNode<P, T> getRoot() {
+        return getRootNode();
+    }
+
+    @Override
+    public void visit(BSPTreeVisitor<P, T> visitor) {
+        visit(getRoot(), visitor);
+    }
+
+    @Override
+    public BSPTreeNode<P, T> findNode(P pt) {
+        return findNode(getRootNode(), pt);
+    }
+
+    protected SimpleBSPTreeNode<P, T> getRootNode() {
         return root;
     }
 
-    public N createNode() {
+    protected SimpleBSPTreeNode<P, T> createNode() {
         return nodeFactory.apply(this);
     }
 
-    public boolean cut(final N node, final Hyperplane<P> cutter) {
-        // cut the hyperplane using all hyperplanes from this node
-        // up
-        ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
-        if (cut == null || cut.isEmpty()) {
-            node.setCut(null, null, null);
-        }
-        else {
-            node.setCut(cut, createNode(), createNode());
-        }
+    protected SimpleBSPTreeNode<P, T> findNode(SimpleBSPTreeNode<P, T> start, P pt) {
+        Hyperplane<P> hyper = start.getCutHyperplane();
+        if (hyper != null) {
+            Side side = hyper.classify(pt);
 
-        return false;
+            if (side == Side.PLUS) {
+                return findNode(start.getPlus(), pt);
+            }
+            else if (side == Side.MINUS) {
+                return findNode(start.getMinus(), pt);
+            }
+        }
+        return start;
     }
 
-    protected ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
+    protected void visit(final BSPTreeNode<P, T> node, BSPTreeVisitor<P, T> visitor) {
+        // simple recursive implementation of this; we'll probably
+        // want to change this later
+        if (node != null) {
+            visitor.visit(node);
+
+            if (!node.isLeaf()) {
+                visit(node.getMinus(), visitor);
+                visit(node.getPlus(), visitor);
+            }
+        }
+    }
+
+    protected boolean insertCut(final SimpleBSPTreeNode<P, T> node, final Hyperplane<P> cutter) {
+        // cut the hyperplane using all hyperplanes from this node up
+        // to the root
+        ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
+        if (cut == null || cut.isEmpty()) {
+            // insertion failed; the node was not cut
+            node.setCut(null, null, null);
+            return false;
+        }
+
+        node.setCut(cut, createNode(), createNode());
+        return true;
+    }
+
+    protected ConvexSubHyperplane<P> fitToCell(final SimpleBSPTreeNode<P, T> node, final ConvexSubHyperplane<P> sub) {
 
         ConvexSubHyperplane<P> result = sub;
 
-        N parentNode = node.getParent();
-        N currentNode = node;
+        SimpleBSPTreeNode<P, T> parentNode = node.getParent();
+        SimpleBSPTreeNode<P, T> currentNode = node;
 
         while (parentNode != null && result != null) {
             SplitConvexSubHyperplane<P> split = result.split(parentNode.getCut().getHyperplane());
@@ -73,28 +124,35 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return result;
     }
 
-    protected abstract static class Node<T extends Point<T>, U extends Node<T, U>> implements BSPTree.Node<T> {
+    public static class SimpleBSPTreeNode<P extends Point<P>, T> implements BSPTreeNode<P, T> {
 
-        private final AbstractBSPTree<T, U> tree;
+        private final AbstractBSPTree<P, T> tree;
 
-        private U parent;
+        private SimpleBSPTreeNode<P, T> parent;
 
-        private ConvexSubHyperplane<T> cut;
+        private ConvexSubHyperplane<P> cut;
 
-        private U plus;
+        private SimpleBSPTreeNode<P, T> plus;
 
-        private U minus;
+        private SimpleBSPTreeNode<P, T> minus;
 
-        public Node(final AbstractBSPTree<T, U> tree) {
+        private T attribute;
+
+        public SimpleBSPTreeNode(final AbstractBSPTree<P, T> tree) {
             this.tree = tree;
         }
 
         @Override
-        public U getParent() {
+        public AbstractBSPTree<P, T> getTree() {
+            return tree;
+        }
+
+        @Override
+        public SimpleBSPTreeNode<P, T> getParent() {
             return parent;
         }
 
-        protected void setParent(U parent) {
+        protected void setParent(SimpleBSPTreeNode<P, T> parent) {
             this.parent = parent;
         }
 
@@ -114,39 +172,74 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
 
         @Override
-        public ConvexSubHyperplane<T> getCut() {
+        public ConvexSubHyperplane<P> getCut() {
             return cut;
         }
 
+        protected Hyperplane<P> getCutHyperplane() {
+            return (cut != null) ? cut.getHyperplane() : null;
+        }
+
         @Override
-        public U getPlus() {
+        public SimpleBSPTreeNode<P, T> getPlus() {
             return plus;
         }
 
         @Override
-        public U getMinus() {
+        public SimpleBSPTreeNode<P, T> getMinus() {
             return minus;
         }
 
         @Override
-        public U findNode(T p) {
+        public SimpleBSPTreeNode<P, T> findNode(P p) {
             return null;
         }
 
-        protected void setCut(ConvexSubHyperplane<T> cut, U plus, U minus) {
+        @Override
+        public void visit(BSPTreeVisitor<P, T> visitor) {
+            tree.visit(this, visitor);
+        }
+
+        @Override
+        public T getAttribute() {
+            return attribute;
+        }
+
+        @Override
+        public void setAttribute(T attribute) {
+            this.attribute = attribute;
+        }
+
+        @Override
+        public boolean insertCut(Hyperplane<P> cutter) {
+            return tree.insertCut(this, cutter);
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName())
+                .append("[cut= ")
+                .append(getCut())
+                .append(", attribute= ")
+                .append(attribute)
+                .append("]");
+
+            return sb.toString();
+        }
+
+        protected void setCut(ConvexSubHyperplane<P> cut, SimpleBSPTreeNode<P, T> plus, SimpleBSPTreeNode<P, T> minus) {
             this.cut = cut;
 
             if (plus != null) {
-                plus.setParent(getSelf());
+                plus.setParent(this);
             }
             this.plus = plus;
 
             if (minus != null) {
-                minus.setParent(getSelf());
+                minus.setParent(this);
             }
             this.minus = minus;
         }
-
-        protected abstract U getSelf();
     }
 }
