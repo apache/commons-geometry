@@ -15,6 +15,15 @@ public class PartitionTestUtils {
     public static final DoublePrecisionContext PRECISION =
             new EpsilonDoublePrecisionContext(EPS);
 
+    /** Compute the Euclidean norm.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return Euclidean norm
+     */
+    public static double norm(final double x, final double y) {
+        return Math.sqrt((x * x) + (y * y));
+    }
+
     public static <T> void printTree(StubBSPTree<T> tree) {
         StubTreePrinter<T> printer = new StubTreePrinter<T>();
         String str = printer.writeAsString(tree);
