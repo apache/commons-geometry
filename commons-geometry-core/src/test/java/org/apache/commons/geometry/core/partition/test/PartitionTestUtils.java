@@ -2,7 +2,7 @@ package org.apache.commons.geometry.core.partition.test;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.partition.BSPTreeNode;
+import org.apache.commons.geometry.core.partition.BSPTree;
 import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -46,7 +46,7 @@ public class PartitionTestUtils {
         }
 
         @Override
-        public void visit(BSPTreeNode<StubPoint, T> node) {
+        public void visit(BSPTree.Node<StubPoint, T> node) {
             writeLinePrefix(node);
 
             if (node.isLeaf()) {
@@ -57,7 +57,7 @@ public class PartitionTestUtils {
             }
         }
 
-        public void visitInternalNode(BSPTreeNode<StubPoint, T> node) {
+        public void visitInternalNode(BSPTree.Node<StubPoint, T> node) {
             writeInternalNode(node);
 
             write("\n");
@@ -65,12 +65,12 @@ public class PartitionTestUtils {
             ++depth;
         }
 
-        public void visitLeafNode(BSPTreeNode<StubPoint, T> node) {
+        public void visitLeafNode(BSPTree.Node<StubPoint, T> node) {
             writeLeafNode(node);
 
             write("\n");
 
-            BSPTreeNode<StubPoint, T> cur = node;
+            BSPTree.Node<StubPoint, T> cur = node;
             while (cur.isPlus()) {
                 --depth;
                 cur = cur.getParent();
@@ -82,7 +82,7 @@ public class PartitionTestUtils {
          * for the node itself.
          * @param node
          */
-        protected void writeLinePrefix(BSPTreeNode<StubPoint, T>node) {
+        protected void writeLinePrefix(BSPTree.Node<StubPoint, T>node) {
             for (int i=0; i<depth; ++i) {
                 write(INDENT);
             }
@@ -103,7 +103,7 @@ public class PartitionTestUtils {
          * @param node
          * @return
          */
-        protected String nodeIdString(BSPTreeNode<StubPoint, T> node) {
+        protected String nodeIdString(BSPTree.Node<StubPoint, T> node) {
             return node.getClass().getSimpleName() + "@"  + Objects.hashCode(node);
         }
 
@@ -117,7 +117,7 @@ public class PartitionTestUtils {
         /** Method for subclasses to provide their own string representation
          * of the given internal node.
          */
-        protected void writeInternalNode(BSPTreeNode<StubPoint, T> node) {
+        protected void writeInternalNode(BSPTree.Node<StubPoint, T> node) {
             write(node.toString());
         }
 
@@ -125,7 +125,7 @@ public class PartitionTestUtils {
          * the node attribute as a string.
          * @param node
          */
-        protected void writeLeafNode(BSPTreeNode<StubPoint, T> node) {
+        protected void writeLeafNode(BSPTree.Node<StubPoint, T> node) {
             write(node.toString());
         }
     }

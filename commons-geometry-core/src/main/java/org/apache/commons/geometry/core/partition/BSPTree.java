@@ -18,7 +18,40 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
-public interface BSPTree<P extends Point<P>, T> extends BSPTreeEntryPoint<P, T> {
+public interface BSPTree<P extends Point<P>, T> {
 
-    BSPTreeNode<P, T> getRoot();
+    Node<P, T> getRoot();
+
+    void visit(BSPTreeVisitor<P, T> visitor);
+
+    Node<P, T> findNode(P pt);
+
+    public static interface Node<P extends Point<P>, T> {
+
+        BSPTree<P, T> getTree();
+
+        Node<P, T> getParent();
+
+        ConvexSubHyperplane<P> getCut();
+
+        Node<P, T> getPlus();
+
+        Node<P, T> getMinus();
+
+        T getAttribute();
+
+        void setAttribute(T attribute);
+
+        boolean isLeaf();
+
+        boolean isPlus();
+
+        boolean isMinus();
+
+        boolean insertCut(Hyperplane<P> cutter);
+
+        void visit(BSPTreeVisitor<P, T> visitor);
+
+        Node<P, T> findNode(P pt);
+    }
 }

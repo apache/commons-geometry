@@ -1,5 +1,6 @@
 package org.apache.commons.geometry.core.partition;
 
+import org.apache.commons.geometry.core.partition.BSPTree.Node;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.StubBSPTree;
 import org.apache.commons.geometry.core.partition.test.StubHyperplane;
@@ -16,7 +17,7 @@ public class AbstractBSPTreeTest {
 
         tree.getRoot().insertCut(hyper);
 
-        BSPTreeNode<StubPoint, Integer> node = tree.findNode(new StubPoint(4));
+        Node<StubPoint, Integer> node = tree.findNode(new StubPoint(4));
         node.setAttribute(1);
 
         System.out.println(node);
@@ -30,7 +31,7 @@ public class AbstractBSPTreeTest {
         StubBSPTree<Integer> tree = new StubBSPTree<Integer>();
 
         // assert
-        BSPTreeNode<StubPoint, Integer> root = tree.getRoot();
+        Node<StubPoint, Integer> root = tree.getRoot();
 
         Assert.assertNotNull(root);
         Assert.assertNull(root.getParent());
@@ -55,12 +56,12 @@ public class AbstractBSPTreeTest {
         // assert
         Assert.assertTrue(result);
 
-        BSPTreeNode<StubPoint, Integer> root = tree.getRoot();
+        Node<StubPoint, Integer> root = tree.getRoot();
         assertIsInternalNode(root);
         Assert.assertSame(hyper, root.getCut().getHyperplane());
     }
 
-    private static void assertIsInternalNode(BSPTreeNode<?, ?> node) {
+    private static void assertIsInternalNode(Node<?, ?> node) {
         Assert.assertNotNull(node.getCut());
         Assert.assertNotNull(node.getMinus());
         Assert.assertNotNull(node.getPlus());
@@ -68,7 +69,7 @@ public class AbstractBSPTreeTest {
         Assert.assertFalse(node.isLeaf());
     }
 
-    private static void assertIsLeafNode(BSPTreeNode<?, ?> node) {
+    private static void assertIsLeafNode(Node<?, ?> node) {
         Assert.assertNull(node.getCut());
         Assert.assertNull(node.getMinus());
         Assert.assertNull(node.getPlus());
