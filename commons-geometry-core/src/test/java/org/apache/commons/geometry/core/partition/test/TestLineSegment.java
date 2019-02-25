@@ -32,32 +32,72 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     /** Serializable UID */
     private static final long serialVersionUID = 20190224L;
 
+    /** Abscissa of the line segment start point. */
+    private final double start;
+
+    /** Abscissa of the line segment end point. */
+    private final double end;
+
+    /** The underlying line for the line segment. */
+    private final TestLine line;
+
+    /** Construct a line segment between two points.
+     * @param start start point
+     * @param end end point
+     */
+    public TestLineSegment(final TestPoint2D start, final TestPoint2D end) {
+        this.line = new TestLine(start, end);
+        this.start = line.toSubSpace(start);
+        this.end = line.toSubSpace(end);
+    }
+
+    /** Construct a line segment based on an existing line.
+     * @param start abscissa of the line segment start point
+     * @param end abscissa of the line segment end point
+     * @param line the underyling line
+     */
+    public TestLineSegment(final double start, final double end, final TestLine line) {
+        this.start = start;
+        this.end = end;
+        this.line = line;
+    }
+
+    /** Get the start point of the line segment.
+     * @return the start point of the line segment
+     */
+    public TestPoint2D getStartPoint() {
+        return line.toSpace(start);
+    }
+
+    /** Get the end point of the line segment.
+     * @return the end point of the line segment
+     */
+    public TestPoint2D getEndPoint() {
+        return line.toSpace(end);
+    }
+
     /** {@inheritDoc} */
     @Override
-    public Hyperplane<TestPoint2D> getHyperplane() {
-        // TODO Auto-generated method stub
-        return null;
+    public TestLine getHyperplane() {
+        return line;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return PartitionTestUtils.PRECISION.eqZero(size());
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        // TODO Auto-generated method stub
-        return false;
+        return Double.isInfinite(size());
     }
 
     /** {@inheritDoc} */
     @Override
     public double size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return Math.abs(start - end);
     }
 
     /** {@inheritDoc} */
@@ -69,8 +109,63 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     /** {@inheritDoc} */
     @Override
     public SplitConvexSubHyperplane<TestPoint2D> split(Hyperplane<TestPoint2D> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+        final TestLine splitterLine = (TestLine) splitter;
+
+        final double startOffset = splitterLine.offset(line.toSpace(start));
+        final double endOffset = splitterLine.offset(line.toSpace(end));
+
+        final int startCmp = PartitionTestUtils.PRECISION.compare(startOffset, 0);
+        final int endCmp = PartitionTestUtils.PRECISION.compare(endOffset, 0);
+
+        // startCmp |   endCmp  |   result
+        // --------------------------------
+        // 0        |   0       |   hyper
+        // 0        |   < 0     |   minus
+        // 0        |   > 0     |   plus
+        // < 0      |   0       |   minus
+        // < 0      |   < 0     |   minus
+        // < 0      |   > 0     |   SPLIT
+        // > 0      |   0       |   plus
+        // > 0      |   < 0     |   SPLIT
+        // > 0      |   > 0     |   plus
+
+        if (startCmp == 0 && endCmp == 0) {
+            // the entire line segment is directly on the splitter line
+            return new SplitConvexSubHyperplane<TestPoint2D>(null, null);
+        }
+        else if (startCmp < 1 && endCmp < 1) {
+            // the entire line segment is on the minus side
+            return new SplitConvexSubHyperplane<TestPoint2D>(null, this);
+        }
+        else if (startCmp > -1 && endCmp > -1) {
+            // the entire line segment is on the plus side
+            return new SplitConvexSubHyperplane<TestPoint2D>(this, null);
+        }
+
+        // we need to split the line
+        final TestPoint2D intersection = splitterLine.intersection(line);
+        final double intersectionAbscissa = line.toSubSpace(intersection);
+
+        final TestLineSegment startSegment = new TestLineSegment(start, intersectionAbscissa, line);
+        final TestLineSegment endSegment = new TestLineSegment(intersectionAbscissa, end, line);
+
+        final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
+        final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+
+        return new SplitConvexSubHyperplane<TestPoint2D>(plus, minus);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[start= ")
+            .append(getStartPoint())
+            .append(", end= ")
+            .append(getEndPoint())
+            .append("]");
+
+        return sb.toString();
+    }
 }

@@ -21,8 +21,6 @@ import org.apache.commons.geometry.core.partitioning.Side_Old;
 
 public class SplitConvexSubHyperplane<P extends Point<P>> {
 
-    private final Hyperplane<P> splitter;
-
     /** Part of the convex sub-hyperplane on the plus side of the splitting hyperplane. */
     private final ConvexSubHyperplane<P> plus;
 
@@ -37,16 +35,10 @@ public class SplitConvexSubHyperplane<P extends Point<P>> {
      * splitting hyperplane
      */
     public SplitConvexSubHyperplane(
-            final Hyperplane<P> splitter,
             final ConvexSubHyperplane<P> plus,
             final ConvexSubHyperplane<P> minus) {
-        this.splitter = splitter;
         this.plus  = plus;
         this.minus = minus;
-    }
-
-    public Hyperplane<P> getSplitter() {
-        return splitter;
     }
 
     /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.

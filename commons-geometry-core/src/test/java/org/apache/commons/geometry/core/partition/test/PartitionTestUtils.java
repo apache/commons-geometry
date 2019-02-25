@@ -15,23 +15,14 @@ public class PartitionTestUtils {
     public static final DoublePrecisionContext PRECISION =
             new EpsilonDoublePrecisionContext(EPS);
 
-    /** Compute the Euclidean norm.
-     * @param x x coordinate value
-     * @param y y coordinate value
-     * @return Euclidean norm
-     */
-    public static double norm(final double x, final double y) {
-        return Math.sqrt((x * x) + (y * y));
-    }
-
-    public static <T> void printTree(StubBSPTree<T> tree) {
-        StubTreePrinter<T> printer = new StubTreePrinter<T>();
+    public static <T> void printTree(TestBSPTree tree) {
+        TestTreePrinter printer = new TestTreePrinter();
         String str = printer.writeAsString(tree);
 
         System.out.println(str);
     }
 
-    public static class StubTreePrinter<T> implements BSPTreeVisitor<StubPoint, T> {
+    public static class TestTreePrinter implements BSPTreeVisitor<TestPoint2D, Integer> {
 
         /** Indent per tree level */
         protected static final String INDENT = "    ";
@@ -46,7 +37,7 @@ public class PartitionTestUtils {
          * @param tree
          * @return
          */
-        public String writeAsString(StubBSPTree<T> tree) {
+        public String writeAsString(TestBSPTree tree) {
             output.delete(0, output.length());
 
             tree.getRoot().visit(this);
@@ -55,7 +46,7 @@ public class PartitionTestUtils {
         }
 
         @Override
-        public void visit(BSPTree.Node<StubPoint, T> node) {
+        public void visit(BSPTree.Node<TestPoint2D, Integer> node) {
             writeLinePrefix(node);
 
             if (node.isLeaf()) {
@@ -66,7 +57,7 @@ public class PartitionTestUtils {
             }
         }
 
-        public void visitInternalNode(BSPTree.Node<StubPoint, T> node) {
+        public void visitInternalNode(BSPTree.Node<TestPoint2D, Integer> node) {
             writeInternalNode(node);
 
             write("\n");
@@ -74,12 +65,12 @@ public class PartitionTestUtils {
             ++depth;
         }
 
-        public void visitLeafNode(BSPTree.Node<StubPoint, T> node) {
+        public void visitLeafNode(BSPTree.Node<TestPoint2D, Integer> node) {
             writeLeafNode(node);
 
             write("\n");
 
-            BSPTree.Node<StubPoint, T> cur = node;
+            BSPTree.Node<TestPoint2D, Integer> cur = node;
             while (cur.isPlus()) {
                 --depth;
                 cur = cur.getParent();
@@ -91,7 +82,7 @@ public class PartitionTestUtils {
          * for the node itself.
          * @param node
          */
-        protected void writeLinePrefix(BSPTree.Node<StubPoint, T>node) {
+        protected void writeLinePrefix(BSPTree.Node<TestPoint2D, Integer>node) {
             for (int i=0; i<depth; ++i) {
                 write(INDENT);
             }
@@ -112,7 +103,7 @@ public class PartitionTestUtils {
          * @param node
          * @return
          */
-        protected String nodeIdString(BSPTree.Node<StubPoint, T> node) {
+        protected String nodeIdString(BSPTree.Node<TestPoint2D, Integer> node) {
             return node.getClass().getSimpleName() + "@"  + Objects.hashCode(node);
         }
 
@@ -126,7 +117,7 @@ public class PartitionTestUtils {
         /** Method for subclasses to provide their own string representation
          * of the given internal node.
          */
-        protected void writeInternalNode(BSPTree.Node<StubPoint, T> node) {
+        protected void writeInternalNode(BSPTree.Node<TestPoint2D, Integer> node) {
             write(node.toString());
         }
 
@@ -134,7 +125,7 @@ public class PartitionTestUtils {
          * the node attribute as a string.
          * @param node
          */
-        protected void writeLeafNode(BSPTree.Node<StubPoint, T> node) {
+        protected void writeLeafNode(BSPTree.Node<TestPoint2D, Integer> node) {
             write(node.toString());
         }
     }

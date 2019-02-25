@@ -16,44 +16,10 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 
-/** Stub 1D point class for use in testing.
+/** BSP Tree implementation class for testing purposes.
  */
-public class StubPoint implements Point<StubPoint> {
+public class TestBSPTree extends AbstractBSPTree<TestPoint2D, Integer> {
 
-    private final double x;
-
-    public StubPoint(final double x) {
-        this.x = x;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    @Override
-    public int getDimension() {
-        return 1;
-    }
-
-    @Override
-    public boolean isNaN() {
-        return Double.isNaN(x);
-    }
-
-    @Override
-    public boolean isInfinite() {
-        return Double.isInfinite(x);
-    }
-
-    @Override
-    public double distance(StubPoint p) {
-        return Math.abs(p.x - x);
-    }
-
-    @Override
-    public String toString() {
-        return "(" + x + ")";
-    }
 }

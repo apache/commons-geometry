@@ -48,7 +48,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
         double vecX = p2.getX() - p1.getX();
         double vecY = p2.getY() - p2.getY();
 
-        double norm = PartitionTestUtils.norm(vecX, vecY);
+        double norm = norm(vecX, vecY);
 
         vecX /= norm;
         vecY /= norm;
@@ -61,6 +61,27 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
         this.directionY = vecY;
 
         this.originOffset = signedArea(vecX, vecY, p1.getX(), p1.getY());
+    }
+
+    /** Get the line origin, meaning the projection of the 2D origin onto the line.
+     * @return line origin
+     */
+    public TestPoint2D getOrigin() {
+        return toSpace(0);
+    }
+
+    /** Get the x component of the line direction.
+     * @return x component of the line direction.
+     */
+    public double getDirectionX() {
+        return directionX;
+    }
+
+    /** Get the y component of the line direction.
+     * @return y component of the line direction.
+     */
+    public double getDirectionY() {
+        return directionY;
     }
 
     /** {@inheritDoc} */
@@ -80,14 +101,29 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
         return cmp < 0 ? Side.MINUS : Side.PLUS;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public TestPoint2D project(TestPoint2D point) {
-        final double abscissa = (directionX * point.getX()) + (directionY * point.getY());
+    /** Get the location of the given 2D point in the 1D space of the line.
+     * @param point point to project into the line's 1D space
+     * @return location of the point in the line's 1D space
+     */
+    public double toSubSpace(TestPoint2D point) {
+        return (directionX * point.getX()) + (directionY * point.getY());
+    }
+
+    /** Get the 2D location of the given 1D location in the line's 1D space.
+     * @param abscissa location in the line's 1D space.
+     * @return the location of the given 1D point in 2D space
+     */
+    public TestPoint2D toSpace(final double abscissa) {
         final double ptX = (abscissa * directionX) + (-originOffset * directionY);
         final double ptY = (abscissa * directionY) + (originOffset * directionX);
 
         return new TestPoint2D(ptX, ptY);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D project(final TestPoint2D point) {
+        return toSpace(toSubSpace(point));
     }
 
     /** {@inheritDoc} */
@@ -101,7 +137,45 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public ConvexSubHyperplane<TestPoint2D> wholeHyperplane() {
-        return null;
+        return new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, this);
+    }
+
+    /** Get the intersection point of the instance and another line.
+     * @param other other line
+     * @return intersection point of the instance and the other line
+     *      or null if there is no unique intersection point (ie, the lines
+     *      are parallel or coincident)
+     */
+    public TestPoint2D intersection(final TestLine other) {
+        final double area = signedArea(directionX, directionY, other.directionX, other.directionY);
+        if (PartitionTestUtils.PRECISION.eqZero(area)) {
+            // lines are parallel
+            return null;
+        }
+
+        final double x = ((other.directionX * originOffset) +
+                (-directionX * other.originOffset)) / area;
+
+        final double y = ((other.directionY * originOffset) +
+                (-directionY * other.originOffset)) / area;
+
+        return new TestPoint2D(x, y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[origin= ")
+            .append(getOrigin())
+            .append(", direction= (")
+            .append(directionX)
+            .append(", ")
+            .append(directionY)
+            .append(")]");
+
+        return sb.toString();
     }
 
     /** Compute the signed area of the parallelogram with sides defined by the given
@@ -116,5 +190,14 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
     private static double signedArea(final double x1, final double y1,
             final double x2, final double y2) {
         return (x1 * y2) + (-y1 * x2);
+    }
+
+    /** Compute the Euclidean norm.
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @return Euclidean norm
+     */
+    public static double norm(final double x, final double y) {
+        return Math.sqrt((x * x) + (y * y));
     }
 }

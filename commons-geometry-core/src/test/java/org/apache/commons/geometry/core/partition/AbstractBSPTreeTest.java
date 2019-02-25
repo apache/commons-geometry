@@ -2,9 +2,9 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.partition.BSPTree.Node;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
-import org.apache.commons.geometry.core.partition.test.StubBSPTree;
-import org.apache.commons.geometry.core.partition.test.StubHyperplane;
-import org.apache.commons.geometry.core.partition.test.StubPoint;
+import org.apache.commons.geometry.core.partition.test.TestBSPTree;
+import org.apache.commons.geometry.core.partition.test.TestLine;
+import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,12 +12,12 @@ public class AbstractBSPTreeTest {
 
     @Test
     public void scratch() {
-        StubBSPTree<Integer> tree = new StubBSPTree<Integer>();
-        StubHyperplane hyper = new StubHyperplane(new StubPoint(2), true);
+        TestBSPTree tree = new TestBSPTree();
+        TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
 
-        tree.getRoot().insertCut(hyper);
+        tree.getRoot().insertCut(line);
 
-        Node<StubPoint, Integer> node = tree.findNode(new StubPoint(4));
+        Node<TestPoint2D, Integer> node = tree.findNode(new TestPoint2D(0, 4));
         node.setAttribute(1);
 
         System.out.println(node);
@@ -28,10 +28,10 @@ public class AbstractBSPTreeTest {
     @Test
     public void testInitialization() {
         // act
-        StubBSPTree<Integer> tree = new StubBSPTree<Integer>();
+        TestBSPTree tree = new TestBSPTree();
 
         // assert
-        Node<StubPoint, Integer> root = tree.getRoot();
+        Node<TestPoint2D, Integer> root = tree.getRoot();
 
         Assert.assertNotNull(root);
         Assert.assertNull(root.getParent());
@@ -47,18 +47,18 @@ public class AbstractBSPTreeTest {
     @Test
     public void testInsertCut() {
         // arrange
-        StubBSPTree<Integer> tree = new StubBSPTree<Integer>();
-        StubHyperplane hyper = new StubHyperplane(new StubPoint(2), true);
+        TestBSPTree tree = new TestBSPTree();
+        TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
 
         // act
-        boolean result = tree.getRoot().insertCut(hyper);
+        boolean result = tree.getRoot().insertCut(line);
 
         // assert
         Assert.assertTrue(result);
 
-        Node<StubPoint, Integer> root = tree.getRoot();
+        Node<TestPoint2D, Integer> root = tree.getRoot();
         assertIsInternalNode(root);
-        Assert.assertSame(hyper, root.getCut().getHyperplane());
+        Assert.assertSame(line, root.getCut().getHyperplane());
     }
 
     private static void assertIsInternalNode(Node<?, ?> node) {
