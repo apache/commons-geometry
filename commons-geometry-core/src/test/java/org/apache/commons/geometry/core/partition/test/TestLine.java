@@ -46,7 +46,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      */
     public TestLine(final TestPoint2D p1, final TestPoint2D p2) {
         double vecX = p2.getX() - p1.getX();
-        double vecY = p2.getY() - p2.getY();
+        double vecY = p2.getY() - p1.getY();
 
         double norm = norm(vecX, vecY);
 
@@ -114,6 +114,36 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      * @return the location of the given 1D point in 2D space
      */
     public TestPoint2D toSpace(final double abscissa) {
+        if (Double.isInfinite(abscissa)) {
+            int dirXCmp = PartitionTestUtils.PRECISION.compare(directionX, 0.0);
+            int dirYCmp = PartitionTestUtils.PRECISION.compare(directionY, 0.0);
+
+            double x;
+            if (dirXCmp == 0) {
+                // vertical line
+                x = getOrigin().getX();
+            }
+            else {
+                x = (dirXCmp < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+            }
+
+            double y;
+            if (dirYCmp == 0) {
+                // horizontal line
+                y = getOrigin().getY();
+            }
+            else {
+                y = (dirYCmp < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+            }
+
+            if (abscissa < 0) {
+                x = -x;
+                y = -y;
+            }
+
+            return new TestPoint2D(x, y);
+        }
+
         final double ptX = (abscissa * directionX) + (-originOffset * directionY);
         final double ptY = (abscissa * directionY) + (originOffset * directionX);
 

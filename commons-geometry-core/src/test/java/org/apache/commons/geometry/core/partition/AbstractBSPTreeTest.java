@@ -18,9 +18,7 @@ public class AbstractBSPTreeTest {
         tree.getRoot().insertCut(line);
 
         Node<TestPoint2D, Integer> node = tree.findNode(new TestPoint2D(0, 4));
-        node.setAttribute(1);
-
-        System.out.println(node);
+        node.insertCut(new TestLine(new TestPoint2D(0, 1), new TestPoint2D(0, 2)));
 
         PartitionTestUtils.printTree(tree);
     }
