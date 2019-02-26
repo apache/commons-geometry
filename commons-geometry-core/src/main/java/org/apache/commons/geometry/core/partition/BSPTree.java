@@ -23,23 +23,19 @@ import org.apache.commons.geometry.core.Point;
  * @param <T> Node attribute type. This is the type of the data stored with
  *      each node in the tree.
  */
-public interface BSPTree<P extends Point<P>, T> {
+public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
 
     /** Get the root node of the tree.
      * @return the root node of the tree
      */
     Node<P, T> getRoot();
 
-    void visit(BSPTreeVisitor<P, T> visitor);
-
-    Node<P, T> findNode(P pt);
-
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      * @param <T> Node attribute type. This is the type of the data stored with
      *      each node in the tree.
      */
-    public static interface Node<P extends Point<P>, T> {
+    public static interface Node<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
 
         /** Get the {@link BSPTree} that owns the node.
          * @return the owning tree
@@ -73,20 +69,45 @@ public interface BSPTree<P extends Point<P>, T> {
          */
         Node<P, T> getMinus();
 
+        /** Get the attribute associated with this node.
+         * @return the attribute associated with this node
+         */
         T getAttribute();
 
+        /** Set the attribute associated with this node.
+         * @param attribute the attribute to associate with this node
+         */
         void setAttribute(T attribute);
 
+        /** Return true if the node is a leaf node, meaning that it has no
+         * binary partitioner (aka, cut) and therefore no child nodes.
+         * @return true if the node is a leaf node
+         */
         boolean isLeaf();
 
+        /** Return true if the node has a parent and is the parent's plus
+         * child.
+         * @return true if the node is the plus child of its parent
+         */
         boolean isPlus();
 
+        /** Return true if the node has a parent and is the parent's minus
+         * child.
+         * @return true if the node is the minus child of its parent
+         */
         boolean isMinus();
 
+        /** Insert a cut into this node. If the given hyperplane intersects
+         * this node's region, then the node's cut is set to the {@link ConvexSubHyerplane}
+         * representing the intersection, new plus and minus child leaf nodes
+         * are assigned, and true is returned. If the hyperplane does not intersect
+         * the node's region, then the node's cut and plus and minus child references
+         * are all set to null (ie, it becomes a leaf node) and false is returned. In
+         * either case, any existing cut and/or child nodes are removed by this method.
+         * @param cutter the hyperplane to cut the node's region with
+         * @return true if the cutting hyperplane intersected the node's region, resulting
+         *      in the creation of new child nodes
+         */
         boolean insertCut(Hyperplane<P> cutter);
-
-        void visit(BSPTreeVisitor<P, T> visitor);
-
-        Node<P, T> findNode(P pt);
     }
 }

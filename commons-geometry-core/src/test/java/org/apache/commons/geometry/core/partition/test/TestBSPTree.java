@@ -22,4 +22,7 @@ import org.apache.commons.geometry.core.partition.AbstractBSPTree;
  */
 public class TestBSPTree extends AbstractBSPTree<TestPoint2D, Integer> {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190225L;
+
 }
