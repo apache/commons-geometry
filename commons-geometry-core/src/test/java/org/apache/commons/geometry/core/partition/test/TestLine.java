@@ -45,8 +45,18 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      * @param p2 second point
      */
     public TestLine(final TestPoint2D p1, final TestPoint2D p2) {
-        double vecX = p2.getX() - p1.getX();
-        double vecY = p2.getY() - p1.getY();
+        this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    }
+
+    /** Construct a line from two point, given by their components.
+     * @param x1 x coordinate of first point
+     * @param y1 y coordinate of first point
+     * @param x2 x coordinate of second point
+     * @param y2 y coordinate of second point
+     */
+    public TestLine(final double x1, final double y1, final double x2, final double y2) {
+        double vecX = x2 - x1;
+        double vecY = y2 - y1;
 
         double norm = norm(vecX, vecY);
 
@@ -54,13 +64,14 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
         vecY /= norm;
 
         if (!Double.isFinite(vecX) || !Double.isFinite(vecY)) {
-            throw new IllegalStateException("Unable to create line between points: " + p1 + ", " + p2);
+            throw new IllegalStateException("Unable to create line between points: (" +
+                    x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")");
         }
 
         this.directionX = vecX;
         this.directionY = vecY;
 
-        this.originOffset = signedArea(vecX, vecY, p1.getX(), p1.getY());
+        this.originOffset = signedArea(vecX, vecY, x1, y1);
     }
 
     /** Get the line origin, meaning the projection of the 2D origin onto the line.
@@ -87,6 +98,9 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public double offset(TestPoint2D point) {
+        final double x = point.getX();
+        final double y = point.getY();
+
         return originOffset - signedArea(directionX, directionY, point.getX(), point.getY());
     }
 

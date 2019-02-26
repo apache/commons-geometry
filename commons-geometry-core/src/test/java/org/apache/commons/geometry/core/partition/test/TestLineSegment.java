@@ -135,11 +135,11 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         }
         else if (startCmp < 1 && endCmp < 1) {
             // the entire line segment is on the minus side
-            return new SplitConvexSubHyperplane<TestPoint2D>(null, this);
+            return new SplitConvexSubHyperplane<TestPoint2D>(this, null);
         }
         else if (startCmp > -1 && endCmp > -1) {
             // the entire line segment is on the plus side
-            return new SplitConvexSubHyperplane<TestPoint2D>(this, null);
+            return new SplitConvexSubHyperplane<TestPoint2D>(null, this);
         }
 
         // we need to split the line
@@ -149,10 +149,10 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         final TestLineSegment startSegment = new TestLineSegment(start, intersectionAbscissa, line);
         final TestLineSegment endSegment = new TestLineSegment(intersectionAbscissa, end, line);
 
-        final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
         final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+        final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-        return new SplitConvexSubHyperplane<TestPoint2D>(plus, minus);
+        return new SplitConvexSubHyperplane<TestPoint2D>(minus, plus);
     }
 
     /** {@inheritDoc} */

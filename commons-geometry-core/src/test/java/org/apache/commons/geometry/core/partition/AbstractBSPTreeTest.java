@@ -4,24 +4,12 @@ import org.apache.commons.geometry.core.partition.BSPTree.Node;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestLine;
+import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AbstractBSPTreeTest {
-
-    @Test
-    public void scratch() {
-        TestBSPTree tree = new TestBSPTree();
-        TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
-
-        tree.getRoot().insertCut(line);
-
-        Node<TestPoint2D, Integer> node = tree.findNode(new TestPoint2D(0, 4));
-        node.insertCut(new TestLine(new TestPoint2D(0, 1), new TestPoint2D(0, 2)));
-
-        PartitionTestUtils.printTree(tree);
-    }
 
     @Test
     public void testInitialization() {
@@ -46,7 +34,7 @@ public class AbstractBSPTreeTest {
     public void testInsertCut() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
-        TestLine line = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+        TestLine line = new TestLine(0, 0, 1, 0);
 
         // act
         boolean result = tree.getRoot().insertCut(line);
@@ -56,7 +44,37 @@ public class AbstractBSPTreeTest {
 
         Node<TestPoint2D, Integer> root = tree.getRoot();
         assertIsInternalNode(root);
+
         Assert.assertSame(line, root.getCut().getHyperplane());
+
+        assertIsLeafNode(root.getMinus());
+        assertIsLeafNode(root.getPlus());
+    }
+
+    @Test
+    public void testInsertCut_fitsCutterToCell() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, Integer> node = tree.getRoot()
+            .cut(new TestLine(0, 0, 1, 0))
+            .getMinus()
+                .cut(new TestLine(0, 1, 0, 2))
+                .getPlus()
+                    .attr(1);
+
+        // act
+        boolean result = node.insertCut(new TestLine(0, 2, 2, 0));
+
+        PartitionTestUtils.printTree(tree);
+
+        // assert
+        Assert.assertTrue(result);
+
+        TestLineSegment segment = (TestLineSegment) node.getCut();
+
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), segment.getEndPoint());
     }
 
     private static void assertIsInternalNode(Node<?, ?> node) {

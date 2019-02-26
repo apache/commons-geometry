@@ -62,8 +62,8 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
 
     /** {@inheritDoc} */
     @Override
-    public SimpleNode<P, T> getRoot() {
-        return root;
+    public Node<P, T> getRoot() {
+        return getRootNode();
     }
 
     /** {@inheritDoc} */
@@ -75,7 +75,7 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
     /** {@inheritDoc} */
     @Override
     public Node<P, T> findNode(P pt) {
-        return findNode(getRoot(), pt);
+        return findNode(getRootNode(), pt);
     }
 
     /** Create a new node for this tree. The returned node is empty.
@@ -83,6 +83,13 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
      */
     protected SimpleNode<P, T> createNode() {
         return nodeFactory.apply(this);
+    }
+
+    /** Get the root node as a {@link SimpleNode} instance.
+     * @return the root node
+     */
+    protected SimpleNode<P, T> getRootNode() {
+        return root;
     }
 
     /** Find the smallest node in the tree containing the point, starting
@@ -270,7 +277,7 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
 
         /** {@inheritDoc} */
         @Override
-        public void visit(BSPTreeVisitor<P, T> visitor) {
+        public void visit(final BSPTreeVisitor<P, T> visitor) {
             tree.visit(this, visitor);
         }
 
@@ -288,8 +295,24 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
 
         /** {@inheritDoc} */
         @Override
-        public boolean insertCut(Hyperplane<P> cutter) {
+        public boolean insertCut(final Hyperplane<P> cutter) {
             return tree.insertCut(this, cutter);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SimpleNode<P, T> cut(final Hyperplane<P> cutter) {
+            this.insertCut(cutter);
+
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SimpleNode<P, T> attr(final T attribute) {
+            setAttribute(attribute);
+
+            return this;
         }
 
         /** {@inheritDoc} */

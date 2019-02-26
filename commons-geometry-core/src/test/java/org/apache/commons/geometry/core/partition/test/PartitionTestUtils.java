@@ -23,6 +23,7 @@ import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.junit.Assert;
 
 /** Class containing utility methods for tests related to the
  * partition package.
@@ -33,6 +34,17 @@ public class PartitionTestUtils {
 
     public static final DoublePrecisionContext PRECISION =
             new EpsilonDoublePrecisionContext(EPS);
+
+    /**
+     * Asserts that corresponding values in the given points are equal.
+     * @param expected
+     * @param actual
+     */
+    public static void assertPointsEqual(TestPoint2D expected, TestPoint2D actual) {
+        String msg = "Expected points to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getX(), actual.getX(), EPS);
+        Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
+    }
 
     public static <T> void printTree(TestBSPTree tree) {
         TestTreePrinter printer = new TestTreePrinter();

@@ -109,5 +109,15 @@ public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
          *      in the creation of new child nodes
          */
         boolean insertCut(Hyperplane<P> cutter);
+
+        /** Cut this node with the given hyperplane. The same node is returned, regardless of
+         * the outcome of the cut operation.
+         * @param cutter the hyperplane to cut the node's region with
+         * @return this node
+         * @see #insertCut(Hyperplane)
+         */
+        Node<P, T> cut(Hyperplane<P> cutter);
+
+        Node<P, T> attr(T attribute);
     }
 }

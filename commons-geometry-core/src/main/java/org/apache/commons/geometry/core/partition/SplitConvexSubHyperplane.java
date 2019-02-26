@@ -21,31 +21,23 @@ import org.apache.commons.geometry.core.partitioning.Side_Old;
 
 public class SplitConvexSubHyperplane<P extends Point<P>> {
 
-    /** Part of the convex sub-hyperplane on the plus side of the splitting hyperplane. */
-    private final ConvexSubHyperplane<P> plus;
-
     /** Part of the convex sub-hyperplane on the minus side of the splitting hyperplane. */
     private final ConvexSubHyperplane<P> minus;
 
+    /** Part of the convex sub-hyperplane on the plus side of the splitting hyperplane. */
+    private final ConvexSubHyperplane<P> plus;
+
     /** Build a SplitSubHyperplane from its parts.
-     * @param splitter the hyperplane performing the split
-     * @param plus part of the sub-hyperplane on the plus side of the
-     * splitting hyperplane
      * @param minus part of the sub-hyperplane on the minus side of the
-     * splitting hyperplane
+     *      splitting hyperplane
+     * @param plus part of the sub-hyperplane on the plus side of the
+     *      splitting hyperplane
      */
     public SplitConvexSubHyperplane(
-            final ConvexSubHyperplane<P> plus,
-            final ConvexSubHyperplane<P> minus) {
+            final ConvexSubHyperplane<P> minus,
+            final ConvexSubHyperplane<P> plus) {
         this.plus  = plus;
         this.minus = minus;
-    }
-
-    /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.
-     * @return part of the sub-hyperplane on the plus side of the splitting hyperplane
-     */
-    public ConvexSubHyperplane<P> getPlus() {
-        return plus;
     }
 
     /** Get the part of the sub-hyperplane on the minus side of the splitting hyperplane.
@@ -53,6 +45,13 @@ public class SplitConvexSubHyperplane<P extends Point<P>> {
      */
     public ConvexSubHyperplane<P> getMinus() {
         return minus;
+    }
+
+    /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.
+     * @return part of the sub-hyperplane on the plus side of the splitting hyperplane
+     */
+    public ConvexSubHyperplane<P> getPlus() {
+        return plus;
     }
 
     /** Get the side of the split sub-hyperplane with respect to its splitter.
