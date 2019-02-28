@@ -31,6 +31,33 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testSetAttribute_node() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        Node<TestPoint2D, Integer> root = tree.getRoot();
+
+        // act
+        root.setAttribute(10);
+
+        // assert
+        Assert.assertEquals(new Integer(10), root.getAttribute());
+    }
+
+    @Test
+    public void testAttr_node() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        Node<TestPoint2D, Integer> root = tree.getRoot();
+
+        // act
+        Node<TestPoint2D, Integer> result = root.attr(10);
+
+        // assert
+        Assert.assertSame(root, result);
+        Assert.assertEquals(new Integer(10), root.getAttribute());
+    }
+
+    @Test
     public void testInsertCut() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
@@ -68,11 +95,68 @@ public class AbstractBSPTreeTest {
 
         // assert
         Assert.assertTrue(result);
+        assertIsInternalNode(node);
 
         TestLineSegment segment = (TestLineSegment) node.getCut();
 
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment.getStartPoint());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), segment.getEndPoint());
+    }
+
+    @Test
+    public void testInsertCut_doesNotPassThroughCell_intersects() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, Integer> node = tree.getRoot()
+            .cut(new TestLine(0, 0, 1, 0))
+                .getMinus()
+                    .cut(new TestLine(0, 1, 0, 2))
+                    .getPlus();
+
+        // act
+        boolean result = node.insertCut(new TestLine(-2, 0, 0, -2));
+
+        // assert
+        Assert.assertFalse(result);
+        assertIsLeafNode(node);
+    }
+
+    @Test
+    public void testInsertCut_doesNotPassThroughCell_parallel() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, Integer> node = tree.getRoot()
+            .cut(new TestLine(0, 0, 1, 0))
+                .getMinus();
+
+        // act
+        boolean result = node.insertCut(new TestLine(0, -1, 1, -1));
+
+        // assert
+        Assert.assertFalse(result);
+        assertIsLeafNode(node);
+    }
+
+    @Test
+    public void testInsertCut_doesNotPassThroughCell_removesExistingChildren() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, Integer> node = tree.getRoot()
+            .cut(new TestLine(0, 0, 1, 0))
+                .getMinus()
+                    .cut(new TestLine(0, 1, 0, 2))
+                    .getPlus()
+                        .cut(new TestLine(0, 2, 2, 0));
+
+        // act
+        boolean result = node.insertCut(new TestLine(-2, 0, 0, -2));
+
+        // assert
+        Assert.assertFalse(result);
+        assertIsLeafNode(node);
     }
 
     private static void assertIsInternalNode(Node<?, ?> node) {
