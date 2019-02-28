@@ -47,8 +47,12 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
      */
     public TestLineSegment(final TestPoint2D start, final TestPoint2D end) {
         this.line = new TestLine(start, end);
-        this.start = line.toSubSpace(start);
-        this.end = line.toSubSpace(end);
+
+        final double startValue = line.toSubSpace(start);
+        final double endValue = line.toSubSpace(end);
+
+        this.start = Math.min(startValue, endValue);
+        this.end = Math.max(startValue, endValue);
     }
 
     /** Construct a line segment based on an existing line.
@@ -57,8 +61,8 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
      * @param line the underyling line
      */
     public TestLineSegment(final double start, final double end, final TestLine line) {
-        this.start = start;
-        this.end = end;
+        this.start = Math.min(start, end);
+        this.end = Math.max(start, end);
         this.line = line;
     }
 
@@ -111,11 +115,83 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     public SplitConvexSubHyperplane<TestPoint2D> split(Hyperplane<TestPoint2D> splitter) {
         final TestLine splitterLine = (TestLine) splitter;
 
-        final double startOffset = splitterLine.offset(line.toSpace(start));
-        final double endOffset = splitterLine.offset(line.toSpace(end));
+        if (isInfinite()) {
+            return splitInfinite(splitterLine);
+        }
+        return splitFinite(splitterLine);
+    }
 
-        final int startCmp = PartitionTestUtils.PRECISION.compare(startOffset, 0);
-        final int endCmp = PartitionTestUtils.PRECISION.compare(endOffset, 0);
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[start= ")
+            .append(getStartPoint())
+            .append(", end= ")
+            .append(getEndPoint())
+            .append("]");
+
+        return sb.toString();
+    }
+
+    /** Method used to split the instance with the given line when the instance has
+     * infinite size.
+     * @param splitter the splitter line
+     * @return the split convex subhyperplane
+     */
+    private SplitConvexSubHyperplane<TestPoint2D> splitInfinite(TestLine splitter) {
+        final TestPoint2D intersection = splitter.intersection(line);
+
+        if (intersection == null) {
+            // the lines are parallel
+            final double originOffset = splitter.offset(line.getOrigin());
+
+            final int sign = PartitionTestUtils.PRECISION.sign(originOffset);
+            if (sign < 0) {
+                return new SplitConvexSubHyperplane<TestPoint2D>(this, null);
+            }
+            else if (sign > 0) {
+                return new SplitConvexSubHyperplane<TestPoint2D>(null, this);
+            }
+            return new SplitConvexSubHyperplane<TestPoint2D>(null, null);
+        }
+        else {
+            // the lines intersect
+            final double intersectionAbscissa = line.toSubSpace(intersection);
+
+            TestLineSegment startSegment = null;
+            TestLineSegment endSegment = null;
+
+            if (start < intersectionAbscissa) {
+                startSegment = new TestLineSegment(start, intersectionAbscissa, line);
+            }
+            if (intersectionAbscissa < end) {
+                endSegment = new TestLineSegment(intersectionAbscissa, end, line);
+            }
+
+            final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
+            final double startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
+
+            final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+            final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
+
+            return new SplitConvexSubHyperplane<TestPoint2D>(minus, plus);
+        }
+    }
+
+    /** Method used to split the instance with the given line when the instance has
+     * finite size.
+     * @param splitter the splitter line
+     * @return the split convex subhyperplane
+     */
+    private SplitConvexSubHyperplane<TestPoint2D> splitFinite(TestLine splitter) {
+
+        final double startOffset = splitter.offset(line.toSpace(start));
+        final double endOffset = splitter.offset(line.toSpace(end));
+
+        final int startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
+        final int endCmp = PartitionTestUtils.PRECISION.sign(endOffset);
 
         // startCmp |   endCmp  |   result
         // --------------------------------
@@ -143,7 +219,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         }
 
         // we need to split the line
-        final TestPoint2D intersection = splitterLine.intersection(line);
+        final TestPoint2D intersection = splitter.intersection(line);
         final double intersectionAbscissa = line.toSubSpace(intersection);
 
         final TestLineSegment startSegment = new TestLineSegment(start, intersectionAbscissa, line);
@@ -153,19 +229,5 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
         return new SplitConvexSubHyperplane<TestPoint2D>(minus, plus);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append("[start= ")
-            .append(getStartPoint())
-            .append(", end= ")
-            .append(getEndPoint())
-            .append("]");
-
-        return sb.toString();
     }
 }

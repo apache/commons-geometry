@@ -66,8 +66,6 @@ public class AbstractBSPTreeTest {
         // act
         boolean result = node.insertCut(new TestLine(0, 2, 2, 0));
 
-        PartitionTestUtils.printTree(tree);
-
         // assert
         Assert.assertTrue(result);
 

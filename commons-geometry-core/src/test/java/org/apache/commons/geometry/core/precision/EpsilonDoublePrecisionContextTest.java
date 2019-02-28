@@ -36,6 +36,28 @@ public class EpsilonDoublePrecisionContextTest {
     }
 
     @Test
+    public void testSign() {
+        // arrange
+        double eps = 1e-2;
+
+        EpsilonDoublePrecisionContext ctx = new EpsilonDoublePrecisionContext(eps);
+
+        // act/assert
+        Assert.assertEquals(0, ctx.sign(0.0));
+        Assert.assertEquals(0, ctx.sign(-0.0));
+
+        Assert.assertEquals(0, ctx.sign(1e-2));
+        Assert.assertEquals(0, ctx.sign(-1e-2));
+
+        Assert.assertEquals(1, ctx.sign(1e-1));
+        Assert.assertEquals(-1, ctx.sign(-1e-1));
+
+        Assert.assertEquals(1, ctx.sign(Double.NaN));
+        Assert.assertEquals(1, ctx.sign(Double.POSITIVE_INFINITY));
+        Assert.assertEquals(-1, ctx.sign(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
     public void testCompare_compareToZero() {
         // arrange
         double eps = 1e-2;

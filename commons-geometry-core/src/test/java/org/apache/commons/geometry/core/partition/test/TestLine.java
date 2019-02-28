@@ -98,9 +98,6 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public double offset(TestPoint2D point) {
-        final double x = point.getX();
-        final double y = point.getY();
-
         return originOffset - signedArea(directionX, directionY, point.getX(), point.getY());
     }
 
