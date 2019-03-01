@@ -271,12 +271,6 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
 
         /** {@inheritDoc} */
         @Override
-        public SimpleNode<P, T> findNode(P p) {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public void visit(final BSPTreeVisitor<P, T> visitor) {
             tree.visit(this, visitor);
         }

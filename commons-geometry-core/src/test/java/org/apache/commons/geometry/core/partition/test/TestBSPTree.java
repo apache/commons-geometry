@@ -20,7 +20,7 @@ import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
  */
-public class TestBSPTree extends AbstractBSPTree<TestPoint2D, Integer> {
+public class TestBSPTree extends AbstractBSPTree<TestPoint2D, String> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;

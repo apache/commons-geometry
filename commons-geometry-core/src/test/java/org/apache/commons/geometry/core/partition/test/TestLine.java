@@ -27,6 +27,12 @@ import org.apache.commons.geometry.core.partition.Side;
  */
 public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
+    /** Line pointing along the positive x-axis. */
+    public static final TestLine X_AXIS = new TestLine(0, 0, 1, 0);
+
+    /** Line pointing along the positive y-axis. */
+    public static final TestLine Y_AXIS = new TestLine(0, 0, 0, 1);
+
     /** Serializable UID */
     private static final long serialVersionUID = 20190224L;
 

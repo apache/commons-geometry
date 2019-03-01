@@ -30,6 +30,14 @@ public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
      */
     Node<P, T> getRoot();
 
+    /** Return the node representing the smallest cell that contains the given point.
+     * If the point lies directly on the cut subhyperplane of an internal node, then
+     * that internal node is returned. Otherwise, a leaf node is returned.
+     * @param pt point to check
+     * @return the node containing the point
+     */
+    Node<P, T> findNode(P pt);
+
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      * @param <T> Node attribute type. This is the type of the data stored with
@@ -111,13 +119,18 @@ public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
         boolean insertCut(Hyperplane<P> cutter);
 
         /** Cut this node with the given hyperplane. The same node is returned, regardless of
-         * the outcome of the cut operation.
+         * the outcome of the cut operation. If the operation succeeded, then the node will
+         * have plus and minus child nodes.
          * @param cutter the hyperplane to cut the node's region with
          * @return this node
          * @see #insertCut(Hyperplane)
          */
         Node<P, T> cut(Hyperplane<P> cutter);
 
+        /** Set the attribute for this node. The node is returned.
+         * @param attribute attribute to set for the node
+         * @return the node instance
+         */
         Node<P, T> attr(T attribute);
     }
 }

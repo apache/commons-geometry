@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partition.BSPTree.Node;
 
 /** Interface specifying basic methods of traversing Binary Space Partitioning
  * (BSP) trees.
@@ -29,12 +28,4 @@ public interface BSPTreeTraversal<P extends Point<P>, T> {
      * @param visitor visitor call with each tree node
      */
     void visit(BSPTreeVisitor<P, T> visitor);
-
-    /** Return the node that the given point belongs to. If the point
-     * lies directly on the cut subhyerplane of an internal node, then
-     * that internal node is returned. Otherwise, a leaf node is returned.
-     * @param pt point to check
-     * @return the node containing the point
-     */
-    Node<P, T> findNode(P pt);
 }
