@@ -24,4 +24,10 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, String> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
+
+    /** {@inheritDoc} */
+    @Override
+    protected AbstractBSPTree<TestPoint2D, String> createTree() {
+        return new TestBSPTree();
+    }
 }

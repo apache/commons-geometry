@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <T> Node attribute type
  */
-public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Serializable {
+public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Serializable {
 
     /** Interface for objects that construct instances of {@link SimpleNode}.
      * @param <P> Point implementation type
@@ -68,14 +68,36 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
 
     /** {@inheritDoc} */
     @Override
-    public void visit(BSPTreeVisitor<P, T> visitor) {
+    public void visit(final BSPTreeVisitor<P, T> visitor) {
         visit(getRoot(), visitor);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node<P, T> findNode(P pt) {
+    public Node<P, T> findNode(final P pt) {
         return findNode(getRootNode(), pt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractBSPTree<P, T> extract(final Node<P, T> node) {
+        return extract(node, null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AbstractBSPTree<P, T> extract(final Node<P, T> node, final T emptyAttr) {
+        if (node.getTree() != this) {
+            throw new IllegalArgumentException("Cannot extract node: node does not belong to this tree");
+        }
+
+        final AbstractBSPTree<P, T> tree = createTree();
+        final SimpleNode<P, T> start = (SimpleNode<P, T>) node;
+
+        SimpleNode<P, T> newStart = extractPathToRoot(start, tree, emptyAttr);
+        copySubTree(start, newStart, tree);
+
+        return tree;
     }
 
     /** Create a new node for this tree. The returned node is empty.
@@ -85,11 +107,98 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
         return nodeFactory.apply(this);
     }
 
+    /** Copy the node attribute from {@code src} to {@code dest}.
+     * @param src the source node
+     * @param dst the destination node
+     */
+    protected void copyNodeAttribute(final SimpleNode<P, T> src, final SimpleNode<P, T> dst) {
+        dst.setAttribute(src.getAttribute());
+    }
+
+    /** Create a new tree instance.
+     * @return a new tree instance
+     */
+    protected abstract AbstractBSPTree<P, T> createTree();
+
     /** Get the root node as a {@link SimpleNode} instance.
      * @return the root node
      */
     protected SimpleNode<P, T> getRootNode() {
         return root;
+    }
+
+    /** Create a copy of the nodes from the given start node in this tree into the given new tree
+     * instance.
+     * @param start the start node in this tree
+     * @param tree the tree to contain the copy of the path
+     * @param emptyAttr attribute value for any new nodes
+     * @return the new leaf node in {@code tree}
+     */
+    protected SimpleNode<P, T> extractPathToRoot(final SimpleNode<P, T> start,
+            final AbstractBSPTree<P, T> tree, final T emptyAttr) {
+
+        final SimpleNode<P, T> newStart = tree.createNode();
+
+        SimpleNode<P, T> cur = start;
+        SimpleNode<P, T> newCur = newStart;
+
+        while (cur.parent != null) {
+            // create the parent-child connections
+            final SimpleNode<P, T> parent = cur.parent;
+            final SimpleNode<P, T> newParent = tree.createNode();
+
+            final SimpleNode<P, T> newSibling = tree.createNode();
+            newSibling.setAttribute(emptyAttr);
+
+            SimpleNode<P, T> newPlus;
+            SimpleNode<P, T> newMinus;
+
+            if (cur.isPlus()) {
+                newPlus = newCur;
+                newMinus = newSibling;
+            }
+            else {
+                newPlus = newSibling;
+                newMinus = newCur;
+            }
+
+            newParent.setCut(parent.getCut(), newPlus, newMinus);
+
+            // copy attributes at this level
+            copyNodeAttribute(cur, newCur);
+
+            // next iteration
+            cur = parent;
+            newCur = newParent;
+        }
+        copyNodeAttribute(cur, newCur);
+
+        return newStart;
+    }
+
+    /** Copy a subtree from this tree into the destination tree.
+     * @param src the node representing the root of the subtree in this instance
+     * @param dst the node representing the root of the subtree in the destintation instance
+     * @param dstTree the destination tree instance
+     */
+    protected void copySubTree(final SimpleNode<P, T> src, final SimpleNode<P, T> dst,
+            final AbstractBSPTree<P, T> dstTree) {
+        copyNodeAttribute(src, dst);
+
+        if (src.isLeaf()) {
+            dst.setCut(null, null, null);
+        }
+        else {
+            final SimpleNode<P, T> minus = src.getMinus();
+            final SimpleNode<P, T> newMinus = dstTree.createNode();
+            copySubTree(minus, newMinus, dstTree);
+
+            final SimpleNode<P, T> plus = src.getPlus();
+            final SimpleNode<P, T> newPlus = dstTree.createNode();
+            copySubTree(minus, newMinus, dstTree);
+
+            dst.setCut(src.getCut(), newPlus, newMinus);
+       }
     }
 
     /** Find the smallest node in the tree containing the point, starting
@@ -253,11 +362,6 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
         }
 
         /** {@inheritDoc} */
-        protected Hyperplane<P> getCutHyperplane() {
-            return (cut != null) ? cut.getHyperplane() : null;
-        }
-
-        /** {@inheritDoc} */
         @Override
         public SimpleNode<P, T> getPlus() {
             return plus;
@@ -321,6 +425,15 @@ public class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Se
                 .append("]");
 
             return sb.toString();
+        }
+
+        /** Get the hyperplane for the instance's cut. Returns null if
+         * no cut exists.
+         * @return the hyperplane for the node's cut or null if no cut
+         *      exists
+         */
+        protected Hyperplane<P> getCutHyperplane() {
+            return (cut != null) ? cut.getHyperplane() : null;
         }
 
         /** Set the cut state for the node. The arguments must either all be null or all be

@@ -236,6 +236,15 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testExtract() {
+        // act/assert
+        TestBSPTree tree = createDiamond();
+
+       PartitionTestUtils.printTree(tree);
+
+    }
+
+    @Test
     public void testNodeStateGetters() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
@@ -274,6 +283,25 @@ public class AbstractBSPTreeTest {
         Assert.assertTrue(str.contains("SimpleNode"));
         Assert.assertTrue(str.contains("cut= TestLineSegment"));
         Assert.assertTrue(str.contains("attribute= abc"));
+    }
+
+    /** Create a BSP tree with a diamond-shaped region and labelled nodes.
+     * @return
+     */
+    private static TestBSPTree createDiamond() {
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, String> root = tree.getRoot().attr("root");
+
+        root.cut(TestLine.X_AXIS);
+        Node<TestPoint2D, String> minusY = root.getPlus().attr("minusY");
+        Node<TestPoint2D, String> plusY = root.getMinus().attr("plusY");
+
+        minusY.cut(TestLine.Y_AXIS);
+        Node<TestPoint2D, String> minusYPlusX = minusY.getPlus().attr("minusYPlusX");
+        Node<TestPoint2D, String> minusYMinusX = minusY.getMinus().attr("minusYMinusX");
+
+        return tree;
     }
 
     private static void assertIsInternalNode(Node<?, ?> node) {
