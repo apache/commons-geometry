@@ -46,6 +46,20 @@ public class PartitionTestUtils {
         Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
     }
 
+    public static void assertSegmentsEqual(TestLineSegment expected, TestLineSegment actual) {
+        String msg = "Expected line segment to equal " + expected + " but was " + actual;
+
+        Assert.assertEquals(msg, expected.getStartPoint().getX(),
+                actual.getStartPoint().getX(), EPS);
+        Assert.assertEquals(msg, expected.getStartPoint().getY(),
+                actual.getStartPoint().getY(), EPS);
+
+        Assert.assertEquals(msg, expected.getEndPoint().getX(),
+                actual.getEndPoint().getX(), EPS);
+        Assert.assertEquals(msg, expected.getEndPoint().getY(),
+                actual.getEndPoint().getY(), EPS);
+    }
+
     public static <T> void printTree(TestBSPTree tree) {
         TestTreePrinter printer = new TestTreePrinter();
         String str = printer.writeAsString(tree);

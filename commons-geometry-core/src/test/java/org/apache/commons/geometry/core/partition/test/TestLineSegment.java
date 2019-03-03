@@ -55,6 +55,16 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         this.end = Math.max(startValue, endValue);
     }
 
+    /** Construct a line segment between two points.
+     * @param x1 x coordinate of first point
+     * @param y1 y coordinate of first point
+     * @param x2 x coordinate of second point
+     * @param y2 y coordinate of second point
+     */
+    public TestLineSegment(final double x1, final double y1, final double x2, final double y2) {
+        this(new TestPoint2D(x1, y1), new TestPoint2D(x2, y2));
+    }
+
     /** Construct a line segment based on an existing line.
      * @param start abscissa of the line segment start point
      * @param end abscissa of the line segment end point

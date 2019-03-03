@@ -80,24 +80,23 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
 
     /** {@inheritDoc} */
     @Override
-    public AbstractBSPTree<P, T> extract(final Node<P, T> node) {
-        return extract(node, null);
+    public void insert(final SubHyperplane<P> sub) {
+        insert(sub.toConvex());
     }
 
     /** {@inheritDoc} */
     @Override
-    public AbstractBSPTree<P, T> extract(final Node<P, T> node, final T emptyAttr) {
-        if (node.getTree() != this) {
-            throw new IllegalArgumentException("Cannot extract node: node does not belong to this tree");
+    public void insert(final ConvexSubHyperplane<P> convexSub) {
+        insertRecursive(getRootNode(), convexSub,
+                convexSub.getHyperplane().wholeHyperplane());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void insert(final Iterable<ConvexSubHyperplane<P>> convexSubs) {
+        for (ConvexSubHyperplane<P> convexSub : convexSubs) {
+            insert(convexSub);
         }
-
-        final AbstractBSPTree<P, T> tree = createTree();
-        final SimpleNode<P, T> start = (SimpleNode<P, T>) node;
-
-        SimpleNode<P, T> newStart = extractPathToRoot(start, tree, emptyAttr);
-        copySubTree(start, newStart, tree);
-
-        return tree;
     }
 
     /** Create a new node for this tree. The returned node is empty.
@@ -105,14 +104,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      */
     protected SimpleNode<P, T> createNode() {
         return nodeFactory.apply(this);
-    }
-
-    /** Copy the node attribute from {@code src} to {@code dest}.
-     * @param src the source node
-     * @param dst the destination node
-     */
-    protected void copyNodeAttribute(final SimpleNode<P, T> src, final SimpleNode<P, T> dst) {
-        dst.setAttribute(src.getAttribute());
     }
 
     /** Create a new tree instance.
@@ -125,80 +116,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      */
     protected SimpleNode<P, T> getRootNode() {
         return root;
-    }
-
-    /** Create a copy of the nodes from the given start node in this tree into the given new tree
-     * instance.
-     * @param start the start node in this tree
-     * @param tree the tree to contain the copy of the path
-     * @param emptyAttr attribute value for any new nodes
-     * @return the new leaf node in {@code tree}
-     */
-    protected SimpleNode<P, T> extractPathToRoot(final SimpleNode<P, T> start,
-            final AbstractBSPTree<P, T> tree, final T emptyAttr) {
-
-        final SimpleNode<P, T> newStart = tree.createNode();
-
-        SimpleNode<P, T> cur = start;
-        SimpleNode<P, T> newCur = newStart;
-
-        while (cur.parent != null) {
-            // create the parent-child connections
-            final SimpleNode<P, T> parent = cur.parent;
-            final SimpleNode<P, T> newParent = tree.createNode();
-
-            final SimpleNode<P, T> newSibling = tree.createNode();
-            newSibling.setAttribute(emptyAttr);
-
-            SimpleNode<P, T> newPlus;
-            SimpleNode<P, T> newMinus;
-
-            if (cur.isPlus()) {
-                newPlus = newCur;
-                newMinus = newSibling;
-            }
-            else {
-                newPlus = newSibling;
-                newMinus = newCur;
-            }
-
-            newParent.setCut(parent.getCut(), newPlus, newMinus);
-
-            // copy attributes at this level
-            copyNodeAttribute(cur, newCur);
-
-            // next iteration
-            cur = parent;
-            newCur = newParent;
-        }
-        copyNodeAttribute(cur, newCur);
-
-        return newStart;
-    }
-
-    /** Copy a subtree from this tree into the destination tree.
-     * @param src the node representing the root of the subtree in this instance
-     * @param dst the node representing the root of the subtree in the destintation instance
-     * @param dstTree the destination tree instance
-     */
-    protected void copySubTree(final SimpleNode<P, T> src, final SimpleNode<P, T> dst,
-            final AbstractBSPTree<P, T> dstTree) {
-        copyNodeAttribute(src, dst);
-
-        if (src.isLeaf()) {
-            dst.setCut(null, null, null);
-        }
-        else {
-            final SimpleNode<P, T> minus = src.getMinus();
-            final SimpleNode<P, T> newMinus = dstTree.createNode();
-            copySubTree(minus, newMinus, dstTree);
-
-            final SimpleNode<P, T> plus = src.getPlus();
-            final SimpleNode<P, T> newPlus = dstTree.createNode();
-            copySubTree(minus, newMinus, dstTree);
-
-            dst.setCut(src.getCut(), newPlus, newMinus);
-       }
     }
 
     /** Find the smallest node in the tree containing the point, starting
@@ -283,6 +200,36 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
         }
 
         return result;
+    }
+
+    /** Recursively insert a convex subhyperplane into the tree at the given node.
+     * @param node the node to begin insertion with
+     * @param insert the convex subhyperplane to insert
+     * @param trimmed convex subhyperplane containing the result of splitting the entire
+     *      space with each hyperplane from this node to the root
+     */
+    protected void insertRecursive(final SimpleNode<P, T> node, final ConvexSubHyperplane<P> insert,
+            final ConvexSubHyperplane<P> trimmed) {
+        if (node.isLeaf()) {
+            node.setCut(trimmed, createNode(), createNode());
+        }
+        else {
+            final SplitConvexSubHyperplane<P> insertSplit = insert.split(node.getCutHyperplane());
+
+            final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
+            final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
+
+            if (minus != null || plus != null) {
+                final SplitConvexSubHyperplane<P> trimmedSplit = trimmed.split(node.getCutHyperplane());
+
+                if (minus != null) {
+                    insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus());
+                }
+                if (plus != null) {
+                    insertRecursive(node.getPlus(), plus, trimmedSplit.getPlus());
+                }
+            }
+        }
     }
 
     /** Simple implementation of {@link BSPTree.Node}. This class is intended for use with

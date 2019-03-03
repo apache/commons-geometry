@@ -132,8 +132,8 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      */
     public TestPoint2D toSpace(final double abscissa) {
         if (Double.isInfinite(abscissa)) {
-            int dirXCmp = PartitionTestUtils.PRECISION.compare(directionX, 0.0);
-            int dirYCmp = PartitionTestUtils.PRECISION.compare(directionY, 0.0);
+            int dirXCmp = PartitionTestUtils.PRECISION.sign(directionX);
+            int dirYCmp = PartitionTestUtils.PRECISION.sign(directionY);
 
             double x;
             if (dirXCmp == 0) {
@@ -141,7 +141,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
                 x = getOrigin().getX();
             }
             else {
-                x = (dirXCmp < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+                x = (dirXCmp < 0 ^ abscissa < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
 
             double y;
@@ -150,12 +150,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
                 y = getOrigin().getY();
             }
             else {
-                y = (dirYCmp < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-            }
-
-            if (abscissa < 0) {
-                x = -x;
-                y = -y;
+                y = (dirYCmp < 0 ^ abscissa < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
 
             return new TestPoint2D(x, y);

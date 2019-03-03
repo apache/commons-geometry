@@ -38,30 +38,21 @@ public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
      */
     Node<P, T> findNode(P pt);
 
-    /** Extract the given node into a separate tree instance. The tree will contain all
-     * nodes below the given node and the nodes from the given node up to the root. In
-     * other words, only nodes that could possibly be part of a path containing the given
-     * node are extracted. The nodes are copied and any newly created nodes are given a null
-     * attribute value. The original tree is left unchanged.
-     * @param node the node to extract
-     * @return a new tree instance with a structure similar to the current tree but only
-     *      containing the given node, the nodes below it, and the nodes between it and
-     *      the root.
-     * @throws IllegalArgumentException if the given node does not belong to this tree
-     * @see #extract(Node, Object)
+    /** Insert a subhyperplane into the tree.
+     * @param sub the subhyperplane to insert into the tree
      */
-    BSPTree<P, T> extract(Node<P, T> node);
+    void insert(SubHyperplane<P> sub);
 
-    /** Extract the given node into a separate tree instance, using the given attribute
-     * value for any newly created, empty nodes.
-     * @param node the node to extract
-     * @param emptyAttr the attribute value to use for any new node created in the
-     *      extracted tree
-     * @return the new tree instance
-     * @throws IllegalArgumentException if the given node does not belong to this tree
-     * @see #extract(Node)
+    /** Insert a convex subhyperplane into the tree.
+     * @param convexSub the convex subhyperplane to insert into the tree
      */
-    BSPTree<P, T> extract(Node<P, T> node, T emptyAttr);
+    void insert(ConvexSubHyperplane<P> convexSub);
+
+    /** Insert a set of convex subhyperplanes into the tree.
+     * @param convexSubs iterable containing a collection of subhyperplanes
+     *      to insert into the tree
+     */
+    void insert(Iterable<ConvexSubHyperplane<P>> convexSubs);
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type

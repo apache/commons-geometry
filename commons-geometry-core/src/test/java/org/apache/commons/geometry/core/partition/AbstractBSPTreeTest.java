@@ -1,5 +1,9 @@
 package org.apache.commons.geometry.core.partition;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.geometry.core.partition.BSPTree.Node;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
@@ -28,6 +32,31 @@ public class AbstractBSPTreeTest {
         Assert.assertFalse(root.isMinus());
 
         Assert.assertSame(tree, root.getTree());
+    }
+
+    @Test
+    public void testNodeStateGetters() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Node<TestPoint2D, String> root = tree.getRoot();
+        root.cut(TestLine.X_AXIS);
+
+        Node<TestPoint2D, String> plus = root.getPlus();
+        Node<TestPoint2D, String> minus = root.getMinus();
+
+        // act/assert
+        Assert.assertFalse(root.isLeaf());
+        Assert.assertFalse(root.isPlus());
+        Assert.assertFalse(root.isMinus());
+
+        Assert.assertTrue(plus.isLeaf());
+        Assert.assertTrue(plus.isPlus());
+        Assert.assertFalse(plus.isMinus());
+
+        Assert.assertTrue(minus.isLeaf());
+        Assert.assertFalse(minus.isPlus());
+        Assert.assertTrue(minus.isMinus());
     }
 
     @Test
@@ -236,38 +265,152 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract() {
-        // act/assert
-        TestBSPTree tree = createDiamond();
-
-       PartitionTestUtils.printTree(tree);
-
-    }
-
-    @Test
-    public void testNodeStateGetters() {
+    public void testInsert_convex_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
+        // act
+        tree.insert(new TestLineSegment(1, 0, 1, 1));
+
+        // assert
         Node<TestPoint2D, String> root = tree.getRoot();
-        root.cut(TestLine.X_AXIS);
-
-        Node<TestPoint2D, String> plus = root.getPlus();
-        Node<TestPoint2D, String> minus = root.getMinus();
-
-        // act/assert
         Assert.assertFalse(root.isLeaf());
-        Assert.assertFalse(root.isPlus());
-        Assert.assertFalse(root.isMinus());
+        Assert.assertTrue(root.getMinus().isLeaf());
+        Assert.assertTrue(root.getPlus().isLeaf());
 
-        Assert.assertTrue(plus.isLeaf());
-        Assert.assertTrue(plus.isPlus());
-        Assert.assertFalse(plus.isMinus());
+        TestLineSegment seg = (TestLineSegment) root.getCut();
+        PartitionTestUtils.assertPointsEqual(
+                new TestPoint2D(1, Double.NEGATIVE_INFINITY),
+                seg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(
+                new TestPoint2D(1, Double.POSITIVE_INFINITY),
+                seg.getEndPoint());
+    }
 
-        Assert.assertTrue(minus.isLeaf());
-        Assert.assertFalse(minus.isPlus());
-        Assert.assertTrue(minus.isMinus());
+    @Test
+    public void testInsert_convex_noSplit() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
 
+        // act
+        tree.insert(new TestLineSegment(0.5, 1.5, 1.5, 0.5));
+
+        // assert
+        Node<TestPoint2D, String> root = tree.getRoot();
+        Assert.assertFalse(root.isLeaf());
+
+        Node<TestPoint2D, String> node = tree.findNode(new TestPoint2D(0.5, 0.5));
+        TestLineSegment seg = (TestLineSegment) node.getParent().getCut();
+
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), seg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), seg.getEndPoint());
+
+        Assert.assertTrue(tree.getRoot().getPlus().isLeaf());
+        Assert.assertTrue(tree.getRoot().getMinus().getMinus().isLeaf());
+    }
+
+    @Test
+    public void testInsert_convex_split() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        tree.insert(new TestLineSegment(-0.5, 2.5, 2.5, -0.5));
+
+        // assert
+        Node<TestPoint2D, String> root = tree.getRoot();
+        Assert.assertFalse(root.isLeaf());
+
+        Node<TestPoint2D, String> plusXPlusY = tree.getRoot().getMinus().getPlus();
+        TestLineSegment plusXPlusYSeg = (TestLineSegment) plusXPlusY.getCut();
+
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), plusXPlusYSeg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), plusXPlusYSeg.getEndPoint());
+
+        Node<TestPoint2D, String> minusY = tree.getRoot().getPlus();
+        TestLineSegment minusYSeg = (TestLineSegment) minusY.getCut();
+
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(2, 0), minusYSeg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(
+                new TestPoint2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY), minusYSeg.getEndPoint());
+
+        Node<TestPoint2D, String> minusXPlusY = tree.getRoot().getMinus().getMinus();
+        TestLineSegment minusXPlusYSeg = (TestLineSegment) minusXPlusY.getCut();
+
+        PartitionTestUtils.assertPointsEqual(
+                new TestPoint2D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), minusXPlusYSeg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), minusXPlusYSeg.getEndPoint());
+    }
+
+    @Test
+    public void testInsert_convexList_convexRegion() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestLineSegment a = new TestLineSegment(0, 0, 1, 0);
+        TestLineSegment b = new TestLineSegment(1, 0, 0, 1);
+        TestLineSegment c = new TestLineSegment(0, 1, 0, 0);
+
+        // act
+        tree.insert(Arrays.asList(a, b, c));
+
+        // assert
+        List<TestLineSegment> segments = getLineSegments(tree);
+
+        Assert.assertEquals(3, segments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                segments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-Math.sqrt(0.5), Double.POSITIVE_INFINITY, new TestLine(1, 0, 0, 1)),
+                segments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(c, segments.get(2));
+    }
+
+    @Test
+    public void testInsert_convexList_concaveRegion() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestLineSegment a = new TestLineSegment(-1, -1, 1, -1);
+        TestLineSegment b = new TestLineSegment(1, -1, 0, 0);
+        TestLineSegment c = new TestLineSegment(0, 0, 1, 1);
+        TestLineSegment d = new TestLineSegment(1, 1, -1, 1);
+        TestLineSegment e = new TestLineSegment(-1, 1, -1, -1);
+
+        // act
+        tree.insert(Arrays.asList(a, b, c, d, e));
+
+        // assert
+        List<TestLineSegment> segments = getLineSegments(tree);
+
+        Assert.assertEquals(5, segments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
+                segments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-Math.sqrt(2), Double.POSITIVE_INFINITY, new TestLine(1, -1, 0, 0)),
+                segments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-1, 1, -1, -1),
+                segments.get(2));
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, new TestLine(0, 0, 1, 1)),
+                segments.get(3));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(1, 1, -1, 1),
+                segments.get(4));
     }
 
     @Test
@@ -285,23 +428,16 @@ public class AbstractBSPTreeTest {
         Assert.assertTrue(str.contains("attribute= abc"));
     }
 
-    /** Create a BSP tree with a diamond-shaped region and labelled nodes.
-     * @return
-     */
-    private static TestBSPTree createDiamond() {
-        TestBSPTree tree = new TestBSPTree();
+    private static List<TestLineSegment> getLineSegments(TestBSPTree tree) {
+        List<TestLineSegment> list = new ArrayList<>();
 
-        Node<TestPoint2D, String> root = tree.getRoot().attr("root");
+        tree.visit(node -> {
+            if (!node.isLeaf()) {
+                list.add((TestLineSegment) node.getCut());
+            }
+        });
 
-        root.cut(TestLine.X_AXIS);
-        Node<TestPoint2D, String> minusY = root.getPlus().attr("minusY");
-        Node<TestPoint2D, String> plusY = root.getMinus().attr("plusY");
-
-        minusY.cut(TestLine.Y_AXIS);
-        Node<TestPoint2D, String> minusYPlusX = minusY.getPlus().attr("minusYPlusX");
-        Node<TestPoint2D, String> minusYMinusX = minusY.getMinus().attr("minusYMinusX");
-
-        return tree;
+        return list;
     }
 
     private static void assertIsInternalNode(Node<?, ?> node) {
