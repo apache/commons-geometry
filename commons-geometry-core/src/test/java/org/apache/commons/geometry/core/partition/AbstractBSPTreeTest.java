@@ -9,6 +9,7 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
+import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -389,6 +390,46 @@ public class AbstractBSPTreeTest {
 
         // act
         tree.insert(Arrays.asList(a, b, c, d, e));
+
+        // assert
+        List<TestLineSegment> segments = getLineSegments(tree);
+
+        Assert.assertEquals(5, segments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
+                segments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-Math.sqrt(2), Double.POSITIVE_INFINITY, new TestLine(1, -1, 0, 0)),
+                segments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-1, 1, -1, -1),
+                segments.get(2));
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, new TestLine(0, 0, 1, 1)),
+                segments.get(3));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(1, 1, -1, 1),
+                segments.get(4));
+    }
+
+    @Test
+    public void testInsert_subhyperplane_concaveRegion() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestLineSegment a = new TestLineSegment(-1, -1, 1, -1);
+        TestLineSegment b = new TestLineSegment(1, -1, 0, 0);
+        TestLineSegment c = new TestLineSegment(0, 0, 1, 1);
+        TestLineSegment d = new TestLineSegment(1, 1, -1, 1);
+        TestLineSegment e = new TestLineSegment(-1, 1, -1, -1);
+
+        TestLineSegmentCollection coll = new TestLineSegmentCollection(
+                Arrays.asList(a, b, c, d, e));
+
+        // act
+        tree.insert(coll);
 
         // assert
         List<TestLineSegment> segments = getLineSegments(tree);
