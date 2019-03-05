@@ -19,10 +19,55 @@ package org.apache.commons.geometry.core.partition;
 import org.apache.commons.geometry.core.Point;
 
 /** {@link BSPTree} specialized for representing regions of space. For example, this
- * interface can be used to represent polygons in Euclidean 2D space and polyhedrons
+ * class can be used to represent polygons in Euclidean 2D space and polyhedrons
  * in Euclidean 3D space.
  * @param <P> Point type
  */
-public interface RegionBSPTree<P extends Point<P>> extends BSPTree<P, RegionAttribute<P>> {
+public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, RegionBSPTree.RegionNode<P>> {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 1L;
+
+    public RegionBSPTree() {
+        super(RegionNode<P>::new);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected RegionBSPTree<P> createTree() {
+        return new RegionBSPTree<P>();
+    }
+
+    public static class RegionNode<P extends Point<P>> extends AbstractBSPTree.AbstractNode<P, RegionNode<P>> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 1L;
+
+        private RegionLocation location;
+
+        /** Simple constructor.
+         * @param tree owning tree instance
+         */
+        public RegionNode(AbstractBSPTree<P, RegionNode<P>> tree) {
+            super(tree);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected RegionNode<P> getSelf() {
+            return this;
+        }
+
+        public RegionLocation getLocation() {
+            return location;
+        }
+
+        public boolean isInside() {
+            return location == RegionLocation.INSIDE;
+        }
+
+        public boolean isOutside() {
+            return location == RegionLocation.OUTSIDE;
+        }
+    }
 }

@@ -23,59 +23,52 @@ import org.apache.commons.geometry.core.Point;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
- * @param <T> Node attribute type
+ * @param <T> Node implementation type
  */
-public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<P, T>, Serializable {
+public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>> implements BSPTree<P, N>, Serializable {
 
-    /** Interface for objects that construct instances of {@link SimpleNode}.
+    /** Interface for objects that construct instances of {@link AbstractNode}.
      * @param <P> Point implementation type
      * @param <T> Node attribute type
      */
-    protected static interface SimpleNodeFactory<P extends Point<P>, T>
-        extends Function<AbstractBSPTree<P, T>, SimpleNode<P, T>> {
+    protected static interface NodeFactory<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
+        extends Function<AbstractBSPTree<P, N>, N> {
     }
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
 
     /** Object used to create new nodes for the tree. */
-    private final SimpleNodeFactory<P, T> nodeFactory;
+    private final NodeFactory<P, N> nodeFactory;
 
     /** The root node for the tree. */
-    private final SimpleNode<P, T> root;
-
-    /** Default constructor.
-     */
-    protected AbstractBSPTree()
-    {
-        this(SimpleNode::new);
-    }
+    private final N root;
 
     /** Construct a new instance that uses the given factory object to produce
      * tree nodes.
      * @param nodeFactory object used to create nodes for this instance
      */
-    protected AbstractBSPTree(final SimpleNodeFactory<P, T> nodeFactory) {
+    protected AbstractBSPTree(final NodeFactory<P, N> nodeFactory) {
         this.nodeFactory = nodeFactory;
         this.root = nodeFactory.apply(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node<P, T> getRoot() {
-        return getRootNode();
+    public N getRoot() {
+        return root;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final BSPTreeVisitor<P, T> visitor) {
+    public void visit(final BSPTreeVisitor<P, N> visitor) {
         visit(getRoot(), visitor);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Node<P, T> findNode(final P pt) {
-        return findNode(getRootNode(), pt);
+    public N findNode(final P pt) {
+        return findNode(getRoot(), pt);
     }
 
     /** {@inheritDoc} */
@@ -87,7 +80,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
     /** {@inheritDoc} */
     @Override
     public void insert(final ConvexSubHyperplane<P> convexSub) {
-        insertRecursive(getRootNode(), convexSub,
+        insertRecursive(getRoot(), convexSub,
                 convexSub.getHyperplane().wholeHyperplane());
     }
 
@@ -102,21 +95,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
     /** Create a new node for this tree. The returned node is empty.
      * @return a new node for this tree
      */
-    protected SimpleNode<P, T> createNode() {
+    protected N createNode() {
         return nodeFactory.apply(this);
     }
 
     /** Create a new tree instance.
      * @return a new tree instance
      */
-    protected abstract AbstractBSPTree<P, T> createTree();
-
-    /** Get the root node as a {@link SimpleNode} instance.
-     * @return the root node
-     */
-    protected SimpleNode<P, T> getRootNode() {
-        return root;
-    }
+    protected abstract AbstractBSPTree<P, N> createTree();
 
     /** Find the smallest node in the tree containing the point, starting
      * at the given node.
@@ -124,7 +110,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      * @param pt the point to check
      * @return the smallest node in the tree containing the point
      */
-    protected SimpleNode<P, T> findNode(SimpleNode<P, T> start, P pt) {
+    protected N findNode(final N start, final P pt) {
         Hyperplane<P> hyper = start.getCutHyperplane();
         if (hyper != null) {
             Side side = hyper.classify(pt);
@@ -143,7 +129,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      * @param node the node to begin the visit process
      * @param visitor the visitor to pass nodes to
      */
-    protected void visit(final Node<P, T> node, BSPTreeVisitor<P, T> visitor) {
+    protected void visit(final N node, BSPTreeVisitor<P, N> visitor) {
         // simple recursive implementation of this; we'll probably
         // want to change this later
         if (node != null) {
@@ -163,17 +149,17 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      * @param cutter the hyperplane to cut the node with
      * @return true if the node was cut; otherwise fasel
      */
-    protected boolean insertCut(final SimpleNode<P, T> node, final Hyperplane<P> cutter) {
+    protected boolean insertCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
-            node.setCut(null, null, null);
+            setCut(node, null, null, null);
             return false;
         }
 
-        node.setCut(cut, createNode(), createNode());
+        setCut(node, cut, createNode(), createNode());
         return true;
     }
 
@@ -183,12 +169,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      * @param sub the subhyperplane to fit into the cell
      * @return the subhyperplane fit to the cell
      */
-    protected ConvexSubHyperplane<P> fitToCell(final SimpleNode<P, T> node, final ConvexSubHyperplane<P> sub) {
+    protected ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
 
         ConvexSubHyperplane<P> result = sub;
 
-        SimpleNode<P, T> parentNode = node.getParent();
-        SimpleNode<P, T> currentNode = node;
+        N parentNode = node.getParent();
+        N currentNode = node;
 
         while (parentNode != null && result != null) {
             SplitConvexSubHyperplane<P> split = result.split(parentNode.getCutHyperplane());
@@ -208,10 +194,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
      * @param trimmed convex subhyperplane containing the result of splitting the entire
      *      space with each hyperplane from this node to the root
      */
-    protected void insertRecursive(final SimpleNode<P, T> node, final ConvexSubHyperplane<P> insert,
+    protected void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
-            node.setCut(trimmed, createNode(), createNode());
+            setCut(node, trimmed, createNode(), createNode());
         }
         else {
             final SplitConvexSubHyperplane<P> insertSplit = insert.split(node.getCutHyperplane());
@@ -232,22 +218,42 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
         }
     }
 
-    /** Simple implementation of {@link BSPTree.Node}. This class is intended for use with
+    /** Set the cut state for the given node.
+     * @param node the node to set the cut state for
+     * @param cut the cut, ie binary partitioner for the node; may be null
+     * @param minus the minus child node; may be null
+     * @param plus the plus child node; may be null
+     */
+    protected void setCut(final N node, final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
+        node.setCut(cut);
+
+        if (minus != null) {
+            minus.setParent(node);
+        }
+        node.setMinus(minus);
+
+        if (plus != null) {
+            plus.setParent(node);
+        }
+        node.setPlus(plus);
+    }
+
+    /** Abstract implementation of {@link BSPTree.Node}. This class is intended for use with
      * {@link AbstractBSPTree} and delegates tree mutation methods into the parent tree
      * class, where the logic can be easily overridden or extended.
      * @param <P> Point implementation type
-     * @param <T> Node attribute type
+     * @param <T> Node implementation type
      */
-    public static class SimpleNode<P extends Point<P>, T> implements BSPTree.Node<P, T>, Serializable {
+    public static abstract class AbstractNode<P extends Point<P>, N extends AbstractNode<P, N>> implements BSPTree.Node<P, N>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190225L;
 
         /** The owning tree instance */
-        private final AbstractBSPTree<P, T> tree;
+        private final AbstractBSPTree<P, N> tree;
 
         /** The parent node; this will be null for the tree root node */
-        private SimpleNode<P, T> parent;
+        private N parent;
 
         /** The subhyperplane cutting the node's region; this will be null for leaf nodes */
         private ConvexSubHyperplane<P> cut;
@@ -255,32 +261,29 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
         /** The node lying on the plus side of the cut subhyperplane; this will be null
          * for leaf nodes.
          */
-        private SimpleNode<P, T> plus;
+        private N plus;
 
         /** The node lying on the minus side of the cut subhyperplane; this will be null
          * for leaf nodes.
          */
-        private SimpleNode<P, T> minus;
-
-        /** The node attribute */
-        private T attribute;
+        private N minus;
 
         /** Simple constructor.
          * @param tree the tree instance that owns this node
          */
-        public SimpleNode(final AbstractBSPTree<P, T> tree) {
+        public AbstractNode(final AbstractBSPTree<P, N> tree) {
             this.tree = tree;
         }
 
         /** {@inheritDoc} */
         @Override
-        public AbstractBSPTree<P, T> getTree() {
+        public AbstractBSPTree<P, N> getTree() {
             return tree;
         }
 
         /** {@inheritDoc} */
         @Override
-        public SimpleNode<P, T> getParent() {
+        public N getParent() {
             return parent;
         }
 
@@ -310,48 +313,28 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
 
         /** {@inheritDoc} */
         @Override
-        public SimpleNode<P, T> getPlus() {
+        public N getPlus() {
             return plus;
         }
 
         /** {@inheritDoc} */
         @Override
-        public SimpleNode<P, T> getMinus() {
+        public N getMinus() {
             return minus;
         }
 
         /** {@inheritDoc} */
         @Override
-        public T getAttribute() {
-            return attribute;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void setAttribute(T attribute) {
-            this.attribute = attribute;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public boolean insertCut(final Hyperplane<P> cutter) {
-            return tree.insertCut(this, cutter);
+            return tree.insertCut(getSelf(), cutter);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SimpleNode<P, T> cut(final Hyperplane<P> cutter) {
+        public N cut(final Hyperplane<P> cutter) {
             this.insertCut(cutter);
 
-            return this;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SimpleNode<P, T> attr(final T attribute) {
-            setAttribute(attribute);
-
-            return this;
+            return getSelf();
         }
 
         /** {@inheritDoc} */
@@ -361,8 +344,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
             sb.append(this.getClass().getSimpleName())
                 .append("[cut= ")
                 .append(getCut())
-                .append(", attribute= ")
-                .append(attribute)
                 .append("]");
 
             return sb.toString();
@@ -377,24 +358,31 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
             return (cut != null) ? cut.getHyperplane() : null;
         }
 
-        /** Set the cut state for the node. The arguments must either all be null or all be
-         * non-null.
-         * @param cut the binary partitioner for the node
-         * @param plus the plus child node
-         * @param minus the minus child node
+        /** Set the parent node for the instance.
+         * @param parent the parent node for the instance
          */
-        protected void setCut(ConvexSubHyperplane<P> cut, SimpleNode<P, T> plus, SimpleNode<P, T> minus) {
-            this.cut = cut;
+        protected void setParent(final N parent) {
+            this.parent = parent;
+        }
 
-            if (plus != null) {
-                plus.parent = this;
-            }
-            this.plus = plus;
-
-            if (minus != null) {
-                minus.parent = this;
-            }
+        protected void setMinus(final N minus) {
             this.minus = minus;
         }
+
+        protected void setPlus(final N plus) {
+            this.plus = plus;
+        }
+
+        /** Set the cut (ie, binary partitioner) for the node.
+         * @param cut the cut for the node
+         */
+        protected void setCut(final ConvexSubHyperplane<P> cut) {
+            this.cut = cut;
+        }
+
+        /** Get a reference to the current instance, cast to type N.
+         * @return a reference to the current instance, as type N.
+         */
+        protected abstract N getSelf();
     }
 }

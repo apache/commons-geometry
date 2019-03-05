@@ -20,15 +20,14 @@ import org.apache.commons.geometry.core.Point;
 
 /** Interface for Binary Space Partitioning (BSP) trees.
  * @param <P> Point type
- * @param <T> Node attribute type. This is the type of the data stored with
- *      each node in the tree.
+ * @param <N> Node type
  */
-public interface BSPTree<P extends Point<P>, T> {
+public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 
     /** Get the root node of the tree.
      * @return the root node of the tree
      */
-    Node<P, T> getRoot();
+    N getRoot();
 
     /** Return the node representing the smallest cell that contains the given point.
      * If the point lies directly on the cut subhyperplane of an internal node, then
@@ -36,7 +35,7 @@ public interface BSPTree<P extends Point<P>, T> {
      * @param pt point to check
      * @return the node containing the point
      */
-    Node<P, T> findNode(P pt);
+    N findNode(P pt);
 
     /** Insert a subhyperplane into the tree.
      * @param sub the subhyperplane to insert into the tree
@@ -58,25 +57,23 @@ public interface BSPTree<P extends Point<P>, T> {
      * tree.
      * @param visitor visitor call with each tree node
      */
-    void visit(BSPTreeVisitor<P, T> visitor);
+    void visit(BSPTreeVisitor<P, N> visitor);
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
-     * @param <T> Node attribute type. This is the type of the data stored with
-     *      each node in the tree.
      */
-    public static interface Node<P extends Point<P>, T> {
+    public static interface Node<P extends Point<P>, N extends Node<P, N>> {
 
         /** Get the {@link BSPTree} that owns the node.
          * @return the owning tree
          */
-        BSPTree<P, T> getTree();
+        BSPTree<P, N> getTree();
 
         /** Get the parent of the node. This will be null if the node is the
          * root of the tree.
          * @return the parent node for this instance
          */
-        Node<P, T> getParent();
+        N getParent();
 
         /** Get the cut for the node. This is a convex subhyperplane that splits
          * the region for the cell into two disjoint regions, namely the plus and
@@ -91,23 +88,13 @@ public interface BSPTree<P extends Point<P>, T> {
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the plus region of the cell
          */
-        Node<P, T> getPlus();
+        N getPlus();
 
         /** Get the node for the minus region of the cell. This will be null if the
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the minus region of the cell
          */
-        Node<P, T> getMinus();
-
-        /** Get the attribute associated with this node.
-         * @return the attribute associated with this node
-         */
-        T getAttribute();
-
-        /** Set the attribute associated with this node.
-         * @param attribute the attribute to associate with this node
-         */
-        void setAttribute(T attribute);
+        N getMinus();
 
         /** Return true if the node is a leaf node, meaning that it has no
          * binary partitioner (aka, cut) and therefore no child nodes.
@@ -147,12 +134,6 @@ public interface BSPTree<P extends Point<P>, T> {
          * @return this node
          * @see #insertCut(Hyperplane)
          */
-        Node<P, T> cut(Hyperplane<P> cutter);
-
-        /** Set the attribute for this node. The node is returned.
-         * @param attribute attribute to set for the node
-         * @return the node instance
-         */
-        Node<P, T> attr(T attribute);
+        N cut(Hyperplane<P> cutter);
     }
 }

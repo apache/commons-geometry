@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.partition.BSPTree;
 import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partition.BSPTree.Node;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -60,14 +61,29 @@ public class PartitionTestUtils {
                 actual.getEndPoint().getY(), EPS);
     }
 
-    public static <T> void printTree(TestBSPTree tree) {
-        TestTreePrinter printer = new TestTreePrinter();
-        String str = printer.writeAsString(tree);
+    public static void assertIsInternalNode(Node<?, ?> node) {
+        Assert.assertNotNull(node.getCut());
+        Assert.assertNotNull(node.getMinus());
+        Assert.assertNotNull(node.getPlus());
 
-        System.out.println(str);
+        Assert.assertFalse(node.isLeaf());
     }
 
-    public static class TestTreePrinter implements BSPTreeVisitor<TestPoint2D, String> {
+    public static void assertIsLeafNode(Node<?, ?> node) {
+        Assert.assertNull(node.getCut());
+        Assert.assertNull(node.getMinus());
+        Assert.assertNull(node.getPlus());
+
+        Assert.assertTrue(node.isLeaf());
+    }
+
+    public static <N extends BSPTree.Node<TestPoint2D, N>> void printTree(BSPTree<TestPoint2D, N> tree) {
+        TestTreePrinter<N> printer = new TestTreePrinter<>();
+
+        System.out.println(printer.writeAsString(tree));
+    }
+
+    public static class TestTreePrinter<N extends BSPTree.Node<TestPoint2D, N>> implements BSPTreeVisitor<TestPoint2D, N> {
 
         /** Indent per tree level */
         protected static final String INDENT = "    ";
@@ -82,7 +98,7 @@ public class PartitionTestUtils {
          * @param tree
          * @return
          */
-        public String writeAsString(TestBSPTree tree) {
+        public String writeAsString(BSPTree<TestPoint2D, N> tree) {
             output.delete(0, output.length());
 
             tree.visit(this);
@@ -91,7 +107,7 @@ public class PartitionTestUtils {
         }
 
         @Override
-        public void visit(BSPTree.Node<TestPoint2D, String> node) {
+        public void visit(N node) {
             writeLinePrefix(node);
 
             if (node.isLeaf()) {
@@ -102,7 +118,7 @@ public class PartitionTestUtils {
             }
         }
 
-        public void visitInternalNode(BSPTree.Node<TestPoint2D, String> node) {
+        public void visitInternalNode(N node) {
             writeInternalNode(node);
 
             write("\n");
@@ -110,12 +126,12 @@ public class PartitionTestUtils {
             ++depth;
         }
 
-        public void visitLeafNode(BSPTree.Node<TestPoint2D, String> node) {
+        public void visitLeafNode(N node) {
             writeLeafNode(node);
 
             write("\n");
 
-            BSPTree.Node<TestPoint2D, String> cur = node;
+            N cur = node;
             while (cur.isPlus()) {
                 --depth;
                 cur = cur.getParent();
@@ -127,7 +143,7 @@ public class PartitionTestUtils {
          * for the node itself.
          * @param node
          */
-        protected void writeLinePrefix(BSPTree.Node<TestPoint2D, String>node) {
+        protected void writeLinePrefix(N node) {
             for (int i=0; i<depth; ++i) {
                 write(INDENT);
             }
@@ -148,7 +164,7 @@ public class PartitionTestUtils {
          * @param node
          * @return
          */
-        protected String nodeIdString(BSPTree.Node<TestPoint2D, String> node) {
+        protected String nodeIdString(N node) {
             return node.getClass().getSimpleName() + "@"  + Objects.hashCode(node);
         }
 
@@ -162,7 +178,7 @@ public class PartitionTestUtils {
         /** Method for subclasses to provide their own string representation
          * of the given internal node.
          */
-        protected void writeInternalNode(BSPTree.Node<TestPoint2D, String> node) {
+        protected void writeInternalNode(N node) {
             write(node.toString());
         }
 
@@ -170,7 +186,7 @@ public class PartitionTestUtils {
          * the node attribute as a string.
          * @param node
          */
-        protected void writeLeafNode(BSPTree.Node<TestPoint2D, String> node) {
+        protected void writeLeafNode(N node) {
             write(node.toString());
         }
     }
