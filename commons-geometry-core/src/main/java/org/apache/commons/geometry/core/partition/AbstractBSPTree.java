@@ -322,12 +322,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, T> implements BSPTree<
 
         /** {@inheritDoc} */
         @Override
-        public void visit(final BSPTreeVisitor<P, T> visitor) {
-            tree.visit(this, visitor);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public T getAttribute() {
             return attribute;
         }

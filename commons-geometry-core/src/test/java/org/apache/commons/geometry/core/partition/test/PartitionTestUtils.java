@@ -85,7 +85,7 @@ public class PartitionTestUtils {
         public String writeAsString(TestBSPTree tree) {
             output.delete(0, output.length());
 
-            tree.getRoot().visit(this);
+            tree.visit(this);
 
             return output.toString();
         }

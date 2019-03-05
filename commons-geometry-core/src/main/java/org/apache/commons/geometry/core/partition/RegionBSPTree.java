@@ -18,14 +18,11 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Interface specifying basic methods of traversing Binary Space Partitioning
- * (BSP) trees.
+/** {@link BSPTree} specialized for representing regions of space. For example, this
+ * interface can be used to represent polygons in Euclidean 2D space and polyhedrons
+ * in Euclidean 3D space.
+ * @param <P> Point type
  */
-public interface BSPTreeTraversal<P extends Point<P>, T> {
+public interface RegionBSPTree<P extends Point<P>> extends BSPTree<P, RegionAttribute<P>> {
 
-    /** Call the given {@link BSPTreeVisitor} with each node from the
-     * tree.
-     * @param visitor visitor call with each tree node
-     */
-    void visit(BSPTreeVisitor<P, T> visitor);
 }

@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <T> Node attribute type. This is the type of the data stored with
  *      each node in the tree.
  */
-public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
+public interface BSPTree<P extends Point<P>, T> {
 
     /** Get the root node of the tree.
      * @return the root node of the tree
@@ -54,12 +54,18 @@ public interface BSPTree<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
      */
     void insert(Iterable<ConvexSubHyperplane<P>> convexSubs);
 
+    /** Call the given {@link BSPTreeVisitor} with each node from the
+     * tree.
+     * @param visitor visitor call with each tree node
+     */
+    void visit(BSPTreeVisitor<P, T> visitor);
+
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      * @param <T> Node attribute type. This is the type of the data stored with
      *      each node in the tree.
      */
-    public static interface Node<P extends Point<P>, T> extends BSPTreeTraversal<P, T> {
+    public static interface Node<P extends Point<P>, T> {
 
         /** Get the {@link BSPTree} that owns the node.
          * @return the owning tree
