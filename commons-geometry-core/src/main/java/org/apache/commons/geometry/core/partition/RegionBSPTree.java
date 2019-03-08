@@ -52,12 +52,6 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             super(tree);
         }
 
-        /** {@inheritDoc} */
-        @Override
-        protected RegionNode<P> getSelf() {
-            return this;
-        }
-
         public RegionLocation getLocation() {
             return location;
         }
@@ -68,6 +62,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         public boolean isOutside() {
             return location == RegionLocation.OUTSIDE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected RegionNode<P> getSelf() {
+            return this;
         }
     }
 }
