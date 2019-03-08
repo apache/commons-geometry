@@ -30,9 +30,34 @@ public interface SubHyperplane<P extends Point<P>> {
 
     double size();
 
+    Builder<P> builder();
+
     /** Convert this instance into a list of convex child
      * subhyperplanes.
      * @return
      */
     List<ConvexSubHyperplane<P>> toConvex();
+
+    /** Interface for joining multiple {@link SubHyperplane}s into a single
+     * instance.
+     * @param <P> Point implementation type
+     */
+    static interface Builder<P extends Point<P>> {
+
+        /** Add a {@link SubHyperplane} instance to the builder.
+         * @param sub
+         */
+        void add(SubHyperplane<P> sub);
+
+        /** Add a {@link ConvexSubHyperplane} instance to the builder.
+         * @param sub
+         */
+        void add(ConvexSubHyperplane<P> sub);
+
+        /** Get a {@link SubHyperplane} representing the union
+         * of all input subhyperplanes.
+         * @return
+         */
+        SubHyperplane<P> build();
+    }
 }

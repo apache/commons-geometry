@@ -53,8 +53,7 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
     /** {@inheritDoc} */
     @Override
     public Hyperplane<TestPoint2D> getHyperplane() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -95,5 +94,11 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
     @Override
     public List<ConvexSubHyperplane<TestPoint2D>> toConvex() {
         return new ArrayList<>(segments);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SubHyperplane.Builder<TestPoint2D> builder() {
+        return new TestLineSegmentCollectionBuilder(segments.get(0).getHyperplane());
     }
 }

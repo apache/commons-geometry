@@ -177,7 +177,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         N currentNode = node;
 
         while (parentNode != null && result != null) {
-            SplitConvexSubHyperplane<P> split = result.split(parentNode.getCutHyperplane());
+            ConvexSubHyperplane.Split<P> split = result.split(parentNode.getCutHyperplane());
 
             result = currentNode.isPlus() ? split.getPlus() : split.getMinus();
 
@@ -200,13 +200,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             setCut(node, trimmed, createNode(), createNode());
         }
         else {
-            final SplitConvexSubHyperplane<P> insertSplit = insert.split(node.getCutHyperplane());
+            final ConvexSubHyperplane.Split<P> insertSplit = insert.split(node.getCutHyperplane());
 
             final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
             final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
 
             if (minus != null || plus != null) {
-                final SplitConvexSubHyperplane<P> trimmedSplit = trimmed.split(node.getCutHyperplane());
+                final ConvexSubHyperplane.Split<P> trimmedSplit = trimmed.split(node.getCutHyperplane());
 
                 if (minus != null) {
                     insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus());

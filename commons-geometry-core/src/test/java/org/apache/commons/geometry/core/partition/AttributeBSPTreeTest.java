@@ -1,14 +1,8 @@
 package org.apache.commons.geometry.core.partition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
-import org.apache.commons.geometry.core.partition.test.TestLineSegment;
-import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
