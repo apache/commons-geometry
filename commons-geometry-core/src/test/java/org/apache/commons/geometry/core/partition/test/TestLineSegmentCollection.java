@@ -90,6 +90,17 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
         return size;
     }
 
+    @Override
+    public TestLineSegmentCollection reverse() {
+        List<TestLineSegment> reversed = new ArrayList<>(segments.size());
+
+        for (TestLineSegment seg : segments) {
+            reversed.add(seg.reverse());
+        }
+
+        return new TestLineSegmentCollection(reversed);
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<ConvexSubHyperplane<TestPoint2D>> toConvex() {

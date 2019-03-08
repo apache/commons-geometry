@@ -24,6 +24,10 @@ import org.apache.commons.geometry.core.Point;
  */
 public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P> {
 
+    /** {@inheritDoc} */
+    @Override
+    ConvexSubHyperplane<P> reverse();
+
     /** Split a convex subhyperplane with a hyperplane.
      * @param splitter the splitting hyperplane
      * @return the results of the split operation
