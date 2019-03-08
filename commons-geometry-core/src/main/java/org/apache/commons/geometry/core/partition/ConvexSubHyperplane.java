@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.core.partition;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
 
 /** Extension of the {@link SubHyperplane} interface with the additional restriction
@@ -33,6 +35,8 @@ public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P
      * @return the results of the split operation
      */
     Split<P> split(Hyperplane<P> splitter);
+
+    List<P> getPoints();
 
     /** Class containing the result of splitting a convex subhyperplane with a hyperplane.
      * @param <P> Point implementation type

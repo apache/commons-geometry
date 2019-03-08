@@ -40,7 +40,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         return new RegionBSPTree<P>();
     }
 
-    protected BoundarySet<P> computeBoundary(final RegionNode<P> node) {
+    protected List<ConvexSubHyperplane<P>> computeBoundary(final RegionNode<P> node) {
         if (node.isLeaf()) {
             // no boundary for leaf nodes; they are either entirely in or
             // entirely out
@@ -109,6 +109,8 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         private RegionLocation location;
 
+        private List<ConvexSubHyperplane<P>> boundary;
+
         /** Simple constructor.
          * @param tree owning tree instance
          */
@@ -126,6 +128,13 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         public boolean isOutside() {
             return location == RegionLocation.OUTSIDE;
+        }
+
+        public List<ConvexSubHyperplane<P>> getBoundary() {
+            if (!isLeaf() && boundary == null) {
+                // TODO: compute the boundary here
+            }
+            return boundary;
         }
 
         /** {@inheritDoc} */

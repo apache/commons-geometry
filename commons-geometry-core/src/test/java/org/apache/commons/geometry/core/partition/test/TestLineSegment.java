@@ -106,6 +106,12 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
+    public List<TestPoint2D> getPoints() {
+        return Arrays.asList(getStartPoint(), getEndPoint());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public TestLine getHyperplane() {
         return line;
     }
