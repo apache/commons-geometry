@@ -44,7 +44,7 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
         /** The node attribute */
         private T attribute;
 
-        public AttributeNode(AbstractBSPTree<P, AttributeNode<P, T>> tree) {
+        protected AttributeNode(AbstractBSPTree<P, AttributeNode<P, T>> tree) {
             super(tree);
         }
 

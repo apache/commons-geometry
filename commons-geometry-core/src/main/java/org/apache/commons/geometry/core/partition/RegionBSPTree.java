@@ -40,7 +40,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         return new RegionBSPTree<P>();
     }
 
-    protected List<ConvexSubHyperplane<P>> computeBoundary(final RegionNode<P> node) {
+    protected RegionCutBoundary<P> computeBoundary(final RegionNode<P> node) {
         if (node.isLeaf()) {
             // no boundary for leaf nodes; they are either entirely in or
             // entirely out
@@ -60,25 +60,28 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         List<ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
 
         // create the boundary builder
-        SubHyperplane.Builder<P> boundary = sub.builder();
+        SubHyperplane.Builder<P> insideFacing = sub.builder();
+        SubHyperplane.Builder<P> outsideFacing = sub.builder();
 
         if (!minusIn.isEmpty()) {
-            // add to the boundary anything that touches an inside cell in the minus sub-tree
-            // and an outside cell in the plus sub-tree
+            // Add to the boundary anything that touches an inside cell in the minus sub-tree
+            // and an outside cell in the plus sub-tree. These portions are oriented with their
+            // plus side pointing to the outside of the region.
             for (ConvexSubHyperplane<P> minusInFragment : minusIn) {
-                characterizeSubHyperplane(minusInFragment, node.getPlus(), null, boundary);
+                characterizeSubHyperplane(minusInFragment, node.getPlus(), null, outsideFacing);
             }
         }
 
         if (!minusOut.isEmpty()) {
-            // add to the boundary anything that touches an outside cell in the minus sub-tree
-            // and an inside cell in the plus sub-tree
+            // Add to the boundary anything that touches an outside cell in the minus sub-tree
+            // and an inside cell in the plus sub-tree. These portions are oriented with their
+            // plus side pointing to the inside of the region.
             for (ConvexSubHyperplane<P> minusOutFragment : minusOut) {
-                characterizeSubHyperplane(minusOutFragment, node.getPlus(), boundary, null);
+                characterizeSubHyperplane(minusOutFragment, node.getPlus(), insideFacing, null);
             }
         }
 
-        return null;
+        return new RegionCutBoundary<P>(insideFacing.build(), outsideFacing.build());
     }
 
     protected void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P> node,
@@ -109,12 +112,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         private RegionLocation location;
 
-        private List<ConvexSubHyperplane<P>> boundary;
+        private RegionCutBoundary<P> cutBoundary;
 
         /** Simple constructor.
          * @param tree owning tree instance
          */
-        public RegionNode(AbstractBSPTree<P, RegionNode<P>> tree) {
+        protected RegionNode(AbstractBSPTree<P, RegionNode<P>> tree) {
             super(tree);
         }
 
@@ -130,11 +133,11 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             return location == RegionLocation.OUTSIDE;
         }
 
-        public List<ConvexSubHyperplane<P>> getBoundary() {
-            if (!isLeaf() && boundary == null) {
-                // TODO: compute the boundary here
+        public RegionCutBoundary<P> getCutBoundary() {
+            if (!isLeaf() && cutBoundary == null) {
+                cutBoundary = ((RegionBSPTree<P>) getTree()).computeBoundary(this);
             }
-            return boundary;
+            return cutBoundary;
         }
 
         /** {@inheritDoc} */

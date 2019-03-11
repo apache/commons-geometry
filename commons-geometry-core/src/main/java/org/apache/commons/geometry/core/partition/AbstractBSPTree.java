@@ -271,7 +271,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** Simple constructor.
          * @param tree the tree instance that owns this node
          */
-        public AbstractNode(final AbstractBSPTree<P, N> tree) {
+        protected AbstractNode(final AbstractBSPTree<P, N> tree) {
             this.tree = tree;
         }
 
