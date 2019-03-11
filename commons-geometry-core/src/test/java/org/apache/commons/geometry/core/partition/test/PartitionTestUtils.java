@@ -88,9 +88,6 @@ public class PartitionTestUtils {
         /** Indent per tree level */
         protected static final String INDENT = "    ";
 
-        /** Current depth in the tree */
-        protected int depth;
-
         /** Contains the string output */
         protected StringBuilder output = new StringBuilder();
 
@@ -122,8 +119,6 @@ public class PartitionTestUtils {
             writeInternalNode(node);
 
             write("\n");
-
-            ++depth;
         }
 
         public void visitLeafNode(N node) {
@@ -133,7 +128,6 @@ public class PartitionTestUtils {
 
             N cur = node;
             while (cur.isPlus()) {
-                --depth;
                 cur = cur.getParent();
             }
         }
@@ -144,7 +138,7 @@ public class PartitionTestUtils {
          * @param node
          */
         protected void writeLinePrefix(N node) {
-            for (int i=0; i<depth; ++i) {
+            for (int i=0; i<node.depth(); ++i) {
                 write(INDENT);
             }
 

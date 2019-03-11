@@ -59,6 +59,11 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     void visit(BSPTreeVisitor<P, N> visitor);
 
+    /** Return the total number of nodes in the tree.
+     * @return
+     */
+    int count();
+
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      */
@@ -68,6 +73,18 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          * @return the owning tree
          */
         BSPTree<P, N> getTree();
+
+        /** Return the total number of nodes in the child tree rooted at this
+         * node. The count does include the current node.
+         * @return
+         */
+        int count();
+
+        /** Get the depth of the node in the tree. The root node of the tree
+         * has a depth of 1.
+         * @return the depth of the node in the tree
+         */
+        int depth();
 
         /** Get the parent of the node. This will be null if the node is the
          * root of the tree.

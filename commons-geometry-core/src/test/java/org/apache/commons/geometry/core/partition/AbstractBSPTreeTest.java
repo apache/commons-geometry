@@ -443,6 +443,57 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testCount() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        // act/assert
+        Assert.assertEquals(1, tree.count());
+        Assert.assertEquals(1, tree.getRoot().count());
+
+        tree.getRoot().insertCut(TestLine.X_AXIS);
+        Assert.assertEquals(1, tree.getRoot().getMinus().count());
+        Assert.assertEquals(1, tree.getRoot().getPlus().count());
+        Assert.assertEquals(3, tree.count());
+
+        tree.getRoot().getPlus().insertCut(TestLine.Y_AXIS);
+        Assert.assertEquals(1, tree.getRoot().getMinus().count());
+        Assert.assertEquals(3, tree.getRoot().getPlus().count());
+        Assert.assertEquals(5, tree.count());
+
+        tree.getRoot().getMinus().insertCut(TestLine.Y_AXIS);
+        Assert.assertEquals(3, tree.getRoot().getMinus().count());
+        Assert.assertEquals(3, tree.getRoot().getPlus().count());
+        Assert.assertEquals(7, tree.count());
+
+        tree.getRoot().getMinus().insertCut(new TestLine(new TestPoint2D(-1, -1), new TestPoint2D(1, -1)));
+        Assert.assertEquals(1, tree.getRoot().getMinus().count());
+        Assert.assertEquals(3, tree.getRoot().getPlus().count());
+        Assert.assertEquals(5, tree.count());
+    }
+
+    @Test
+    public void testDepth() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode root = tree.getRoot();
+        root.cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                    .getPlus();
+
+        // act/assert
+        Assert.assertEquals(0, root.depth());
+
+        Assert.assertEquals(1, root.getPlus().depth());
+
+        Assert.assertEquals(1, root.getMinus().depth());
+        Assert.assertEquals(2, root.getMinus().getPlus().depth());
+        Assert.assertEquals(2, root.getMinus().getMinus().depth());
+    }
+
+    @Test
     public void testNodeToString() {
         // arrange
         TestBSPTree tree = new TestBSPTree();

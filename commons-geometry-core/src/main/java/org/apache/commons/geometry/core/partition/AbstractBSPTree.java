@@ -61,6 +61,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
+    public int count() {
+        return root.count();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void visit(final BSPTreeVisitor<P, N> visitor) {
         visit(getRoot(), visitor);
     }
@@ -95,8 +101,15 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Create a new node for this tree. The returned node is empty.
      * @return a new node for this tree
      */
-    protected N createNode() {
-        return nodeFactory.apply(this);
+    protected N createNode(N parent) {
+        N node = nodeFactory.apply(this);
+
+        node.setParent(parent);
+
+        final int parentDepth = (parent != null) ? parent.depth() : 0;
+        node.setDepth(parentDepth + 1);
+
+        return node;
     }
 
     /** Create a new tree instance.
@@ -155,11 +168,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
-            setCut(node, null, null, null);
+            clearNode(node);
             return false;
         }
 
-        setCut(node, cut, createNode(), createNode());
+        cutNode(node, cut);
         return true;
     }
 
@@ -197,7 +210,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
-            setCut(node, trimmed, createNode(), createNode());
+            cutNode(node, trimmed);
         }
         else {
             final ConvexSubHyperplane.Split<P> insertSplit = insert.split(node.getCutHyperplane());
@@ -218,24 +231,37 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Set the cut state for the given node.
-     * @param node the node to set the cut state for
-     * @param cut the cut, ie binary partitioner for the node; may be null
-     * @param minus the minus child node; may be null
-     * @param plus the plus child node; may be null
-     */
-    protected void setCut(final N node, final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
+    protected void cutNode(final N node, final ConvexSubHyperplane<P> cut) {
         node.setCut(cut);
 
-        if (minus != null) {
-            minus.setParent(node);
-        }
-        node.setMinus(minus);
+        node.setMinus(createNode(node));
+        node.setPlus(createNode(node));
 
-        if (plus != null) {
-            plus.setParent(node);
+        onCutChange(node);
+    }
+
+    protected void clearNode(final N node) {
+        node.setCut(null);
+
+        node.setMinus(null);
+        node.setPlus(null);
+
+        onCutChange(node);
+    }
+
+    protected void onCutChange(final N changed) {
+        N current = changed;
+        while (current != null && handleCutChange(current)) {
+            current = current.getParent();
         }
-        node.setPlus(plus);
+    }
+
+    protected boolean handleCutChange(final N node) {
+        final int prev = node.count();
+
+        node.setCount(-1); // flag as invalid
+
+        return prev > -1;
     }
 
     /** Abstract implementation of {@link BSPTree.Node}. This class is intended for use with
@@ -268,6 +294,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          */
         private N minus;
 
+        /** The total number of nodes in the subtree rooted at this node. This will be
+         * set to -1 when the value needs to be computed.
+         */
+        private int count = -1;
+
+        /** The depth of this node in the tree. */
+        private int depth = 0;
+
         /** Simple constructor.
          * @param tree the tree instance that owns this node
          */
@@ -279,6 +313,26 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         @Override
         public AbstractBSPTree<P, N> getTree() {
             return tree;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int depth() {
+            return depth;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int count() {
+            if (count < 0) {
+                count = 1;
+
+                if (!isLeaf()) {
+                    count += minus.count() + plus.count();
+                }
+            }
+
+            return count;
         }
 
         /** {@inheritDoc} */
@@ -358,6 +412,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             return (cut != null) ? cut.getHyperplane() : null;
         }
 
+        protected void setDepth(final int depth) {
+            this.depth = depth;
+        }
+
+        protected void setCount(final int count) {
+            this.count = count;
+        }
+
         /** Set the parent node for the instance.
          * @param parent the parent node for the instance
          */
@@ -365,10 +427,16 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             this.parent = parent;
         }
 
+        /** Set the minus child for this instance.
+         * @param minus the minus child for this instance
+         */
         protected void setMinus(final N minus) {
             this.minus = minus;
         }
 
+        /** Set the plus child for this instance.
+         * @param plus the plus child for this instance
+         */
         protected void setPlus(final N plus) {
             this.plus = plus;
         }
