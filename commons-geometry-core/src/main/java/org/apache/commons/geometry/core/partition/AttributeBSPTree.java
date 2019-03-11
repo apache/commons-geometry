@@ -23,12 +23,12 @@ import org.apache.commons.geometry.core.Point;
  */
 public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, AttributeBSPTree.AttributeNode<P, T>> {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190306L;
+
     protected AttributeBSPTree() {
         super(AttributeNode<P, T>::new);
     }
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 20190306L;
 
     /** {@inheritDoc} */
     @Override
