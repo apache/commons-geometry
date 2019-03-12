@@ -29,6 +29,30 @@ public class AttributeBSPTreeTest {
     }
 
     @Test
+    public void testInitialNodeValue_null() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> tree = new AttributeBSPTree<TestPoint2D, String>();
+        tree.getRoot().cut(TestLine.X_AXIS);
+
+        // act/assert
+        Assert.assertNull(tree.getRoot().getAttribute());
+        Assert.assertNull(tree.getRoot().getPlus().getAttribute());
+        Assert.assertNull(tree.getRoot().getMinus().getAttribute());
+    }
+
+    @Test
+    public void testInitialNodeValue_givenValue() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> tree = new AttributeBSPTree<TestPoint2D, String>("a");
+        tree.getRoot().cut(TestLine.X_AXIS);
+
+        // act/assert
+        Assert.assertEquals("a", tree.getRoot().getAttribute());
+        Assert.assertEquals("a", tree.getRoot().getPlus().getAttribute());
+        Assert.assertEquals("a", tree.getRoot().getMinus().getAttribute());
+    }
+
+    @Test
     public void testSetAttribute_node() {
         // arrange
         AttributeBSPTree<TestPoint2D, String> tree = new AttributeBSPTree<TestPoint2D, String>();

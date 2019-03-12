@@ -20,14 +20,34 @@ import org.apache.commons.geometry.core.Point;
 
 /** Simple {@link BSPTree} implementation allowing arbitrary values to be
  * associated with each node.
+ * @param <P> Point implementation type
+ * @param <T> Tree node attribute type
  */
 public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, AttributeBSPTree.AttributeNode<P, T>> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190306L;
 
-    protected AttributeBSPTree() {
+    /** The initial attribute value to use for newly created nodes. */
+    private final T initialNodeAttribute;
+
+    /** Create a new tree instance. New nodes in the tree are given an attribute
+     * of null.
+     */
+    public AttributeBSPTree() {
+        this(null);
+    }
+
+    /** Create a new tree instance. New nodes in the tree are assigned the given
+     * initial attribute value.
+     * @param initialNodeAttribute The attribute value to assign to newly created nodes.
+     */
+    public AttributeBSPTree(T initialNodeAttribute) {
         super(AttributeNode<P, T>::new);
+
+        this.initialNodeAttribute = initialNodeAttribute;
+
+        this.getRoot().setAttribute(initialNodeAttribute);
     }
 
     /** {@inheritDoc} */
@@ -36,6 +56,19 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
         return new AttributeBSPTree<P, T>();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void initChildNode(final AttributeNode<P, T> parent, final AttributeNode<P, T> child,
+            final boolean isPlus) {
+        super.initChildNode(parent, child, isPlus);
+
+        child.setAttribute(initialNodeAttribute);
+    }
+
+    /** {@link BSPTree.Node} implementation for use with {@link AttributeBSPTree}s.
+     * @param <P> Point implementation type
+     * @param <T> Tree node attribute type
+     */
     public static class AttributeNode<P extends Point<P>, T> extends AbstractBSPTree.AbstractNode<P, AttributeNode<P, T>> {
 
         /** Serializable UID */
@@ -44,6 +77,9 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
         /** The node attribute */
         private T attribute;
 
+        /** Simple constructor.
+         * @param tree the owning tree; this must be an instance of {@link AttributeBSPTree}
+         */
         protected AttributeNode(AbstractBSPTree<P, AttributeNode<P, T>> tree) {
             super(tree);
         }
