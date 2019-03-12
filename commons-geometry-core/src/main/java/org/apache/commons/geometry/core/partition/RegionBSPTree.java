@@ -40,6 +40,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         return new RegionBSPTree<P>();
     }
 
+    /** Compute the portion of the node's cut subhyperplane that lies on the boundary of
+     * the region.
+     * @param node the node to compute the cut subhyperplane boundary of
+     * @return object representing the portions of the node's cut subhyperplane that lie
+     *      on the region's boundary
+     */
     protected RegionCutBoundary<P> computeBoundary(final RegionNode<P> node) {
         if (node.isLeaf()) {
             // no boundary for leaf nodes; they are either entirely in or
@@ -59,7 +65,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         List<ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
         List<ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
 
-        // create the boundary builder
+        // create the result boundary builders
         SubHyperplane.Builder<P> insideFacing = sub.builder();
         SubHyperplane.Builder<P> outsideFacing = sub.builder();
 
@@ -84,6 +90,15 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         return new RegionCutBoundary<P>(insideFacing.build(), outsideFacing.build());
     }
 
+    /** Recursive method to characterize a convex subhyperplane with respect to the region's
+     * boundaries.
+     * @param sub the subhyperplane to characterize
+     * @param node the node to characterize the subhyperplane against
+     * @param in the builder that will receive the portions of the subhyperplane that lie in the inside
+     *      of the region; may be null
+     * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
+     *      of the region; may be null
+     */
     protected void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P> node,
             final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
 
@@ -105,6 +120,14 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void initChildNode(final RegionNode<P> parent, final RegionNode<P> child, final boolean isPlus) {
+        super.initChildNode(parent, child, isPlus);
+
+        child.setLocation(isPlus ? RegionLocation.OUTSIDE : RegionLocation.INSIDE);
+    }
+
     public static class RegionNode<P extends Point<P>> extends AbstractBSPTree.AbstractNode<P, RegionNode<P>> {
 
         /** Serializable UID */
@@ -121,6 +144,13 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             super(tree);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public RegionBSPTree<P> getTree() {
+            // cast to our parent tree type
+            return (RegionBSPTree<P>) super.getTree();
+        }
+
         public RegionLocation getLocation() {
             return location;
         }
@@ -134,10 +164,31 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         }
 
         public RegionCutBoundary<P> getCutBoundary() {
-            if (!isLeaf() && cutBoundary == null) {
-                cutBoundary = ((RegionBSPTree<P>) getTree()).computeBoundary(this);
+            if (!isLeaf()) {
+                checkTreeUpdates();
+
+                if (cutBoundary == null) {
+                    cutBoundary = getTree().computeBoundary(this);
+                }
             }
+
             return cutBoundary;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void treeUpdated() {
+            super.treeUpdated();
+
+            // null any computed boundary value since it is no longer valid
+            cutBoundary = null;
+        }
+
+        /** Set the location attribute for the node.
+         * @param location
+         */
+        protected void setLocation(final RegionLocation location) {
+            this.location = location;
         }
 
         /** {@inheritDoc} */

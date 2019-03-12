@@ -43,11 +43,14 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
      * @throws IllegalArgumentException if the collection is null or empty
      */
     public TestLineSegmentCollection(List<TestLineSegment> segments) {
-        if (segments == null || segments.isEmpty()) {
-            throw new IllegalArgumentException("No line segments given");
-        }
-
         this.segments = Collections.unmodifiableList(new ArrayList<>(segments));
+    }
+
+    /** Get the list of line segments comprising the collection.
+     * @return the list of line segments in the collection
+     */
+    public List<TestLineSegment> getLineSegments() {
+        return segments;
     }
 
     /** {@inheritDoc} */

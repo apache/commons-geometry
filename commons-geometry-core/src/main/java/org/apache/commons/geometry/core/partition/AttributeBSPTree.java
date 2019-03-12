@@ -48,6 +48,13 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
             super(tree);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public AttributeBSPTree<P, T> getTree() {
+            // cast to our parent tree type
+            return (AttributeBSPTree<P, T>) super.getTree();
+        }
+
         /** Get the attribute associated with this node.
          * @return the attribute associated with this node
          */

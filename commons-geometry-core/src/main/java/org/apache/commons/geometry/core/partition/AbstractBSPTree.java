@@ -38,11 +38,19 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
 
+    /** Count value set on nodes when the total number of nodes in the subtree is unknown. */
+    private static final int UNKNOWN_NODE_COUNT_VALUE = -1;
+
     /** Object used to create new nodes for the tree. */
     private final NodeFactory<P, N> nodeFactory;
 
     /** The root node for the tree. */
     private final N root;
+
+    /** The current tree modification version. This is incremented each time
+     * a structural change occurs in the tree.
+     */
+    private long version = 0L;
 
     /** Construct a new instance that uses the given factory object to produce
      * tree nodes.
@@ -98,18 +106,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Create a new node for this tree. The returned node is empty.
+    /** Create a new node for this tree
      * @return a new node for this tree
      */
-    protected N createNode(N parent) {
-        N node = nodeFactory.apply(this);
-
-        node.setParent(parent);
-
-        final int parentDepth = (parent != null) ? parent.depth() : 0;
-        node.setDepth(parentDepth + 1);
-
-        return node;
+    protected N createNode() {
+        return nodeFactory.apply(this);
     }
 
     /** Create a new tree instance.
@@ -168,11 +169,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
-            clearNode(node);
+            setNodeCut(node, null);
             return false;
         }
 
-        cutNode(node, cut);
+        setNodeCut(node, cut);
         return true;
     }
 
@@ -210,7 +211,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
-            cutNode(node, trimmed);
+            setNodeCut(node, trimmed);
         }
         else {
             final ConvexSubHyperplane.Split<P> insertSplit = insert.split(node.getCutHyperplane());
@@ -231,37 +232,52 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    protected void cutNode(final N node, final ConvexSubHyperplane<P> cut) {
-        node.setCut(cut);
+    /** Set the cut subhyperplane for the given node. If {@code cut} is null, any existing child nodes
+     * are removed. If {@code cut} is not null, two new child nodes are created.
+     * @param node
+     * @param cut
+     */
+    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
+        N plus = null;;
+        N minus = null;
 
-        node.setMinus(createNode(node));
-        node.setPlus(createNode(node));
+        if (cut != null) {
+            plus = createNode();
+            initChildNode(node, plus, true);
 
-        onCutChange(node);
-    }
-
-    protected void clearNode(final N node) {
-        node.setCut(null);
-
-        node.setMinus(null);
-        node.setPlus(null);
-
-        onCutChange(node);
-    }
-
-    protected void onCutChange(final N changed) {
-        N current = changed;
-        while (current != null && handleCutChange(current)) {
-            current = current.getParent();
+            minus = createNode();
+            initChildNode(node, minus, false);
         }
+
+        node.setCutState(cut, plus, minus);
+
+        // a structural change occurred, so increment the tree version
+        incrementVersion();
     }
 
-    protected boolean handleCutChange(final N node) {
-        final int prev = node.count();
+    /** Method called to initialize a new child node. Subclasses can use this method to
+     * set initial attributes on the node.
+     * @param parent the parent node
+     * @param child the new child node
+     * @param isPlus true if the child will be assigned as the parent's plus child;
+     *      false if it will be the parent's minus child
+     */
+    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
+    }
 
-        node.setCount(-1); // flag as invalid
+    /** Increment the version of the tree. This method should be called anytime structural
+     * changes occur to the tree.
+     */
+    protected void incrementVersion() {
+        ++version;
+    }
 
-        return prev > -1;
+    /** Get the current structural version of the tree. This is incremented each time the
+     * tree structure changes and can be used by nodes to allow caching of computed values.
+     * @return the current version of the tree structure
+     */
+    protected long getVersion() {
+        return version;
     }
 
     /** Abstract implementation of {@link BSPTree.Node}. This class is intended for use with
@@ -294,13 +310,20 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          */
         private N minus;
 
-        /** The total number of nodes in the subtree rooted at this node. This will be
-         * set to -1 when the value needs to be computed.
+        /** The current version of the node. This is set to track the tree's version
+         * and is used to detect when certain values need to be recomputed due to
+         * structural changes in the tree.
          */
-        private int count = -1;
+        private long version = -1L;
 
         /** The depth of this node in the tree. */
         private int depth = 0;
+
+        /** The total number of nodes in the subtree rooted at this node. This will be
+         * set to {@link AbstractBSPTree#UNKNOWN_NODE_COUNT_VALUE} when the value needs
+         * to be computed.
+         */
+        private int count = UNKNOWN_NODE_COUNT_VALUE;
 
         /** Simple constructor.
          * @param tree the tree instance that owns this node
@@ -324,7 +347,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int count() {
-            if (count < 0) {
+            checkTreeUpdates();
+
+            if (count == UNKNOWN_NODE_COUNT_VALUE) {
                 count = 1;
 
                 if (!isLeaf()) {
@@ -412,12 +437,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             return (cut != null) ? cut.getHyperplane() : null;
         }
 
+        /** Set the depth of the node in the tree.
+         * @param depth the depth of the node in the tree
+         */
         protected void setDepth(final int depth) {
             this.depth = depth;
-        }
-
-        protected void setCount(final int count) {
-            this.count = count;
         }
 
         /** Set the parent node for the instance.
@@ -427,25 +451,53 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             this.parent = parent;
         }
 
-        /** Set the minus child for this instance.
-         * @param minus the minus child for this instance
+        /** Set the cut state of node. The arguments should either be all null or all
+         * non-null.
+         * @param cut the new cut subhyperplane for the node
+         * @param plus the new plus child for the node
+         * @param minus the new minus child for the node
          */
-        protected void setMinus(final N minus) {
+        protected void setCutState(final ConvexSubHyperplane<P> cut, final N plus, final N minus) {
+            this.cut = cut;
+
+            final N self = getSelf();
+            final int childDepth = depth() + 1;
+
+            if (plus != null) {
+                plus.setParent(self);
+                plus.setDepth(childDepth);
+            }
+            this.plus = plus;
+
+            if (minus != null) {
+                minus.setParent(self);
+                minus.setDepth(childDepth);
+            }
             this.minus = minus;
         }
 
-        /** Set the plus child for this instance.
-         * @param plus the plus child for this instance
+        /** Checks if any updates have occurred in the tree since the last
+         * call to this method and calls {@link #treeUpdated()} if so.
          */
-        protected void setPlus(final N plus) {
-            this.plus = plus;
+        protected void checkTreeUpdates() {
+            final long treeVersion = tree.getVersion();
+
+            if (version != treeVersion) {
+                // the tree structure changed somewhere
+                treeUpdated();
+
+                // store the current version
+                version = treeVersion;
+            }
         }
 
-        /** Set the cut (ie, binary partitioner) for the node.
-         * @param cut the cut for the node
+        /** Method called from {@link #checkTreeUpdates()} when updates
+         * are detected in the tree. This method should clear out any
+         * computed properties that rely on the structure of the tree
+         * and prepare them for recalculation.
          */
-        protected void setCut(final ConvexSubHyperplane<P> cut) {
-            this.cut = cut;
+        protected void treeUpdated() {
+            count = UNKNOWN_NODE_COUNT_VALUE;
         }
 
         /** Get a reference to the current instance, cast to type N.

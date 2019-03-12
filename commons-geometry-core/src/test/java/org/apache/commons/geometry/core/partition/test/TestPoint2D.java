@@ -25,6 +25,9 @@ import org.apache.commons.geometry.core.Point;
  */
 public class TestPoint2D implements Point<TestPoint2D>, Serializable {
 
+    /** Instance representing the coordinates {@code (0, 0)} */
+    public static final TestPoint2D ZERO = new TestPoint2D(0, 0);
+
     /** Serializable UID */
     private static final long serialVersionUID = 20190224L;
 

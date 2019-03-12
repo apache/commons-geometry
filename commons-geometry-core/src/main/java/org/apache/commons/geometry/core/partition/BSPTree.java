@@ -74,17 +74,17 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          */
         BSPTree<P, N> getTree();
 
-        /** Return the total number of nodes in the child tree rooted at this
-         * node. The count does include the current node.
-         * @return
-         */
-        int count();
-
         /** Get the depth of the node in the tree. The root node of the tree
-         * has a depth of 1.
+         * has a depth of 0.
          * @return the depth of the node in the tree
          */
         int depth();
+
+        /** Return the total number of nodes in the child tree rooted at this
+         * node. The count includes the current node.
+         * @return
+         */
+        int count();
 
         /** Get the parent of the node. This will be null if the node is the
          * root of the tree.
