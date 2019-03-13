@@ -144,6 +144,11 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          */
         boolean insertCut(Hyperplane<P> cutter);
 
+        /** Remove the cut from this node. Returns true if the node previously had a cut.
+         * @return true if the node had a cut before the call to this method
+         */
+        boolean clearCut();
+
         /** Cut this node with the given hyperplane. The same node is returned, regardless of
          * the outcome of the cut operation. If the operation succeeded, then the node will
          * have plus and minus child nodes.

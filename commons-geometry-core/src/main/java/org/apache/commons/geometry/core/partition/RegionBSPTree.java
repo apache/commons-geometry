@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.Point;
 /** {@link BSPTree} specialized for representing regions of space. For example, this
  * class can be used to represent polygons in Euclidean 2D space and polyhedrons
  * in Euclidean 3D space.
- * @param <P> Point type
+ * @param <P> Point implementation type
  */
 public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, RegionBSPTree.RegionNode<P>> {
 
@@ -32,6 +32,8 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
     public RegionBSPTree() {
         super(RegionNode<P>::new);
+
+        getRoot().setLocation(RegionLocation.INSIDE);
     }
 
     /** {@inheritDoc} */
@@ -128,13 +130,20 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         child.setLocation(isPlus ? RegionLocation.OUTSIDE : RegionLocation.INSIDE);
     }
 
+    /** {@link BSPTree.Node} implementation for use with {@link RegionBSPTree}s.
+     * @param <P> Point implementation type
+     */
     public static class RegionNode<P extends Point<P>> extends AbstractBSPTree.AbstractNode<P, RegionNode<P>> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 1L;
 
+        /** The location for the node. This will only be set on leaf nodes. */
         private RegionLocation location;
 
+        /** Object representing the part of the node cut subhyperplane that lies on the
+         * region boundary. This is calculated lazily and is only present on internal nodes.
+         */
         private RegionCutBoundary<P> cutBoundary;
 
         /** Simple constructor.
@@ -151,18 +160,35 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             return (RegionBSPTree<P>) super.getTree();
         }
 
+        /** Get the location of the node. This value will only be non-null for
+         * leaf nodes.
+         * @return the location of the node; will be null for internal nodes
+         */
         public RegionLocation getLocation() {
-            return location;
+            return isLeaf() ? location : null;
         }
 
+        /** True if the node is a leaf node and has a location of {@link RegionLocation#INSIDE}.
+         * @return true if the node is a leaf node and has a location of
+         *      {@link RegionLocation#INSIDE}
+         */
         public boolean isInside() {
             return location == RegionLocation.INSIDE;
         }
 
+        /** True if the node is a leaf node and has a location of {@link RegionLocation#OUTSIDE}.
+         * @return true if the node is a leaf node and has a location of
+         *      {@link RegionLocation#OUTSIDE}
+         */
         public boolean isOutside() {
             return location == RegionLocation.OUTSIDE;
         }
 
+        /** Get the portion of the node's cut subhyperplane that lies on the boundary of the
+         * region.
+         * @return the portion of the node's cut subhyperplane that lies on the boundary of
+         *      the region
+         */
         public RegionCutBoundary<P> getCutBoundary() {
             if (!isLeaf()) {
                 checkTreeUpdates();
@@ -185,7 +211,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         }
 
         /** Set the location attribute for the node.
-         * @param location
+         * @param location the location attribute for the node
          */
         protected void setLocation(final RegionLocation location) {
             this.location = location;

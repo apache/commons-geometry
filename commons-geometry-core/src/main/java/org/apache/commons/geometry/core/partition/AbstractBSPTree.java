@@ -177,6 +177,18 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return true;
     }
 
+    /** Remove the cut from the given node. Returns true if the node had a cut before
+     * the call to this method.
+     * @param node the node to remove the cut from
+     * @return true if the node previously had a cut
+     */
+    protected boolean clearCut(final N node) {
+        boolean hadCut = node.getCut() != null;
+        setNodeCut(node, null);
+
+        return hadCut;
+    }
+
     /** Fit the subhyperplane in the region defined by the given node. This method cuts the
      * given subhyperplane with the binary partitioners of all parent nodes up to the root.
      * @param node the node representing the region to fit the subhyperplane to
@@ -406,6 +418,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         @Override
         public boolean insertCut(final Hyperplane<P> cutter) {
             return tree.insertCut(getSelf(), cutter);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean clearCut() {
+            return tree.clearCut(getSelf());
         }
 
         /** {@inheritDoc} */

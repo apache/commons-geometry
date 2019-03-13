@@ -197,6 +197,88 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testClearCut_cutExists() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode node = tree.getRoot()
+            .cut(TestLine.X_AXIS)
+                .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        boolean result = node.clearCut();
+
+        // assert
+        Assert.assertTrue(result);
+        Assert.assertTrue(node.isLeaf());
+        Assert.assertNull(node.getPlus());
+        Assert.assertNull(node.getMinus());
+    }
+
+    @Test
+    public void testClearCut_cutDoesNotExist() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode node = tree.getRoot()
+            .cut(TestLine.X_AXIS)
+                .getMinus()
+                .cut(TestLine.Y_AXIS)
+                .getMinus();
+
+        // act
+        boolean result = node.clearCut();
+
+        // assert
+        Assert.assertFalse(result);
+        Assert.assertTrue(node.isLeaf());
+        Assert.assertNull(node.getPlus());
+        Assert.assertNull(node.getMinus());
+    }
+
+    @Test
+    public void testClearCut_root_fullTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode node = tree.getRoot()
+            .cut(TestLine.X_AXIS)
+                .getMinus()
+                .cut(TestLine.Y_AXIS)
+                .getMinus();
+
+        // act
+        boolean result = tree.getRoot().clearCut();
+
+        // assert
+        Assert.assertTrue(result);
+        Assert.assertTrue(node.isLeaf());
+        Assert.assertNull(node.getPlus());
+        Assert.assertNull(node.getMinus());
+
+        Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
+    public void testClearCut_root_emptyTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        TestNode node = tree.getRoot();
+
+        // act
+        boolean result = node.clearCut();
+
+        // assert
+        Assert.assertFalse(result);
+        Assert.assertTrue(node.isLeaf());
+        Assert.assertNull(node.getPlus());
+        Assert.assertNull(node.getMinus());
+
+        Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
     public void testFindNode_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();

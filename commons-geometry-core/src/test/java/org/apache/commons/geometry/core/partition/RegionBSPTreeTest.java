@@ -2,21 +2,29 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.partition.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
+import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class RegionBSPTreeTest {
 
-    private RegionBSPTree<TestPoint2D> tree = new RegionBSPTree<>();
+    private RegionBSPTree<TestPoint2D> tree;
+
+    private RegionNode<TestPoint2D> root;
+
+    @Before
+    public void setup() {
+        tree = new RegionBSPTree<>();
+        root = tree.getRoot();
+    }
 
     @Test
     public void testInitialization() {
         // assert
-        RegionNode<TestPoint2D> root = tree.getRoot();
-
         Assert.assertNotNull(root);
         Assert.assertNull(root.getParent());
 
@@ -28,9 +36,73 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testGetLocation_emptyRoot() {
+        // act/assert
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+    }
+
+    @Test
+    public void testGetLocation_singleCut() {
+        // arrange
+        root.insertCut(TestLine.X_AXIS);
+
+        // act/assert
+        Assert.assertNull(root.getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, root.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, root.getPlus().getLocation());
+    }
+
+    @Test
+    public void testGetLocation_multipleCuts() {
+        // arrange
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1)));
+
+        // act/assert
+        Assert.assertNull(root.getLocation());
+
+        RegionNode<TestPoint2D> plus = root.getPlus();
+        Assert.assertNull(plus.getLocation());
+
+        RegionNode<TestPoint2D> plusPlus = plus.getPlus();
+        Assert.assertEquals(RegionLocation.OUTSIDE, plusPlus.getLocation());
+
+        RegionNode<TestPoint2D> plusMinus = plus.getMinus();
+        Assert.assertEquals(RegionLocation.INSIDE, plusMinus.getLocation());
+
+        RegionNode<TestPoint2D> minus = root.getMinus();
+        Assert.assertNull(minus.getLocation());
+
+        RegionNode<TestPoint2D> minusPlus = minus.getPlus();
+        Assert.assertEquals(RegionLocation.OUTSIDE, minusPlus.getLocation());
+
+        RegionNode<TestPoint2D> minusMinus = minus.getMinus();
+        Assert.assertEquals(RegionLocation.INSIDE, minusMinus.getLocation());
+    }
+
+    @Test
+    public void testGetLocation_resetsLocationWhenNodeCleared() {
+        // arrange
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1)));
+
+        // act
+        root.getPlus().clearCut();
+        root.getMinus().clearCut();
+
+        // assert
+        Assert.assertNull(root.getLocation());
+
+        Assert.assertEquals(RegionLocation.INSIDE, root.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, root.getPlus().getLocation());
+    }
+
+    @Test
     public void testGetCutBoundary_emptyTree() {
         // act
-        RegionCutBoundary<TestPoint2D> boundary = tree.getRoot().getCutBoundary();
+        RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
 
         // assert
         Assert.assertNull(boundary);
@@ -42,7 +114,7 @@ public class RegionBSPTreeTest {
         tree.insert(new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 0)));
 
         // act
-        RegionCutBoundary<TestPoint2D> boundary = tree.getRoot().getCutBoundary();
+        RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
 
         // assert
         Assert.assertTrue(boundary.getInsideFacing().isEmpty());
@@ -58,7 +130,7 @@ public class RegionBSPTreeTest {
         tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
 
         // act/assert
-        RegionCutBoundary<TestPoint2D> rootBoundary = tree.getRoot().getCutBoundary();
+        RegionCutBoundary<TestPoint2D> rootBoundary = root.getCutBoundary();
 
         Assert.assertTrue(rootBoundary.getInsideFacing().isEmpty());
         assertCutBoundarySegment(rootBoundary.getOutsideFacing(),
