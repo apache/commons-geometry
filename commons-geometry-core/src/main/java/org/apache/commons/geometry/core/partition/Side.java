@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 /** Enumeration representing the location of an element with respect to a
- * {@link Hyperplanehyperplane}.
+ * {@link Hyperplane hyperplane}.
  */
 public enum Side {
 

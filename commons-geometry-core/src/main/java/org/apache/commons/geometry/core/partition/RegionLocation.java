@@ -18,5 +18,6 @@ package org.apache.commons.geometry.core.partition;
 
 public enum RegionLocation {
     INSIDE,
-    OUTSIDE
+    OUTSIDE,
+    BOUNDARY
 }

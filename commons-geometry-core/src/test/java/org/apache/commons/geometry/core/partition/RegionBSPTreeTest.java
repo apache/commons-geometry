@@ -1,5 +1,7 @@
 package org.apache.commons.geometry.core.partition;
 
+import java.util.Arrays;
+
 import org.apache.commons.geometry.core.partition.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
@@ -55,9 +57,10 @@ public class RegionBSPTreeTest {
     @Test
     public void testGetLocation_multipleCuts() {
         // arrange
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1)));
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
 
         // act/assert
         Assert.assertNull(root.getLocation());
@@ -84,9 +87,10 @@ public class RegionBSPTreeTest {
     @Test
     public void testGetLocation_resetsLocationWhenNodeCleared() {
         // arrange
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
-        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1)));
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
 
         // act
         root.getPlus().clearCut();
@@ -97,6 +101,51 @@ public class RegionBSPTreeTest {
 
         Assert.assertEquals(RegionLocation.INSIDE, root.getMinus().getLocation());
         Assert.assertEquals(RegionLocation.OUTSIDE, root.getPlus().getLocation());
+    }
+
+    @Test
+    public void testGetLocation_resetRoot() {
+        // arrange
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
+
+        RegionNode<TestPoint2D> root = tree.getRoot();
+
+        // act
+        root.clearCut();
+
+        // assert
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+    }
+
+    @Test
+    public void testClassify() {
+        // arrange
+        insertAngledBowtie(tree);
+
+        // act/assert
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
+
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     @Test
@@ -140,6 +189,17 @@ public class RegionBSPTreeTest {
         Assert.assertTrue(childBoundary.getInsideFacing().isEmpty());
         assertCutBoundarySegment(childBoundary.getOutsideFacing(),
                 TestPoint2D.ZERO, new TestPoint2D(0.0, Double.POSITIVE_INFINITY));
+    }
+
+    private static void insertAngledBowtie(final RegionBSPTree<TestPoint2D> tree) {
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+
+                new TestLineSegment(new TestPoint2D(4, 0), new TestPoint2D(4, 1)),
+                new TestLineSegment(new TestPoint2D(-4, 0), new TestPoint2D(-4, -1)),
+
+                new TestLineSegment(new TestPoint2D(4, 5), new TestPoint2D(-1, 0)),
+                new TestLineSegment(new TestPoint2D(-4, -5), new TestPoint2D(1, 0))));
     }
 
     private static void assertCutBoundarySegment(final SubHyperplane<TestPoint2D> boundary, final TestPoint2D start, final TestPoint2D end) {

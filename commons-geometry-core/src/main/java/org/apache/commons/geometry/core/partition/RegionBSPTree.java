@@ -36,6 +36,48 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         getRoot().setLocation(RegionLocation.INSIDE);
     }
 
+    /** Classify a point with respect to the region.
+     * @param point the point to classify
+     * @return the classification of the point with respect to the region
+     */
+    public RegionLocation classify(final P point) {
+        return classifyRecursive(getRoot(), point);
+    }
+
+    /** Recursively classify a point with respect to the region.
+     * @param node the node to classify against
+     * @param point the point to classify
+     * @return the classification of the point with respect to the region rooted
+     *      at the given node
+     */
+    protected RegionLocation classifyRecursive(final RegionNode<P> node, final P point) {
+        if (node.isLeaf()) {
+            // the point is in a leaf, so the classification is just the leaf location
+            return node.getLocation();
+        }
+        else {
+            final Side side = node.getCutHyperplane().classify(point);
+
+            if (side == Side.MINUS) {
+                return classifyRecursive(node.getMinus(), point);
+            }
+            else if (side == Side.PLUS) {
+                return classifyRecursive(node.getPlus(), point);
+            }
+            else {
+                // the point is on the cut boundary; classify against both child
+                // subtrees and see if we end up with the same result or not
+                RegionLocation minusLoc = classifyRecursive(node.getMinus(), point);
+                RegionLocation plusLoc = classifyRecursive(node.getPlus(), point);
+
+                if (minusLoc == plusLoc) {
+                    return minusLoc;
+                }
+                return RegionLocation.BOUNDARY;
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected RegionBSPTree<P> createTree() {
