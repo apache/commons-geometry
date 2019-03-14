@@ -562,8 +562,7 @@ public class AbstractBSPTreeTest {
         TestNode root = tree.getRoot();
         root.cut(TestLine.X_AXIS)
                 .getMinus()
-                    .cut(TestLine.Y_AXIS)
-                    .getPlus();
+                    .cut(TestLine.Y_AXIS);
 
         // act/assert
         Assert.assertEquals(0, root.depth());
@@ -573,6 +572,150 @@ public class AbstractBSPTreeTest {
         Assert.assertEquals(1, root.getMinus().depth());
         Assert.assertEquals(2, root.getMinus().getPlus().depth());
         Assert.assertEquals(2, root.getMinus().getMinus().depth());
+    }
+
+    @Test
+    public void testNodes_emptyTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.nodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(1, nodes.size());
+        Assert.assertSame(tree.getRoot(), nodes.get(0));
+    }
+
+    @Test
+    public void testNodes_multipleNodes() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode root = tree.getRoot();
+        root.cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                 .getParent()
+                 .getPlus()
+                     .cut(TestLine.Y_AXIS);
+
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.nodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(7, nodes.size());
+        Assert.assertSame(root, nodes.get(0));
+
+        Assert.assertSame(root.getMinus(), nodes.get(1));
+        Assert.assertSame(root.getMinus().getMinus(), nodes.get(2));
+        Assert.assertSame(root.getMinus().getPlus(), nodes.get(3));
+
+        Assert.assertSame(root.getPlus(), nodes.get(4));
+        Assert.assertSame(root.getPlus().getMinus(), nodes.get(5));
+        Assert.assertSame(root.getPlus().getPlus(), nodes.get(6));
+    }
+
+    @Test
+    public void testLeafNodes_emptyTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.leafNodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(1, nodes.size());
+        Assert.assertSame(tree.getRoot(), nodes.get(0));
+    }
+
+    @Test
+    public void testLeafNodes_multipleNodes() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode root = tree.getRoot();
+        root.cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                 .getParent()
+                 .getPlus()
+                     .cut(TestLine.Y_AXIS);
+
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.leafNodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(4, nodes.size());
+
+        Assert.assertSame(root.getMinus().getMinus(), nodes.get(0));
+        Assert.assertSame(root.getMinus().getPlus(), nodes.get(1));
+
+        Assert.assertSame(root.getPlus().getMinus(), nodes.get(2));
+        Assert.assertSame(root.getPlus().getPlus(), nodes.get(3));
+    }
+
+    @Test
+    public void testCutNodes_emptyTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.cutNodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(0, nodes.size());
+    }
+
+    @Test
+    public void testCutNodes_multipleNodes() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode root = tree.getRoot();
+        root.cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                 .getParent()
+                 .getPlus()
+                     .cut(TestLine.Y_AXIS);
+
+        List<TestNode> nodes = new ArrayList<>();
+
+        // act
+        for (TestNode node : tree.cutNodes())
+        {
+            nodes.add(node);
+        }
+
+        // assert
+        Assert.assertEquals(3, nodes.size());
+        Assert.assertSame(root, nodes.get(0));
+
+        Assert.assertSame(root.getMinus(), nodes.get(1));
+        Assert.assertSame(root.getPlus(), nodes.get(2));
     }
 
     @Test

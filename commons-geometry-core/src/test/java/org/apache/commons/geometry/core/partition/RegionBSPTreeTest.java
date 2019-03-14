@@ -123,7 +123,7 @@ public class RegionBSPTreeTest {
     @Test
     public void testClassify() {
         // arrange
-        insertAngledBowtie(tree);
+        insertSkewedBowtie(tree);
 
         // act/assert
         Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
@@ -146,6 +146,12 @@ public class RegionBSPTreeTest {
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
         Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
+    }
+
+    @Test
+    public void testClassify_emptyTree() {
+        // act/assert
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
     }
 
     @Test
@@ -191,7 +197,7 @@ public class RegionBSPTreeTest {
                 TestPoint2D.ZERO, new TestPoint2D(0.0, Double.POSITIVE_INFINITY));
     }
 
-    private static void insertAngledBowtie(final RegionBSPTree<TestPoint2D> tree) {
+    private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
         tree.insert(Arrays.asList(
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
 

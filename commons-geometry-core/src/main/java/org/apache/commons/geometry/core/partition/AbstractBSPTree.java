@@ -17,7 +17,12 @@
 package org.apache.commons.geometry.core.partition;
 
 import java.io.Serializable;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.commons.geometry.core.Point;
 
@@ -104,6 +109,44 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         for (ConvexSubHyperplane<P> convexSub : convexSubs) {
             insert(convexSub);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<N> nodes() {
+        return new Iterable<N>() {
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<N> iterator() {
+                return new NodeIterator<P, N>(AbstractBSPTree.this);
+            }
+        };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<N> leafNodes() {
+        return new Iterable<N>() {
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<N> iterator() {
+                final NodeIterator<P, N> iterator = new NodeIterator<P, N>(AbstractBSPTree.this);
+                return new FilteredNodeIteratorWrapper<P, N>(iterator, n -> n.isLeaf());
+            }
+        };
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<N> cutNodes() {
+        return new Iterable<N>() {
+            /** {@inheritDoc} */
+            @Override
+            public Iterator<N> iterator() {
+                final NodeIterator<P, N> iterator = new NodeIterator<P, N>(AbstractBSPTree.this);
+                return new FilteredNodeIteratorWrapper<P, N>(iterator, n -> !n.isLeaf());
+            }
+        };
     }
 
     /** Create a new node for this tree
@@ -359,7 +402,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int count() {
-            checkTreeUpdates();
+            checkTreeUpdated();
 
             if (count == UNKNOWN_NODE_COUNT_VALUE) {
                 count = 1;
@@ -497,7 +540,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** Checks if any updates have occurred in the tree since the last
          * call to this method and calls {@link #treeUpdated()} if so.
          */
-        protected void checkTreeUpdates() {
+        protected void checkTreeUpdated() {
             final long treeVersion = tree.getVersion();
 
             if (version != treeVersion) {
@@ -509,7 +552,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             }
         }
 
-        /** Method called from {@link #checkTreeUpdates()} when updates
+        /** Method called from {@link #checkTreeUpdated()} when updates
          * are detected in the tree. This method should clear out any
          * computed properties that rely on the structure of the tree
          * and prepare them for recalculation.
@@ -522,5 +565,106 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * @return a reference to the current instance, as type N.
          */
         protected abstract N getSelf();
+    }
+
+    /** Class for iterating through the nodes in a BSP tree.
+     * @param <P> Point implementation type
+     * @param <N> Node implementation type
+     */
+    public static class NodeIterator<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
+
+        /** The current node stack */
+        private final Deque<N> stack = new LinkedList<>();
+
+        /** Create a new instance for iterating over the nodes in the given tree.
+         * @param tree the tree to iterate
+         */
+        public NodeIterator(final AbstractBSPTree<P, N> tree) {
+            stack.push(tree.getRoot());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public N next() {
+            if (stack.isEmpty()) {
+                throw new NoSuchElementException();
+            }
+
+            final N result = stack.pop();
+
+            if (result != null && !result.isLeaf()) {
+                stack.push(result.getPlus());
+                stack.push(result.getMinus());
+            }
+
+            return result;
+        }
+    }
+
+    /** Class that wraps filtering functionality around an underlying node iterator.
+     * @param <P> Point implementation type
+     * @param <N> Node implementation type
+     */
+    public static class FilteredNodeIteratorWrapper<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
+
+        /** The iterator to filter */
+        private final Iterator<N> iterator;
+
+        /** The filter function */
+        private final Predicate<N> predicate;
+
+        /** The next node to return */
+        private N next;
+
+        /** Construct a new instance that applies the given predicate function to the elements in the
+         * iterator. Only elements that pass the predicate are returned.
+         * @param iterator iterator to wrap
+         * @param predicate predicate function to apply to nodes
+         */
+        public FilteredNodeIteratorWrapper(final Iterator<N> iterator, final Predicate<N> predicate) {
+            this.iterator = iterator;
+            this.predicate = predicate;
+
+            advance();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public N next() {
+            if (next == null) {
+                throw new NoSuchElementException();
+            }
+
+            N result = next;
+
+            advance();
+
+            return result;
+        }
+
+        /** Advance to the next filtered node in the iterable.
+         */
+        private void advance() {
+            next = null;
+            while (iterator.hasNext() &&
+                    (next = iterator.next()) != null &&
+                    !predicate.test(next)) {
+                // the node didn't pass the test; advance to the
+                // next one
+                next = null;
+            }
+        }
     }
 }

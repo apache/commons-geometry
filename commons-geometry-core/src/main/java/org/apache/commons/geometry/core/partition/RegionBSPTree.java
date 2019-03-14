@@ -233,7 +233,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          */
         public RegionCutBoundary<P> getCutBoundary() {
             if (!isLeaf()) {
-                checkTreeUpdates();
+                checkTreeUpdated();
 
                 if (cutBoundary == null) {
                     cutBoundary = getTree().computeBoundary(this);

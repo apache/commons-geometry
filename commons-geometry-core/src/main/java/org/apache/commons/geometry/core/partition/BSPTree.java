@@ -64,6 +64,21 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     int count();
 
+    /** Return an iterable for iterating through the nodes of the tree.
+     * @return an iterable for iterating through the nodes of the tree
+     */
+    Iterable<N> nodes();
+
+    /** Return an iterable for iterating through the leaf nodes of the tree.
+     * @return an iterable for iterating through the leaf nodes of the tree
+     */
+    Iterable<N> leafNodes();
+
+    /** Return an iterable for iterating through the cut (internal) nodes of the tree.
+     * @return an iterable for iterating through the cut nodes of the tree
+     */
+    Iterable<N> cutNodes();
+
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      */
