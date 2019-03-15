@@ -528,7 +528,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return vector with coordinates calculated by {@code a * c}
      */
     public static Vector3D linearCombination(double a, Vector3D c) {
-        return new Vector3D(a * c.x, a * c.y, a * c.z);
+        return c.multiply(a);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
