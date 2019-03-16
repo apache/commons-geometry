@@ -30,10 +30,69 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
 
+    /** Construct a new region covering the entire space.
+     */
     public RegionBSPTree() {
         super(RegionNode<P>::new);
 
         getRoot().setLocation(RegionLocation.INSIDE);
+    }
+
+    /** Change this region into its complement. All inside nodes become outside
+     * nodes and vice versa. The orientation of the cut subhyperplanes is not modified.
+     */
+    public void complement() {
+        complementRecursive(getRoot());
+    }
+
+    /** Recursively switch all inside nodes to outside nodes and vice versa.
+     * @param node the node at the root of the subtree to switch
+     */
+    private void complementRecursive(final RegionNode<P> node) {
+        if (node != null)
+        {
+            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
+                    ? RegionLocation.OUTSIDE
+                    : RegionLocation.INSIDE;
+
+            node.setLocation(newLoc);
+
+            complementRecursive(node.getMinus());
+            complementRecursive(node.getPlus());
+        }
+    }
+
+    /** Return true if the region is empty, i.e. if no node in the tree
+     * has a location of {@link RegionLocation#INSIDE}.
+     * @return true if the region does not have an inside
+     */
+    public boolean isEmpty() {
+        return !hasNodeWithLocationRecursive(getRoot(), RegionLocation.INSIDE);
+    }
+
+    /** Return true if the region is full, i.e. if no node in the tree
+     * has a location of {@link RegionLocation#OUTSIDE}. Trees with this
+     * property cover the entire space.
+     * @return true if the region does not have an outside
+     */
+    public boolean isFull() {
+        return !hasNodeWithLocationRecursive(getRoot(), RegionLocation.OUTSIDE);
+    }
+
+    /** Return true if any node in the subtree rooted at the given node has a location with the
+     * given value.
+     * @param node the node at the root of the subtree to search
+     * @param location the location to find
+     * @return true if any node in the subtree has the given location
+     */
+    private boolean hasNodeWithLocationRecursive(final RegionNode<P> node, final RegionLocation location) {
+        if (node == null) {
+            return false;
+        }
+
+        return node.getLocation() == location ||
+                hasNodeWithLocationRecursive(node.getMinus(), location) ||
+                hasNodeWithLocationRecursive(node.getPlus(), location);
     }
 
     /** Classify a point with respect to the region.
@@ -50,7 +109,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @return the classification of the point with respect to the region rooted
      *      at the given node
      */
-    protected RegionLocation classifyRecursive(final RegionNode<P> node, final P point) {
+    private RegionLocation classifyRecursive(final RegionNode<P> node, final P point) {
         if (node.isLeaf()) {
             // the point is in a leaf, so the classification is just the leaf location
             return node.getLocation();
@@ -90,7 +149,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @return object representing the portions of the node's cut subhyperplane that lie
      *      on the region's boundary
      */
-    protected RegionCutBoundary<P> computeBoundary(final RegionNode<P> node) {
+    private RegionCutBoundary<P> computeBoundary(final RegionNode<P> node) {
         if (node.isLeaf()) {
             // no boundary for leaf nodes; they are either entirely in or
             // entirely out
@@ -143,7 +202,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
      *      of the region; may be null
      */
-    protected void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P> node,
+    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P> node,
             final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
 
         if (sub != null) {
@@ -255,8 +314,16 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         /** Set the location attribute for the node.
          * @param location the location attribute for the node
          */
-        protected void setLocation(final RegionLocation location) {
+        private void setLocation(final RegionLocation location) {
             this.location = location;
+        }
+
+        /** Get the value of the location property, unmodified based on the
+         * node's leaf state.
+         * @return the value of the location property
+         */
+        private RegionLocation getLocationValue() {
+            return location;
         }
 
         /** {@inheritDoc} */

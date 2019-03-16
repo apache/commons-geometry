@@ -197,6 +197,18 @@ public class RegionBSPTreeTest {
                 TestPoint2D.ZERO, new TestPoint2D(0.0, Double.POSITIVE_INFINITY));
     }
 
+    @Test
+    public void testComplement_rootOnly() {
+        // act
+        tree.complement();
+
+        // assert
+        Assert.assertTrue(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
+    }
+
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
         tree.insert(Arrays.asList(
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
