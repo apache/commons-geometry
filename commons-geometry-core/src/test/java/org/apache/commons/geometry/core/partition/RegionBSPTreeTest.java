@@ -198,6 +198,25 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testFullEmpty_fullTree() {
+        // act/assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
+    }
+
+    @Test
+    public void testFullEmpty_emptyTree() {
+        // arrange
+        tree.complement();
+
+        // act/assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+    }
+
+    @Test
     public void testComplement_rootOnly() {
         // act
         tree.complement();
@@ -207,6 +226,41 @@ public class RegionBSPTreeTest {
         Assert.assertFalse(tree.isFull());
 
         Assert.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+    }
+
+    @Test
+    public void testComplement_skewedBowtie() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act
+        tree.complement();
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, -1)));
+
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, -1)));
+
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
