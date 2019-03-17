@@ -21,7 +21,6 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -60,7 +59,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     
     public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision)
             throws IllegalArgumentException {
-        Vector3D w = calculateW(normal);
+        Vector3D w = normal.normalize();
         double originOffset = 0;
         Vector3D origin = calculateOrigin(w, originOffset);
         Vector3D u = w.orthogonal();
@@ -72,10 +71,6 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return w.multiply(-originOffset);
     }
 
-    private static Vector3D calculateW(final Vector3D normal) {
-        final double norm = Vectors.checkedNorm(normal);
-        return normal.multiply(1.0 / norm);
-    }
 
     /**
      * Build a plane from a point and a normal.
@@ -87,7 +82,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision)
             throws IllegalArgumentException {
-        Vector3D w = calculateW(normal);
+        Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
         Vector3D origin = calculateOrigin(w, originOffset);
         Vector3D u = w.orthogonal();
@@ -334,7 +329,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         final Vector3D delta = origin.subtract(center);
         Vector3D p = center.add(rotation.apply(delta));
         Vector3D normal = rotation.apply(this.w);
-        Vector3D w = calculateW(normal);
+        Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
         Vector3D origin = calculateOrigin(w, originOffset);
         Vector3D u = rotation.apply(this.u);
@@ -354,7 +349,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Plane translate(final Vector3D translation) {
         Vector3D p = origin.add(translation);
         Vector3D normal = this.w;
-        Vector3D w = calculateW(normal);
+        Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
         Vector3D origin = calculateOrigin(w, originOffset);
         return new Plane(this.u, this.v, w, origin, originOffset, this.precision);
