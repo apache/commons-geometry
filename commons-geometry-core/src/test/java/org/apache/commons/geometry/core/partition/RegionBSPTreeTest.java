@@ -230,6 +230,26 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testComplement_singleCut() {
+        // arrange
+        root.insertCut(TestLine.X_AXIS);
+
+        // act
+        tree.complement();
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, root.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, root.getPlus().getLocation());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, 1)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, -1)));
+    }
+
+    @Test
     public void testComplement_skewedBowtie() {
         // arrange
         insertSkewedBowtie(tree);
@@ -261,6 +281,116 @@ public class RegionBSPTreeTest {
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
         Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-5, 0)));
+    }
+
+    @Test
+    public void testComplement_addCutAfterComplement() {
+        // arrange
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)));
+        tree.complement();
+
+        // act
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
+    }
+
+    @Test
+    public void testComplement_clearCutAfterComplement() {
+        // arrange
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1))
+                ));
+        tree.complement();
+
+        // act
+        root.getMinus().clearCut();
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(TestPoint2D.ZERO));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(1, 1)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-1, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(1, -1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-1, -1)));
+    }
+
+    @Test
+    public void testComplement_clearRootAfterComplement() {
+        // arrange
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1))
+                ));
+        tree.complement();
+
+        // act
+        root.clearCut();
+
+        // assert
+        Assert.assertTrue(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+    }
+
+    @Test
+    public void testComplement_isReversible_root() {
+        // act
+        tree.complement();
+        tree.complement();
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertTrue(tree.isFull());
+
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+    }
+
+    @Test
+    public void testComplement_isReversible_skewedBowtie() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act
+        tree.complement();
+        tree.complement();
+
+        // assert
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(-3, -1)));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-3, 1)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(3, -1)));
+
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 5)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, -5)));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(5, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(4, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(1, 0)));
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(0, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-1, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-2, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
+        Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
     }
 
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
