@@ -198,6 +198,18 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void tetsGetCutBoundary_leafNode() {
+        // arrange
+        tree.insert(new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)));
+        tree.insert(new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)));
+
+        // act/assert
+        Assert.assertNull(root.getPlus().getCutBoundary());
+        Assert.assertNull(root.getMinus().getMinus().getCutHyperplane());
+        Assert.assertNull(root.getMinus().getPlus().getCutHyperplane());
+    }
+
+    @Test
     public void testFullEmpty_fullTree() {
         // act/assert
         Assert.assertTrue(tree.isFull());
@@ -391,6 +403,40 @@ public class RegionBSPTreeTest {
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-3, 0)));
         Assert.assertEquals(RegionLocation.BOUNDARY, tree.classify(new TestPoint2D(-4, 0)));
         Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(-5, 0)));
+    }
+
+    @Test
+    public void testComplement_getCutBoundary() {
+        // arrange
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1))));
+        tree.complement();
+
+        // act
+        RegionCutBoundary<TestPoint2D> xAxisBoundary = root.getCutBoundary();
+        RegionCutBoundary<TestPoint2D> yAxisBoundary = root.getMinus().getCutBoundary();
+
+        // assert
+        Assert.assertTrue(xAxisBoundary.getOutsideFacing().isEmpty());
+        Assert.assertFalse(xAxisBoundary.getInsideFacing().isEmpty());
+
+        TestLineSegmentCollection xAxisInsideFacing = (TestLineSegmentCollection) xAxisBoundary.getInsideFacing();
+        Assert.assertEquals(1, xAxisInsideFacing.getLineSegments().size());
+
+        TestLineSegment xAxisSeg = xAxisInsideFacing.getLineSegments().get(0);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 0), xAxisSeg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, xAxisSeg.getEndPoint());
+
+        Assert.assertTrue(yAxisBoundary.getOutsideFacing().isEmpty());
+        Assert.assertFalse(yAxisBoundary.getInsideFacing().isEmpty());
+
+        TestLineSegmentCollection yAxisInsideFacing = (TestLineSegmentCollection) yAxisBoundary.getInsideFacing();
+        Assert.assertEquals(1, yAxisInsideFacing.getLineSegments().size());
+
+        TestLineSegment yAxisSeg = yAxisInsideFacing.getLineSegments().get(0);
+        PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, yAxisSeg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, Double.POSITIVE_INFINITY), yAxisSeg.getEndPoint());
     }
 
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
