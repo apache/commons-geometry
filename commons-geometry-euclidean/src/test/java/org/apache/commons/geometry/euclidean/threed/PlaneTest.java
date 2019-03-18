@@ -62,7 +62,7 @@ public class PlaneTest {
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
         Vector3D p3 = Vector3D.of(-2.0, 4.3, 0.7);
-        Plane    p  = Plane.fromThreePoints(p1, p2, p3, TEST_PRECISION);
+        Plane    p  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
         Assert.assertTrue(p.contains(p1));
         Assert.assertTrue(p.contains(p2));
         Assert.assertTrue(p.contains(p3));
@@ -73,7 +73,7 @@ public class PlaneTest {
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
         Vector3D p3 = Vector3D.of(-2.0, 4.3, 0.7);
-        Plane    p  = Plane.fromThreePoints(p1, p2, p3, TEST_PRECISION);
+        Plane    p  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
         Vector3D oldNormal = p.getNormal();
 
         p = p.rotate(p2, QuaternionRotation.fromAxisAngle(p2.subtract(p1), 1.7));
@@ -98,7 +98,7 @@ public class PlaneTest {
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
         Vector3D p3 = Vector3D.of(-2.0, 4.3, 0.7);
-        Plane    p  = Plane.fromThreePoints(p1, p2, p3, TEST_PRECISION);
+        Plane    p  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
 
         p = p.translate(Vector3D.linearCombination(2.0, p.getU(), -1.5, p.getV()));
         Assert.assertTrue(p.contains(p1));
@@ -133,8 +133,8 @@ public class PlaneTest {
     public void testIntersection2() {
         Vector3D p1  = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2  = Vector3D.of(3.4, -5.8, 1.2);
-        Plane    pA  = Plane.fromThreePoints(p1, p2, Vector3D.of(-2.0, 4.3, 0.7), TEST_PRECISION);
-        Plane    pB  = Plane.fromThreePoints(p1, Vector3D.of(11.4, -3.8, 5.1), p2, TEST_PRECISION);
+        Plane    pA  = Plane.fromPoints(p1, p2, Vector3D.of(-2.0, 4.3, 0.7), TEST_PRECISION);
+        Plane    pB  = Plane.fromPoints(p1, Vector3D.of(11.4, -3.8, 5.1), p2, TEST_PRECISION);
         Line     l   = pA.intersection(pB);
         Assert.assertTrue(l.contains(p1));
         Assert.assertTrue(l.contains(p2));
@@ -158,13 +158,13 @@ public class PlaneTest {
         Vector3D p1  = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2  = Vector3D.of(3.4, -5.8, 1.2);
         Vector3D p3  = Vector3D.of(-2.0, 4.3, 0.7);
-        Plane    pA  = Plane.fromThreePoints(p1, p2, p3, TEST_PRECISION);
-        Plane    pB  = Plane.fromThreePoints(p1, Vector3D.of(11.4, -3.8, 5.1), p2, TEST_PRECISION);
+        Plane    pA  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
+        Plane    pB  = Plane.fromPoints(p1, Vector3D.of(11.4, -3.8, 5.1), p2, TEST_PRECISION);
         Assert.assertTrue(! pA.isSimilarTo(pB));
         Assert.assertTrue(pA.isSimilarTo(pA));
-        Assert.assertTrue(pA.isSimilarTo(Plane.fromThreePoints(p1, p3, p2, TEST_PRECISION)));
+        Assert.assertTrue(pA.isSimilarTo(Plane.fromPoints(p1, p3, p2, TEST_PRECISION)));
         Vector3D shift = Vector3D.linearCombination(0.3, pA.getNormal());
-        Assert.assertTrue(! pA.isSimilarTo(Plane.fromThreePoints(p1.add(shift),
+        Assert.assertTrue(! pA.isSimilarTo(Plane.fromPoints(p1.add(shift),
                                                      p3.add(shift),
                                                      p2.add(shift),
                                                      TEST_PRECISION)));

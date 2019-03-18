@@ -49,7 +49,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
-    public static Plane fromTwoVectors (final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
+    public static Plane fromPlaneVectors (final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
     {
         Vector3D w = u.cross(v);
         double originOffset = 0;
@@ -102,7 +102,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points do not constitute a plane
      */
-    public static Plane fromThreePoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
+    public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) throws IllegalArgumentException {
         return Plane.fromPointAndNormal(p1, p2.subtract(p1).cross(p3.subtract(p1)), precision);
     }
@@ -172,6 +172,18 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return origin;
     }
 
+    
+    /**
+     *  Gets the offset of the origin with respect to the plane. 
+     *  
+     *  @return the offset of the origin with respect to the plane. 
+     */
+    public double getOriginOffset()
+    {
+        return originOffset;
+    }
+
+    
     /**
      * Get the normalized normal vector.
      * <p>
@@ -191,7 +203,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * Get the plane first canonical vector.
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized frame).
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
      * 
      * @return normalized first canonical vector
@@ -206,7 +218,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * Get the plane second canonical vector.
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized frame).
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
      * 
      * @return normalized second canonical vector
@@ -217,6 +229,23 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return v;
     }
 
+    
+    /**
+     * Get the normalized normal vector. Alias for getNormal().
+     * <p>
+     * The frame defined by ({@link #getU getU}, {@link #getV getV},
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
+     * </p>
+     * 
+     * @return normalized normal vector
+     * @see #getU
+     * @see #getV
+     */
+    public Vector3D getW() {
+        return w;
+    }
+
+    
     /** {@inheritDoc} */
     @Override
     public Vector3D project(Vector3D point) {
@@ -230,7 +259,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     }
 
     /**
-     * Creates a new reverted version of this plane, with opposite orientation.
+     * Creates a new reversed version of this plane, with opposite orientation.
      * <p>
      * The new plane frame is chosen in such a way that a 3D point that had
      * {@code (x, y)} in-plane coordinates and {@code z} offset with respect to the
@@ -241,7 +270,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * {@link #getNormal} method is reversed.
      * </p>
      */
-    public Plane revert() {
+    public Plane reverse() {
         final Vector3D tmp = u;
         Vector3D u = v;
         Vector3D v = tmp;

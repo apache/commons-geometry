@@ -465,10 +465,10 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                Plane.fromThreePoints(vertex3, vertex2, vertex1, TEST_PRECISION),
-                Plane.fromThreePoints(vertex2, vertex3, vertex4, TEST_PRECISION),
-                Plane.fromThreePoints(vertex4, vertex3, vertex1, TEST_PRECISION),
-                Plane.fromThreePoints(vertex1, vertex2, vertex4, TEST_PRECISION));
+                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
+                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
@@ -539,10 +539,10 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                Plane.fromThreePoints(vertex3, vertex2, vertex1, TEST_PRECISION),
-                Plane.fromThreePoints(vertex2, vertex3, vertex4, TEST_PRECISION),
-                Plane.fromThreePoints(vertex4, vertex3, vertex1, TEST_PRECISION),
-                Plane.fromThreePoints(vertex1, vertex2, vertex4, TEST_PRECISION));
+                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
+                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Vector3D barycenter = tree.getBarycenter();
@@ -691,7 +691,7 @@ public class PolyhedronsSetTest {
             Vector3D v_2 = Vector3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
             Vector3D v_3 = Vector3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
             Vector3D[] vertices = {v_1, v_2, v_3};
-            Plane polyPlane = Plane.fromThreePoints(v_1, v_2, v_3, TEST_PRECISION);
+            Plane polyPlane = Plane.fromPoints(v_1, v_2, v_3, TEST_PRECISION);
             ArrayList<SubHyperplane<Vector2D>> lines = new ArrayList<>();
 
             Vector2D[] projPts = new Vector2D[vertices.length];

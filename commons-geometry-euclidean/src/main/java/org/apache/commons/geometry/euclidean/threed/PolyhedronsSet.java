@@ -218,7 +218,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         for (final int[] facet : facets) {
 
             // define facet plane from the first 3 points
-            Plane plane = Plane.fromThreePoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
+            Plane plane = Plane.fromPoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
                                     precision);
 
             // check all points are in the plane

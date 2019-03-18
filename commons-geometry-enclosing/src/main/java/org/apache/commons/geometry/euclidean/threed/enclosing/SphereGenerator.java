@@ -58,7 +58,7 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
                         // delegate to 2D disk generator
                         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
-                        final Plane p = Plane.fromThreePoints(vA, vB, vC, precision);
+                        final Plane p = Plane.fromPoints(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
                                                                                 p.toSubSpace(vB),
