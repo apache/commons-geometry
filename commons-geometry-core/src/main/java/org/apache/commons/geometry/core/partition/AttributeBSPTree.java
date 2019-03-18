@@ -52,6 +52,12 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
 
     /** {@inheritDoc} */
     @Override
+    public AttributeBSPTree<P, T> copy() {
+        return (AttributeBSPTree<P, T>) super.copy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected AttributeBSPTree<P, T> createTree() {
         return new AttributeBSPTree<P, T>();
     }
@@ -63,6 +69,12 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
         super.initChildNode(parent, child, isPlus);
 
         child.setAttribute(initialNodeAttribute);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void copyNodeProperties(final AttributeNode<P, T> src, final AttributeNode<P, T> dst) {
+        dst.setAttribute(src.getAttribute());
     }
 
     /** {@link BSPTree.Node} implementation for use with {@link AttributeBSPTree}s.

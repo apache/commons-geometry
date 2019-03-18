@@ -1,8 +1,11 @@
 package org.apache.commons.geometry.core.partition;
 
+import java.util.Arrays;
+
 import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
+import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -77,6 +80,43 @@ public class AttributeBSPTreeTest {
         // assert
         Assert.assertSame(root, result);
         Assert.assertEquals("a", root.getAttribute());
+    }
+
+    @Test
+    public void testCopy_rootOnly() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> tree = new AttributeBSPTree<TestPoint2D, String>();
+        tree.getRoot().attr("abc");
+
+        // act
+        AttributeBSPTree<TestPoint2D, String> copy = tree.copy();
+
+        // assert
+        Assert.assertEquals(1, copy.count());
+        Assert.assertEquals("abc", copy.getRoot().getAttribute());
+    }
+
+    @Test
+    public void testCopy_withCuts() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> tree = new AttributeBSPTree<TestPoint2D, String>();
+        tree.insert(Arrays.asList(
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1))
+                ));
+
+        tree.findNode(new TestPoint2D(1, 1)).attr("a");
+        tree.findNode(new TestPoint2D(-1, 1)).attr("b");
+        tree.findNode(new TestPoint2D(0, -1)).attr("c");
+
+        // act
+        AttributeBSPTree<TestPoint2D, String> copy = tree.copy();
+
+        // assert
+        Assert.assertEquals(5, copy.count());
+        Assert.assertEquals("a", copy.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("b", copy.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("c", copy.findNode(new TestPoint2D(0, -1)).getAttribute());
     }
 
     @Test

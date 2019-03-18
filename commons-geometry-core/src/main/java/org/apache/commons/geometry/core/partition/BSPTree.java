@@ -79,6 +79,11 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     Iterable<N> cutNodes();
 
+    /** Return a deep copy of this instance.
+     * @return a deep copy of this instance
+     */
+    BSPTree<P, N> copy();
+
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      */

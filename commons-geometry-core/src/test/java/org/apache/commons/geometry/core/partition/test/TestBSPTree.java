@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.AbstractBSPTree.AbstractNode;
 
 /** BSP Tree implementation class for testing purposes.
  */
@@ -34,13 +33,19 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
 
     /** {@inheritDoc} */
     @Override
+    public TestBSPTree copy() {
+        return (TestBSPTree) super.copy();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected TestBSPTree createTree() {
         return new TestBSPTree();
     }
 
     /** BSP Tree node class for {@link TestBSPTree}.
      */
-    public static class TestNode extends AbstractNode<TestPoint2D,TestNode> {
+    public static class TestNode extends AbstractBSPTree.AbstractNode<TestPoint2D,TestNode> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190225L;

@@ -38,6 +38,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         getRoot().setLocation(RegionLocation.INSIDE);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public RegionBSPTree<P> copy() {
+        return (RegionBSPTree<P>) super.copy();
+    }
+
     /** Change this region into its complement. All inside nodes become outside
      * nodes and vice versa. The orientation of the cut subhyperplanes is not modified.
      */
@@ -141,6 +147,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     @Override
     protected RegionBSPTree<P> createTree() {
         return new RegionBSPTree<P>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void copyNodeProperties(final RegionNode<P> src, final RegionNode<P> dst) {
+        dst.setLocation(src.getLocationValue());
     }
 
     /** Compute the portion of the node's cut subhyperplane that lies on the boundary of
@@ -322,7 +334,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          * node's leaf state.
          * @return the value of the location property
          */
-        private RegionLocation getLocationValue() {
+        protected RegionLocation getLocationValue() {
             return location;
         }
 

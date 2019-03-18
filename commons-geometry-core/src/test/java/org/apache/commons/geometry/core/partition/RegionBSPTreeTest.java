@@ -1,6 +1,8 @@
 package org.apache.commons.geometry.core.partition;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.geometry.core.partition.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -437,6 +439,27 @@ public class RegionBSPTreeTest {
         TestLineSegment yAxisSeg = yAxisInsideFacing.getLineSegments().get(0);
         PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, yAxisSeg.getStartPoint());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, Double.POSITIVE_INFINITY), yAxisSeg.getEndPoint());
+    }
+
+    @Test
+    public void testCopy() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act
+        RegionBSPTree<TestPoint2D> copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+        Assert.assertEquals(tree.count(), copy.count());
+
+        List<RegionLocation> origLocations = new ArrayList<>();
+        tree.nodes().forEach(n -> origLocations.add(n.getLocationValue()));
+
+        List<RegionLocation> copyLocations = new ArrayList<>();
+        copy.nodes().forEach(n -> copyLocations.add(n.getLocationValue()));
+
+        Assert.assertEquals(origLocations, copyLocations);
     }
 
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {

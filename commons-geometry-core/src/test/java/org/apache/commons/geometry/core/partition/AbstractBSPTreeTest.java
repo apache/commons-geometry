@@ -719,6 +719,81 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testCopy_rootOnly() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        // act
+        TestBSPTree copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+        Assert.assertNotSame(tree.getRoot(), copy.getRoot());
+
+        Assert.assertEquals(tree.count(), copy.count());
+    }
+
+    @Test
+    public void testCopy_withCuts() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        TestBSPTree copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+
+        assertNodesCopiedRecursive(tree.getRoot(), copy.getRoot());
+
+        Assert.assertEquals(tree.count(), copy.count());
+    }
+
+    @Test
+    public void testCopy_changesToOneTreeDoNotAffectCopy() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        TestBSPTree copy = tree.copy();
+        tree.getRoot().clearCut();
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+        Assert.assertEquals(5, copy.count());
+    }
+
+    private void assertNodesCopiedRecursive(final TestNode orig, final TestNode copy) {
+        Assert.assertNotSame(orig, copy);
+
+        Assert.assertEquals(orig.getCut(), copy.getCut());
+
+        if (!orig.isLeaf())
+        {
+            Assert.assertNotSame(orig.getMinus(), copy.getMinus());
+            Assert.assertNotSame(orig.getPlus(), copy.getPlus());
+
+            assertNodesCopiedRecursive(orig.getMinus(), copy.getMinus());
+            assertNodesCopiedRecursive(orig.getPlus(), copy.getPlus());
+        }
+        else {
+            Assert.assertNull(copy.getMinus());
+            Assert.assertNull(copy.getPlus());
+        }
+
+        Assert.assertEquals(orig.depth(), copy.depth());
+        Assert.assertEquals(orig.count(), copy.count());
+    }
+
+    @Test
     public void testNodeToString() {
         // arrange
         TestBSPTree tree = new TestBSPTree();

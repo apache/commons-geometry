@@ -149,6 +149,47 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         };
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public AbstractBSPTree<P, N> copy() {
+        AbstractBSPTree<P, N> copy = createTree();
+        copyRecursive(getRoot(), copy.getRoot());
+
+        return copy;
+    }
+
+    /** Recursively copy a subtree.
+     * @param src the node representing the source subtree
+     * @param dst the node representing the destination subtree
+     * @return the copied node, ie {@code dst}
+     */
+    private N copyRecursive(final N src, final N dst) {
+
+        ConvexSubHyperplane<P> cut = null;
+        N minus = null;
+        N plus = null;
+
+        if (!src.isLeaf()) {
+            final AbstractBSPTree<P, N> dstTree = dst.getTree();
+
+            cut = src.getCut();
+            minus = copyRecursive(src.getMinus(), dstTree.createNode());
+            plus = copyRecursive(src.getPlus(), dstTree.createNode());
+        }
+
+        dst.setDepth(src.depth());
+        dst.setCutState(cut, plus, minus);
+
+        copyNodeProperties(src, dst);
+
+        return dst;
+    }
+
+    /** Create a new tree instance.
+     * @return a new tree instance
+     */
+    protected abstract AbstractBSPTree<P, N> createTree();
+
     /** Create a new node for this tree
      * @return a new node for this tree
      */
@@ -156,10 +197,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return nodeFactory.apply(this);
     }
 
-    /** Create a new tree instance.
-     * @return a new tree instance
+    /** Copy node properties from {@code src} to {@code dst}. This method
+     * is used when performing a deep copy of the tree and can be used by
+     * subclasses to copy non-structural node properties.
+     * @param src source node
+     * @param dst destination node
      */
-    protected abstract AbstractBSPTree<P, N> createTree();
+    protected void copyNodeProperties(final N src, final N dst) {
+    }
 
     /** Find the smallest node in the tree containing the point, starting
      * at the given node.
