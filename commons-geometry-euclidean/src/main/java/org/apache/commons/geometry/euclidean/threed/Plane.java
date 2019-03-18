@@ -90,16 +90,6 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return new Plane(u, v, w, origin, originOffset, precision);
     }
 
-    // TODO check this one
-    public static Plane of(Vector3D u, Vector3D v, Vector3D w, Vector3D origin, double originOffset,
-            DoublePrecisionContext precision) {
-        if (!w.orthogonal().equals(u, precision))
-        {
-            throw new IllegalArgumentException("w must be orthogonal to u.");
-        }
-        return new Plane(u, v, w, origin, originOffset, precision);
-    }
-
     /**
      * Build a plane from three points.
      * <p>
@@ -118,7 +108,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     }
 
     /**
-     * Copy constructor.
+     * Copy plane.
      * <p>
      * The instance created is completely independent of the original one. A deep
      * copy is used, none of the underlying object are shared.
@@ -186,7 +176,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * Get the normalized normal vector.
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a rigth-handed orthonormalized frame).
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
      * 
      * @return normalized normal vector
