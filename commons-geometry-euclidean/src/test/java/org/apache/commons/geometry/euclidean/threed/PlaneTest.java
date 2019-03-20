@@ -22,6 +22,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class PlaneTest {
 
     private static final double TEST_EPS = 1e-10;
@@ -38,19 +39,61 @@ public class PlaneTest {
     }
 
     @Test
-                public void testFromNormalfset() {
-                    Vector3D p1 = Vector3D.of(1, 1, 1);
-                    Plane p = Plane.fromPointAndNormal(p1, Vector3D.of(0.2, 0, 0), TEST_PRECISION);
-                    Assert.assertEquals(-5.0, p.getOffset(Vector3D.of(-4, 0, 0)), TEST_EPS);
-                    Assert.assertEquals(+5.0, p.getOffset(Vector3D.of(6, 10, -12)), TEST_EPS);
-                    Assert.assertEquals(0.3,
-                                        p.getOffset(Vector3D.linearCombination(1.0, p1, 0.3, p.getNormal())),
-                                        TEST_EPS);
-                    Assert.assertEquals(-0.3,
-                                        p.getOffset(Vector3D.linearCombination(1.0, p1, -0.3, p.getNormal())),
-                                        TEST_EPS);
-                }
+    public void testContainsLine() {
+        Plane p = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
+        Line line = new Line(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 1), TEST_PRECISION);
+        Assert.assertTrue(p.contains(line));
+    }
+    
+    
+    @Test
+    public void testProjectLine() {
+        Plane p = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
+        Line line = new Line(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 2), TEST_PRECISION);
+        Line expectedProjection = new Line(Vector3D.of(1, 0, 1),Vector3D.of(2, 0, 1), TEST_PRECISION);
+        Assert.assertEquals(expectedProjection, p.project(line));
+    }
+    
+    @Test
+    public void testOffset() {
+        Vector3D p1 = Vector3D.of(1, 1, 1);
+        Plane p = Plane.fromPointAndNormal(p1, Vector3D.of(0.2, 0, 0), TEST_PRECISION);
+        Assert.assertEquals(-5.0, p.getOffset(Vector3D.of(-4, 0, 0)), TEST_EPS);
+        Assert.assertEquals(+5.0, p.getOffset(Vector3D.of(6, 10, -12)), TEST_EPS);
+        Assert.assertEquals(0.3,
+                            p.getOffset(Vector3D.linearCombination(1.0, p1, 0.3, p.getNormal())),
+                            TEST_EPS);
+        Assert.assertEquals(-0.3,
+                            p.getOffset(Vector3D.linearCombination(1.0, p1, -0.3, p.getNormal())),
+                            TEST_EPS);
+    }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testVectorsAreColinear()
+    {
+      Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1), Vector3D.of(2, 0, 0), Vector3D.of(2,0,0), TEST_PRECISION);
+    }
+
+    
+    @Test
+    public void testVectorsAreNormalizedForSuppliedUAndV() {
+        Plane p = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1), Vector3D.of(2, 0, 0), Vector3D.of(0,2,0), TEST_PRECISION);
+        Assert.assertEquals(1.0, p.getNormal().norm(), TEST_EPS);
+        Assert.assertEquals(1.0, p.getV().norm(), TEST_EPS);
+        Assert.assertEquals(1.0, p.getU().norm(), TEST_EPS);
+    }
+
+    
+    
+    @Test
+    public void testVectorsAreNormalized() {
+        Plane p = Plane.fromPointAndNormal(Vector3D.of(2, -3, 1), Vector3D.of(1, 4, 9), TEST_PRECISION);
+        Assert.assertEquals(1.0, p.getNormal().norm(), TEST_EPS);
+        Assert.assertEquals(1.0, p.getV().norm(), TEST_EPS);
+        Assert.assertEquals(1.0, p.getU().norm(), TEST_EPS);
+    }
+
+    
     @Test
     public void testPoint() {
         Plane p = Plane.fromPointAndNormal(Vector3D.of(2, -3, 1), Vector3D.of(1, 4, 9), TEST_PRECISION);
@@ -160,11 +203,11 @@ public class PlaneTest {
         Vector3D p3  = Vector3D.of(-2.0, 4.3, 0.7);
         Plane    pA  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
         Plane    pB  = Plane.fromPoints(p1, Vector3D.of(11.4, -3.8, 5.1), p2, TEST_PRECISION);
-        Assert.assertTrue(! pA.isSimilarTo(pB));
-        Assert.assertTrue(pA.isSimilarTo(pA));
-        Assert.assertTrue(pA.isSimilarTo(Plane.fromPoints(p1, p3, p2, TEST_PRECISION)));
+        Assert.assertTrue(! pA.contains(pB));
+        Assert.assertTrue(pA.contains(pA));
+        Assert.assertTrue(pA.contains(Plane.fromPoints(p1, p3, p2, TEST_PRECISION)));
         Vector3D shift = Vector3D.linearCombination(0.3, pA.getNormal());
-        Assert.assertTrue(! pA.isSimilarTo(Plane.fromPoints(p1.add(shift),
+        Assert.assertTrue(! pA.contains(Plane.fromPoints(p1.add(shift),
                                                      p3.add(shift),
                                                      p2.add(shift),
                                                      TEST_PRECISION)));

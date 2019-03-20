@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -27,15 +28,15 @@ import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
- * The class represent planes in a three dimensional space.
+ * The class represents a plane in a three dimensional space.
  */
 public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D> {
 
     /** Offset of the origin with respect to the plane. */
     private final double originOffset;
 
-    /** Origin of the plane frame. */
-    private final Vector3D origin;
+    /** orthogonal projection of the 3D-space origin in the plane. */
+    private final Vector3D projectedOrigin;
 
     /** First vector of the plane frame (in plane). */
     private final Vector3D u;
@@ -43,34 +44,69 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** Second vector of the plane frame (in plane). */
     private final Vector3D v;
 
-    /** Third vector of the plane frame (plane normal). */
+    /** Third vector of the plane frame (normalized plane normal). */
     private final Vector3D w;
 
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
-    public static Plane fromPlaneVectors (final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
-    {
-        Vector3D w = u.cross(v);
-        double originOffset = 0;
-        Vector3D origin = calculateOrigin(w, originOffset);
-        return new Plane(u, v, w, origin, originOffset, precision);
+    /** 
+     * Constructor, made private to prevent inheritance.
+     * 
+     * Builds a new plane with the given values.
+     * @param u u vector (on plane)
+     * @param v v vector (on plane)
+     * @param w unit normal vector
+     * @param projectedOrigin orthogonal projection of the 3D-space origin in the plane.
+     * @param precision precision context used to compare floating point values
+     * @param precision the precision context
+     * @throws IllegalArgumentException if the provided vectors are coplanar
+     */
+    private Plane(Vector3D u, Vector3D v, Vector3D w, Vector3D projectedOrigin, double originOffset,
+            DoublePrecisionContext precision) {
+        this.u = u;
+        this.v = v;
+        this.w = w;
+        if (Vector3D.areCoplanar(u, v, w, precision))
+        {
+            throw new IllegalArgumentException("Provided vectors must not be a coplanar.");
+        }
+        this.projectedOrigin = projectedOrigin;
+        this.originOffset = originOffset;
+        this.precision = precision;
     }
     
+    /**
+     * Build a plane from a point and two (on plane) vectors.
+     * @param p the provided point (on plane)
+     * @param u u vector (on plane)
+     * @param v v vector (on plane)
+     * @param precision precision context used to compare floating point values
+     * @return a new plane
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     */
+    public static Plane fromPointAndPlaneVectors (Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
+    {
+        Vector3D u_norm = u.normalize();
+        Vector3D v_norm = v.normalize();
+        Vector3D w = u_norm.cross(v_norm);
+        double originOffset = -p.dot(w);
+        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
+        return new Plane(u_norm, v_norm, w, projectedOrigin, originOffset, precision);
+    }
+    
+    /**
+     * Build a plane from a normal.
+     * Chooses origin as point on plane. 
+     * @param normal    normal direction to the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane
+     * @exception IllegalArgumentException if the normal norm is too small
+     */
     public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision)
             throws IllegalArgumentException {
-        Vector3D w = normal.normalize();
-        double originOffset = 0;
-        Vector3D origin = calculateOrigin(w, originOffset);
-        Vector3D u = w.orthogonal();
-        Vector3D v = w.cross(u);
-        return new Plane(u, v, w, origin, originOffset, precision);
+        return fromPointAndNormal(Vector3D.ZERO, normal, precision);
     }
-
-    private static Vector3D calculateOrigin(Vector3D w, double originOffset) {
-        return w.multiply(-originOffset);
-    }
-
 
     /**
      * Build a plane from a point and a normal.
@@ -78,18 +114,19 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param p         point belonging to the plane
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
+     * @return a new plane
      * @exception IllegalArgumentException if the normal norm is too small
      */
     public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision)
             throws IllegalArgumentException {
         Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
-        Vector3D origin = calculateOrigin(w, originOffset);
+        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
         Vector3D u = w.orthogonal();
         Vector3D v = w.cross(u);
-        return new Plane(u, v, w, origin, originOffset, precision);
+        return new Plane(u, v, w, projectedOrigin, originOffset, precision);
     }
-
+    
     /**
      * Build a plane from three points.
      * <p>
@@ -100,6 +137,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param p2        second point belonging to the plane
      * @param p3        third point belonging to the plane
      * @param precision precision context used to compare floating point values
+     * @return a new plane
      * @exception IllegalArgumentException if the points do not constitute a plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
@@ -115,30 +153,10 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * </p>
      * 
      * @param plane plane to copy
+     * @return a new plane
      */
     public static Plane of(final Plane plane) {
-        return new Plane(plane.u, plane.v, plane.w, plane.origin, plane.originOffset, plane.getPrecision());
-    }
-
-    /** 
-     * Constructor, made private to prevent inheritance.
-     * 
-     * Creates a new instance with the given values.
-     * @param u u axis
-     * @param v v axis
-     * @param w w axis
-     * @param origin origin
-     * @param originOffset offset of the origin
-     * @param precision the precision context
-     */
-    private Plane(Vector3D u, Vector3D v, Vector3D w, Vector3D origin, double originOffset,
-            DoublePrecisionContext precision) {
-        this.u = u;
-        this.v = v;
-        this.w = w;
-        this.origin = origin;
-        this.originOffset = originOffset;
-        this.precision = precision;
+        return new Plane(plane.u, plane.v, plane.w, plane.projectedOrigin, plane.originOffset, plane.getPrecision());
     }
 
     /**
@@ -154,27 +172,20 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     @Deprecated
     @Override
     public Plane copySelf() {
-        return new Plane(this.u, this.v, this.w, this.origin, this.originOffset, this.precision);
+        return new Plane(this.u, this.v, this.w, this.projectedOrigin, this.originOffset, this.precision);
     }
 
-
     /**
-     * Get the origin point of the plane frame.
-     * <p>
-     * The point returned is the orthogonal projection of the 3D-space origin in the
-     * plane.
-     * </p>
-     * 
+     * Get the orthogonal projection of the 3D-space origin in the plane.      
      * @return the origin point of the plane frame (point closest to the 3D-space
      *         origin)
      */
     public Vector3D getOrigin() {
-        return origin;
+        return projectedOrigin;
     }
-
     
     /**
-     *  Gets the offset of the origin with respect to the plane. 
+     *  Get the offset of the origin with respect to the plane. 
      *  
      *  @return the offset of the origin with respect to the plane. 
      */
@@ -182,23 +193,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     {
         return originOffset;
     }
-
     
-    /**
-     * Get the normalized normal vector.
-     * <p>
-     * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
-     * </p>
-     * 
-     * @return normalized normal vector
-     * @see #getU
-     * @see #getV
-     */
-    public Vector3D getNormal() {
-        return w;
-    }
-
     /**
      * Get the plane first canonical vector.
      * <p>
@@ -228,10 +223,9 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Vector3D getV() {
         return v;
     }
-
     
     /**
-     * Get the normalized normal vector. Alias for getNormal().
+     * Get the normalized normal vector, alias for getNormal().
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
      * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
@@ -244,12 +238,41 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Vector3D getW() {
         return w;
     }
-
+    
+    /**
+     * Get the normalized normal vector.
+     * <p>
+     * The frame defined by ({@link #getU getU}, {@link #getV getV},
+     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
+     * </p>
+     * 
+     * @return normalized normal vector
+     * @see #getU
+     * @see #getV
+     */
+    public Vector3D getNormal() {
+        return w;
+    }
     
     /** {@inheritDoc} */
     @Override
     public Vector3D project(Vector3D point) {
         return toSpace(toSubSpace(point));
+    }
+
+    /**
+     * 3D line projected onto plane
+     * @param line the line to project
+     * @return the projection of the given line onto the plane.
+     */
+    public Line project(Line line)
+    {
+        Vector3D direction = line.getDirection();
+        Vector3D projection = w.multiply(direction.dot(w)).multiply(1/Math.pow(w.norm(), 2));
+        Vector3D projectedLineDirection = direction.subtract(projection);
+        Vector3D p1 = project(line.getOrigin());
+        Vector3D p2 = p1.add(projectedLineDirection);
+        return new Line(p1,p2, precision);
     }
 
     /** {@inheritDoc} */
@@ -259,7 +282,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     }
 
     /**
-     * Creates a new reversed version of this plane, with opposite orientation.
+     * Build a new reversed version of this plane, with opposite orientation.
      * <p>
      * The new plane frame is chosen in such a way that a 3D point that had
      * {@code (x, y)} in-plane coordinates and {@code z} offset with respect to the
@@ -269,6 +292,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * {@link #getV} methods are exchanged, and the {@code w} vector returned by the
      * {@link #getNormal} method is reversed.
      * </p>
+     * @return a new reversed plane
      */
     public Plane reverse() {
         final Vector3D tmp = u;
@@ -276,8 +300,8 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         Vector3D v = tmp;
         Vector3D w = this.w.negate();
         double originOffset = -this.originOffset;
-        Vector3D origin = calculateOrigin(w, originOffset);
-        return new Plane(u, v, w, origin, originOffset, this.precision);
+        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
+        return new Plane(u, v, w, projectedOrigin, originOffset, this.precision);
     }
 
     /**
@@ -313,12 +337,12 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return one point in the 3D-space, with given coordinates and offset relative
      *         to the plane
      */
-    public Vector3D getPointAt(final Vector2D inPlane, final double offset) {
+    public Vector3D pointAt(final Vector2D inPlane, final double offset) {
         return Vector3D.linearCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
     }
 
     /**
-     * Check if the instance is similar to another plane.
+     * Check if the instance contains another plane.
      * <p>
      * Planes are considered similar if they contain the same points. This does not
      * mean they are equal since they can have opposite normals.
@@ -327,12 +351,28 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param plane plane to which the instance is compared
      * @return true if the planes are similar
      */
-    public boolean isSimilarTo(final Plane plane) {
-        final double angle = w.angle(plane.w);
+    public boolean contains(final Plane plane) {
+        //final double angle = w.angle(plane.w);
 
-        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
-                || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
+//        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
+//                || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
+    
+        Vector3D u_other = plane.getU();
+        Vector3D v_other = plane.getV();
+        
+        boolean isVOtherInPlane = Vector3D.areCoplanar(u, v, v_other, precision); 
+        boolean isUOtherInPlane = Vector3D.areCoplanar(u, v, u_other, precision);
+        if (isVOtherInPlane && isUOtherInPlane && contains(plane.getOrigin()))
+        {
+            return true;
+        }
+        return false;
+    
+                
+    
     }
+    
+    
 
     /**
      * Rotate the plane around the specified point.
@@ -345,15 +385,15 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return a new plane
      */
     public Plane rotate(final Vector3D center, final QuaternionRotation rotation) {
-        final Vector3D delta = origin.subtract(center);
+        final Vector3D delta = projectedOrigin.subtract(center);
         Vector3D p = center.add(rotation.apply(delta));
         Vector3D normal = rotation.apply(this.w);
         Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
-        Vector3D origin = calculateOrigin(w, originOffset);
+        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
         Vector3D u = rotation.apply(this.u);
         Vector3D v = rotation.apply(this.v);
-        return new Plane(u, v, w, origin, originOffset, this.precision);
+        return new Plane(u, v, w, projectedOrigin, originOffset, this.precision);
     }
 
     /**
@@ -366,12 +406,12 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return a new plane
      */
     public Plane translate(final Vector3D translation) {
-        Vector3D p = origin.add(translation);
+        Vector3D p = projectedOrigin.add(translation);
         Vector3D normal = this.w;
         Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
-        Vector3D origin = calculateOrigin(w, originOffset);
-        return new Plane(this.u, this.v, w, origin, originOffset, this.precision);
+        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
+        return new Plane(this.u, this.v, w, projectedOrigin, originOffset, this.precision);
     }
 
     /**
@@ -481,7 +521,34 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public boolean contains(final Vector3D p) {
         return precision.eqZero(getOffset(p));
     }
+    
+    /**
+     * Check if the instance contains a line
+     * @param line line to check
+     * @return true if line is contained in this plane
+     */
+    public boolean contains(Line line)
+    {
+        Vector3D origin = line.getOrigin();
+        Vector3D direction = line.getDirection();
+        return (contains(origin) && Vector3D.areCoplanar(u, v, direction, precision));
+    }
 
+    /** Check, if the line is parallel to the instance.
+     * @param line line to check.
+     * @return true if the line is parallel to the instance, false otherwise.
+     */
+    public boolean isParallel(Line line) {
+        final Vector3D direction = line.getDirection();
+        final double   dot       = w.dot(direction);
+        if (precision.eqZero(dot)) {
+            return true;
+        }
+        return false;
+    }
+
+    
+    
     /**
      * Get the offset (oriented distance) of a parallel plane.
      * <p>
@@ -501,6 +568,20 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return originOffset + (sameOrientationAs(plane) ? -plane.originOffset : plane.originOffset);
     }
 
+    /**
+     *  Returns the distance of the given line to the plane instance.
+     *  Returns 0.0, if the line is not parallel to the plane instance.
+     * @param line to calculate the distance to the plane instance
+     * @return the distance or 0.0, if the line is not parallel to the plane instance.
+     */
+    public double getOffset(Line line) {
+        if (!isParallel(line))
+        {
+            return 0.0;
+        }
+        return getOffset(line.getOrigin());
+    }
+    
     /**
      * Get the offset (oriented distance) of a point.
      * <p>
@@ -533,14 +614,14 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Plane [originOffset=" + originOffset + ", origin=" + origin + ", u=" + u + ", v=" + v + ", w=" + w
+        return "Plane [originOffset=" + originOffset + ", projectedOrigin=" + projectedOrigin + ", u=" + u + ", v=" + v + ", w=" + w
                 + ", precision=" + precision + "]";
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(origin, originOffset, u, v, w);
+        return Objects.hash(projectedOrigin, originOffset, u, v, w);
     }
 
     /** {@inheritDoc} */
@@ -553,8 +634,12 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         if (getClass() != obj.getClass())
             return false;
         Plane other = (Plane) obj;
-        return Objects.equals(origin, other.origin)
+        return Objects.equals(projectedOrigin, other.projectedOrigin)
                 && Double.doubleToLongBits(originOffset) == Double.doubleToLongBits(other.originOffset)
                 && Objects.equals(u, other.u) && Objects.equals(v, other.v) && Objects.equals(w, other.w);
+    }
+    
+    private static Vector3D calculateOrigin(Vector3D w, double originOffset) {
+        return w.multiply(-originOffset);
     }
 }

@@ -89,7 +89,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     }
 
     /** Returns the abscissa (first coordinate) value of the instance.
-     * @return the abscisaa
+     * @return the abscissa
      */
     public double getX() {
         return x;
@@ -371,6 +371,19 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return transform.apply(this);
     }
 
+    /**
+     * Check if provided vectors are coplanar.
+     * @param u first vector
+     * @param v second vector
+     * @param w third vector
+     * @param precision precision context used to compare floating point values
+     * @return true if vectors a coplanar, false otherwise.
+     */
+    public static boolean areCoplanar(Vector3D u, Vector3D v, Vector3D w, DoublePrecisionContext precision)
+    {
+        return precision.eqZero(u.dot(v.cross(w)));
+    }
+    
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Vector3D vec, final DoublePrecisionContext precision) {
