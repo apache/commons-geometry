@@ -18,8 +18,16 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
+/** Interface used during BSP tree merge operations to how cells are merged.
+ */
 @FunctionalInterface
-public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>> {
+public interface BSPTreeMerger<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 
-    void visit(N node);
+    /** Merge a node from the target tree instance with a node from the tree being
+     * merged in. The return value will replace {@code targetNode} in the target tree.
+     * @param targetNode the node in the target tree
+     * @param mergeNode the node being merged
+     * @return the new node to replace {@code targetNode} in the target tree
+     */
+    N merge(N targetNode, N mergeNode);
 }

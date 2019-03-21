@@ -3,6 +3,7 @@ package org.apache.commons.geometry.core.partition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.commons.geometry.core.partition.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -27,7 +28,7 @@ public class RegionBSPTreeTest {
     }
 
     @Test
-    public void testInitialization() {
+    public void testDefaultConstructor() {
         // assert
         Assert.assertNotNull(root);
         Assert.assertNull(root.getParent());
@@ -37,6 +38,46 @@ public class RegionBSPTreeTest {
         Assert.assertFalse(root.isMinus());
 
         Assert.assertSame(tree, root.getTree());
+
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+    }
+
+    @Test
+    public void testParameterizedConstructor_true() {
+        // act
+        tree = new RegionBSPTree<>(true);
+        root = tree.getRoot();
+
+        // assert
+        Assert.assertNotNull(root);
+        Assert.assertNull(root.getParent());
+
+        PartitionTestUtils.assertIsLeafNode(root);
+        Assert.assertFalse(root.isPlus());
+        Assert.assertFalse(root.isMinus());
+
+        Assert.assertSame(tree, root.getTree());
+
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+    }
+
+    @Test
+    public void testParameterizedConstructor_false() {
+        // act
+        tree = new RegionBSPTree<>(false);
+        root = tree.getRoot();
+
+        // assert
+        Assert.assertNotNull(root);
+        Assert.assertNull(root.getParent());
+
+        PartitionTestUtils.assertIsLeafNode(root);
+        Assert.assertFalse(root.isPlus());
+        Assert.assertFalse(root.isMinus());
+
+        Assert.assertSame(tree, root.getTree());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, root.getLocation());
     }
 
     @Test
@@ -462,6 +503,86 @@ public class RegionBSPTreeTest {
         Assert.assertEquals(origLocations, copyLocations);
     }
 
+    @Test
+    public void testUnion_noCuts() {
+        // act/assert
+        unionChecker(emptyTree(), emptyTree())
+            .full(false)
+            .empty(true)
+            .count(1)
+            .check();
+
+        unionChecker(fullTree(), emptyTree())
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+
+        unionChecker(emptyTree(), fullTree())
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+
+        unionChecker(fullTree(), fullTree())
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+    }
+
+    @Test
+    public void testUnion_singleCutTreeWithNoCuts() {
+        // arrange
+        RegionBSPTree<TestPoint2D> horizontal = fullTree();
+        horizontal.getRoot().cut(TestLine.X_AXIS);
+
+        RegionBSPTree<TestPoint2D> vertical = fullTree();
+        vertical.getRoot().cut(TestLine.Y_AXIS);
+
+        // act
+        unionChecker(horizontal, emptyTree())
+            .count(3)
+            .check();
+
+        unionChecker(emptyTree(), horizontal)
+            .count(3)
+            .check();
+
+        unionChecker(horizontal, fullTree())
+            .full(true)
+            .count(1)
+            .check();
+
+        unionChecker(fullTree(), horizontal)
+            .full(true)
+            .count(1)
+            .check();
+    }
+
+    @Test
+    public void testUnion_singleCutBothTrees() {
+        // arrange
+        RegionBSPTree<TestPoint2D> horizontal = fullTree();
+        horizontal.getRoot().cut(TestLine.X_AXIS);
+
+        RegionBSPTree<TestPoint2D> vertical = fullTree();
+        vertical.getRoot().cut(TestLine.Y_AXIS);
+
+        // act/assert
+        unionChecker(horizontal, vertical)
+            .inside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1), new TestPoint2D(1, 1))
+            .outside(new TestPoint2D(1, -1))
+            .boundary(TestPoint2D.ZERO)
+            .count(5)
+            .check();
+    }
+
+    private MergeChecker unionChecker(final RegionBSPTree<TestPoint2D> r1, final RegionBSPTree<TestPoint2D> r2) {
+        return new MergeChecker(r1, r2, (a, b) -> a.union(b))
+                .inPlace(false);
+    }
+
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
         tree.insert(Arrays.asList(
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
@@ -482,5 +603,156 @@ public class RegionBSPTreeTest {
         TestLineSegment segment = segmentCollection.getLineSegments().get(0);
         PartitionTestUtils.assertPointsEqual(start, segment.getStartPoint());
         PartitionTestUtils.assertPointsEqual(end, segment.getEndPoint());
+    }
+
+    private static RegionBSPTree<TestPoint2D> emptyTree() {
+        return new RegionBSPTree<>(false);
+    }
+
+    private static RegionBSPTree<TestPoint2D> fullTree() {
+        return new RegionBSPTree<>(true);
+    }
+
+    /** Helper interface used when testing tree merge operations.
+     */
+    @FunctionalInterface
+    private static interface MergeOperation {
+        RegionBSPTree<TestPoint2D> merge(RegionBSPTree<TestPoint2D> tree1, RegionBSPTree<TestPoint2D> tree2);
+    }
+
+    /** Helper class with a fluent API used to construct assert conditions on tree merge operations.
+     */
+    private static class MergeChecker {
+
+        private final RegionBSPTree<TestPoint2D> tree1;
+
+        private final RegionBSPTree<TestPoint2D> tree2;
+
+        private final MergeOperation operation;
+
+        private int expectedCount = -1;
+
+        private boolean expectedFull = false;
+
+        private boolean expectedEmpty = false;
+
+        private boolean expectedInPlace = false;
+
+        private List<TestPoint2D> insidePoints = new ArrayList<>();
+
+        private List<TestPoint2D> outsidePoints = new ArrayList<>();
+
+        private List<TestPoint2D> boundaryPoints = new ArrayList<>();
+
+        public MergeChecker(final RegionBSPTree<TestPoint2D> tree1, final RegionBSPTree<TestPoint2D> tree2,
+                final MergeOperation operation) {
+
+            this.tree1 = tree1;
+            this.tree2 = tree2;
+            this.operation = operation;
+        }
+
+        public MergeChecker count(final int expectedCount) {
+            this.expectedCount = expectedCount;
+            return this;
+        }
+
+        public MergeChecker full(final boolean expectedFull) {
+            this.expectedFull = expectedFull;
+            return this;
+        }
+
+        public MergeChecker empty(final boolean expectedEmpty) {
+            this.expectedEmpty = expectedEmpty;
+            return this;
+        }
+
+        public MergeChecker inPlace(final boolean expectedInPlace) {
+            this.expectedInPlace = expectedInPlace;
+            return this;
+        }
+
+        public MergeChecker inside(TestPoint2D ... points) {
+            insidePoints.addAll(Arrays.asList(points));
+            return this;
+        }
+
+        public MergeChecker outside(TestPoint2D ... points) {
+            outsidePoints.addAll(Arrays.asList(points));
+            return this;
+        }
+
+        public MergeChecker boundary(TestPoint2D ... points) {
+            boundaryPoints.addAll(Arrays.asList(points));
+            return this;
+        }
+
+        public void check() {
+            check(null);
+        }
+
+        public void check(final Consumer<RegionBSPTree<TestPoint2D>> assertions) {
+
+            // store the number of nodes in each tree before the operation
+            final int tree1BeforeCount = tree1.count();
+            final long tree1BeforeVersion = tree1.getVersion();
+
+            final int tree2BeforeCount = tree2.count();
+            final long tree2BeforeVersion = tree2.getVersion();
+
+            // perform the operation
+            final RegionBSPTree<TestPoint2D> result = operation.merge(tree1, tree2);
+
+            try {
+                // check full/empty status
+                Assert.assertEquals("Expected tree to be full", expectedFull, result.isFull());
+                Assert.assertEquals("Expected tree to be empty", expectedEmpty, result.isEmpty());
+
+                // check the node count
+                if (expectedCount > -1) {
+                    Assert.assertEquals("Unexpected node count", expectedCount, result.count());
+                }
+
+                // check in place or not
+                if (expectedInPlace) {
+                    Assert.assertSame("Expected merge operation to be in place", tree1, result);
+                }
+                else {
+                    Assert.assertNotSame("Expected merge operation to return a new instance", tree1, result);
+
+                    // make sure that tree1 wasn't modified
+                    Assert.assertEquals("Tree 1 node count should not have changed", tree1BeforeCount, tree1.count());
+                    Assert.assertEquals("Tree 1 version should not have changed", tree1BeforeVersion, tree1.getVersion());
+                }
+
+                // make sure that tree2 wasn't modified
+                Assert.assertEquals("Tree 2 node count should not have changed", tree2BeforeCount, tree2.count());
+                Assert.assertEquals("Tree 2 version should not have changed", tree2BeforeVersion, tree2.getVersion());
+
+                // check region point locations
+                assertPointLocations(result, insidePoints, RegionLocation.INSIDE);
+                assertPointLocations(result, outsidePoints, RegionLocation.OUTSIDE);
+                assertPointLocations(result, boundaryPoints, RegionLocation.BOUNDARY);
+
+                // pass the result to the given function for any additional assertions
+                if (assertions != null) {
+                    assertions.accept(result);
+                }
+            }
+            catch (AssertionError err) {
+                // print the tree for easier debugging
+                PartitionTestUtils.printTree(result);
+
+                throw err;
+            }
+        }
+
+        private void assertPointLocations(final RegionBSPTree<TestPoint2D> result, final List<TestPoint2D> points,
+                final RegionLocation location) {
+
+            for (TestPoint2D p : points) {
+                Assert.assertEquals("Unexpected location for point " + p, location, result.classify(p));
+            }
+        }
     }
 }

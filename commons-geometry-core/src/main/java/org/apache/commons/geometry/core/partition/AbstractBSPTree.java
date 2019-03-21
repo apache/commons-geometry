@@ -43,8 +43,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
 
-    /** Count value set on nodes when the total number of nodes in the subtree is unknown. */
-    private static final int UNKNOWN_NODE_COUNT_VALUE = -1;
+    /** Integer value set on various node fields when a value is unknown. */
+    private static final int UNKNOWN_VALUE = -1;
 
     /** Object used to create new nodes for the tree. */
     private final NodeFactory<P, N> nodeFactory;
@@ -63,7 +63,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     protected AbstractBSPTree(final NodeFactory<P, N> nodeFactory) {
         this.nodeFactory = nodeFactory;
+
         this.root = nodeFactory.apply(this);
+        this.root.setDepth(0);
     }
 
     /** {@inheritDoc} */
@@ -163,7 +165,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst the node representing the destination subtree
      * @return the copied node, ie {@code dst}
      */
-    private N copyRecursive(final N src, final N dst) {
+    protected N copyRecursive(final N src, final N dst) {
 
         ConvexSubHyperplane<P> cut = null;
         N minus = null;
@@ -177,7 +179,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             plus = copyRecursive(src.getPlus(), dstTree.createNode());
         }
 
-        dst.setDepth(src.depth());
         dst.setCutState(cut, plus, minus);
 
         copyNodeProperties(src, dst);
@@ -417,13 +418,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         private long version = -1L;
 
         /** The depth of this node in the tree. */
-        private int depth = 0;
+        private int depth = UNKNOWN_VALUE;
 
         /** The total number of nodes in the subtree rooted at this node. This will be
-         * set to {@link AbstractBSPTree#UNKNOWN_NODE_COUNT_VALUE} when the value needs
+         * set to {@link AbstractBSPTree#UNKNOWN_VALUE} when the value needs
          * to be computed.
          */
-        private int count = UNKNOWN_NODE_COUNT_VALUE;
+        private int count = UNKNOWN_VALUE;
 
         /** Simple constructor.
          * @param tree the tree instance that owns this node
@@ -441,6 +442,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int depth() {
+            if (depth == UNKNOWN_VALUE) {
+                if (parent != null) {
+                    int parentDepth = parent.depth();
+                    if (parentDepth != UNKNOWN_VALUE) {
+                        depth = parentDepth + 1;
+                    }
+                }
+            }
             return depth;
         }
 
@@ -449,7 +458,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         public int count() {
             checkTreeUpdated();
 
-            if (count == UNKNOWN_NODE_COUNT_VALUE) {
+            if (count == UNKNOWN_VALUE) {
                 count = 1;
 
                 if (!isLeaf()) {
@@ -567,7 +576,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             this.cut = cut;
 
             final N self = getSelf();
-            final int childDepth = depth() + 1;
+
+            // get the child depth now if we know it offhand, otherwise set it to the unknown value
+            // and have the child pull it when needed
+            final int childDepth = (depth != UNKNOWN_VALUE) ? depth + 1 : UNKNOWN_VALUE;
 
             if (plus != null) {
                 plus.setParent(self);
@@ -577,7 +589,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
             if (minus != null) {
                 minus.setParent(self);
-                minus.setDepth(childDepth);
+                plus.setDepth(childDepth);
             }
             this.minus = minus;
         }
@@ -603,7 +615,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * and prepare them for recalculation.
          */
         protected void treeUpdated() {
-            count = UNKNOWN_NODE_COUNT_VALUE;
+            count = UNKNOWN_VALUE;
         }
 
         /** Get a reference to the current instance, cast to type N.
