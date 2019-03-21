@@ -579,7 +579,7 @@ public class RegionBSPTreeTest {
     }
 
     private MergeChecker unionChecker(final RegionBSPTree<TestPoint2D> r1, final RegionBSPTree<TestPoint2D> r2) {
-        return new MergeChecker(r1, r2, (a, b) -> a.union(b))
+        return new MergeChecker(r1, r2, RegionBSPTree::union)
                 .inPlace(false);
     }
 
