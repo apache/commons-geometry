@@ -413,12 +413,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
                 final ConvexSubHyperplane<P> minusSubHyperplane = insertSplit.getMinus();
                 final ConvexSubHyperplane<P> plusSubHyperplane = insertSplit.getPlus();
 
-//                System.out.println();
-//                System.out.println("insertSubHyperplane: " + insertSubHyperplane);
-//                System.out.println("node.getCutHyperplane(): " + node.getCutHyperplane());
-//                System.out.println("minusSubHyperplane: " + minusSubHyperplane);
-//                System.out.println("plusSubHyperplane: " + plusSubHyperplane);
-//                System.out.println();
+                System.out.println();
+                System.out.println("insertSubHyperplane: " + insertSubHyperplane);
+                System.out.println("node.getCutHyperplane(): " + node.getCutHyperplane());
+                System.out.println("minusSubHyperplane: " + minusSubHyperplane);
+                System.out.println("plusSubHyperplane: " + plusSubHyperplane);
+                System.out.println();
 
                 final RegionNode<P> nodeMinus = node.getMinus();
                 final RegionNode<P> nodePlus = node.getPlus();

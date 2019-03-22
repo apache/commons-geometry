@@ -575,6 +575,7 @@ public class RegionBSPTreeTest {
             .outside(new TestPoint2D(1, -1))
             .boundary(TestPoint2D.ZERO)
             .count(5)
+            .print(true)
             .check();
     }
 
@@ -624,26 +625,49 @@ public class RegionBSPTreeTest {
      */
     private static class MergeChecker {
 
+        /** First tree in the merge operation */
         private final RegionBSPTree<TestPoint2D> tree1;
 
+        /** Second tree in the merge operation */
         private final RegionBSPTree<TestPoint2D> tree2;
 
+        /** The merge operation itself */
         private final MergeOperation operation;
 
+        /** If true, the resulting tree will be printed to stdout to help with
+         * debugging.
+         */
+        private boolean print;
+
+        /** The expected node count of the merged tree */
         private int expectedCount = -1;
 
+        /** The expected full state of the merged tree */
         private boolean expectedFull = false;
 
+        /** The expected empty state of the merged tree */
         private boolean expectedEmpty = false;
 
+        /** If true, the tree is expected to be modified in place. Otherwise, a new tree
+         * is expected to be returned with both inputs being unmodified
+         */
         private boolean expectedInPlace = false;
 
+        /** Points expected to lie in the inside of the region */
         private List<TestPoint2D> insidePoints = new ArrayList<>();
 
+        /** Points expected to lie on the outside of the region */
         private List<TestPoint2D> outsidePoints = new ArrayList<>();
 
+        /** Points expected to lie on the  boundary of the region */
         private List<TestPoint2D> boundaryPoints = new ArrayList<>();
 
+        /** Construct a new instance that will verify the output of performing the given merge operation
+         * on the input trees.
+         * @param tree1 first tree in the merge operation
+         * @param tree2 second tree in the merge operation
+         * @param operation object performing the merge operation itself
+         */
         public MergeChecker(final RegionBSPTree<TestPoint2D> tree1, final RegionBSPTree<TestPoint2D> tree2,
                 final MergeOperation operation) {
 
@@ -652,45 +676,94 @@ public class RegionBSPTreeTest {
             this.operation = operation;
         }
 
+        /** Set the expected node count of the merged tree
+         * @param expectedCount the expected node count of the merged tree
+         * @return this instance
+         */
         public MergeChecker count(final int expectedCount) {
             this.expectedCount = expectedCount;
             return this;
         }
 
+        /** Set the expected full state of the merged tree.
+         * @param expectedFull the expected full state of the merged tree.
+         * @return this instance
+         */
         public MergeChecker full(final boolean expectedFull) {
             this.expectedFull = expectedFull;
             return this;
         }
 
+        /** Set the expected empty state of the merged tree.
+         * @param expectedEmpty the expected empty state of the merged tree.
+         * @return this instance
+         */
         public MergeChecker empty(final boolean expectedEmpty) {
             this.expectedEmpty = expectedEmpty;
             return this;
         }
 
+        /** Set whether or not the merge operation is expected to be in-place or not,
+         * ie whether it returns a brand new tree or simply modifies the first input.
+         * @param expectedInPlace the expected in-place status of the operation
+         * @return this instance
+         */
         public MergeChecker inPlace(final boolean expectedInPlace) {
             this.expectedInPlace = expectedInPlace;
             return this;
         }
 
+        /** Add points expected to be on the inside of the merged region.
+         * @param points point expected to be on the inside of the merged
+         *      region
+         * @return this instance
+         */
         public MergeChecker inside(TestPoint2D ... points) {
             insidePoints.addAll(Arrays.asList(points));
             return this;
         }
 
+        /** Add points expected to be on the outside of the merged region.
+         * @param points point expected to be on the outside of the merged
+         *      region
+         * @return this instance
+         */
         public MergeChecker outside(TestPoint2D ... points) {
             outsidePoints.addAll(Arrays.asList(points));
             return this;
         }
 
+        /** Add points expected to be on the boundary of the merged region.
+         * @param points point expected to be on the boundary of the merged
+         *      region
+         * @return this instance
+         */
         public MergeChecker boundary(TestPoint2D ... points) {
             boundaryPoints.addAll(Arrays.asList(points));
             return this;
         }
 
+        /** Set the flag for printing the merged tree to stdout before performing assertions.
+         * This can be useful for debugging tests.
+         * @param print if set to true, the merged tree will be printed to stdout
+         * @return this instance
+         */
+        public MergeChecker print(final boolean print) {
+            this.print = print;
+            return this;
+        }
+
+        /** Perform the merge operation and verify the output.
+         */
         public void check() {
             check(null);
         }
 
+        /** Perform the merge operation and verify the output. The given consumer
+         * is passed the merge result and can be used to perform extra assertions.
+         * @param assertions consumer that will be passed the merge result; may
+         *      be null
+         */
         public void check(final Consumer<RegionBSPTree<TestPoint2D>> assertions) {
 
             // store the number of nodes in each tree before the operation
@@ -703,55 +776,80 @@ public class RegionBSPTreeTest {
             // perform the operation
             final RegionBSPTree<TestPoint2D> result = operation.merge(tree1, tree2);
 
-            try {
-                // check full/empty status
-                Assert.assertEquals("Expected tree to be full", expectedFull, result.isFull());
-                Assert.assertEquals("Expected tree to be empty", expectedEmpty, result.isEmpty());
-
-                // check the node count
-                if (expectedCount > -1) {
-                    Assert.assertEquals("Unexpected node count", expectedCount, result.count());
-                }
-
-                // check in place or not
-                if (expectedInPlace) {
-                    Assert.assertSame("Expected merge operation to be in place", tree1, result);
-                }
-                else {
-                    Assert.assertNotSame("Expected merge operation to return a new instance", tree1, result);
-
-                    // make sure that tree1 wasn't modified
-                    Assert.assertEquals("Tree 1 node count should not have changed", tree1BeforeCount, tree1.count());
-                    Assert.assertEquals("Tree 1 version should not have changed", tree1BeforeVersion, tree1.getVersion());
-                }
-
-                // make sure that tree2 wasn't modified
-                Assert.assertEquals("Tree 2 node count should not have changed", tree2BeforeCount, tree2.count());
-                Assert.assertEquals("Tree 2 version should not have changed", tree2BeforeVersion, tree2.getVersion());
-
-                // check region point locations
-                assertPointLocations(result, insidePoints, RegionLocation.INSIDE);
-                assertPointLocations(result, outsidePoints, RegionLocation.OUTSIDE);
-                assertPointLocations(result, boundaryPoints, RegionLocation.BOUNDARY);
-
-                // pass the result to the given function for any additional assertions
-                if (assertions != null) {
-                    assertions.accept(result);
-                }
-            }
-            catch (AssertionError err) {
-                // print the tree for easier debugging
+            if (print) {
                 PartitionTestUtils.printTree(result);
+            }
 
-                throw err;
+            // check full/empty status
+            Assert.assertEquals("Expected tree to be full", expectedFull, result.isFull());
+            Assert.assertEquals("Expected tree to be empty", expectedEmpty, result.isEmpty());
+
+            // check the node count
+            if (expectedCount > -1) {
+                Assert.assertEquals("Unexpected node count", expectedCount, result.count());
+            }
+
+            // check depth properties
+            checkNodeDepths(result);
+
+            // check in place or not
+            if (expectedInPlace) {
+                Assert.assertSame("Expected merge operation to be in place", tree1, result);
+            }
+            else {
+                Assert.assertNotSame("Expected merge operation to return a new instance", tree1, result);
+
+                // make sure that tree1 wasn't modified
+                Assert.assertEquals("Tree 1 node count should not have changed", tree1BeforeCount, tree1.count());
+                Assert.assertEquals("Tree 1 version should not have changed", tree1BeforeVersion, tree1.getVersion());
+            }
+
+            // make sure that tree2 wasn't modified
+            Assert.assertEquals("Tree 2 node count should not have changed", tree2BeforeCount, tree2.count());
+            Assert.assertEquals("Tree 2 version should not have changed", tree2BeforeVersion, tree2.getVersion());
+
+            // check region point locations
+            assertPointLocations(result, insidePoints, RegionLocation.INSIDE);
+            assertPointLocations(result, outsidePoints, RegionLocation.OUTSIDE);
+            assertPointLocations(result, boundaryPoints, RegionLocation.BOUNDARY);
+
+            // pass the result to the given function for any additional assertions
+            if (assertions != null) {
+                assertions.accept(result);
             }
         }
 
-        private void assertPointLocations(final RegionBSPTree<TestPoint2D> result, final List<TestPoint2D> points,
+        /** Check that all nodes in the given tree have a correct 'depth' property. This can be an issue
+         * when nodes are moved around the way they are in the merge operation.
+         * @param tree
+         */
+        private void checkNodeDepths(final RegionBSPTree<TestPoint2D> tree) {
+            checkNodeDepthsRecursive(tree.getRoot(), 0);
+        }
+
+        /** Recursively check that the given nodes and all child nodes have a correct depth property.
+         * @param node
+         * @param expectedDepth
+         */
+        private void checkNodeDepthsRecursive(final RegionNode<TestPoint2D> node, final int expectedDepth) {
+            if (node != null) {
+                Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
+
+                checkNodeDepthsRecursive(node.getPlus(), expectedDepth + 1);
+                checkNodeDepthsRecursive(node.getMinus(), expectedDepth + 1);
+            }
+        }
+
+        /** Assert that all points in the given list lie in the expected location of the region.
+         * @param tree region tree
+         * @param points points to test
+         * @param location expected location of all points
+         */
+        private void assertPointLocations(final RegionBSPTree<TestPoint2D> tree, final List<TestPoint2D> points,
                 final RegionLocation location) {
 
             for (TestPoint2D p : points) {
-                Assert.assertEquals("Unexpected location for point " + p, location, result.classify(p));
+                Assert.assertEquals("Unexpected location for point " + p, location, tree.classify(p));
             }
         }
     }
