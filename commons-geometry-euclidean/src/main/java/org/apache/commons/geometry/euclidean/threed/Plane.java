@@ -355,24 +355,9 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return true if the planes are similar
      */
     public boolean contains(final Plane plane) {
-        //final double angle = w.angle(plane.w);
-
-//        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
-//                || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
-    
-        Vector3D u_other = plane.getU();
-        Vector3D v_other = plane.getV();
-        
-        boolean isVOtherInPlane = Vector3D.areCoplanar(u, v, v_other, precision); 
-        boolean isUOtherInPlane = Vector3D.areCoplanar(u, v, u_other, precision);
-        if (isVOtherInPlane && isUOtherInPlane && contains(plane.getOrigin()))
-        {
-            return true;
-        }
-        return false;
-    
-                
-    
+        final double angle = w.angle(plane.w);
+        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
+                || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
     }
     
     
@@ -649,5 +634,4 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     private boolean areVectorsNormalized(Vector3D u, Vector3D v, Vector3D w, DoublePrecisionContext precision) {
         return precision.eq(u.normSq(), 1) && precision.eq(v.normSq(), 1) && precision.eq(w.normSq(), 1);
     }
-
 }
