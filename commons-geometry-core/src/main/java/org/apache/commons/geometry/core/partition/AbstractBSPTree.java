@@ -52,8 +52,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** The root node for the tree. */
     private final N root;
 
-    /** The current tree modification version. This is incremented each time
-     * a structural change occurs in the tree.
+    /** The current modification version for the tree structure. This is incremented each time
+     * a structural change occurs in the tree and is used to determine when cached values
+     * must be recomputed.
      */
     private long version = 0L;
 
@@ -179,7 +180,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             plus = copyRecursive(src.getPlus(), dstTree.createNode());
         }
 
-        dst.setCutState(cut, plus, minus);
+        dst.setCutState(cut, minus, plus);
 
         copyNodeProperties(src, dst);
 
@@ -343,14 +344,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         N minus = null;
 
         if (cut != null) {
-            plus = createNode();
-            initChildNode(node, plus, true);
-
             minus = createNode();
             initChildNode(node, minus, false);
+
+            plus = createNode();
+            initChildNode(node, plus, true);
         }
 
-        node.setCutState(cut, plus, minus);
+        node.setCutState(cut, minus, plus);
 
         // a structural change occurred, so increment the tree version
         incrementVersion();
@@ -382,8 +383,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     }
 
     /** Abstract implementation of {@link BSPTree.Node}. This class is intended for use with
-     * {@link AbstractBSPTree} and delegates tree mutation methods into the parent tree
-     * class, where the logic can be easily overridden or extended.
+     * {@link AbstractBSPTree} and delegates tree mutation methods back to the parent tree object.
      * @param <P> Point implementation type
      * @param <T> Node implementation type
      */
@@ -401,15 +401,15 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** The subhyperplane cutting the node's region; this will be null for leaf nodes */
         private ConvexSubHyperplane<P> cut;
 
-        /** The node lying on the plus side of the cut subhyperplane; this will be null
-         * for leaf nodes.
-         */
-        private N plus;
-
         /** The node lying on the minus side of the cut subhyperplane; this will be null
          * for leaf nodes.
          */
         private N minus;
+
+        /** The node lying on the plus side of the cut subhyperplane; this will be null
+         * for leaf nodes.
+         */
+        private N plus;
 
         /** The current version of the node. This is set to track the tree's version
          * and is used to detect when certain values need to be recomputed due to
@@ -417,7 +417,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          */
         private long version = -1L;
 
-        /** The depth of this node in the tree. */
+        /** The depth of this node in the tree. This will be zero for the root node and
+         * {@link AbstractBSPTree#UNKNOWN_VALUE} when the value needs to be computed.
+         */
         private int depth = UNKNOWN_VALUE;
 
         /** The total number of nodes in the subtree rooted at this node. This will be
@@ -443,6 +445,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         @Override
         public int depth() {
             if (depth == UNKNOWN_VALUE) {
+                // calculate our depth based on our parent's depth, if
+                // possible
                 if (parent != null) {
                     int parentDepth = parent.depth();
                     if (parentDepth != UNKNOWN_VALUE) {
@@ -569,10 +573,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** Set the cut state of node. The arguments should either be all null or all
          * non-null.
          * @param cut the new cut subhyperplane for the node
-         * @param plus the new plus child for the node
          * @param minus the new minus child for the node
+         * @param plus the new plus child for the node
          */
-        protected void setCutState(final ConvexSubHyperplane<P> cut, final N plus, final N minus) {
+        protected void setCutState(final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
             this.cut = cut;
 
             final N self = getSelf();
@@ -581,21 +585,21 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             // and have the child pull it when needed
             final int childDepth = (depth != UNKNOWN_VALUE) ? depth + 1 : UNKNOWN_VALUE;
 
-            if (plus != null) {
-                plus.setParent(self);
-                plus.setDepth(childDepth);
-            }
-            this.plus = plus;
-
             if (minus != null) {
                 minus.setParent(self);
                 plus.setDepth(childDepth);
             }
             this.minus = minus;
+
+            if (plus != null) {
+                plus.setParent(self);
+                plus.setDepth(childDepth);
+            }
+            this.plus = plus;
         }
 
-        /** Checks if any updates have occurred in the tree since the last
-         * call to this method and calls {@link #treeUpdated()} if so.
+        /** Check if any updates have occurred in the tree since the last
+         * call to this method and call {@link #treeUpdated()} if so.
          */
         protected void checkTreeUpdated() {
             final long treeVersion = tree.getVersion();

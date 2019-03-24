@@ -121,17 +121,17 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          */
         ConvexSubHyperplane<P> getCut();
 
-        /** Get the node for the plus region of the cell. This will be null if the
-         * node has not been cut, ie if it is a leaf node.
-         * @return the node for the plus region of the cell
-         */
-        N getPlus();
-
         /** Get the node for the minus region of the cell. This will be null if the
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the minus region of the cell
          */
         N getMinus();
+
+        /** Get the node for the plus region of the cell. This will be null if the
+         * node has not been cut, ie if it is a leaf node.
+         * @return the node for the plus region of the cell
+         */
+        N getPlus();
 
         /** Return true if the node is a leaf node, meaning that it has no
          * binary partitioner (aka, cut) and therefore no child nodes.
@@ -139,17 +139,17 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          */
         boolean isLeaf();
 
-        /** Return true if the node has a parent and is the parent's plus
-         * child.
-         * @return true if the node is the plus child of its parent
-         */
-        boolean isPlus();
-
         /** Return true if the node has a parent and is the parent's minus
          * child.
          * @return true if the node is the minus child of its parent
          */
         boolean isMinus();
+
+        /** Return true if the node has a parent and is the parent's plus
+         * child.
+         * @return true if the node is the plus child of its parent
+         */
+        boolean isPlus();
 
         /** Insert a cut into this node. If the given hyperplane intersects
          * this node's region, then the node's cut is set to the {@link ConvexSubHyerplane}

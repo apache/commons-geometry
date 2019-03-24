@@ -439,7 +439,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
                     copySubtree(nodePlus, outputPlus);
                 }
 
-                output.setCutState(node.getCut(), outputPlus, outputMinus);
+                output.setCutState(node.getCut(), outputMinus, outputPlus);
             }
         }
 
