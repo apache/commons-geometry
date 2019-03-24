@@ -905,6 +905,9 @@ public class RegionBSPTreeTest {
                 PartitionTestUtils.printTree(result);
             }
 
+            // verify the tree's internal consistency
+            checkTreeConsistency(result);
+
             // check full/empty status
             Assert.assertEquals("Expected tree to be full", expectedFull, result.isFull());
             Assert.assertEquals("Expected tree to be empty", expectedEmpty, result.isEmpty());
@@ -913,9 +916,6 @@ public class RegionBSPTreeTest {
             if (expectedCount > -1) {
                 Assert.assertEquals("Unexpected node count", expectedCount, result.count());
             }
-
-            // check depth properties
-            checkNodeDepths(result);
 
             // check in place or not
             if (expectedInPlace) {
@@ -944,24 +944,33 @@ public class RegionBSPTreeTest {
             }
         }
 
-        /** Check that all nodes in the given tree have a correct 'depth' property. This can be an issue
-         * when nodes are moved around the way they are in the merge operation.
-         * @param tree
+        /** Check the tree for internal consistency.
+         * @param tree tree to check
          */
-        private void checkNodeDepths(final RegionBSPTree<TestPoint2D> tree) {
-            checkNodeDepthsRecursive(tree.getRoot(), 0);
+        private void checkTreeConsistency(final RegionBSPTree<TestPoint2D> tree) {
+            checkTreeConsistencyRecursive(tree, tree.getRoot(), 0);
         }
 
-        /** Recursively check that the given nodes and all child nodes have a correct depth property.
-         * @param node
-         * @param expectedDepth
-         */
-        private void checkNodeDepthsRecursive(final RegionNode<TestPoint2D> node, final int expectedDepth) {
-            if (node != null) {
-                Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
+        private void checkTreeConsistencyRecursive(final RegionBSPTree<TestPoint2D> tree,
+                final RegionNode<TestPoint2D> node, final int expectedDepth) {
 
-                checkNodeDepthsRecursive(node.getPlus(), expectedDepth + 1);
-                checkNodeDepthsRecursive(node.getMinus(), expectedDepth + 1);
+            Assert.assertSame("Node has an incorrect owning tree", tree, node.getTree());
+            Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
+
+            if (node.getCut() == null) {
+                String msg = "Node without cut cannot have children";
+
+                Assert.assertNull(msg, node.getMinus());
+                Assert.assertNull(msg, node.getPlus());
+            }
+            else {
+                String msg = "Node with cut must have children";
+
+                Assert.assertNotNull(msg, node.getMinus());
+                Assert.assertNotNull(msg, node.getPlus());
+
+                checkTreeConsistencyRecursive(tree, node.getPlus(), expectedDepth + 1);
+                checkTreeConsistencyRecursive(tree, node.getMinus(), expectedDepth + 1);
             }
         }
 

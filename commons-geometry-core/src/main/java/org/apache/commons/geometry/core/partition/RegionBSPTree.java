@@ -308,7 +308,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          *      {@link RegionLocation#INSIDE}
          */
         public boolean isInside() {
-            return location == RegionLocation.INSIDE;
+            return getLocation() == RegionLocation.INSIDE;
         }
 
         /** True if the node is a leaf node and has a location of {@link RegionLocation#OUTSIDE}.
@@ -316,7 +316,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          *      {@link RegionLocation#OUTSIDE}
          */
         public boolean isOutside() {
-            return location == RegionLocation.OUTSIDE;
+            return getLocation() == RegionLocation.OUTSIDE;
         }
 
         /** Get the portion of the node's cut subhyperplane that lies on the boundary of the
