@@ -575,29 +575,6 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testDepth_newlyCreatedNode() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-        TestNode root = tree.getRoot();
-
-        TestNode parent = tree.createNode();
-        TestNode childNode = tree.createNode();
-
-        parent.setCutState(new TestLineSegment(
-                new TestPoint2D(0.0, 0.0),
-                new TestPoint2D(0.0, 1.0)), childNode, tree.createNode());
-
-        // act/assert
-        Assert.assertEquals(-1, parent.depth());
-
-        root.setCutState(new TestLineSegment(
-                new TestPoint2D(0.0, 0.0),
-                new TestPoint2D(1.0, 0.0)), parent, tree.createNode());
-
-        Assert.assertEquals(1, parent.depth());
-    }
-
-    @Test
     public void testNodes_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();

@@ -561,7 +561,25 @@ public class RegionBSPTreeTest {
     }
 
     @Test
-    public void testUnion_singleCutBothTrees() {
+    public void testUnion_simple_treeIsCondensed() {
+        // arrange
+        RegionBSPTree<TestPoint2D> box = fullTree();
+        insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
+
+        RegionBSPTree<TestPoint2D> horizontal = fullTree();
+        horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, 2), new TestPoint2D(0, 2)));
+
+        // act/assert
+        unionChecker(horizontal, box)
+            .count(3)
+            .inside(TestPoint2D.ZERO, new TestPoint2D(1, 1), new TestPoint2D(1, -1))
+            .outside(new TestPoint2D(0, 3), new TestPoint2D(3, 3))
+            .boundary(new TestPoint2D(-1, 2), new TestPoint2D(3, 2))
+            .check();
+    }
+
+    @Test
+    public void testUnion_simple_singleCutBothTrees() {
         // arrange
         RegionBSPTree<TestPoint2D> horizontal = fullTree();
         horizontal.getRoot().cut(TestLine.X_AXIS);
@@ -571,17 +589,123 @@ public class RegionBSPTreeTest {
 
         // act/assert
         unionChecker(horizontal, vertical)
+            .count(5)
             .inside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1), new TestPoint2D(1, 1))
             .outside(new TestPoint2D(1, -1))
             .boundary(TestPoint2D.ZERO)
-            .count(5)
-            .print(true)
+            .check(tree -> {
+                TestLineSegment seg = (TestLineSegment) tree.getRoot().getPlus().getCut();
+
+                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), seg.getStartPoint());
+                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getEndPoint());
+            });
+    }
+
+    @Test
+    public void testUnionOf_noCuts() {
+        // act/assert
+        unionOfChecker(emptyTree(), emptyTree())
+            .full(false)
+            .empty(true)
+            .count(1)
+            .check();
+
+        unionOfChecker(fullTree(), emptyTree())
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+
+        unionOfChecker(emptyTree(), fullTree())
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+
+        unionOfChecker(fullTree(), fullTree())
+            .full(true)
+            .empty(false)
+            .count(1)
             .check();
     }
 
-    private MergeChecker unionChecker(final RegionBSPTree<TestPoint2D> r1, final RegionBSPTree<TestPoint2D> r2) {
-        return new MergeChecker(r1, r2, RegionBSPTree::union)
-                .inPlace(false);
+    @Test
+    public void testUnionOf_singleCutTreeWithNoCuts() {
+        // arrange
+        RegionBSPTree<TestPoint2D> horizontal = fullTree();
+        horizontal.getRoot().cut(TestLine.X_AXIS);
+
+        RegionBSPTree<TestPoint2D> vertical = fullTree();
+        vertical.getRoot().cut(TestLine.Y_AXIS);
+
+        // act
+        unionOfChecker(horizontal, emptyTree())
+            .count(3)
+            .check();
+
+        unionOfChecker(emptyTree(), horizontal)
+            .count(3)
+            .check();
+
+        unionOfChecker(horizontal, fullTree())
+            .full(true)
+            .count(1)
+            .check();
+
+        unionOfChecker(fullTree(), horizontal)
+            .full(true)
+            .count(1)
+            .check();
+    }
+
+    @Test
+    public void testUnionOf_singleCutBothTrees() {
+        // arrange
+        RegionBSPTree<TestPoint2D> horizontal = fullTree();
+        horizontal.getRoot().cut(TestLine.X_AXIS);
+
+        RegionBSPTree<TestPoint2D> vertical = fullTree();
+        vertical.getRoot().cut(TestLine.Y_AXIS);
+
+        // act/assert
+        unionOfChecker(horizontal, vertical)
+            .count(5)
+            .inside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1), new TestPoint2D(1, 1))
+            .outside(new TestPoint2D(1, -1))
+            .boundary(TestPoint2D.ZERO)
+            .check(tree -> {
+                TestLineSegment seg = (TestLineSegment) tree.getRoot().getPlus().getCut();
+
+                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), seg.getStartPoint());
+                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getEndPoint());
+            });
+    }
+
+    private static MergeChecker unionChecker(final RegionBSPTree<TestPoint2D> r1, final RegionBSPTree<TestPoint2D> r2) {
+        return new MergeChecker(r1, r2, (a, b) -> {
+            a.union(b);
+            return a;
+        }).inPlace(true);
+    }
+
+    private static MergeChecker unionOfChecker(final RegionBSPTree<TestPoint2D> r1, final RegionBSPTree<TestPoint2D> r2) {
+        return new MergeChecker(r1, r2, (a, b) -> {
+            RegionBSPTree<TestPoint2D> r = fullTree();
+            r.unionOf(a, b);
+            return r;
+        }).inPlace(false);
+    }
+
+    private static void insertBox(final RegionBSPTree<TestPoint2D> tree, final TestPoint2D upperLeft, final TestPoint2D lowerRight) {
+        final TestPoint2D upperRight = new TestPoint2D(lowerRight.getX(), upperLeft.getY());
+        final TestPoint2D lowerLeft = new TestPoint2D(upperLeft.getX(), lowerRight.getY());
+
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(lowerRight, upperRight),
+                    new TestLineSegment(upperRight, upperLeft),
+                    new TestLineSegment(upperLeft, lowerLeft),
+                    new TestLineSegment(lowerLeft, lowerRight)
+                ));
     }
 
     private static void insertSkewedBowtie(final RegionBSPTree<TestPoint2D> tree) {
@@ -748,6 +872,7 @@ public class RegionBSPTreeTest {
          * @param print if set to true, the merged tree will be printed to stdout
          * @return this instance
          */
+        @SuppressWarnings("unused")
         public MergeChecker print(final boolean print) {
             this.print = print;
             return this;

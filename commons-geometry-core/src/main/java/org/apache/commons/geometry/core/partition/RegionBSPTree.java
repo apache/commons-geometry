@@ -43,8 +43,6 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      *      be empty
      */
     public RegionBSPTree(final boolean full) {
-        super(RegionNode<P>::new);
-
         getRoot().setLocation(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
     }
 
@@ -153,18 +151,24 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         }
     }
 
-    public RegionBSPTree<P> union(final RegionBSPTree<P> other) {
-        return new UnionTreeMerger<P>().merge(this, other, this.createTree());
+    public void union(final RegionBSPTree<P> other) {
+        new UnionTreeMerger<P>().merge(this, other, this);
     }
 
-    public RegionBSPTree<P> setUnion(final RegionBSPTree<P> other) {
-        return new UnionTreeMerger<P>().merge(this, other);
+    public void unionOf(final RegionBSPTree<P> regionA, final RegionBSPTree<P> regionB) {
+        new UnionTreeMerger<P>().merge(regionA, regionB, this);
     }
 
     /** {@inheritDoc} */
     @Override
     protected RegionBSPTree<P> createTree() {
         return new RegionBSPTree<P>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected RegionNode<P> createNode() {
+        return new RegionNode<P>(this);
     }
 
     /** {@inheritDoc} */
@@ -381,107 +385,194 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         private RegionBSPTree<P> outputTree;
 
-        public RegionBSPTree<P> merge(final RegionBSPTree<P> inputTree1, final RegionBSPTree<P> inputTree2) {
-            return merge(inputTree1, inputTree2, null);
-        }
-
         public RegionBSPTree<P> merge(final RegionBSPTree<P> inputTree1, final RegionBSPTree<P> inputTree2,
                 final RegionBSPTree<P> outputTree) {
 
-            // store the output tree for use later
             this.outputTree = outputTree;
 
             final RegionNode<P> root1 = inputTree1.getRoot();
             final RegionNode<P> root2 = inputTree2.getRoot();
 
-            final RegionNode<P> outputRoot = (outputTree != null) ? outputTree.getRoot() : root1;
+            final RegionNode<P> outputRoot = mergeRecursive(root1, root2);
+            condense(outputRoot);
 
-            mergeInsertRecursive(root1, root2, root2.getCut(), outputRoot);
+            outputTree.setRoot(outputRoot);
 
             return outputTree;
         }
 
-        private void mergeInsertRecursive(final RegionNode<P> node, final RegionNode<P> inserting,
-                final ConvexSubHyperplane<P> insertSubHyperplane, final RegionNode<P> output) {
+        private RegionNode<P> mergeRecursive(final RegionNode<P> node1, final RegionNode<P> node2) {
 
-            if (node.isLeaf() || inserting.isLeaf()) {
-                mergeCell(node, inserting, output);
+            if (node1.isLeaf() || node2.isLeaf()) {
+                return mergeCell(node1, node2);
             }
             else {
-                final ConvexSubHyperplane.Split<P> insertSplit = insertSubHyperplane.split(node.getCutHyperplane());
+                final RegionNode<P> partitioned = splitSubtree(node2, node1.getCut());
 
-                final ConvexSubHyperplane<P> minusSubHyperplane = insertSplit.getMinus();
-                final ConvexSubHyperplane<P> plusSubHyperplane = insertSplit.getPlus();
+                final RegionNode<P> minus = mergeRecursive(node1.getMinus(), partitioned.getMinus());
 
-                System.out.println();
-                System.out.println("insertSubHyperplane: " + insertSubHyperplane);
-                System.out.println("node.getCutHyperplane(): " + node.getCutHyperplane());
-                System.out.println("minusSubHyperplane: " + minusSubHyperplane);
-                System.out.println("plusSubHyperplane: " + plusSubHyperplane);
-                System.out.println();
+                final RegionNode<P> plus = mergeRecursive(node1.getPlus(), partitioned.getPlus());
 
-                final RegionNode<P> nodeMinus = node.getMinus();
-                final RegionNode<P> nodePlus = node.getPlus();
+                final RegionNode<P> outputNode = outputNode(node1);
+                outputNode.setCutState(node1.getCut(), minus, plus);
 
-                final RegionNode<P> outputMinus = getOutputNode(nodeMinus);
-                if (minusSubHyperplane != null) {
-                    mergeInsertRecursive(nodeMinus, inserting, minusSubHyperplane, outputMinus);
-                }
-                else {
-                    copySubtree(nodeMinus, outputMinus);
-                }
-
-                final RegionNode<P> outputPlus = getOutputNode(nodePlus);
-                if (plusSubHyperplane != null) {
-                    mergeInsertRecursive(nodePlus, inserting, plusSubHyperplane, outputPlus);
-                }
-                else {
-                    copySubtree(nodePlus, outputPlus);
-                }
-
-                output.setCutState(node.getCut(), outputMinus, outputPlus);
+                return outputNode;
             }
         }
 
-        protected void copySubtree(final RegionNode<P> src, final RegionNode<P> output) {
-            if (src != output) {
-                outputTree.copyRecursive(src, output);
+        private RegionNode<P> splitSubtree(final RegionNode<P> node, final ConvexSubHyperplane<P> partitioner) {
+            if (node.isLeaf()) {
+                return splitSubtreeLeaf(node, partitioner);
             }
+            return splitSubtreeCut(node, partitioner);
         }
 
-        protected RegionNode<P> getOutputNode(final RegionNode<P> node) {
-            if (outputTree != null) {
-                RegionNode<P> output = outputTree.createNode();
-                outputTree.copyNodeProperties(node, output);
+        private RegionNode<P> splitSubtreeLeaf(final RegionNode<P> node, final ConvexSubHyperplane<P> partitioner) {
+           final RegionNode<P> parent = outputNode();
+           parent.setCutState(partitioner, outputNode(node), outputNode(node));
 
-                return output;
+           return parent;
+        }
+
+        private RegionNode<P> splitSubtreeCut(final RegionNode<P> node, final ConvexSubHyperplane<P> partitioner) {
+            // split the partitioner and node cut with each other's hyperplanes to determine their relative positions
+            final ConvexSubHyperplane.Split<P> partitionerSplit = partitioner.split(node.getCutHyperplane());
+            final ConvexSubHyperplane.Split<P> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
+
+            final Side partitionerSplitSide = partitionerSplit.getSide();
+            final Side nodeCutSplitSide = nodeCutSplit.getSide();
+
+            final RegionNode<P> result = outputNode();
+
+            RegionNode<P> resultMinus;
+            RegionNode<P> resultPlus;
+
+            if (partitionerSplitSide == Side.PLUS) {
+                if (nodeCutSplitSide == Side.PLUS) {
+                    // partitioner is on node cut plus side, node cut is on partitioner plus side
+                    final RegionNode<P> nodePlusSplit = splitSubtree(node.getPlus(), partitioner);
+
+                    resultMinus = nodePlusSplit.getMinus();
+
+                    resultPlus = outputNode(node);
+                    resultPlus.setCutState(node.getCut(), outputSubtree(node.getMinus()), nodePlusSplit.getPlus());
+                }
+                else {
+                    // partitioner is on node cut plus side, node cut is on partitioner minus side
+                    final RegionNode<P> nodePlusSplit = splitSubtree(node.getPlus(), partitioner);
+
+                    resultMinus = outputNode(node);
+                    resultMinus.setCutState(node.getCut(), outputSubtree(node.getMinus()), nodePlusSplit.getMinus());
+
+                    resultPlus = nodePlusSplit.getPlus();
+                }
+            }
+            else if (partitionerSplitSide == Side.MINUS) {
+                if (nodeCutSplitSide == Side.MINUS) {
+                    // partitioner is on node cut minus side, node cut is on partitioner minus side
+                    final RegionNode<P> nodeMinusSplit = splitSubtree(node.getMinus(), partitioner);
+
+                    resultMinus = outputNode(node);
+                    resultMinus.setCutState(node.getCut(), nodeMinusSplit.getMinus(), outputSubtree(node.getPlus()));
+
+                    resultPlus = nodeMinusSplit.getPlus();
+                }
+                else {
+                    // partitioner is on node cut minus side, node cut is on partitioner plus side
+                    final RegionNode<P> nodeMinusSplit = splitSubtree(node.getMinus(), partitioner);
+
+                    resultMinus = nodeMinusSplit.getMinus();
+
+                    resultPlus = outputNode(node);
+                    resultPlus.setCutState(node.getCut(), nodeMinusSplit.getPlus(), outputSubtree(node.getPlus()));
+                }
+            }
+            else if (partitionerSplitSide == Side.BOTH) {
+                // partitioner and node cut split each other
+                final RegionNode<P> nodeMinusSplit = splitSubtree(node.getMinus(), partitionerSplit.getMinus());
+                final RegionNode<P> nodePlusSplit = splitSubtree(node.getPlus(), partitionerSplit.getPlus());
+
+                resultMinus = outputNode(node);
+                resultMinus.setCutState(nodeCutSplit.getMinus(), nodeMinusSplit.getMinus(), nodePlusSplit.getMinus());
+
+                resultPlus = outputNode(node);
+                resultPlus.setCutState(nodeCutSplit.getPlus(), nodeMinusSplit.getPlus(), nodePlusSplit.getPlus());
+            }
+            else {
+                // partitioner and node cut are parallel or anti-parallel
+                final boolean sameOrientation = partitioner.getHyperplane().sameOrientation(node.getCutHyperplane());
+
+                resultMinus = outputSubtree(sameOrientation ? node.getMinus() : node.getPlus());
+                resultPlus = outputSubtree(sameOrientation ? node.getPlus() : node.getMinus());
+            }
+
+
+            result.setCutState(partitioner, resultMinus, resultPlus);
+
+            return result;
+        }
+
+        protected RegionLocation condense(final RegionNode<P> node) {
+            if (node.isLeaf()) {
+                return node.getLocation();
+            }
+
+            final RegionLocation minusLocation = condense(node.getMinus());
+            final RegionLocation plusLocation = condense(node.getPlus());
+
+            if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
+                node.setLocation(minusLocation);
+                node.clearCut();
+
+                return minusLocation;
+            }
+
+            return null;
+        }
+
+        protected RegionNode<P> outputNode() {
+            return new RegionNode<P>(outputTree);
+        }
+
+        protected RegionNode<P> outputNode(final RegionNode<P> node) {
+            final RegionNode<P> copy = outputNode();
+            outputTree.copyNodeProperties(node, copy);
+
+            return copy;
+        }
+
+        protected RegionNode<P> outputSubtree(final RegionNode<P> node) {
+            if (node.getTree() != outputTree) {
+                final RegionNode<P> outputNode = outputNode();
+                outputTree.copyRecursive(node, outputNode);
+
+                return outputNode;
             }
 
             return node;
         }
 
-        protected abstract void mergeCell(final RegionNode<P> node, final RegionNode<P> inserting,
-                final RegionNode<P> target);
+        protected abstract RegionNode<P> mergeCell(final RegionNode<P> node1, final RegionNode<P> node2);
     }
 
     private static class UnionTreeMerger<P extends Point<P>> extends TreeMerger<P> {
 
         @Override
-        protected void mergeCell(RegionNode<P> node, RegionNode<P> inserting, RegionNode<P> outputNode) {
-            if (node.isLeaf()) {
-                if (node.isInside()) {
-                    outputNode.setLocation(RegionLocation.INSIDE);
+        protected RegionNode<P> mergeCell(RegionNode<P> node1, RegionNode<P> node2) {
+            if (node1.isLeaf()) {
+                if (node1.isInside()) {
+                    return outputNode(node1);
                 }
                 else {
-                    copySubtree(inserting, outputNode);
+                    return outputSubtree(node2);
                 }
             }
             else {
-                if (inserting.isInside()) {
-                    outputNode.setLocation(RegionLocation.INSIDE);
+                if (node2.isInside()) {
+                    return outputNode(node2);
                 }
                 else {
-                    copySubtree(node, outputNode);
+                    return outputSubtree(node1);
                 }
             }
         }

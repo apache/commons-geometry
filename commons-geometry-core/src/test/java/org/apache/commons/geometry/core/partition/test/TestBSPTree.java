@@ -25,12 +25,6 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
 
-    /** Simple constructor.
-     */
-    public TestBSPTree() {
-        super(TestNode::new);
-    }
-
     /** {@inheritDoc} */
     @Override
     public TestBSPTree copy() {
@@ -41,6 +35,12 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
     @Override
     protected TestBSPTree createTree() {
         return new TestBSPTree();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected TestNode createNode() {
+        return new TestNode(this);
     }
 
     /** BSP Tree node class for {@link TestBSPTree}.

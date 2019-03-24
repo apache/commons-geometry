@@ -46,11 +46,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Integer value set on various node fields when a value is unknown. */
     private static final int UNKNOWN_VALUE = -1;
 
-    /** Object used to create new nodes for the tree. */
-    private final NodeFactory<P, N> nodeFactory;
-
     /** The root node for the tree. */
-    private final N root;
+    private N root;
 
     /** The current modification version for the tree structure. This is incremented each time
      * a structural change occurs in the tree and is used to determine when cached values
@@ -58,27 +55,31 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     private long version = 0L;
 
-    /** Construct a new instance that uses the given factory object to produce
-     * tree nodes.
-     * @param nodeFactory object used to create nodes for this instance
-     */
-    protected AbstractBSPTree(final NodeFactory<P, N> nodeFactory) {
-        this.nodeFactory = nodeFactory;
-
-        this.root = nodeFactory.apply(this);
-        this.root.setDepth(0);
-    }
-
     /** {@inheritDoc} */
     @Override
     public N getRoot() {
+        if (root == null) {
+            setRoot(createNode());
+        }
         return root;
+    }
+
+    /** Set the root node for the tree.
+     * @return
+     */
+    protected void setRoot(final N root) {
+        this.root = root;
+
+        this.root.setParent(null);
+        this.root.setDepth(0);
+
+        incrementVersion();
     }
 
     /** {@inheritDoc} */
     @Override
     public int count() {
-        return root.count();
+        return getRoot().count();
     }
 
     /** {@inheritDoc} */
@@ -195,9 +196,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Create a new node for this tree
      * @return a new node for this tree
      */
-    protected N createNode() {
-        return nodeFactory.apply(this);
-    }
+    protected abstract N createNode();
 
     /** Copy node properties from {@code src} to {@code dst}. This method
      * is used when performing a deep copy of the tree and can be used by
