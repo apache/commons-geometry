@@ -32,49 +32,53 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Vector2D> {
 
+    /** First normalized vector of the plane frame (in plane). */
+    private final Vector3D u;
+
+    /** Second normalized vector of the plane frame (in plane). */
+    private final Vector3D v;
+
+    /** Normalized plane normal. */
+    private final Vector3D w;
+
     /** Offset of the origin with respect to the plane. */
     private final double originOffset;
 
     /** orthogonal projection of the 3D-space origin in the plane. */
     private final Vector3D projectedOrigin;
-
-    /** First vector of the plane frame (in plane). */
-    private final Vector3D u;
-
-    /** Second vector of the plane frame (in plane). */
-    private final Vector3D v;
-
-    /** Third vector of the plane frame (normalized plane normal). */
-    private final Vector3D w;
-
+    
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
     /** 
-     * Constructor, made private to prevent inheritance.
-     * 
-     * Builds a new plane with the given values.
+     * Constructor to build a new plane with the given values.
+     * Made private to prevent inheritance.
      * @param u u vector (on plane)
      * @param v v vector (on plane)
      * @param w unit normal vector
      * @param projectedOrigin orthogonal projection of the 3D-space origin in the plane.
      * @param precision precision context used to compare floating point values
-     * @param precision the precision context
-     * @throws IllegalArgumentException if the provided vectors are coplanar
+     * @throws IllegalArgumentException if the provided vectors are coplanar or not normalized
      */
     private Plane(Vector3D u, Vector3D v, Vector3D w, Vector3D projectedOrigin, double originOffset,
             DoublePrecisionContext precision) {
         this.u = u;
         this.v = v;
         this.w = w;
+        
+        if (!areVectorsNormalized(u, v, w, precision))
+        {
+            throw new IllegalArgumentException("Provided vectors must be normalized.");
+        }
         if (Vector3D.areCoplanar(u, v, w, precision))
         {
-            throw new IllegalArgumentException("Provided vectors must not be a coplanar.");
+            throw new IllegalArgumentException("Provided vectors must not be coplanar.");
         }
         this.projectedOrigin = projectedOrigin;
         this.originOffset = originOffset;
         this.precision = precision;
     }
+
     
     /**
      * Build a plane from a point and two (on plane) vectors.
@@ -84,6 +88,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param precision precision context used to compare floating point values
      * @return a new plane
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     * @throws IllegalArgumentException if the provided vectors are collinear 
      */
     public static Plane fromPointAndPlaneVectors (Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
     {
@@ -101,10 +106,9 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @exception IllegalArgumentException if the normal norm is too small
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
      */
-    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision)
-            throws IllegalArgumentException {
+    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision){
         return fromPointAndNormal(Vector3D.ZERO, normal, precision);
     }
 
@@ -115,10 +119,9 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @exception IllegalArgumentException if the normal norm is too small
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
      */
-    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision)
-            throws IllegalArgumentException {
+    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision) {
         Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
         Vector3D projectedOrigin = calculateOrigin(w, originOffset);
@@ -138,10 +141,10 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param p3        third point belonging to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @exception IllegalArgumentException if the points do not constitute a plane
+     * @throws IllegalNormException if the points do not constitute a plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final DoublePrecisionContext precision) throws IllegalArgumentException {
+            final DoublePrecisionContext precision) {
         return Plane.fromPointAndNormal(p1, p2.subtract(p1).cross(p3.subtract(p1)), precision);
     }
 
@@ -642,4 +645,9 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     private static Vector3D calculateOrigin(Vector3D w, double originOffset) {
         return w.multiply(-originOffset);
     }
+    
+    private boolean areVectorsNormalized(Vector3D u, Vector3D v, Vector3D w, DoublePrecisionContext precision) {
+        return precision.eq(u.normSq(), 1) && precision.eq(v.normSq(), 1) && precision.eq(w.normSq(), 1);
+    }
+
 }

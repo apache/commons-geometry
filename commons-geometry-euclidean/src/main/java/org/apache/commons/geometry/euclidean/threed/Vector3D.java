@@ -377,7 +377,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param v second vector
      * @param w third vector
      * @param precision precision context used to compare floating point values
-     * @return true if vectors a coplanar, false otherwise.
+     * @return true if vectors are coplanar, false otherwise.
      */
     public static boolean areCoplanar(Vector3D u, Vector3D v, Vector3D w, DoublePrecisionContext precision)
     {

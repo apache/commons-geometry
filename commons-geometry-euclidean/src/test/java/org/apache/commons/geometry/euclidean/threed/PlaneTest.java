@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -30,6 +31,26 @@ public class PlaneTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testUAndVAreIdentical() {
+        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testUAndVAreCollinear() {
+        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testUAndVAreCollinear2() {
+        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
+    }
+
+    @Test(expected=IllegalNormException.class)
+    public void testPointsDoNotConstituteAPlane() {
+        Plane.fromPoints(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 1, 0), TEST_PRECISION);
+    }
+    
     @Test
     public void testContains() {
         Plane p = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
