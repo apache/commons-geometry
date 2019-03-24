@@ -552,28 +552,23 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             return node;
         }
 
-        protected abstract RegionNode<P> mergeCell(final RegionNode<P> node1, final RegionNode<P> node2);
+        protected RegionNode<P> mergeCell(final RegionNode<P> node1, final RegionNode<P> node2) {
+            final RegionNode<P> result = mergeCellInternal(node1, node2);
+            return outputSubtree(result);
+        }
+
+        protected abstract RegionNode<P> mergeCellInternal(final RegionNode<P> node1, final RegionNode<P> node2);
     }
 
     private static class UnionTreeMerger<P extends Point<P>> extends TreeMerger<P> {
 
         @Override
-        protected RegionNode<P> mergeCell(RegionNode<P> node1, RegionNode<P> node2) {
+        protected RegionNode<P> mergeCellInternal(RegionNode<P> node1, RegionNode<P> node2) {
             if (node1.isLeaf()) {
-                if (node1.isInside()) {
-                    return outputNode(node1);
-                }
-                else {
-                    return outputSubtree(node2);
-                }
+                return node1.isInside() ? node1 : node2;
             }
             else {
-                if (node2.isInside()) {
-                    return outputNode(node2);
-                }
-                else {
-                    return outputSubtree(node1);
-                }
+                return node2.isInside() ? node2 : node1;
             }
         }
     }
