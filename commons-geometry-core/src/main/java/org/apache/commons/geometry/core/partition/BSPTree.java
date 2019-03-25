@@ -19,8 +19,8 @@ package org.apache.commons.geometry.core.partition;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface for Binary Space Partitioning (BSP) trees.
- * @param <P> Point type
- * @param <N> Node type
+ * @param <P> Point implementation type
+ * @param <N> Node implementation type
  */
 public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 
@@ -74,10 +74,10 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     Iterable<N> leafNodes();
 
-    /** Return an iterable for iterating through the cut (internal) nodes of the tree.
-     * @return an iterable for iterating through the cut nodes of the tree
+    /** Return an iterable for iterating through the internal nodes of the tree.
+     * @return an iterable for iterating through the internal nodes of the tree
      */
-    Iterable<N> cutNodes();
+    Iterable<N> internalNodes();
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance

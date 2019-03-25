@@ -680,7 +680,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree.cutNodes())
+        for (TestNode node : tree.internalNodes())
         {
             nodes.add(node);
         }
@@ -705,7 +705,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree.cutNodes())
+        for (TestNode node : tree.internalNodes())
         {
             nodes.add(node);
         }

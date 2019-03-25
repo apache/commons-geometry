@@ -142,7 +142,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public Iterable<N> cutNodes() {
+    public Iterable<N> internalNodes() {
         return new Iterable<N>() {
             /** {@inheritDoc} */
             @Override
