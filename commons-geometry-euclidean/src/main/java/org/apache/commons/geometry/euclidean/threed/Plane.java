@@ -78,7 +78,6 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         this.originOffset = originOffset;
         this.precision = precision;
     }
-
     
     /**
      * Build a plane from a point and two (on plane) vectors.
@@ -94,10 +93,10 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     {
         Vector3D u_norm = u.normalize();
         Vector3D v_norm = v.normalize();
-        Vector3D w = u_norm.cross(v_norm);
-        double originOffset = -p.dot(w);
-        Vector3D projectedOrigin = calculateOrigin(w, originOffset);
-        return new Plane(u_norm, v_norm, w, projectedOrigin, originOffset, precision);
+        Vector3D w_norm = u_norm.cross(v_norm).normalize();
+        double originOffset = -p.dot(w_norm);
+        Vector3D projectedOrigin = calculateOrigin(w_norm, originOffset);
+        return new Plane(u_norm, v_norm, w_norm, projectedOrigin, originOffset, precision);
     }
     
     /**
@@ -535,7 +534,14 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return false;
     }
 
-    
+    /** Check, if the plane is parallel to the instance.
+     * @param plane plane to check.
+     * @return true if the plane is parallel to the instance, false otherwise.
+     */
+    public boolean isParallel(Plane plane) {
+        return precision.eqZero(w.cross(plane.w).norm());
+    }
+
     
     /**
      * Get the offset (oriented distance) of a parallel plane.
