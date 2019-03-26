@@ -977,6 +977,108 @@ public class AbstractBSPTreeTest {
         Assert.assertEquals(5, copy.count());
     }
 
+    @Test
+    public void testTreeString() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus().cut(TestLine.Y_AXIS);
+
+        // act
+        String str = tree.treeString();
+
+        // assert
+        String[] lines = str.split("\n");
+        Assert.assertEquals(5, lines.length);
+        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assert.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
+        Assert.assertEquals("        [-] TestNode[cut= null]", lines[2]);
+        Assert.assertEquals("        [+] TestNode[cut= null]", lines[3]);
+        Assert.assertEquals("    [+] TestNode[cut= null]", lines[4]);
+    }
+
+    @Test
+    public void testTreeString_emptyTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        // act
+        String str = tree.treeString();
+
+        // assert
+        Assert.assertEquals("TestNode[cut= null]", str);
+    }
+
+    @Test
+    public void testTreeString_reachesMaxDepth() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus().cut(TestLine.Y_AXIS)
+            .getMinus().cut(new TestLine(new TestPoint2D(-2, 1), new TestPoint2D(0, 1)));
+
+        // act
+        String str = tree.treeString(1);
+
+        // assert
+        String[] lines = str.split("\n");
+        Assert.assertEquals(4, lines.length);
+        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assert.assertTrue(lines[1].startsWith("    [-] TestNode[cut= TestLineSegment"));
+        Assert.assertEquals("        ...", lines[2]);
+        Assert.assertEquals("    [+] TestNode[cut= null]", lines[3]);
+    }
+
+    @Test
+    public void testTreeString_zeroMaxDepth() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus().cut(TestLine.Y_AXIS)
+            .getMinus().cut(new TestLine(new TestPoint2D(-2, 1), new TestPoint2D(0, 1)));
+
+        // act
+        String str = tree.treeString(0);
+
+        // assert
+        String[] lines = str.split("\n");
+        Assert.assertEquals(2, lines.length);
+        Assert.assertTrue(lines[0].startsWith("TestNode[cut= TestLineSegment"));
+        Assert.assertTrue(lines[1].startsWith("    ..."));
+    }
+
+    @Test
+    public void testTreeString_negativeMaxDepth() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus().cut(TestLine.Y_AXIS)
+            .getMinus().cut(new TestLine(new TestPoint2D(-2, 1), new TestPoint2D(0, 1)));
+
+        // act
+        String str = tree.treeString(-1);
+
+        // assert
+        Assert.assertEquals("", str);
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().insertCut(TestLine.Y_AXIS);
+
+        // act
+        String str = tree.toString();
+
+        // assert
+        String msg = "Unexpected toString() representation: " + str;
+
+        Assert.assertTrue(msg, str.contains("TestBSPTree"));
+        Assert.assertTrue(msg, str.contains("count= 3"));
+        Assert.assertTrue(msg, str.contains("height= 1"));
+    }
+
     private void assertNodesCopiedRecursive(final TestNode orig, final TestNode copy) {
         Assert.assertNotSame(orig, copy);
 

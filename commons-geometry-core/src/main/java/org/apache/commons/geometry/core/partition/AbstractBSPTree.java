@@ -35,6 +35,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
 
+    /** The default number of levels to print when creating a string representation of the tree */
+    private static final int DEFAULT_TREE_STRING_MAX_DEPTH = 8;
+
     /** Integer value set on various node fields when a value is unknown. */
     private static final int UNKNOWN_VALUE = -1;
 
@@ -126,6 +129,38 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         copyRecursive(getRoot(), copy.getRoot());
 
         return copy;
+    }
+
+    /** Get a simple string representation of the tree structure. The returned string contains
+     * the tree structure down to the default max depth of {@value #DEFAULT_TREE_STRING_MAX_DEPTH}.
+     * @return a string representation of the tree
+     */
+    public String treeString() {
+        return treeString(DEFAULT_TREE_STRING_MAX_DEPTH);
+    }
+
+    /** Get a simple string representation of the tree structure. The returned string contains
+     * the tree structure down to {@code maxDepth}.
+     * @return a string representation of the tree
+     */
+    public String treeString(final int maxDepth) {
+        BSPTreePrinter<P, N> printer = new BSPTreePrinter<>(maxDepth);
+        visit(printer);
+
+        return printer.toString();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append(getClass().getSimpleName())
+                .append("[count= ")
+                .append(count())
+                .append(", height= ")
+                .append(height())
+                .append("]")
+                .toString();
     }
 
     /** Recursively copy a subtree.
