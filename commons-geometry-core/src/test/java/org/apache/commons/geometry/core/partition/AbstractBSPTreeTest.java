@@ -19,7 +19,9 @@ package org.apache.commons.geometry.core.partition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.geometry.core.partition.BSPTree.NodeSearchCutBehavior;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
@@ -63,14 +65,17 @@ public class AbstractBSPTreeTest {
 
         // act/assert
         Assert.assertFalse(root.isLeaf());
+        Assert.assertTrue(root.isInternal());
         Assert.assertFalse(root.isPlus());
         Assert.assertFalse(root.isMinus());
 
         Assert.assertTrue(plus.isLeaf());
+        Assert.assertFalse(plus.isInternal());
         Assert.assertTrue(plus.isPlus());
         Assert.assertFalse(plus.isMinus());
 
         Assert.assertTrue(minus.isLeaf());
+        Assert.assertFalse(minus.isInternal());
         Assert.assertFalse(minus.isPlus());
         Assert.assertTrue(minus.isMinus());
     }
@@ -284,21 +289,38 @@ public class AbstractBSPTreeTest {
         TestBSPTree tree = new TestBSPTree();
         TestNode root = tree.getRoot();
 
-        // act/assert
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0)));
+        List<TestPoint2D> testPoints = Arrays.asList(
+                    new TestPoint2D(0, 0),
+                    new TestPoint2D(1, 0),
+                    new TestPoint2D(1, 1),
+                    new TestPoint2D(0, 1),
+                    new TestPoint2D(-1, 1),
+                    new TestPoint2D(-1, 0),
+                    new TestPoint2D(-1, -1),
+                    new TestPoint2D(0, -1),
+                    new TestPoint2D(1, -1)
+                );
 
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, 0)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, 1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, 1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, 0)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, -1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, -1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, -1)));
+        // act/assert
+        for (TestPoint2D pt : testPoints) {
+            Assert.assertSame(root, tree.findNode(pt));
+        }
+
+        for (TestPoint2D pt : testPoints) {
+            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.NODE));
+        }
+
+        for (TestPoint2D pt : testPoints) {
+            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.MINUS));
+        }
+
+        for (TestPoint2D pt : testPoints) {
+            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.PLUS));
+        }
     }
 
     @Test
-    public void testFindNode_populatedTree() {
+    public void testFindNode_singleArg() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
@@ -320,19 +342,139 @@ public class AbstractBSPTreeTest {
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
         // act/assert
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0)));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0)));
 
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, 0)));
-        Assert.assertSame(diagonalCut, tree.findNode(new TestPoint2D(1, 1)));
-        Assert.assertSame(yCut, tree.findNode(new TestPoint2D(0, 1)));
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0)));
+        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1)));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1)));
         Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1)));
-        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, 0)));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0)));
         Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1)));
         Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1)));
         Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1)));
 
         Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5)));
         Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3)));
+    }
+
+    @Test
+    public void testFindNode_nodeCutBehavior() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        tree.getRoot()
+                .cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                    .getPlus()
+                        .cut(new TestLine(0, 2, 2, 0));
+
+        TestNode root = tree.getRoot();
+        TestNode minusY = root.getPlus();
+
+        TestNode yCut = root.getMinus();
+        TestNode minusXPlusY = yCut.getMinus();
+
+        TestNode diagonalCut = yCut.getPlus();
+        TestNode underDiagonal = diagonalCut.getPlus();
+        TestNode aboveDiagonal = diagonalCut.getMinus();
+
+        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.NODE;
+
+        // act/assert
+        Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+
+        Assert.assertSame(root, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assert.assertSame(diagonalCut, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assert.assertSame(yCut, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assert.assertSame(root, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
+    }
+
+    @Test
+    public void testFindNode_minusCutBehavior() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        tree.getRoot()
+                .cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                    .getPlus()
+                        .cut(new TestLine(0, 2, 2, 0));
+
+        TestNode root = tree.getRoot();
+        TestNode minusY = root.getPlus();
+
+        TestNode yCut = root.getMinus();
+        TestNode minusXPlusY = yCut.getMinus();
+
+        TestNode diagonalCut = yCut.getPlus();
+        TestNode underDiagonal = diagonalCut.getPlus();
+        TestNode aboveDiagonal = diagonalCut.getMinus();
+
+        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.MINUS;
+
+        // act/assert
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
+    }
+
+    @Test
+    public void testFindNode_plusCutBehavior() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        tree.getRoot()
+                .cut(TestLine.X_AXIS)
+                .getMinus()
+                    .cut(TestLine.Y_AXIS)
+                    .getPlus()
+                        .cut(new TestLine(0, 2, 2, 0));
+
+        TestNode root = tree.getRoot();
+        TestNode minusY = root.getPlus();
+
+        TestNode yCut = root.getMinus();
+        TestNode minusXPlusY = yCut.getMinus();
+
+        TestNode diagonalCut = yCut.getPlus();
+        TestNode underDiagonal = diagonalCut.getPlus();
+        TestNode aboveDiagonal = diagonalCut.getMinus();
+
+        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.PLUS;
+
+        // act/assert
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
+
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, 0), cutBehavior));
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(1, 1), cutBehavior));
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0, 1), cutBehavior));
+        Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(-1, 1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, 0), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(-1, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, -1), cutBehavior));
+        Assert.assertSame(minusY, tree.findNode(new TestPoint2D(1, -1), cutBehavior));
+
+        Assert.assertSame(underDiagonal, tree.findNode(new TestPoint2D(0.5, 0.5), cutBehavior));
+        Assert.assertSame(aboveDiagonal, tree.findNode(new TestPoint2D(3, 3), cutBehavior));
     }
 
     @Test
@@ -555,6 +697,43 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testHeight() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        // act/assert
+        Assert.assertEquals(0, tree.height());
+        Assert.assertEquals(0, tree.getRoot().height());
+
+        tree.getRoot().insertCut(TestLine.X_AXIS);
+        Assert.assertEquals(0, tree.getRoot().getMinus().height());
+        Assert.assertEquals(0, tree.getRoot().getPlus().height());
+        Assert.assertEquals(1, tree.height());
+
+        tree.getRoot().getPlus().insertCut(TestLine.Y_AXIS);
+        Assert.assertEquals(0, tree.getRoot().getMinus().height());
+        Assert.assertEquals(1, tree.getRoot().getPlus().height());
+        Assert.assertEquals(2, tree.height());
+
+        tree.getRoot().getMinus().insertCut(TestLine.Y_AXIS);
+        Assert.assertEquals(1, tree.getRoot().getMinus().height());
+        Assert.assertEquals(1, tree.getRoot().getPlus().height());
+        Assert.assertEquals(2, tree.height());
+
+        tree.getRoot().getMinus().clearCut();
+        Assert.assertEquals(0, tree.getRoot().getMinus().height());
+        Assert.assertEquals(1, tree.getRoot().getPlus().height());
+        Assert.assertEquals(2, tree.height());
+
+        tree.getRoot().getPlus().getPlus()
+            .insertCut(new TestLine(new TestPoint2D(0, -1), new TestPoint2D(1, -1)));
+
+        Assert.assertEquals(0, tree.getRoot().getMinus().height());
+        Assert.assertEquals(2, tree.getRoot().getPlus().height());
+        Assert.assertEquals(3, tree.height());
+    }
+
+    @Test
     public void testDepth() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
@@ -575,13 +754,13 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodes_emptyTree() {
+    public void testIterable_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree.nodes())
+        for (TestNode node : tree)
         {
             nodes.add(node);
         }
@@ -592,7 +771,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodes_multipleNodes() {
+    public void testIterable_multipleNodes() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
@@ -607,7 +786,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree.nodes())
+        for (TestNode node : tree)
         {
             nodes.add(node);
         }
@@ -626,16 +805,12 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testLeafNodes_emptyTree() {
+    public void testStream_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
-        List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree.leafNodes())
-        {
-            nodes.add(node);
-        }
+        List<TestNode> nodes = tree.stream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, nodes.size());
@@ -643,7 +818,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testLeafNodes_multipleNodes() {
+    public void testStream_multipleNodes() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
@@ -655,67 +830,98 @@ public class AbstractBSPTreeTest {
                  .getPlus()
                      .cut(TestLine.Y_AXIS);
 
-        List<TestNode> nodes = new ArrayList<>();
-
         // act
-        for (TestNode node : tree.leafNodes())
-        {
-            nodes.add(node);
-        }
+        List<TestNode> nodes = tree.stream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(4, nodes.size());
+        Assert.assertEquals(7, nodes.size());
+        Assert.assertSame(root, nodes.get(0));
 
-        Assert.assertSame(root.getMinus().getMinus(), nodes.get(0));
-        Assert.assertSame(root.getMinus().getPlus(), nodes.get(1));
+        Assert.assertSame(root.getMinus(), nodes.get(1));
+        Assert.assertSame(root.getMinus().getMinus(), nodes.get(2));
+        Assert.assertSame(root.getMinus().getPlus(), nodes.get(3));
 
-        Assert.assertSame(root.getPlus().getMinus(), nodes.get(2));
-        Assert.assertSame(root.getPlus().getPlus(), nodes.get(3));
+        Assert.assertSame(root.getPlus(), nodes.get(4));
+        Assert.assertSame(root.getPlus().getMinus(), nodes.get(5));
+        Assert.assertSame(root.getPlus().getPlus(), nodes.get(6));
     }
 
     @Test
-    public void testCutNodes_emptyTree() {
+    public void testNodeIterable_singleNodeSubtree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
-        List<TestNode> nodes = new ArrayList<>();
+        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS)
+                .getMinus();
 
+        List<TestNode> nodes = new ArrayList<>();
         // act
-        for (TestNode node : tree.internalNodes())
+        for (TestNode n : node)
         {
-            nodes.add(node);
+            nodes.add(n);
         }
 
         // assert
-        Assert.assertEquals(0, nodes.size());
+        Assert.assertEquals(1, nodes.size());
+        Assert.assertSame(node, nodes.get(0));
     }
 
     @Test
-    public void testCutNodes_multipleNodes() {
+    public void testNodeIterable_multipleNodeSubtree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
-
-        TestNode root = tree.getRoot();
-        root.cut(TestLine.X_AXIS)
-                .getMinus()
-                    .cut(TestLine.Y_AXIS)
-                 .getParent()
-                 .getPlus()
-                     .cut(TestLine.Y_AXIS);
+        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
 
         List<TestNode> nodes = new ArrayList<>();
-
         // act
-        for (TestNode node : tree.internalNodes())
+        for (TestNode n : node)
         {
-            nodes.add(node);
+            nodes.add(n);
         }
 
         // assert
         Assert.assertEquals(3, nodes.size());
-        Assert.assertSame(root, nodes.get(0));
+        Assert.assertSame(node, nodes.get(0));
+        Assert.assertSame(node.getMinus(), nodes.get(1));
+        Assert.assertSame(node.getPlus(), nodes.get(2));
+    }
 
-        Assert.assertSame(root.getMinus(), nodes.get(1));
-        Assert.assertSame(root.getPlus(), nodes.get(2));
+    @Test
+    public void testNodeStream_singleNodeSubtree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS)
+                .getMinus();
+
+        // act
+        List<TestNode> nodes = node.stream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(1, nodes.size());
+        Assert.assertSame(node, nodes.get(0));
+    }
+
+    @Test
+    public void testNodeStream_multipleNodeSubtree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        List<TestNode> nodes = node.stream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(3, nodes.size());
+        Assert.assertSame(node, nodes.get(0));
+        Assert.assertSame(node.getMinus(), nodes.get(1));
+        Assert.assertSame(node.getPlus(), nodes.get(2));
     }
 
     @Test
@@ -811,7 +1017,7 @@ public class AbstractBSPTreeTest {
         List<TestLineSegment> list = new ArrayList<>();
 
         tree.visit(node -> {
-            if (!node.isLeaf()) {
+            if (node.isInternal()) {
                 list.add((TestLineSegment) node.getCut());
             }
         });

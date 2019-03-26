@@ -21,7 +21,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.geometry.core.Point;
@@ -30,15 +29,8 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <T> Node implementation type
  */
-public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>> implements BSPTree<P, N>, Serializable {
-
-    /** Interface for objects that construct instances of {@link AbstractNode}.
-     * @param <P> Point implementation type
-     * @param <T> Node attribute type
-     */
-    protected static interface NodeFactory<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
-        extends Function<AbstractBSPTree<P, N>, N> {
-    }
+public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
+    implements BSPTree<P, N>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190225L;
@@ -84,14 +76,20 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
+    public int height() {
+        return getRoot().height();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void visit(final BSPTreeVisitor<P, N> visitor) {
         visit(getRoot(), visitor);
     }
 
     /** {@inheritDoc} */
     @Override
-    public N findNode(final P pt) {
-        return findNode(getRoot(), pt);
+    public N findNode(final P pt, final NodeSearchCutBehavior cutBehavior) {
+        return findNode(getRoot(), pt, cutBehavior);
     }
 
     /** {@inheritDoc} */
@@ -115,42 +113,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** {@inheritDoc} */
+    /** Return an iterator over the nodes in the tree */
     @Override
-    public Iterable<N> nodes() {
-        return new Iterable<N>() {
-            /** {@inheritDoc} */
-            @Override
-            public Iterator<N> iterator() {
-                return new NodeIterator<P, N>(AbstractBSPTree.this);
-            }
-        };
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Iterable<N> leafNodes() {
-        return new Iterable<N>() {
-            /** {@inheritDoc} */
-            @Override
-            public Iterator<N> iterator() {
-                final NodeIterator<P, N> iterator = new NodeIterator<P, N>(AbstractBSPTree.this);
-                return new FilteredNodeIteratorWrapper<P, N>(iterator, n -> n.isLeaf());
-            }
-        };
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Iterable<N> internalNodes() {
-        return new Iterable<N>() {
-            /** {@inheritDoc} */
-            @Override
-            public Iterator<N> iterator() {
-                final NodeIterator<P, N> iterator = new NodeIterator<P, N>(AbstractBSPTree.this);
-                return new FilteredNodeIteratorWrapper<P, N>(iterator, n -> !n.isLeaf());
-            }
-        };
+    public Iterator<N> iterator() {
+        return new NodeIterator<>(getRoot());
     }
 
     /** {@inheritDoc} */
@@ -211,18 +177,24 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * at the given node.
      * @param start the node to begin the search with
      * @param pt the point to check
+     * @param cutBehavior value determining the search behavior when the test point
+     *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    protected N findNode(final N start, final P pt) {
+    protected N findNode(final N start, final P pt, final NodeSearchCutBehavior cutBehavior) {
         Hyperplane<P> hyper = start.getCutHyperplane();
         if (hyper != null) {
             Side side = hyper.classify(pt);
 
-            if (side == Side.PLUS) {
-                return findNode(start.getPlus(), pt);
+            final boolean onPlusSide = side == Side.PLUS;
+            final boolean onMinusSide = side == Side.MINUS;
+            final boolean onCut = !onPlusSide && !onMinusSide;
+
+            if (onMinusSide || (onCut && cutBehavior == NodeSearchCutBehavior.MINUS)) {
+                return findNode(start.getMinus(), pt, cutBehavior);
             }
-            else if (side == Side.MINUS) {
-                return findNode(start.getMinus(), pt);
+            else if (onPlusSide || (onCut && cutBehavior == NodeSearchCutBehavior.PLUS)) {
+                return findNode(start.getPlus(), pt, cutBehavior);
             }
         }
         return start;
@@ -427,6 +399,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          */
         private int count = UNKNOWN_VALUE;
 
+        /** The height of the subtree rooted at this node. This will
+         * be set to {@link AbstractBSPTree#UNKNOWN_VALUE} when the value needs
+         * to be computed.
+         */
+        private int height = UNKNOWN_VALUE;
+
         /** Simple constructor.
          * @param tree the tree instance that owns this node
          */
@@ -458,6 +436,23 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
+        public int height() {
+            checkTreeUpdated();
+
+            if (height == UNKNOWN_VALUE) {
+                if (isLeaf()) {
+                    height = 0;
+                }
+                else {
+                    height = Math.max(getMinus().height(), getPlus().height()) + 1;
+                }
+            }
+
+            return height;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public int count() {
             checkTreeUpdated();
 
@@ -474,6 +469,18 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
+        public Iterator<N> iterator() {
+            return new NodeIterator<P, N>(getSelf());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visit(final BSPTreeVisitor<P, N> visitor) {
+            tree.visit(getSelf(), visitor);
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public N getParent() {
             return parent;
         }
@@ -482,6 +489,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         @Override
         public boolean isLeaf() {
             return cut == null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean isInternal() {
+            return cut != null;
         }
 
         /** {@inheritDoc} */
@@ -619,6 +632,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          */
         protected void treeUpdated() {
             count = UNKNOWN_VALUE;
+            height = UNKNOWN_VALUE;
         }
 
         /** Get a reference to the current instance, cast to type N.
@@ -627,7 +641,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         protected abstract N getSelf();
     }
 
-    /** Class for iterating through the nodes in a BSP tree.
+    /** Class for iterating through the nodes in a BSP subtree.
      * @param <P> Point implementation type
      * @param <N> Node implementation type
      */
@@ -636,11 +650,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** The current node stack */
         private final Deque<N> stack = new LinkedList<>();
 
-        /** Create a new instance for iterating over the nodes in the given tree.
-         * @param tree the tree to iterate
+        /** Create a new instance for iterating over the nodes in the given subtree.
+         * @param subtreeRoot the root node of the subtree to iterate
          */
-        public NodeIterator(final AbstractBSPTree<P, N> tree) {
-            stack.push(tree.getRoot());
+        public NodeIterator(final N subtreeRoot) {
+            stack.push(subtreeRoot);
         }
 
         /** {@inheritDoc} */

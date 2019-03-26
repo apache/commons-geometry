@@ -22,20 +22,64 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <N> Node implementation type
  */
-public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
+public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> extends BSPSubtree<P, N> {
+
+    /** Enum specifying possible behaviors when a point used to locate a node
+     * falls directly on the cut subhyperplane of an internal node.
+     */
+    public static enum NodeSearchCutBehavior {
+
+        /** Choose the minus child of the internal node and continue searching.
+         * This behavior will result in a leaf node always being returned by the
+         * node search.
+         */
+        MINUS,
+
+        /** Choose the plus child of the internal node and continue searching.
+         * This behavior will result in a leaf node always being returned by the
+         * node search.
+         */
+        PLUS,
+
+        /** Choose the internal node and stop searching. This behavior may result
+         * in non-leaf nodes being returned by the node search.
+         */
+        NODE
+    }
 
     /** Get the root node of the tree.
      * @return the root node of the tree
      */
     N getRoot();
 
-    /** Return the node representing the smallest cell that contains the given point.
-     * If the point lies directly on the cut subhyperplane of an internal node, then
-     * that internal node is returned. Otherwise, a leaf node is returned.
-     * @param pt point to check
-     * @return the node containing the point
+    /** Find a node in this subtree containing the given point or its interior or boundary.
+     * When a point lies directly on the cut of an internal node, the minus child of the
+     * cut is chosen. This is equivalent to {@code subtree.findNode(pt, NodeSearchCutBehavior.MINUS)}
+     * and always returns a leaf node.
+     * @param pt test point used to locate a node in the tree
+     * @return leaf node containing the point on its interior or boundary
+     * @see #findNode(Point, NodeSearchCutBehavior)
      */
-    N findNode(P pt);
+    default N findNode(P pt) {
+        return findNode(pt, NodeSearchCutBehavior.MINUS);
+    }
+
+    /** Find a node in this subtree containing the given point on it interior or boundary. The
+     * search should always return a leaf node except in the cases where the given point lies
+     * exactly on the cut subhyperplane of an internal node. In this case, it is unclear whether
+     * the search should continue with the minus child, the plus child, or end with the internal
+     * node. The {@code cutBehavior} argument specifies what should happen in this case.
+     * <ul>
+     *      <li>{@link NodeSearchCutBehavior#MINUS} - continue the search in the minus subtree</li>
+     *      <li>{@link NodeSearchCutBehavior#PLUS} - continue the search in the plus subtree</li>
+     *      <li>{@link NodeSearchCutBehavior#NODE} - stop the search and return the internal node</li>
+     * @param pt test point used to locate a node in the tree
+     * @param cutBehavior value used to determine the search behavior when the test point lies
+     *      exactly on the cut subhyperplane of an internal node
+     * @return node containing the point on its interior or boundary
+     * @see #findNode(Point)
+     */
+    N findNode(P pt, NodeSearchCutBehavior cutBehavior);
 
     /** Insert a subhyperplane into the tree.
      * @param sub the subhyperplane to insert into the tree
@@ -53,32 +97,6 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     void insert(Iterable<ConvexSubHyperplane<P>> convexSubs);
 
-    /** Call the given {@link BSPTreeVisitor} with each node from the
-     * tree.
-     * @param visitor visitor call with each tree node
-     */
-    void visit(BSPTreeVisitor<P, N> visitor);
-
-    /** Return the total number of nodes in the tree.
-     * @return
-     */
-    int count();
-
-    /** Return an iterable for iterating through the nodes of the tree.
-     * @return an iterable for iterating through the nodes of the tree
-     */
-    Iterable<N> nodes();
-
-    /** Return an iterable for iterating through the leaf nodes of the tree.
-     * @return an iterable for iterating through the leaf nodes of the tree
-     */
-    Iterable<N> leafNodes();
-
-    /** Return an iterable for iterating through the internal nodes of the tree.
-     * @return an iterable for iterating through the internal nodes of the tree
-     */
-    Iterable<N> internalNodes();
-
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance
      */
@@ -87,7 +105,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
      */
-    public static interface Node<P extends Point<P>, N extends Node<P, N>> {
+    public static interface Node<P extends Point<P>, N extends Node<P, N>> extends BSPSubtree<P, N> {
 
         /** Get the {@link BSPTree} that owns the node.
          * @return the owning tree
@@ -99,12 +117,6 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
          * @return the depth of the node in the tree
          */
         int depth();
-
-        /** Return the total number of nodes in the child tree rooted at this
-         * node. The count includes the current node.
-         * @return
-         */
-        int count();
 
         /** Get the parent of the node. This will be null if the node is the
          * root of the tree.
@@ -134,10 +146,16 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
         N getPlus();
 
         /** Return true if the node is a leaf node, meaning that it has no
-         * binary partitioner (aka, cut) and therefore no child nodes.
+         * binary partitioner (aka "cut") and therefore no child nodes.
          * @return true if the node is a leaf node
          */
         boolean isLeaf();
+
+        /** Return true if the node is an internal node, meaning that is
+         * has a binary partitioner (aka "cut") and therefore two child nodes.
+         * @return true if the node is an internal node
+         */
+        boolean isInternal();
 
         /** Return true if the node has a parent and is the parent's minus
          * child.

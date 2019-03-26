@@ -66,6 +66,7 @@ public class PartitionTestUtils {
         Assert.assertNotNull(node.getMinus());
         Assert.assertNotNull(node.getPlus());
 
+        Assert.assertTrue(node.isInternal());
         Assert.assertFalse(node.isLeaf());
     }
 
@@ -74,6 +75,7 @@ public class PartitionTestUtils {
         Assert.assertNull(node.getMinus());
         Assert.assertNull(node.getPlus());
 
+        Assert.assertFalse(node.isInternal());
         Assert.assertTrue(node.isLeaf());
     }
 

@@ -16,7 +16,8 @@
  */
 package org.apache.commons.geometry.core.partition;
 
-import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Point;
 
@@ -25,40 +26,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <N> Node implementation type
  */
-public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
-
-    /** Enum specifying possible behaviors when a point used to locate a node
-     * falls directly on the cut subhyperplane of an internal node.
-     */
-    public static enum FindNodeCutBehavior {
-
-        /** Choose the minus child of the internal node and continue searching.
-         * This behavior will result in a leaf node always being returned by the
-         * node search.
-         */
-        MINUS,
-
-        /** Choose the plus child of the internal node and continue searching.
-         * This behavior will result in a leaf node always being returned by the
-         * node search.
-         */
-        PLUS,
-
-        /** Choose the internal node and stop searching. This behavior may result
-         * in non-leaf nodes being returned by the node search.
-         */
-        NODE
-    }
-
-    N findNode(P pt);
-
-    N findNode(P pt, FindNodeCutBehavior cutBehavior);
-
-    /** Call the given {@link BSPTreeVisitor} with each node from the
-     * subtree.
-     * @param visitor visitor call with each subtree node
-     */
-    void visit(BSPTreeVisitor<P, N> visitor);
+public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> extends Iterable<N> {
 
     /** Return the total number of nodes in the subtree.
      * @return
@@ -71,33 +39,16 @@ public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
      */
     int height();
 
-    /** Return an iterable for iterating through the nodes of the subtree.
-     * @return an iterable for iterating through the nodes of the subtree
+    /** Call the given {@link BSPTreeVisitor} with each node from the
+     * subtree.
+     * @param visitor visitor call with each subtree node
      */
-    Iterable<N> nodes();
+    void visit(BSPTreeVisitor<P, N> visitor);
 
-    /** Return a list containing all nodes in the subtree.
-     * @return list containing all nodes in the subtree
+    /** Create a stream over the nodes in this subtree.
+     * @return a stream for accessing the nodes in this subtree
      */
-    List<N> nodeList();
-
-    /** Return an iterable for iterating through the leaf nodes of the subtree.
-     * @return an iterable for iterating through the leaf nodes of the subtree
-     */
-    Iterable<N> leafNodes();
-
-    /** Return a list containing all leaf nodes in the subtree.
-     * @return list containing all leaf nodes in the subtree
-     */
-    List<N> leafNodeList();
-
-    /** Return an iterable for iterating through the internal nodes of the subtree.
-     * @return an iterable for iterating through the internal nodes of the subtree
-     */
-    Iterable<N> internalNodes();
-
-    /** Return a list containing all internal nodes in the subtree.
-     * @return list containing all internal nodes in the subtree
-     */
-    List<N> internalNodeList();
+    default Stream<N> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 }

@@ -495,10 +495,10 @@ public class RegionBSPTreeTest {
         Assert.assertEquals(tree.count(), copy.count());
 
         List<RegionLocation> origLocations = new ArrayList<>();
-        tree.nodes().forEach(n -> origLocations.add(n.getLocationValue()));
+        tree.forEach(n -> origLocations.add(n.getLocationValue()));
 
         List<RegionLocation> copyLocations = new ArrayList<>();
-        copy.nodes().forEach(n -> copyLocations.add(n.getLocationValue()));
+        copy.forEach(n -> copyLocations.add(n.getLocationValue()));
 
         Assert.assertEquals(origLocations, copyLocations);
     }
