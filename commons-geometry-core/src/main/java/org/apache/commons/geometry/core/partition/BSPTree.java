@@ -22,7 +22,8 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <N> Node implementation type
  */
-public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> extends BSPSubtree<P, N> {
+public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
+    extends BSPSubtree<P, N> {
 
     /** Enum specifying possible behaviors when a point used to locate a node
      * falls directly on the cut subhyperplane of an internal node.

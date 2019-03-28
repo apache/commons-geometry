@@ -25,7 +25,79 @@ import org.junit.Test;
 public class AbstractBSPTreeMergerTest {
 
     @Test
-    public void testMerge() {
+    public void testMerge_singleNodeTreeWithMultiNodeTree() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().setAttribute("B");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(1, b.count());
+        Assert.assertEquals(3, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("Ba", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("Ba", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("BA", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("BA", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_multiNodeTreeWithSingleNodeTree() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().setAttribute("A");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(1, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(3, c.count());
+
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutsIntersect() {
         // arrange
         AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
         a.getRoot().cut(TestLine.X_AXIS)
@@ -47,12 +119,332 @@ public class AbstractBSPTreeMergerTest {
         merger.merge(a, b, c);
 
         // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
         Assert.assertEquals(7, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
 
         Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
         Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutsParallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(3, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutsAntiParallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(new TestLine(new TestPoint2D(1, 0), TestPoint2D.ZERO))
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(3, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutOnPlusSide_parallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(new TestLine(new TestPoint2D(0, -2), new TestPoint2D(1, -2)))
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(5, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -3)).getAttribute());
+
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutOnPlusSide_antiParallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(new TestLine(new TestPoint2D(1, -2), new TestPoint2D(0, -2)))
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(5, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, -3)).getAttribute());
+
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutOnMinusSide_parallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(new TestLine(new TestPoint2D(0, 2), new TestPoint2D(1, 2)))
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(5, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 3)).getAttribute());
+
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_cutOnMinusSide_antiParallel() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(new TestLine(new TestPoint2D(1, 2), new TestPoint2D(0, 2)))
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, c);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(3, b.count());
+        Assert.assertEquals(5, c.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 3)).getAttribute());
+
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
+        Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_outputIsFirstInput() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(TestLine.Y_AXIS)
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, a);
+
+        // assert
+        Assert.assertEquals(7, a.count());
+        Assert.assertEquals(3, b.count());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(1, 0)).getAttribute());
+        Assert.assertEquals("b", b.findNode(new TestPoint2D(-1, 0)).getAttribute());
+
+        Assert.assertEquals("aB", a.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("ab", a.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("Ab", a.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", a.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
+
+    @Test
+    public void testMerge_outputIsSecondInput() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().cut(TestLine.X_AXIS)
+            .getPlus().attr("A")
+            .getParent()
+            .getMinus().attr("a");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().cut(TestLine.Y_AXIS)
+            .getPlus().attr("B")
+            .getParent()
+            .getMinus().attr("b");
+
+        TestMerger merger = new TestMerger();
+
+        // act
+        merger.merge(a, b, b);
+
+        // assert
+        Assert.assertEquals(3, a.count());
+        Assert.assertEquals(7, b.count());
+
+        Assert.assertEquals("a", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("aB", b.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("ab", b.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("Ab", b.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", b.findNode(new TestPoint2D(1, -1)).getAttribute());
     }
 
     private static class TestMerger extends AbstractBSPTreeMerger<TestPoint2D, AttributeNode<TestPoint2D, String>> {
