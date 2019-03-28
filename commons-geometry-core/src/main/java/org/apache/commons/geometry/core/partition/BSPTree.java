@@ -27,7 +27,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> exten
     /** Enum specifying possible behaviors when a point used to locate a node
      * falls directly on the cut subhyperplane of an internal node.
      */
-    public static enum NodeSearchCutBehavior {
+    public static enum CutRule {
 
         /** Choose the minus child of the internal node and continue searching.
          * This behavior will result in a leaf node always being returned by the
@@ -54,32 +54,32 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>> exten
 
     /** Find a node in this subtree containing the given point or its interior or boundary.
      * When a point lies directly on the cut of an internal node, the minus child of the
-     * cut is chosen. This is equivalent to {@code subtree.findNode(pt, NodeSearchCutBehavior.MINUS)}
+     * cut is chosen. This is equivalent to {@code subtree.findNode(pt, SearchMode.MINUS)}
      * and always returns a leaf node.
      * @param pt test point used to locate a node in the tree
      * @return leaf node containing the point on its interior or boundary
-     * @see #findNode(Point, NodeSearchCutBehavior)
+     * @see #findNode(Point, CutRule)
      */
     default N findNode(P pt) {
-        return findNode(pt, NodeSearchCutBehavior.MINUS);
+        return findNode(pt, CutRule.MINUS);
     }
 
     /** Find a node in this subtree containing the given point on it interior or boundary. The
      * search should always return a leaf node except in the cases where the given point lies
      * exactly on the cut subhyperplane of an internal node. In this case, it is unclear whether
      * the search should continue with the minus child, the plus child, or end with the internal
-     * node. The {@code cutBehavior} argument specifies what should happen in this case.
+     * node. The {@code cutRule} argument specifies what should happen in this case.
      * <ul>
-     *      <li>{@link NodeSearchCutBehavior#MINUS} - continue the search in the minus subtree</li>
-     *      <li>{@link NodeSearchCutBehavior#PLUS} - continue the search in the plus subtree</li>
-     *      <li>{@link NodeSearchCutBehavior#NODE} - stop the search and return the internal node</li>
+     *      <li>{@link CutRule#MINUS} - continue the search in the minus subtree</li>
+     *      <li>{@link CutRule#PLUS} - continue the search in the plus subtree</li>
+     *      <li>{@link CutRule#NODE} - stop the search and return the internal node</li>
      * @param pt test point used to locate a node in the tree
-     * @param cutBehavior value used to determine the search behavior when the test point lies
+     * @param cutRule value used to determine the search behavior when the test point lies
      *      exactly on the cut subhyperplane of an internal node
      * @return node containing the point on its interior or boundary
      * @see #findNode(Point)
      */
-    N findNode(P pt, NodeSearchCutBehavior cutBehavior);
+    N findNode(P pt, CutRule cutRule);
 
     /** Insert a subhyperplane into the tree.
      * @param sub the subhyperplane to insert into the tree

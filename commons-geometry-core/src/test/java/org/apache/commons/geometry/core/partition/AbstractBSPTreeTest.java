@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partition.BSPTree.NodeSearchCutBehavior;
+import org.apache.commons.geometry.core.partition.BSPTree.CutRule;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
@@ -307,15 +307,15 @@ public class AbstractBSPTreeTest {
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.NODE));
+            Assert.assertSame(root, tree.findNode(pt, CutRule.NODE));
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.MINUS));
+            Assert.assertSame(root, tree.findNode(pt, CutRule.MINUS));
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, NodeSearchCutBehavior.PLUS));
+            Assert.assertSame(root, tree.findNode(pt, CutRule.PLUS));
         }
     }
 
@@ -379,7 +379,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.NODE;
+        CutRule cutBehavior = CutRule.NODE;
 
         // act/assert
         Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
@@ -419,7 +419,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.MINUS;
+        CutRule cutBehavior = CutRule.MINUS;
 
         // act/assert
         Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
@@ -459,7 +459,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        NodeSearchCutBehavior cutBehavior = NodeSearchCutBehavior.PLUS;
+        CutRule cutBehavior = CutRule.PLUS;
 
         // act/assert
         Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));

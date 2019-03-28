@@ -33,7 +33,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     implements BSPTree<P, N>, Serializable {
 
     /** Serializable UID */
-    private static final long serialVersionUID = 20190225L;
+    private static final long serialVersionUID = 20190330L;
 
     /** The default number of levels to print when creating a string representation of the tree */
     private static final int DEFAULT_TREE_STRING_MAX_DEPTH = 8;
@@ -91,7 +91,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public N findNode(final P pt, final NodeSearchCutBehavior cutBehavior) {
+    public N findNode(final P pt, final CutRule cutBehavior) {
         return findNode(getRoot(), pt, cutBehavior);
     }
 
@@ -216,7 +216,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    protected N findNode(final N start, final P pt, final NodeSearchCutBehavior cutBehavior) {
+    protected N findNode(final N start, final P pt, final CutRule cutBehavior) {
         Hyperplane<P> hyper = start.getCutHyperplane();
         if (hyper != null) {
             Side side = hyper.classify(pt);
@@ -225,10 +225,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final boolean onMinusSide = side == Side.MINUS;
             final boolean onCut = !onPlusSide && !onMinusSide;
 
-            if (onMinusSide || (onCut && cutBehavior == NodeSearchCutBehavior.MINUS)) {
+            if (onMinusSide || (onCut && cutBehavior == CutRule.MINUS)) {
                 return findNode(start.getMinus(), pt, cutBehavior);
             }
-            else if (onPlusSide || (onCut && cutBehavior == NodeSearchCutBehavior.PLUS)) {
+            else if (onPlusSide || (onCut && cutBehavior == CutRule.PLUS)) {
                 return findNode(start.getPlus(), pt, cutBehavior);
             }
         }

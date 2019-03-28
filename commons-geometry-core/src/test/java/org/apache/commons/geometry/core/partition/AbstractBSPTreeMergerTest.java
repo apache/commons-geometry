@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
-import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
