@@ -91,7 +91,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public N findNode(final P pt, final CutRule cutBehavior) {
+    public N findNode(final P pt, final NodeCutRule cutBehavior) {
         return findNode(getRoot(), pt, cutBehavior);
     }
 
@@ -216,7 +216,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    protected N findNode(final N start, final P pt, final CutRule cutBehavior) {
+    protected N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
         Hyperplane<P> hyper = start.getCutHyperplane();
         if (hyper != null) {
             Side side = hyper.classify(pt);
@@ -225,10 +225,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final boolean onMinusSide = side == Side.MINUS;
             final boolean onCut = !onPlusSide && !onMinusSide;
 
-            if (onMinusSide || (onCut && cutBehavior == CutRule.MINUS)) {
+            if (onMinusSide || (onCut && cutBehavior == NodeCutRule.MINUS)) {
                 return findNode(start.getMinus(), pt, cutBehavior);
             }
-            else if (onPlusSide || (onCut && cutBehavior == CutRule.PLUS)) {
+            else if (onPlusSide || (onCut && cutBehavior == NodeCutRule.PLUS)) {
                 return findNode(start.getPlus(), pt, cutBehavior);
             }
         }

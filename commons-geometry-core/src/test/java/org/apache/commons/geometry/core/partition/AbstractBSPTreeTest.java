@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partition.BSPTree.CutRule;
+import org.apache.commons.geometry.core.partition.BSPTree.NodeCutRule;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
@@ -307,15 +307,15 @@ public class AbstractBSPTreeTest {
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, CutRule.NODE));
+            Assert.assertSame(root, tree.findNode(pt, NodeCutRule.NODE));
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, CutRule.MINUS));
+            Assert.assertSame(root, tree.findNode(pt, NodeCutRule.MINUS));
         }
 
         for (TestPoint2D pt : testPoints) {
-            Assert.assertSame(root, tree.findNode(pt, CutRule.PLUS));
+            Assert.assertSame(root, tree.findNode(pt, NodeCutRule.PLUS));
         }
     }
 
@@ -379,7 +379,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        CutRule cutBehavior = CutRule.NODE;
+        NodeCutRule cutBehavior = NodeCutRule.NODE;
 
         // act/assert
         Assert.assertSame(root, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
@@ -419,7 +419,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        CutRule cutBehavior = CutRule.MINUS;
+        NodeCutRule cutBehavior = NodeCutRule.MINUS;
 
         // act/assert
         Assert.assertSame(minusXPlusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
@@ -459,7 +459,7 @@ public class AbstractBSPTreeTest {
         TestNode underDiagonal = diagonalCut.getPlus();
         TestNode aboveDiagonal = diagonalCut.getMinus();
 
-        CutRule cutBehavior = CutRule.PLUS;
+        NodeCutRule cutBehavior = NodeCutRule.PLUS;
 
         // act/assert
         Assert.assertSame(minusY, tree.findNode(new TestPoint2D(0, 0), cutBehavior));
