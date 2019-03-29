@@ -140,6 +140,15 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         complementRecursive(getRoot());
     }
 
+    /** Set this instance to be the complement of the given tree. The argument
+     * is not modified.
+     * @param tree the tree to become the complement of
+     */
+    public void complementOf(final RegionBSPTree<P> tree) {
+        copyRecursive(tree.getRoot(), getRoot());
+        complementRecursive(getRoot());
+    }
+
     /** Recursively switch all inside nodes to outside nodes and vice versa.
      * @param node the node at the root of the subtree to switch
      */
@@ -189,6 +198,40 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      */
     public void intersectionOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
         new IntersectionOperator<P>().apply(a, b, this);
+    }
+
+    /** Compute the difference of this instance and the given region, storing the result back in
+     * this instance. The argument is not modified.
+     * @param other the tree to compute the difference with
+     */
+    public void difference(final RegionBSPTree<P> other) {
+        new DifferenceOperator<P>().apply(this, other, this);
+    }
+
+    /** Compute the difference of the two regions passed as arguments and store the result in
+     * this instance. Any nodes currently existing in this instance are removed.
+     * @param a first argument to the difference operation
+     * @param b second argument to the difference operation
+     */
+    public void differenceOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
+        new DifferenceOperator<P>().apply(a, b, this);
+    }
+
+    /** Compute the symmetric difference (xor) of this instance and the given region, storing the result back in
+     * this instance. The argument is not modified.
+     * @param other the tree to compute the symmetric difference with
+     */
+    public void xor(final RegionBSPTree<P> other) {
+        new XorOperator<P>().apply(this, other, this);
+    }
+
+    /** Compute the symmetric difference (xor) of the two regions passed as arguments and store the result in
+     * this instance. Any nodes currently existing in this instance are removed.
+     * @param a first argument to the symmetric difference operation
+     * @param b second argument to the symmetric difference operation
+     */
+    public void xorOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
+        new XorOperator<P>().apply(a, b, this);
     }
 
     /** {@inheritDoc} */
@@ -463,13 +506,13 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(RegionNode<P> node1, RegionNode<P> node2) {
+        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
             if (node1.isLeaf()) {
                 return node1.isInside() ? node1 : node2;
             }
-            else {
-                return node2.isInside() ? node2 : node1;
-            }
+
+            // call again with flipped arguments
+            return mergeLeaf(node2, node1);
         }
     }
 
@@ -480,13 +523,77 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(RegionNode<P> node1, RegionNode<P> node2) {
+        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
             if (node1.isLeaf()) {
                 return node1.isInside() ? node2 : node1;
             }
-            else {
-                return node2.isInside() ? node1 : node2;
+
+            // call again with flipped arguments
+            return mergeLeaf(node2, node1);
+        }
+    }
+
+    /** Class for performing boolean difference operations on region trees.
+     * @param <P> Point implementation type
+     */
+    public static class DifferenceOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+            // a region is included if it belongs in tree1 and is not in tree2
+
+            if (node1.isInside()) {
+                // this region is inside of tree1, so only include subregions that are
+                // not in tree2, ie include everything in node2's complement
+                final RegionNode<P> output = outputSubtree(node2);
+                output.getTree().complementRecursive(output);
+
+                return output;
             }
+            else if (node2.isInside()) {
+                // this region is inside of tree2 and so cannot be in the result region
+                final RegionNode<P> output = outputNode();
+                output.setLocation(RegionLocation.OUTSIDE);
+
+                return output;
+            }
+
+            // this region is not in tree2, so we can include everything in tree1
+            return node1;
+        }
+    }
+
+    /** Class for performing boolean symmetric difference (xor) operations on region trees.
+     * @param <P> Point implementation type
+     */
+    public static class XorOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+            // a region is included if it belongs in tree1 and is not in tree2 OR
+            // it belongs in tree2 and is not in tree1
+
+            if (node1.isLeaf()) {
+                if (node1.isInside()) {
+                    // this region is inside node1, so only include subregions that are
+                    // not in node2, ie include everything in node2's complement
+                    final RegionNode<P> output = outputSubtree(node2);
+                    output.getTree().complementRecursive(output);
+
+                    return output;
+                }
+                else {
+                    // this region is not in node1, so only include subregions that
+                    // in node2
+                    return node2;
+                }
+            }
+
+            // the operation is symmetric, so perform the same operation but with the
+            // nodes flipped
+            return mergeLeaf(node2, node1);
         }
     }
 }

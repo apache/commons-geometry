@@ -65,11 +65,11 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
     private N performMergeRecursive(final N node1, final N node2) {
 
         if (node1.isLeaf() || node2.isLeaf()) {
-            // delegate to the mergeCell method if we can no longer continue
+            // delegate to the mergeLeaf method if we can no longer continue
             // merging recursively
             final N merged = mergeLeaf(node1, node2);
 
-            // copy the merged node to the output if needed (in case mergeCell
+            // copy the merged node to the output if needed (in case mergeLeaf
             // returned one of the input nodes directly)
             return outputSubtree(merged);
         }
@@ -107,6 +107,8 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
      * @return node containing the split subtree
      */
     private N splitSubtreeLeaf(final N node, final ConvexSubHyperplane<P> partitioner) {
+        // in this case, we just create a new parent node with the partitioner as its
+        // cut and two copies of the original node as children
        final N parent = outputNode();
        parent.setCutState(partitioner, outputNode(node), outputNode(node));
 
@@ -198,7 +200,7 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
 
     /** Create a new node in the output tree. The node is associated with the output tree but
      * is not attached to a parent node.
-     * @return a new node in the output tree.
+     * @return a new node associated with the output tree but not yet attached to a parent
      */
     protected N outputNode() {
         return outputTree.createNode();
@@ -207,6 +209,7 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
     /** Create a new node in the output tree with the same non-structural properties as the given
      * node. Non-structural properties are properties other than parent, children, or cut. The
      * returned node is associated with the output tree but is not attached to a parent node.
+     * Note that this method only copies the given node and <strong>not</strong> any of its children.
      * @param node the input node to copy properties from
      * @return a new node in the output tree
      */
