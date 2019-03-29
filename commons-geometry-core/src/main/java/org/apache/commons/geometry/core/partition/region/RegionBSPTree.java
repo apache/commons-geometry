@@ -14,11 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.region;
 
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partition.AbstractBSPTree;
+import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
+import org.apache.commons.geometry.core.partition.BSPTree;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** {@link BSPTree} specialized for representing regions of space. For example, this
  * class can be used to represent polygons in Euclidean 2D space and polyhedrons
@@ -50,30 +56,6 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     @Override
     public RegionBSPTree<P> copy() {
         return (RegionBSPTree<P>) super.copy();
-    }
-
-    /** Change this region into its complement. All inside nodes become outside
-     * nodes and vice versa. The orientation of the cut subhyperplanes is not modified.
-     */
-    public void complement() {
-        complementRecursive(getRoot());
-    }
-
-    /** Recursively switch all inside nodes to outside nodes and vice versa.
-     * @param node the node at the root of the subtree to switch
-     */
-    private void complementRecursive(final RegionNode<P> node) {
-        if (node != null)
-        {
-            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
-                    ? RegionLocation.OUTSIDE
-                    : RegionLocation.INSIDE;
-
-            node.setLocation(newLoc);
-
-            complementRecursive(node.getMinus());
-            complementRecursive(node.getPlus());
-        }
     }
 
     /** Return true if the region is empty, i.e. if no node in the tree
@@ -151,12 +133,62 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         }
     }
 
-    public void union(final RegionBSPTree<P> other) {
-        new UnionTreeMerger<P>().merge(this, other, this);
+    /** Change this region into its complement. All inside nodes become outside
+     * nodes and vice versa. The orientation of the cut subhyperplanes is not modified.
+     */
+    public void complement() {
+        complementRecursive(getRoot());
     }
 
-    public void unionOf(final RegionBSPTree<P> regionA, final RegionBSPTree<P> regionB) {
-        new UnionTreeMerger<P>().merge(regionA, regionB, this);
+    /** Recursively switch all inside nodes to outside nodes and vice versa.
+     * @param node the node at the root of the subtree to switch
+     */
+    private void complementRecursive(final RegionNode<P> node) {
+        if (node != null)
+        {
+            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
+                    ? RegionLocation.OUTSIDE
+                    : RegionLocation.INSIDE;
+
+            node.setLocation(newLoc);
+
+            complementRecursive(node.getMinus());
+            complementRecursive(node.getPlus());
+        }
+    }
+
+    /** Compute the union of this instance and the given region, storing the result back in
+     * this instance. The argument is not modified.
+     * @param other the tree to compute the union with
+     */
+    public void union(final RegionBSPTree<P> other) {
+        new UnionOperator<P>().apply(this, other, this);
+    }
+
+    /** Compute the union of the two regions passed as arguments and store the result in
+     * this instance. Any nodes currently existing in this instance are removed.
+     * @param a first argument to the union operation
+     * @param b second argument to the union operation
+     */
+    public void unionOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
+        new UnionOperator<P>().apply(a, b, this);
+    }
+
+    /** Compute the intersection of this instance and the given region, storing the result back in
+     * this instance. The argument is not modified.
+     * @param other the tree to compute the intersection with
+     */
+    public void intersection(final RegionBSPTree<P> other) {
+        new IntersectionOperator<P>().apply(this, other, this);
+    }
+
+    /** Compute the intersection of the two regions passed as arguments and store the result in
+     * this instance. Any nodes currently existing in this instance are removed.
+     * @param a first argument to the intersection operation
+     * @param b second argument to the intersection operation
+     */
+    public void intersectionOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
+        new IntersectionOperator<P>().apply(a, b, this);
     }
 
     /** {@inheritDoc} */
@@ -384,14 +416,18 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
      */
-    public abstract static class TreeMerger<P extends Point<P>> extends AbstractBSPTreeMerger<P, RegionNode<P>> {
+    public abstract static class RegionMergeOperator<P extends Point<P>> extends AbstractBSPTreeMergeSupport<P, RegionNode<P>> {
 
-        /** {@inheritDoc} */
-        @Override
-        public void merge(final AbstractBSPTree<P, RegionNode<P>> inputTree1, final AbstractBSPTree<P, RegionNode<P>> inputTree2,
-                final AbstractBSPTree<P, RegionNode<P>> outputTree) {
+        /** Merge two input trees, storing the output in the third. The output tree can be one of the
+         * input tree.
+         * @param inputTree1 first input tree
+         * @param inputTree2 second input tree
+         * @param outputTree
+         */
+        public void apply(final RegionBSPTree<P> inputTree1, final RegionBSPTree<P> inputTree2,
+                final RegionBSPTree<P> outputTree) {
 
-            super.merge(inputTree1, inputTree2, outputTree);
+            this.performMerge(inputTree1, inputTree2, outputTree);
             condense(outputTree.getRoot());
         }
 
@@ -423,7 +459,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class for performing boolean union operations on region trees.
      * @param <P> Point implementation type
      */
-    private static class UnionTreeMerger<P extends Point<P>> extends TreeMerger<P> {
+    public static class UnionOperator<P extends Point<P>> extends RegionMergeOperator<P> {
 
         /** {@inheritDoc} */
         @Override
@@ -433,6 +469,23 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
             }
             else {
                 return node2.isInside() ? node2 : node1;
+            }
+        }
+    }
+
+    /** Class for performing boolean intersection operations on region trees.
+     * @param <P> Point implementation type
+     */
+    public static class IntersectionOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected RegionNode<P> mergeLeaf(RegionNode<P> node1, RegionNode<P> node2) {
+            if (node1.isLeaf()) {
+                return node1.isInside() ? node2 : node1;
+            }
+            else {
+                return node2.isInside() ? node1 : node2;
             }
         }
     }

@@ -134,6 +134,13 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
          */
         ConvexSubHyperplane<P> getCut();
 
+        /** Get the hyperplane belonging to the node cut, if it exists.
+         * @return the hyperplane belonging to the node cut, or null if
+         *      the node does not have a cut
+         * @see #getCut()
+         */
+        Hyperplane<P> getCutHyperplane();
+
         /** Get the node for the minus region of the cell. This will be null if the
          * node has not been cut, ie if it is a leaf node.
          * @return the node for the minus region of the cell

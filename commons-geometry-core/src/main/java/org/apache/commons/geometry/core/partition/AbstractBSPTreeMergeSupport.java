@@ -20,23 +20,32 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree.AbstractNode;
 
 /** Class containing the basic algorithm for merging two {@link AbstractBSPTree}
- * instances. This class maintains state during the merging process and is therefore
- * not thread-safe.
+ * instances. Subclasses must override the {@link #mergeLeaf(AbstractNode, AbstractNode)} method
+ * to implement the merging logic for their particular use case. The remainder of the
+ * algorithm is independent of the use case.
+ *
+ * <p>This class does not expose any public methods so that subclasses can present their own
+ * public API, tailored to the specific types being worked with. In particular, most subclasses
+ * will want to restrict the tree types used with the algorithm, which is difficult to implement
+ * cleanly at this level.</p>
+ *
+ * <p>This class maintains state during the merging process and is therefore
+ * not thread-safe.</p>
  */
-public abstract class AbstractBSPTreeMerger<P extends Point<P>, N extends AbstractNode<P, N>> {
+public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends AbstractNode<P, N>> {
 
     /** The tree that the merge operation output will be written to. All existing content
      * is this tree is overwritten at the end of the merge process.
      */
     private AbstractBSPTree<P, N> outputTree;
 
-    /** Create a new instance that performs a merge operation with the two given input trees, storing
-     * the result in the output tree.
+    /** Perform a merge operation with the two input trees and store the result in the output tree. The
+     * output tree may be one of the input trees, in which case, the tree is modified in place.
      * @param inputTree1 first input tree
      * @param inputTree2 second input tree
      * @param outputTree output tree
      */
-    public void merge(final AbstractBSPTree<P, N> inputTree1, final AbstractBSPTree<P, N> inputTree2,
+    protected void performMerge(final AbstractBSPTree<P, N> inputTree1, final AbstractBSPTree<P, N> inputTree2,
             final AbstractBSPTree<P, N> outputTree) {
 
         this.outputTree = outputTree;
@@ -44,7 +53,7 @@ public abstract class AbstractBSPTreeMerger<P extends Point<P>, N extends Abstra
         final N root1 = inputTree1.getRoot();
         final N root2 = inputTree2.getRoot();
 
-        final N outputRoot = mergeRecursive(root1, root2);
+        final N outputRoot = performMergeRecursive(root1, root2);
         outputTree.setRoot(outputRoot);
     }
 
@@ -53,7 +62,7 @@ public abstract class AbstractBSPTreeMerger<P extends Point<P>, N extends Abstra
      * @param node2 node from the second input tree
      * @return a merged node
      */
-    private N mergeRecursive(final N node1, final N node2) {
+    private N performMergeRecursive(final N node1, final N node2) {
 
         if (node1.isLeaf() || node2.isLeaf()) {
             // delegate to the mergeCell method if we can no longer continue
@@ -67,9 +76,9 @@ public abstract class AbstractBSPTreeMerger<P extends Point<P>, N extends Abstra
         else {
             final N partitioned = splitSubtree(node2, node1.getCut());
 
-            final N minus = mergeRecursive(node1.getMinus(), partitioned.getMinus());
+            final N minus = performMergeRecursive(node1.getMinus(), partitioned.getMinus());
 
-            final N plus = mergeRecursive(node1.getPlus(), partitioned.getPlus());
+            final N plus = performMergeRecursive(node1.getPlus(), partitioned.getPlus());
 
             final N outputNode = outputNode(node1);
             outputNode.setCutState(node1.getCut(), minus, plus);

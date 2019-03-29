@@ -552,6 +552,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
+        public Hyperplane<P> getCutHyperplane() {
+            return (cut != null) ? cut.getHyperplane() : null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public N getPlus() {
             return plus;
         }
@@ -592,15 +598,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 .append("]");
 
             return sb.toString();
-        }
-
-        /** Get the hyperplane for the instance's cut. Returns null if
-         * no cut exists.
-         * @return the hyperplane for the node's cut or null if no cut
-         *      exists
-         */
-        protected Hyperplane<P> getCutHyperplane() {
-            return (cut != null) ? cut.getHyperplane() : null;
         }
 
         /** Set the depth of the node in the tree.

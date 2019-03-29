@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.region;
 
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** Class representing the portion of a
  * {@link RegionBSPTree.RegionNode RegionNode}'s cut subhyperplane that

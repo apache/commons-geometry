@@ -22,7 +22,40 @@ import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractBSPTreeMergerTest {
+public class AbstractBSPTreeMergeSupportTest {
+
+    @Test
+    public void testMerge_singleNodeTreeWithSingleNodeTree() {
+        // arrange
+        AttributeBSPTree<TestPoint2D, String> a = new AttributeBSPTree<>();
+        a.getRoot().setAttribute("A");
+
+        AttributeBSPTree<TestPoint2D, String> b = new AttributeBSPTree<>();
+        b.getRoot().setAttribute("B");
+
+        AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
+
+        TestMergeOperator mergeOp = new TestMergeOperator();
+
+        // act
+        mergeOp.apply(a, b, c);
+
+        // assert
+        Assert.assertEquals(1, a.count());
+        Assert.assertEquals(1, b.count());
+        Assert.assertEquals(1, c.count());
+
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("A", a.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, 1)).getAttribute());
+        Assert.assertEquals("B", b.findNode(new TestPoint2D(0, -1)).getAttribute());
+
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
+        Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+    }
 
     @Test
     public void testMerge_singleNodeTreeWithMultiNodeTree() {
@@ -38,10 +71,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -74,10 +107,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(1, a.count());
@@ -113,10 +146,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -152,10 +185,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -191,10 +224,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -230,10 +263,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -272,10 +305,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -314,10 +347,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -356,10 +389,10 @@ public class AbstractBSPTreeMergerTest {
 
         AttributeBSPTree<TestPoint2D, String> c = new AttributeBSPTree<>();
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, c);
+        mergeOp.apply(a, b, c);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -396,10 +429,10 @@ public class AbstractBSPTreeMergerTest {
             .getParent()
             .getMinus().attr("b");
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, a);
+        mergeOp.apply(a, b, a);
 
         // assert
         Assert.assertEquals(7, a.count());
@@ -429,10 +462,10 @@ public class AbstractBSPTreeMergerTest {
             .getParent()
             .getMinus().attr("b");
 
-        TestMerger merger = new TestMerger();
+        TestMergeOperator mergeOp = new TestMergeOperator();
 
         // act
-        merger.merge(a, b, b);
+        mergeOp.apply(a, b, b);
 
         // assert
         Assert.assertEquals(3, a.count());
@@ -447,7 +480,17 @@ public class AbstractBSPTreeMergerTest {
         Assert.assertEquals("AB", b.findNode(new TestPoint2D(1, -1)).getAttribute());
     }
 
-    private static class TestMerger extends AbstractBSPTreeMerger<TestPoint2D, AttributeNode<TestPoint2D, String>> {
+    private static class TestMergeOperator extends AbstractBSPTreeMergeSupport<TestPoint2D, AttributeNode<TestPoint2D, String>> {
+
+        /** Perform the test merge operation with the given arguments.
+         * @param input1
+         * @param input2
+         * @param output
+         */
+        public void apply(AttributeBSPTree<TestPoint2D, String> input1, AttributeBSPTree<TestPoint2D, String> input2,
+                AttributeBSPTree<TestPoint2D, String> output) {
+            performMerge(input1, input2, output);
+        }
 
         /** {@inheritDoc} */
         @Override
