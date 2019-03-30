@@ -675,6 +675,30 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testUnion_treeWithComplement() {
+        // arrange
+        Supplier<RegionBSPTree<TestPoint2D>> treeFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = fullTree();
+            insertSkewedBowtie(tree);
+
+            return tree;
+        };
+        Supplier<RegionBSPTree<TestPoint2D>> complementFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = treeFactory.get();
+            tree.complement();
+
+            return tree;
+        };
+
+        // act/assert
+        unionChecker(treeFactory, complementFactory)
+            .full(true)
+            .empty(false)
+            .count(1)
+            .check();
+    }
+
+    @Test
     public void testIntersection_singleNodeTrees() {
         // act/assert
         intersectionChecker(RegionBSPTreeTest::emptyTree, RegionBSPTreeTest::emptyTree)
@@ -774,6 +798,30 @@ public class RegionBSPTreeTest {
             .boundary(new TestPoint2D(0, -2), new TestPoint2D(2, -2),
                     new TestPoint2D(0, -4), new TestPoint2D(2, -4))
             .count(9)
+            .check();
+    }
+
+    @Test
+    public void testIntersection_treeWithComplement() {
+        // arrange
+        Supplier<RegionBSPTree<TestPoint2D>> treeFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = fullTree();
+            insertSkewedBowtie(tree);
+
+            return tree;
+        };
+        Supplier<RegionBSPTree<TestPoint2D>> complementFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = treeFactory.get();
+            tree.complement();
+
+            return tree;
+        };
+
+        // act/assert
+        intersectionChecker(treeFactory, complementFactory)
+            .full(false)
+            .empty(true)
+            .count(1)
             .check();
     }
 
@@ -879,6 +927,24 @@ public class RegionBSPTreeTest {
             .boundary(new TestPoint2D(0, -2), new TestPoint2D(0, -4),
                     new TestPoint2D(2, -4), new TestPoint2D(2, -2))
             .count(9)
+            .check();
+    }
+
+    @Test
+    public void testDifference_treeWithCopy() {
+        // arrange
+        Supplier<RegionBSPTree<TestPoint2D>> treeFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = fullTree();
+            insertSkewedBowtie(tree);
+
+            return tree;
+        };
+
+        // act/assert
+        differenceChecker(treeFactory, treeFactory)
+            .full(false)
+            .empty(true)
+            .count(1)
             .check();
     }
 
@@ -996,6 +1062,30 @@ public class RegionBSPTreeTest {
                     new TestPoint2D(2, -4), new TestPoint2D(2, -2),
                     TestPoint2D.ZERO, new TestPoint2D(2, 0))
             .count(15)
+            .check();
+    }
+
+    @Test
+    public void testXor_treeWithComplement() {
+        // arrange
+        Supplier<RegionBSPTree<TestPoint2D>> treeFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = fullTree();
+            insertSkewedBowtie(tree);
+
+            return tree;
+        };
+        Supplier<RegionBSPTree<TestPoint2D>> complementFactory = () -> {
+            RegionBSPTree<TestPoint2D> tree = treeFactory.get();
+            tree.complement();
+
+            return tree;
+        };
+
+        // act/assert
+        xorChecker(treeFactory, complementFactory)
+            .full(true)
+            .empty(false)
+            .count(1)
             .check();
     }
 
@@ -1157,8 +1247,12 @@ public class RegionBSPTreeTest {
         /** Second tree in the merge operation */
         private final Supplier<RegionBSPTree<TestPoint2D>> tree2Factory;
 
+        /** Merge operation that does not modify either input tree */
         private final MergeOperation constOperation;
 
+        /** Merge operation that stores the result in the first input tree
+         * and leaves the second one unmodified.
+         */
         private final MergeOperation inPlaceOperation;
 
         /** If true, the resulting tree will be printed to stdout to help with
@@ -1188,7 +1282,11 @@ public class RegionBSPTreeTest {
          * on the input trees.
          * @param tree1 first tree in the merge operation
          * @param tree2 second tree in the merge operation
-         * @param constOperation object performing the merge operation itself
+         * @param constOperation object that performs the merge operation in a form that
+         *      leaves both argument unmodified
+         * @param inPlaceOperation object that performs the merge operation in a form
+         *      that stores the result in the first input tree and leaves the second
+         *      input unchanged.
          */
         public MergeChecker(
                 final Supplier<RegionBSPTree<TestPoint2D>> tree1Factory,
