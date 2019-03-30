@@ -50,12 +50,6 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
 
     /** {@inheritDoc} */
     @Override
-    public AttributeBSPTree<P, T> copy() {
-        return (AttributeBSPTree<P, T>) super.copy();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected AttributeBSPTree<P, T> createTree() {
         return new AttributeBSPTree<P, T>();
     }

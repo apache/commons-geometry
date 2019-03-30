@@ -124,11 +124,22 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public AbstractBSPTree<P, N> copy() {
-        AbstractBSPTree<P, N> copy = createTree();
-        copyRecursive(getRoot(), copy.getRoot());
+    public void copy(final BSPTree<P, N> src) {
+        copyRecursive(src.getRoot(), getRoot());
+    }
 
-        return copy;
+    /** {@inheritDoc} */
+    @Override
+    public void extract(final N node) {
+        // copy downward
+        final N extracted = createNode();
+        copyRecursive(node, extracted);
+
+        // extract upward
+        final N newRoot = extractParentPath(node, extracted);
+
+        // set the root of this tree
+        setRoot(newRoot);
     }
 
     /** Get a simple string representation of the tree structure. The returned string contains
@@ -163,32 +174,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 .toString();
     }
 
-    /** Recursively copy a subtree.
-     * @param src the node representing the source subtree
-     * @param dst the node representing the destination subtree
-     * @return the copied node, ie {@code dst}
-     */
-    protected N copyRecursive(final N src, final N dst) {
-
-        ConvexSubHyperplane<P> cut = null;
-        N minus = null;
-        N plus = null;
-
-        if (!src.isLeaf()) {
-            final AbstractBSPTree<P, N> dstTree = dst.getTree();
-
-            cut = src.getCut();
-            minus = copyRecursive(src.getMinus(), dstTree.createNode());
-            plus = copyRecursive(src.getPlus(), dstTree.createNode());
-        }
-
-        dst.setCutState(cut, minus, plus);
-
-        copyNodeProperties(src, dst);
-
-        return dst;
-    }
-
     /** Create a new tree instance.
      * @return a new tree instance
      */
@@ -206,6 +191,87 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst destination node
      */
     protected void copyNodeProperties(final N src, final N dst) {
+    }
+
+    /** Method called to initialize a new child node. Subclasses can use this method to
+     * set initial attributes on the node.
+     * @param parent the parent node
+     * @param child the new child node
+     * @param isPlus true if the child will be assigned as the parent's plus child;
+     *      false if it will be the parent's minus child
+     */
+    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
+    }
+
+    /** Recursively copy a subtree.
+     * @param src the node representing the source subtree
+     * @param dst the node representing the destination subtree
+     * @return the copied node, ie {@code dst}
+     */
+    protected N copyRecursive(final N src, final N dst) {
+        if (src != dst) {
+            ConvexSubHyperplane<P> cut = null;
+            N minus = null;
+            N plus = null;
+
+            if (!src.isLeaf()) {
+                final AbstractBSPTree<P, N> dstTree = dst.getTree();
+
+                cut = src.getCut();
+                minus = copyRecursive(src.getMinus(), dstTree.createNode());
+                plus = copyRecursive(src.getPlus(), dstTree.createNode());
+            }
+
+            dst.setCutState(cut, minus, plus);
+
+            copyNodeProperties(src, dst);
+        }
+
+        return dst;
+    }
+
+    /** Extract the path from {@code src} to the root of its tree and
+     * set it as the parent path of {@code dst}. Leaf nodes created during
+     * the extraction are given the same node properties as their counterparts
+     * in the source tree but without the cuts and child nodes. The properties
+     * of {@code dst} are not modified, with the exception of its parent node
+     * reference.
+     * @param src the source node to copy the parent path from
+     * @param dst the destination node to place under the extracted path
+     * @return the root node of the extracted path
+     */
+    protected N extractParentPath(final N src, final N dst) {
+        N dstParent = dst;
+        N dstChild;
+        N dstOtherChild;
+
+        N srcChild = src;
+        N srcParent = srcChild.getParent();
+
+        while (srcParent != null) {
+            dstChild = dstParent;
+
+            dstParent = createNode();
+            copyNodeProperties(srcParent, dstParent);
+
+            dstOtherChild = createNode();
+
+            if (srcChild.isMinus()) {
+                copyNodeProperties(dstOtherChild, srcParent.getPlus());
+
+                dstParent.setCutState(srcParent.getCut(), dstChild, dstOtherChild);
+            }
+            else {
+                copyNodeProperties(dstOtherChild, srcParent.getMinus());
+
+                dstParent.setCutState(srcParent.getCut(), dstOtherChild, dstChild);
+            }
+
+            srcChild = srcParent;
+            srcParent = srcChild.getParent();
+        }
+
+        return dstParent;
     }
 
     /** Find the smallest node in the tree containing the point, starting
@@ -361,16 +427,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         // a structural change occurred, so increment the tree version
         incrementVersion();
-    }
-
-    /** Method called to initialize a new child node. Subclasses can use this method to
-     * set initial attributes on the node.
-     * @param parent the parent node
-     * @param child the new child node
-     * @param isPlus true if the child will be assigned as the parent's plus child;
-     *      false if it will be the parent's minus child
-     */
-    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
     }
 
     /** Increment the version of the tree. This method should be called anytime structural

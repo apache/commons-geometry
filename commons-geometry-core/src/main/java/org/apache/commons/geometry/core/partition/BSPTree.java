@@ -98,10 +98,16 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      */
     void insert(Iterable<ConvexSubHyperplane<P>> convexSubs);
 
-    /** Return a deep copy of this instance.
-     * @return a deep copy of this instance
+    /** Make the current instance a deep copy of the argument.
+     * @param src the tree to copy
      */
-    BSPTree<P, N> copy();
+    void copy(BSPTree<P, N> src);
+
+    /** Set this instance to the region represented by the given node. The
+     * node does not need to belong to the this tree.
+     * @param node the node to extract
+     */
+    void extract(N node);
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type

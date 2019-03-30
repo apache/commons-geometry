@@ -564,7 +564,8 @@ public class RegionBSPTreeTest {
         insertSkewedBowtie(tree);
 
         // act
-        RegionBSPTree<TestPoint2D> copy = tree.copy();
+        RegionBSPTree<TestPoint2D> copy = fullTree();
+        copy.copy(tree);
 
         // assert
         Assert.assertNotSame(tree, copy);

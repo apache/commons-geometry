@@ -89,7 +89,8 @@ public class AttributeBSPTreeTest {
         tree.getRoot().attr("abc");
 
         // act
-        AttributeBSPTree<TestPoint2D, String> copy = tree.copy();
+        AttributeBSPTree<TestPoint2D, String> copy = new AttributeBSPTree<>();
+        copy.copy(tree);
 
         // assert
         Assert.assertEquals(1, copy.count());
@@ -110,7 +111,8 @@ public class AttributeBSPTreeTest {
         tree.findNode(new TestPoint2D(0, -1)).attr("c");
 
         // act
-        AttributeBSPTree<TestPoint2D, String> copy = tree.copy();
+        AttributeBSPTree<TestPoint2D, String> copy = new AttributeBSPTree<>();
+        copy.copy(tree);
 
         // assert
         Assert.assertEquals(5, copy.count());

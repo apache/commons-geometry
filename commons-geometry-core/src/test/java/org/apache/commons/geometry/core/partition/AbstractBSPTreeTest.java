@@ -930,7 +930,8 @@ public class AbstractBSPTreeTest {
         TestBSPTree tree = new TestBSPTree();
 
         // act
-        TestBSPTree copy = tree.copy();
+        TestBSPTree copy = new TestBSPTree();
+        copy.copy(tree);
 
         // assert
         Assert.assertNotSame(tree, copy);
@@ -949,7 +950,8 @@ public class AbstractBSPTreeTest {
                 .cut(TestLine.Y_AXIS);
 
         // act
-        TestBSPTree copy = tree.copy();
+        TestBSPTree copy = new TestBSPTree();
+        copy.copy(tree);
 
         // assert
         Assert.assertNotSame(tree, copy);
@@ -969,12 +971,52 @@ public class AbstractBSPTreeTest {
                 .cut(TestLine.Y_AXIS);
 
         // act
-        TestBSPTree copy = tree.copy();
+        TestBSPTree copy = new TestBSPTree();
+        copy.copy(tree);
         tree.getRoot().clearCut();
 
         // assert
         Assert.assertEquals(1, tree.count());
         Assert.assertEquals(5, copy.count());
+    }
+
+    @Test
+    public void testCopy_instancePassedAsArgument() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        // act
+        tree.copy(tree);
+
+        // assert
+        Assert.assertEquals(5, tree.count());
+    }
+
+    @Test
+    public void testExtract_extractToDifferentTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(1, 2), new TestPoint2D(2, 1)),
+                    new TestLineSegment(new TestPoint2D(-1, 2), new TestPoint2D(-2, 1)),
+                    new TestLineSegment(new TestPoint2D(0, -2), new TestPoint2D(1, -2))
+                ));
+
+        System.out.println(tree.treeString());
+
+        TestNode node = tree.findNode(new TestPoint2D(1, 1));
+        TestBSPTree result = new TestBSPTree();
+
+        // act
+        result.extract(node);
+
+        System.out.println(result.treeString());
     }
 
     @Test
@@ -1079,6 +1121,20 @@ public class AbstractBSPTreeTest {
         Assert.assertTrue(msg, str.contains("height= 1"));
     }
 
+    @Test
+    public void testNodeToString() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().cut(TestLine.X_AXIS);
+
+        // act
+        String str = tree.getRoot().toString();
+
+        // assert
+        Assert.assertTrue(str.contains("TestNode"));
+        Assert.assertTrue(str.contains("cut= TestLineSegment"));
+    }
+
     private void assertNodesCopiedRecursive(final TestNode orig, final TestNode copy) {
         Assert.assertNotSame(orig, copy);
 
@@ -1099,20 +1155,6 @@ public class AbstractBSPTreeTest {
 
         Assert.assertEquals(orig.depth(), copy.depth());
         Assert.assertEquals(orig.count(), copy.count());
-    }
-
-    @Test
-    public void testNodeToString() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-        tree.getRoot().cut(TestLine.X_AXIS);
-
-        // act
-        String str = tree.getRoot().toString();
-
-        // assert
-        Assert.assertTrue(str.contains("TestNode"));
-        Assert.assertTrue(str.contains("cut= TestLineSegment"));
     }
 
     private static List<TestLineSegment> getLineSegments(TestBSPTree tree) {

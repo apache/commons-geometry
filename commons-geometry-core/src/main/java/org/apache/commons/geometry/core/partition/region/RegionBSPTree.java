@@ -52,12 +52,6 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         getRoot().setLocation(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public RegionBSPTree<P> copy() {
-        return (RegionBSPTree<P>) super.copy();
-    }
-
     /** Return true if the region is empty, i.e. if no node in the tree
      * has a location of {@link RegionLocation#INSIDE}.
      * @return true if the region does not have an inside
