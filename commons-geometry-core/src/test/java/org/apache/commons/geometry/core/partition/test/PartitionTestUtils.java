@@ -16,15 +16,9 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.util.Objects;
-
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partition.BSPTree;
-import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partition.BSPTree.Node;
-import org.apache.commons.geometry.core.partition.region.RegionBSPTree;
-import org.apache.commons.geometry.core.partition.region.RegionBSPTree.RegionNode;
-import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;

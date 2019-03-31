@@ -26,7 +26,18 @@ public interface Hyperplane<P extends Point<P>> {
 
     P project(P point);
 
-    boolean sameOrientation(Hyperplane<P> other);
+    Hyperplane<P> transform(Transform<P> transform);
+
+    /** Return true if this instance has a similar orientation to the given hyperplane,
+     * meaning that they point in generally the same direction. This method is not
+     * used to determine exact equality of hyperplanes, but rather to determine whether
+     * two hyperplanes that contain the same points are parallel (point in the same direction)
+     * or anti-parallel (point in opposite directions).
+     * @param other the hyperplane to compare with
+     * @return true if the hyperplanes point in generally the same direction and could
+     *      possibly be parallel
+     */
+    boolean similarOrientation(Hyperplane<P> other);
 
     ConvexSubHyperplane<P> wholeHyperplane();
 }

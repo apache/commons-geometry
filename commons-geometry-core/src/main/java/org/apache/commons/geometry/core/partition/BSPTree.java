@@ -104,10 +104,16 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     void copy(BSPTree<P, N> src);
 
     /** Set this instance to the region represented by the given node. The
-     * node does not need to belong to the this tree.
+     * given node could have come from this tree or a different tree.
      * @param node the node to extract
      */
     void extract(N node);
+
+    /** Transform this tree. Each cut subhyperplane in the tree is transformed in place using
+     * the given transform object.
+     * @param t the transform to apply
+     */
+    void transform(Transform<P> t);
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type

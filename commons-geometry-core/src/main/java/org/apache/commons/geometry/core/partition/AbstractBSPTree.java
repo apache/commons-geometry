@@ -142,6 +142,22 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         setRoot(newRoot);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void transform(final Transform<P> t) {
+        this.forEach(n -> {
+            if (n.isInternal()) {
+                final ConvexSubHyperplane<P> tCut = n.getCut().transform(t);
+
+                n.setCutState(tCut, n.getMinus(), n.getPlus());
+            }
+        });
+
+        // increment the version to invalidate any computed properties that might
+        // depend on the cuts
+        incrementVersion();
+    }
+
     /** Get a simple string representation of the tree structure. The returned string contains
      * the tree structure down to the default max depth of {@value #DEFAULT_TREE_STRING_MAX_DEPTH}.
      * @return a string representation of the tree

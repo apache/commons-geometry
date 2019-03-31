@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partition.Transform;
 
 /** Class representing a line segment in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
@@ -106,12 +107,6 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
-    public List<TestPoint2D> getPoints() {
-        return Arrays.asList(getStartPoint(), getEndPoint());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public TestLine getHyperplane() {
         return line;
     }
@@ -142,12 +137,6 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
-    public TestLineSegment reverse() {
-        return new TestLineSegment(getEndPoint(), getStartPoint());
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public ConvexSubHyperplane.Split<TestPoint2D> split(Hyperplane<TestPoint2D> splitter) {
         final TestLine splitterLine = (TestLine) splitter;
 
@@ -161,6 +150,31 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     @Override
     public SubHyperplane.Builder<TestPoint2D> builder() {
         return new TestLineSegmentCollectionBuilder(line);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ConvexSubHyperplane<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+        if (!isInfinite()) {
+            // simple case; just transform the points directly
+            TestPoint2D p1 = transform.apply(getStartPoint());
+            TestPoint2D p2 = transform.apply(getEndPoint());
+
+            return new TestLineSegment(p1, p2);
+        }
+
+        // determine how the line has transformed
+        TestPoint2D p0 = transform.apply(line.toSpace(0));
+        TestPoint2D p1 = transform.apply(line.toSpace(1));
+
+        TestLine tLine = new TestLine(p0, p1);
+        double translation = tLine.toSubSpace(p0);
+        double scale = tLine.toSubSpace(p1);
+
+        double tStart = (start * scale) + translation;
+        double tEnd = (end * scale) + translation;
+
+        return new TestLineSegment(tStart, tEnd, tLine);
     }
 
     /** {@inheritDoc} */

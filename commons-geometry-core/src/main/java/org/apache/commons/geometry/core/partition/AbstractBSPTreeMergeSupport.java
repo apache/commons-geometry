@@ -187,7 +187,7 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
         }
         else {
             // partitioner and node cut are parallel or anti-parallel
-            final boolean sameOrientation = partitioner.getHyperplane().sameOrientation(node.getCutHyperplane());
+            final boolean sameOrientation = partitioner.getHyperplane().similarOrientation(node.getCutHyperplane());
 
             resultMinus = outputSubtree(sameOrientation ? node.getMinus() : node.getPlus());
             resultPlus = outputSubtree(sameOrientation ? node.getPlus() : node.getMinus());

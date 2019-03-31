@@ -1171,6 +1171,44 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testTransform_singleNodeTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), p.getY() + 2);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+        Assert.assertTrue(tree.getRoot().isLeaf());
+    }
+
+    @Test
+    public void testTransform_singleCut() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot().insertCut(TestLine.X_AXIS);
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), p.getY() + 2);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertEquals(3, tree.count());
+
+        List<TestLineSegment> segments = getLineSegments(tree);
+        Assert.assertEquals(1, segments.size());
+
+        TestLineSegment seg = segments.get(0);
+
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), seg.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, 2), seg.getEndPoint());
+    }
+
+    @Test
     public void testTreeString() {
         // arrange
         TestBSPTree tree = new TestBSPTree();

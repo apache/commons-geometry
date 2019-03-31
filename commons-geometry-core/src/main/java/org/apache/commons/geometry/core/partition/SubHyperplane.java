@@ -32,8 +32,6 @@ public interface SubHyperplane<P extends Point<P>> {
 
     Builder<P> builder();
 
-    SubHyperplane<P> reverse();
-
     /** Convert this instance into a list of convex child
      * subhyperplanes.
      * @return

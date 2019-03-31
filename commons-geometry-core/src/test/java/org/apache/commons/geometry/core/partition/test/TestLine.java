@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.Transform;
 
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
@@ -170,7 +171,16 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientation(Hyperplane<TestPoint2D> other) {
+    public TestLine transform(Transform<TestPoint2D> transform) {
+        TestPoint2D p1 = transform.apply(toSpace(0));
+        TestPoint2D p2 = transform.apply(toSpace(1));
+
+        return new TestLine(p1, p2);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean similarOrientation(Hyperplane<TestPoint2D> other) {
         final TestLine otherLine = (TestLine) other;
         final double dot = (directionX * otherLine.directionX) + (directionY * otherLine.directionY);
         return dot >= 0.0;
