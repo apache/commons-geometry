@@ -91,12 +91,12 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     public static Plane fromPointAndPlaneVectors (Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
     {
-        Vector3D u_norm = u.normalize();
-        Vector3D v_norm = v.normalize();
-        Vector3D w_norm = u_norm.cross(v_norm).normalize();
-        double originOffset = -p.dot(w_norm);
-        Vector3D projectedOrigin = calculateOrigin(w_norm, originOffset);
-        return new Plane(u_norm, v_norm, w_norm, projectedOrigin, originOffset, precision);
+        Vector3D uNorm = u.normalize();
+        Vector3D vNorm = v.normalize();
+        Vector3D wNorm = uNorm.cross(vNorm).normalize();
+        double originOffset = -p.dot(wNorm);
+        Vector3D projectedOrigin = calculateOrigin(wNorm, originOffset);
+        return new Plane(uNorm, vNorm, wNorm, projectedOrigin, originOffset, precision);
     }
     
     /**
@@ -144,7 +144,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
-        return Plane.fromPointAndNormal(p1, p2.subtract(p1).cross(p3.subtract(p1)), precision);
+        return Plane.fromPointAndNormal(p1, p1.vectorTo(p2).cross(p1.vectorTo(p3)), precision);
     }
 
     /**
@@ -157,10 +157,13 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param plane plane to copy
      * @return a new plane
      */
-    public static Plane of(final Plane plane) {
+    public static Plane of(Plane plane) {
         return new Plane(plane.u, plane.v, plane.w, plane.projectedOrigin, plane.originOffset, plane.getPrecision());
     }
 
+    
+    // This should be removed after GEOMETRY-32 is done.
+    
     /**
      * Copy the instance.
      * <p>
@@ -270,7 +273,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Line project(Line line)
     {
         Vector3D direction = line.getDirection();
-        Vector3D projection = w.multiply(direction.dot(w)).multiply(1/Math.pow(w.norm(), 2));
+        Vector3D projection = w.multiply(direction.dot(w)).multiply(1/w.normSq());
         Vector3D projectedLineDirection = direction.subtract(projection);
         Vector3D p1 = project(line.getOrigin());
         Vector3D p2 = p1.add(projectedLineDirection);
@@ -353,7 +356,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param plane plane to which the instance is compared
      * @return true if the planes are similar
      */
-    public boolean contains(final Plane plane) {
+    public boolean contains(Plane plane) {
         final double angle = w.angle(plane.w);
         return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
                 || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
@@ -426,7 +429,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return line at the intersection of the instance and the other plane (really
      *         a {@link Line Line} instance)
      */
-    public Line intersection(final Plane other) {
+    public Line intersection(Plane other) {
         final Vector3D direction = w.cross(other.w);
         if (precision.eqZero(direction.norm())) {
             return null;
@@ -443,7 +446,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param plane3 third plane2
      * @return intersection point of three planes, null if some planes are parallel
      */
-    public static Vector3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
+    public static Vector3D intersection(Plane plane1, Plane plane2, Plane plane3) {
 
         // coefficients of the three planes linear equations
         final double a1 = plane1.w.getX();
@@ -558,7 +561,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param plane plane to check
      * @return offset of the plane
      */
-    public double getOffset(final Plane plane) {
+    public double getOffset(Plane plane) {
         return originOffset + (sameOrientationAs(plane) ? -plane.originOffset : plane.originOffset);
     }
 
