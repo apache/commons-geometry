@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
+import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
@@ -55,6 +56,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -91,6 +96,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("Ba", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("BA", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("BA", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -127,6 +136,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -166,6 +179,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -205,6 +222,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -244,6 +265,10 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -286,6 +311,10 @@ public class AbstractBSPTreeMergeSupportTest {
 
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
         Assert.assertEquals("AB", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -328,6 +357,10 @@ public class AbstractBSPTreeMergeSupportTest {
 
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(-1, -3)).getAttribute());
         Assert.assertEquals("Ab", c.findNode(new TestPoint2D(1, -3)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -370,6 +403,10 @@ public class AbstractBSPTreeMergeSupportTest {
 
         Assert.assertEquals("ab", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
         Assert.assertEquals("ab", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -412,6 +449,10 @@ public class AbstractBSPTreeMergeSupportTest {
 
         Assert.assertEquals("aB", c.findNode(new TestPoint2D(-1, 3)).getAttribute());
         Assert.assertEquals("aB", c.findNode(new TestPoint2D(1, 3)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
+        PartitionTestUtils.assertTreeStructure(c);
     }
 
     @Test
@@ -445,6 +486,9 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("ab", a.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("Ab", a.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", a.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
     }
 
     @Test
@@ -478,6 +522,9 @@ public class AbstractBSPTreeMergeSupportTest {
         Assert.assertEquals("ab", b.findNode(new TestPoint2D(-1, 1)).getAttribute());
         Assert.assertEquals("Ab", b.findNode(new TestPoint2D(-1, -1)).getAttribute());
         Assert.assertEquals("AB", b.findNode(new TestPoint2D(1, -1)).getAttribute());
+
+        PartitionTestUtils.assertTreeStructure(a);
+        PartitionTestUtils.assertTreeStructure(b);
     }
 
     private static class TestMergeOperator extends AbstractBSPTreeMergeSupport<TestPoint2D, AttributeNode<TestPoint2D, String>> {

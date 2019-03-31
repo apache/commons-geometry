@@ -257,12 +257,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             dstOtherChild = createNode();
 
             if (srcChild.isMinus()) {
-                copyNodeProperties(dstOtherChild, srcParent.getPlus());
+                copyNodeProperties(srcParent.getPlus(), dstOtherChild);
 
                 dstParent.setCutState(srcParent.getCut(), dstChild, dstOtherChild);
             }
             else {
-                copyNodeProperties(dstOtherChild, srcParent.getMinus());
+                copyNodeProperties(srcParent.getMinus(), dstOtherChild);
 
                 dstParent.setCutState(srcParent.getCut(), dstOtherChild, dstChild);
             }

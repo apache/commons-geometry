@@ -581,6 +581,60 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testExtract() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        RegionBSPTree<TestPoint2D> result = fullTree();
+
+        TestPoint2D pt = new TestPoint2D(2, 2);
+
+        // act
+        result.extract(tree.findNode(pt));
+
+        // assert
+        assertPointLocations(result, RegionLocation.INSIDE,
+                new TestPoint2D(0, 0.5), new TestPoint2D(2, 2));
+        assertPointLocations(result, RegionLocation.OUTSIDE,
+                new TestPoint2D(-2, 2),
+                new TestPoint2D(-2, -2), new TestPoint2D(0, -0.5), new TestPoint2D(-2, 2));
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                new TestPoint2D(0, 0.5), new TestPoint2D(2, 2),
+                new TestPoint2D(-2, -2), new TestPoint2D(0, -0.5));
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(2, -2), new TestPoint2D(-2, 2));
+    }
+
+    @Test
+    public void testExtract_complementedTree() {
+        // arrange
+        insertSkewedBowtie(tree);
+        tree.complement();
+
+        RegionBSPTree<TestPoint2D> result = fullTree();
+
+        TestPoint2D pt = new TestPoint2D(2, 2);
+
+        // act
+        result.extract(tree.findNode(pt));
+
+        // assert
+        assertPointLocations(result, RegionLocation.OUTSIDE,
+                new TestPoint2D(0, 0.5), new TestPoint2D(2, 2));
+        assertPointLocations(result, RegionLocation.INSIDE,
+                new TestPoint2D(-2, 2),
+                new TestPoint2D(-2, -2), new TestPoint2D(0, -0.5), new TestPoint2D(-2, 2));
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(0, 0.5), new TestPoint2D(2, 2),
+                new TestPoint2D(-2, -2), new TestPoint2D(0, -0.5));
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                new TestPoint2D(2, -2), new TestPoint2D(-2, 2));
+    }
+
+
+    @Test
     public void testUnion_singleNodeTrees() {
         // act/assert
         unionChecker(RegionBSPTreeTest::emptyTree, RegionBSPTreeTest::emptyTree)
@@ -1103,6 +1157,29 @@ public class RegionBSPTreeTest {
         Assert.assertEquals("RegionBSPTree[count= 3, height= 1]", str);
     }
 
+    /** Assert that all given points lie in the expected location of the region.
+     * @param tree region tree
+     * @param points points to test
+     * @param location expected location of all points
+     */
+    private static void assertPointLocations(final RegionBSPTree<TestPoint2D> tree, final RegionLocation location,
+            final TestPoint2D ... points) {
+        assertPointLocations(tree, location, Arrays.asList(points));
+    }
+
+    /** Assert that all given points lie in the expected location of the region.
+     * @param tree region tree
+     * @param points points to test
+     * @param location expected location of all points
+     */
+    private static void assertPointLocations(final RegionBSPTree<TestPoint2D> tree, final RegionLocation location,
+            final List<TestPoint2D> points) {
+
+        for (TestPoint2D p : points) {
+            Assert.assertEquals("Unexpected location for point " + p, location, tree.classify(p));
+        }
+    }
+
     private static MergeChecker unionChecker(
             final Supplier<RegionBSPTree<TestPoint2D>> r1,
             final Supplier<RegionBSPTree<TestPoint2D>> r2) {
@@ -1411,8 +1488,10 @@ public class RegionBSPTreeTest {
                 System.out.println(result.treeString());
             }
 
-            // verify the result tree's internal consistency
-            checkTreeConsistency(result);
+            // verify the internal consistency of all of the involved trees
+            PartitionTestUtils.assertTreeStructure(tree1);
+            PartitionTestUtils.assertTreeStructure(tree2);
+            PartitionTestUtils.assertTreeStructure(result);
 
             // check full/empty status
             Assert.assertEquals("Unexpected tree 'full' property", expectedFull, result.isFull());
@@ -1438,56 +1517,13 @@ public class RegionBSPTreeTest {
             Assert.assertEquals("Tree 2 node count should not have changed", tree2BeforeCount, tree2.count());
 
             // check region point locations
-            assertPointLocations(result, insidePoints, RegionLocation.INSIDE);
-            assertPointLocations(result, outsidePoints, RegionLocation.OUTSIDE);
-            assertPointLocations(result, boundaryPoints, RegionLocation.BOUNDARY);
+            assertPointLocations(result, RegionLocation.INSIDE, insidePoints);
+            assertPointLocations(result, RegionLocation.OUTSIDE, outsidePoints);
+            assertPointLocations(result, RegionLocation.BOUNDARY, boundaryPoints);
 
             // pass the result to the given function for any additional assertions
             if (assertions != null) {
                 assertions.accept(result);
-            }
-        }
-
-        /** Check the tree for internal consistency.
-         * @param tree tree to check
-         */
-        private void checkTreeConsistency(final RegionBSPTree<TestPoint2D> tree) {
-            checkTreeConsistencyRecursive(tree, tree.getRoot(), 0);
-        }
-
-        private void checkTreeConsistencyRecursive(final RegionBSPTree<TestPoint2D> tree,
-                final RegionNode<TestPoint2D> node, final int expectedDepth) {
-
-            Assert.assertSame("Node has an incorrect owning tree", tree, node.getTree());
-            Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
-
-            if (node.getCut() == null) {
-                String msg = "Node without cut cannot have children";
-
-                Assert.assertNull(msg, node.getMinus());
-                Assert.assertNull(msg, node.getPlus());
-            }
-            else {
-                String msg = "Node with cut must have children";
-
-                Assert.assertNotNull(msg, node.getMinus());
-                Assert.assertNotNull(msg, node.getPlus());
-
-                checkTreeConsistencyRecursive(tree, node.getPlus(), expectedDepth + 1);
-                checkTreeConsistencyRecursive(tree, node.getMinus(), expectedDepth + 1);
-            }
-        }
-
-        /** Assert that all points in the given list lie in the expected location of the region.
-         * @param tree region tree
-         * @param points points to test
-         * @param location expected location of all points
-         */
-        private void assertPointLocations(final RegionBSPTree<TestPoint2D> tree, final List<TestPoint2D> points,
-                final RegionLocation location) {
-
-            for (TestPoint2D p : points) {
-                Assert.assertEquals("Unexpected location for point " + p, location, tree.classify(p));
             }
         }
     }

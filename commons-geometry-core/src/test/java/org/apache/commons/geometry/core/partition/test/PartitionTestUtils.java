@@ -18,9 +18,12 @@ package org.apache.commons.geometry.core.partition.test;
 
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partition.BSPTree;
 import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partition.BSPTree.Node;
+import org.apache.commons.geometry.core.partition.region.RegionBSPTree;
+import org.apache.commons.geometry.core.partition.region.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -79,111 +82,40 @@ public class PartitionTestUtils {
         Assert.assertTrue(node.isLeaf());
     }
 
-    public static <N extends BSPTree.Node<TestPoint2D, N>> void printTree(BSPTree<TestPoint2D, N> tree) {
-        TestTreePrinter<N> printer = new TestTreePrinter<>();
-
-        System.out.println(printer.writeAsString(tree));
+    /** Assert that the given tree for has a valid, consistent internal structure. This checks that all nodes
+     * in the tree are owned by the tree, that the node depth values are correct, and the cut nodes have children
+     * and non-cut nodes do not.
+     * @param tree tree to check
+     */
+    public static <P extends Point<P>, N extends BSPTree.Node<P, N>> void assertTreeStructure(final BSPTree<P, N> tree) {
+        assertTreeStructureRecursive(tree, tree.getRoot(), 0);
     }
 
-    public static class TestTreePrinter<N extends BSPTree.Node<TestPoint2D, N>> implements BSPTreeVisitor<TestPoint2D, N> {
+    /** Recursive method to assert that a tree has a valid internal structure.
+     * @param tree tree to check
+     * @param node node to check
+     * @param expectedDepth the expected depth of the node in the tree
+     */
+    private static <P extends Point<P>, N extends BSPTree.Node<P, N>> void assertTreeStructureRecursive(
+            final BSPTree<P, N> tree, final BSPTree.Node<P, N> node, final int expectedDepth) {
 
-        /** Indent per tree level */
-        protected static final String INDENT = "    ";
+        Assert.assertSame("Node has an incorrect owning tree", tree, node.getTree());
+        Assert.assertEquals("Node has an incorrect depth property", node.depth(), expectedDepth);
 
-        /** Contains the string output */
-        protected StringBuilder output = new StringBuilder();
+        if (node.getCut() == null) {
+            String msg = "Node without cut cannot have children";
 
-        /** Returns a string representation of the given {@link BSPTree_Old}.
-         * @param tree
-         * @return
-         */
-        public String writeAsString(BSPTree<TestPoint2D, N> tree) {
-            output.delete(0, output.length());
-
-            tree.visit(this);
-
-            return output.toString();
+            Assert.assertNull(msg, node.getMinus());
+            Assert.assertNull(msg, node.getPlus());
         }
+        else {
+            String msg = "Node with cut must have children";
 
-        @Override
-        public void visit(N node) {
-            writeLinePrefix(node);
+            Assert.assertNotNull(msg, node.getMinus());
+            Assert.assertNotNull(msg, node.getPlus());
 
-            if (node.isLeaf()) {
-                visitLeafNode(node);
-            }
-            else {
-                visitInternalNode(node);
-            }
-        }
-
-        public void visitInternalNode(N node) {
-            writeInternalNode(node);
-
-            write("\n");
-        }
-
-        public void visitLeafNode(N node) {
-            writeLeafNode(node);
-
-            write("\n");
-
-            N cur = node;
-            while (cur.isPlus()) {
-                cur = cur.getParent();
-            }
-        }
-
-        /** Writes the prefix for the current line in the output. This includes
-         * the line indent, the plus/minus node indicator, and a string identifier
-         * for the node itself.
-         * @param node
-         */
-        protected void writeLinePrefix(N node) {
-            for (int i=0; i<node.depth(); ++i) {
-                write(INDENT);
-            }
-
-            if (node.getParent() != null) {
-                if (node.isMinus()) {
-                    write("[-] ");
-                }
-                else {
-                    write("[+] ");
-                }
-            }
-
-            write(nodeIdString(node) + " | ");
-        }
-
-        /** Returns a short string identifier for the given node.
-         * @param node
-         * @return
-         */
-        protected String nodeIdString(N node) {
-            return node.getClass().getSimpleName() + "@"  + Objects.hashCode(node);
-        }
-
-        /** Adds the given string to the output.
-         * @param str
-         */
-        protected void write(String str) {
-            output.append(str);
-        }
-
-        /** Method for subclasses to provide their own string representation
-         * of the given internal node.
-         */
-        protected void writeInternalNode(N node) {
-            write(node.toString());
-        }
-
-        /** Writes a leaf node. The default implementation here simply writes
-         * the node attribute as a string.
-         * @param node
-         */
-        protected void writeLeafNode(N node) {
-            write(node.toString());
+            assertTreeStructureRecursive(tree, node.getPlus(), expectedDepth + 1);
+            assertTreeStructureRecursive(tree, node.getMinus(), expectedDepth + 1);
         }
     }
 }

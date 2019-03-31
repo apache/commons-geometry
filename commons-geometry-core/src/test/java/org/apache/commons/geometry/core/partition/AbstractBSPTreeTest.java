@@ -997,7 +997,48 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testExtract_extractToDifferentTree() {
+    public void testExtract_singleNodeTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestBSPTree result = new TestBSPTree();
+        result.getRoot().insertCut(TestLine.X_AXIS);
+
+        // act
+        result.extract(tree.getRoot());
+
+        // assert
+        Assert.assertNotSame(tree.getRoot(), result.getRoot());
+        Assert.assertEquals(1, tree.count());
+        Assert.assertEquals(1, result.count());
+
+        PartitionTestUtils.assertTreeStructure(tree);
+        PartitionTestUtils.assertTreeStructure(result);
+    }
+
+    @Test
+    public void testExtract_clearsExistingNodesInCallingTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestBSPTree result = new TestBSPTree();
+        result.getRoot().cut(TestLine.X_AXIS)
+            .getMinus().cut(TestLine.Y_AXIS);
+
+        // act
+        result.extract(tree.getRoot());
+
+        // assert
+        Assert.assertNotSame(tree.getRoot(), result.getRoot());
+        Assert.assertEquals(1, tree.count());
+        Assert.assertEquals(1, result.count());
+
+        PartitionTestUtils.assertTreeStructure(tree);
+        PartitionTestUtils.assertTreeStructure(result);
+    }
+
+    @Test
+    public void testExtract_internalNode() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
         tree.insert(Arrays.asList(
@@ -1008,15 +1049,125 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, -2), new TestPoint2D(1, -2))
                 ));
 
-        System.out.println(tree.treeString());
+        TestBSPTree result = new TestBSPTree();
 
-        TestNode node = tree.findNode(new TestPoint2D(1, 1));
+        // act
+        result.extract(tree.getRoot().getPlus());
+
+        // assert
+        Assert.assertEquals(7, result.count());
+
+        List<TestLineSegment> resultSegments = getLineSegments(result);
+        Assert.assertEquals(3, resultSegments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                resultSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, 0, TestLine.Y_AXIS),
+                resultSegments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, new TestLine(new TestPoint2D(0, -2), new TestPoint2D(1, -2))),
+                resultSegments.get(2));
+
+        Assert.assertEquals(13, tree.count());
+
+        List<TestLineSegment> inputSegment = getLineSegments(tree);
+        Assert.assertEquals(6, inputSegment.size());
+
+        PartitionTestUtils.assertTreeStructure(tree);
+        PartitionTestUtils.assertTreeStructure(result);
+    }
+
+    @Test
+    public void testExtract_leafNode() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(1, 2), new TestPoint2D(2, 1)),
+                    new TestLineSegment(new TestPoint2D(-1, 2), new TestPoint2D(-2, 1)),
+                    new TestLineSegment(new TestPoint2D(0, -2), new TestPoint2D(1, -2))
+                ));
+
+        TestPoint2D pt = new TestPoint2D(1, 1);
+
+        TestNode node = tree.findNode(pt);
         TestBSPTree result = new TestBSPTree();
 
         // act
         result.extract(node);
 
-        System.out.println(result.treeString());
+        // assert
+        TestNode resultNode = result.findNode(pt);
+        Assert.assertNotNull(resultNode);
+        Assert.assertNotSame(node, resultNode);
+
+        Assert.assertEquals(7, result.count());
+
+        List<TestLineSegment> resultSegments = getLineSegments(result);
+        Assert.assertEquals(3, resultSegments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                resultSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.Y_AXIS),
+                resultSegments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0)),
+                resultSegments.get(2));
+
+        Assert.assertEquals(13, tree.count());
+
+        List<TestLineSegment> inputSegment = getLineSegments(tree);
+        Assert.assertEquals(6, inputSegment.size());
+
+        PartitionTestUtils.assertTreeStructure(tree);
+        PartitionTestUtils.assertTreeStructure(result);
+    }
+
+    @Test
+    public void testExtract_extractFromSameTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(1, 2), new TestPoint2D(2, 1)),
+                    new TestLineSegment(new TestPoint2D(-1, 2), new TestPoint2D(-2, 1)),
+                    new TestLineSegment(new TestPoint2D(0, -2), new TestPoint2D(1, -2))
+                ));
+
+        TestPoint2D pt = new TestPoint2D(1, 1);
+
+        TestNode node = tree.findNode(pt);
+
+        // act
+        tree.extract(node);
+
+        // assert
+        TestNode resultNode = tree.findNode(pt);
+        Assert.assertNotNull(resultNode);
+        Assert.assertNotSame(node, resultNode);
+
+        Assert.assertEquals(7, tree.count());
+
+        List<TestLineSegment> resultSegments = getLineSegments(tree);
+        Assert.assertEquals(3, resultSegments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                resultSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.Y_AXIS),
+                resultSegments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0)),
+                resultSegments.get(2));
+
+        PartitionTestUtils.assertTreeStructure(tree);
     }
 
     @Test
@@ -1158,14 +1309,9 @@ public class AbstractBSPTreeTest {
     }
 
     private static List<TestLineSegment> getLineSegments(TestBSPTree tree) {
-        List<TestLineSegment> list = new ArrayList<>();
-
-        tree.visit(node -> {
-            if (node.isInternal()) {
-                list.add((TestLineSegment) node.getCut());
-            }
-        });
-
-        return list;
+        return tree.stream()
+            .filter(BSPTree.Node::isInternal)
+            .map(n -> (TestLineSegment) n.getCut())
+            .collect(Collectors.toList());
     }
 }
