@@ -140,11 +140,10 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
-        return Plane.fromPointAndNormal(p1, p1.vectorTo(p2).cross(p1.vectorTo(p3)), precision);
+        return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
     }
    
     // This should be removed after GEOMETRY-32 is done.
-    
     /**
      * Copy the instance.
      * <p>
