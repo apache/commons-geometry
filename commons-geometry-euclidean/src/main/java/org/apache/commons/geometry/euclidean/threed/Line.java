@@ -239,11 +239,13 @@ public class Line implements Embedding<Vector3D, Vector1D> {
         return new SubLine(this, new IntervalsSet(precision));
     }
     
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(direction, precision, zero);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
