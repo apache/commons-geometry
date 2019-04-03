@@ -239,11 +239,9 @@ public class Line implements Embedding<Vector3D, Vector1D> {
         return new SubLine(this, new IntervalsSet(precision));
     }
     
-    
-
     @Override
     public int hashCode() {
-        throw new IllegalStateException("Must not be used in maps.");
+        return Objects.hash(direction, precision, zero);
     }
 
     @Override

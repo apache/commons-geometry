@@ -66,6 +66,24 @@ public class PlaneTest {
         Assert.assertTrue(plane.contains(line));
     }
     
+    @Test(expected=IllegalNormException.class)
+    public void testFromPointPlaneVectorsWithZeroVector()
+    {
+        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.ZERO, Vector3D.of(1,0,0), TEST_PRECISION);
+    }
+    
+    @Test(expected=IllegalNormException.class)
+    public void testFromPointAndNormalWithZeroNormal()
+    {
+        Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
+    }
+     
+    @Test(expected=IllegalNormException.class)
+    public void testFromNormal()
+    {
+        Plane.fromNormal(Vector3D.ZERO, TEST_PRECISION);
+    }
+     
     @Test
     public void testIsParallelAndGetOffset()
     {
@@ -76,14 +94,6 @@ public class PlaneTest {
         Line nonParallelLine = new Line(Vector3D.of(1, 0, 2), Vector3D.of(2, 0, 1), TEST_PRECISION);
         Assert.assertFalse(plane.isParallel(nonParallelLine));
         Assert.assertEquals(0.0, plane.getOffset(nonParallelLine), TEST_EPS);
-    }
-    
-    @Test
-    public void testCopy()
-    {
-        Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
-        Plane copyPlane = Plane.of(plane);
-        Assert.assertEquals(plane, copyPlane); 
     }
     
     @Test
