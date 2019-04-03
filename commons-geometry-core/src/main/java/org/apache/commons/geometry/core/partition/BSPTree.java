@@ -110,7 +110,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     void extract(N node);
 
     /** Transform this tree. Each cut subhyperplane in the tree is transformed in place using
-     * the given transform object.
+     * the given {@link Transform}.
      * @param t the transform to apply
      */
     void transform(Transform<P> t);

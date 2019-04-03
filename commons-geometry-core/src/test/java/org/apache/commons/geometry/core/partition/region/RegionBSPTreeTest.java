@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partition.Transform;
 import org.apache.commons.geometry.core.partition.region.RegionBSPTree.RegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
@@ -283,6 +284,93 @@ public class RegionBSPTreeTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
         Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+    }
+
+    @Test
+    public void testTransform_noCuts() {
+        // arrange
+        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), p.getY() + 2);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.INSIDE, TestPoint2D.ZERO);
+    }
+
+    @Test
+    public void testTransform_singleCut() {
+        // arrange
+        tree.getRoot().insertCut(TestLine.X_AXIS);
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), p.getY() + 2);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(0, -1), TestPoint2D.ZERO, new TestPoint2D(0, 1));
+
+        assertPointLocations(tree, RegionLocation.BOUNDARY, new TestPoint2D(0, 2));
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                new TestPoint2D(0, 3), new TestPoint2D(0, 4));
+    }
+
+    @Test
+    public void testTransform_multipleCuts() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                new TestPoint2D(0, 5), new TestPoint2D(-1, 4), new TestPoint2D(1, 6));
+
+        assertPointLocations(tree, RegionLocation.BOUNDARY,
+                new TestPoint2D(-2, 4), new TestPoint2D(2, 6));
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(-3, 5), new TestPoint2D(3, 5));
+    }
+
+    @Test
+    public void testTransform_resetsCutBoundary() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        RegionNode<TestPoint2D> node = tree.findNode(new TestPoint2D(1, 1)).getParent();
+
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5);
+
+        // act
+        RegionCutBoundary<TestPoint2D> origBoundary = node.getCutBoundary();
+
+        tree.transform(t);
+
+        RegionCutBoundary<TestPoint2D> resultBoundary = node.getCutBoundary();
+
+        // assert
+        Assert.assertNotSame(origBoundary, resultBoundary);
+
+        assertCutBoundarySegment(origBoundary.getOutsideFacing(), new TestPoint2D(4, 5), new TestPoint2D(-1, 0));
+
+        assertCutBoundarySegment(resultBoundary.getOutsideFacing(), new TestPoint2D(2, 10), new TestPoint2D(-0.5, 5));
     }
 
     @Test

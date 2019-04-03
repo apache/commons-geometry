@@ -1209,6 +1209,44 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testTransform_multipleCuts() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(-1, -1), new TestPoint2D(1, 1)),
+                    new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2))
+                ));
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-0.5 * p.getX(), p.getY() + 2);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertEquals(9, tree.count());
+
+        List<TestLineSegment> segments = getLineSegments(tree);
+        Assert.assertEquals(4, segments.size());
+
+        TestLineSegment segment1 = segments.get(0);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, 2), segment1.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), segment1.getEndPoint());
+
+        TestLineSegment segment2 = segments.get(1);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment2.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), segment2.getEndPoint());
+
+        TestLineSegment segment3 = segments.get(2);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1.5, 2), segment3.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1.5, 5), segment3.getEndPoint());
+
+        TestLineSegment segment4 = segments.get(3);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY), segment4.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment4.getEndPoint());
+    }
+
+    @Test
     public void testTreeString() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
