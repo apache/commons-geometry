@@ -143,10 +143,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public void transform(final Transform<P> t) {
-
-        final boolean swapChildren = shouldTransformSwapChildren(t);
-        transformRecursive(getRoot(), t, swapChildren);
+    public void transform(final Transform<P> transform) {
+        final boolean swapChildren = shouldTransformSwapChildren(transform);
+        transformRecursive(getRoot(), transform, swapChildren);
 
         // increment the version to invalidate any computed properties that might
         // depend on the cuts
@@ -251,7 +250,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst the destination node to place under the extracted path
      * @return the root node of the extracted path
      */
-    protected N extractParentPath(final N src, final N dst) {
+    private N extractParentPath(final N src, final N dst) {
         N dstParent = dst;
         N dstChild;
         N dstOtherChild;
@@ -293,7 +292,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    protected N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
+    private N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
         Hyperplane<P> hyper = start.getCutHyperplane();
         if (hyper != null) {
             Side side = hyper.classify(pt);
@@ -316,7 +315,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node the node to begin the visit process
      * @param visitor the visitor to pass nodes to
      */
-    protected void visit(final N node, BSPTreeVisitor<P, N> visitor) {
+    private void visit(final N node, BSPTreeVisitor<P, N> visitor) {
         // simple recursive implementation of this; we'll probably
         // want to change this later
         if (node != null) {
@@ -336,7 +335,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param cutter the hyperplane to cut the node with
      * @return true if the node was cut; otherwise fasel
      */
-    protected boolean insertCut(final N node, final Hyperplane<P> cutter) {
+    private boolean insertCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
@@ -355,7 +354,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node the node to remove the cut from
      * @return true if the node previously had a cut
      */
-    protected boolean clearCut(final N node) {
+    private boolean clearCut(final N node) {
         boolean hadCut = node.getCut() != null;
         setNodeCut(node, null);
 
@@ -368,7 +367,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param sub the subhyperplane to fit into the cell
      * @return the subhyperplane fit to the cell
      */
-    protected ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
+    private ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
 
         ConvexSubHyperplane<P> result = sub;
 
@@ -393,7 +392,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param trimmed convex subhyperplane containing the result of splitting the entire
      *      space with each hyperplane from this node to the root
      */
-    protected void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
+    private void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
             setNodeCut(node, trimmed);
@@ -422,7 +421,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node
      * @param cut
      */
-    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
+    private void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
         N plus = null;;
         N minus = null;
 
@@ -446,7 +445,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param swapChildren if true, the plus and minus child nodes of each internal node
      *      will be swapped; this should be the case when the transform is a reflection
      */
-    protected void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
+    private void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
         if (node.isInternal()) {
             // transform our cut
             final ConvexSubHyperplane<P> transformedCut = node.getCut().transform(t);
@@ -465,21 +464,21 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** Return true if the given transform should swap the plus and minus child nodes when
      * applied to the tree. This will be the case for transforms that represent reflections.
-     * @param t the transform to test
+     * @param transform the transform to test
      * @return true if the transform should swap the plus and minus child nodes in the tree
      */
-    protected boolean shouldTransformSwapChildren(final Transform<P> t) {
+    private boolean shouldTransformSwapChildren(final Transform<P> transform) {
         final Hyperplane<P> hyperplane = getRoot().getCutHyperplane();
 
         if (hyperplane != null) {
             final P plusPt = hyperplane.plusPoint();
 
-            // we should swap if a point on the plus side of the hyperplane is no
-            // longer on the plus side after the transformation
-            final P transformedPlusPt = t.apply(plusPt);
-            final Hyperplane<P> transformedHyperplane = hyperplane.transform(t);
+            // we should swap if a point on the plus side of the hyperplane is on the minus
+            // side after the transformation
+            final P transformedPlusPt = transform.apply(plusPt);
+            final Hyperplane<P> transformedHyperplane = hyperplane.transform(transform);
 
-            return transformedHyperplane.classify(transformedPlusPt) != Side.PLUS;
+            return transformedHyperplane.classify(transformedPlusPt) == Side.MINUS;
         }
 
         return false;

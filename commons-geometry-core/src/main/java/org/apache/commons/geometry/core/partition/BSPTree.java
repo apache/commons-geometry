@@ -111,9 +111,9 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
 
     /** Transform this tree. Each cut subhyperplane in the tree is transformed in place using
      * the given {@link Transform}.
-     * @param t the transform to apply
+     * @param transform the transform to apply
      */
-    void transform(Transform<P> t);
+    void transform(Transform<P> transform);
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
