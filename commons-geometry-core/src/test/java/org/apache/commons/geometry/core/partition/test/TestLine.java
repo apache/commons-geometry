@@ -119,6 +119,13 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
         return cmp < 0 ? Side.MINUS : Side.PLUS;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D plusPoint() {
+        TestPoint2D origin = getOrigin();
+        return new TestPoint2D(origin.getX() + directionY, origin.getY() - directionX);
+    }
+
     /** Get the location of the given 2D point in the 1D space of the line.
      * @param point point to project into the line's 1D space
      * @return location of the point in the line's 1D space

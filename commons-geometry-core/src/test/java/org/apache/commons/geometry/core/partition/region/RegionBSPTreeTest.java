@@ -349,6 +349,81 @@ public class RegionBSPTreeTest {
     }
 
     @Test
+    public void testTransform_xAxisReflection() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(-p.getX(), p.getY());
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                TestPoint2D.ZERO, new TestPoint2D(-1, 1), new TestPoint2D(1, -1));
+
+        assertPointLocations(tree, RegionLocation.BOUNDARY,
+                new TestPoint2D(0, 1), new TestPoint2D(0, -1),
+                new TestPoint2D(-4, 0), new TestPoint2D(4, 0));
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(1, 1), new TestPoint2D(-1, -1));
+    }
+
+    @Test
+    public void testTransform_yAxisReflection() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), -p.getY());
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                TestPoint2D.ZERO, new TestPoint2D(1, -1), new TestPoint2D(-1, 1));
+
+        assertPointLocations(tree, RegionLocation.BOUNDARY,
+                new TestPoint2D(0, 1), new TestPoint2D(0, -1),
+                new TestPoint2D(-4, 0), new TestPoint2D(4, 0));
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(-1, -1), new TestPoint2D(1, 1));
+    }
+
+    @Test
+    public void testTransform_xAndYAxisReflection() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        Transform<TestPoint2D> t = p -> new TestPoint2D(-p.getX(), -p.getY());
+
+        // act
+        tree.transform(t);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        assertPointLocations(tree, RegionLocation.INSIDE,
+                TestPoint2D.ZERO, new TestPoint2D(1, 1), new TestPoint2D(-1, -1));
+
+        assertPointLocations(tree, RegionLocation.BOUNDARY,
+                new TestPoint2D(0, 1), new TestPoint2D(0, -1),
+                new TestPoint2D(-4, 0), new TestPoint2D(4, 0));
+
+        assertPointLocations(tree, RegionLocation.OUTSIDE,
+                new TestPoint2D(-1, 1), new TestPoint2D(1, -1));
+    }
+
+    @Test
     public void testTransform_resetsCutBoundary() {
         // arrange
         insertSkewedBowtie(tree);

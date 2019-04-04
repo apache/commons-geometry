@@ -18,7 +18,9 @@ package org.apache.commons.geometry.core.partition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.partition.BSPTree.NodeCutRule;
@@ -1218,7 +1220,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2))
                 ));
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-0.5 * p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(0.5 * p.getX(), p.getY() + 2);
 
         // act
         tree.transform(t);
@@ -1230,20 +1232,92 @@ public class AbstractBSPTreeTest {
         Assert.assertEquals(4, segments.size());
 
         TestLineSegment segment1 = segments.get(0);
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, 2), segment1.getStartPoint());
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), segment1.getEndPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, 2), segment1.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, 2), segment1.getEndPoint());
 
         TestLineSegment segment2 = segments.get(1);
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment2.getStartPoint());
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY), segment2.getEndPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY), segment2.getEndPoint());
 
         TestLineSegment segment3 = segments.get(2);
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1.5, 2), segment3.getStartPoint());
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1.5, 5), segment3.getEndPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(1.5, 2), segment3.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(1.5, 5), segment3.getEndPoint());
 
         TestLineSegment segment4 = segments.get(3);
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY), segment4.getStartPoint());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY), segment4.getStartPoint());
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(0, 2), segment4.getEndPoint());
+    }
+
+    @Test
+    public void testTransform_xAxisReflection() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
+                ));
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-p.getX(), p.getY());
+
+        Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        checkTransformedPointNodeMap(tree, t, pointNodeMap);
+
+        List<TestLineSegment> segments = getLineSegments(tree);
+        Assert.assertEquals(4, segments.size());
+    }
+
+    @Test
+    public void testTransform_yAxisReflection() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
+                ));
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), -p.getY());
+
+        Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        checkTransformedPointNodeMap(tree, t, pointNodeMap);
+
+        List<TestLineSegment> segments = getLineSegments(tree);
+        Assert.assertEquals(4, segments.size());
+    }
+
+    @Test
+    public void testTransform_xAndYAxisReflection() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.insert(Arrays.asList(
+                    new TestLineSegment(new TestPoint2D(-1, 0), new TestPoint2D(1, 0)),
+                    new TestLineSegment(new TestPoint2D(0, -1), new TestPoint2D(0, 1)),
+                    new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
+                ));
+
+        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-p.getX(), -p.getY());
+
+        Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
+
+        // act
+        tree.transform(t);
+
+        // assert
+        checkTransformedPointNodeMap(tree, t, pointNodeMap);
+
+        List<TestLineSegment> segments = getLineSegments(tree);
+        Assert.assertEquals(4, segments.size());
     }
 
     @Test
@@ -1390,4 +1464,41 @@ public class AbstractBSPTreeTest {
             .map(n -> (TestLineSegment) n.getCut())
             .collect(Collectors.toList());
     }
+
+    /** Create a map of points to the nodes that they resolve to in the
+     * given tree.
+     */
+    private static Map<TestPoint2D, TestNode> createPointNodeMap(TestBSPTree tree, int min, int max) {
+        Map<TestPoint2D, TestNode> map = new HashMap<>();
+
+        for (int x = min; x <= max; ++x) {
+            for (int y = min; y <= max; ++y) {
+                TestPoint2D pt = new TestPoint2D(x, y);
+                TestNode node = tree.findNode(pt, NodeCutRule.NODE);
+
+                map.put(pt, node);
+            }
+        }
+
+        return map;
+    }
+
+    /** Check that transformed points resolve to the same tree nodes that were found when the original
+     * points were resolved in the untransformed tree.
+     * @param transformed
+     * @param transform
+     * @param pointNodeMap
+     */
+    private static void checkTransformedPointNodeMap(TestBSPTree transformedTree, Transform<TestPoint2D> transform,
+            Map<TestPoint2D, TestNode> pointNodeMap) {
+
+        for (TestPoint2D pt : pointNodeMap.keySet()) {
+            TestNode expectedNode = pointNodeMap.get(pt);
+            TestPoint2D transformedPt = transform.apply(pt);
+
+            String msg = "Expected transformed point " + transformedPt + " to resolve to node " + expectedNode;
+            Assert.assertSame(msg, expectedNode, transformedTree.findNode(transformedPt, NodeCutRule.NODE));
+        }
+    }
+
 }

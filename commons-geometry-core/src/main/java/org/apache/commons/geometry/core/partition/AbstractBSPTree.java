@@ -21,7 +21,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 
 import org.apache.commons.geometry.core.Point;
 
@@ -145,13 +144,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void transform(final Transform<P> t) {
-        this.forEach(n -> {
-            if (n.isInternal()) {
-                final ConvexSubHyperplane<P> tCut = n.getCut().transform(t);
 
-                n.setCutState(tCut, n.getMinus(), n.getPlus());
-            }
-        });
+        final boolean swapChildren = shouldTransformSwapChildren(t);
+        transformRecursive(getRoot(), t, swapChildren);
 
         // increment the version to invalidate any computed properties that might
         // depend on the cuts
@@ -445,7 +440,53 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         incrementVersion();
     }
 
-    /** Increment the version of the tree. This method should be called anytime structural
+    /** Transform the subtree rooted as {@code node} recursively.
+     * @param node the root node of the subtree to transform
+     * @param t the transform to apply
+     * @param swapChildren if true, the plus and minus child nodes of each internal node
+     *      will be swapped; this should be the case when the transform is a reflection
+     */
+    protected void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
+        if (node.isInternal()) {
+            // transform our cut
+            final ConvexSubHyperplane<P> transformedCut = node.getCut().transform(t);
+
+            // transform our children
+            transformRecursive(node.getMinus(), t, swapChildren);
+            transformRecursive(node.getPlus(), t, swapChildren);
+
+            final N transformedMinus = swapChildren ? node.getPlus() : node.getMinus();
+            final N transformedPlus = swapChildren ? node.getMinus() : node.getPlus();
+
+            // set our new state
+            node.setCutState(transformedCut, transformedMinus, transformedPlus);
+        }
+    }
+
+    /** Return true if the given transform should swap the plus and minus child nodes when
+     * applied to the tree. This will be the case for transforms that represent reflections.
+     * @param t the transform to test
+     * @return true if the transform should swap the plus and minus child nodes in the tree
+     */
+    protected boolean shouldTransformSwapChildren(final Transform<P> t) {
+        final Hyperplane<P> hyperplane = getRoot().getCutHyperplane();
+
+        if (hyperplane != null) {
+            final P plusPt = hyperplane.plusPoint();
+
+            // we should swap if a point on the plus side of the hyperplane is no
+            // longer on the plus side after the transformation
+            final P transformedPlusPt = t.apply(plusPt);
+            final Hyperplane<P> transformedHyperplane = hyperplane.transform(t);
+
+            return transformedHyperplane.classify(transformedPlusPt) != Side.PLUS;
+        }
+
+        return false;
+    }
+
+
+    /** Increment the version of the tree. This method should be called any time structural
      * changes occur to the tree.
      */
     protected void incrementVersion() {
@@ -782,67 +823,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             }
 
             return result;
-        }
-    }
-
-    /** Class that wraps filtering functionality around an underlying node iterator.
-     * @param <P> Point implementation type
-     * @param <N> Node implementation type
-     */
-    public static class FilteredNodeIteratorWrapper<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
-
-        /** The iterator to filter */
-        private final Iterator<N> iterator;
-
-        /** The filter function */
-        private final Predicate<N> predicate;
-
-        /** The next node to return */
-        private N next;
-
-        /** Construct a new instance that applies the given predicate function to the elements in the
-         * iterator. Only elements that pass the predicate are returned.
-         * @param iterator iterator to wrap
-         * @param predicate predicate function to apply to nodes
-         */
-        public FilteredNodeIteratorWrapper(final Iterator<N> iterator, final Predicate<N> predicate) {
-            this.iterator = iterator;
-            this.predicate = predicate;
-
-            advance();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean hasNext() {
-            return next != null;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public N next() {
-            if (next == null) {
-                throw new NoSuchElementException();
-            }
-
-            N result = next;
-
-            advance();
-
-            return result;
-        }
-
-        /** Advance to the next filtered node in the iterable.
-         */
-        private void advance() {
-            next = null;
-            while (iterator.hasNext() &&
-                    (next = iterator.next()) != null &&
-                    !predicate.test(next)) {
-                // the node didn't pass the test; advance to the
-                // next one
-                next = null;
-            }
         }
     }
 }
