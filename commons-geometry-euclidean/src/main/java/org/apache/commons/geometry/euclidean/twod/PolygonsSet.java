@@ -29,7 +29,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.Side_Old;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.geometry.euclidean.oned.Interval_Old;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
@@ -1040,8 +1040,8 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
             final AbstractSubHyperplane_Old<Vector2D, Vector1D> absSub =
                 (AbstractSubHyperplane_Old<Vector2D, Vector1D>) sub;
             final Line line      = (Line) sub.getHyperplane();
-            final List<Interval> intervals = ((IntervalsSet) absSub.getRemainingRegion()).asList();
-            for (final Interval i : intervals) {
+            final List<Interval_Old> intervals = ((IntervalsSet) absSub.getRemainingRegion()).asList();
+            for (final Interval_Old i : intervals) {
 
                 // find the 2D points
                 final Vector2D startV = Double.isInfinite(i.getInf()) ?

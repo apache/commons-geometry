@@ -20,10 +20,10 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.Transform;
 
 /** Class representing a line segment in two dimensional Euclidean space. This
  * class should only be used for testing purposes.

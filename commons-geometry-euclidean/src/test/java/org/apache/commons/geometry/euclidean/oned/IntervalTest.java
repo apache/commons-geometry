@@ -29,7 +29,7 @@ public class IntervalTest {
     @Test
     public void testBasicProperties() {
         // arrange
-        Interval interval = new Interval(2.3, 5.7);
+        Interval_Old interval = new Interval_Old(2.3, 5.7);
 
         // act/assert
         Assert.assertEquals(3.4, interval.getSize(), TEST_TOLERANCE);
@@ -41,7 +41,7 @@ public class IntervalTest {
     @Test
     public void testBasicProperties_negativeValues() {
         // arrange
-        Interval interval = new Interval(-5.7, -2.3);
+        Interval_Old interval = new Interval_Old(-5.7, -2.3);
 
         // act/assert
         Assert.assertEquals(3.4, interval.getSize(), TEST_TOLERANCE);
@@ -53,13 +53,13 @@ public class IntervalTest {
     // MATH-1256
     @Test(expected = IllegalArgumentException.class)
     public void testStrictOrdering() {
-        new Interval(0, -1);
+        new Interval_Old(0, -1);
     }
 
     @Test
     public void testCheckPoint() {
         // arrange
-        Interval interval = new Interval(2.3, 5.7);
+        Interval_Old interval = new Interval_Old(2.3, 5.7);
 
         // act/assert
         Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(1.2, TEST_TOLERANCE));
@@ -84,7 +84,7 @@ public class IntervalTest {
     @Test
     public void testCheckPoint_tolerance() {
         // arrange
-        Interval interval = new Interval(2.3, 5.7);
+        Interval_Old interval = new Interval_Old(2.3, 5.7);
 
         // act/assert
         Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(2.29, 1e-3));
@@ -103,7 +103,7 @@ public class IntervalTest {
     @Test
     public void testInfinite_inf() {
         // act
-        Interval interval = new Interval(Double.NEGATIVE_INFINITY, 9);
+        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, 9);
 
         // assert
         Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
@@ -120,7 +120,7 @@ public class IntervalTest {
     @Test
     public void testInfinite_sup() {
         // act
-        Interval interval = new Interval(9.0, Double.POSITIVE_INFINITY);
+        Interval_Old interval = new Interval_Old(9.0, Double.POSITIVE_INFINITY);
 
         // assert
         Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
@@ -137,7 +137,7 @@ public class IntervalTest {
     @Test
     public void testInfinite_infAndSup() {
         // act
-        Interval interval = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         // assert
         for (double e = 1.0; e <= 6.0; e += 1.0) {
@@ -152,7 +152,7 @@ public class IntervalTest {
     @Test
     public void testSinglePoint() {
         // act
-        Interval interval = new Interval(1.0, 1.0);
+        Interval_Old interval = new Interval_Old(1.0, 1.0);
 
         // assert
         Assert.assertEquals(0.0, interval.getSize(), Precision.SAFE_MIN);
@@ -162,7 +162,7 @@ public class IntervalTest {
     @Test
     public void testSingleInfinitePoint_positive() {
         // act
-        Interval interval = new Interval(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        Interval_Old interval = new Interval_Old(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         // assert
         Assert.assertTrue(Double.isNaN(interval.getSize())); // inf - inf = NaN according to floating point spec
@@ -172,7 +172,7 @@ public class IntervalTest {
     @Test
     public void testSingleInfinitePoint_negative() {
         // act
-        Interval interval = new Interval(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
         // assert
         Assert.assertTrue(Double.isNaN(interval.getSize())); // inf - inf = NaN according to floating point spec

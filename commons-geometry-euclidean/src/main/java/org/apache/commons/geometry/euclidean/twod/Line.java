@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -465,8 +465,9 @@ public final class Line implements Hyperplane_Old<Vector2D>, Embedding_Old<Vecto
         /** {@inheritDoc} */
         @Override
         public Line apply(final Hyperplane_Old<Vector2D> hyperplane) {
-            final Line line = (Line) hyperplane;
-            return line.transform(matrix);
+//            final Line line = (Line) hyperplane;
+//            return line.transform(matrix);
+            return null;
         }
 
         /** {@inheritDoc} */
@@ -474,12 +475,12 @@ public final class Line implements Hyperplane_Old<Vector2D>, Embedding_Old<Vecto
         public SubHyperplane_Old<Vector1D> apply(final SubHyperplane_Old<Vector1D> sub,
                                                 final Hyperplane_Old<Vector2D> original,
                                                 final Hyperplane_Old<Vector2D> transformed) {
-            final OrientedPoint op = (OrientedPoint) sub.getHyperplane();
+            final OrientedPoint_Old op = (OrientedPoint_Old) sub.getHyperplane();
             final Line originalLine  = (Line) original;
             final Line transformedLine = (Line) transformed;
             final Vector1D newLoc =
                 transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
-            return OrientedPoint.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
+            return OrientedPoint_Old.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
         }
     }
 }

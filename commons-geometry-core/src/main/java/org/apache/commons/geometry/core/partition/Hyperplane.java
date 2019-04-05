@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Transform;
 
 public interface Hyperplane<P extends Point<P>> {
 
@@ -42,7 +43,9 @@ public interface Hyperplane<P extends Point<P>> {
      */
     P project(P point);
 
-    /** Get a representative point on the plus side of the hyperplane.
+    /** Get a representative point on the plus side of the hyperplane. The only
+     * requirement for this point is that {@code hyperplane.classify(pt)}
+     * returns {@link Side#PLUS}.
      * @return a point on the plus side of the hyperplane
      */
     P plusPoint();

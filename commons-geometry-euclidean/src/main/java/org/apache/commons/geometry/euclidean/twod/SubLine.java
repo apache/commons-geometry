@@ -26,9 +26,9 @@ import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
-import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.geometry.euclidean.oned.Interval_Old;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** This class represents a sub-hyperplane for {@link Line}.
@@ -78,10 +78,10 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
     public List<Segment> getSegments() {
 
         final Line line = (Line) getHyperplane();
-        final List<Interval> list = ((IntervalsSet) getRemainingRegion()).asList();
+        final List<Interval_Old> list = ((IntervalsSet) getRemainingRegion()).asList();
         final List<Segment> segments = new ArrayList<>(list.size());
 
-        for (final Interval interval : list) {
+        for (final Interval_Old interval : list) {
             final Vector2D start = line.toSpace(Vector1D.of(interval.getInf()));
             final Vector2D end   = line.toSpace(Vector1D.of(interval.getSup()));
             segments.add(new Segment(start, end, line));
@@ -178,9 +178,9 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
         final boolean direct = Math.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
         final Vector1D x      = thisLine.toSubSpace(crossing);
         final SubHyperplane_Old<Vector1D> subPlus  =
-                OrientedPoint.fromPointAndDirection(x, !direct, precision).wholeHyperplane();
+                OrientedPoint_Old.fromPointAndDirection(x, !direct, precision).wholeHyperplane();
         final SubHyperplane_Old<Vector1D> subMinus =
-                OrientedPoint.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
+                OrientedPoint_Old.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
 
         final BSPTree_Old<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
         final BSPTree_Old<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?

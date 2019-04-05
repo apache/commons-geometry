@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core;
 
 import java.util.function.Function;
-
-import org.apache.commons.geometry.core.Point;
 
 public interface Transform<P extends Point<P>> extends Function<P, P>{
 }

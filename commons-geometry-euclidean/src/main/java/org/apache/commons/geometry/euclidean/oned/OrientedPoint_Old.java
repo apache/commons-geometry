@@ -19,11 +19,9 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.
@@ -33,7 +31,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
+public final class OrientedPoint_Old implements Hyperplane_Old<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -53,7 +51,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      *      otherwise, it will point toward negative infinity.
      * @param precision precision context used to compare floating point values
      */
-    private OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
+    private OrientedPoint_Old(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
         this.location = point;
         this.positiveFacing = positiveFacing;
         this.precision = precision;
@@ -84,6 +82,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public DoublePrecisionContext getPrecision() {
         return precision;
     }
@@ -92,45 +91,38 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * direction.
      * @return a copy of this instance with the opposite direction
      */
-    public OrientedPoint reverse() {
-        return new OrientedPoint(location, !positiveFacing, precision);
+    public OrientedPoint_Old reverse() {
+        return new OrientedPoint_Old(location, !positiveFacing, precision);
     }
 
-    @Override
-    public Side classify(final Vector1D point) {
-        final double offset = offset(point);
-        final int cmp = precision.sign(offset);
-        if (cmp > 0) {
-            return Side.PLUS;
-        }
-        else if (cmp < 0) {
-            return Side.MINUS;
-        }
-        return Side.HYPER;
-    }
-
-    @Override
-    public Vector1D plusPoint() {
-        final double offset = Math.min(1.0, precision.getMaxZero() + 1.0);
-        return Vector1D.of(location.getX() + offset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OrientedPoint transform(final Transform<Vector1D> transform) {
+    /** Return a new instance transformed by the given {@link Transform_Old}.
+     * @param transform transform object
+     * @return a transformed instance
+     */
+    public OrientedPoint_Old transform(final Transform_Old<Vector1D, Vector1D> transform) {
         Vector1D transformedLocation = transform.apply(location);
         Vector1D transformedPlusDirPt = transform.apply(location.add(getDirection()));
 
-        return OrientedPoint.fromPointAndDirection(
+        return OrientedPoint_Old.fromPointAndDirection(
                     transformedLocation,
                     transformedLocation.vectorTo(transformedPlusDirPt),
                     precision
                 );
     }
 
+    /** Copy the instance.
+     * <p>Since instances are immutable, this method directly returns
+     * the instance.</p>
+     * @return the instance itself
+     */
+    @Override
+    public OrientedPoint_Old copySelf() {
+        return this;
+    }
+
     /** {@inheritDoc} */
     @Override
-    public double offset(final Vector1D point) {
+    public double getOffset(final Vector1D point) {
         final double delta = point.getX() - location.getX();
         return positiveFacing ? delta : -delta;
     }
@@ -147,14 +139,23 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @return a dummy sub hyperplane
      */
     @Override
-    public ConvexSubHyperplane<Vector1D> wholeHyperplane() {
-        return null;
+    public SubOrientedPoint_Old wholeHyperplane() {
+        return new SubOrientedPoint_Old(this, null);
+    }
+
+    /** Build a region covering the whole space.
+     * @return a region containing the instance (really an {@link
+     * IntervalsSet IntervalsSet} instance)
+     */
+    @Override
+    public IntervalsSet wholeSpace() {
+        return new IntervalsSet(precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean similarOrientation(final Hyperplane<Vector1D> other) {
-        return positiveFacing == ((OrientedPoint) other).positiveFacing;
+    public boolean sameOrientationAs(final Hyperplane_Old<Vector1D> other) {
+        return positiveFacing == ((OrientedPoint_Old) other).positiveFacing;
     }
 
     /** {@inheritDoc} */
@@ -182,11 +183,11 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         if (this == obj) {
             return true;
         }
-        else if (!(obj instanceof OrientedPoint)) {
+        else if (!(obj instanceof OrientedPoint_Old)) {
             return false;
         }
 
-        OrientedPoint other = (OrientedPoint) obj;
+        OrientedPoint_Old other = (OrientedPoint_Old) obj;
 
         return Objects.equals(this.location, other.location) &&
                 this.positiveFacing == other.positiveFacing &&
@@ -214,9 +215,9 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point values
      * @return a new instance
      */
-    public static OrientedPoint fromPointAndDirection(final Vector1D point, final boolean positiveFacing,
+    public static OrientedPoint_Old fromPointAndDirection(final Vector1D point, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, positiveFacing, precision);
+        return new OrientedPoint_Old(point, positiveFacing, precision);
     }
 
     /** Create a new instance from the given point and direction.
@@ -227,7 +228,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @throws GeometryValueException if the direction is zero as evaluated by the
      *      given precision context
      */
-    public static OrientedPoint fromPointAndDirection(final Vector1D point, final Vector1D direction,
+    public static OrientedPoint_Old fromPointAndDirection(final Vector1D point, final Vector1D direction,
             final DoublePrecisionContext precision) {
         if (direction.isZero(precision)) {
             throw new GeometryValueException("Oriented point direction cannot be zero");
@@ -235,7 +236,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
 
         final boolean positiveFacing = direction.getX() > 0;
 
-        return new OrientedPoint(point, positiveFacing, precision);
+        return new OrientedPoint_Old(point, positiveFacing, precision);
     }
 
     /** Create a new instance at the given point, oriented so that it is facing positive infinity.
@@ -243,8 +244,8 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward positive infinity
      */
-    public static OrientedPoint createPositiveFacing(final Vector1D point, final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, true, precision);
+    public static OrientedPoint_Old createPositiveFacing(final Vector1D point, final DoublePrecisionContext precision) {
+        return new OrientedPoint_Old(point, true, precision);
     }
 
     /** Create a new instance at the given point, oriented so that it is facing negative infinity.
@@ -252,7 +253,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented toward negative infinity
      */
-    public static OrientedPoint createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, false, precision);
+    public static OrientedPoint_Old createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
+        return new OrientedPoint_Old(point, false, precision);
     }
 }

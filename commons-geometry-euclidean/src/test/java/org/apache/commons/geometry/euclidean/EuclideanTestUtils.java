@@ -28,8 +28,8 @@ import org.apache.commons.geometry.core.partitioning.TreeDumper;
 import org.apache.commons.geometry.core.partitioning.TreePrinter;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
-import org.apache.commons.geometry.euclidean.oned.SubOrientedPoint;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
+import org.apache.commons.geometry.euclidean.oned.SubOrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.PolyhedronsSet;
@@ -222,7 +222,7 @@ public class EuclideanTestUtils {
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane_Old<Vector1D> hyperplane) {
-                final OrientedPoint h = (OrientedPoint) hyperplane;
+                final OrientedPoint_Old h = (OrientedPoint_Old) hyperplane;
                 getFormatter().format("%22.15e %b", h.getLocation().getX(), h.isPositiveFacing());
             }
 
@@ -292,9 +292,9 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            public OrientedPoint parseHyperplane()
+            public OrientedPoint_Old parseHyperplane()
                 throws ParseException {
-                return OrientedPoint.fromPointAndDirection(Vector1D.of(getNumber()), getBoolean(), getPrecision());
+                return OrientedPoint_Old.fromPointAndDirection(Vector1D.of(getNumber()), getBoolean(), getPrecision());
             }
 
         };
@@ -390,9 +390,9 @@ public class EuclideanTestUtils {
         /** {@inheritDoc} */
         @Override
         protected void writeInternalNode(BSPTree_Old<Vector1D> node) {
-            SubOrientedPoint cut = (SubOrientedPoint) node.getCut();
+            SubOrientedPoint_Old cut = (SubOrientedPoint_Old) node.getCut();
 
-            OrientedPoint hyper = (OrientedPoint) cut.getHyperplane();
+            OrientedPoint_Old hyper = (OrientedPoint_Old) cut.getHyperplane();
             write("cut = { hyperplane: ");
             if (hyper.isPositiveFacing()) {
                 write("[" + hyper.getLocation().getX() + ", inf)");

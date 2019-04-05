@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.geometry.euclidean.oned.Interval_Old;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
@@ -80,10 +80,10 @@ public class SubLine {
      */
     public List<Segment> getSegments() {
 
-        final List<Interval> list = remainingRegion.asList();
+        final List<Interval_Old> list = remainingRegion.asList();
         final List<Segment> segments = new ArrayList<>(list.size());
 
-        for (final Interval interval : list) {
+        for (final Interval_Old interval : list) {
             final Vector3D start = line.toSpace(Vector1D.of(interval.getInf()));
             final Vector3D end   = line.toSpace(Vector1D.of(interval.getSup()));
             segments.add(new Segment(start, end, line));

@@ -36,28 +36,28 @@ public class OrientedPointTest {
     public void testGetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ONE,
-                OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION).getDirection(),
+                OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION).getDirection(),
                 TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.MINUS_ONE,
-                OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, TEST_PRECISION).getDirection(),
+                OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), false, TEST_PRECISION).getDirection(),
                 TEST_EPS);
     }
 
     @Test
     public void testReverse() {
         // act/assert
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse(),
                 0.0, false, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse(),
                 -1.0, true, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse(),
                 1.0, false, TEST_PRECISION);
 
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse().reverse(),
                 0.0, true, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse().reverse(),
                 -1.0, false, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse().reverse(),
                 1.0, true, TEST_PRECISION);
     }
 
@@ -70,8 +70,8 @@ public class OrientedPointTest {
 
         AffineTransformMatrix1D reflect = AffineTransformMatrix1D.createScale(-2);
 
-        OrientedPoint a = OrientedPoint.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
-        OrientedPoint b = OrientedPoint.createNegativeFacing(Vector1D.of(-3.0), TEST_PRECISION);
+        OrientedPoint_Old a = OrientedPoint_Old.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
+        OrientedPoint_Old b = OrientedPoint_Old.createNegativeFacing(Vector1D.of(-3.0), TEST_PRECISION);
 
         // act/assert
         assertOrientedPoint(a.transform(scaleAndTranslate), -9.0, true, TEST_PRECISION);
@@ -86,7 +86,7 @@ public class OrientedPointTest {
         // arrange
         AffineTransformMatrix1D zeroScale = AffineTransformMatrix1D.createScale(0.0);
 
-        OrientedPoint pt = OrientedPoint.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.createPositiveFacing(Vector1D.of(2.0), TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(
@@ -97,10 +97,10 @@ public class OrientedPointTest {
     @Test
     public void testCopySelf() {
         // arrange
-        OrientedPoint orig = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
+        OrientedPoint_Old orig = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // act
-        OrientedPoint copy = orig.copySelf();
+        OrientedPoint_Old copy = orig.copySelf();
 
         // assert
         Assert.assertSame(orig, copy);
@@ -110,7 +110,7 @@ public class OrientedPointTest {
     @Test
     public void testGetOffset_positiveFacing() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(-98.0, pt.getOffset(Vector1D.of(-100)), Precision.EPSILON);
@@ -126,7 +126,7 @@ public class OrientedPointTest {
     @Test
     public void testGetOffset_negativeFacing() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(-2.0), false, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-2.0), false, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(98.0, pt.getOffset(Vector1D.of(-100)), Precision.EPSILON);
@@ -142,10 +142,10 @@ public class OrientedPointTest {
     @Test
     public void testWholeHyperplane() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
 
         // act
-        SubOrientedPoint subPt = pt.wholeHyperplane();
+        SubOrientedPoint_Old subPt = pt.wholeHyperplane();
 
         // assert
         Assert.assertSame(pt, subPt.getHyperplane());
@@ -155,7 +155,7 @@ public class OrientedPointTest {
     @Test
     public void testWholeSpace() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
 
         // act
         IntervalsSet set = pt.wholeSpace();
@@ -168,10 +168,10 @@ public class OrientedPointTest {
     @Test
     public void testSameOrientationAs() {
         // arrange
-        OrientedPoint negativeDir1 = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
-        OrientedPoint negativeDir2 = OrientedPoint.fromPointAndDirection(Vector1D.of(-1.0), false, TEST_PRECISION);
-        OrientedPoint positiveDir1 = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
-        OrientedPoint positiveDir2 = OrientedPoint.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
+        OrientedPoint_Old negativeDir1 = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);
+        OrientedPoint_Old negativeDir2 = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-1.0), false, TEST_PRECISION);
+        OrientedPoint_Old positiveDir1 = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
+        OrientedPoint_Old positiveDir2 = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(negativeDir1.sameOrientationAs(negativeDir1));
@@ -189,7 +189,7 @@ public class OrientedPointTest {
     @Test
     public void testProject() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), true, TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(1.0, pt.project(Vector1D.of(-1.0)).getX(), Precision.EPSILON);
@@ -204,13 +204,13 @@ public class OrientedPointTest {
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
 
-        OrientedPoint a = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA);
-        OrientedPoint b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
-        OrientedPoint c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
+        OrientedPoint_Old a = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(3.0), true, precisionA);
+        OrientedPoint_Old b = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
+        OrientedPoint_Old c = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
 
-        OrientedPoint d = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA);
-        OrientedPoint e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
-        OrientedPoint f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
+        OrientedPoint_Old d = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(3.0), true, precisionA);
+        OrientedPoint_Old e = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
+        OrientedPoint_Old f = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
 
         // act/assert
         Assert.assertNotEquals(a.hashCode(), b.hashCode());
@@ -228,16 +228,16 @@ public class OrientedPointTest {
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
 
-        OrientedPoint a = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
-        OrientedPoint b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
+        OrientedPoint_Old a = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
+        OrientedPoint_Old b = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
 
-        OrientedPoint c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
-        OrientedPoint d = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
+        OrientedPoint_Old c = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
+        OrientedPoint_Old d = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), false, precisionA);
 
-        OrientedPoint e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
-        OrientedPoint f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
+        OrientedPoint_Old e = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionA);
+        OrientedPoint_Old f = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, precisionB);
 
-        OrientedPoint g = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
+        OrientedPoint_Old g = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.0), true, precisionA);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -255,7 +255,7 @@ public class OrientedPointTest {
     @Test
     public void testToString() {
         // arrange
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // act
         String str = pt.toString();
@@ -269,7 +269,7 @@ public class OrientedPointTest {
     @Test
     public void testFromPointAndDirection_trueBooleanArg() {
         // act
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION);
 
         // assert
         assertOrientedPoint(pt, 2.0, true, TEST_PRECISION);
@@ -279,7 +279,7 @@ public class OrientedPointTest {
     @Test
     public void testFromPointAndDirection_falseBooleanArg() {
         // act
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, TEST_PRECISION);
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), false, TEST_PRECISION);
 
         // assert
         assertOrientedPoint(pt, 2.0, false, TEST_PRECISION);
@@ -289,7 +289,7 @@ public class OrientedPointTest {
     @Test
     public void testFromPointAndDirection_positiveVectorArg() {
         // act
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(
                 Vector1D.of(-2.0), Vector1D.of(0.1), TEST_PRECISION);
 
         // assert
@@ -300,7 +300,7 @@ public class OrientedPointTest {
     @Test
     public void testFromPointAndDirection_negativeVectorArg() {
         // act
-        OrientedPoint pt = OrientedPoint.fromPointAndDirection(
+        OrientedPoint_Old pt = OrientedPoint_Old.fromPointAndDirection(
                 Vector1D.of(2.0), Vector1D.of(-10.1), TEST_PRECISION);
 
         // assert
@@ -315,10 +315,10 @@ public class OrientedPointTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(
-                () -> OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),
+                () -> OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),
                 GeometryValueException.class, "Oriented point direction cannot be zero");
         GeometryTestUtils.assertThrows(
-                () -> OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),
+                () -> OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),
                 GeometryValueException.class, "Oriented point direction cannot be zero");
         ;
     }
@@ -326,7 +326,7 @@ public class OrientedPointTest {
     @Test
     public void testCreatePositiveFacing() {
         // act
-        OrientedPoint pt = OrientedPoint.createPositiveFacing(
+        OrientedPoint_Old pt = OrientedPoint_Old.createPositiveFacing(
                 Vector1D.of(-2.0), TEST_PRECISION);
 
         // assert
@@ -337,7 +337,7 @@ public class OrientedPointTest {
     @Test
     public void testCreateNegativeFacing() {
         // act
-        OrientedPoint pt = OrientedPoint.createNegativeFacing(
+        OrientedPoint_Old pt = OrientedPoint_Old.createNegativeFacing(
                 Vector1D.of(2.0), TEST_PRECISION);
 
         // assert
@@ -345,7 +345,7 @@ public class OrientedPointTest {
         Assert.assertEquals(-1.0, pt.getDirection().getX(), Precision.EPSILON);
     }
 
-    private static void assertOrientedPoint(OrientedPoint pt, double location,
+    private static void assertOrientedPoint(OrientedPoint_Old pt, double location,
             boolean positiveFacing, DoublePrecisionContext precision) {
         Assert.assertEquals(location, pt.getLocation().getX(), TEST_EPS);
         Assert.assertEquals(positiveFacing, pt.isPositiveFacing());

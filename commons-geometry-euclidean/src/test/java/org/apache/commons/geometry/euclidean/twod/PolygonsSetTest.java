@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.oned.Interval;
+import org.apache.commons.geometry.euclidean.oned.Interval_Old;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.core.Precision;
@@ -716,16 +716,16 @@ public class PolygonsSetTest {
         // assert
         Line l1 = Line.fromPointAndAngle(Vector2D.of(-1.5, 0.0), Math.PI / 4, TEST_PRECISION);
         SubLine s1 = (SubLine) set.intersection(l1.wholeHyperplane());
-        List<Interval> i1 = ((IntervalsSet) s1.getRemainingRegion()).asList();
+        List<Interval_Old> i1 = ((IntervalsSet) s1.getRemainingRegion()).asList();
         Assert.assertEquals(2, i1.size());
-        Interval v10 = i1.get(0);
+        Interval_Old v10 = i1.get(0);
         Vector2D p10Lower = l1.toSpace(Vector1D.of(v10.getInf()));
         Assert.assertEquals(0.0, p10Lower.getX(), TEST_EPS);
         Assert.assertEquals(1.5, p10Lower.getY(), TEST_EPS);
         Vector2D p10Upper = l1.toSpace(Vector1D.of(v10.getSup()));
         Assert.assertEquals(0.5, p10Upper.getX(), TEST_EPS);
         Assert.assertEquals(2.0, p10Upper.getY(), TEST_EPS);
-        Interval v11 = i1.get(1);
+        Interval_Old v11 = i1.get(1);
         Vector2D p11Lower = l1.toSpace(Vector1D.of(v11.getInf()));
         Assert.assertEquals(1.0, p11Lower.getX(), TEST_EPS);
         Assert.assertEquals(2.5, p11Lower.getY(), TEST_EPS);
@@ -735,9 +735,9 @@ public class PolygonsSetTest {
 
         Line l2 = Line.fromPointAndAngle(Vector2D.of(-1.0, 2.0), 0, TEST_PRECISION);
         SubLine s2 = (SubLine) set.intersection(l2.wholeHyperplane());
-        List<Interval> i2 = ((IntervalsSet) s2.getRemainingRegion()).asList();
+        List<Interval_Old> i2 = ((IntervalsSet) s2.getRemainingRegion()).asList();
         Assert.assertEquals(1, i2.size());
-        Interval v20 = i2.get(0);
+        Interval_Old v20 = i2.get(0);
         Vector2D p20Lower = l2.toSpace(Vector1D.of(v20.getInf()));
         Assert.assertEquals(1.0, p20Lower.getX(), TEST_EPS);
         Assert.assertEquals(2.0, p20Lower.getY(), TEST_EPS);

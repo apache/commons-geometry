@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.partitioning.Region_Old.Location;
 /** This class represents a 1D interval.
  * @see IntervalsSet
  */
-public class Interval {
+public class Interval_Old {
 
     /** The lower bound of the interval. */
     private final double lower;
@@ -33,7 +33,7 @@ public class Interval {
      * @param lower lower bound of the interval
      * @param upper upper bound of the interval
      */
-    public Interval(final double lower, final double upper) {
+    public Interval_Old(final double lower, final double upper) {
         if (upper < lower) {
             throw new IllegalArgumentException("Endpoints do not specify an interval: [{" + upper + "}, {" + lower + "}]");
         }

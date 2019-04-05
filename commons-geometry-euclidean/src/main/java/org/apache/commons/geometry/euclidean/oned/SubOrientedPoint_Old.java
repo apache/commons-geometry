@@ -21,18 +21,18 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** This class represents sub-hyperplane for {@link OrientedPoint}.
+/** This class represents sub-hyperplane for {@link OrientedPoint_Old}.
  * <p>An hyperplane in 1D is a simple point, its orientation being a
  * boolean.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class SubOrientedPoint extends AbstractSubHyperplane_Old<Vector1D, Vector1D> {
+public class SubOrientedPoint_Old extends AbstractSubHyperplane_Old<Vector1D, Vector1D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubOrientedPoint(final Hyperplane_Old<Vector1D> hyperplane,
+    public SubOrientedPoint_Old(final Hyperplane_Old<Vector1D> hyperplane,
                             final Region_Old<Vector1D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
@@ -53,13 +53,13 @@ public class SubOrientedPoint extends AbstractSubHyperplane_Old<Vector1D, Vector
     @Override
     protected AbstractSubHyperplane_Old<Vector1D, Vector1D> buildNew(final Hyperplane_Old<Vector1D> hyperplane,
                                                                        final Region_Old<Vector1D> remainingRegion) {
-        return new SubOrientedPoint(hyperplane, remainingRegion);
+        return new SubOrientedPoint_Old(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
     public SplitSubHyperplane<Vector1D> split(final Hyperplane_Old<Vector1D> hyperplane) {
-        final OrientedPoint thisHyperplane = (OrientedPoint) getHyperplane();
+        final OrientedPoint_Old thisHyperplane = (OrientedPoint_Old) getHyperplane();
         final double global = hyperplane.getOffset(thisHyperplane.getLocation());
 
         // use the precision context from our parent hyperplane to determine equality

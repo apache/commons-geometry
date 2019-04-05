@@ -56,7 +56,7 @@ public class IntervalsSetTest {
         Assert.assertNull(tree.getMinus());
         Assert.assertNull(tree.getPlus());
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -84,7 +84,7 @@ public class IntervalsSetTest {
         Assert.assertNull(tree.getMinus());
         Assert.assertNull(tree.getPlus());
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -106,7 +106,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -131,7 +131,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
@@ -156,7 +156,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
@@ -182,7 +182,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.0), set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(1.0, 1.0, intervals.get(0), TEST_EPS);
 
@@ -215,7 +215,7 @@ public class IntervalsSetTest {
         Assert.assertNull(tree.getMinus());
         Assert.assertNull(tree.getPlus());
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -241,7 +241,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(9.0, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -270,7 +270,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, 9.0, intervals.get(0), TEST_EPS);
 
@@ -300,7 +300,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4.0), set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(-1.0, 9.0, intervals.get(0), TEST_EPS);
 
@@ -333,7 +333,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(29.5 / 7.0), set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(2, intervals.size());
         assertInterval(-1.0, 2.0, intervals.get(0), TEST_EPS);
         assertInterval(5.0, 9.0, intervals.get(1), TEST_EPS);
@@ -371,7 +371,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(Double.NaN), set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(4, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, -2.0, intervals.get(0), TEST_EPS);
         assertInterval(-1.0, 2.0, intervals.get(1), TEST_EPS);
@@ -413,7 +413,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(Double.NEGATIVE_INFINITY, first, intervals.get(0), TEST_EPS);
 
@@ -444,7 +444,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(0.0, set.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.NaN, set.getBarycenter(), TEST_EPS);
 
-        List<Interval> intervals = set.asList();
+        List<Interval_Old> intervals = set.asList();
         Assert.assertEquals(1, intervals.size());
         assertInterval(first, Double.POSITIVE_INFINITY, intervals.get(0), TEST_EPS);
 
@@ -556,7 +556,7 @@ public class IntervalsSetTest {
         assertLocation(Region_Old.Location.BOUNDARY, set, 5.0);
         assertLocation(Region_Old.Location.BOUNDARY, set, 11.0);
 
-        List<Interval> list = set.asList();
+        List<Interval_Old> list = set.asList();
         Assert.assertEquals(3, list.size());
         assertInterval(1.0, 3.0, list.get(0), TEST_EPS);
         assertInterval(5.0, 6.0, list.get(1), TEST_EPS);
@@ -567,7 +567,7 @@ public class IntervalsSetTest {
         Assert.assertEquals(location, set.checkPoint(Vector1D.of(pt)));
     }
 
-    private void assertInterval(double expectedInf, double expectedSup, Interval actual, double tolerance) {
+    private void assertInterval(double expectedInf, double expectedSup, Interval_Old actual, double tolerance) {
         Assert.assertEquals(expectedInf, actual.getInf(), tolerance);
         Assert.assertEquals(expectedSup, actual.getSup(), tolerance);
     }
@@ -581,12 +581,12 @@ public class IntervalsSetTest {
         Assert.assertEquals(expectedOffset, proj.getOffset(), TEST_EPS);
     }
 
-    private SubOrientedPoint subOrientedPoint(double location, boolean direct) {
+    private SubOrientedPoint_Old subOrientedPoint(double location, boolean direct) {
         return subOrientedPoint(location, direct, TEST_PRECISION);
     }
 
-    private SubOrientedPoint subOrientedPoint(double location, boolean direct, DoublePrecisionContext precision) {
+    private SubOrientedPoint_Old subOrientedPoint(double location, boolean direct, DoublePrecisionContext precision) {
         // the remaining region isn't necessary for creating 1D boundaries so we can set it to null here
-        return new SubOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(location), direct, precision), null);
+        return new SubOrientedPoint_Old(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(location), direct, precision), null);
     }
 }

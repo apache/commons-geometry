@@ -18,10 +18,10 @@ package org.apache.commons.geometry.core.partition.test;
 
 import java.io.Serializable;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Side;
-import org.apache.commons.geometry.core.partition.Transform;
 
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.

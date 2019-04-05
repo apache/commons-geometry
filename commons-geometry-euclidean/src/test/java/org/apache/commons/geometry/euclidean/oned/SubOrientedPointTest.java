@@ -34,8 +34,8 @@ public class SubOrientedPointTest {
     @Test
     public void testGetSize() {
         // arrange
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
-        SubOrientedPoint pt = hyperplane.wholeHyperplane();
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        SubOrientedPoint_Old pt = hyperplane.wholeHyperplane();
 
         // act/assert
         Assert.assertEquals(0.0, pt.getSize(), TEST_EPS);
@@ -44,8 +44,8 @@ public class SubOrientedPointTest {
     @Test
     public void testIsEmpty() {
         // arrange
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
-        SubOrientedPoint pt = hyperplane.wholeHyperplane();
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        SubOrientedPoint_Old pt = hyperplane.wholeHyperplane();
 
         // act/assert
         Assert.assertFalse(pt.isEmpty());
@@ -54,29 +54,29 @@ public class SubOrientedPointTest {
     @Test
     public void testBuildNew() {
         // arrange
-        OrientedPoint originalHyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
-        SubOrientedPoint pt = originalHyperplane.wholeHyperplane();
+        OrientedPoint_Old originalHyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        SubOrientedPoint_Old pt = originalHyperplane.wholeHyperplane();
 
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(2), true, TEST_PRECISION);
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2), true, TEST_PRECISION);
         IntervalsSet intervals = new IntervalsSet(2, 3, TEST_PRECISION);
 
         // act
         SubHyperplane_Old<Vector1D> result = pt.buildNew(hyperplane, intervals);
 
         // assert
-        Assert.assertTrue(result instanceof SubOrientedPoint);
+        Assert.assertTrue(result instanceof SubOrientedPoint_Old);
         Assert.assertSame(hyperplane, result.getHyperplane());
-        Assert.assertSame(intervals, ((SubOrientedPoint) result).getRemainingRegion());
+        Assert.assertSame(intervals, ((SubOrientedPoint_Old) result).getRemainingRegion());
     }
 
     @Test
     public void testSplit_resultOnMinusSide() {
         // arrange
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
         IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
-        SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
+        SubOrientedPoint_Old pt = new SubOrientedPoint_Old(hyperplane, interval);
 
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(Vector1D.of(2), true, TEST_PRECISION);
+        OrientedPoint_Old splitter = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(2), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -84,10 +84,10 @@ public class SubOrientedPointTest {
         // assert
         Assert.assertEquals(Side_Old.MINUS, split.getSide());
 
-        SubOrientedPoint minusSub = ((SubOrientedPoint) split.getMinus());
+        SubOrientedPoint_Old minusSub = ((SubOrientedPoint_Old) split.getMinus());
         Assert.assertNotNull(minusSub);
 
-        OrientedPoint minusHyper = (OrientedPoint) minusSub.getHyperplane();
+        OrientedPoint_Old minusHyper = (OrientedPoint_Old) minusSub.getHyperplane();
         Assert.assertEquals(1, minusHyper.getLocation().getX(), TEST_EPS);
 
         Assert.assertSame(interval, minusSub.getRemainingRegion());
@@ -98,11 +98,11 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_resultOnPlusSide() {
         // arrange
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
         IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
-        SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
+        SubOrientedPoint_Old pt = new SubOrientedPoint_Old(hyperplane, interval);
 
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION);
+        OrientedPoint_Old splitter = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -112,10 +112,10 @@ public class SubOrientedPointTest {
 
         Assert.assertNull(split.getMinus());
 
-        SubOrientedPoint plusSub = ((SubOrientedPoint) split.getPlus());
+        SubOrientedPoint_Old plusSub = ((SubOrientedPoint_Old) split.getPlus());
         Assert.assertNotNull(plusSub);
 
-        OrientedPoint plusHyper = (OrientedPoint) plusSub.getHyperplane();
+        OrientedPoint_Old plusHyper = (OrientedPoint_Old) plusSub.getHyperplane();
         Assert.assertEquals(1, plusHyper.getLocation().getX(), TEST_EPS);
 
         Assert.assertSame(interval, plusSub.getRemainingRegion());
@@ -124,11 +124,11 @@ public class SubOrientedPointTest {
     @Test
     public void testSplit_equivalentHyperplanes() {
         // arrange
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
         IntervalsSet interval = new IntervalsSet(TEST_PRECISION);
-        SubOrientedPoint pt = new SubOrientedPoint(hyperplane, interval);
+        SubOrientedPoint_Old pt = new SubOrientedPoint_Old(hyperplane, interval);
 
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
+        OrientedPoint_Old splitter = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION);
 
         // act
         SplitSubHyperplane<Vector1D> split = pt.split(splitter);
@@ -146,23 +146,23 @@ public class SubOrientedPointTest {
         DoublePrecisionContext parentPrecision = new EpsilonDoublePrecisionContext(0.1);
         DoublePrecisionContext otherPrecision = new EpsilonDoublePrecisionContext(1e-10);
 
-        OrientedPoint hyperplane = OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, parentPrecision);
-        SubOrientedPoint pt = hyperplane.wholeHyperplane();
+        OrientedPoint_Old hyperplane = OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1), true, parentPrecision);
+        SubOrientedPoint_Old pt = hyperplane.wholeHyperplane();
 
         // act/assert
-        SplitSubHyperplane<Vector1D> plusSplit = pt.split(OrientedPoint.fromPointAndDirection(Vector1D.of(0.899), true, otherPrecision));
+        SplitSubHyperplane<Vector1D> plusSplit = pt.split(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(0.899), true, otherPrecision));
         Assert.assertNull(plusSplit.getMinus());
         Assert.assertNotNull(plusSplit.getPlus());
 
-        SplitSubHyperplane<Vector1D> lowWithinTolerance = pt.split(OrientedPoint.fromPointAndDirection(Vector1D.of(0.901), true, otherPrecision));
+        SplitSubHyperplane<Vector1D> lowWithinTolerance = pt.split(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(0.901), true, otherPrecision));
         Assert.assertNull(lowWithinTolerance.getMinus());
         Assert.assertNull(lowWithinTolerance.getPlus());
 
-        SplitSubHyperplane<Vector1D> highWithinTolerance = pt.split(OrientedPoint.fromPointAndDirection(Vector1D.of(1.09), true, otherPrecision));
+        SplitSubHyperplane<Vector1D> highWithinTolerance = pt.split(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.09), true, otherPrecision));
         Assert.assertNull(highWithinTolerance.getMinus());
         Assert.assertNull(highWithinTolerance.getPlus());
 
-        SplitSubHyperplane<Vector1D> minusSplit = pt.split(OrientedPoint.fromPointAndDirection(Vector1D.of(1.101), true, otherPrecision));
+        SplitSubHyperplane<Vector1D> minusSplit = pt.split(OrientedPoint_Old.fromPointAndDirection(Vector1D.of(1.101), true, otherPrecision));
         Assert.assertNotNull(minusSplit.getMinus());
         Assert.assertNull(minusSplit.getPlus());
     }

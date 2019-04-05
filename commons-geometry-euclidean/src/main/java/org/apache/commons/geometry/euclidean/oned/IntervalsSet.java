@@ -106,14 +106,14 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
             }
             // the tree must be open on the negative infinity side
             final SubHyperplane_Old<Vector1D> upperCut =
-                OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
+                OrientedPoint_Old.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
             return new BSPTree_Old<>(upperCut,
                                new BSPTree_Old<Vector1D>(Boolean.FALSE),
                                new BSPTree_Old<Vector1D>(Boolean.TRUE),
                                null);
         }
         final SubHyperplane_Old<Vector1D> lowerCut =
-            OrientedPoint.createNegativeFacing(Vector1D.of(lower), precision).wholeHyperplane();
+            OrientedPoint_Old.createNegativeFacing(Vector1D.of(lower), precision).wholeHyperplane();
         if (Double.isInfinite(upper) && (upper > 0)) {
             // the tree must be open on the positive infinity side
             return new BSPTree_Old<>(lowerCut,
@@ -124,7 +124,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
 
         // the tree must be bounded on the two sides
         final SubHyperplane_Old<Vector1D> upperCut =
-            OrientedPoint.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
+            OrientedPoint_Old.createPositiveFacing(Vector1D.of(upper), precision).wholeHyperplane();
         return new BSPTree_Old<>(lowerCut,
                                         new BSPTree_Old<Vector1D>(Boolean.FALSE),
                                         new BSPTree_Old<>(upperCut,
@@ -150,7 +150,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
         } else {
             double size = 0.0;
             double sum = 0.0;
-            for (final Interval interval : asList()) {
+            for (final Interval_Old interval : asList()) {
                 size += interval.getSize();
                 sum  += interval.getSize() * interval.getBarycenter();
             }
@@ -160,7 +160,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
             } else if (size > 0) {
                 setBarycenter(Vector1D.of(sum / size));
             } else {
-                setBarycenter(((OrientedPoint) getTree(false).getCut().getHyperplane()).getLocation());
+                setBarycenter(((OrientedPoint_Old) getTree(false).getCut().getHyperplane()).getLocation());
             }
         }
     }
@@ -175,7 +175,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
         BSPTree_Old<Vector1D> node = getTree(false);
         double  inf  = Double.POSITIVE_INFINITY;
         while (node.getCut() != null) {
-            final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
+            final OrientedPoint_Old op = (OrientedPoint_Old) node.getCut().getHyperplane();
             inf  = op.getLocation().getX();
             node = op.isPositiveFacing() ? node.getMinus() : node.getPlus();
         }
@@ -192,7 +192,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
         BSPTree_Old<Vector1D> node = getTree(false);
         double  sup  = Double.NEGATIVE_INFINITY;
         while (node.getCut() != null) {
-            final OrientedPoint op = (OrientedPoint) node.getCut().getHyperplane();
+            final OrientedPoint_Old op = (OrientedPoint_Old) node.getCut().getHyperplane();
             sup  = op.getLocation().getX();
             node = op.isPositiveFacing() ? node.getPlus() : node.getMinus();
         }
@@ -248,7 +248,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
 
     /** Build an ordered list of intervals representing the instance.
      * <p>This method builds this intervals set as an ordered list of
-     * {@link Interval Interval} elements. If the intervals set has no
+     * {@link Interval_Old Interval} elements. If the intervals set has no
      * lower limit, the first interval will have its low bound equal to
      * {@code Double.NEGATIVE_INFINITY}. If the intervals set has
      * no upper limit, the last interval will have its upper bound equal
@@ -256,13 +256,13 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
      * build an empty list while a tree representing the whole real line
      * will build a one element list with both bounds being
      * infinite.</p>
-     * @return a new ordered list containing {@link Interval Interval}
+     * @return a new ordered list containing {@link Interval_Old Interval}
      * elements
      */
-    public List<Interval> asList() {
-        final List<Interval> list = new ArrayList<>();
+    public List<Interval_Old> asList() {
+        final List<Interval_Old> list = new ArrayList<>();
         for (final double[] a : this) {
-            list.add(new Interval(a[0], a[1]));
+            list.add(new Interval_Old(a[0], a[1]));
         }
         return list;
     }
@@ -484,7 +484,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
      * @return true if the oriented point is direct
      */
     private boolean isDirect(final BSPTree_Old<Vector1D> node) {
-        return ((OrientedPoint) node.getCut().getHyperplane()).isPositiveFacing();
+        return ((OrientedPoint_Old) node.getCut().getHyperplane()).isPositiveFacing();
     }
 
     /** Get the abscissa of an internal node.
@@ -492,7 +492,7 @@ public class IntervalsSet extends AbstractRegion_Old<Vector1D, Vector1D> impleme
      * @return abscissa
      */
     private double getAngle(final BSPTree_Old<Vector1D> node) {
-        return ((OrientedPoint) node.getCut().getHyperplane()).getLocation().getX();
+        return ((OrientedPoint_Old) node.getCut().getHyperplane()).getLocation().getX();
     }
 
     /** {@inheritDoc}

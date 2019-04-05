@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Transform;
 
 /** Interface for Binary Space Partitioning (BSP) trees.
  * @param <P> Point implementation type

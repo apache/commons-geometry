@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Transform;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type

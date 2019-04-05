@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Transform;
 
 /** Extension of the {@link SubHyperplane} interface with the additional restriction
  * that instances represent convex regions of space.

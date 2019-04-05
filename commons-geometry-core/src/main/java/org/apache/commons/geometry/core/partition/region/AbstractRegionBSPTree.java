@@ -31,16 +31,10 @@ import org.apache.commons.geometry.core.partition.SubHyperplane;
  * in Euclidean 3D space.
  * @param <P> Point implementation type
  */
-public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, RegionBSPTree.RegionNode<P>> {
+public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.RegionNode<P, N>> extends AbstractBSPTree<P, N> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
-
-    /** Construct a new region covering the entire space.
-     */
-    public RegionBSPTree() {
-        this(true);
-    }
 
     /** Construct a new region will the given boolean determining whether or not the
      * region will be full (including the entire space) or empty (excluding the entire
@@ -48,7 +42,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param full if true, the region will cover the entire space, otherwise it will
      *      be empty
      */
-    public RegionBSPTree(final boolean full) {
+    protected AbstractRegionBSPTree(final boolean full) {
         getRoot().setLocation(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
     }
 
@@ -75,7 +69,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param location the location to find
      * @return true if any node in the subtree has the given location
      */
-    private boolean hasNodeWithLocationRecursive(final RegionNode<P> node, final RegionLocation location) {
+    private boolean hasNodeWithLocationRecursive(final RegionNode<P, N> node, final RegionLocation location) {
         if (node == null) {
             return false;
         }
@@ -99,7 +93,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @return the classification of the point with respect to the region rooted
      *      at the given node
      */
-    private RegionLocation classifyRecursive(final RegionNode<P> node, final P point) {
+    private RegionLocation classifyRecursive(final RegionNode<P, N> node, final P point) {
         if (node.isLeaf()) {
             // the point is in a leaf, so the classification is just the leaf location
             return node.getLocation();
@@ -138,7 +132,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * is not modified.
      * @param tree the tree to become the complement of
      */
-    public void complementOf(final RegionBSPTree<P> tree) {
+    public void complementOf(final AbstractRegionBSPTree<P, N> tree) {
         copyRecursive(tree.getRoot(), getRoot());
         complementRecursive(getRoot());
     }
@@ -146,7 +140,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Recursively switch all inside nodes to outside nodes and vice versa.
      * @param node the node at the root of the subtree to switch
      */
-    private void complementRecursive(final RegionNode<P> node) {
+    private void complementRecursive(final RegionNode<P, N> node) {
         if (node != null)
         {
             final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
@@ -164,8 +158,8 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * this instance. The argument is not modified.
      * @param other the tree to compute the union with
      */
-    public void union(final RegionBSPTree<P> other) {
-        new UnionOperator<P>().apply(this, other, this);
+    public void union(final AbstractRegionBSPTree<P, N> other) {
+        new UnionOperator<P, N>().apply(this, other, this);
     }
 
     /** Compute the union of the two regions passed as arguments and store the result in
@@ -173,16 +167,16 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param a first argument to the union operation
      * @param b second argument to the union operation
      */
-    public void unionOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
-        new UnionOperator<P>().apply(a, b, this);
+    public void unionOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+        new UnionOperator<P, N>().apply(a, b, this);
     }
 
     /** Compute the intersection of this instance and the given region, storing the result back in
      * this instance. The argument is not modified.
      * @param other the tree to compute the intersection with
      */
-    public void intersection(final RegionBSPTree<P> other) {
-        new IntersectionOperator<P>().apply(this, other, this);
+    public void intersection(final AbstractRegionBSPTree<P, N> other) {
+        new IntersectionOperator<P, N>().apply(this, other, this);
     }
 
     /** Compute the intersection of the two regions passed as arguments and store the result in
@@ -190,16 +184,16 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param a first argument to the intersection operation
      * @param b second argument to the intersection operation
      */
-    public void intersectionOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
-        new IntersectionOperator<P>().apply(a, b, this);
+    public void intersectionOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+        new IntersectionOperator<P, N>().apply(a, b, this);
     }
 
     /** Compute the difference of this instance and the given region, storing the result back in
      * this instance. The argument is not modified.
      * @param other the tree to compute the difference with
      */
-    public void difference(final RegionBSPTree<P> other) {
-        new DifferenceOperator<P>().apply(this, other, this);
+    public void difference(final AbstractRegionBSPTree<P, N> other) {
+        new DifferenceOperator<P, N>().apply(this, other, this);
     }
 
     /** Compute the difference of the two regions passed as arguments and store the result in
@@ -207,16 +201,16 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param a first argument to the difference operation
      * @param b second argument to the difference operation
      */
-    public void differenceOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
-        new DifferenceOperator<P>().apply(a, b, this);
+    public void differenceOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+        new DifferenceOperator<P, N>().apply(a, b, this);
     }
 
     /** Compute the symmetric difference (xor) of this instance and the given region, storing the result back in
      * this instance. The argument is not modified.
      * @param other the tree to compute the symmetric difference with
      */
-    public void xor(final RegionBSPTree<P> other) {
-        new XorOperator<P>().apply(this, other, this);
+    public void xor(final AbstractRegionBSPTree<P, N> other) {
+        new XorOperator<P, N>().apply(this, other, this);
     }
 
     /** Compute the symmetric difference (xor) of the two regions passed as arguments and store the result in
@@ -224,25 +218,13 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param a first argument to the symmetric difference operation
      * @param b second argument to the symmetric difference operation
      */
-    public void xorOf(final RegionBSPTree<P> a, final RegionBSPTree<P> b) {
-        new XorOperator<P>().apply(a, b, this);
+    public void xorOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+        new XorOperator<P, N>().apply(a, b, this);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected RegionBSPTree<P> createTree() {
-        return new RegionBSPTree<P>();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected RegionNode<P> createNode() {
-        return new RegionNode<P>(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void copyNodeProperties(final RegionNode<P> src, final RegionNode<P> dst) {
+    protected void copyNodeProperties(final N src, final N dst) {
         dst.setLocation(src.getLocationValue());
     }
 
@@ -252,7 +234,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @return object representing the portions of the node's cut subhyperplane that lie
      *      on the region's boundary
      */
-    private RegionCutBoundary<P> computeBoundary(final RegionNode<P> node) {
+    private RegionCutBoundary<P> computeBoundary(final N node) {
         if (node.isLeaf()) {
             // no boundary for leaf nodes; they are either entirely in or
             // entirely out
@@ -305,7 +287,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
      * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
      *      of the region; may be null
      */
-    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P> node,
+    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P, N> node,
             final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
 
         if (sub != null) {
@@ -328,16 +310,16 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
 
     /** {@inheritDoc} */
     @Override
-    protected void initChildNode(final RegionNode<P> parent, final RegionNode<P> child, final boolean isPlus) {
+    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
         super.initChildNode(parent, child, isPlus);
 
         child.setLocation(isPlus ? RegionLocation.OUTSIDE : RegionLocation.INSIDE);
     }
 
-    /** {@link BSPTree.Node} implementation for use with {@link RegionBSPTree}s.
+    /** {@link BSPTree.Node} implementation for use with {@link AbstractRegionBSPTree}s.
      * @param <P> Point implementation type
      */
-    public static class RegionNode<P extends Point<P>> extends AbstractBSPTree.AbstractNode<P, RegionNode<P>> {
+    public abstract static class RegionNode<P extends Point<P>, N extends RegionNode<P, N>> extends AbstractBSPTree.AbstractNode<P, N> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 1L;
@@ -353,15 +335,15 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         /** Simple constructor.
          * @param tree owning tree instance
          */
-        protected RegionNode(AbstractBSPTree<P, RegionNode<P>> tree) {
+        protected RegionNode(AbstractBSPTree<P, N> tree) {
             super(tree);
         }
 
         /** {@inheritDoc} */
         @Override
-        public RegionBSPTree<P> getTree() {
+        public AbstractRegionBSPTree<P, N> getTree() {
             // cast to our parent tree type
-            return (RegionBSPTree<P>) super.getTree();
+            return (AbstractRegionBSPTree<P, N>) super.getTree();
         }
 
         /** Get the location of the node. This value will only be non-null for
@@ -398,7 +380,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
                 checkTreeUpdated();
 
                 if (cutBoundary == null) {
-                    cutBoundary = getTree().computeBoundary(this);
+                    cutBoundary = getTree().computeBoundary(getSelf());
                 }
             }
 
@@ -431,7 +413,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         /** Set the location attribute for the node.
          * @param location the location attribute for the node
          */
-        private void setLocation(final RegionLocation location) {
+        protected void setLocation(final RegionLocation location) {
             this.location = location;
         }
 
@@ -442,18 +424,12 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
         protected RegionLocation getLocationValue() {
             return location;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        protected RegionNode<P> getSelf() {
-            return this;
-        }
     }
 
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
      */
-    public abstract static class RegionMergeOperator<P extends Point<P>> extends AbstractBSPTreeMergeSupport<P, RegionNode<P>> {
+    public abstract static class RegionMergeOperator<P extends Point<P>, N extends RegionNode<P, N>> extends AbstractBSPTreeMergeSupport<P, N> {
 
         /** Merge two input trees, storing the output in the third. The output tree can be one of the
          * input tree.
@@ -461,8 +437,8 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          * @param inputTree2 second input tree
          * @param outputTree
          */
-        public void apply(final RegionBSPTree<P> inputTree1, final RegionBSPTree<P> inputTree2,
-                final RegionBSPTree<P> outputTree) {
+        public void apply(final AbstractRegionBSPTree<P, N> inputTree1, final AbstractRegionBSPTree<P, N> inputTree2,
+                final AbstractRegionBSPTree<P, N> outputTree) {
 
             this.performMerge(inputTree1, inputTree2, outputTree);
             condense(outputTree.getRoot());
@@ -474,7 +450,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
          * @return the location of the successfully condensed subtree or null if no condensing was
          *      able to be performed
          */
-        private RegionLocation condense(final RegionNode<P> node) {
+        private RegionLocation condense(final N node) {
             if (node.isLeaf()) {
                 return node.getLocation();
             }
@@ -496,11 +472,11 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class for performing boolean union operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class UnionOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+    public static class UnionOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+        protected N mergeLeaf(final N node1, final N node2) {
             if (node1.isLeaf()) {
                 return node1.isInside() ? node1 : node2;
             }
@@ -513,11 +489,11 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class for performing boolean intersection operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class IntersectionOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+    public static class IntersectionOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+        protected N mergeLeaf(final N node1, final N node2) {
             if (node1.isLeaf()) {
                 return node1.isInside() ? node2 : node1;
             }
@@ -530,24 +506,24 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class for performing boolean difference operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class DifferenceOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+    public static class DifferenceOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+        protected N mergeLeaf(final N node1, final N node2) {
             // a region is included if it belongs in tree1 and is not in tree2
 
             if (node1.isInside()) {
                 // this region is inside of tree1, so only include subregions that are
                 // not in tree2, ie include everything in node2's complement
-                final RegionNode<P> output = outputSubtree(node2);
+                final N output = outputSubtree(node2);
                 output.getTree().complementRecursive(output);
 
                 return output;
             }
             else if (node2.isInside()) {
                 // this region is inside of tree2 and so cannot be in the result region
-                final RegionNode<P> output = outputNode();
+                final N output = outputNode();
                 output.setLocation(RegionLocation.OUTSIDE);
 
                 return output;
@@ -561,11 +537,11 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
     /** Class for performing boolean symmetric difference (xor) operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class XorOperator<P extends Point<P>> extends RegionMergeOperator<P> {
+    public static class XorOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
-        protected RegionNode<P> mergeLeaf(final RegionNode<P> node1, final RegionNode<P> node2) {
+        protected N mergeLeaf(final N node1, final N node2) {
             // a region is included if it belongs in tree1 and is not in tree2 OR
             // it belongs in tree2 and is not in tree1
 
@@ -573,7 +549,7 @@ public class RegionBSPTree<P extends Point<P>> extends AbstractBSPTree<P, Region
                 if (node1.isInside()) {
                     // this region is inside node1, so only include subregions that are
                     // not in node2, ie include everything in node2's complement
-                    final RegionNode<P> output = outputSubtree(node2);
+                    final N output = outputSubtree(node2);
                     output.getTree().complementRecursive(output);
 
                     return output;
