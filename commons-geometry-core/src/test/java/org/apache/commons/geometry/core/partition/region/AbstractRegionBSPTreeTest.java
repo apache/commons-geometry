@@ -667,7 +667,7 @@ public class AbstractRegionBSPTreeTest {
         insertSkewedBowtie(other);
 
         // act
-        other.complementOf(tree);
+        other.complement(tree);
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -691,7 +691,7 @@ public class AbstractRegionBSPTreeTest {
         TestRegionBSPTree other = fullTree();
 
         // act
-        other.complementOf(tree);
+        other.complement(tree);
 
         // assert
         Assert.assertEquals(RegionLocation.INSIDE, tree.classify(new TestPoint2D(3, 1)));
@@ -1350,7 +1350,7 @@ public class AbstractRegionBSPTreeTest {
 
         MergeOperation constOperation = (a, b) -> {
             TestRegionBSPTree result = fullTree();
-            result.unionOf(a, b);
+            result.union(a, b);
             return result;
         };
 
@@ -1368,7 +1368,7 @@ public class AbstractRegionBSPTreeTest {
 
         MergeOperation constOperation = (a, b) -> {
             TestRegionBSPTree result = fullTree();
-            result.intersectionOf(a, b);
+            result.intersection(a, b);
             return result;
         };
 
@@ -1386,7 +1386,7 @@ public class AbstractRegionBSPTreeTest {
 
         MergeOperation constOperation = (a, b) -> {
             TestRegionBSPTree result = fullTree();
-            result.differenceOf(a, b);
+            result.difference(a, b);
             return result;
         };
 
@@ -1404,7 +1404,7 @@ public class AbstractRegionBSPTreeTest {
 
         MergeOperation constOperation = (a, b) -> {
             TestRegionBSPTree result = fullTree();
-            result.xorOf(a, b);
+            result.xor(a, b);
             return result;
         };
 

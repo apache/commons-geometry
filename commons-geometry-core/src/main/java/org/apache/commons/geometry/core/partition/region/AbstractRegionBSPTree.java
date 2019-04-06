@@ -132,7 +132,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * is not modified.
      * @param tree the tree to become the complement of
      */
-    public void complementOf(final AbstractRegionBSPTree<P, N> tree) {
+    public void complement(final AbstractRegionBSPTree<P, N> tree) {
         copyRecursive(tree.getRoot(), getRoot());
         complementRecursive(getRoot());
     }
@@ -167,7 +167,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param a first argument to the union operation
      * @param b second argument to the union operation
      */
-    public void unionOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+    public void union(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
         new UnionOperator<P, N>().apply(a, b, this);
     }
 
@@ -184,7 +184,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param a first argument to the intersection operation
      * @param b second argument to the intersection operation
      */
-    public void intersectionOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+    public void intersection(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
         new IntersectionOperator<P, N>().apply(a, b, this);
     }
 
@@ -201,7 +201,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param a first argument to the difference operation
      * @param b second argument to the difference operation
      */
-    public void differenceOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+    public void difference(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
         new DifferenceOperator<P, N>().apply(a, b, this);
     }
 
@@ -218,7 +218,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param a first argument to the symmetric difference operation
      * @param b second argument to the symmetric difference operation
      */
-    public void xorOf(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
+    public void xor(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
         new XorOperator<P, N>().apply(a, b, this);
     }
 
