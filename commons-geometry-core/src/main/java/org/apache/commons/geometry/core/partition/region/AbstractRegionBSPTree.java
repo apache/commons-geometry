@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.partition.SubHyperplane;
  * in Euclidean 3D space.
  * @param <P> Point implementation type
  */
-public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.RegionNode<P, N>> extends AbstractBSPTree<P, N> {
+public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>> extends AbstractBSPTree<P, N> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
@@ -69,7 +69,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param location the location to find
      * @return true if any node in the subtree has the given location
      */
-    private boolean hasNodeWithLocationRecursive(final RegionNode<P, N> node, final RegionLocation location) {
+    private boolean hasNodeWithLocationRecursive(final AbstractRegionNode<P, N> node, final RegionLocation location) {
         if (node == null) {
             return false;
         }
@@ -93,7 +93,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @return the classification of the point with respect to the region rooted
      *      at the given node
      */
-    private RegionLocation classifyRecursive(final RegionNode<P, N> node, final P point) {
+    private RegionLocation classifyRecursive(final AbstractRegionNode<P, N> node, final P point) {
         if (node.isLeaf()) {
             // the point is in a leaf, so the classification is just the leaf location
             return node.getLocation();
@@ -140,7 +140,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Recursively switch all inside nodes to outside nodes and vice versa.
      * @param node the node at the root of the subtree to switch
      */
-    private void complementRecursive(final RegionNode<P, N> node) {
+    private void complementRecursive(final AbstractRegionNode<P, N> node) {
         if (node != null)
         {
             final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
@@ -287,7 +287,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
      *      of the region; may be null
      */
-    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final RegionNode<P, N> node,
+    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final AbstractRegionNode<P, N> node,
             final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
 
         if (sub != null) {
@@ -319,7 +319,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** {@link BSPTree.Node} implementation for use with {@link AbstractRegionBSPTree}s.
      * @param <P> Point implementation type
      */
-    public abstract static class RegionNode<P extends Point<P>, N extends RegionNode<P, N>> extends AbstractBSPTree.AbstractNode<P, N> {
+    public abstract static class AbstractRegionNode<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends AbstractBSPTree.AbstractNode<P, N> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 1L;
@@ -335,7 +336,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         /** Simple constructor.
          * @param tree owning tree instance
          */
-        protected RegionNode(AbstractBSPTree<P, N> tree) {
+        protected AbstractRegionNode(AbstractBSPTree<P, N> tree) {
             super(tree);
         }
 
@@ -429,7 +430,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
      */
-    public abstract static class RegionMergeOperator<P extends Point<P>, N extends RegionNode<P, N>> extends AbstractBSPTreeMergeSupport<P, N> {
+    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends AbstractBSPTreeMergeSupport<P, N> {
 
         /** Merge two input trees, storing the output in the third. The output tree can be one of the
          * input tree.
@@ -472,7 +473,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean union operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class UnionOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -489,7 +490,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean intersection operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class IntersectionOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -506,7 +507,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean difference operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class DifferenceOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -537,7 +538,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean symmetric difference (xor) operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class XorOperator<P extends Point<P>, N extends RegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override

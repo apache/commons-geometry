@@ -50,6 +50,20 @@ public interface Hyperplane<P extends Point<P>> {
      */
     P plusPoint();
 
+    /** Get a representative point on the minus side of the hyperplane. The only
+     * requirement for this point is that {@code hyperplane.classify(pt)}
+     * returns {@link Side#MINUS}.
+     * @return a point on the minus side of the hyperplane
+     */
+    P minusPoint();
+
+    /** Get a representative point on the hyperplane. The only
+     * requirement for this point is that {@code hyperplane.classify(pt)}
+     * returns {@link Side#HYPER}.
+     * @return a point on the hyperplane
+     */
+    P onPoint();
+
     /** Transform this instance using the given {@link Transform}.
      * @param transform object to transform this instance with
      * @return a new, transformed hyperplane

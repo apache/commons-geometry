@@ -17,13 +17,17 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.
@@ -33,7 +37,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
+public final class OrientedPoint extends AbstractHyperplane<Vector1D>
+    implements Hyperplane<Vector1D>, ConvexSubHyperplane<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -44,9 +49,6 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
     /** Hyperplane direction. */
     private final boolean positiveFacing;
 
-    /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
-
     /** Simple constructor.
      * @param point location of the hyperplane
      * @param positiveFacing if true, the hyperplane will face toward positive infinity;
@@ -54,9 +56,10 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point values
      */
     private OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
+        super(precision);
+
         this.location = point;
         this.positiveFacing = positiveFacing;
-        this.precision = precision;
     }
 
     /** Get the point representing the hyperplane's location on the real line.
@@ -83,36 +86,32 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         return positiveFacing;
     }
 
-    /** {@inheritDoc} */
-    public DoublePrecisionContext getPrecision() {
-        return precision;
-    }
-
     /** Get an instance with the same location and precision but the opposite
      * direction.
      * @return a copy of this instance with the opposite direction
      */
     public OrientedPoint reverse() {
-        return new OrientedPoint(location, !positiveFacing, precision);
+        return new OrientedPoint(location, !positiveFacing, getPrecision());
     }
 
-    @Override
-    public Side classify(final Vector1D point) {
-        final double offset = offset(point);
-        final int cmp = precision.sign(offset);
-        if (cmp > 0) {
-            return Side.PLUS;
-        }
-        else if (cmp < 0) {
-            return Side.MINUS;
-        }
-        return Side.HYPER;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public Vector1D plusPoint() {
-        final double offset = Math.min(1.0, precision.getMaxZero() + 1.0);
-        return Vector1D.of(location.getX() + offset);
+        final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
+        return Vector1D.linearCombination(1.0, location, scale, getDirection());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D minusPoint() {
+        final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
+        return Vector1D.linearCombination(1.0, location, -scale, getDirection());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D onPoint() {
+        return location;
     }
 
     /** {@inheritDoc} */
@@ -124,7 +123,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         return OrientedPoint.fromPointAndDirection(
                     transformedLocation,
                     transformedLocation.vectorTo(transformedPlusDirPt),
-                    precision
+                    getPrecision()
                 );
     }
 
@@ -135,20 +134,10 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
         return positiveFacing ? delta : -delta;
     }
 
-    /** Build a region covering the whole hyperplane.
-     * <p>Since this class represent zero dimension spaces which does
-     * not have lower dimension sub-spaces, this method returns a dummy
-     * implementation of a {@link
-     * org.apache.commons.geometry.core.partitioning.SubHyperplane_Old SubHyperplane}.
-     * This implementation is only used to allow the {@link
-     * org.apache.commons.geometry.core.partitioning.SubHyperplane_Old
-     * SubHyperplane} class implementation to work properly, it should
-     * <em>not</em> be used otherwise.</p>
-     * @return a dummy sub hyperplane
-     */
+    /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<Vector1D> wholeHyperplane() {
-        return null;
+    public OrientedPoint wholeHyperplane() {
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -165,13 +154,67 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
+        final Side side = splitter.classify(getLocation());
+
+        OrientedPoint minus = null;
+        OrientedPoint plus = null;
+
+        if (side == Side.MINUS) {
+            minus = this;
+        }
+        else if (side == Side.PLUS) {
+            plus = this;
+        }
+
+        return new Split<>(minus, plus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OrientedPoint getHyperplane() {
+        return this;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isInfinite() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double size() {
+        return 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Builder<Vector1D> builder() {
+        return new OrientedPointBuilder(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<ConvexSubHyperplane<Vector1D>> toConvex() {
+        return Arrays.asList(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         final int prime = 31;
 
         int result = 1;
         result = (prime * result) + Objects.hashCode(location);
         result = (prime * result) + Boolean.hashCode(positiveFacing);
-        result = (prime * result) + Objects.hashCode(precision);
+        result = (prime * result) + Objects.hashCode(getPrecision());
 
         return result;
     }
@@ -190,7 +233,7 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
 
         return Objects.equals(this.location, other.location) &&
                 this.positiveFacing == other.positiveFacing &&
-                Objects.equals(this.precision, other.precision);
+                Objects.equals(this.getPrecision(), other.getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -254,5 +297,40 @@ public final class OrientedPoint implements Hyperplane<Vector1D>, Serializable {
      */
     public static OrientedPoint createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
         return new OrientedPoint(point, false, precision);
+    }
+
+    public static class OrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190405L;
+
+        private final OrientedPoint base;
+
+        private OrientedPointBuilder(final OrientedPoint base) {
+            this.base = base;
+        }
+
+        @Override
+        public void add(SubHyperplane<Vector1D> sub) {
+            validateHyperplane(sub);
+        }
+
+        @Override
+        public void add(ConvexSubHyperplane<Vector1D> sub) {
+            validateHyperplane(sub);
+        }
+
+        @Override
+        public SubHyperplane<Vector1D> build() {
+            return base;
+        }
+
+        private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
+            if (!base.getHyperplane().equals(sub.getHyperplane())) {
+                throw new IllegalArgumentException("Argument is not on the same " +
+                        "hyperplane. Expected " + base.getHyperplane() + " but was " +
+                        sub.getHyperplane());
+            }
+        }
     }
 }

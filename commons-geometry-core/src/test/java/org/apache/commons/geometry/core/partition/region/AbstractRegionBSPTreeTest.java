@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.RegionNode;
+import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
@@ -1718,7 +1718,7 @@ public class AbstractRegionBSPTreeTest {
 
     }
 
-    private static class TestRegionNode extends RegionNode<TestPoint2D, TestRegionNode> {
+    private static class TestRegionNode extends AbstractRegionNode<TestPoint2D, TestRegionNode> {
 
         private static final long serialVersionUID = 20190405L;
 
