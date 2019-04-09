@@ -33,6 +33,26 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         super(full);
     }
 
+    public void insert(final Interval interval) {
+        if (interval.isFull()) {
+            setFull();
+        }
+        else if (!interval.isEmpty()) {
+            final double min = interval.getMin();
+            final double max = interval.getMax();
+
+            if (Double.isFinite(min)) {
+                final OrientedPoint minPt = OrientedPoint.createPositiveFacing(interval.getMin(), interval.getPrecision());
+                insert(minPt);
+            }
+
+            if (Double.isFinite(max)) {
+                final OrientedPoint maxPt = OrientedPoint.createNegativeFacing(interval.getMax(), interval.getPrecision());
+                insert(maxPt);
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected RegionBSPTree1D createTree() {

@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.Arrays;
 
-import org.apache.commons.geometry.core.partition.region.RegionLocation;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;

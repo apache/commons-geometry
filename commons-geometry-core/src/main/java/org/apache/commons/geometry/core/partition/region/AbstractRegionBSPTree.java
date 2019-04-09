@@ -19,6 +19,8 @@ package org.apache.commons.geometry.core.partition.region;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
 import org.apache.commons.geometry.core.partition.BSPTree;
@@ -31,7 +33,8 @@ import org.apache.commons.geometry.core.partition.SubHyperplane;
  * in Euclidean 3D space.
  * @param <P> Point implementation type
  */
-public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>> extends AbstractBSPTree<P, N> {
+public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
+    extends AbstractBSPTree<P, N> implements Region<P> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
@@ -79,10 +82,29 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 hasNodeWithLocationRecursive(node.getPlus(), location);
     }
 
+    /** Set this instance to represent the full space.
+     */
+    public void setFull() {
+        final N root = getRoot();
+
+        root.clearCut();
+        root.setLocation(RegionLocation.INSIDE);
+    }
+
+    /** Set this instance to represent the empty space.
+     */
+    public void setEmpty() {
+        final N root = getRoot();
+
+        root.clearCut();
+        root.setLocation(RegionLocation.OUTSIDE);
+    }
+
     /** Classify a point with respect to the region.
      * @param point the point to classify
      * @return the classification of the point with respect to the region
      */
+    @Override
     public RegionLocation classify(final P point) {
         return classifyRecursive(getRoot(), point);
     }

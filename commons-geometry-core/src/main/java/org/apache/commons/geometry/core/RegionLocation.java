@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition.region;
+package org.apache.commons.geometry.core;
 
 public enum RegionLocation {
     INSIDE,

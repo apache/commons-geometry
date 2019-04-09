@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -199,6 +200,68 @@ public class AbstractRegionBSPTreeTest {
     public void testClassify_emptyTree() {
         // act/assert
         Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+    }
+
+    @Test
+    public void testContains() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act/assert
+        Assert.assertTrue(tree.contains(new TestPoint2D(3, 1)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-3, -1)));
+
+        Assert.assertFalse(tree.contains(new TestPoint2D(-3, 1)));
+        Assert.assertFalse(tree.contains(new TestPoint2D(3, -1)));
+
+        Assert.assertTrue(tree.contains(new TestPoint2D(4, 5)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-4, -5)));
+
+        Assert.assertFalse(tree.contains(new TestPoint2D(5, 0)));
+
+        Assert.assertTrue(tree.contains(new TestPoint2D(4, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(3, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(2, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(1, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(0, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-1, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-2, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-3, 0)));
+        Assert.assertTrue(tree.contains(new TestPoint2D(-4, 0)));
+
+        Assert.assertFalse(tree.contains(new TestPoint2D(-5, 0)));
+    }
+
+    @Test
+    public void testSetFull() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act
+        tree.setFull();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(TestPoint2D.ZERO));
+        Assert.assertTrue(tree.contains(TestPoint2D.ZERO));
+    }
+
+    @Test
+    public void testSetEmpty() {
+        // arrange
+        insertSkewedBowtie(tree);
+
+        // act
+        tree.setEmpty();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(TestPoint2D.ZERO));
+        Assert.assertFalse(tree.contains(TestPoint2D.ZERO));
     }
 
     @Test

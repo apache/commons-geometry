@@ -250,6 +250,18 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return sb.toString();
     }
 
+    /** Create a new instance from the given location and boolean direction value.
+     * @param location the location of the hyperplane
+     * @param positiveFacing if true, the hyperplane will face toward positive infinity;
+     *      otherwise, it will point toward negative infinity.
+     * @param precision precision context used to compare floating point values
+     * @return a new instance
+     */
+    public static OrientedPoint fromPointAndDirection(final double location, final boolean positiveFacing,
+            final DoublePrecisionContext precision) {
+        return fromPointAndDirection(Vector1D.of(location), positiveFacing, precision);
+    }
+
     /** Create a new instance from the given point and boolean direction value.
      * @param point the location of the hyperplane
      * @param positiveFacing if true, the hyperplane will face toward positive infinity;
@@ -290,6 +302,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new OrientedPoint(point, true, precision);
     }
 
+    /** Create a new instance at the given location, oriented so that it is facing positive infinity.
+     * @param location the location of the hyperplane
+     * @param precision precision context used to compare floating point values
+     * @return a new instance oriented toward positive infinity
+     */
+    public static OrientedPoint createPositiveFacing(final double location, final DoublePrecisionContext precision) {
+        return new OrientedPoint(Vector1D.of(location), true, precision);
+    }
+
     /** Create a new instance at the given point, oriented so that it is facing negative infinity.
      * @param point the location of the hyperplane
      * @param precision precision context used to compare floating point values
@@ -297,6 +318,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      */
     public static OrientedPoint createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
         return new OrientedPoint(point, false, precision);
+    }
+
+    /** Create a new instance at the given location, oriented so that it is facing negative infinity.
+     * @param location the location of the hyperplane
+     * @param precision precision context used to compare floating point values
+     * @return a new instance oriented toward negative infinity
+     */
+    public static OrientedPoint createNegativeFacing(final double location, final DoublePrecisionContext precision) {
+        return new OrientedPoint(Vector1D.of(location), false, precision);
     }
 
     public static class OrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {

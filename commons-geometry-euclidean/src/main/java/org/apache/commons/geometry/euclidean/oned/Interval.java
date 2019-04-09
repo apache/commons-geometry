@@ -19,7 +19,11 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Interval implements Serializable {
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+
+public class Interval implements Region<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -28,9 +32,12 @@ public class Interval implements Serializable {
 
     private final double max;
 
-    private Interval(final double a, final double b) {
+    private final DoublePrecisionContext precision;
+
+    private Interval(final double a, final double b, final DoublePrecisionContext precision) {
         this.min = Math.min(a, b);
         this.max = Math.max(a, b);
+        this.precision = precision;
     }
 
     public double getMin() {
@@ -43,6 +50,47 @@ public class Interval implements Serializable {
 
     public boolean isInfinite() {
         return Double.isInfinite(min) || Double.isInfinite(max);
+    }
+
+    public DoublePrecisionContext getPrecision() {
+        return precision;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classify(Vector1D pt) {
+        final double x = pt.getX();
+
+        final int cmpMin = precision.compare(x, min);
+        final int cmpMax = precision.compare(x, max);
+
+        if (cmpMin == 0 || cmpMax == 0) {
+            return RegionLocation.BOUNDARY;
+        }
+        else if (cmpMin > 0 && cmpMax < 0) {
+            return RegionLocation.INSIDE;
+        }
+
+        return RegionLocation.OUTSIDE;
+    }
+
+    public boolean isEmpty() {
+        return precision.eqZero(size());
+    }
+
+    public boolean isFull() {
+        return min == Double.NEGATIVE_INFINITY && max == Double.POSITIVE_INFINITY;
+    }
+
+    public double size() {
+        return min - max;
+    }
+
+    public RegionBSPTree1D toTree() {
+        final RegionBSPTree1D tree = new RegionBSPTree1D();
+        tree.insert(this);
+
+        return tree;
     }
 
     /** {@inheritDoc} */
@@ -63,8 +111,8 @@ public class Interval implements Serializable {
 
         Interval other = (Interval) obj;
 
-        return Double.compare(min, other.min) == 0 &&
-                Double.compare(max, other.max) == 0;
+        return Objects.equals(min, other.min) &&
+                Objects.equals(max, other.max);
     }
 
     /** {@inheritDoc} */
@@ -73,15 +121,19 @@ public class Interval implements Serializable {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
             .append("[min= ")
-            .append(min)
+            .append(getMin())
             .append(", max= ")
-            .append(max)
+            .append(getMax())
             .append(']');
 
         return sb.toString();
     }
 
-    public static Interval of(final double a, final double b) {
-        return new Interval(a, b);
+    public static Interval of(final double a, final double b, final DoublePrecisionContext precision) {
+        return new Interval(a, b, precision);
+    }
+
+    public static Interval of(final Vector1D a, final Vector1D b, final DoublePrecisionContext precision) {
+        return of(a.getX(), b.getX(), precision);
     }
 }
