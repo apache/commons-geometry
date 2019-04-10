@@ -199,8 +199,8 @@ public class Vector3DTest {
         checkVector(Vector3D.of(x, y, z).withNorm(-0.5), -0.5 * normX, -0.5 * normY, -0.5 * normZ);
         checkVector(Vector3D.of(x, y, z).withNorm(-3), -3 * normX, -3 * normY, -3 * normZ);
 
-        for (double mag = -10.0; mag <= 10.0; ++mag)
-        {
+        for (int i = 0; i <= 10; i++) {
+            final double mag = i * 0.12345 - 5;
             Assert.assertEquals(Math.abs(mag), Vector3D.of(x, y, z).withNorm(mag).norm(), EPS);
         }
     }

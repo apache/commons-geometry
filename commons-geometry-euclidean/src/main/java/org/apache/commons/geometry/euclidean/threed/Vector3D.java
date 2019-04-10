@@ -176,12 +176,12 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Vector3D withNorm(double magnitude) {
-        final double invNorm = 1.0 / getCheckedNorm();
+        final double m = magnitude / getCheckedNorm();
 
         return new Vector3D(
-                    magnitude * x * invNorm,
-                    magnitude * y * invNorm,
-                    magnitude * z * invNorm
+                    m * x,
+                    m * y,
+                    m * z
                 );
     }
 
