@@ -371,19 +371,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return transform.apply(this);
     }
 
-    /**
-     * Check if provided vectors are coplanar.
-     * @param u first vector
-     * @param v second vector
-     * @param w third vector
-     * @param precision precision context used to compare floating point values
-     * @return true if vectors are coplanar, false otherwise.
-     */
-    public static boolean areCoplanar(final Vector3D u, final Vector3D v, final Vector3D w, final DoublePrecisionContext precision)
-    {
-        return precision.eqZero(u.dot(v.cross(w)));
-    }
-    
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Vector3D vec, final DoublePrecisionContext precision) {
