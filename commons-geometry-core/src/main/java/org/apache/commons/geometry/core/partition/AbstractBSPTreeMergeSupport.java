@@ -126,16 +126,16 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
         final ConvexSubHyperplane.Split<P> partitionerSplit = partitioner.split(node.getCutHyperplane());
         final ConvexSubHyperplane.Split<P> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
 
-        final Side partitionerSplitSide = partitionerSplit.getSide();
-        final Side nodeCutSplitSide = nodeCutSplit.getSide();
+        final SplitLocation partitionerSplitSide = partitionerSplit.getLocation();
+        final SplitLocation nodeCutSplitSide = nodeCutSplit.getLocation();
 
         final N result = outputNode();
 
         N resultMinus;
         N resultPlus;
 
-        if (partitionerSplitSide == Side.PLUS) {
-            if (nodeCutSplitSide == Side.PLUS) {
+        if (partitionerSplitSide == SplitLocation.PLUS) {
+            if (nodeCutSplitSide == SplitLocation.PLUS) {
                 // partitioner is on node cut plus side, node cut is on partitioner plus side
                 final N nodePlusSplit = splitSubtree(node.getPlus(), partitioner);
 
@@ -154,8 +154,8 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
                 resultPlus = nodePlusSplit.getPlus();
             }
         }
-        else if (partitionerSplitSide == Side.MINUS) {
-            if (nodeCutSplitSide == Side.MINUS) {
+        else if (partitionerSplitSide == SplitLocation.MINUS) {
+            if (nodeCutSplitSide == SplitLocation.MINUS) {
                 // partitioner is on node cut minus side, node cut is on partitioner minus side
                 final N nodeMinusSplit = splitSubtree(node.getMinus(), partitioner);
 
@@ -174,7 +174,7 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
                 resultPlus.setCutState(node.getCut(), nodeMinusSplit.getPlus(), outputSubtree(node.getPlus()));
             }
         }
-        else if (partitionerSplitSide == Side.BOTH) {
+        else if (partitionerSplitSide == SplitLocation.BOTH) {
             // partitioner and node cut split each other
             final N nodeMinusSplit = splitSubtree(node.getMinus(), partitionerSplit.getMinus());
             final N nodePlusSplit = splitSubtree(node.getPlus(), partitionerSplit.getPlus());

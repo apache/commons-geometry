@@ -40,18 +40,62 @@ public class Interval implements Region<Vector1D>, Serializable {
         this.precision = precision;
     }
 
+    /** Get the minimum value for the interval.
+     * @return the minimum value for the interval
+     */
     public double getMin() {
         return min;
     }
 
+    /** Get the maximum value for the interval.
+     * @return the maximum value for the interval
+     */
     public double getMax() {
         return max;
     }
 
+    /** Get an {@link OrientedPoint} instance representing the minimum boundary
+     * of the instance or null if the boundary does not exist.
+     * @return the minimum boundary for the instance or null if it does not exist
+     */
+    public OrientedPoint getMinBoundary() {
+        if (Double.isFinite(min)) {
+            return OrientedPoint.createPositiveFacing(min, getPrecision());
+        }
+
+        return null;
+    }
+
+    /** Get an {@link OrientedPoint} instance representing the maximum boundary
+     * of the instance or null if the boundary does not exist.
+     * @return the maximum boundary for the instance or null if it does not exist
+     */
+    public OrientedPoint getMaxBoundary() {
+        if (Double.isFinite(max)) {
+            return OrientedPoint.createNegativeFacing(max, getPrecision());
+        }
+
+        return null;
+    }
+
+    /** True if the region is infinite, meaning that at least one of the boundary
+     * values is infinite.
+     * @return true if the region is infinite
+     */
     public boolean isInfinite() {
         return Double.isInfinite(min) || Double.isInfinite(max);
     }
 
+    /** Return true if at least one of the boundary values is {@link Double#NaN}.
+     * @return true if at least one of the boundary values is {@link Double#NaN}
+     */
+    public boolean isNaN() {
+        return Double.isNaN(min) || Double.isNaN(max);
+    }
+
+    /** Get the precision context used to determine floating point equality.
+     * @return precision context for the instance
+     */
     public DoublePrecisionContext getPrecision() {
         return precision;
     }
@@ -74,21 +118,46 @@ public class Interval implements Region<Vector1D>, Serializable {
         return RegionLocation.OUTSIDE;
     }
 
+    /** {@inheritDoc}
+     *
+     *  <p>This method only returns false if the instance is {@link Interval#isNaN() NaN}.
+     *  Otherwise, there is at least one point that can be classified as not being on
+     *  the outside of the region.</p>
+     */
+    @Override
     public boolean isEmpty() {
-        return precision.eqZero(size());
+        return isNaN();
     }
 
+    /** {@inheritDoc} */
+    @Override
     public boolean isFull() {
-        return min == Double.NEGATIVE_INFINITY && max == Double.POSITIVE_INFINITY;
+        return Double.isInfinite(min) && min < 0.0 &&
+                Double.isInfinite(max) && max > 0.0;
     }
 
+    /** Return the size of the interval.
+     * @return the size of the interval
+     */
     public double size() {
         return min - max;
     }
 
+    /** Return a {@link RegionBSPTree1D} representing the same region as this instance.
+     * @return a BSP tree representing the same region
+     */
     public RegionBSPTree1D toTree() {
         final RegionBSPTree1D tree = new RegionBSPTree1D();
-        tree.insert(this);
+
+        final OrientedPoint minBoundary = getMinBoundary();
+        if (minBoundary != null) {
+            tree.insert(minBoundary);
+        }
+
+        final OrientedPoint maxBoundary = getMaxBoundary();
+        if (maxBoundary != null) {
+            tree.insert(maxBoundary);
+        }
 
         return tree;
     }

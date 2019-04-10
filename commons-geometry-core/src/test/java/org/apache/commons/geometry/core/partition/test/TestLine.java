@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
@@ -110,13 +110,13 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Side classify(TestPoint2D point) {
+    public HyperplaneLocation classify(TestPoint2D point) {
         final double offset = offset(point);
         final double cmp = PartitionTestUtils.PRECISION.compare(offset, 0.0);
         if (cmp == 0) {
-            return Side.HYPER;
+            return HyperplaneLocation.ON;
         }
-        return cmp < 0 ? Side.MINUS : Side.PLUS;
+        return cmp < 0 ? HyperplaneLocation.MINUS : HyperplaneLocation.PLUS;
     }
 
     /** {@inheritDoc} */

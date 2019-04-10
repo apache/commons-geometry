@@ -16,29 +16,29 @@
  */
 package org.apache.commons.geometry.core.partition;
 
-/** Enumeration representing the location of an element with respect to a
+/** Enumeration representing the location of a split
+ * {@link SubHyperplane subhyperplane} with respect to its splitting
  * {@link Hyperplane hyperplane}.
  */
-public enum Side {
+public enum SplitLocation {
 
-    /** Value indicating that an element lies on the plus side of a
-     * hyperplane.
+    /** Value indicating that the split subhyperplane lies entirely on the
+     * plus side of the splitting hyperplane.
      */
     PLUS,
 
-    /** Value indicating that an element lies on the minus side of a
-     * hyperplane.
+    /** Value indicating that the split subhyperplane lies entirely on the
+     * minus side of the splitting hyperplane.
      */
     MINUS,
 
-    /** Value indicating that an element cross the hyperplane and lies
-     * on both the plus and minus sides.
+    /** Value indicating that the split subhyperplane lies in both the plus
+     * and minus sides of the splitting hyperplane.
      */
     BOTH,
 
-    /** Value indicating that an element lies directly on the hyperplane
-     * itself.
+    /** Value indicating that the split subhyperplane lies directly on the
+     * splitting hyperplane.
      */
-    HYPER;
-
+    ON;
 }

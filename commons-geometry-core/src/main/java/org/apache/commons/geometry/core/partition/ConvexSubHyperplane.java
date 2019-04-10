@@ -69,27 +69,27 @@ public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P
             return plus;
         }
 
-        /** Get the side of the split sub-hyperplane with respect to its splitter.
-         * @return {@link Side#PLUS} if only {@link #getPlus()} is neither null nor empty,
-         * {@link Side#MINUS} if only {@link #getMinus()} is neither null nor empty,
-         * {@link Side#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
-         * are neither null nor empty or {@link Side#HYPER} if both {@link #getPlus()} and
+        /** Get the location of the split sub-hyperplane with respect to its splitter.
+         * @return {@link SplitLocation#PLUS} if only {@link #getPlus()} is neither null nor empty,
+         * {@link SplitLocation#MINUS} if only {@link #getMinus()} is neither null nor empty,
+         * {@link SplitLocation#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
+         * are neither null nor empty or {@link SplitLocation#ON} if both {@link #getPlus()} and
          * {@link #getMinus()} are either null or empty
          */
-        public Side getSide() {
+        public SplitLocation getLocation() {
             if (plus != null && !plus.isEmpty()) {
                 if (minus != null && !minus.isEmpty()) {
-                    return Side.BOTH;
+                    return SplitLocation.BOTH;
                 }
                 else {
-                    return Side.PLUS;
+                    return SplitLocation.PLUS;
                 }
             }
             else if (minus != null && !minus.isEmpty()) {
-                return Side.MINUS;
+                return SplitLocation.MINUS;
             }
             else {
-                return Side.HYPER;
+                return SplitLocation.ON;
             }
         }
     }

@@ -16,8 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane.Split;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partition.SubHyperplane.Builder;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -59,6 +66,28 @@ public class OrientedPointTest {
                 -1.0, false, TEST_PRECISION);
         assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse().reverse(),
                 1.0, true, TEST_PRECISION);
+    }
+
+    @Test
+    public void testHyperplanePoints() {
+        // arrange
+        OrientedPoint orientedPoint = OrientedPoint.createNegativeFacing(2.5, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(HyperplaneLocation.MINUS, orientedPoint.classify(orientedPoint.minusPoint()));
+        Assert.assertEquals(HyperplaneLocation.PLUS, orientedPoint.classify(orientedPoint.plusPoint()));
+        Assert.assertEquals(HyperplaneLocation.ON, orientedPoint.classify(orientedPoint.onPoint()));
+    }
+
+    @Test
+    public void testHyperplanePoints_largeEpsilon() {
+        // arrange
+        OrientedPoint orientedPoint = OrientedPoint.createNegativeFacing(2.5, new EpsilonDoublePrecisionContext(2.0));
+
+        // act/assert
+        Assert.assertEquals(HyperplaneLocation.MINUS, orientedPoint.classify(orientedPoint.minusPoint()));
+        Assert.assertEquals(HyperplaneLocation.PLUS, orientedPoint.classify(orientedPoint.plusPoint()));
+        Assert.assertEquals(HyperplaneLocation.ON, orientedPoint.classify(orientedPoint.onPoint()));
     }
 
     @Test
@@ -170,6 +199,114 @@ public class OrientedPointTest {
         Assert.assertEquals(1.0, pt.project(Vector1D.of(0.0)).getX(), Precision.EPSILON);
         Assert.assertEquals(1.0, pt.project(Vector1D.of(1.0)).getX(), Precision.EPSILON);
         Assert.assertEquals(1.0, pt.project(Vector1D.of(100.0)).getX(), Precision.EPSILON);
+    }
+
+    @Test
+    public void testSplit() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint pt = OrientedPoint.createPositiveFacing(-1.5, precision);
+
+        // act/assert
+        checkSplit(pt, OrientedPoint.createPositiveFacing(1.0, precision), pt, null);
+        checkSplit(pt, OrientedPoint.createPositiveFacing(-1.5 + 1e-2, precision), pt, null);
+
+        checkSplit(pt, OrientedPoint.createNegativeFacing(1.0, precision), null, pt);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 + 1e-2, precision), null, pt);
+
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5, precision), null, null);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 + 1e-4, precision), null, null);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 - 1e-4, precision), null, null);
+    }
+
+    private void checkSplit(OrientedPoint pt, OrientedPoint splitter, OrientedPoint minus, OrientedPoint plus) {
+        Split<Vector1D> split = pt.split(splitter);
+
+        Assert.assertSame(minus, split.getMinus());
+        Assert.assertSame(plus, split.getPlus());
+    }
+
+    @Test
+    public void testSubHyperplane_simpleMethods() {
+        // arrange
+        OrientedPoint pt = OrientedPoint.createPositiveFacing(0, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertSame(pt, pt.getHyperplane());
+        Assert.assertFalse(pt.isEmpty());
+        Assert.assertFalse(pt.isInfinite());
+        Assert.assertEquals(0.0, pt.size(), TEST_EPS);
+
+        List<ConvexSubHyperplane<Vector1D>> list = pt.toConvex();
+        Assert.assertEquals(1, list.size());
+        Assert.assertSame(pt, list.get(0));
+    }
+
+    @Test
+    public void testBuilder() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint pt = OrientedPoint.createPositiveFacing(0, precision);
+
+        // act
+        Builder<Vector1D> builder = pt.builder();
+
+        builder.add(pt);
+        builder.add(OrientedPoint.createPositiveFacing(1e-4, precision));
+        builder.add((SubHyperplane<Vector1D>) pt);
+
+        SubHyperplane<Vector1D> result = builder.build();
+
+        // assert
+        Assert.assertSame(pt, result);
+    }
+
+    @Test
+    public void testBuilder_invalidArgs() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint pt = OrientedPoint.createPositiveFacing(0, precision);
+
+        Builder<Vector1D> builder = pt.builder();
+
+        // act/assert
+        GeometryTestUtils.assertThrows(
+                () -> builder.add(OrientedPoint.createPositiveFacing(2e-3, precision)),
+                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(
+                () -> builder.add(OrientedPoint.createNegativeFacing(2e-3, precision)),
+                IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(
+                () -> builder.add((SubHyperplane<Vector1D>) OrientedPoint.createPositiveFacing(2e-3, precision)),
+                IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testEq() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint a = OrientedPoint.createPositiveFacing(0, precision);
+
+        OrientedPoint b = OrientedPoint.createPositiveFacing(0, TEST_PRECISION);
+        OrientedPoint c = OrientedPoint.createNegativeFacing(0, precision);
+        OrientedPoint d = OrientedPoint.createPositiveFacing(2e-3, precision);
+
+        OrientedPoint e = OrientedPoint.createPositiveFacing(1e-4, precision);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a));
+
+        Assert.assertFalse(a.eq(b));
+        Assert.assertFalse(a.eq(c));
+        Assert.assertFalse(a.eq(d));
+
+        Assert.assertTrue(a.eq(e));
+        Assert.assertTrue(e.eq(a));
     }
 
     @Test

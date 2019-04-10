@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core;
+package org.apache.commons.geometry.core.partition;
 
-/** Enumeration containing the possible locations of a point with
- * respect to a region.
- * @see Region
+/** Enumeration containing possible locations of a point with respect to
+ * a hyperplane.
+ * @see Hyperplane
  */
-public enum RegionLocation {
+public enum HyperplaneLocation {
 
-    /** Value indicating that a point lies on the inside of
-     * a region.
+    /** Value indicating that a point lies on the minus side of
+     * a hyperplane.
      */
-    INSIDE,
+    MINUS,
 
-    /** Value indicating that a point lies on the outside of
-     * a region.
+    /** Value indicating that a point lies on the plus side of
+     * a hyperplane.
      */
-    OUTSIDE,
+    PLUS,
 
-    /** Value indicating that a point lies on the boundary of
-     * a region.
+    /** Value indicating that a point lies directly on a hyperplane.
      */
-    BOUNDARY
+    ON
 }

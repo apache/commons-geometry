@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
 import org.apache.commons.geometry.core.partition.BSPTree;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** {@link BSPTree} specialized for representing regions of space. For example, this
@@ -49,19 +49,14 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         getRoot().setLocation(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
     }
 
-    /** Return true if the region is empty, i.e. if no node in the tree
-     * has a location of {@link RegionLocation#INSIDE}.
-     * @return true if the region does not have an inside
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean isEmpty() {
         return !hasNodeWithLocationRecursive(getRoot(), RegionLocation.INSIDE);
     }
 
-    /** Return true if the region is full, i.e. if no node in the tree
-     * has a location of {@link RegionLocation#OUTSIDE}. Trees with this
-     * property cover the entire space.
-     * @return true if the region does not have an outside
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean isFull() {
         return !hasNodeWithLocationRecursive(getRoot(), RegionLocation.OUTSIDE);
     }
@@ -82,7 +77,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 hasNodeWithLocationRecursive(node.getPlus(), location);
     }
 
-    /** Set this instance to represent the full space.
+    /** Modify this instance so that it contains the entire space.
+     * @see #isFull()
      */
     public void setFull() {
         final N root = getRoot();
@@ -91,7 +87,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         root.setLocation(RegionLocation.INSIDE);
     }
 
-    /** Set this instance to represent the empty space.
+    /** Modify this instance so that is is completely empty.
+     * @see #isEmpty()
      */
     public void setEmpty() {
         final N root = getRoot();
@@ -121,12 +118,12 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             return node.getLocation();
         }
         else {
-            final Side side = node.getCutHyperplane().classify(point);
+            final HyperplaneLocation cutLoc = node.getCutHyperplane().classify(point);
 
-            if (side == Side.MINUS) {
+            if (cutLoc == HyperplaneLocation.MINUS) {
                 return classifyRecursive(node.getMinus(), point);
             }
-            else if (side == Side.PLUS) {
+            else if (cutLoc == HyperplaneLocation.PLUS) {
                 return classifyRecursive(node.getPlus(), point);
             }
             else {
@@ -242,6 +239,44 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      */
     public void xor(final AbstractRegionBSPTree<P, N> a, final AbstractRegionBSPTree<P, N> b) {
         new XorOperator<P, N>().apply(a, b, this);
+    }
+
+    /** Condense this tree by removing redundant subtrees.
+     *
+     * <p>This operation can be used to reduce the total number of nodes in the
+     * tree after performing node manipulations. For example, if two sibling leaf
+     * nodes both represent the same {@link RegionLocation}, then there is no reason
+     * from the perspective of the geometric region to retain both nodes. They are
+     * therefore both merged into their parent node. This method performs this
+     * simplification process.
+     * </p>
+     */
+    protected void condense() {
+        condenseRecursive(getRoot());
+    }
+
+    /** Recursively condense nodes that have children with homogenous location attributes
+     * (eg, both inside, both outside) into single nodes.
+     * @param node the root of the subtree to condense
+     * @return the location of the successfully condensed subtree or null if no condensing was
+     *      able to be performed
+     */
+    private RegionLocation condenseRecursive(final N node) {
+        if (node.isLeaf()) {
+            return node.getLocation();
+        }
+
+        final RegionLocation minusLocation = condenseRecursive(node.getMinus());
+        final RegionLocation plusLocation = condenseRecursive(node.getPlus());
+
+        if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
+            node.setLocation(minusLocation);
+            node.clearCut();
+
+            return minusLocation;
+        }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -455,7 +490,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends AbstractBSPTreeMergeSupport<P, N> {
 
         /** Merge two input trees, storing the output in the third. The output tree can be one of the
-         * input tree.
+         * input trees. The output tree is condensed before the method returns.
          * @param inputTree1 first input tree
          * @param inputTree2 second input tree
          * @param outputTree
@@ -464,31 +499,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 final AbstractRegionBSPTree<P, N> outputTree) {
 
             this.performMerge(inputTree1, inputTree2, outputTree);
-            condense(outputTree.getRoot());
-        }
 
-        /** Recursively condense nodes that have children with homogenous location attributes
-         * (eg, both inside, both outside) into single nodes.
-         * @param node the root of the subtree to condense
-         * @return the location of the successfully condensed subtree or null if no condensing was
-         *      able to be performed
-         */
-        private RegionLocation condense(final N node) {
-            if (node.isLeaf()) {
-                return node.getLocation();
-            }
-
-            final RegionLocation minusLocation = condense(node.getMinus());
-            final RegionLocation plusLocation = condense(node.getPlus());
-
-            if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
-                node.setLocation(minusLocation);
-                node.clearCut();
-
-                return minusLocation;
-            }
-
-            return null;
+            outputTree.condense();
         }
     }
 

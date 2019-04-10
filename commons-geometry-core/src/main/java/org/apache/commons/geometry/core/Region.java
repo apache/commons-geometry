@@ -18,6 +18,19 @@ package org.apache.commons.geometry.core;
 
 public interface Region<P extends Point<P>> {
 
+    /** Return true if the region spans the entire space. In other words,
+     * a region is full if no points in the space are classified as
+     * {@link RegionLocation#OUTSIDE outside}.
+     * @return true if the region spans the entire space
+     */
+    boolean isFull();
+
+    /** Return true if the region is completely empty, ie all points in
+     * the space are classified as {@link RegionLocation#OUTSIDE outside}.
+     * @return true if the region is empty
+     */
+    boolean isEmpty();
+
     /** Classify the given point with respect to the region.
      * @param pt the point to classify
      * @return the location of the point with respect to the region

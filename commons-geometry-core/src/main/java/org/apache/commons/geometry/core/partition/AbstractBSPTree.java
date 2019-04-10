@@ -294,12 +294,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @return the smallest node in the tree containing the point
      */
     private N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
-        Hyperplane<P> hyper = start.getCutHyperplane();
-        if (hyper != null) {
-            Side side = hyper.classify(pt);
+        Hyperplane<P> cutHyper = start.getCutHyperplane();
+        if (cutHyper != null) {
+            HyperplaneLocation cutLoc = cutHyper.classify(pt);
 
-            final boolean onPlusSide = side == Side.PLUS;
-            final boolean onMinusSide = side == Side.MINUS;
+            final boolean onPlusSide = cutLoc == HyperplaneLocation.PLUS;
+            final boolean onMinusSide = cutLoc == HyperplaneLocation.MINUS;
             final boolean onCut = !onPlusSide && !onMinusSide;
 
             if (onMinusSide || (onCut && cutBehavior == NodeCutRule.MINUS)) {
@@ -479,7 +479,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final P transformedPlusPt = transform.apply(plusPt);
             final Hyperplane<P> transformedHyperplane = hyperplane.transform(transform);
 
-            return transformedHyperplane.classify(transformedPlusPt) == Side.MINUS;
+            return transformedHyperplane.classify(transformedPlusPt) == HyperplaneLocation.MINUS;
         }
 
         return false;

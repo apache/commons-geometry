@@ -29,16 +29,16 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
 
     /** {@inheritDoc} */
     @Override
-    public Side classify(final P point) {
+    public HyperplaneLocation classify(final P point) {
         final double offsetValue = offset(point);
         final int cmp = precision.sign(offsetValue);
         if (cmp > 0) {
-            return Side.PLUS;
+            return HyperplaneLocation.PLUS;
         }
         else if (cmp < 0) {
-            return Side.MINUS;
+            return HyperplaneLocation.MINUS;
         }
-        return Side.HYPER;
+        return HyperplaneLocation.ON;
     }
 
     public DoublePrecisionContext getPrecision() {

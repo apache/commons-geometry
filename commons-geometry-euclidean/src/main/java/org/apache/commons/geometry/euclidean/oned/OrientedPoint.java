@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Side;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
@@ -155,15 +155,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     /** {@inheritDoc} */
     @Override
     public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
-        final Side side = splitter.classify(getLocation());
+        final HyperplaneLocation side = splitter.classify(getLocation());
 
         OrientedPoint minus = null;
         OrientedPoint plus = null;
 
-        if (side == Side.MINUS) {
+        if (side == HyperplaneLocation.MINUS) {
             minus = this;
         }
-        else if (side == Side.PLUS) {
+        else if (side == HyperplaneLocation.PLUS) {
             plus = this;
         }
 
@@ -176,19 +176,28 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return this;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns false.</p>
+     */
     @Override
     public boolean isEmpty() {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns false.</p>
+     */
     @Override
     public boolean isInfinite() {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     *  <p>This method simply returns {@code 0}.</p>
+     */
     @Override
     public double size() {
         return 0;
@@ -204,6 +213,22 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     @Override
     public List<ConvexSubHyperplane<Vector1D>> toConvex() {
         return Arrays.asList(this);
+    }
+
+    /** Return true if this instance should be considered equal to the argument. Instances
+     * are considered equivalent if they
+     * <ul>
+     *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+     *  <li>have equivalent locations as evaluated by the precision context, and</li>
+     *  <li>point in the same direction</li>
+     * </ul>
+     * @param other the point to compare with
+     * @return true if this instance should be considered equivalent to the argument
+     */
+    public boolean eq(OrientedPoint other) {
+        return getPrecision().equals(other.getPrecision()) &&
+                location.equals(other.location, getPrecision()) &&
+                positiveFacing == other.positiveFacing;
     }
 
     /** {@inheritDoc} */
@@ -329,7 +354,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new OrientedPoint(Vector1D.of(location), false, precision);
     }
 
-    public static class OrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+    private static class OrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
@@ -340,26 +365,34 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             this.base = base;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void add(SubHyperplane<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
+        /** {@inheritDoc} */
         @Override
         public void add(ConvexSubHyperplane<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
+        /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Vector1D> build() {
+        public OrientedPoint build() {
             return base;
         }
 
+        /** Validate the given subhyperplane lies on the same hyperplane
+         * @param sub
+         */
         private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
-            if (!base.getHyperplane().equals(sub.getHyperplane())) {
+            final OrientedPoint hyper = (OrientedPoint) sub.getHyperplane();
+
+            if (!base.eq(hyper)) {
                 throw new IllegalArgumentException("Argument is not on the same " +
-                        "hyperplane. Expected " + base.getHyperplane() + " but was " +
-                        sub.getHyperplane());
+                        "hyperplane. Expected " + base + " but was " +
+                        hyper);
             }
         }
     }
