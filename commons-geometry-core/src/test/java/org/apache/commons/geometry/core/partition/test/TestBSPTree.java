@@ -27,12 +27,6 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
 
     /** {@inheritDoc} */
     @Override
-    protected TestBSPTree createTree() {
-        return new TestBSPTree();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected TestNode createNode() {
         return new TestNode(this);
     }

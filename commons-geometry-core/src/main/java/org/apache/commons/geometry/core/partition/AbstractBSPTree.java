@@ -185,11 +185,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 .toString();
     }
 
-    /** Create a new tree instance.
-     * @return a new tree instance
-     */
-    protected abstract AbstractBSPTree<P, N> createTree();
-
     /** Create a new node for this tree
      * @return a new node for this tree
      */
