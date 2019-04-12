@@ -203,6 +203,12 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
+    public void testClassify_NaN() {
+        // act/assert
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(new TestPoint2D(0, Double.NaN)));
+    }
+
+    @Test
     public void testContains() {
         // arrange
         insertSkewedBowtie(tree);

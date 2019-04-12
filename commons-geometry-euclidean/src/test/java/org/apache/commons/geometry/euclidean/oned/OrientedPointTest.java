@@ -215,9 +215,9 @@ public class OrientedPointTest {
         checkSplit(pt, OrientedPoint.createNegativeFacing(1.0, precision), null, pt);
         checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 + 1e-2, precision), null, pt);
 
-        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5, precision), null, null);
-        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 + 1e-4, precision), null, null);
-        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 - 1e-4, precision), null, null);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5, precision), pt, pt);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 + 1e-4, precision), pt, pt);
+        checkSplit(pt, OrientedPoint.createNegativeFacing(-1.5 - 1e-4, precision), pt, pt);
     }
 
     private void checkSplit(OrientedPoint pt, OrientedPoint splitter, OrientedPoint minus, OrientedPoint plus) {

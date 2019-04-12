@@ -37,9 +37,8 @@ public interface Region<P extends Point<P>> {
      */
     RegionLocation classify(P pt);
 
-    /** Return true if the given point does not lie on the outside of
-     * the region. This will be the case if the point is on the inside
-     * or on the boundary.
+    /** Return true if the given point is on the inside or boundary
+     * of the region.
      * @param pt the point to test
      * @return true if the point is on the inside or boundary of the region
      */

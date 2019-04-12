@@ -97,12 +97,17 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         root.setLocation(RegionLocation.OUTSIDE);
     }
 
-    /** Classify a point with respect to the region.
-     * @param point the point to classify
-     * @return the classification of the point with respect to the region
+    /** {@inheritDoc}
+     *
+     * <p>If the point is {@link Spatial#isNaN() NaN}, then
+     * {@link RegionLocation#OUTSIDE} is returned.</p>
      */
     @Override
     public RegionLocation classify(final P point) {
+        if (point.isNaN()) {
+            return RegionLocation.OUTSIDE;
+        }
+
         return classifyRecursive(getRoot(), point);
     }
 

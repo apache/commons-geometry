@@ -16,166 +16,479 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.partitioning.Region_Old;
-import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class IntervalTest {
 
-    private static final double TEST_TOLERANCE = 1e-10;
+    private static final double TEST_EPS = 1e-15;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testBasicProperties() {
+    public void testOf_doubles() {
+        // act/assert
+        checkInterval(Interval.of(0, 0, TEST_PRECISION), 0, 0);
+
+        checkInterval(Interval.of(1, 2, TEST_PRECISION), 1, 2);
+        checkInterval(Interval.of(2, 1, TEST_PRECISION), 1, 2);
+
+        checkInterval(Interval.of(-2, -1, TEST_PRECISION), -2, -1);
+        checkInterval(Interval.of(-1, -2, TEST_PRECISION), -2, -1);
+
+        checkInterval(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION),
+                1, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.of(Double.POSITIVE_INFINITY, 1, TEST_PRECISION),
+                1, Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, 1);
+        checkInterval(Interval.of(1, Double.NEGATIVE_INFINITY, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, 1);
+
+        checkInterval(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testOf_doubles_invalidIntervals() {
         // arrange
-        Interval_Old interval = new Interval_Old(2.3, 5.7);
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
-        Assert.assertEquals(3.4, interval.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(4.0, interval.getBarycenter(), TEST_TOLERANCE);
-        Assert.assertEquals(2.3, interval.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(5.7, interval.getSup(), TEST_TOLERANCE);
+        GeometryTestUtils.assertThrows(() -> Interval.of(1, Double.NaN, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(() -> Interval.of(Double.NaN, 1, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(() -> Interval.of(Double.NaN, Double.NaN, TEST_PRECISION), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
     }
 
     @Test
-    public void testBasicProperties_negativeValues() {
+    public void testOf_points() {
+        // act/assert
+        checkInterval(Interval.of(Vector1D.of(1), Vector1D.of(2), TEST_PRECISION), 1, 2);
+        checkInterval(Interval.of(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.NEGATIVE_INFINITY), TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testOf_points_invalidIntervals() {
         // arrange
-        Interval_Old interval = new Interval_Old(-5.7, -2.3);
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
-        Assert.assertEquals(3.4, interval.getSize(), TEST_TOLERANCE);
-        Assert.assertEquals(-4.0, interval.getBarycenter(), TEST_TOLERANCE);
-        Assert.assertEquals(-5.7, interval.getInf(), TEST_TOLERANCE);
-        Assert.assertEquals(-2.3, interval.getSup(), TEST_TOLERANCE);
-    }
-
-    // MATH-1256
-    @Test(expected = IllegalArgumentException.class)
-    public void testStrictOrdering() {
-        new Interval_Old(0, -1);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(Vector1D.of(1), Vector1D.of(Double.NaN), TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(Vector1D.of(Double.POSITIVE_INFINITY), Vector1D.of(Double.POSITIVE_INFINITY), TEST_PRECISION), excType);
     }
 
     @Test
-    public void testCheckPoint() {
+    public void testIsInfinite() {
+        // act/assert
+        Assert.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
+
+        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isInfinite());
+        Assert.assertTrue(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
+        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isInfinite());
+    }
+
+    @Test
+    public void testClassify_finite() {
         // arrange
-        Interval_Old interval = new Interval_Old(2.3, 5.7);
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(-1, 1, precision);
 
         // act/assert
-        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(1.2, TEST_TOLERANCE));
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, -2, -1.1,
+                1.1, 2, Double.POSITIVE_INFINITY);
 
-        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(2.2, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.3, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(2.4, TEST_TOLERANCE));
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                -1.001, -1, -0.999,
+                0.999, 1, 1.001);
 
-        Assert.assertEquals(Region_Old.Location.INSIDE,   interval.checkPoint(3.0, TEST_TOLERANCE));
+        checkClassify(interval, RegionLocation.INSIDE, -0.9, 0, 0.9);
 
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(5.6, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(5.7, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(5.8, TEST_TOLERANCE));
-
-        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(8.7, TEST_TOLERANCE));
-
-        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(Double.NEGATIVE_INFINITY, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(Double.POSITIVE_INFINITY, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(Double.NaN, TEST_TOLERANCE));
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
     }
 
     @Test
-    public void testCheckPoint_tolerance() {
+    public void testClassify_singlePoint() {
         // arrange
-        Interval_Old interval = new Interval_Old(2.3, 5.7);
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(1, 1, precision);
 
         // act/assert
-        Assert.assertEquals(Region_Old.Location.OUTSIDE, interval.checkPoint(2.29, 1e-3));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1e-2));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1e-1));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 1));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(2.29, 2));
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, 0, 0.9, 1.1, 2, Double.POSITIVE_INFINITY);
 
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-3));
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-2));
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1e-1));
-        Assert.assertEquals(Region_Old.Location.INSIDE, interval.checkPoint(4.0, 1));
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(4.0, 2));
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                0.999, 1, 1.0001);
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
     }
 
     @Test
-    public void testInfinite_inf() {
+    public void testClassify_positiveInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, -2, -1.1);
+
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                -1.001, -1, -0.999);
+
+        checkClassify(interval, RegionLocation.INSIDE,
+                -0.9, 0, 1.0, Double.POSITIVE_INFINITY);
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void testClassify_negativeInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.INSIDE,
+                Double.NEGATIVE_INFINITY, 0, 0.9);
+
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                0.999, 1, 1.001);
+
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                1.1, 2, Double.POSITIVE_INFINITY);
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void testClassify_bothInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.INSIDE,
+                Double.NEGATIVE_INFINITY, -1, 0, 1, Double.POSITIVE_INFINITY);
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void testContains_finite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(-1, 1, precision);
+
+        // act/assert
+        checkContains(interval, true,
+                -1.001, -1, -0.999,
+                0.999, 1, 1.001,
+
+                -0.9, 0, 0.9);
+
+        checkContains(interval, false,
+                Double.NEGATIVE_INFINITY, -2, -1.1,
+                1.1, 2, Double.POSITIVE_INFINITY);
+
+        checkContains(interval, false, Double.NaN);
+    }
+
+    @Test
+    public void testIsFull() {
+        // act/assert
+        Assert.assertFalse(Interval.of(1, 1, TEST_PRECISION).isFull());
+        Assert.assertFalse(Interval.of(-2, 2, TEST_PRECISION).isFull());
+
+        Assert.assertFalse(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
+        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).isFull());
+
+        Assert.assertTrue(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFull());
+    }
+
+    @Test
+    public void testSize() {
+        // act/assert
+        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).size(), TEST_EPS);
+
+        Assert.assertEquals(4, Interval.of(-2, 2, TEST_PRECISION).size(), TEST_EPS);
+        Assert.assertEquals(5, Interval.of(2, -3, TEST_PRECISION).size(), TEST_EPS);
+
+        Assert.assertEquals(Double.POSITIVE_INFINITY,
+                Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).size(), TEST_EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY,
+                Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).size(), TEST_EPS);
+
+        Assert.assertEquals(Double.POSITIVE_INFINITY,
+                Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).size(), TEST_EPS);
+    }
+
+    @Test
+    public void checkToTree_finite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(-1, 1, precision);
+
         // act
-        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, 9);
+        RegionBSPTree1D tree = interval.toTree();
 
         // assert
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(9.4, TEST_TOLERANCE));
-        for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region_Old.Location.INSIDE,
-                                interval.checkPoint(-1 * Math.pow(10.0, e), TEST_TOLERANCE));
+        Assert.assertEquals(5, tree.count());
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, -2, -1.1,
+                1.1, 2, Double.POSITIVE_INFINITY);
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                -1.001, -1, -0.999,
+                0.999, 1, 1.001);
+
+        checkClassify(tree, RegionLocation.INSIDE, -0.9, 0, 0.9);
+
+        checkClassify(tree, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void checkToTree_singlePoint() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(1, 1, precision);
+
+        // act
+        RegionBSPTree1D tree = interval.toTree();
+
+        // assert
+        Assert.assertEquals(5, tree.count());
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, 0, 0.9, 1.1, 2, Double.POSITIVE_INFINITY);
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                0.999, 1, 1.0001);
+
+        checkClassify(tree, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void checkToTree_positiveInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
+
+        // act
+        RegionBSPTree1D tree = interval.toTree();
+
+        // assert
+        Assert.assertEquals(3, tree.count());
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, -2, -1.1);
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                -1.001, -1, -0.999);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                -0.9, 0, 1.0, Double.POSITIVE_INFINITY);
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void checkToTree_negativeInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
+
+        // act
+        RegionBSPTree1D tree = interval.toTree();
+
+        // assert
+        Assert.assertEquals(3, tree.count());
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Double.NEGATIVE_INFINITY, 0, 0.9);
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                0.999, 1, 1.001);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                1.1, 2, Double.POSITIVE_INFINITY);
+
+        checkClassify(tree, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void checkToTree_bothInfinite() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+        Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
+
+        // act
+        RegionBSPTree1D tree = interval.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Double.NEGATIVE_INFINITY, -1, 0, 1, Double.POSITIVE_INFINITY);
+
+        checkClassify(tree, RegionLocation.OUTSIDE, Double.NaN);
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        Transform<Vector1D> transform = (p) -> Vector1D.of(2.0 * p.getX());
+
+        // act/assert
+        checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 4);
+
+        checkInterval(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).transform(transform),
+                Double.NEGATIVE_INFINITY, 4);
+
+        checkInterval(Interval.of(-1, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform), -2,
+                Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        Transform<Vector1D> transform = Vector1D::negate;
+
+        // act/assert
+        checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 1);
+
+        checkInterval(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).transform(transform),
+                -2, Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.of(-1, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform),
+                Double.NEGATIVE_INFINITY, 1);
+    }
+
+    @Test
+    public void testHashCode() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        Interval a = Interval.of(1, 2, TEST_PRECISION);
+
+        Interval b = Interval.of(1, 2, precision);
+        Interval c = Interval.of(1, 3, TEST_PRECISION);
+        Interval d = Interval.of(0, 2, TEST_PRECISION);
+
+        Interval e = Interval.of(1, 2, TEST_PRECISION);
+
+        // act
+        int hash = a.hashCode();
+
+        // assert
+        Assert.assertEquals(hash, a.hashCode());
+
+        Assert.assertNotEquals(hash, b.hashCode());
+        Assert.assertNotEquals(hash, c.hashCode());
+        Assert.assertNotEquals(hash, d.hashCode());
+
+        Assert.assertEquals(hash, e.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        Interval a = Interval.of(1, 2, TEST_PRECISION);
+
+        Interval b = Interval.of(1, 2, precision);
+        Interval c = Interval.of(1, 3, TEST_PRECISION);
+        Interval d = Interval.of(0, 2, TEST_PRECISION);
+
+        Interval e = Interval.of(1, 2, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertTrue(a.equals(a));
+
+        Assert.assertFalse(a.equals(null));
+        Assert.assertFalse(a.equals(new Object()));
+
+        Assert.assertFalse(a.equals(b));
+        Assert.assertFalse(a.equals(c));
+        Assert.assertFalse(a.equals(d));
+
+        Assert.assertTrue(a.equals(e));
+        Assert.assertTrue(e.equals(a));
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        Interval interval = Interval.of(2, 1, TEST_PRECISION);
+
+        // act
+        String str = interval.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("Interval"));
+        Assert.assertTrue(str.contains("min= 1.0"));
+        Assert.assertTrue(str.contains("max= 2.0"));
+    }
+
+    private static void checkClassify(Interval interval, RegionLocation loc, double ... points) {
+        for (double x : points) {
+            String msg = "Unexpected location for point " + x;
+
+            Assert.assertEquals(msg, loc, interval.classify(x));
+            Assert.assertEquals(msg, loc, interval.classify(Vector1D.of(x)));
         }
-        EuclideanTestUtils.assertPositiveInfinity(interval.getSize());
-        EuclideanTestUtils.assertNegativeInfinity(interval.getInf());
-        Assert.assertEquals(9.0, interval.getSup(), TEST_TOLERANCE);
     }
 
-    @Test
-    public void testInfinite_sup() {
-        // act
-        Interval_Old interval = new Interval_Old(9.0, Double.POSITIVE_INFINITY);
+    private static void checkContains(Interval interval, boolean contains, double ... points) {
+        for (double x : points) {
+            String msg = "Unexpected contains status for point " + x;
 
-        // assert
-        Assert.assertEquals(Region_Old.Location.BOUNDARY, interval.checkPoint(9.0, TEST_TOLERANCE));
-        Assert.assertEquals(Region_Old.Location.OUTSIDE,  interval.checkPoint(8.4, TEST_TOLERANCE));
-        for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region_Old.Location.INSIDE,
-                                interval.checkPoint(Math.pow(10.0, e), TEST_TOLERANCE));
+            Assert.assertEquals(msg, contains, interval.contains(x));
+            Assert.assertEquals(msg, contains, interval.contains(Vector1D.of(x)));
         }
-        EuclideanTestUtils.assertPositiveInfinity(interval.getSize());
-        Assert.assertEquals(9.0, interval.getInf(), TEST_TOLERANCE);
-        EuclideanTestUtils.assertPositiveInfinity(interval.getSup());
     }
 
-    @Test
-    public void testInfinite_infAndSup() {
-        // act
-        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
+        for (double x : points) {
+            String msg = "Unexpected location for point " + x;
 
-        // assert
-        for (double e = 1.0; e <= 6.0; e += 1.0) {
-            Assert.assertEquals(Region_Old.Location.INSIDE,
-                                interval.checkPoint(Math.pow(10.0, e), TEST_TOLERANCE));
+            Assert.assertEquals(msg, loc, tree.classify(Vector1D.of(x)));
         }
-        EuclideanTestUtils.assertPositiveInfinity(interval.getSize());
-        EuclideanTestUtils.assertNegativeInfinity(interval.getInf());
-        EuclideanTestUtils.assertPositiveInfinity(interval.getSup());
     }
 
-    @Test
-    public void testSinglePoint() {
-        // act
-        Interval_Old interval = new Interval_Old(1.0, 1.0);
-
-        // assert
-        Assert.assertEquals(0.0, interval.getSize(), Precision.SAFE_MIN);
-        Assert.assertEquals(1.0, interval.getBarycenter(), Precision.EPSILON);
+    private static void checkInterval(Interval interval, double min, double max) {
+        checkInterval(interval, min, max, TEST_PRECISION);
     }
 
-    @Test
-    public void testSingleInfinitePoint_positive() {
-        // act
-        Interval_Old interval = new Interval_Old(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    private static void checkInterval(Interval interval, double min, double max, DoublePrecisionContext precision) {
+        Assert.assertEquals(min, interval.getMin(), TEST_EPS);
+        Assert.assertEquals(max, interval.getMax(), TEST_EPS);
 
-        // assert
-        Assert.assertTrue(Double.isNaN(interval.getSize())); // inf - inf = NaN according to floating point spec
-        EuclideanTestUtils.assertPositiveInfinity(interval.getBarycenter());
-    }
+        Assert.assertEquals(min, interval.getMinPoint().getX(), TEST_EPS);
+        Assert.assertEquals(max, interval.getMaxPoint().getX(), TEST_EPS);
 
-    @Test
-    public void testSingleInfinitePoint_negative() {
-        // act
-        Interval_Old interval = new Interval_Old(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        Assert.assertSame(precision, interval.getPrecision());
 
-        // assert
-        Assert.assertTrue(Double.isNaN(interval.getSize())); // inf - inf = NaN according to floating point spec
-        EuclideanTestUtils.assertNegativeInfinity(interval.getBarycenter());
+        Assert.assertFalse(interval.isEmpty()); // always false
     }
 }
