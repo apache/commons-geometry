@@ -148,7 +148,8 @@ public class Interval implements Region<Vector1D>, Serializable {
     }
 
     /** Return true if the given point location is on the inside or boundary
-     * of the region.
+     * of the region. This is a convenience overload of {@link Interval#contains(Vector1D)}
+     * for use in one dimension.
      * @param x the location to test
      * @return true if the location is on the inside or boundary of the region
      */

@@ -16,10 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.
@@ -51,7 +54,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         union(interval.toTree());
     }
 
-    /** Classify a point with respect to the region. This is
+    /** Classify a point location with respect to the region. This is
      * a convenience overload of {@link #classify(Vector1D)} for
      * use in one dimension.
      * @param x the point to classify
@@ -62,8 +65,22 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         return classify(Vector1D.of(x));
     }
 
+    /** Return true if the given point location is on the inside or boundary
+     * of the region. This is a convenience overload of {@link Interval#contains(Vector1D)}
+     * for use in one dimension.
+     * @param x the location to test
+     * @return true if the location is on the inside or boundary of the region
+     */
     public boolean contains(final double x) {
         return contains(Vector1D.of(x));
+    }
+
+    /** Convert the the region represented by this tree into a list
+     * of separate {@link Interval}s.
+     * @return list of {@link Interval}s representing this region
+     */
+    public List<Interval> toIntervals(final DoublePrecisionContext precision) {
+        return null;
     }
 
     /** {@inheritDoc} */
