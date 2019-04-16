@@ -16,12 +16,17 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
+import org.apache.commons.geometry.core.partition.region.RegionCutBoundary;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
@@ -31,6 +36,11 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
+
+    /** Comparator used to sort OrientedPoints in ascending location.  */
+    private static final Comparator<OrientedPoint> ORIENTED_POINT_COMPARATOR = (OrientedPoint a, OrientedPoint b) -> {
+        return Double.compare(a.getLocation().getX(), b.getLocation().getX());
+    };
 
     /** Create a new region representing the entire number line.
      */
@@ -47,8 +57,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         super(full);
     }
 
-    /** Add an interval to this region.
-     * @param interval
+    /** Add an interval to this region. The resulting region will be the
+     * union of the interval and the region represented by this instance.
+     * @param interval the interval to add
      */
     public void add(final Interval interval) {
         union(interval.toTree());
@@ -80,7 +91,67 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @return list of {@link Interval}s representing this region
      */
     public List<Interval> toIntervals(final DoublePrecisionContext precision) {
-        return null;
+
+        if (isEmpty()) {
+            return Collections.emptyList();
+        }
+        else if (isFull()) {
+            return Arrays.asList(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision));
+        }
+
+        return computeIntervals(precision);
+    }
+
+    private List<Interval> computeIntervals(final DoublePrecisionContext precision) {
+        final List<OrientedPoint> boundaries = getPointBoundaries();
+        boundaries.sort(ORIENTED_POINT_COMPARATOR);
+
+        final List<Interval> intervals = new ArrayList<>();
+
+        OrientedPoint min = null;
+
+        for (OrientedPoint pt : boundaries)
+        {
+            if (min == null) {
+                if (pt.isPositiveFacing()) {
+                    intervals.add(Interval.of(Vector1D.NEGATIVE_INFINITY, pt.getLocation(), precision));
+                }
+                else {
+                    min = pt;
+                }
+            }
+            else {
+                intervals.add(Interval.of(min.getLocation(), pt.getLocation(), precision));
+
+                min = null;
+            }
+        }
+
+        if (min != null) {
+            intervals.add(Interval.of(min.getLocation(), Vector1D.POSITIVE_INFINITY, precision));
+        }
+
+        return intervals;
+    }
+
+    private List<OrientedPoint> getPointBoundaries() {
+        final List<OrientedPoint> pointBoundaries = new ArrayList<>();
+
+        for (RegionNode1D node : this)
+        {
+            if (node.isInternal())
+            {
+                final RegionCutBoundary<Vector1D> boundary = node.getCutBoundary();
+
+                final OrientedPoint outsideFacing = (OrientedPoint) boundary.getOutsideFacing();
+                if (outsideFacing != null)
+                {
+                    pointBoundaries.add(outsideFacing);
+                }
+            }
+        }
+
+        return pointBoundaries;
     }
 
     /** {@inheritDoc} */

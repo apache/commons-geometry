@@ -167,7 +167,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testToIntervals_emptyRegion() {
         // arrange
-        RegionBSPTree1D tree = new RegionBSPTree1D(true);
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
         // act
         List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
@@ -181,7 +181,7 @@ public class RegionBSPTree1DTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        RegionBSPTree1D tree = new RegionBSPTree1D(true);
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(-1, 1, precision));
 
         // act
@@ -197,7 +197,7 @@ public class RegionBSPTree1DTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        RegionBSPTree1D tree = new RegionBSPTree1D(true);
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, -10, precision));
         tree.add(Interval.of(-1, 1, precision));
         tree.add(Interval.of(10, Double.POSITIVE_INFINITY, precision));
@@ -208,8 +208,40 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(3, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -10);
-        checkInterval(intervals.get(0), -1, 1);
-        checkInterval(intervals.get(0), 10, Double.POSITIVE_INFINITY);
+        checkInterval(intervals.get(1), -1, 1);
+        checkInterval(intervals.get(2), 10, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_halfOpen_negative() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D();
+        tree.getRoot().cut(OrientedPoint.fromPointAndDirection(1.0, true, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
+    }
+
+    @Test
+    public void testToIntervals_halfOpen_positive() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D();
+        tree.getRoot().cut(OrientedPoint.fromPointAndDirection(-1.0, false, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), -1, Double.POSITIVE_INFINITY);
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
