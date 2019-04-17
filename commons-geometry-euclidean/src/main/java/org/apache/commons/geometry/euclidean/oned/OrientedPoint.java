@@ -157,18 +157,14 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
         final HyperplaneLocation side = splitter.classify(getLocation());
 
-        // Return this instance for both plus and minus sides when the
-        // points are directly on top of each other. That way, we can
-        // create bsp trees that represent single points.
-
-        OrientedPoint minus = this;
-        OrientedPoint plus = this;
+        OrientedPoint minus = null;
+        OrientedPoint plus = null;
 
         if (side == HyperplaneLocation.MINUS) {
-            plus = null;
+            minus = this;
         }
         else if (side == HyperplaneLocation.PLUS) {
-            minus = null;
+            plus = this;
         }
 
         return new Split<>(minus, plus);

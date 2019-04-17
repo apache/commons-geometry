@@ -357,8 +357,37 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return hadCut;
     }
 
-    /** Fit the subhyperplane in the region defined by the given node. This method cuts the
-     * given subhyperplane with the binary partitioners of all parent nodes up to the root.
+    /** Fit the subhyperplane to the region defined by the given node. This method cuts the
+     * subhyperplane with the cut hyperplanes (binary partitioners) of all parent nodes up to
+     * the root and returns the fitted subhyperplane or {@code null} if the subhyperplane lies
+     * outside of the region defined by the node.
+     *
+     * <p>If the subhyperplane is directly coincident with a binary partitioner of a parent node,
+     * then the relative orientations of the associated hyperplanes are used to determine the behavior,
+     * as described below.
+     * <ul>
+     *      <li>If the orientations are <strong>similar</strong>, then the subhyperplane is determined to
+     *      lie <em>outside</em> of the node's region and {@code null} is returned.</li>
+     *      <li>If the orientations are <strong>different</strong> (ie, opposite), then the subhyperplane
+     *      is determined to lie <em>inside</em> of the node's region and the fit operation continues
+     *      with the remaining parent nodes.</li>
+     * </ul>
+     * These rules are designed to allow the creation of trees with node regions that are the thickness
+     * of a single hyperplane. For example, in two dimensions, a tree could be constructed with an internal
+     * node containing a cut along the x-axis in the positive direction and with a child node containing a
+     * cut along the x-axis in the opposite direction. If the nodes in the tree are given inside and outside
+     * attributes, then this tree could be used to represent a region consisting of a single line or a region
+     * consisting of the entire space except for the single line. This would not be possible if nodes were not
+     * able to have cut hyperplanes that were coincident with parent cuts but in opposite directions.
+     * </p>
+     *
+     * <p>
+     * Another way of looking at the rules above is that inserting a hyperplane into the tree that exactly
+     * matches the hyperplane of a parent node does not add any information to the tree. However, adding a
+     * hyperplane to the tree that is coincident with a parent node but with the opposite orientation,
+     * <em>does</em> add information to the tree.
+     * </p>
+     *
      * @param node the node representing the region to fit the subhyperplane to
      * @param sub the subhyperplane to fit into the cell
      * @return the subhyperplane fit to the cell
@@ -373,7 +402,17 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         while (parentNode != null && result != null) {
             ConvexSubHyperplane.Split<P> split = result.split(parentNode.getCutHyperplane());
 
-            result = currentNode.isPlus() ? split.getPlus() : split.getMinus();
+            if (split.getLocation() == SplitLocation.ON) {
+                // if we're directly on the splitter and have the same orientation, then
+                // we say the subhyperplane does not lie in the node's region (no new information
+                // is added to the tree in this case)
+                if (result.getHyperplane().similarOrientation(parentNode.getCutHyperplane())) {
+                    result = null;
+                }
+            }
+            else {
+                result = currentNode.isPlus() ? split.getPlus() : split.getMinus();
+            }
 
             currentNode = parentNode;
             parentNode = parentNode.getParent();

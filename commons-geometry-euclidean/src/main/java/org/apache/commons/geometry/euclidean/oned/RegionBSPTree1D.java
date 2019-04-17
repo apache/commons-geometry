@@ -109,6 +109,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         final List<Interval> intervals = new ArrayList<>();
 
         OrientedPoint min = null;
+        OrientedPoint max = null;
 
         for (OrientedPoint pt : boundaries)
         {

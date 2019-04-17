@@ -185,7 +185,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsertCut_cutExistsInTree() {
+    public void testInsertCut_cutExistsInTree_sameOrientation() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
@@ -202,6 +202,46 @@ public class AbstractBSPTreeTest {
         // assert
         Assert.assertFalse(result);
         PartitionTestUtils.assertIsLeafNode(node);
+    }
+
+    @Test
+    public void testInsertCut_cutExistsInTree_oppositeOrientation() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode node = tree.getRoot()
+                .cut(TestLine.X_AXIS)
+                    .getMinus()
+                        .cut(TestLine.Y_AXIS)
+                        .getPlus()
+                            .cut(new TestLine(0, 2, 2, 0));
+
+        // act
+        boolean result = node.insertCut(new TestLine(0, 3, 0, 2));
+
+        // assert
+        Assert.assertTrue(result);
+        PartitionTestUtils.assertIsInternalNode(node);
+    }
+
+    @Test
+    public void testInsertCut_createRegionWithThicknessOfHyperplane() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestNode node = tree.getRoot()
+                .cut(TestLine.X_AXIS)
+                    .getMinus();
+
+        // act
+        boolean result = node.insertCut(new TestLine(0, 0, -1, 0));
+
+        // assert
+        Assert.assertTrue(result);
+
+        Assert.assertSame(tree.getRoot().getPlus(), tree.findNode(new TestPoint2D(0, -1e-2)));
+        Assert.assertSame(node.getMinus(), tree.findNode(new TestPoint2D(0, 0)));
+        Assert.assertSame(node.getPlus(), tree.findNode(new TestPoint2D(0, 1e-2)));
     }
 
     @Test
