@@ -177,42 +177,6 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToIntervals_singleClosedInterval() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(-1, 1, precision));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
-
-        // assert
-        Assert.assertEquals(1, intervals.size());
-        checkInterval(intervals.get(0), -1, 1);
-    }
-
-    @Test
-    public void testToIntervals_openAndClosedIntervals() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(Double.NEGATIVE_INFINITY, -10, precision));
-        tree.add(Interval.of(-1, 1, precision));
-        tree.add(Interval.of(10, Double.POSITIVE_INFINITY, precision));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
-
-        // assert
-        Assert.assertEquals(3, intervals.size());
-        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -10);
-        checkInterval(intervals.get(1), -1, 1);
-        checkInterval(intervals.get(2), 10, Double.POSITIVE_INFINITY);
-    }
-
-    @Test
     public void testToIntervals_halfOpen_negative() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
@@ -242,6 +206,132 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), -1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_singleClosedInterval() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(-1, 1, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), -1, 1);
+    }
+
+    @Test
+    public void testToIntervals_singleClosedInterval_complement() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(-1, 1, precision));
+        tree.complement();
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -1);
+        checkInterval(intervals.get(1), 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_openAndClosedIntervals() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(Double.NEGATIVE_INFINITY, -10, precision));
+        tree.add(Interval.of(-1, 1, precision));
+        tree.add(Interval.of(10, Double.POSITIVE_INFINITY, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -10);
+        checkInterval(intervals.get(1), -1, 1);
+        checkInterval(intervals.get(2), 10, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_singlePoint() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(1, 1, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), 1, 1);
+    }
+
+    @Test
+    public void testToIntervals_singlePoint_complement() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(1, 1, precision));
+        tree.complement();
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(intervals.get(1), 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_multiplePoints() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(1, 1, precision));
+        tree.add(Interval.of(2, 2, precision));
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), 1, 1);
+        checkInterval(intervals.get(1), 2, 2);
+    }
+
+    @Test
+    public void testToIntervals_multiplePoints_complement() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(1, 1, precision));
+        tree.add(Interval.of(2, 2, precision));
+        tree.complement();
+
+        // act
+        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(3, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(intervals.get(1), 1, 2);
+        checkInterval(intervals.get(2), 2, Double.POSITIVE_INFINITY);
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {

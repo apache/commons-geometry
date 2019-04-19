@@ -17,16 +17,12 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
-import org.apache.commons.geometry.core.partition.region.RegionCutBoundary;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
@@ -37,9 +33,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
 
-    /** Comparator used to sort OrientedPoints in ascending location.  */
-    private static final Comparator<OrientedPoint> ORIENTED_POINT_COMPARATOR = (OrientedPoint a, OrientedPoint b) -> {
-        return Double.compare(a.getLocation().getX(), b.getLocation().getX());
+    /** Comparator used to sort Intervals in ascending location.  */
+    private static final Comparator<Interval> INTERVAL_COMPARATOR = (Interval a, Interval b) -> {
+        return Double.compare(a.getMin(), b.getMax());
     };
 
     /** Create a new region representing the entire number line.
@@ -87,72 +83,56 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     }
 
     /** Convert the the region represented by this tree into a list
-     * of separate {@link Interval}s.
-     * @return list of {@link Interval}s representing this region
+     * of separate {@link Interval}s. The intervals are arranged in order of
+     * ascending min value.
+     * @return list of {@link Interval}s representing this region in order of
+     *      ascending min value
      */
     public List<Interval> toIntervals(final DoublePrecisionContext precision) {
 
-        if (isEmpty()) {
-            return Collections.emptyList();
-        }
-        else if (isFull()) {
-            return Arrays.asList(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision));
-        }
-
-        return computeIntervals(precision);
-    }
-
-    private List<Interval> computeIntervals(final DoublePrecisionContext precision) {
-        final List<OrientedPoint> boundaries = getPointBoundaries();
-        boundaries.sort(ORIENTED_POINT_COMPARATOR);
-
         final List<Interval> intervals = new ArrayList<>();
 
-        OrientedPoint min = null;
-        OrientedPoint max = null;
-
-        for (OrientedPoint pt : boundaries)
-        {
-            if (min == null) {
-                if (pt.isPositiveFacing()) {
-                    intervals.add(Interval.of(Vector1D.NEGATIVE_INFINITY, pt.getLocation(), precision));
-                }
-                else {
-                    min = pt;
-                }
-            }
-            else {
-                intervals.add(Interval.of(min.getLocation(), pt.getLocation(), precision));
-
-                min = null;
+        for (RegionNode1D node : this) {
+            if (node.isInside()) {
+                intervals.add(nodeToInterval(node, precision));
             }
         }
 
-        if (min != null) {
-            intervals.add(Interval.of(min.getLocation(), Vector1D.POSITIVE_INFINITY, precision));
-        }
+        intervals.sort(INTERVAL_COMPARATOR);
 
         return intervals;
     }
 
-    private List<OrientedPoint> getPointBoundaries() {
-        final List<OrientedPoint> pointBoundaries = new ArrayList<>();
+    /** Get an {@link Interval} instance representing the same convex region as the given BSP tree
+     * node. This is accomplished by taking an interval representing the full number line and trimming
+     * the min and max values based on the cut hyperplanes present on the path from the node to the root.
+     * @param node the node containing the 1D region to convert to an interval
+     * @param precision the precision context to use for the interval
+     * @return an interval representing the same convex region as the given BSP tree node
+     */
+    private Interval nodeToInterval(final RegionNode1D node, final DoublePrecisionContext precision) {
+        double min = Double.NEGATIVE_INFINITY;
+        double max = Double.POSITIVE_INFINITY;
 
-        for (RegionNode1D node : this)
-        {
-            if (node.isInternal())
-            {
-                final RegionCutBoundary<Vector1D> boundary = node.getCutBoundary();
+        OrientedPoint pt;
+        RegionNode1D child = node;
+        RegionNode1D parent;
 
-                final OrientedPoint outsideFacing = (OrientedPoint) boundary.getOutsideFacing();
-                if (outsideFacing != null)
-                {
-                    pointBoundaries.add(outsideFacing);
-                }
+        while ((parent = child.getParent()) != null) {
+            pt = (OrientedPoint) parent.getCutHyperplane();
+
+            if ((pt.isPositiveFacing() && child.isMinus()) ||
+                    (!pt.isPositiveFacing() && child.isPlus())) {
+                max = Math.min(max, pt.getLocation().getX());
             }
+            else {
+                min = Math.max(min, pt.getLocation().getX());
+            }
+
+            child = parent;
         }
 
-        return pointBoundaries;
+        return Interval.of(min, max, precision);
     }
 
     /** {@inheritDoc} */
@@ -163,7 +143,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** BSP tree node for one dimensional Euclidean space.
      */
-    public static final class RegionNode1D extends AbstractRegionNode<Vector1D, RegionNode1D> {
+    public static final class RegionNode1D extends AbstractRegionBSPTree.AbstractRegionNode<Vector1D, RegionNode1D> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
