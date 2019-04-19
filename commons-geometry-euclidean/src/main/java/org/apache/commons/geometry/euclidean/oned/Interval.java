@@ -19,10 +19,10 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanRegion;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
 
 /** Class representing an interval in one dimension. The interval is defined
@@ -31,7 +31,7 @@ import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Interval implements Region<Vector1D>, Serializable {
+public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -184,11 +184,19 @@ public class Interval implements Region<Vector1D>, Serializable {
         return Double.isInfinite(min) && Double.isInfinite(max);
     }
 
-    /** Return the size of the interval.
-     * @return the size of the interval
-     */
+    /** {@inheritDoc} */
+    @Override
     public double size() {
         return max - min;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D barycenter() {
+        if (isInfinite()) {
+            return null;
+        }
+        return Vector1D.of(0.5 * (max - min));
     }
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.

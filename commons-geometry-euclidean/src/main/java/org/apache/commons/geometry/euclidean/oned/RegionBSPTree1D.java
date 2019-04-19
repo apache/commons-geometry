@@ -19,16 +19,18 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.internal.AbstractEuclideanRegionBSPTree;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.
  */
-public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
+public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
@@ -92,25 +94,24 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
         final List<Interval> intervals = new ArrayList<>();
 
-        for (RegionNode1D node : this) {
-            if (node.isInside()) {
-                intervals.add(nodeToInterval(node, precision));
-            }
-        }
+        visitIntervals((min, max) -> {
+           intervals.add(Interval.of(min, max, precision));
+        });
 
         intervals.sort(INTERVAL_COMPARATOR);
 
         return intervals;
     }
 
-    /** Get an {@link Interval} instance representing the same convex region as the given BSP tree
-     * node. This is accomplished by taking an interval representing the full number line and trimming
-     * the min and max values based on the cut hyperplanes present on the path from the node to the root.
-     * @param node the node containing the 1D region to convert to an interval
-     * @param precision the precision context to use for the interval
-     * @return an interval representing the same convex region as the given BSP tree node
-     */
-    private Interval nodeToInterval(final RegionNode1D node, final DoublePrecisionContext precision) {
+    private void visitIntervals(final BiConsumer<Double, Double> visitor) {
+        for (RegionNode1D node : this) {
+            if (node.isInside()) {
+                visitNodeInterval(node, visitor);
+            }
+        }
+    }
+
+    private void visitNodeInterval(final RegionNode1D node, final BiConsumer<Double, Double> visitor) {
         double min = Double.NEGATIVE_INFINITY;
         double max = Double.POSITIVE_INFINITY;
 
@@ -132,13 +133,23 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             child = parent;
         }
 
-        return Interval.of(min, max, precision);
+        visitor.accept(min, max);
     }
 
     /** {@inheritDoc} */
     @Override
     protected RegionNode1D createNode() {
         return new RegionNode1D(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected EuclideanRegionProperties<Vector1D> computeRegionProperties() {
+        RegionPropertiesVisitor visitor = new RegionPropertiesVisitor();
+
+        visitIntervals(visitor);
+
+        return visitor.getRegionProperties();
     }
 
     /** BSP tree node for one dimensional Euclidean space.
@@ -159,6 +170,45 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         @Override
         protected RegionNode1D getSelf() {
             return this;
+        }
+    }
+
+    private static class RegionPropertiesVisitor implements BiConsumer<Double, Double>
+    {
+        private int count = 0;
+
+        private double size = 0;
+        private double sum = 0;
+
+        private double lastMin;
+
+        /** {@inheritDoc} */
+        @Override
+        public void accept(Double min, Double max) {
+            ++count;
+
+            final double intervalSize = max - min;
+            final double intervalBarycenter = 0.5 * (max - min);
+
+            size += intervalSize;
+            sum += intervalSize * intervalBarycenter;
+
+            lastMin = min;
+        }
+
+        public EuclideanRegionProperties<Vector1D> getRegionProperties() {
+            Vector1D barycenter = null;
+
+            if (count > 0 && Double.isFinite(size)) {
+                if (size > 0.0) {
+                    barycenter = Vector1D.of(sum / size);
+                }
+                else {
+                    barycenter = Vector1D.of(lastMin);
+                }
+            }
+
+            return new EuclideanRegionProperties<>(size, barycenter);
         }
     }
 }

@@ -48,7 +48,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * a structural change occurs in the tree and is used to determine when cached values
      * must be recomputed.
      */
-    private long version = 0L;
+    private int version = 0;
 
     /** {@inheritDoc} */
     @Override
@@ -531,7 +531,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * tree structure changes and can be used by nodes to allow caching of computed values.
      * @return the current version of the tree structure
      */
-    protected long getVersion() {
+    protected int getVersion() {
         return version;
     }
 
@@ -568,7 +568,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * and is used to detect when certain values need to be recomputed due to
          * structural changes in the tree.
          */
-        private long version = -1L;
+        private int version = -1;
 
         /** The depth of this node in the tree. This will be zero for the root node and
          * {@link AbstractBSPTree#UNKNOWN_VALUE} when the value needs to be computed.
@@ -793,7 +793,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * call to this method and call {@link #treeUpdated()} if so.
          */
         protected void checkTreeUpdated() {
-            final long treeVersion = tree.getVersion();
+            final int treeVersion = tree.getVersion();
 
             if (version != treeVersion) {
                 // the tree structure changed somewhere
