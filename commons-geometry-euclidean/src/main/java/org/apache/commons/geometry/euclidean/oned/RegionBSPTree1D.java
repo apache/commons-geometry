@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
@@ -84,9 +85,30 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
         return contains(Vector1D.of(x));
     }
 
-    /** Convert the the region represented by this tree into a list
-     * of separate {@link Interval}s. The intervals are arranged in order of
-     * ascending min value.
+    /** Convert the the region represented by this tree into a list of separate
+     * {@link Interval}s, arranged in order of ascending min value. The returned
+     * intervals are all assigned the given {@link DoublePrecisionContext}.
+     *
+     * <p>The number of intervals returned can vary depending on the value of
+     * {@code precision}. This is due to the fact that adjacent intervals in
+     * the returned list are merged into a single interval if one or both of
+     * the following conditions are met:
+     *  <ol>
+     *      <li>The distance between the min values of the intervals is equal to zero
+     *      as evaluated by {@code precision}</li>
+     *      <li>The distance between the max values of the intervals is equal to zero
+     *      as evaluated by {@code precision}.</li>
+     *  </ol>
+     * This merging operation prevents superfluous intervals from appearing in the returned
+     * list. For example, consider the intervals {@code [0.98, 0.99], [1.0, 2.0]}. If
+     * {@code precision} evaluates {@code 0.98} and {@code 1.0} as not equal, then two separate
+     * intervals are returned. However, if {@code 0.98} and {@code 1.0} do evaluate as
+     * equal, then no information about the region is added by keeping two separate intervals
+     * with this precision context, because all points between {@code 0.98} and {@code 1.0}
+     * will be evaluated as being on the region boundary. Therefore, the single interval
+     * {@code [0.98, 2.0]} is returned.
+     * </p>
+     * @param precision object used to determine floating point equality
      * @return list of {@link Interval}s representing this region in order of
      *      ascending min value
      */
@@ -94,16 +116,63 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
 
         final List<Interval> intervals = new ArrayList<>();
 
-        visitIntervals((min, max) -> {
+        visitInsideIntervals((min, max) -> {
            intervals.add(Interval.of(min, max, precision));
         });
 
-        intervals.sort(INTERVAL_COMPARATOR);
+        return sortAndMergeIntervals(intervals, precision);
+    }
+
+    /** Sort the given intervals and merge ones that contain endpoints that point in the same direction
+     * and are equivalent according to the given precision context.
+     * @param intervals the intervals to sort and merge
+     * @param precision object used to determine floating point equality
+     * @return sorted and merged intervals
+     */
+    private List<Interval> sortAndMergeIntervals(final List<Interval> intervals, final DoublePrecisionContext precision) {
+        if (!intervals.isEmpty()) {
+            intervals.sort(INTERVAL_COMPARATOR);
+
+            // combine intervals based on the given precision
+            ListIterator<Interval> it = intervals.listIterator();
+
+            Interval prev;
+            Interval cur;
+
+            // merge min edges by moving forward through the list
+            prev = it.next();
+            while (it.hasNext()) {
+                cur = it.next();
+
+                if (precision.eq(prev.getMin(), cur.getMin()) ||
+                        precision.eq(prev.getMax(), cur.getMax())) {
+
+                    // remove the first entry in the comparison
+                    it.previous();
+                    it.previous();
+                    it.remove();
+
+                    // replace the second entry in the comparison with the merged
+                    // interval
+                    it.next();
+                    prev = Interval.of(prev.getMin(), cur.getMax(), precision);
+                    it.set(prev);
+                }
+                else {
+                    prev = cur;
+                }
+            }
+        }
 
         return intervals;
     }
 
-    private void visitIntervals(final BiConsumer<Double, Double> visitor) {
+    /** Compute the min/max intervals for all interior convex regions in the tree and
+     * pass the values to the given visitor function.
+     * @param visitor the object that will receive the calculated min and max for each
+     *      insides node's convex region
+     */
+    private void visitInsideIntervals(final BiConsumer<Double, Double> visitor) {
         for (RegionNode1D node : this) {
             if (node.isInside()) {
                 visitNodeInterval(node, visitor);
@@ -111,6 +180,12 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
         }
     }
 
+    /** Compute the min/max interval for the convex region represented by the given node and pass
+     * the values to the given visitor function.
+     * @param node the node to compute the interval for
+     * @param visitor the object that will receive the calculated min and max for the node's
+     *      convex region
+     */
     private void visitNodeInterval(final RegionNode1D node, final BiConsumer<Double, Double> visitor) {
         double min = Double.NEGATIVE_INFINITY;
         double max = Double.POSITIVE_INFINITY;
@@ -147,7 +222,7 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
     protected EuclideanRegionProperties<Vector1D> computeRegionProperties() {
         RegionPropertiesVisitor visitor = new RegionPropertiesVisitor();
 
-        visitIntervals(visitor);
+        visitInsideIntervals(visitor);
 
         return visitor.getRegionProperties();
     }
