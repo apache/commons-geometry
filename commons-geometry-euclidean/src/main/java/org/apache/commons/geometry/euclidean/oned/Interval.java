@@ -62,14 +62,14 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return the minimum value for the interval
      */
     public double getMin() {
-        return minHyperplane.getLocation().getX();
+        return minHyperplane.getPoint().getX();
     }
 
     /** Get the maximum value for the interval.
      * @return the maximum value for the interval
      */
     public double getMax() {
-        return maxHyperplane.getLocation().getX();
+        return maxHyperplane.getPoint().getX();
     }
 
     /** Get a {@link Vector1D} instance representing the minimum value of the
@@ -77,7 +77,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return the minimum point of the interval
      */
     public Vector1D getMinPoint() {
-        return minHyperplane.getLocation();
+        return minHyperplane.getPoint();
     }
 
     /** Get a {@link Vector1D} instance representing the maximum value of the
@@ -85,7 +85,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return the maximum point of the interval
      */
     public Vector1D getMaxPoint() {
-        return maxHyperplane.getLocation();
+        return maxHyperplane.getPoint();
     }
 
     /**
@@ -111,8 +111,8 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return true if the region is infinite
      */
     public boolean isInfinite() {
-        return minHyperplane.getLocation().isInfinite() ||
-                maxHyperplane.getLocation().isInfinite();
+        return minHyperplane.getPoint().isInfinite() ||
+                maxHyperplane.getPoint().isInfinite();
     }
 
     /** {@inheritDoc} */
@@ -128,7 +128,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     }
 
     private RegionLocation classifyWithBoundary(final OrientedPoint hyperplane, final Vector1D pt) {
-        final double hyperx = hyperplane.getLocation().getX();
+        final double hyperx = hyperplane.getPoint().getX();
         final double ptx = pt.getX();
 
         if (Double.isInfinite(hyperx) && Double.compare(hyperx, ptx) == 0) {
@@ -222,13 +222,13 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
         RegionNode1D node = tree.getRoot();
 
-        if (!minHyperplane.getLocation().isInfinite()) {
+        if (!minHyperplane.getPoint().isInfinite()) {
             node.cut(minHyperplane);
 
             node = node.getMinus();
         }
 
-        if (!maxHyperplane.getLocation().isInfinite()) {
+        if (!maxHyperplane.getPoint().isInfinite()) {
             node.cut(maxHyperplane);
         }
 
@@ -336,15 +336,15 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      *      is on the plus side of the other
      */
     private static void validateIntervalHyperplanes(final OrientedPoint a, final OrientedPoint b) {
-        validateIntervalValues(a.getLocation().getX(), b.getLocation().getX());
+        validateIntervalValues(a.getPoint().getX(), b.getPoint().getX());
 
         if (a.isPositiveFacing() == b.isPositiveFacing()) {
             throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
                         + a + ", " + b);
         }
 
-        if (a.classify(b.getLocation()) == HyperplaneLocation.PLUS ||
-                b.classify(a.getLocation()) == HyperplaneLocation.PLUS) {
+        if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
+                b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
             throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
                         + a + ", " + b);
         }

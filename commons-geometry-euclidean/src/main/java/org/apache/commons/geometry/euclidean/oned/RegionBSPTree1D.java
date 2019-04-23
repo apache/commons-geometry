@@ -199,10 +199,10 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
 
             if ((pt.isPositiveFacing() && child.isMinus()) ||
                     (!pt.isPositiveFacing() && child.isPlus())) {
-                max = Math.min(max, pt.getLocation().getX());
+                max = Math.min(max, pt.getPoint().getX());
             }
             else {
-                min = Math.max(min, pt.getLocation().getX());
+                min = Math.max(min, pt.getPoint().getX());
             }
 
             child = parent;

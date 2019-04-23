@@ -38,13 +38,13 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class OrientedPoint extends AbstractHyperplane<Vector1D>
-    implements Hyperplane<Vector1D>, ConvexSubHyperplane<Vector1D>, Serializable {
+    implements Hyperplane<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
 
-    /** Hyperplane location. */
-    private final Vector1D location;
+    /** Hyperplane location as a point. */
+    private final Vector1D point;
 
     /** Hyperplane direction. */
     private final boolean positiveFacing;
@@ -58,15 +58,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     private OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
         super(precision);
 
-        this.location = point;
+        this.point = point;
         this.positiveFacing = positiveFacing;
     }
 
     /** Get the point representing the hyperplane's location on the real line.
      * @return the hyperplane location
      */
-    public Vector1D getLocation() {
-        return location;
+    public Vector1D getPoint() {
+        return point;
     }
 
     /** Get the direction of the hyperplane's plus side.
@@ -91,49 +91,49 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * @return a copy of this instance with the opposite direction
      */
     public OrientedPoint reverse() {
-        return new OrientedPoint(location, !positiveFacing, getPrecision());
+        return new OrientedPoint(point, !positiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D plusPoint() {
         final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        return Vector1D.linearCombination(1.0, location, scale, getDirection());
+        return Vector1D.linearCombination(1.0, point, scale, getDirection());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D minusPoint() {
         final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        return Vector1D.linearCombination(1.0, location, -scale, getDirection());
+        return Vector1D.linearCombination(1.0, point, -scale, getDirection());
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector1D onPoint() {
-        return location;
+        return point;
     }
 
     /** {@inheritDoc} */
     @Override
     public OrientedPoint transform(final Transform<Vector1D> transform) {
-        final Vector1D transformedLocation = transform.apply(location);
+        final Vector1D transformedPoint = transform.apply(point);
 
         Vector1D transformedDir;
-        if (location.isInfinite()) {
+        if (point.isInfinite()) {
             // use a test point to determine if the direction switches or not
             final Vector1D transformedZero = transform.apply(Vector1D.ZERO);
-            final Vector1D transformedTempDir = transform.apply(getDirection());
+            final Vector1D transformedZeroDir = transform.apply(getDirection());
 
-            transformedDir = transformedZero.vectorTo(transformedTempDir);
+            transformedDir = transformedZero.vectorTo(transformedZeroDir);
         }
         else {
-            final Vector1D transformedPlusDir = transform.apply(location.add(getDirection()));
-            transformedDir = transformedLocation.vectorTo(transformedPlusDir);
+            final Vector1D transformedPointPlusDir = transform.apply(point.add(getDirection()));
+            transformedDir = transformedPoint.vectorTo(transformedPointPlusDir);
         }
 
         return OrientedPoint.fromPointAndDirection(
-                    transformedLocation,
+                    transformedPoint,
                     transformedDir,
                     getPrecision()
                 );
@@ -142,14 +142,8 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     /** {@inheritDoc} */
     @Override
     public double offset(final Vector1D point) {
-        final double delta = point.getX() - location.getX();
+        final double delta = point.getX() - this.point.getX();
         return positiveFacing ? delta : -delta;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OrientedPoint wholeHyperplane() {
-        return this;
     }
 
     /** {@inheritDoc} */
@@ -161,70 +155,13 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     /** {@inheritDoc} */
     @Override
     public Vector1D project(final Vector1D point) {
-        return location;
+        return this.point;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
-        final HyperplaneLocation side = splitter.classify(getLocation());
-
-        OrientedPoint minus = null;
-        OrientedPoint plus = null;
-
-        if (side == HyperplaneLocation.MINUS) {
-            minus = this;
-        }
-        else if (side == HyperplaneLocation.PLUS) {
-            plus = this;
-        }
-
-        return new Split<>(minus, plus);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OrientedPoint getHyperplane() {
-        return this;
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>This method simply returns false.</p>
-     */
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>This method simply returns false.</p>
-     */
-    @Override
-    public boolean isInfinite() {
-        return false;
-    }
-
-    /** {@inheritDoc}
-     *
-     *  <p>This method simply returns {@code 0}.</p>
-     */
-    @Override
-    public double size() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Builder<Vector1D> builder() {
-        return new OrientedPointBuilder(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ConvexSubHyperplane<Vector1D>> toConvex() {
-        return Arrays.asList(this);
+    public OrientedPointSubHyperplane wholeHyperplane() {
+        return new OrientedPointSubHyperplane(this);
     }
 
     /** Return true if this instance should be considered equal to the argument. Instances
@@ -239,7 +176,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      */
     public boolean eq(OrientedPoint other) {
         return getPrecision().equals(other.getPrecision()) &&
-                location.equals(other.location, getPrecision()) &&
+                point.equals(other.point, getPrecision()) &&
                 positiveFacing == other.positiveFacing;
     }
 
@@ -249,7 +186,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         final int prime = 31;
 
         int result = 1;
-        result = (prime * result) + Objects.hashCode(location);
+        result = (prime * result) + Objects.hashCode(point);
         result = (prime * result) + Boolean.hashCode(positiveFacing);
         result = (prime * result) + Objects.hashCode(getPrecision());
 
@@ -268,7 +205,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         OrientedPoint other = (OrientedPoint) obj;
 
-        return Objects.equals(this.location, other.location) &&
+        return Objects.equals(this.point, other.point) &&
                 this.positiveFacing == other.positiveFacing &&
                 Objects.equals(this.getPrecision(), other.getPrecision());
     }
@@ -279,7 +216,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
             .append("[location= ")
-            .append(location)
+            .append(point)
             .append(", direction= ")
             .append(getDirection())
             .append(']');
@@ -366,14 +303,100 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new OrientedPoint(Vector1D.of(location), false, precision);
     }
 
-    private static class OrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+    /** {@link ConvexSubHyperplane} implementation for Euclidean 1D space. Since there are not subspaces in 1D,
+     * this is effectively a stub implementation and is used to allow for the correct functioning of partitioning
+     * code.
+     */
+    public static class OrientedPointSubHyperplane implements ConvexSubHyperplane<Vector1D>, Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 1L;
+
+        /** The underlying hyperplane for this instance. */
+        private final OrientedPoint hyperplane;
+
+        public OrientedPointSubHyperplane(final OrientedPoint hyperplane) {
+            this.hyperplane = hyperplane;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OrientedPoint getHyperplane() {
+            return hyperplane;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method simply returns false.</p>
+        */
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method simply returns false.</p>
+         */
+        @Override
+        public boolean isInfinite() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+         *
+         *  <p>This method simply returns {@code 0}.</p>
+         */
+        @Override
+        public double size() {
+            return 0;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
+            final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
+
+            OrientedPointSubHyperplane minus = null;
+            OrientedPointSubHyperplane plus = null;
+
+            if (side == HyperplaneLocation.MINUS) {
+                minus = this;
+            }
+            else if (side == HyperplaneLocation.PLUS) {
+                plus = this;
+            }
+
+            return new Split<>(minus, plus);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<ConvexSubHyperplane<Vector1D>> toConvex() {
+            return Arrays.asList(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ConvexSubHyperplane<Vector1D> transform(Transform<Vector1D> transform) {
+            return getHyperplane().transform(transform).wholeHyperplane();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Builder<Vector1D> builder() {
+            return new OrientedPointSubHyperplaneBuilder(this);
+        }
+    }
+
+    private static class OrientedPointSubHyperplaneBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
 
-        private final OrientedPoint base;
+        private final OrientedPointSubHyperplane base;
 
-        private OrientedPointBuilder(final OrientedPoint base) {
+        private OrientedPointSubHyperplaneBuilder(final OrientedPointSubHyperplane base) {
             this.base = base;
         }
 
@@ -391,7 +414,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public OrientedPoint build() {
+        public OrientedPointSubHyperplane build() {
             return base;
         }
 
@@ -399,12 +422,13 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
          * @param sub
          */
         private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
-            final OrientedPoint hyper = (OrientedPoint) sub.getHyperplane();
+            final OrientedPoint baseHyper = base.getHyperplane();
+            final OrientedPoint inputHyper = (OrientedPoint) sub.getHyperplane();
 
-            if (!base.eq(hyper)) {
+            if (!baseHyper.eq(inputHyper)) {
                 throw new IllegalArgumentException("Argument is not on the same " +
-                        "hyperplane. Expected " + base + " but was " +
-                        hyper);
+                        "hyperplane. Expected " + baseHyper + " but was " +
+                        inputHyper);
             }
         }
     }

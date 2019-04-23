@@ -61,8 +61,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION)
+                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).wholeHyperplane(),
+                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).wholeHyperplane()
                 ));
 
         // act/assert
@@ -104,8 +104,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION)
+                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).wholeHyperplane(),
+                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).wholeHyperplane()
                 ));
 
         // act/assert
@@ -465,11 +465,11 @@ public class RegionBSPTree1DTest {
         Assert.assertEquals(max, interval.getMaxPoint().getX(), TEST_EPS);
 
         Assert.assertFalse(interval.getMinHyperplane().isPositiveFacing());
-        Assert.assertEquals(min, interval.getMinHyperplane().getLocation().getX(), TEST_EPS);
+        Assert.assertEquals(min, interval.getMinHyperplane().getPoint().getX(), TEST_EPS);
         Assert.assertSame(precision, interval.getMinHyperplane().getPrecision());
 
         Assert.assertTrue(interval.getMaxHyperplane().isPositiveFacing());
-        Assert.assertEquals(max, interval.getMaxHyperplane().getLocation().getX(), TEST_EPS);
+        Assert.assertEquals(max, interval.getMaxHyperplane().getPoint().getX(), TEST_EPS);
         Assert.assertSame(precision, interval.getMaxHyperplane().getPrecision());
     }
 }
