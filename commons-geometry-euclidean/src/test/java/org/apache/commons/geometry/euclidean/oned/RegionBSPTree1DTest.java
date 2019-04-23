@@ -461,6 +461,15 @@ public class RegionBSPTree1DTest {
         Assert.assertEquals(min, interval.getMin(), TEST_EPS);
         Assert.assertEquals(max, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(precision, interval.getPrecision());
+        Assert.assertEquals(min, interval.getMinPoint().getX(), TEST_EPS);
+        Assert.assertEquals(max, interval.getMaxPoint().getX(), TEST_EPS);
+
+        Assert.assertFalse(interval.getMinHyperplane().isPositiveFacing());
+        Assert.assertEquals(min, interval.getMinHyperplane().getLocation().getX(), TEST_EPS);
+        Assert.assertSame(precision, interval.getMinHyperplane().getPrecision());
+
+        Assert.assertTrue(interval.getMaxHyperplane().isPositiveFacing());
+        Assert.assertEquals(max, interval.getMaxHyperplane().getLocation().getX(), TEST_EPS);
+        Assert.assertSame(precision, interval.getMaxHyperplane().getPrecision());
     }
 }

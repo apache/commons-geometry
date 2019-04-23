@@ -156,6 +156,28 @@ public class OrientedPointTest {
     }
 
     @Test
+    public void testOffset_infinityArguments() {
+        // arrange
+        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(-2.0), true, TEST_PRECISION);
+
+        // act/assert
+        GeometryTestUtils.assertPositiveInfinity(pt.offset(Vector1D.of(Double.POSITIVE_INFINITY)));
+        GeometryTestUtils.assertNegativeInfinity(pt.offset(Vector1D.of(Double.NEGATIVE_INFINITY)));
+    }
+
+    @Test
+    public void testOffset_infinityLocation() {
+        // arrange
+        OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(Double.POSITIVE_INFINITY), true, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertTrue(Double.isNaN(pt.offset(Vector1D.of(Double.POSITIVE_INFINITY))));
+        GeometryTestUtils.assertNegativeInfinity(pt.offset(Vector1D.of(Double.NEGATIVE_INFINITY)));
+
+        GeometryTestUtils.assertNegativeInfinity(pt.offset(Vector1D.of(0)));
+    }
+
+    @Test
     public void testWholeHyperplane() {
         // arrange
         OrientedPoint pt = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), false, TEST_PRECISION);

@@ -117,12 +117,24 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     /** {@inheritDoc} */
     @Override
     public OrientedPoint transform(final Transform<Vector1D> transform) {
-        Vector1D transformedLocation = transform.apply(location);
-        Vector1D transformedPlusDirPt = transform.apply(location.add(getDirection()));
+        final Vector1D transformedLocation = transform.apply(location);
+
+        Vector1D transformedDir;
+        if (location.isInfinite()) {
+            // use a test point to determine if the direction switches or not
+            final Vector1D transformedZero = transform.apply(Vector1D.ZERO);
+            final Vector1D transformedTempDir = transform.apply(getDirection());
+
+            transformedDir = transformedZero.vectorTo(transformedTempDir);
+        }
+        else {
+            final Vector1D transformedPlusDir = transform.apply(location.add(getDirection()));
+            transformedDir = transformedLocation.vectorTo(transformedPlusDir);
+        }
 
         return OrientedPoint.fromPointAndDirection(
                     transformedLocation,
-                    transformedLocation.vectorTo(transformedPlusDirPt),
+                    transformedDir,
                     getPrecision()
                 );
     }
