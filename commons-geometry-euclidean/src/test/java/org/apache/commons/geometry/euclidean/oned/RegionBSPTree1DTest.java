@@ -176,7 +176,7 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = new RegionBSPTree1D(true);
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -189,7 +189,7 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(0, intervals.size());
@@ -204,7 +204,7 @@ public class RegionBSPTree1DTest {
         tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(1.0, true, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -220,7 +220,7 @@ public class RegionBSPTree1DTest {
         tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(-1.0, false, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -236,7 +236,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(-1, 1, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -253,7 +253,7 @@ public class RegionBSPTree1DTest {
         tree.complement();
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(2, intervals.size());
@@ -272,7 +272,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(10, Double.POSITIVE_INFINITY, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(3, intervals.size());
@@ -290,7 +290,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(1, 1, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -307,7 +307,7 @@ public class RegionBSPTree1DTest {
         tree.complement();
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(2, intervals.size());
@@ -325,7 +325,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(2, 2, precision));
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(2, intervals.size());
@@ -344,95 +344,13 @@ public class RegionBSPTree1DTest {
         tree.complement();
 
         // act
-        List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(3, intervals.size());
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
         checkInterval(intervals.get(1), 1, 2);
         checkInterval(intervals.get(2), 2, Double.POSITIVE_INFINITY);
-    }
-
-    @Test
-    public void testToIntervals_pointsMergedFromMinSide() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(1, 1, TEST_PRECISION));
-        tree.add(Interval.of(1.05, 1.07, TEST_PRECISION));
-        tree.add(Interval.of(1.09, Double.POSITIVE_INFINITY, TEST_PRECISION));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(precision);
-
-        // assert
-        Assert.assertEquals(1, intervals.size());
-        checkInterval(intervals.get(0), 1, Double.POSITIVE_INFINITY, precision);
-    }
-
-    @Test
-    public void testToIntervals_pointsMergedFromMaxSide() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
-        tree.add(Interval.of(1.05, 1.07, TEST_PRECISION));
-        tree.add(Interval.of(1.08, 1.09, TEST_PRECISION));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(precision);
-
-        // assert
-        Assert.assertEquals(1, intervals.size());
-        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1.09, precision);
-    }
-
-    @Test
-    public void testToIntervals_pointsMergedFromBothSide() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(1, 1.01, TEST_PRECISION));
-        tree.add(Interval.of(1.02, 1.03, TEST_PRECISION));
-        tree.add(Interval.of(1.04, 1.05, TEST_PRECISION));
-        tree.add(Interval.of(1.06, 4, TEST_PRECISION));
-        tree.add(Interval.of(4.01, 4.02, TEST_PRECISION));
-        tree.add(Interval.of(4.03, 4.04, TEST_PRECISION));
-        tree.add(Interval.of(4.05, 4.06, TEST_PRECISION));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(precision);
-
-        // assert
-        Assert.assertEquals(1, intervals.size());
-        checkInterval(intervals.get(0), 1, 4.06, precision);
-    }
-
-    @Test
-    public void testToIntervals_mixOfMergedAndUnmergedPoints() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(0.1);
-
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-        tree.add(Interval.of(-3, -2.5, TEST_PRECISION));
-        tree.add(Interval.of(-2, 1, TEST_PRECISION));
-        tree.add(Interval.of(1.05, 1.07, TEST_PRECISION));
-        tree.add(Interval.of(1.99, 2, TEST_PRECISION));
-        tree.add(Interval.of(2.01, 4, TEST_PRECISION));
-        tree.add(Interval.of(5, 7, TEST_PRECISION));
-
-        // act
-        List<Interval> intervals = tree.toIntervals(precision);
-
-        // assert
-        Assert.assertEquals(4, intervals.size());
-        checkInterval(intervals.get(0), -3, -2.5, precision);
-        checkInterval(intervals.get(1), -2, 1.07, precision);
-        checkInterval(intervals.get(2), 1.99, 4, precision);
-        checkInterval(intervals.get(3), 5, 7, precision);
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
