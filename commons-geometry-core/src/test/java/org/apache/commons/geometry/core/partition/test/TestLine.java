@@ -208,7 +208,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<TestPoint2D> wholeHyperplane() {
+    public ConvexSubHyperplane<TestPoint2D> span() {
         return new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, this);
     }
 

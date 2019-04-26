@@ -97,7 +97,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      * @param convexSubs iterable containing a collection of subhyperplanes
      *      to insert into the tree
      */
-    void insert(Iterable<ConvexSubHyperplane<P>> convexSubs);
+    void insert(Iterable<? extends ConvexSubHyperplane<P>> convexSubs);
 
     /** Make the current instance a deep copy of the argument.
      * @param src the tree to copy

@@ -37,124 +37,123 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
 
-    /** {@link OrientedPoint} instance representing the min boundary of the interval.
-     * This instance will be negative-facing. Infinite values are allowed but not NaN.
-     */
-    private final OrientedPoint minHyperplane;
+    /** Interval instance representing the entire real number line. */
+    private static final Interval REALS = new Interval(null, null);
 
-    /** {@link OrientedPoint} instance representing the max boundary of the interval
-     * This instance will be negative-facing. Infinite values are allowed but not NaN.
+    /** {@link OrientedPoint} instance representing the min boundary of the interval,
+     * or null if no min boundary exists. If present, this instance will be negative-facing.
+     * Infinite values are allowed but not NaN.
      */
-    private final OrientedPoint maxHyperplane;
+    private final OrientedPoint minBoundary;
+
+    /** {@link OrientedPoint} instance representing the max boundary of the interval,
+     * or null if no max boundary exists. If present, this instance will be negative-facing.
+     * Infinite values are allowed but not NaN.
+     */
+    private final OrientedPoint maxBoundary;
 
     /** Create an instance from min and max bounding hyperplanes. No validation is performed.
      * Callers are responsible for ensuring that the given hyperplanes represent a valid
      * interval.
-     * @param minHyperplane the min (negative-facing) hyperplane
-     * @param maxHyperplane the max (positive-facing) hyperplane
+     * @param minBoundary the min (negative-facing) hyperplane
+     * @param maxBoundary the max (positive-facing) hyperplane
      */
-    private Interval(final OrientedPoint minHyperplane, final OrientedPoint maxHyperplane) {
-        this.minHyperplane = minHyperplane;
-        this.maxHyperplane = maxHyperplane;
+    private Interval(final OrientedPoint minBoundary, final OrientedPoint maxBoundary) {
+        this.minBoundary = minBoundary;
+        this.maxBoundary = maxBoundary;
     }
 
-    /** Get the minimum value for the interval.
-     * @return the minimum value for the interval
+    /** Get the minimum value for the interval or {@link Double#NEGATIVE_INFINITY}
+     * if no minimum value exists.
+     * @return the minimum value for the interval or {@link Double#NEGATIVE_INFINITY}
+     *      if no minimum value exists.
      */
     public double getMin() {
-        return minHyperplane.getPoint().getX();
+        return (minBoundary != null) ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
     }
 
-    /** Get the maximum value for the interval.
-     * @return the maximum value for the interval
+    /** Get the maximum value for the interval or {@link Double#POSITIVE_INFINITY}
+     * if no maximum value exists.
+     * @return the maximum value for the interval or {@link Double#POSITIVE_INFINITY}
+     *      if no maximum value exists.
      */
     public double getMax() {
-        return maxHyperplane.getPoint().getX();
-    }
-
-    /** Get a {@link Vector1D} instance representing the minimum value of the
-     * interval.
-     * @return the minimum point of the interval
-     */
-    public Vector1D getMinPoint() {
-        return minHyperplane.getPoint();
-    }
-
-    /** Get a {@link Vector1D} instance representing the maximum value of the
-     * interval.
-     * @return the maximum point of the interval
-     */
-    public Vector1D getMaxPoint() {
-        return maxHyperplane.getPoint();
+        return (maxBoundary != null) ? maxBoundary.getLocation() : Double.POSITIVE_INFINITY;
     }
 
     /**
      * Get the {@link OrientedPoint} forming the minimum bounding hyperplane
-     * of the interval. This hyperplane is oriented to point in the negative direction.
-     * @return the min hyperplane of the interval
+     * of the interval, or null if none exists. If present, This hyperplane
+     * is oriented to point in the negative direction.
+     * @return the hyperplane forming the minimum boundary of the interval or
+     *      null if no minimum boundary exists
      */
-    public OrientedPoint getMinHyperplane() {
-        return minHyperplane;
+    public OrientedPoint getMinBoundary() {
+        return minBoundary;
     }
 
     /**
      * Get the {@link OrientedPoint} forming the maximum bounding hyperplane
-     * of the interval. This hyperplane is oriented to point in the positive direction.
-     * @return the max hyperplane of the interval
+     * of the interval, or null if none exists. If present, this hyperplane
+     * is oriented to point in the positive direction.
+     * @return the hyperplane forming the maximum boundary of the interval or
+     *      null if no maximum boundary exists
      */
-    public OrientedPoint getMaxHyperplane() {
-        return maxHyperplane;
+    public OrientedPoint getMaxBoundary() {
+        return maxBoundary;
     }
 
-    /** True if the region is infinite, meaning that at least one of the boundary
-     * values is infinite.
+    /** True if the region is infinite, meaning that at least one of the boundaries
+     * does not exist.
      * @return true if the region is infinite
      */
     public boolean isInfinite() {
-        return minHyperplane.getPoint().isInfinite() ||
-                maxHyperplane.getPoint().isInfinite();
+        return minBoundary == null || maxBoundary == null;
     }
 
     /** {@inheritDoc} */
     @Override
     public RegionLocation classify(final Vector1D pt) {
-        final RegionLocation minLoc = classifyWithBoundary(minHyperplane, pt);
-
-        if (minLoc == RegionLocation.INSIDE) {
-            return classifyWithBoundary(maxHyperplane, pt);
-        }
-
-        return minLoc;
+        return classify(pt.getX());
     }
 
-    private RegionLocation classifyWithBoundary(final OrientedPoint hyperplane, final Vector1D pt) {
-        final double hyperx = hyperplane.getPoint().getX();
-        final double ptx = pt.getX();
-
-        if (Double.isInfinite(hyperx) && Double.compare(hyperx, ptx) == 0) {
-            return RegionLocation.INSIDE;
-        }
-
-        HyperplaneLocation loc = hyperplane.classify(pt);
-
-        if (loc == HyperplaneLocation.ON) {
-            return RegionLocation.BOUNDARY;
-        }
-        else if (loc == HyperplaneLocation.PLUS) {
-            return RegionLocation.OUTSIDE;
-        }
-        return RegionLocation.INSIDE;
-    }
-
-    /** Classify a point with respect to the interval. This is
-     * a convenience overload of {@link #classify(Vector1D)} for
-     * use in one dimension.
-     * @param x the point to classify
-     * @return the location of the point with respect to the interval
+    /** Classify a point with respect to the interval. This is a convenience
+     * overload of {@link #classify(Vector1D)} for use in one dimension.
+     * @param location the location to classify
+     * @return the classification of the point with respect to the interval
      * @see #classify(Vector1D)
      */
-    public RegionLocation classify(final double x) {
-        return classify(Vector1D.of(x));
+    public RegionLocation classify(final double location) {
+        final RegionLocation minLoc = classifyWithBoundary(minBoundary, location);
+        final RegionLocation maxLoc = classifyWithBoundary(maxBoundary, location);
+
+        if (minLoc == RegionLocation.BOUNDARY || maxLoc == RegionLocation.BOUNDARY) {
+            return RegionLocation.BOUNDARY;
+        }
+        else if (minLoc == RegionLocation.INSIDE && maxLoc == RegionLocation.INSIDE) {
+            return RegionLocation.INSIDE;
+        }
+        return RegionLocation.OUTSIDE;
+    }
+
+    private RegionLocation classifyWithBoundary(final OrientedPoint boundary, final double location) {
+        if (Double.isNaN(location)) {
+            return RegionLocation.OUTSIDE;
+        }
+        else if (boundary == null) {
+            return RegionLocation.INSIDE;
+        }
+        else {
+            final HyperplaneLocation hyperLoc = boundary.classify(location);
+
+            if (hyperLoc == HyperplaneLocation.ON) {
+                return RegionLocation.BOUNDARY;
+            }
+            else if (hyperLoc == HyperplaneLocation.PLUS) {
+                return RegionLocation.OUTSIDE;
+            }
+            return RegionLocation.INSIDE;
+        }
     }
 
     /** Return true if the given point location is on the inside or boundary
@@ -171,8 +170,12 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return a new transformed interval
      */
     public Interval transform(final Transform<Vector1D> transform) {
-        final OrientedPoint transformedMin = minHyperplane.transform(transform);
-        final OrientedPoint transformedMax = maxHyperplane.transform(transform);
+        final OrientedPoint transformedMin = (minBoundary != null) ?
+                minBoundary.transform(transform) :
+                null;
+        final OrientedPoint transformedMax = (maxBoundary != null) ?
+                maxBoundary.transform(transform) :
+                null;
 
         return of(transformedMin, transformedMax);
     }
@@ -191,13 +194,16 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean isFull() {
-        return getMinPoint().isInfinite() &&
-                getMaxPoint().isInfinite();
+        return minBoundary == null && maxBoundary == null;
     }
 
     /** {@inheritDoc} */
     @Override
     public double size() {
+        if (isInfinite()) {
+            return Double.POSITIVE_INFINITY;
+        }
+
         return getMax() - getMin();
     }
 
@@ -222,14 +228,14 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
         RegionNode1D node = tree.getRoot();
 
-        if (!minHyperplane.getPoint().isInfinite()) {
-            node.cut(minHyperplane);
+        if (minBoundary != null) {
+            node.cut(minBoundary);
 
             node = node.getMinus();
         }
 
-        if (!maxHyperplane.getPoint().isInfinite()) {
-            node.cut(maxHyperplane);
+        if (maxBoundary != null) {
+            node.cut(maxBoundary);
         }
 
         return tree;
@@ -238,7 +244,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(minHyperplane, maxHyperplane);
+        return Objects.hash(minBoundary, maxBoundary);
     }
 
     /** {@inheritDoc} */
@@ -253,8 +259,8 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
         Interval other = (Interval) obj;
 
-        return Objects.equals(minHyperplane, other.minHyperplane) &&
-                Objects.equals(maxHyperplane, other.maxHyperplane);
+        return Objects.equals(minBoundary, other.minBoundary) &&
+                Objects.equals(maxBoundary, other.maxBoundary);
     }
 
     /** {@inheritDoc} */
@@ -285,8 +291,19 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         final double min = Math.min(a, b);
         final double max = Math.max(a, b);
 
-        return of(OrientedPoint.fromPointAndDirection(min, false, precision),
-                OrientedPoint.fromPointAndDirection(max, true, precision));
+        final OrientedPoint minBoundary = Double.isFinite(min) ?
+                OrientedPoint.fromLocationAndDirection(min, false, precision) :
+                null;
+
+        final OrientedPoint maxBoundary = Double.isFinite(max) ?
+                OrientedPoint.fromLocationAndDirection(max, true, precision) :
+                null;
+
+        if (minBoundary == null && maxBoundary == null) {
+            return REALS;
+        }
+
+        return new Interval(minBoundary, maxBoundary);
     }
 
     /** Create a new interval from the given points. The returned interval represents
@@ -302,12 +319,61 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     }
 
     public static Interval of(final OrientedPoint a, final OrientedPoint b) {
-        validateIntervalHyperplanes(a, b);
+        OrientedPoint minBoundary = null;
+        OrientedPoint maxBoundary = null;
 
-        final OrientedPoint min = a.isPositiveFacing() ? b : a;
-        final OrientedPoint max = a.isPositiveFacing() ? a : b;
+        final boolean hasABound = a != null && !a.getPoint().isInfinite();
+        final boolean hasBBound = b != null && !b.getPoint().isInfinite();
 
-        return new Interval(min, max);
+        if (!hasABound) {
+            if (!hasBBound) {
+                return REALS;
+            }
+
+            if (b.isPositiveFacing()) {
+                maxBoundary = b;
+            }
+            else {
+                minBoundary = b;
+            }
+        }
+        else if (!hasBBound) {
+            if (a.isPositiveFacing()) {
+                maxBoundary = a;
+            }
+            else {
+                minBoundary = a;
+            }
+        }
+        else {
+            if (a.isPositiveFacing() == b.isPositiveFacing()) {
+                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
+                        + a + ", " + b);
+            }
+
+            minBoundary = a.isPositiveFacing() ? b : a;
+            maxBoundary = a.isPositiveFacing() ? a : b;
+
+            if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
+                    b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
+                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
+                            + a + ", " + b);
+            }
+        }
+
+        final double minLoc = minBoundary != null ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
+        final double maxLoc = maxBoundary != null ? maxBoundary.getLocation() : Double.POSITIVE_INFINITY;
+
+        validateIntervalValues(minLoc, maxLoc);
+
+        return new Interval(minBoundary, maxBoundary);
+    }
+
+    /** Return an interval representing the entire real number line.
+     * @return an interval representing the entire real number line.
+     */
+    public static Interval reals() {
+        return REALS;
     }
 
     /** Validate that the given value can be used to construct an interval. The values
@@ -322,31 +388,6 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
                 (Double.isInfinite(a) && Double.compare(a, b) == 0)) {
 
             throw new IllegalArgumentException("Invalid interval values: [" + a + ", " + b + "]");
-        }
-    }
-
-    /** Validate that the given hyperplanes can be used to create an interval. The locations of
-     * the hyperplanes must meet the criteria of {@link #validateIntervalValues(double, double)},
-     * the hyperplanes must point in opposite directions, and neither hyperplane can be on the
-     * plus side of the other.
-     * @param a first hyperplane
-     * @param b second hyperplane
-     * @throws IllegalArgumentException if (1) either value is NaN, (2) both values are infinite
-     *      and have the same sign, (3) the hyperplanes point in the same direction, or (4) one hyperplane
-     *      is on the plus side of the other
-     */
-    private static void validateIntervalHyperplanes(final OrientedPoint a, final OrientedPoint b) {
-        validateIntervalValues(a.getPoint().getX(), b.getPoint().getX());
-
-        if (a.isPositiveFacing() == b.isPositiveFacing()) {
-            throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
-                        + a + ", " + b);
-        }
-
-        if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
-                b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
-            throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
-                        + a + ", " + b);
         }
     }
 }

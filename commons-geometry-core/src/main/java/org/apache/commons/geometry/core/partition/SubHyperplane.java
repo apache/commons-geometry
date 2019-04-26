@@ -36,7 +36,7 @@ public interface SubHyperplane<P extends Point<P>> {
      * subhyperplanes.
      * @return
      */
-    List<ConvexSubHyperplane<P>> toConvex();
+    List<? extends ConvexSubHyperplane<P>> toConvex();
 
     /** Interface for joining multiple {@link SubHyperplane}s into a single
      * instance.

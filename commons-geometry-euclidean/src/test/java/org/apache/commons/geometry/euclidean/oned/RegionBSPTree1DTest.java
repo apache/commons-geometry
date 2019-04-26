@@ -61,8 +61,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).wholeHyperplane(),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).wholeHyperplane()
+                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
+                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
                 ));
 
         // act/assert
@@ -104,8 +104,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).wholeHyperplane(),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).wholeHyperplane()
+                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
+                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
                 ));
 
         // act/assert
@@ -201,7 +201,7 @@ public class RegionBSPTree1DTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         RegionBSPTree1D tree = new RegionBSPTree1D();
-        tree.getRoot().cut(OrientedPoint.fromPointAndDirection(1.0, true, precision));
+        tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(1.0, true, precision));
 
         // act
         List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
@@ -217,7 +217,7 @@ public class RegionBSPTree1DTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         RegionBSPTree1D tree = new RegionBSPTree1D();
-        tree.getRoot().cut(OrientedPoint.fromPointAndDirection(-1.0, false, precision));
+        tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(-1.0, false, precision));
 
         // act
         List<Interval> intervals = tree.toIntervals(TEST_PRECISION);
@@ -460,16 +460,5 @@ public class RegionBSPTree1DTest {
     private static void checkInterval(Interval interval, double min, double max, DoublePrecisionContext precision) {
         Assert.assertEquals(min, interval.getMin(), TEST_EPS);
         Assert.assertEquals(max, interval.getMax(), TEST_EPS);
-
-        Assert.assertEquals(min, interval.getMinPoint().getX(), TEST_EPS);
-        Assert.assertEquals(max, interval.getMaxPoint().getX(), TEST_EPS);
-
-        Assert.assertFalse(interval.getMinHyperplane().isPositiveFacing());
-        Assert.assertEquals(min, interval.getMinHyperplane().getPoint().getX(), TEST_EPS);
-        Assert.assertSame(precision, interval.getMinHyperplane().getPrecision());
-
-        Assert.assertTrue(interval.getMaxHyperplane().isPositiveFacing());
-        Assert.assertEquals(max, interval.getMaxHyperplane().getPoint().getX(), TEST_EPS);
-        Assert.assertSame(precision, interval.getMaxHyperplane().getPrecision());
     }
 }

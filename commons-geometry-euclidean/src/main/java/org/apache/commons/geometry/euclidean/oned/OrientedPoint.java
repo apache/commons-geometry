@@ -62,11 +62,22 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         this.positiveFacing = positiveFacing;
     }
 
-    /** Get the point representing the hyperplane's location on the real line.
-     * @return the hyperplane location
+    /** Get the location of the hyperplane as a point.
+     * @return the hyperplane location as a point
+     * @see #getLocation()
      */
     public Vector1D getPoint() {
         return point;
+    }
+
+    /**
+     * Get the location of the hyperplane as a single value. This is
+     * equivalent to {@code pt.getPoint().getX()}.
+     * @return the location of the hyperplane as a single value.
+     * @see #getPoint()
+     */
+    public double getLocation() {
+        return point.getX();
     }
 
     /** Get the direction of the hyperplane's plus side.
@@ -141,9 +152,45 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public double offset(final Vector1D point) {
-        final double delta = point.getX() - this.point.getX();
+    public double offset(final Vector1D pt) {
+        return offset(pt.getX());
+    }
+
+    /** Compute the offset of the given number line location. This is
+     * a convenience overload of {@link #offset(Vector1D)} for use in
+     * one dimension.
+     * @param location the number line location to compute the offset for
+     * @return the offset of the location from the instance
+     */
+    public double offset(final double location) {
+        final double delta = location - point.getX();
         return positiveFacing ? delta : -delta;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public HyperplaneLocation classify(final Vector1D pt) {
+        return classify(pt.getX());
+    }
+
+    /** Classify the number line location with respect to the instance.
+     * This is a convenience overload of {@link #classify(Vector1D)} for
+     * use in one dimension.
+     * @param location the number line location to classify
+     * @return the classification of the number line location with respect
+     *      to this instance
+     */
+    public HyperplaneLocation classify(final double location) {
+        final double offsetValue = offset(location);
+
+        final int cmp = getPrecision().sign(offsetValue);
+        if (cmp > 0) {
+            return HyperplaneLocation.PLUS;
+        }
+        else if (cmp < 0) {
+            return HyperplaneLocation.MINUS;
+        }
+        return HyperplaneLocation.ON;
     }
 
     /** {@inheritDoc} */
@@ -154,13 +201,13 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D project(final Vector1D point) {
+    public Vector1D project(final Vector1D pt) {
         return this.point;
     }
 
     /** {@inheritDoc} */
     @Override
-    public OrientedPointSubHyperplane wholeHyperplane() {
+    public OrientedPointSubHyperplane span() {
         return new OrientedPointSubHyperplane(this);
     }
 
@@ -215,7 +262,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
-            .append("[location= ")
+            .append("[point= ")
             .append(point)
             .append(", direction= ")
             .append(getDirection())
@@ -231,7 +278,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * @param precision precision context used to compare floating point values
      * @return a new instance
      */
-    public static OrientedPoint fromPointAndDirection(final double location, final boolean positiveFacing,
+    public static OrientedPoint fromLocationAndDirection(final double location, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
         return fromPointAndDirection(Vector1D.of(location), positiveFacing, precision);
     }
@@ -303,9 +350,9 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new OrientedPoint(Vector1D.of(location), false, precision);
     }
 
-    /** {@link ConvexSubHyperplane} implementation for Euclidean 1D space. Since there are not subspaces in 1D,
-     * this is effectively a stub implementation and is used to allow for the correct functioning of partitioning
-     * code.
+    /** {@link ConvexSubHyperplane} implementation for Euclidean 1D space. Since there are no subspaces in 1D,
+     * this is effectively a stub implementation, its main use being to allow for the correct functioning of
+     * partitioning code.
      */
     public static class OrientedPointSubHyperplane implements ConvexSubHyperplane<Vector1D>, Serializable {
 
@@ -315,6 +362,9 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         /** The underlying hyperplane for this instance. */
         private final OrientedPoint hyperplane;
 
+        /** Simple constructor.
+         * @param hyperplane underlying hyperplane instance
+         */
         public OrientedPointSubHyperplane(final OrientedPoint hyperplane) {
             this.hyperplane = hyperplane;
         }
@@ -372,24 +422,63 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public List<ConvexSubHyperplane<Vector1D>> toConvex() {
+        public List<OrientedPointSubHyperplane> toConvex() {
             return Arrays.asList(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public ConvexSubHyperplane<Vector1D> transform(Transform<Vector1D> transform) {
-            return getHyperplane().transform(transform).wholeHyperplane();
+        public OrientedPointSubHyperplane transform(Transform<Vector1D> transform) {
+            return getHyperplane().transform(transform).span();
         }
 
         /** {@inheritDoc} */
         @Override
-        public Builder<Vector1D> builder() {
+        public OrientedPointSubHyperplaneBuilder builder() {
             return new OrientedPointSubHyperplaneBuilder(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(hyperplane);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            else if (!(obj instanceof OrientedPointSubHyperplane)) {
+                return false;
+            }
+
+            OrientedPointSubHyperplane other = (OrientedPointSubHyperplane) obj;
+
+            return Objects.equals(this.hyperplane, other.hyperplane);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName())
+                .append("[point= ")
+                .append(hyperplane.getPoint())
+                .append(", direction= ")
+                .append(hyperplane.getDirection())
+                .append(']');
+
+            return sb.toString();
         }
     }
 
-    private static class OrientedPointSubHyperplaneBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+    /** {@link SubHyperplane.Builder} implementation for Euclidean 1D space. Similar to {@link OrientedPointSubHyperplane},
+     * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
+     * for the correct functioning of partitioning code.
+     */
+    public static class OrientedPointSubHyperplaneBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
@@ -416,6 +505,39 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         @Override
         public OrientedPointSubHyperplane build() {
             return base;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(base);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            else if (!(obj instanceof OrientedPointSubHyperplaneBuilder)) {
+                return false;
+            }
+
+            OrientedPointSubHyperplaneBuilder other = (OrientedPointSubHyperplaneBuilder) obj;
+
+            return Objects.equals(this.base, other.base);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName())
+                .append("[base= ")
+                .append(base)
+                .append(']');
+
+            return sb.toString();
         }
 
         /** Validate the given subhyperplane lies on the same hyperplane

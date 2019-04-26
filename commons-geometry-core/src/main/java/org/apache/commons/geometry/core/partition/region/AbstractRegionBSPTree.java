@@ -312,8 +312,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
         characterizeSubHyperplane(sub, node.getMinus(), minusInBuilder, minusOutBuilder);
 
-        List<ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
-        List<ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
+        List<? extends ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
+        List<? extends ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
 
         // create the result boundary builders
         SubHyperplane.Builder<P> insideFacing = sub.builder();

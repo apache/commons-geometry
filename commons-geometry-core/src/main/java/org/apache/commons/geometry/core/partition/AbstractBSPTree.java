@@ -105,12 +105,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     @Override
     public void insert(final ConvexSubHyperplane<P> convexSub) {
         insertRecursive(getRoot(), convexSub,
-                convexSub.getHyperplane().wholeHyperplane());
+                convexSub.getHyperplane().span());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void insert(final Iterable<ConvexSubHyperplane<P>> convexSubs) {
+    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs) {
         for (ConvexSubHyperplane<P> convexSub : convexSubs) {
             insert(convexSub);
         }
@@ -334,7 +334,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     private boolean insertCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
-        ConvexSubHyperplane<P> cut = fitToCell(node, cutter.wholeHyperplane());
+        ConvexSubHyperplane<P> cut = fitToCell(node, cutter.span());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
             setNodeCut(node, null);

@@ -19,6 +19,10 @@ package org.apache.commons.geometry.core.partition;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 
+/** Interface representing a hyperplane, which is a subspace of degree
+ * one less than the space it is embedded in.
+ * @param <P> Point implementation type
+ */
 public interface Hyperplane<P extends Point<P>> {
 
     /** Get the offset (oriented distance) of a point with respect
@@ -81,8 +85,9 @@ public interface Hyperplane<P extends Point<P>> {
      */
     boolean similarOrientation(Hyperplane<P> other);
 
-    /** Return a {@link ConvexSubHyperplane} containing all points lying in this hyperplane.
+    /** Return a {@link ConvexSubHyperplane} spanning this entire hyperplane. The returned
+     * subhyperplane contains all points lying in this hyperplane and no more.
      * @return a {@link ConvexSubHyperplane} containing all points lying in this hyperplane
      */
-    ConvexSubHyperplane<P> wholeHyperplane();
+    ConvexSubHyperplane<P> span();
 }

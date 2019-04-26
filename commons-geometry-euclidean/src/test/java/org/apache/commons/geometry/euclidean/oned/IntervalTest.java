@@ -484,9 +484,6 @@ public class IntervalTest {
         Assert.assertEquals(min, interval.getMin(), TEST_EPS);
         Assert.assertEquals(max, interval.getMax(), TEST_EPS);
 
-        Assert.assertEquals(min, interval.getMinPoint().getX(), TEST_EPS);
-        Assert.assertEquals(max, interval.getMaxPoint().getX(), TEST_EPS);
-
         Assert.assertFalse(interval.isEmpty()); // always false
     }
 }
