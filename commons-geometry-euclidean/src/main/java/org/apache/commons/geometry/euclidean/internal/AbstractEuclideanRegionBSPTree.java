@@ -40,13 +40,13 @@ public abstract class AbstractEuclideanRegionBSPTree<V extends EuclideanVector<V
 
     /** {@inheritDoc} */
     @Override
-    public double size() {
+    public double getSize() {
         return getRegionProperties().getSize();
     }
 
     /** {@inheritDoc} */
     @Override
-    public V barycenter() {
+    public V getBarycenter() {
         return getRegionProperties().getBarycenter();
     }
 

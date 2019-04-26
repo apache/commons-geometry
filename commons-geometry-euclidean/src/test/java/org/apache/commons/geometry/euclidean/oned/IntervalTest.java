@@ -21,6 +21,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -96,6 +97,81 @@ public class IntervalTest {
     }
 
     @Test
+    public void testOf_hyperplanes() {
+        // act/assert
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION)), 1, 1);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), 1, 1);
+
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(-2, false, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), -2, 5);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(-2, false, TEST_PRECISION)), -2, 5);
+
+        checkInterval(Interval.of(
+                null,
+                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION),
+                null), Double.NEGATIVE_INFINITY, 5);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(Double.NEGATIVE_INFINITY, false, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
+
+        checkInterval(Interval.of(
+                null,
+                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION),
+                null), 5, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.of(
+                OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION),
+                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testOf_hyperplanes_invalidArgs() {
+        // arrange
+        Class<?> excType = IllegalArgumentException.class;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+
+        GeometryTestUtils.assertThrows(
+                () -> Interval.of(
+                        OrientedPoint.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                        OrientedPoint.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+    }
+
+    @Test
     public void testIsInfinite() {
         // act/assert
         Assert.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
@@ -142,7 +218,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_positiveInfinite() {
+    public void testClassify_maxInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
@@ -161,7 +237,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_negativeInfinite() {
+    public void testClassify_minInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
@@ -180,7 +256,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testClassify_bothInfinite() {
+    public void testClassify_minMaxInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
@@ -225,20 +301,38 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSize() {
+    public void testGetSize() {
         // act/assert
-        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).size(), TEST_EPS);
+        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getSize(), TEST_EPS);
 
-        Assert.assertEquals(4, Interval.of(-2, 2, TEST_PRECISION).size(), TEST_EPS);
-        Assert.assertEquals(5, Interval.of(2, -3, TEST_PRECISION).size(), TEST_EPS);
-
-        Assert.assertEquals(Double.POSITIVE_INFINITY,
-                Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).size(), TEST_EPS);
-        Assert.assertEquals(Double.POSITIVE_INFINITY,
-                Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).size(), TEST_EPS);
+        Assert.assertEquals(4, Interval.of(-2, 2, TEST_PRECISION).getSize(), TEST_EPS);
+        Assert.assertEquals(5, Interval.of(2, -3, TEST_PRECISION).getSize(), TEST_EPS);
 
         Assert.assertEquals(Double.POSITIVE_INFINITY,
-                Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).size(), TEST_EPS);
+                Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getSize(), TEST_EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY,
+                Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getSize(), TEST_EPS);
+
+        Assert.assertEquals(Double.POSITIVE_INFINITY,
+                Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter() {
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ZERO,
+                Interval.of(-1, 1, TEST_PRECISION).getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(10),
+                Interval.of(10, 10, TEST_PRECISION).getBarycenter(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2),
+                Interval.of(1, 3, TEST_PRECISION).getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-1),
+                Interval.of(-2, 0, TEST_PRECISION).getBarycenter(), TEST_EPS);
+
+        Assert.assertNull(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getBarycenter());
+        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getBarycenter());
+        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getBarycenter());
     }
 
     @Test
@@ -288,7 +382,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void checkToTree_positiveInfinite() {
+    public void checkToTree_maxInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(-1, Double.POSITIVE_INFINITY, precision);
@@ -312,7 +406,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void checkToTree_negativeInfinite() {
+    public void checkToTree_minInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, precision);
@@ -336,7 +430,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void checkToTree_bothInfinite() {
+    public void checkToTree_minMaxInfinite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, precision);
@@ -366,6 +460,9 @@ public class IntervalTest {
 
         checkInterval(Interval.of(-1, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform), -2,
                 Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -450,6 +547,22 @@ public class IntervalTest {
         Assert.assertTrue(str.contains("max= 2.0"));
     }
 
+    @Test
+    public void testReals() {
+        // act
+        Interval reals = Interval.reals();
+
+        // assert
+        Assert.assertTrue(reals.isFull());
+        Assert.assertFalse(reals.isEmpty());
+        Assert.assertFalse(reals.hasMinBoundary());
+        Assert.assertFalse(reals.hasMaxBoundary());
+        Assert.assertTrue(reals.isInfinite());
+
+        Assert.assertEquals(RegionLocation.INSIDE, reals.classify(Double.NEGATIVE_INFINITY));
+        Assert.assertEquals(RegionLocation.INSIDE, reals.classify(Double.POSITIVE_INFINITY));
+    }
+
     private static void checkClassify(Interval interval, RegionLocation loc, double ... points) {
         for (double x : points) {
             String msg = "Unexpected location for point " + x;
@@ -472,17 +585,49 @@ public class IntervalTest {
         for (double x : points) {
             String msg = "Unexpected location for point " + x;
 
+            Assert.assertEquals(msg, loc, tree.classify(x));
             Assert.assertEquals(msg, loc, tree.classify(Vector1D.of(x)));
         }
     }
 
+    /** Check that the given interval matches the arguments and is internally consistent.
+     * @param interval
+     * @param min
+     * @param max
+     */
     private static void checkInterval(Interval interval, double min, double max) {
         checkInterval(interval, min, max, TEST_PRECISION);
     }
 
+    /** Check that the given interval matches the arguments and is internally consistent.
+     * @param interval
+     * @param min
+     * @param max
+     * @param precision
+     */
     private static void checkInterval(Interval interval, double min, double max, DoublePrecisionContext precision) {
         Assert.assertEquals(min, interval.getMin(), TEST_EPS);
         Assert.assertEquals(max, interval.getMax(), TEST_EPS);
+
+        boolean finiteMin = Double.isFinite(min);
+        boolean finiteMax = Double.isFinite(max);
+
+        Assert.assertEquals(finiteMin, interval.hasMinBoundary());
+        Assert.assertEquals(finiteMax, interval.hasMaxBoundary());
+
+        if (finiteMin) {
+            Assert.assertEquals(min, interval.getMinBoundary().getLocation(), TEST_EPS);
+        }
+        else {
+            Assert.assertNull(interval.getMinBoundary());
+        }
+
+        if (finiteMax) {
+            Assert.assertEquals(max, interval.getMaxBoundary().getLocation(), TEST_EPS);
+        }
+        else {
+            Assert.assertNull(interval.getMaxBoundary());
+        }
 
         Assert.assertFalse(interval.isEmpty()); // always false
     }

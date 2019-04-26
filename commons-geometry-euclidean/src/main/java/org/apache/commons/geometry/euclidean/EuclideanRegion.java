@@ -24,10 +24,10 @@ public interface EuclideanRegion<V extends EuclideanVector<V>> extends Region<V>
      * dimensions of the region.
      * @return the size of the region
      */
-    double size();
+    double getSize();
 
     /** Get the barycenter of the region or null if no barycenter exists.
      * @return the barycenter of the region or null if none exists
      */
-    V barycenter();
+    V getBarycenter();
 }

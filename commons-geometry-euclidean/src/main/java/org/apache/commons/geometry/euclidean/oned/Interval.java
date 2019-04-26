@@ -103,6 +103,20 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return maxBoundary;
     }
 
+    /** Return true if the interval has a minimum (lower) boundary.
+     * @return true if the interval has minimum (lower) boundary
+     */
+    public boolean hasMinBoundary() {
+        return minBoundary != null;
+    }
+
+    /** Return true if the interval has a maximum (upper) boundary.
+     * @return true if the interval has maximum (upper) boundary
+     */
+    public boolean hasMaxBoundary() {
+        return maxBoundary != null;
+    }
+
     /** True if the region is infinite, meaning that at least one of the boundaries
      * does not exist.
      * @return true if the region is infinite
@@ -124,8 +138,8 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @see #classify(Vector1D)
      */
     public RegionLocation classify(final double location) {
-        final RegionLocation minLoc = classifyWithBoundary(minBoundary, location);
-        final RegionLocation maxLoc = classifyWithBoundary(maxBoundary, location);
+        final RegionLocation minLoc = classifyWithBoundary(location, minBoundary);
+        final RegionLocation maxLoc = classifyWithBoundary(location, maxBoundary);
 
         if (minLoc == RegionLocation.BOUNDARY || maxLoc == RegionLocation.BOUNDARY) {
             return RegionLocation.BOUNDARY;
@@ -136,7 +150,12 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return RegionLocation.OUTSIDE;
     }
 
-    private RegionLocation classifyWithBoundary(final OrientedPoint boundary, final double location) {
+    /** Classify the location using the given interval boundary, which may be null.
+     * @param location the location to classify
+     * @param boundary interval boundary to classify against
+     * @return
+     */
+    private RegionLocation classifyWithBoundary(final double location, final OrientedPoint boundary) {
         if (Double.isNaN(location)) {
             return RegionLocation.OUTSIDE;
         }
@@ -199,7 +218,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public double size() {
+    public double getSize() {
         if (isInfinite()) {
             return Double.POSITIVE_INFINITY;
         }
@@ -209,7 +228,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D barycenter() {
+    public Vector1D getBarycenter() {
         if (isInfinite()) {
             return null;
         }
@@ -318,15 +337,36 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return of(a.getX(), b.getX(), precision);
     }
 
+    /** Create a new interval from the given hyperplanes.
+     * @param a
+     * @param b
+     * @return
+     */
     public static Interval of(final OrientedPoint a, final OrientedPoint b) {
+        // determine the ordering of the hyperplanes
         OrientedPoint minBoundary = null;
         OrientedPoint maxBoundary = null;
 
-        final boolean hasABound = a != null && !a.getPoint().isInfinite();
-        final boolean hasBBound = b != null && !b.getPoint().isInfinite();
+        if (a != null && b != null) {
+            // both hyperplanes are present, so validate then against each other
+            if (a.isPositiveFacing() == b.isPositiveFacing()) {
+                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
+                        + a + ", " + b);
+            }
 
-        if (!hasABound) {
-            if (!hasBBound) {
+            if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
+                    b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
+                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
+                            + a + ", " + b);
+            }
+
+            // min boundary faces -infinity, max boundary faces +infinity
+            minBoundary = a.isPositiveFacing() ? b : a;
+            maxBoundary = a.isPositiveFacing() ? a : b;
+        }
+        else if (a == null) {
+            if (b == null) {
+                // no boundaries; return the full number line
                 return REALS;
             }
 
@@ -337,7 +377,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
                 minBoundary = b;
             }
         }
-        else if (!hasBBound) {
+        else {
             if (a.isPositiveFacing()) {
                 maxBoundary = a;
             }
@@ -345,28 +385,17 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
                 minBoundary = a;
             }
         }
-        else {
-            if (a.isPositiveFacing() == b.isPositiveFacing()) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
-                        + a + ", " + b);
-            }
 
-            minBoundary = a.isPositiveFacing() ? b : a;
-            maxBoundary = a.isPositiveFacing() ? a : b;
-
-            if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
-                    b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
-                            + a + ", " + b);
-            }
-        }
-
-        final double minLoc = minBoundary != null ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
-        final double maxLoc = maxBoundary != null ? maxBoundary.getLocation() : Double.POSITIVE_INFINITY;
+        // validate the boundary locations
+        final double minLoc = (minBoundary != null) ? minBoundary.getLocation() : Double.NEGATIVE_INFINITY;
+        final double maxLoc = (maxBoundary != null) ? maxBoundary.getLocation() : Double.POSITIVE_INFINITY;
 
         validateIntervalValues(minLoc, maxLoc);
 
-        return new Interval(minBoundary, maxBoundary);
+        // create the interval, replacing infinites with nulls
+        return new Interval(
+                Double.isFinite(minLoc) ? minBoundary : null,
+                Double.isFinite(maxLoc) ? maxBoundary : null);
     }
 
     /** Return an interval representing the entire real number line.
