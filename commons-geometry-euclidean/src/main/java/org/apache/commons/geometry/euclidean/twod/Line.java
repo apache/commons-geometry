@@ -465,9 +465,8 @@ public final class Line implements Hyperplane_Old<Vector2D>, Embedding_Old<Vecto
         /** {@inheritDoc} */
         @Override
         public Line apply(final Hyperplane_Old<Vector2D> hyperplane) {
-//            final Line line = (Line) hyperplane;
-//            return line.transform(matrix);
-            return null;
+            final Line line = (Line) hyperplane;
+            return line.transform(matrix);
         }
 
         /** {@inheritDoc} */
