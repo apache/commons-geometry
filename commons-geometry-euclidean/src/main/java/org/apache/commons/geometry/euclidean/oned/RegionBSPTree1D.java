@@ -83,6 +83,48 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
         return contains(Vector1D.of(x));
     }
 
+    /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
+     * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITE} if
+     * the region is empty.
+     * @return the minimum value on the inside of the region
+     */
+    public double getMin() {
+        double min = Double.POSITIVE_INFINITY;
+
+        RegionNode1D node = getRoot();
+        OrientedPoint pt;
+
+        while (!node.isLeaf()) {
+            pt = (OrientedPoint) node.getCutHyperplane();
+
+            min = pt.getLocation();
+            node = pt.isPositiveFacing() ? node.getMinus() : node.getPlus();
+        }
+
+        return node.isInside() ? Double.NEGATIVE_INFINITY : min;
+    }
+
+    /** Get the maximum value on the inside of the region; returns {@link Double#POSITIVE_INFINITY}
+     * if the region does not have a maximum value and {@link Double#NEGATIVE_INFINITY} if
+     * the region is empty.
+     * @return the maximum value on the inside of the region
+     */
+    public double getMax() {
+        double max = Double.NEGATIVE_INFINITY;
+
+        RegionNode1D node = getRoot();
+        OrientedPoint pt;
+
+        while (!node.isLeaf()) {
+            pt = (OrientedPoint) node.getCutHyperplane();
+
+            max = pt.getLocation();
+            node = pt.isPositiveFacing() ? node.getPlus() : node.getMinus();
+        }
+
+        return node.isInside() ? Double.POSITIVE_INFINITY : max;
+    }
+
     /** Convert the the region represented by this tree into a list of separate
      * {@link Interval}s, arranged in order of ascending min value.
      * @return list of {@link Interval}s representing this region in order of
@@ -191,6 +233,20 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
      */
     public static RegionBSPTree1D empty() {
         return new RegionBSPTree1D(false);
+    }
+
+    /** Construct a new instance from the given collection of intervals.
+     * @param intervals the intervals to populate the region with
+     * @return a new instance constructed from the given collection of intervals
+     */
+    public static RegionBSPTree1D fromIntervals(Iterable<Interval> intervals) {
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+
+        for (Interval interval : intervals) {
+            tree.add(interval);
+        }
+
+        return tree;
     }
 
     /** BSP tree node for one dimensional Euclidean space.

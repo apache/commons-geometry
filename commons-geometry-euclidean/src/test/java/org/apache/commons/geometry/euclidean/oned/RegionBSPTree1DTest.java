@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -547,6 +548,71 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
+    public void testGetMinMax_full() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // act/assert
+        GeometryTestUtils.assertPositiveInfinity(tree.getMin());
+        GeometryTestUtils.assertNegativeInfinity(tree.getMax());
+    }
+
+    @Test
+    public void testGetMinMax_empty() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // act/assert
+        GeometryTestUtils.assertPositiveInfinity(tree.getMin());
+        GeometryTestUtils.assertNegativeInfinity(tree.getMax());
+    }
+
+    @Test
+    public void testGetMinMax_halfSpaces() {
+        // arrange
+        RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
+        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+
+        RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
+        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(-2, posHalfSpace.getMin(), TEST_EPS);
+        GeometryTestUtils.assertPositiveInfinity(posHalfSpace.getMax());
+
+        GeometryTestUtils.assertNegativeInfinity(negHalfSpace.getMin());
+        Assert.assertEquals(3, negHalfSpace.getMax(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetMinMax_multipleIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+                    Interval.of(3, 5, TEST_PRECISION),
+                    Interval.of(-4, -2, TEST_PRECISION),
+                    Interval.of(0, 0, TEST_PRECISION)
+                ));
+
+        // act/assert
+        Assert.assertEquals(-4, tree.getMin(), TEST_EPS);
+        Assert.assertEquals(5, tree.getMax(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetMinMax_pointsAtMinAndMax() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+                    Interval.of(5, 5, TEST_PRECISION),
+                    Interval.of(-4, -4, TEST_PRECISION),
+                    Interval.of(0, 0, TEST_PRECISION)
+                ));
+
+        // act/assert
+        Assert.assertEquals(-4, tree.getMin(), TEST_EPS);
+        Assert.assertEquals(5, tree.getMax(), TEST_EPS);
+    }
+
+    @Test
     public void testFull_factoryMethod() {
         // act
         RegionBSPTree1D tree = RegionBSPTree1D.full();
@@ -566,6 +632,37 @@ public class RegionBSPTree1DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
         Assert.assertNotSame(tree, RegionBSPTree1D.full());
+    }
+
+    @Test
+    public void testFromIntervals() {
+        // act
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.of(3, 4, TEST_PRECISION)
+                ));
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.INSIDE, 1.5, 3.5);
+        checkClassify(tree, RegionLocation.BOUNDARY, 1, 2, 3, 4);
+        checkClassify(tree, RegionLocation.OUTSIDE, 0, 2.5, 5);
+
+        Assert.assertEquals(2, tree.toIntervals().size());
+    }
+
+    @Test
+    public void testFromIntervals_noItervals() {
+        // act
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList());
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+
+        Assert.assertEquals(0, tree.toIntervals().size());
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
