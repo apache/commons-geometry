@@ -114,7 +114,7 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
 
     /** Compute the min/max intervals for all interior convex regions in the tree and
      * pass the values to the given visitor function.
-     * @param visitor the object that will receive the calculated min and max for each
+     * @param visitor the object that will receive the calculated min and max boundary for each
      *      insides node's convex region
      */
     private void visitInsideIntervals(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
@@ -179,6 +179,20 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
         return visitor.getRegionProperties();
     }
 
+    /** Return a new {@link RegionBSPTree1D} instance containing the entire space.
+     * @return a new {@link RegionBSPTree1D} instance containing the entire space
+     */
+    public static RegionBSPTree1D full() {
+        return new RegionBSPTree1D(true);
+    }
+
+    /** Return a new, empty {@link RegionBSPTree1D} instance.
+     * @return a new, empty {@link RegionBSPTree1D} instance
+     */
+    public static RegionBSPTree1D empty() {
+        return new RegionBSPTree1D(false);
+    }
+
     /** BSP tree node for one dimensional Euclidean space.
      */
     public static final class RegionNode1D extends AbstractRegionBSPTree.AbstractRegionNode<Vector1D, RegionNode1D> {
@@ -200,41 +214,54 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
         }
     }
 
+    /** Class for calculating general properties for a {@link RegionBSPTree1D}.
+     */
     private static class RegionPropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
     {
+        /** Number of inside intervals visited. */
         private int count = 0;
 
+        /** Total computed size of all inside regions. */
         private double size = 0;
-        private double sum = 0;
 
-        private double lastMin;
+        /** Raw sum of the barycenters of each inside interval. */
+        private double rawBarycenterSum = 0;
+
+        /** The sum of the barycenter of each inside interval, scaled by the size of the interval. */
+        private double scaledBarycenterSum = 0;
 
         /** {@inheritDoc} */
         @Override
         public void accept(OrientedPoint min, OrientedPoint max) {
             ++count;
 
-            final double minLoc = min.getLocation();
-            final double maxLoc = max.getLocation();
+            final double minLoc = (min != null) ? min.getLocation() : Double.NEGATIVE_INFINITY;
+            final double maxLoc = (max != null) ? max.getLocation() : Double.POSITIVE_INFINITY;
 
             final double intervalSize = maxLoc - minLoc;
-            final double intervalBarycenter = 0.5 * (maxLoc - minLoc);
+            final double intervalBarycenter = 0.5 * (maxLoc + minLoc);
 
             size += intervalSize;
-            sum += intervalSize * intervalBarycenter;
-
-            lastMin = minLoc;
+            rawBarycenterSum += intervalBarycenter;
+            scaledBarycenterSum += intervalSize * intervalBarycenter;
         }
 
+        /** Get the computed properties for the region. This must only be called after
+         * every inside interval has been visited.
+         * @return properties for the region
+         */
         public EuclideanRegionProperties<Vector1D> getRegionProperties() {
             Vector1D barycenter = null;
 
             if (count > 0 && Double.isFinite(size)) {
                 if (size > 0.0) {
-                    barycenter = Vector1D.of(sum / size);
+                    // use the scaled sum if we have a non-zero size
+                    barycenter = Vector1D.of(scaledBarycenterSum / size);
                 }
                 else {
-                    barycenter = Vector1D.of(lastMin);
+                    // use the raw sum if we don't have a size; this will be
+                    // the case if the region only contains points with zero size
+                    barycenter = Vector1D.of(rawBarycenterSum / count);
                 }
             }
 

@@ -22,12 +22,13 @@ import java.util.List;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class RegionBSPTree1DTest {
 
-    private static final double TEST_EPS = 1e-15;
+    private static final double TEST_EPS = 1e-10;
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
@@ -351,6 +352,220 @@ public class RegionBSPTree1DTest {
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
         checkInterval(intervals.get(1), 1, 2);
         checkInterval(intervals.get(2), 2, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testGetSize_infinite() {
+        // arrange
+        RegionBSPTree1D full = RegionBSPTree1D.full();
+
+        RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
+        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+
+        RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
+        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(Double.POSITIVE_INFINITY, full.getSize(), TEST_EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, posHalfSpace.getSize(), TEST_EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, negHalfSpace.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_empty() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // act/assert
+        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_exactPoints() {
+        // arrange
+        RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
+        singlePoint.add(Interval.of(1, 1, TEST_PRECISION));
+
+        RegionBSPTree1D multiplePoints = RegionBSPTree1D.empty();
+        multiplePoints.add(Interval.of(1, 1, TEST_PRECISION));
+        multiplePoints.add(Interval.of(-1, -1, TEST_PRECISION));
+        multiplePoints.add(Interval.of(2, 2, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(0, singlePoint.getSize(), TEST_EPS);
+        Assert.assertEquals(0, multiplePoints.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_pointsWithinPrecision() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+
+        RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
+        singlePoint.add(Interval.of(1, 1.02, precision));
+
+        RegionBSPTree1D multiplePoints = RegionBSPTree1D.empty();
+        multiplePoints.add(Interval.of(1, 1.02, precision));
+        multiplePoints.add(Interval.of(-1.02, -1, precision));
+        multiplePoints.add(Interval.of(2, 2.02, precision));
+
+        // act/assert
+        Assert.assertEquals(0.02, singlePoint.getSize(), TEST_EPS);
+        Assert.assertEquals(0.06, multiplePoints.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_nonEmptyIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(3, 5, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(3, tree.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_intervalWithPoints() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(3, 3, TEST_PRECISION));
+        tree.add(Interval.of(5, 5, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetSize_complementedRegion() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION));
+        tree.add(Interval.of(4, Double.POSITIVE_INFINITY, TEST_PRECISION));
+
+        tree.complement();
+
+        // act/assert
+        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter_infinite() {
+        // arrange
+        RegionBSPTree1D full = RegionBSPTree1D.full();
+
+        RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
+        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+
+        RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
+        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertNull(full.getBarycenter());
+        Assert.assertNull(posHalfSpace.getBarycenter());
+        Assert.assertNull(negHalfSpace.getBarycenter());
+    }
+
+    @Test
+    public void testGetBarycenter_empty() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // act/assert
+        Assert.assertNull(tree.getBarycenter());
+    }
+
+    @Test
+    public void testGetBarycenter_exactPoints() {
+        // arrange
+        RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
+        singlePoint.add(Interval.of(1, 1, TEST_PRECISION));
+
+        RegionBSPTree1D multiplePoints = RegionBSPTree1D.empty();
+        multiplePoints.add(Interval.of(1, 1, TEST_PRECISION));
+        multiplePoints.add(Interval.of(-1, -1, TEST_PRECISION));
+        multiplePoints.add(Interval.of(6, 6, TEST_PRECISION));
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), singlePoint.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), multiplePoints.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter_pointsWithinPrecision() {
+     // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
+
+        RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
+        singlePoint.add(Interval.of(1, 1.02, precision));
+
+        RegionBSPTree1D multiplePoints = RegionBSPTree1D.empty();
+        multiplePoints.add(Interval.of(1, 1.02, precision));
+        multiplePoints.add(Interval.of(-1.02, -1, precision));
+        multiplePoints.add(Interval.of(6, 6.02, precision));
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.01), singlePoint.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(6.01 / 3), multiplePoints.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter_nonEmptyIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(3, 5, TEST_PRECISION));
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(9.5 / 3), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter_complementedRegion() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION));
+        tree.add(Interval.of(4, Double.POSITIVE_INFINITY, TEST_PRECISION));
+
+        tree.complement();
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBarycenter_intervalWithPoints() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(3, 3, TEST_PRECISION));
+        tree.add(Interval.of(5, 5, TEST_PRECISION));
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.5), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testFull_factoryMethod() {
+        // act
+        RegionBSPTree1D tree = RegionBSPTree1D.full();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertNotSame(tree, RegionBSPTree1D.full());
+    }
+
+    @Test
+    public void testEmpty_factoryMethod() {
+        // act
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+        Assert.assertNotSame(tree, RegionBSPTree1D.full());
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
