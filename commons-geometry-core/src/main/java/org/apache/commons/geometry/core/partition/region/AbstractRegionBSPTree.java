@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
 import org.apache.commons.geometry.core.partition.BSPTree;
@@ -38,6 +39,12 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
+
+    /** The tree version that the region properties were last computed with */
+    private int regionPropertiesVersion = -1;
+
+    /** The current set of geometric properties for the region. */
+    private RegionProperties<P> regionProperties;
 
     /** Construct a new region will the given boolean determining whether or not the
      * region will be full (including the entire space) or empty (excluding the entire
@@ -96,6 +103,36 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         root.clearCut();
         root.setLocation(RegionLocation.OUTSIDE);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getSize() {
+        return getRegionProperties().getSize();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public P getBarycenter() {
+        return getRegionProperties().getBarycenter();
+    }
+
+    /** Get the geometric properties for the region.
+     * @return the geometric properties for the region
+     */
+    public RegionProperties<P> getRegionProperties() {
+        final int currentVersion = getVersion();
+
+        if (currentVersion != regionPropertiesVersion) {
+            regionProperties = computeRegionProperties();
+            regionPropertiesVersion = currentVersion;
+        }
+
+        return regionProperties;
+    }
+
+    /** Compute the geometric properties of the region.
+     */
+    protected abstract RegionProperties<P> computeRegionProperties();
 
     /** {@inheritDoc}
      *

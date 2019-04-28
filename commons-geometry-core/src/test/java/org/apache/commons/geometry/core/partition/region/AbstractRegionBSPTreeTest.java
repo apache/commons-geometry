@@ -271,6 +271,36 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
+    public void testGetRegionProperties_cachesValueBasedOnVersion() {
+        // act
+        RegionProperties<TestPoint2D> first = tree.getRegionProperties();
+        RegionProperties<TestPoint2D> second = tree.getRegionProperties();
+        tree.getRoot().cut(TestLine.X_AXIS);
+        RegionProperties<TestPoint2D> third = tree.getRegionProperties();
+
+        // assert
+        Assert.assertSame(first, second);
+        Assert.assertNotSame(second, third);
+
+        Assert.assertEquals(1, first.getSize(), PartitionTestUtils.EPS);
+        Assert.assertSame(TestPoint2D.ZERO, first.getBarycenter());
+    }
+
+    @Test
+    public void testGetSize() {
+        // act/assert
+        // make sure our stub value is pulled
+        Assert.assertEquals(1, tree.getSize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBarycenter() {
+        // act/assert
+        // make sure our stub value is pulled
+        Assert.assertSame(TestPoint2D.ZERO, tree.getBarycenter());
+    }
+
+    @Test
     public void testGetCutBoundary_emptyTree() {
         // act
         RegionCutBoundary<TestPoint2D> boundary = root.getCutBoundary();
@@ -1778,6 +1808,11 @@ public class AbstractRegionBSPTreeTest {
             return new TestRegionNode(this);
         }
 
+        @Override
+        protected RegionProperties<TestPoint2D> computeRegionProperties() {
+            // return a set of stub values
+            return new RegionProperties<>(1, TestPoint2D.ZERO);
+        }
     }
 
     private static class TestRegionNode extends AbstractRegionNode<TestPoint2D, TestRegionNode> {

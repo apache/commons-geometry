@@ -31,6 +31,19 @@ public interface Region<P extends Point<P>> {
      */
     boolean isEmpty();
 
+    /** Get the size of the region. The meaning of this will vary depending on
+     * the space and dimension of the region. For example, in Euclidean space,
+     * this will be a length in 1D, an area in 2D, and a volume in 3D.
+     * @return the size of the region
+     */
+    double getSize();
+
+    /** Get the barycenter of the region or null if none exists. A barycenter
+     * will not exist for empty or infinite regions.
+     * @return the barycenter of the region or null if none exist
+     */
+    P getBarycenter();
+
     /** Classify the given point with respect to the region.
      * @param pt the point to classify
      * @return the location of the point with respect to the region

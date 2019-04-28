@@ -24,12 +24,12 @@ import java.util.function.BiConsumer;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
-import org.apache.commons.geometry.euclidean.internal.AbstractEuclideanRegionBSPTree;
+import org.apache.commons.geometry.core.partition.region.RegionProperties;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.
  */
-public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
+public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
@@ -213,7 +213,7 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
 
     /** {@inheritDoc} */
     @Override
-    protected EuclideanRegionProperties<Vector1D> computeRegionProperties() {
+    protected RegionProperties<Vector1D> computeRegionProperties() {
         RegionPropertiesVisitor visitor = new RegionPropertiesVisitor();
 
         visitInsideIntervals(visitor);
@@ -306,7 +306,7 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
          * every inside interval has been visited.
          * @return properties for the region
          */
-        public EuclideanRegionProperties<Vector1D> getRegionProperties() {
+        public RegionProperties<Vector1D> getRegionProperties() {
             Vector1D barycenter = null;
 
             if (count > 0 && Double.isFinite(size)) {
@@ -321,7 +321,7 @@ public final class RegionBSPTree1D extends AbstractEuclideanRegionBSPTree<Vector
                 }
             }
 
-            return new EuclideanRegionProperties<>(size, barycenter);
+            return new RegionProperties<>(size, barycenter);
         }
     }
 }
