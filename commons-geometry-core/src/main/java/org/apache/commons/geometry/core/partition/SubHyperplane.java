@@ -28,7 +28,7 @@ public interface SubHyperplane<P extends Point<P>> {
 
     boolean isInfinite();
 
-    double size();
+    double getSize();
 
     Builder<P> builder();
 

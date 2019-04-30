@@ -16,6 +16,10 @@
  */
 package org.apache.commons.geometry.core;
 
+/** Interface representing a region in a space. A region partitions a space
+ * into sets of points lying on the inside, outside, and boundary.
+ * @param <P> Point implementation type
+ */
 public interface Region<P extends Point<P>> {
 
     /** Return true if the region spans the entire space. In other words,
@@ -37,6 +41,13 @@ public interface Region<P extends Point<P>> {
      * @return the size of the region
      */
     double getSize();
+
+    /** Get the size of the boundary of the region. The size is a value in
+     * the {@code d-1} dimension space. For example, in Euclidean space,
+     * this will be a length in 2D and an area in 3D.
+     * @return the size of the boundary of the region
+     */
+    double getBoundarySize();
 
     /** Get the barycenter of the region or null if none exists. A barycenter
      * will not exist for empty or infinite regions.

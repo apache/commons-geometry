@@ -318,6 +318,14 @@ public class IntervalTest {
     }
 
     @Test
+    public void testGetBoundarySize() {
+        // act/assert
+        Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0, Interval.of(-2, 5, TEST_PRECISION).getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0, Interval.reals().getBoundarySize(), TEST_EPS);
+    }
+
+    @Test
     public void testGetBarycenter() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ZERO,

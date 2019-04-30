@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition.region;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
@@ -40,11 +41,14 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
 
-    /** The tree version that the region properties were last computed with */
-    private int regionPropertiesVersion = -1;
+    /** Value used to indicate an unknown size. */
+    private static final double UNKNOWN_SIZE = -1.0;
 
-    /** The current set of geometric properties for the region. */
-    private RegionProperties<P> regionProperties;
+    /** The region boundary size; this is computed when requested and then cached. */
+    private double boundarySize = UNKNOWN_SIZE;
+
+    /** The current size properties for the region. */
+    private RegionSizeProperties<P> regionSizeProperties;
 
     /** Construct a new region will the given boolean determining whether or not the
      * region will be full (including the entire space) or empty (excluding the entire
@@ -107,32 +111,51 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        return getRegionProperties().getSize();
+        return getRegionSizeProperties().getSize();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getBoundarySize() {
+        if (boundarySize < 0.0) {
+            double sum = 0.0;
+
+            RegionCutBoundary<P> boundary;
+            for (AbstractRegionNode<P, N> node : this) {
+                boundary = node.getCutBoundary();
+                if (boundary != null) {
+                    sum += boundary.getInsideFacing().getSize();
+                    sum += boundary.getOutsideFacing().getSize();
+                }
+            }
+
+            boundarySize = sum;
+        }
+
+        return boundarySize;
     }
 
     /** {@inheritDoc} */
     @Override
     public P getBarycenter() {
-        return getRegionProperties().getBarycenter();
+        return getRegionSizeProperties().getBarycenter();
     }
 
-    /** Get the geometric properties for the region.
-     * @return the geometric properties for the region
+    /** Get the size-related properties for the region. The value is computed
+     * lazily and cached.
+     * @return the size-related properties for the region
      */
-    public RegionProperties<P> getRegionProperties() {
-        final int currentVersion = getVersion();
-
-        if (currentVersion != regionPropertiesVersion) {
-            regionProperties = computeRegionProperties();
-            regionPropertiesVersion = currentVersion;
+    protected RegionSizeProperties<P> getRegionSizeProperties() {
+        if (regionSizeProperties == null) {
+            regionSizeProperties = computeRegionSizeProperties();
         }
 
-        return regionProperties;
+        return regionSizeProperties;
     }
 
-    /** Compute the geometric properties of the region.
+    /** Compute the size-related properties of the region.
      */
-    protected abstract RegionProperties<P> computeRegionProperties();
+    protected abstract RegionSizeProperties<P> computeRegionSizeProperties();
 
     /** {@inheritDoc}
      *
@@ -415,6 +438,23 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         child.setLocation(isPlus ? RegionLocation.OUTSIDE : RegionLocation.INSIDE);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void incrementVersion() {
+        super.incrementVersion();
+
+        invalidateRegionProperties();
+    }
+
+    /**
+     * Invalidate properties computed for the region. The properties should be recomputed
+     * when next requested.
+     */
+    protected void invalidateRegionProperties() {
+        boundarySize = UNKNOWN_SIZE;
+        regionSizeProperties = null;
+    }
+
     /** {@link BSPTree.Node} implementation for use with {@link AbstractRegionBSPTree}s.
      * @param <P> Point implementation type
      */
@@ -641,6 +681,46 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             // the operation is symmetric, so perform the same operation but with the
             // nodes flipped
             return mergeLeaf(node2, node1);
+        }
+    }
+
+    /** Class containing the primary size-related properties of a region. These properties
+     * are typically computed at the same time, so this class serves to encapsulate the result
+     * of the combined computation.
+     * @param <P> Point implementation type
+     */
+    protected static class RegionSizeProperties <P extends Point<P>> implements Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190428L;
+
+        /** The size of the region */
+        private final double size;
+
+        /** The barycenter of the region */
+        private final P barycenter;
+
+        /** Simple constructor.
+         * @param size the region size
+         * @param barycenter the region barycenter
+         */
+        public RegionSizeProperties(final double size, final P barycenter) {
+            this.size = size;
+            this.barycenter = barycenter;
+        }
+
+        /** Get the size of the region.
+         * @return the size of the region
+         */
+        public double getSize() {
+            return size;
+        }
+
+        /** Get the barycenter of the region.
+         * @return the barycenter of the region
+         */
+        public P getBarycenter() {
+            return barycenter;
         }
     }
 }

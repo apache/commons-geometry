@@ -17,14 +17,15 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partition.region.RegionProperties;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.
@@ -34,9 +35,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
 
-    /** Comparator used to sort Intervals in ascending location.  */
-    private static final Comparator<Interval> INTERVAL_COMPARATOR = (Interval a, Interval b) -> {
-        return Double.compare(a.getMin(), b.getMax());
+    /** Comparator used to sort BoundaryParis in ascending location.  */
+    private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
+        return Double.compare(a.getMinValue(), b.getMinValue());
     };
 
     /** Create a new region representing the entire number line.
@@ -82,6 +83,16 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     public boolean contains(final double x) {
         return contains(Vector1D.of(x));
     }
+
+    /** {@inheritDoc}
+    *
+    *  <p>This method simply returns 0 because boundaries in one dimension do not
+    *  have any size.</p>
+    */
+   @Override
+   public double getBoundarySize() {
+       return 0;
+   }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
      * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITE} if
@@ -132,26 +143,69 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     public List<Interval> toIntervals() {
 
-        final List<Interval> intervals = new ArrayList<>();
+        final List<BoundaryPair> boundaryPairs = new ArrayList<>();
 
         visitInsideIntervals((min, max) -> {
-            // flip the hyperplanes if needed since there's no
-            // guarantee that the inside will be on the minus side
-            // of the hyperplane (for example, if the region is complemented)
-
-            if (min != null && min.isPositiveFacing()) {
-                min = min.reverse();
-            }
-            if (max != null && !max.isPositiveFacing()) {
-                max = max.reverse();
-            }
-
-            intervals.add(Interval.of(min, max));
+            boundaryPairs.add(new BoundaryPair(min, max));
         });
 
-        intervals.sort(INTERVAL_COMPARATOR);
+        boundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
+
+        final List<Interval> intervals = new ArrayList<>();
+
+        BoundaryPair start = null;
+        BoundaryPair end = null;
+
+        for (BoundaryPair current : boundaryPairs) {
+            if (start == null) {
+                start = current;
+                end = current;
+            }
+            else if (Objects.equals(end.getMax(), current.getMin())) {
+                // these intervals should be merged
+                end = current;
+            }
+            else {
+                // these intervals should not be merged
+                intervals.add(createInterval(start, end));
+
+                // queue up the next pair
+                start = current;
+                end = current;
+            }
+        }
+
+        if (start != null && end != null) {
+            intervals.add(createInterval(start, end));
+        }
 
         return intervals;
+    }
+
+    /** Create an interval instance from the min boundary from the start boundary pair and
+     * the max boundary from the end boundary pair. The hyperplane directions are adjusted
+     * as needed.
+     * @param start starting boundary pair
+     * @param end ending boundary pair
+     * @return an interval created from the min boundary of the given start pair and the
+     *      max boundary from the given end pair
+     */
+    private Interval createInterval(final BoundaryPair start, final BoundaryPair end) {
+        OrientedPoint min = start.getMin();
+        OrientedPoint max = end.getMax();
+
+        // flip the hyperplanes if needed since there's no
+        // guarantee that the inside will be on the minus side
+        // of the hyperplane (for example, if the region is complemented)
+
+        if (min != null && min.isPositiveFacing()) {
+            min = min.reverse();
+        }
+        if (max != null && !max.isPositiveFacing()) {
+            max = max.reverse();
+        }
+
+        return Interval.of(min, max);
     }
 
     /** Compute the min/max intervals for all interior convex regions in the tree and
@@ -213,12 +267,12 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** {@inheritDoc} */
     @Override
-    protected RegionProperties<Vector1D> computeRegionProperties() {
-        RegionPropertiesVisitor visitor = new RegionPropertiesVisitor();
+    protected RegionSizeProperties<Vector1D> computeRegionSizeProperties() {
+        RegionSizePropertiesVisitor visitor = new RegionSizePropertiesVisitor();
 
         visitInsideIntervals(visitor);
 
-        return visitor.getRegionProperties();
+        return visitor.getRegionSizeProperties();
     }
 
     /** Return a new {@link RegionBSPTree1D} instance containing the entire space.
@@ -249,6 +303,14 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         return tree;
     }
 
+    /** Construct a new instance from the given intervals.
+     * @param intervals the intervals to populate the region with
+     * @return a new instance constructed from the given intervals
+     */
+    public static RegionBSPTree1D fromIntervals(Interval ... intervals) {
+        return fromIntervals(Arrays.asList(intervals));
+    }
+
     /** BSP tree node for one dimensional Euclidean space.
      */
     public static final class RegionNode1D extends AbstractRegionBSPTree.AbstractRegionNode<Vector1D, RegionNode1D> {
@@ -270,9 +332,43 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         }
     }
 
-    /** Class for calculating general properties for a {@link RegionBSPTree1D}.
+    /** Internal class containing pairs of interval boundaries.
      */
-    private static class RegionPropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
+    private static class BoundaryPair implements Comparable<BoundaryPair> {
+
+        /** The min boundary */
+        private final OrientedPoint min;
+
+        /** The max boundary */
+        private final OrientedPoint max;
+
+        BoundaryPair(final OrientedPoint min, final OrientedPoint max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public OrientedPoint getMin() {
+            return min;
+        }
+
+        public OrientedPoint getMax() {
+            return max;
+        }
+
+        public double getMinValue() {
+            return (min != null) ? min.getLocation() : Double.NEGATIVE_INFINITY;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int compareTo(BoundaryPair other) {
+            return Double.compare(this.getMinValue(), other.getMinValue());
+        }
+    }
+
+    /** Internal class for calculating size-related properties for a {@link RegionBSPTree1D}.
+     */
+    private static class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
     {
         /** Number of inside intervals visited. */
         private int count = 0;
@@ -306,7 +402,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          * every inside interval has been visited.
          * @return properties for the region
          */
-        public RegionProperties<Vector1D> getRegionProperties() {
+        public RegionSizeProperties<Vector1D> getRegionSizeProperties() {
             Vector1D barycenter = null;
 
             if (count > 0 && Double.isFinite(size)) {
@@ -321,7 +417,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
                 }
             }
 
-            return new RegionProperties<>(size, barycenter);
+            return new RegionSizeProperties<>(size, barycenter);
         }
     }
 }

@@ -114,18 +114,18 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
-        return PartitionTestUtils.PRECISION.eqZero(size());
+        return PartitionTestUtils.PRECISION.eqZero(getSize());
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        return Double.isInfinite(size());
+        return Double.isInfinite(getSize());
     }
 
     /** {@inheritDoc} */
     @Override
-    public double size() {
+    public double getSize() {
         return Math.abs(start - end);
     }
 

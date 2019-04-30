@@ -226,6 +226,16 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return getMax() - getMin();
     }
 
+    /** {@inheritDoc}
+     *
+     *  <p>This method simply returns 0 because boundaries in one dimension do not
+     *  have any size.</p>
+     */
+    @Override
+    public double getBoundarySize() {
+        return 0;
+    }
+
     /** {@inheritDoc} */
     @Override
     public Vector1D getBarycenter() {

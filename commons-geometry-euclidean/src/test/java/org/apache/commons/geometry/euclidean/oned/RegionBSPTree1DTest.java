@@ -121,9 +121,20 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
+    public void testGetBoundarySize_alwaysReturnsZero() {
+        // act/assert
+        Assert.assertEquals(0.0, RegionBSPTree1D.full().getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0.0, RegionBSPTree1D.empty().getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0.0, RegionBSPTree1D.fromIntervals(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.of(4, 5, TEST_PRECISION)
+                ).getBoundarySize(), TEST_EPS);
+    }
+
+    @Test
     public void testAdd_interval() {
         // arrange
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, -10, TEST_PRECISION));
@@ -140,9 +151,27 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
+    public void testAdd_adjacentIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        // act
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(2, 3, TEST_PRECISION));
+
+        // assert
+        checkClassify(tree, RegionLocation.INSIDE, 1.1, 2, 2.9);
+
+        checkClassify(tree, RegionLocation.BOUNDARY, 1, 3);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Double.NEGATIVE_INFINITY, 0, 0.9, 3.1, 4, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
     public void testAdd_addFullInterval() {
         // arrange
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act
         tree.add(Interval.of(-1, 1, TEST_PRECISION));
@@ -353,6 +382,44 @@ public class RegionBSPTree1DTest {
         checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, 1);
         checkInterval(intervals.get(1), 1, 2);
         checkInterval(intervals.get(2), 2, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testToIntervals_adjacentIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(2, 3, TEST_PRECISION));
+
+        // act
+        List<Interval> intervals = tree.toIntervals();
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), 1, 3);
+    }
+
+    @Test
+    public void testToIntervals_multipleAdjacentIntervals() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        tree.add(Interval.of(1, 2, TEST_PRECISION));
+        tree.add(Interval.of(2, 3, TEST_PRECISION));
+        tree.add(Interval.of(3, 4, TEST_PRECISION));
+
+        tree.add(Interval.of(-2, -1, TEST_PRECISION));
+        tree.add(Interval.of(5, 6, TEST_PRECISION));
+
+        // act
+        List<Interval> intervals = tree.toIntervals();
+
+        // assert
+        Assert.assertEquals(3, intervals.size());
+        checkInterval(intervals.get(0), -2, -1);
+        checkInterval(intervals.get(1), 1, 4);
+        checkInterval(intervals.get(2), 5, 6);
     }
 
     @Test
@@ -635,7 +702,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFromIntervals() {
+    public void testFromIntervals_iterable() {
         // act
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
                     Interval.of(1, 2, TEST_PRECISION),
@@ -654,7 +721,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testFromIntervals_noItervals() {
+    public void testFromIntervals_iterable_noItervals() {
         // act
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList());
 
@@ -663,6 +730,25 @@ public class RegionBSPTree1DTest {
         Assert.assertTrue(tree.isEmpty());
 
         Assert.assertEquals(0, tree.toIntervals().size());
+    }
+
+    @Test
+    public void testFromIntervals_varargs() {
+        // act
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.of(3, 4, TEST_PRECISION)
+                );
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.INSIDE, 1.5, 3.5);
+        checkClassify(tree, RegionLocation.BOUNDARY, 1, 2, 3, 4);
+        checkClassify(tree, RegionLocation.OUTSIDE, 0, 2.5, 5);
+
+        Assert.assertEquals(2, tree.toIntervals().size());
     }
 
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {

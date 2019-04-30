@@ -455,7 +455,7 @@ public class OrientedPointTest {
         Assert.assertSame(pt, sub.getHyperplane());
         Assert.assertFalse(sub.isEmpty());
         Assert.assertFalse(sub.isInfinite());
-        Assert.assertEquals(0.0, sub.size(), TEST_EPS);
+        Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
 
         List<OrientedPointSubHyperplane> list = sub.toConvex();
         Assert.assertEquals(1, list.size());

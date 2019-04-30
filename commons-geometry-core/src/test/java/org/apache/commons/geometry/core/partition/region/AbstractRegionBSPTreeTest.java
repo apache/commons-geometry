@@ -11,6 +11,7 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
+import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.RegionSizeProperties;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
@@ -271,12 +272,12 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetRegionProperties_cachesValueBasedOnVersion() {
+    public void testGetRegionSizeProperties_cachesValueBasedOnVersion() {
         // act
-        RegionProperties<TestPoint2D> first = tree.getRegionProperties();
-        RegionProperties<TestPoint2D> second = tree.getRegionProperties();
+        RegionSizeProperties<TestPoint2D> first = tree.getRegionSizeProperties();
+        RegionSizeProperties<TestPoint2D> second = tree.getRegionSizeProperties();
         tree.getRoot().cut(TestLine.X_AXIS);
-        RegionProperties<TestPoint2D> third = tree.getRegionProperties();
+        RegionSizeProperties<TestPoint2D> third = tree.getRegionSizeProperties();
 
         // assert
         Assert.assertSame(first, second);
@@ -298,6 +299,64 @@ public class AbstractRegionBSPTreeTest {
         // act/assert
         // make sure our stub value is pulled
         Assert.assertSame(TestPoint2D.ZERO, tree.getBarycenter());
+    }
+
+    @Test
+    public void testGetBoundarySize_fullAndEmpty() {
+        // act/assert
+        Assert.assertEquals(0.0, fullTree().getBoundarySize(), PartitionTestUtils.EPS);
+        Assert.assertEquals(0.0, emptyTree().getBoundarySize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBoundarySize_infinite() {
+        // arrange
+        TestRegionBSPTree halfPos = new TestRegionBSPTree(true);
+        halfPos.getRoot().cut(TestLine.X_AXIS);
+
+        TestRegionBSPTree halfPosComplement = new TestRegionBSPTree(true);
+        halfPosComplement.complement(halfPos);
+
+        // act/assert
+        Assert.assertEquals(Double.POSITIVE_INFINITY, halfPos.getBoundarySize(), PartitionTestUtils.EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, halfPosComplement.getBoundarySize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBoundarySize_box() {
+        // arrange
+        insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
+
+        // act/assert
+        Assert.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBoundarySize_boxComplement() {
+        // arrange
+        insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
+        tree.complement();
+
+        // act/assert
+        Assert.assertEquals(6.0, tree.getBoundarySize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBoundarySize_recomputesAfterChange() {
+        // arrange
+        insertBox(tree, new TestPoint2D(2, 2), new TestPoint2D(4, 1));
+
+        // act
+        double first = tree.getBoundarySize();
+        tree.insert(new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2)));
+
+        double second = tree.getBoundarySize();
+        double third = tree.getBoundarySize();
+
+        // assert
+        Assert.assertEquals(6.0, first, PartitionTestUtils.EPS);
+        Assert.assertEquals(4.0, second, PartitionTestUtils.EPS);
+        Assert.assertEquals(4.0, third, PartitionTestUtils.EPS);
     }
 
     @Test
@@ -1809,9 +1868,9 @@ public class AbstractRegionBSPTreeTest {
         }
 
         @Override
-        protected RegionProperties<TestPoint2D> computeRegionProperties() {
+        protected RegionSizeProperties<TestPoint2D> computeRegionSizeProperties() {
             // return a set of stub values
-            return new RegionProperties<>(1, TestPoint2D.ZERO);
+            return new RegionSizeProperties<>(1, TestPoint2D.ZERO);
         }
     }
 

@@ -83,11 +83,11 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
 
     /** {@inheritDoc} */
     @Override
-    public double size() {
+    public double getSize() {
         double size = 0.0;
 
         for (TestLineSegment seg : segments) {
-            size += seg.size();
+            size += seg.getSize();
         }
 
         return size;

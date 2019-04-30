@@ -398,7 +398,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
          *  <p>This method simply returns {@code 0}.</p>
          */
         @Override
-        public double size() {
+        public double getSize() {
             return 0;
         }
 
