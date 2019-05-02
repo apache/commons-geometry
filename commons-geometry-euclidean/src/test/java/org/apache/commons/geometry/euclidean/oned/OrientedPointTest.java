@@ -453,6 +453,7 @@ public class OrientedPointTest {
 
         // act/assert
         Assert.assertSame(pt, sub.getHyperplane());
+        Assert.assertFalse(sub.isFull());
         Assert.assertFalse(sub.isEmpty());
         Assert.assertFalse(sub.isInfinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);

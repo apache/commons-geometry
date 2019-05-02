@@ -61,6 +61,17 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFull() {
+        for (TestLineSegment seg : segments) {
+            if (seg.isFull()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isEmpty() {
         for (TestLineSegment seg : segments) {
             if (!seg.isEmpty()) {

@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.Region.BoundaryProjection;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -172,6 +173,74 @@ public class IntervalTest {
     }
 
     @Test
+    public void testPoint() {
+        // act/assert
+        checkInterval(Interval.point(0, TEST_PRECISION), 0, 0);
+        checkInterval(Interval.point(1, TEST_PRECISION), 1, 1);
+        checkInterval(Interval.point(-1, TEST_PRECISION), -1, -1);
+    }
+
+    @Test
+    public void testPoint_invalidArgs() {
+        // arrange
+        Class<?> excType = IllegalArgumentException.class;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(
+                () -> Interval.point(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.point(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.point(Double.NaN, TEST_PRECISION), excType);
+    }
+
+    @Test
+    public void testFromMin() {
+        // act/assert
+        checkInterval(Interval.fromMin(Double.NEGATIVE_INFINITY, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.fromMin(0, TEST_PRECISION), 0, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.fromMin(1, TEST_PRECISION), 1, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.fromMin(-1, TEST_PRECISION), -1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testFromMin_invalidArgs() {
+        // arrange
+        Class<?> excType = IllegalArgumentException.class;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(
+                () -> Interval.fromMin(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.fromMin(Double.NaN, TEST_PRECISION), excType);
+    }
+
+    @Test
+    public void testFromMax() {
+        // act/assert
+        checkInterval(Interval.fromMax(Double.POSITIVE_INFINITY, TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        checkInterval(Interval.fromMax(0, TEST_PRECISION), Double.NEGATIVE_INFINITY, 0);
+        checkInterval(Interval.fromMax(1, TEST_PRECISION), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(Interval.fromMax(-1, TEST_PRECISION), Double.NEGATIVE_INFINITY, -1);
+    }
+
+    @Test
+    public void testFromMax_invalidArgs() {
+        // arrange
+        Class<?> excType = IllegalArgumentException.class;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(
+                () -> Interval.fromMax(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
+        GeometryTestUtils.assertThrows(
+                () -> Interval.fromMax(Double.NaN, TEST_PRECISION), excType);
+    }
+
+    @Test
     public void testIsInfinite() {
         // act/assert
         Assert.assertFalse(Interval.of(1, 2, TEST_PRECISION).isInfinite());
@@ -322,7 +391,7 @@ public class IntervalTest {
         // act/assert
         Assert.assertEquals(0, Interval.of(1, 1, TEST_PRECISION).getBoundarySize(), TEST_EPS);
         Assert.assertEquals(0, Interval.of(-2, 5, TEST_PRECISION).getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0, Interval.reals().getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0, Interval.full().getBoundarySize(), TEST_EPS);
     }
 
     @Test
@@ -456,6 +525,89 @@ public class IntervalTest {
     }
 
     @Test
+    public void testProjectOnBoundary_full() {
+        // arrange
+        Interval full = Interval.full();
+
+        // act/assert
+        Assert.assertNull(full.projectOnBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertNull(full.projectOnBoundary(Vector1D.of(0)));
+        Assert.assertNull(full.projectOnBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
+    }
+
+    @Test
+    public void testProjectOnBoundary_singlePoint() {
+        // arrange
+        Interval interval = Interval.point(1, TEST_PRECISION);
+
+        // act/assert
+        checkBoundaryProjection(interval, -1, 1, 2);
+        checkBoundaryProjection(interval, 0, 1, 1);
+
+        checkBoundaryProjection(interval, 1, 1, 0);
+
+        checkBoundaryProjection(interval, 2, 1, 1);
+        checkBoundaryProjection(interval, 3, 1, 2);
+
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testProjectOnBoundary_closedInterval() {
+        // arrange
+        Interval interval = Interval.of(1, 3, TEST_PRECISION);
+
+        // act/assert
+        checkBoundaryProjection(interval, -1, 1, 2);
+        checkBoundaryProjection(interval, 0, 1, 1);
+        checkBoundaryProjection(interval, 1, 1, 0);
+
+        checkBoundaryProjection(interval, 1.9, 1, -0.9);
+        checkBoundaryProjection(interval, 2, 1, -1);
+        checkBoundaryProjection(interval, 2.1, 3, -0.9);
+
+        checkBoundaryProjection(interval, 3, 3, 0);
+        checkBoundaryProjection(interval, 4, 3, 1);
+        checkBoundaryProjection(interval, 5, 3, 2);
+
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 3, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testProjectOnBoundary_noMinBoundary() {
+        // arrange
+        Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION);
+
+        // act/assert
+        checkBoundaryProjection(interval, -1, 1, -2);
+        checkBoundaryProjection(interval, 0, 1, -1);
+        checkBoundaryProjection(interval, 1, 1, 0);
+        checkBoundaryProjection(interval, 2, 1, 1);
+        checkBoundaryProjection(interval, 3, 1, 2);
+
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testProjectOnBoundary_noMaxBoundary() {
+        // arrange
+        Interval interval = Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION);
+
+        // act/assert
+        checkBoundaryProjection(interval, -1, 1, 2);
+        checkBoundaryProjection(interval, 0, 1, 1);
+        checkBoundaryProjection(interval, 1, 1, 0);
+        checkBoundaryProjection(interval, 2, 1, -1);
+        checkBoundaryProjection(interval, 3, 1, -2);
+
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
+    }
+
+    @Test
     public void testTransform() {
         // arrange
         Transform<Vector1D> transform = (p) -> Vector1D.of(2.0 * p.getX());
@@ -556,28 +708,19 @@ public class IntervalTest {
     }
 
     @Test
-    public void testReals() {
+    public void testFull() {
         // act
-        Interval reals = Interval.reals();
+        Interval full = Interval.full();
 
         // assert
-        Assert.assertTrue(reals.isFull());
-        Assert.assertFalse(reals.isEmpty());
-        Assert.assertFalse(reals.hasMinBoundary());
-        Assert.assertFalse(reals.hasMaxBoundary());
-        Assert.assertTrue(reals.isInfinite());
+        Assert.assertTrue(full.isFull());
+        Assert.assertFalse(full.isEmpty());
+        Assert.assertFalse(full.hasMinBoundary());
+        Assert.assertFalse(full.hasMaxBoundary());
+        Assert.assertTrue(full.isInfinite());
 
-        Assert.assertEquals(RegionLocation.INSIDE, reals.classify(Double.NEGATIVE_INFINITY));
-        Assert.assertEquals(RegionLocation.INSIDE, reals.classify(Double.POSITIVE_INFINITY));
-    }
-
-    private static void checkClassify(Interval interval, RegionLocation loc, double ... points) {
-        for (double x : points) {
-            String msg = "Unexpected location for point " + x;
-
-            Assert.assertEquals(msg, loc, interval.classify(x));
-            Assert.assertEquals(msg, loc, interval.classify(Vector1D.of(x)));
-        }
+        Assert.assertEquals(RegionLocation.INSIDE, full.classify(Double.NEGATIVE_INFINITY));
+        Assert.assertEquals(RegionLocation.INSIDE, full.classify(Double.POSITIVE_INFINITY));
     }
 
     private static void checkContains(Interval interval, boolean contains, double ... points) {
@@ -589,6 +732,15 @@ public class IntervalTest {
         }
     }
 
+    private static void checkClassify(Interval interval, RegionLocation loc, double ... points) {
+        for (double x : points) {
+            String msg = "Unexpected location for point " + x;
+
+            Assert.assertEquals(msg, loc, interval.classify(x));
+            Assert.assertEquals(msg, loc, interval.classify(Vector1D.of(x)));
+        }
+    }
+
     private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
         for (double x : points) {
             String msg = "Unexpected location for point " + x;
@@ -596,6 +748,16 @@ public class IntervalTest {
             Assert.assertEquals(msg, loc, tree.classify(x));
             Assert.assertEquals(msg, loc, tree.classify(Vector1D.of(x)));
         }
+    }
+
+    private void checkBoundaryProjection(Interval interval, double location, double projectedLocation, double offset) {
+        Vector1D pt = Vector1D.of(location);
+
+        BoundaryProjection<Vector1D> proj = interval.projectOnBoundary(pt);
+
+        Assert.assertSame(pt, proj.getOriginal());
+        Assert.assertEquals(projectedLocation, proj.getProjected().getX(), TEST_EPS);
+        Assert.assertEquals(offset, proj.getOffset(), TEST_EPS);
     }
 
     /** Check that the given interval matches the arguments and is internally consistent.

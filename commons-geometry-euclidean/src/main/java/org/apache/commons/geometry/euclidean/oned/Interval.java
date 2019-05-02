@@ -38,7 +38,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
     private static final long serialVersionUID = 20190210L;
 
     /** Interval instance representing the entire real number line. */
-    private static final Interval REALS = new Interval(null, null);
+    private static final Interval FULL = new Interval(null, null);
 
     /** {@link OrientedPoint} instance representing the min boundary of the interval,
      * or null if no min boundary exists. If present, this instance will be negative-facing.
@@ -185,6 +185,46 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return classify(x) != RegionLocation.OUTSIDE;
     }
 
+    /** {@inheritDoc}
+     *
+     * <p>The point is projected onto the nearest interval boundary. When a point
+     * is on the inside of the interval and is equidistant from both boundaries,
+     * then the minimum boundary is selected. when a point is on the outside of the
+     * interval and is equidistant from both boundaries (as is the case for intervals
+     * representing a single point), then the boundary facing the point is returned,
+     * ensuring that the returned offset is positive.
+     * </p>
+     */
+    @Override
+    public BoundaryProjection<Vector1D> projectOnBoundary(Vector1D pt) {
+
+        if (minBoundary != null && maxBoundary != null) {
+            // both boundaries are present; use the closest
+            double minOffset = minBoundary.offset(pt.getX());
+            double maxOffset = maxBoundary.offset(pt.getX());
+
+            double minDist = Math.abs(minOffset);
+            double maxDist = Math.abs(maxOffset);
+
+            // Project onto the max boundary if it's the closest or the point is on its plus side.
+            // Otherwise, project onto the min boundary.
+            if (maxDist < minDist || maxOffset > 0) {
+                return new BoundaryProjection<>(pt, maxBoundary.project(pt), maxOffset);
+            }
+            return new BoundaryProjection<>(pt, minBoundary.project(pt), minOffset);
+        }
+        else if (minBoundary != null) {
+            // only the min boundary is present
+            return new BoundaryProjection<>(pt, minBoundary.project(pt), minBoundary.offset(pt));
+        }
+        else if (maxBoundary != null) {
+            // only the max boundary is present
+            return new BoundaryProjection<>(pt, maxBoundary.project(pt), maxBoundary.offset(pt));
+        }
+
+        return null;
+    }
+
     /** Transform this instance using the given {@link Transform}.
      * @return a new transformed interval
      */
@@ -329,7 +369,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
                 null;
 
         if (minBoundary == null && maxBoundary == null) {
-            return REALS;
+            return FULL;
         }
 
         return new Interval(minBoundary, maxBoundary);
@@ -377,7 +417,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         else if (a == null) {
             if (b == null) {
                 // no boundaries; return the full number line
-                return REALS;
+                return FULL;
             }
 
             if (b.isPositiveFacing()) {
@@ -408,11 +448,40 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
                 Double.isFinite(maxLoc) ? maxBoundary : null);
     }
 
-    /** Return an interval representing the entire real number line.
-     * @return an interval representing the entire real number line.
+    /** Return an interval with the given min value and no max.
+     * @param min min value for the interval
+     * @param precision precision context used to compare floating point numbers
+     * @return an interval with the given min value and no max.
      */
-    public static Interval reals() {
-        return REALS;
+    public static Interval fromMin(final double min, final DoublePrecisionContext precision) {
+        return of(min, Double.POSITIVE_INFINITY, precision);
+    }
+
+    /** Return an interval with the given max value and no min.
+     * @param max max value for the interval
+     * @param precision precision context used to compare floating point numbers
+     * @return an interval with the given max value and no min.
+     */
+    public static Interval fromMax(final double max, final DoublePrecisionContext precision) {
+        return of(Double.NEGATIVE_INFINITY, max, precision);
+    }
+
+    /** Return an interval representing a single point at the given location.
+     * @param location the location of the interval
+     * @param precision precision context used to compare floating point numbers
+     * @return an interval representing a single point
+     */
+    public static Interval point(final double location, final DoublePrecisionContext precision) {
+        return of(location, location, precision);
+    }
+
+    /** Return an interval representing the entire real number line. The {@link #isFull()}
+     * method of the instance will return true.
+     * @return an interval representing the entire real number line
+     * @see #isFull()
+     */
+    public static Interval full() {
+        return FULL;
     }
 
     /** Validate that the given value can be used to construct an interval. The values

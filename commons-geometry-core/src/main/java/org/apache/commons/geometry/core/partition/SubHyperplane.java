@@ -20,16 +20,45 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 
+/** Interface representing subhyperplanes, which are
+
+ * @param <P> Point implementation type
+ */
 public interface SubHyperplane<P extends Point<P>> {
 
+    /** Get the hyperplane that this instance is embedded in.
+     * @return the hyperplane that this instance is embedded in.
+     */
     Hyperplane<P> getHyperplane();
 
+    /** Return true if this instance contains all points in the
+     * hyperplane.
+     * @return true if this instance contains all points in the
+     *      hyperplane
+     */
+    boolean isFull();
+
+    /** Return true if this instance does not contain any points.
+     * @return true if this instance does not contain any points
+     */
     boolean isEmpty();
 
+    /** Return true if this instance has infinite size.
+     * @return true if this instance has infinite size
+     */
     boolean isInfinite();
 
+    /** Return the size of this instance. This will have different
+     * meanings in different spaces and dimensions. For example, in
+     * Euclidean space, this will be length in 2D and area in 3D.
+     * @return the size of this instance
+     */
     double getSize();
 
+    /** Return a {@link Builder} instance for joining multiple
+     * subhyperplanes together.
+     * @return a new builder instance
+     */
     Builder<P> builder();
 
     /** Convert this instance into a list of convex child

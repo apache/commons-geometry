@@ -380,6 +380,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         * <p>This method simply returns false.</p>
         */
         @Override
+        public boolean isFull() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method simply returns false.</p>
+        */
+        @Override
         public boolean isEmpty() {
             return false;
         }

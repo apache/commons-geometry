@@ -1872,6 +1872,12 @@ public class AbstractRegionBSPTreeTest {
             // return a set of stub values
             return new RegionSizeProperties<>(1, TestPoint2D.ZERO);
         }
+
+        @Override
+        public BoundaryProjection<TestPoint2D> projectOnBoundary(TestPoint2D pt) {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
     private static class TestRegionNode extends AbstractRegionNode<TestPoint2D, TestRegionNode> {
