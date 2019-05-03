@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
 import org.apache.commons.geometry.core.partition.BSPTree;
+import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -133,6 +134,16 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         }
 
         return boundarySize;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public BoundaryProjection<P> projectToBoundary(P pt) {
+        if (isFull() || isEmpty()) {
+            return null;
+        }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -681,6 +692,45 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             // the operation is symmetric, so perform the same operation but with the
             // nodes flipped
             return mergeLeaf(node2, node1);
+        }
+    }
+
+    protected static class BoundaryProjector<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        implements BSPTreeVisitor<P, N> {
+
+        /** The point to project onto the region boundary */
+        private final P point;
+
+        /** The projected point. */
+        private P projected;
+
+        /** The closest distance to the boundary found. */
+        private double dist = -1.0;
+
+        public BoundaryProjector(final P point) {
+            this.point = point;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visit(N node) {
+            final double minProjectedDist = Math.abs(node.getCutHyperplane().offset(point));
+
+            if (dist < 0.0 || minProjectedDist < dist) {
+
+            }
+        }
+
+        public P getPoint() {
+            return point;
+        }
+
+        public P getProjected() {
+            return projected;
+        }
+
+        public double getDist() {
+            return dist;
         }
     }
 

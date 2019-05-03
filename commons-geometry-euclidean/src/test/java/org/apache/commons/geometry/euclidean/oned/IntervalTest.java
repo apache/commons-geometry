@@ -525,18 +525,19 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectOnBoundary_full() {
+    public void testProjectToBoundary_full() {
         // arrange
         Interval full = Interval.full();
 
+
         // act/assert
-        Assert.assertNull(full.projectOnBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(full.projectOnBoundary(Vector1D.of(0)));
-        Assert.assertNull(full.projectOnBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertNull(full.projectToBoundary(Vector1D.of(0)));
+        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
-    public void testProjectOnBoundary_singlePoint() {
+    public void testProjectToBoundary_singlePoint() {
         // arrange
         Interval interval = Interval.point(1, TEST_PRECISION);
 
@@ -554,7 +555,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectOnBoundary_closedInterval() {
+    public void testProjectToBoundary_closedInterval() {
         // arrange
         Interval interval = Interval.of(1, 3, TEST_PRECISION);
 
@@ -576,7 +577,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectOnBoundary_noMinBoundary() {
+    public void testProjectToBoundary_noMinBoundary() {
         // arrange
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION);
 
@@ -592,7 +593,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testProjectOnBoundary_noMaxBoundary() {
+    public void testProjectToBoundary_noMaxBoundary() {
         // arrange
         Interval interval = Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION);
 
@@ -750,10 +751,10 @@ public class IntervalTest {
         }
     }
 
-    private void checkBoundaryProjection(Interval interval, double location, double projectedLocation, double offset) {
+    private static void checkBoundaryProjection(Interval interval, double location, double projectedLocation, double offset) {
         Vector1D pt = Vector1D.of(location);
 
-        BoundaryProjection<Vector1D> proj = interval.projectOnBoundary(pt);
+        BoundaryProjection<Vector1D> proj = interval.projectToBoundary(pt);
 
         Assert.assertSame(pt, proj.getOriginal());
         Assert.assertEquals(projectedLocation, proj.getProjected().getX(), TEST_EPS);

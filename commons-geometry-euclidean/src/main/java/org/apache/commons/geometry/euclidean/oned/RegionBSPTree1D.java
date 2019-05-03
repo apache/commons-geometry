@@ -94,13 +94,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
        return 0;
    }
 
-   /** {@inheritDoc} */
-   @Override
-   public BoundaryProjection<Vector1D> projectOnBoundary(Vector1D pt) {
-       // TODO Auto-generated method stub
-       return null;
-   }
-
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
      * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITE} if
      * the region is empty.

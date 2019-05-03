@@ -18,8 +18,61 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
+/** Interface for visiting the nodes in a {@link BSPTree} or {@link BSPSubtree}.
+ * @param <P> Point implementation type
+ * @param <N> BSP tree node implementation type
+ */
 @FunctionalInterface
 public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 
+    /** Enum used to specify the order in which visitors should visit the nodes
+     * in the tree.
+     */
+    enum NodeVisitOrder {
+
+        /** Indicates that the visitor should first visit the plus sub-tree, then
+         * the minus sub-tree and then the current node.
+         */
+        PLUS_MINUS_NODE,
+
+        /** Indicates that the visitor should first visit the plus sub-tree, then
+         * the current node, and then the minus sub-tree.
+         */
+        PLUS_NODE_MINUS,
+
+        /** Indicates that the visitor should first visit the minus sub-tree, then
+         * the plus sub-tree, and then the current node.
+         */
+        MINUS_PLUS_NODE,
+
+        /** Indicates that the visitor should first visit the minus sub-tree, then the
+         * current node, and then the plus sub-tree.
+         */
+        MINUS_NODE_PLUS,
+
+        /** Indicates that the visitor should first visit the current node, then the
+         * plus sub-tree, and then the minus sub-tree.
+         */
+        NODE_PLUS_MINUS,
+
+        /** Indicates that the visitor should first visit the current node, then the
+         * minus sub-tree, and then the plus sub-tree.
+         */
+        NODE_MINUS_PLUS;
+    }
+
+    /** Visit a node in a BSP tree.
+     * @param node the node being visited
+     */
     void visit(N node);
+
+    /** Determine the visit order for the given node. This is called for each node
+     * before {@link #visit(BSPTree.Node)} is called. Returning null from this method
+     * skips the subtree rooted at the given node.
+     * @param node the node to determine the visit order for
+     * @return the order that the subtree rooted at the given node should be visited
+     */
+    default NodeVisitOrder visitOrder(final N node) {
+        return NodeVisitOrder.NODE_MINUS_PLUS;
+    }
 }

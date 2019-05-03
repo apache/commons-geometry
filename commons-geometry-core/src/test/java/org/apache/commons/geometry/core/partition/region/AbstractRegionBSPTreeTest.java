@@ -1874,7 +1874,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         @Override
-        public BoundaryProjection<TestPoint2D> projectOnBoundary(TestPoint2D pt) {
+        public BoundaryProjection<TestPoint2D> projectToBoundary(TestPoint2D pt) {
             // TODO Auto-generated method stub
             return null;
         }

@@ -71,17 +71,18 @@ public interface Region<P extends Point<P>> {
         return location != null && location != RegionLocation.OUTSIDE;
     }
 
-    /** Project a point on the boundary of the region. Null is returned if
+    /** Project a point onto the boundary of the region. Null is returned if
      * the region contains no boundaries (ie, is either {@link #isFull() full}
      * or {@link #isEmpty() empty}).
-     * @param point point to check
-     * @return projection of the point on the boundary or null if the region
-     *      does not contain any boundaries
+     * @param point point to project
+     * @return projection of the point on the boundary of the region or null
+     *      if the region does not contain any boundaries
      */
-    BoundaryProjection<P> projectOnBoundary(P pt);
+    BoundaryProjection<P> projectToBoundary(P pt);
 
     /** Class containing the result of projecting a point onto a region boundary.
      * @param <P> Point implementation type
+     * @see Region#projectToBoundary(Point)
      */
     static class BoundaryProjection<P extends Point<P>> {
 

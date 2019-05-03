@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.BSPTreeVisitor.NodeVisitOrder;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
@@ -312,14 +313,43 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param visitor the visitor to pass nodes to
      */
     private void visit(final N node, BSPTreeVisitor<P, N> visitor) {
-        // simple recursive implementation of this; we'll probably
-        // want to change this later
         if (node != null) {
-            visitor.visit(node);
+            final NodeVisitOrder order = visitor.visitOrder(node);
 
-            if (!node.isLeaf()) {
-                visit(node.getMinus(), visitor);
-                visit(node.getPlus(), visitor);
+            if (order != null) {
+
+                switch (order) {
+                    case PLUS_MINUS_NODE:
+                        visit(node.getPlus(), visitor);
+                        visit(node.getMinus(), visitor);
+                        visitor.visit(node);
+                        break;
+                    case PLUS_NODE_MINUS:
+                        visit(node.getPlus(), visitor);
+                        visitor.visit(node);
+                        visit(node.getMinus(), visitor);
+                        break;
+                    case MINUS_PLUS_NODE:
+                        visit(node.getMinus(), visitor);
+                        visit(node.getPlus(), visitor);
+                        visitor.visit(node);
+                        break;
+                    case MINUS_NODE_PLUS:
+                        visit(node.getMinus(), visitor);
+                        visitor.visit(node);
+                        visit(node.getPlus(), visitor);
+                        break;
+                    case NODE_PLUS_MINUS:
+                        visitor.visit(node);
+                        visit(node.getPlus(), visitor);
+                        visit(node.getMinus(), visitor);
+                        break;
+                    case NODE_MINUS_PLUS:
+                        visitor.visit(node);
+                        visit(node.getMinus(), visitor);
+                        visit(node.getPlus(), visitor);
+                        break;
+                }
             }
         }
     }

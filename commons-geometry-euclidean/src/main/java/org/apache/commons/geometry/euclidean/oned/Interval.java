@@ -196,7 +196,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * </p>
      */
     @Override
-    public BoundaryProjection<Vector1D> projectOnBoundary(Vector1D pt) {
+    public BoundaryProjection<Vector1D> projectToBoundary(Vector1D pt) {
 
         if (minBoundary != null && maxBoundary != null) {
             // both boundaries are present; use the closest
