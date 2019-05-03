@@ -40,6 +40,12 @@ public interface Hyperplane<P extends Point<P>> {
      */
     HyperplaneLocation classify(P point);
 
+    /** Return true if the given point lies on the hyperplane.
+     * @param point the point to test
+     * @return true if the point lies on the hyperplane
+     */
+    boolean contains(P point);
+
     /** Project a point onto this instance.
      * @param point the point to project
      * @return the projection of the point onto this instance. The returned

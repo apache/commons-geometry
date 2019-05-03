@@ -19,8 +19,10 @@ package org.apache.commons.geometry.core.partition;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.RegionLocation;
 
-/** Interface representing subhyperplanes, which are
+/** Interface representing subhyperplanes, which are regions
+ * embedded in a hyperplane.
 
  * @param <P> Point implementation type
  */
@@ -54,6 +56,42 @@ public interface SubHyperplane<P extends Point<P>> {
      * @return the size of this instance
      */
     double getSize();
+
+    /** Classify a point with respect to the subhyperplane's region. The point is
+     * classified as follows:
+     * <ul>
+     *  <li>{@link RegionLocation#INSIDE INSIDE} - The point lies on the hyperplane
+     *      and inside of the subhyperplane's region.</li>
+     *  <li>{@link RegionLocation#BOUNDARY BOUNDARY} - The point lies on the hyperplane
+     *      and is on the boundary of the subhyperplane's region.</li>
+     *  <li>{@link RegionLocation#OUTSIDE OUTSIDE} - The point does not lie on
+     *      the hyperplane or it does lie on the hyperplane but is outside of the
+     *      subhyperplane's region.</li>
+     * </ul>
+     * @param point the point to classify
+     * @return classification of the point with respect to the subhyperplane's hyperplane
+     *      and region
+     */
+    RegionLocation classify(P point);
+
+    /** Return true if the subhyperplane contains the given point, meaning that the point
+     * lies on the hyperplane and is not on the outside of the subhyperplane's region.
+     * @param point the point to check
+     * @return true if the point is contained in the subhyperplane
+     */
+    default boolean contains(P point) {
+        final RegionLocation loc = classify(point);
+        return loc != null && loc != RegionLocation.OUTSIDE;
+    }
+
+    /** Return the closest point to the argument that is contained in the subhyperplane
+     * (ie, not classified as {@link RegionLocation#OUTSIDE outside), or null if no
+     * such point exists.
+     * @param point the reference point
+     * @return the closest point to the reference point that is contained in the subhyperplane,
+     *      or null if no such point exists
+     */
+    P closestContained(P point);
 
     /** Return a {@link Builder} instance for joining multiple
      * subhyperplanes together.

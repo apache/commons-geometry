@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
@@ -207,8 +208,8 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public OrientedPointSubHyperplane span() {
-        return new OrientedPointSubHyperplane(this);
+    public SubOrientedPoint span() {
+        return new SubOrientedPoint(this);
     }
 
     /** Return true if this instance should be considered equal to the argument. Instances
@@ -354,7 +355,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class OrientedPointSubHyperplane implements ConvexSubHyperplane<Vector1D>, Serializable {
+    public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 1L;
@@ -365,7 +366,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         /** Simple constructor.
          * @param hyperplane underlying hyperplane instance
          */
-        public OrientedPointSubHyperplane(final OrientedPoint hyperplane) {
+        public SubOrientedPoint(final OrientedPoint hyperplane) {
             this.hyperplane = hyperplane;
         }
 
@@ -411,13 +412,34 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             return 0;
         }
 
+        /** {@inheritDoc}
+         *
+         * <p>This method return {@link RegionLocation#BOUNDARY} if the
+         * point is on the hyperplane and {@link RegionLocation#OUTSIDE}
+         * otherwise.</p>
+         */
+        @Override
+        public RegionLocation classify(Vector1D point) {
+            if (hyperplane.contains(point)) {
+                return RegionLocation.BOUNDARY;
+            }
+
+            return RegionLocation.OUTSIDE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector1D closestContained(Vector1D point) {
+            return hyperplane.project(point);
+        }
+
         /** {@inheritDoc} */
         @Override
         public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
-            OrientedPointSubHyperplane minus = null;
-            OrientedPointSubHyperplane plus = null;
+            SubOrientedPoint minus = null;
+            SubOrientedPoint plus = null;
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
@@ -431,20 +453,20 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public List<OrientedPointSubHyperplane> toConvex() {
+        public List<SubOrientedPoint> toConvex() {
             return Arrays.asList(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public OrientedPointSubHyperplane transform(Transform<Vector1D> transform) {
+        public SubOrientedPoint transform(Transform<Vector1D> transform) {
             return getHyperplane().transform(transform).span();
         }
 
         /** {@inheritDoc} */
         @Override
-        public OrientedPointSubHyperplaneBuilder builder() {
-            return new OrientedPointSubHyperplaneBuilder(this);
+        public SubOrientedPointBuilder builder() {
+            return new SubOrientedPointBuilder(this);
         }
 
         /** {@inheritDoc} */
@@ -459,11 +481,11 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             if (this == obj) {
                 return true;
             }
-            else if (!(obj instanceof OrientedPointSubHyperplane)) {
+            else if (!(obj instanceof SubOrientedPoint)) {
                 return false;
             }
 
-            OrientedPointSubHyperplane other = (OrientedPointSubHyperplane) obj;
+            SubOrientedPoint other = (SubOrientedPoint) obj;
 
             return Objects.equals(this.hyperplane, other.hyperplane);
         }
@@ -483,18 +505,18 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         }
     }
 
-    /** {@link SubHyperplane.Builder} implementation for Euclidean 1D space. Similar to {@link OrientedPointSubHyperplane},
+    /** {@link SubHyperplane.Builder} implementation for Euclidean 1D space. Similar to {@link SubOrientedPoint},
      * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static class OrientedPointSubHyperplaneBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+    public static class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
 
-        private final OrientedPointSubHyperplane base;
+        private final SubOrientedPoint base;
 
-        private OrientedPointSubHyperplaneBuilder(final OrientedPointSubHyperplane base) {
+        private SubOrientedPointBuilder(final SubOrientedPoint base) {
             this.base = base;
         }
 
@@ -512,7 +534,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public OrientedPointSubHyperplane build() {
+        public SubOrientedPoint build() {
             return base;
         }
 
@@ -528,11 +550,11 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             if (this == obj) {
                 return true;
             }
-            else if (!(obj instanceof OrientedPointSubHyperplaneBuilder)) {
+            else if (!(obj instanceof SubOrientedPointBuilder)) {
                 return false;
             }
 
-            OrientedPointSubHyperplaneBuilder other = (OrientedPointSubHyperplaneBuilder) obj;
+            SubOrientedPointBuilder other = (SubOrientedPointBuilder) obj;
 
             return Objects.equals(this.base, other.base);
         }

@@ -143,7 +143,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             return null;
         }
 
-        return null;
+        final BoundaryProjector<P, N> projector = new BoundaryProjector<>(pt);
+        visit(projector);
+
+        return projector.getProjection();
     }
 
     /** {@inheritDoc} */
@@ -704,8 +707,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         /** The projected point. */
         private P projected;
 
-        /** The closest distance to the boundary found. */
-        private double dist = -1.0;
+        /** The current closest distance to the boundary found. */
+        private double minDist = -1.0;
+
+        private N leaf;
 
         public BoundaryProjector(final P point) {
             this.point = point;
@@ -713,24 +718,70 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
         /** {@inheritDoc} */
         @Override
-        public void visit(N node) {
-            final double minProjectedDist = Math.abs(node.getCutHyperplane().offset(point));
-
-            if (dist < 0.0 || minProjectedDist < dist) {
-
+        public NodeVisitOrder visitOrder(final N node) {
+            // we want to visit the tree so that the first encountered
+            // leaf is the one closest to the test point
+            if (node.getCutHyperplane().offset(point) <= 0.0) {
+                return NodeVisitOrder.MINUS_NODE_PLUS;
+            } else {
+                return NodeVisitOrder.PLUS_NODE_MINUS;
             }
         }
 
-        public P getPoint() {
-            return point;
+        /** {@inheritDoc} */
+        @Override
+        public void visit(final N node) {
+            if (node.isLeaf()) {
+                // store the first leaf node; this will be the node that contains
+                // the test point
+                if (leaf == null) {
+                    leaf = node;
+                }
+            }
+            else {
+                // only check nodes where we haven't yet computed a dist yet or there is at least
+                // a chance that the projected point will be closer than our current closest
+                if (minDist < 0.0 || Math.abs(node.getCutHyperplane().offset(point)) < minDist) {
+                    final P potentialProjected = closestBoundaryPoint(node.getCutBoundary());
+
+                    if (potentialProjected != null) {
+                        final double dist = potentialProjected.distance(point);
+
+                        if (minDist < 0.0 || dist < minDist) {
+                            // new winner!
+                            minDist = dist;
+                            projected = potentialProjected;
+                        }
+                    }
+                }
+            }
         }
 
-        public P getProjected() {
-            return projected;
+        private P closestBoundaryPoint(final RegionCutBoundary<P> boundary) {
+            final P insideFacingPt = boundary.getInsideFacing().closestContained(point);
+            final P outsideFacingPt = boundary.getOutsideFacing().closestContained(point);
+
+            if (insideFacingPt != null && outsideFacingPt != null) {
+                if (insideFacingPt.distance(point) < outsideFacingPt.distance(point)) {
+                    return insideFacingPt;
+                }
+                return outsideFacingPt;
+            }
+            else if (insideFacingPt != null) {
+                return insideFacingPt;
+            }
+            return outsideFacingPt;
         }
 
-        public double getDist() {
-            return dist;
+
+        public BoundaryProjection<P> getProjection() {
+            if (projected != null) {
+                final double offset = minDist * (leaf.isInside() ? -1 : +1);
+
+                return new BoundaryProjection<>(point, projected, offset);
+            }
+
+            return null;
         }
     }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -102,6 +103,41 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
         }
 
         return size;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classify(TestPoint2D point) {
+
+        // simply return the first value that is not outside;
+        // this is decidedly not robust but should work for testing purposes
+        for (TestLineSegment seg : segments) {
+            final RegionLocation loc = seg.classify(point);
+            if (loc != RegionLocation.OUTSIDE) {
+                return loc;
+            }
+        }
+
+        return RegionLocation.OUTSIDE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D closestContained(TestPoint2D point) {
+        TestPoint2D closest = null;
+        double minDist = -1;
+
+        for (TestLineSegment seg : segments) {
+            TestPoint2D pt = seg.closestContained(point);
+            double dist = pt.distance(point);
+            if (minDist < 0 || dist < minDist) {
+                minDist = dist;
+                closest = pt;
+            }
+        }
+
+        return closest;
+
     }
 
     /** {@inheritDoc} */

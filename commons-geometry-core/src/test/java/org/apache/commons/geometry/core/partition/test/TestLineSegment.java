@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -134,6 +135,35 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     @Override
     public double getSize() {
         return Math.abs(start - end);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classify(TestPoint2D point) {
+        if (line.contains(point)) {
+            final double value = line.toSubSpace(point);
+
+            final int startCmp = PartitionTestUtils.PRECISION.compare(value, start);
+            final int endCmp = PartitionTestUtils.PRECISION.compare(value, end);
+
+            if (startCmp == 0 || endCmp == 0) {
+                return RegionLocation.BOUNDARY;
+            }
+            else if (startCmp > 0 && endCmp < 0) {
+                return RegionLocation.INSIDE;
+            }
+        }
+
+        return RegionLocation.OUTSIDE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D closestContained(TestPoint2D point) {
+        double value = line.toSubSpace(point);
+        value = Math.max(Math.min(value, end), start);
+
+        return line.toSpace(value);
     }
 
     /** {@inheritDoc} */

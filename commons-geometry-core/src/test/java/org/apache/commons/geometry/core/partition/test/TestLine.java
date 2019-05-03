@@ -121,6 +121,12 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public boolean contains(TestPoint2D point) {
+        return classify(point) == HyperplaneLocation.ON;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public TestPoint2D plusPoint() {
         TestPoint2D origin = getOrigin();
         return new TestPoint2D(origin.getX() + directionY, origin.getY() - directionX);

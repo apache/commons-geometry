@@ -16,11 +16,17 @@
  */
 package org.apache.commons.geometry.core.partition;
 
+import java.io.Serializable;
+
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P> {
+public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P>, Serializable {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 1L;
+
+    /** Precision object used to perform floating point comparisons */
     private final DoublePrecisionContext precision;
 
     protected AbstractHyperplane(final DoublePrecisionContext precision) {
@@ -42,6 +48,17 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
         return HyperplaneLocation.ON;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean contains(final P point) {
+        final HyperplaneLocation loc = classify(point);
+        return loc == HyperplaneLocation.ON;
+    }
+
+    /** Get the precision object used to perform floating point
+     * comparisons for this instance.
+     * @return the precision object for this instance
+     */
     public DoublePrecisionContext getPrecision() {
         return precision;
     }

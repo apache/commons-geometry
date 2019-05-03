@@ -313,7 +313,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param visitor the visitor to pass nodes to
      */
     private void visit(final N node, BSPTreeVisitor<P, N> visitor) {
-        if (node != null) {
+        if (node.isLeaf()){
+            visitor.visit(node);
+        }
+        else {
             final NodeVisitOrder order = visitor.visitOrder(node);
 
             if (order != null) {
