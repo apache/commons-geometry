@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import org.apache.commons.geometry.core.partition.AbstractBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
  */

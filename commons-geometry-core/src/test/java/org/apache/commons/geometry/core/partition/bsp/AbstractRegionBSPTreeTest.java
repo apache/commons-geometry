@@ -1,4 +1,4 @@
-package org.apache.commons.geometry.core.partition.region;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,10 +8,12 @@ import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.AbstractRegionNode;
-import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree.RegionSizeProperties;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.RegionCutBoundary;
+import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree.AbstractRegionNode;
+import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree.RegionSizeProperties;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;

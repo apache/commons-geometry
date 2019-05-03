@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition.region;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,10 +23,6 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Spatial;
-import org.apache.commons.geometry.core.partition.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.AbstractBSPTreeMergeSupport;
-import org.apache.commons.geometry.core.partition.BSPTree;
-import org.apache.commons.geometry.core.partition.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;

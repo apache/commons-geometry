@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
-import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTreeMergeSupport;
+import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.BSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree.AttributeNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;

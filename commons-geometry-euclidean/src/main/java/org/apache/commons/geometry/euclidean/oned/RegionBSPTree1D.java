@@ -24,8 +24,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partition.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.region.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.

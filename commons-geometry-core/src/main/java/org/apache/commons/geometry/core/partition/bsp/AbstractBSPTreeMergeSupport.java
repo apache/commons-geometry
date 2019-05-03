@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partition.AbstractBSPTree.AbstractNode;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.SplitLocation;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree.AbstractNode;
 
 /** Class containing the basic algorithm for merging two {@link AbstractBSPTree}
  * instances. Subclasses must override the {@link #mergeLeaf(AbstractNode, AbstractNode)} method

@@ -1,8 +1,9 @@
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import java.util.Arrays;
 
-import org.apache.commons.geometry.core.partition.AttributeBSPTree.AttributeNode;
+import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree;
+import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree.AttributeNode;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;

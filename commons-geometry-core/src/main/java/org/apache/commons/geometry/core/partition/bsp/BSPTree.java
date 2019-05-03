@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** Interface for Binary Space Partitioning (BSP) trees.
  * @param <P> Point implementation type

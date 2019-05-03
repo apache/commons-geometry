@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +24,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.BSPTree.NodeCutRule;
-import org.apache.commons.geometry.core.partition.BSPTreeVisitor.NodeVisitOrder;
+import org.apache.commons.geometry.core.partition.bsp.BSPTree;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partition.bsp.BSPTree.NodeCutRule;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.NodeVisitOrder;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;

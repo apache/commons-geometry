@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition;
+package org.apache.commons.geometry.core.partition.bsp;
 
 import java.io.Serializable;
 import java.util.Deque;
@@ -24,7 +24,12 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.BSPTreeVisitor.NodeVisitOrder;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.SplitLocation;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.NodeVisitOrder;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
