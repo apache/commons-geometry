@@ -85,13 +85,13 @@ public interface SubHyperplane<P extends Point<P>> {
     }
 
     /** Return the closest point to the argument that is contained in the subhyperplane
-     * (ie, not classified as {@link RegionLocation#OUTSIDE outside), or null if no
+     * (ie, not classified as {@link RegionLocation#OUTSIDE outside}), or null if no
      * such point exists.
      * @param point the reference point
      * @return the closest point to the reference point that is contained in the subhyperplane,
      *      or null if no such point exists
      */
-    P closestContained(P point);
+    P closest(P point);
 
     /** Return a {@link Builder} instance for joining multiple
      * subhyperplanes together.

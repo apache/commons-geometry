@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -56,6 +57,21 @@ public class Vector1DTest {
 
         Assert.assertSame(Vector1D.ONE.normalize(), Vector1D.ONE);
         Assert.assertSame(Vector1D.MINUS_ONE.normalize(), Vector1D.MINUS_ONE);
+    }
+
+    @Test
+    public void testStrictAscendingOrderComparator() {
+        // arrange
+        Comparator<Vector1D> cmp = Vector1D.STRICT_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, cmp.compare(Vector1D.of(1), Vector1D.of(1)));
+        Assert.assertEquals(1, cmp.compare(Vector1D.of(2), Vector1D.of(1)));
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(0), Vector1D.of(1)));
+
+        Assert.assertEquals(0, cmp.compare(Vector1D.of(0), Vector1D.of(0)));
+        Assert.assertEquals(1, cmp.compare(Vector1D.of(1e-15), Vector1D.of(0)));
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(-1e-15), Vector1D.of(0)));
     }
 
     @Test

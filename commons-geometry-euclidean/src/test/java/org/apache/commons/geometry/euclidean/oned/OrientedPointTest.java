@@ -516,11 +516,11 @@ public class OrientedPointTest {
         SubOrientedPoint sub = pt.span();
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closestContained(Vector1D.NEGATIVE_INFINITY), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closestContained(Vector1D.of(0)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closestContained(Vector1D.of(1)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closestContained(Vector1D.of(2)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closestContained(Vector1D.POSITIVE_INFINITY), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closest(Vector1D.NEGATIVE_INFINITY), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closest(Vector1D.of(0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closest(Vector1D.of(1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closest(Vector1D.of(2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), sub.closest(Vector1D.POSITIVE_INFINITY), TEST_EPS);
     }
 
     @Test

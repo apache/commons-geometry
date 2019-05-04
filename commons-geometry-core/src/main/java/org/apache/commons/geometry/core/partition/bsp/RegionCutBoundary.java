@@ -66,4 +66,37 @@ public final class RegionCutBoundary<P extends Point<P>> implements Serializable
     public SubHyperplane<P> getOutsideFacing() {
         return outsideFacing;
     }
+
+    /** Return the closest point to the argument in the inside and outside facing
+     * portions of the cut boundary.
+     * @param pt the reference point
+     * @return the point in the cut boundary closest to the reference point
+     * @see SubHyperplane#closest(Point)
+     */
+    public P closest(final P pt) {
+        final P insideFacingPt = (insideFacing != null) ? insideFacing.closest(pt) : null;
+        final P outsideFacingPt = (outsideFacing != null) ? outsideFacing.closest(pt) : null;
+
+        if (insideFacingPt != null && outsideFacingPt != null) {
+            if (pt.distance(insideFacingPt) < pt.distance(outsideFacingPt)) {
+                return insideFacingPt;
+            }
+            return outsideFacingPt;
+        }
+        else if (insideFacingPt != null) {
+            return insideFacingPt;
+        }
+        return outsideFacingPt;
+    }
+
+    /** Return true if the given point is contained in the boundary, in either the
+     * inside facing portion or the outside facing portion.
+     * @param pt point to test
+     * @return true if the point is contained in the boundary
+     * @see SubHyperplane#contains(Point)
+     */
+    public boolean contains(final P pt) {
+        return (insideFacing != null && insideFacing.contains(pt)) ||
+                (outsideFacing != null && outsideFacing.contains(pt));
+    }
 }

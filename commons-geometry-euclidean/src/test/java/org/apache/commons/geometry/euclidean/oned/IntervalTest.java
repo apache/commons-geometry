@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Region.BoundaryProjection;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -531,9 +530,9 @@ public class IntervalTest {
 
 
         // act/assert
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(0)));
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assert.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertNull(full.project(Vector1D.of(0)));
+        Assert.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -542,16 +541,16 @@ public class IntervalTest {
         Interval interval = Interval.point(1, TEST_PRECISION);
 
         // act/assert
-        checkBoundaryProjection(interval, -1, 1, 2);
-        checkBoundaryProjection(interval, 0, 1, 1);
+        checkBoundaryProjection(interval, -1, 1);
+        checkBoundaryProjection(interval, 0, 1);
 
-        checkBoundaryProjection(interval, 1, 1, 0);
+        checkBoundaryProjection(interval, 1, 1);
 
-        checkBoundaryProjection(interval, 2, 1, 1);
-        checkBoundaryProjection(interval, 3, 1, 2);
+        checkBoundaryProjection(interval, 2, 1);
+        checkBoundaryProjection(interval, 3, 1);
 
-        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -560,20 +559,20 @@ public class IntervalTest {
         Interval interval = Interval.of(1, 3, TEST_PRECISION);
 
         // act/assert
-        checkBoundaryProjection(interval, -1, 1, 2);
-        checkBoundaryProjection(interval, 0, 1, 1);
-        checkBoundaryProjection(interval, 1, 1, 0);
+        checkBoundaryProjection(interval, -1, 1);
+        checkBoundaryProjection(interval, 0, 1);
+        checkBoundaryProjection(interval, 1, 1);
 
-        checkBoundaryProjection(interval, 1.9, 1, -0.9);
-        checkBoundaryProjection(interval, 2, 1, -1);
-        checkBoundaryProjection(interval, 2.1, 3, -0.9);
+        checkBoundaryProjection(interval, 1.9, 1);
+        checkBoundaryProjection(interval, 2, 1);
+        checkBoundaryProjection(interval, 2.1, 3);
 
-        checkBoundaryProjection(interval, 3, 3, 0);
-        checkBoundaryProjection(interval, 4, 3, 1);
-        checkBoundaryProjection(interval, 5, 3, 2);
+        checkBoundaryProjection(interval, 3, 3);
+        checkBoundaryProjection(interval, 4, 3);
+        checkBoundaryProjection(interval, 5, 3);
 
-        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 3, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 3);
     }
 
     @Test
@@ -582,14 +581,14 @@ public class IntervalTest {
         Interval interval = Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION);
 
         // act/assert
-        checkBoundaryProjection(interval, -1, 1, -2);
-        checkBoundaryProjection(interval, 0, 1, -1);
-        checkBoundaryProjection(interval, 1, 1, 0);
-        checkBoundaryProjection(interval, 2, 1, 1);
-        checkBoundaryProjection(interval, 3, 1, 2);
+        checkBoundaryProjection(interval, -1, 1);
+        checkBoundaryProjection(interval, 0, 1);
+        checkBoundaryProjection(interval, 1, 1);
+        checkBoundaryProjection(interval, 2, 1);
+        checkBoundaryProjection(interval, 3, 1);
 
-        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
-        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -598,14 +597,14 @@ public class IntervalTest {
         Interval interval = Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION);
 
         // act/assert
-        checkBoundaryProjection(interval, -1, 1, 2);
-        checkBoundaryProjection(interval, 0, 1, 1);
-        checkBoundaryProjection(interval, 1, 1, 0);
-        checkBoundaryProjection(interval, 2, 1, -1);
-        checkBoundaryProjection(interval, 3, 1, -2);
+        checkBoundaryProjection(interval, -1, 1);
+        checkBoundaryProjection(interval, 0, 1);
+        checkBoundaryProjection(interval, 1, 1);
+        checkBoundaryProjection(interval, 2, 1);
+        checkBoundaryProjection(interval, 3, 1);
 
-        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
+        checkBoundaryProjection(interval, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(interval, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -751,14 +750,12 @@ public class IntervalTest {
         }
     }
 
-    private static void checkBoundaryProjection(Interval interval, double location, double projectedLocation, double offset) {
+    private static void checkBoundaryProjection(Interval interval, double location, double projectedLocation) {
         Vector1D pt = Vector1D.of(location);
 
-        BoundaryProjection<Vector1D> proj = interval.projectToBoundary(pt);
+        Vector1D proj = interval.project(pt);
 
-        Assert.assertSame(pt, proj.getOriginal());
-        Assert.assertEquals(projectedLocation, proj.getProjected().getX(), TEST_EPS);
-        Assert.assertEquals(offset, proj.getOffset(), TEST_EPS);
+        Assert.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
     }
 
     /** Check that the given interval matches the arguments and is internally consistent.

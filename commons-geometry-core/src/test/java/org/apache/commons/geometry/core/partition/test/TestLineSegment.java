@@ -159,7 +159,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D closestContained(TestPoint2D point) {
+    public TestPoint2D closest(TestPoint2D point) {
         double value = line.toSubSpace(point);
         value = Math.max(Math.min(value, end), start);
 

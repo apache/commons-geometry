@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Region.BoundaryProjection;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -138,9 +137,9 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D full = RegionBSPTree1D.full();
 
         // act/assert
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(0)));
-        Assert.assertNull(full.projectToBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assert.assertNull(full.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertNull(full.project(Vector1D.of(0)));
+        Assert.assertNull(full.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -149,9 +148,9 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D empty = RegionBSPTree1D.empty();
 
         // act/assert
-        Assert.assertNull(empty.projectToBoundary(Vector1D.of(Double.NEGATIVE_INFINITY)));
-        Assert.assertNull(empty.projectToBoundary(Vector1D.of(0)));
-        Assert.assertNull(empty.projectToBoundary(Vector1D.of(Double.POSITIVE_INFINITY)));
+        Assert.assertNull(empty.project(Vector1D.of(Double.NEGATIVE_INFINITY)));
+        Assert.assertNull(empty.project(Vector1D.of(0)));
+        Assert.assertNull(empty.project(Vector1D.of(Double.POSITIVE_INFINITY)));
     }
 
     @Test
@@ -160,16 +159,16 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
 
         // act/assert
-        checkBoundaryProjection(tree, -1, 1, 2);
-        checkBoundaryProjection(tree, 0, 1, 1);
+        checkBoundaryProjection(tree, -1, 1);
+        checkBoundaryProjection(tree, 0, 1);
 
-        checkBoundaryProjection(tree, 1, 1, 0);
+        checkBoundaryProjection(tree, 1, 1);
 
-        checkBoundaryProjection(tree, 2, 1, 1);
-        checkBoundaryProjection(tree, 3, 1, 2);
+        checkBoundaryProjection(tree, 2, 1);
+        checkBoundaryProjection(tree, 3, 1);
 
-        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -178,14 +177,14 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
 
         // act/assert
-        checkBoundaryProjection(tree, -1, 1, -2);
-        checkBoundaryProjection(tree, 0, 1, -1);
-        checkBoundaryProjection(tree, 1, 1, 0);
-        checkBoundaryProjection(tree, 2, 1, 1);
-        checkBoundaryProjection(tree, 3, 1, 2);
+        checkBoundaryProjection(tree, -1, 1);
+        checkBoundaryProjection(tree, 0, 1);
+        checkBoundaryProjection(tree, 1, 1);
+        checkBoundaryProjection(tree, 2, 1);
+        checkBoundaryProjection(tree, 3, 1);
 
-        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
-        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -194,14 +193,14 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION));
 
         // act/assert
-        checkBoundaryProjection(tree, -1, 1, 2);
-        checkBoundaryProjection(tree, 0, 1, 1);
-        checkBoundaryProjection(tree, 1, 1, 0);
-        checkBoundaryProjection(tree, 2, 1, -1);
-        checkBoundaryProjection(tree, 3, 1, -2);
+        checkBoundaryProjection(tree, -1, 1);
+        checkBoundaryProjection(tree, 0, 1);
+        checkBoundaryProjection(tree, 1, 1);
+        checkBoundaryProjection(tree, 2, 1);
+        checkBoundaryProjection(tree, 3, 1);
 
-        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1, Double.NEGATIVE_INFINITY);
+        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 1);
     }
 
     @Test
@@ -210,20 +209,20 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, 3, TEST_PRECISION));
 
         // act/assert
-        checkBoundaryProjection(tree, -1, 1, 2);
-        checkBoundaryProjection(tree, 0, 1, 1);
-        checkBoundaryProjection(tree, 1, 1, 0);
+        checkBoundaryProjection(tree, -1, 1);
+        checkBoundaryProjection(tree, 0, 1);
+        checkBoundaryProjection(tree, 1, 1);
 
-        checkBoundaryProjection(tree, 1.9, 1, -0.9);
-        checkBoundaryProjection(tree, 2, 1, -1);
-        checkBoundaryProjection(tree, 2.1, 3, -0.9);
+        checkBoundaryProjection(tree, 1.9, 1);
+        checkBoundaryProjection(tree, 2, 1);
+        checkBoundaryProjection(tree, 2.1, 3);
 
-        checkBoundaryProjection(tree, 3, 3, 0);
-        checkBoundaryProjection(tree, 4, 3, 1);
-        checkBoundaryProjection(tree, 5, 3, 2);
+        checkBoundaryProjection(tree, 3, 3);
+        checkBoundaryProjection(tree, 4, 3);
+        checkBoundaryProjection(tree, 5, 3);
 
-        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1, Double.POSITIVE_INFINITY);
-        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 3, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, 1);
+        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 3);
     }
 
     @Test
@@ -237,45 +236,45 @@ public class RegionBSPTree1DTest {
                 );
 
         // act/assert
-        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, -1, Double.NEGATIVE_INFINITY);
-        checkBoundaryProjection(tree, -2, -1, -1);
-        checkBoundaryProjection(tree, -1, -1, 0);
+        checkBoundaryProjection(tree, Double.NEGATIVE_INFINITY, -1);
+        checkBoundaryProjection(tree, -2, -1);
+        checkBoundaryProjection(tree, -1, -1);
 
-        checkBoundaryProjection(tree, -0.5, -1, 0.5);
-        checkBoundaryProjection(tree, 0, -1, 1);
-        checkBoundaryProjection(tree, 0.5, 1, 0.5);
+        checkBoundaryProjection(tree, -0.5, -1);
+        checkBoundaryProjection(tree, 0, -1);
+        checkBoundaryProjection(tree, 0.5, 1);
 
-        checkBoundaryProjection(tree, 0.9, 1, 0.1);
-        checkBoundaryProjection(tree, 1, 1, 0);
-        checkBoundaryProjection(tree, 1.1, 1, 0.1);
+        checkBoundaryProjection(tree, 0.9, 1);
+        checkBoundaryProjection(tree, 1, 1);
+        checkBoundaryProjection(tree, 1.1, 1);
 
-        checkBoundaryProjection(tree, 0.5, 1, 0.5);
+        checkBoundaryProjection(tree, 0.5, 1);
 
-        checkBoundaryProjection(tree, 1.9, 2, 0.1);
-        checkBoundaryProjection(tree, 2, 2, 0);
-        checkBoundaryProjection(tree, 2.1, 2, -0.1);
-        checkBoundaryProjection(tree, 2.5, 2, -0.5);
-        checkBoundaryProjection(tree, 2.9, 3, -0.1);
-        checkBoundaryProjection(tree, 3, 3, 0);
-        checkBoundaryProjection(tree, 3.1, 3, 0.1);
+        checkBoundaryProjection(tree, 1.9, 2);
+        checkBoundaryProjection(tree, 2, 2);
+        checkBoundaryProjection(tree, 2.1, 2);
+        checkBoundaryProjection(tree, 2.5, 2);
+        checkBoundaryProjection(tree, 2.9, 3);
+        checkBoundaryProjection(tree, 3, 3);
+        checkBoundaryProjection(tree, 3.1, 3);
 
-        checkBoundaryProjection(tree, 3.9, 3, 0.9);
-        checkBoundaryProjection(tree, 4, 3, 1);
-        checkBoundaryProjection(tree, 4.1, 5, 0.9);
+        checkBoundaryProjection(tree, 3.9, 3);
+        checkBoundaryProjection(tree, 4, 3);
+        checkBoundaryProjection(tree, 4.1, 5);
 
-        checkBoundaryProjection(tree, 4.9, 5, 0.1);
-        checkBoundaryProjection(tree, 5, 5, 0);
-        checkBoundaryProjection(tree, 5.1, 5, -0.1);
-        checkBoundaryProjection(tree, 5.49, 5, -0.49);
-        checkBoundaryProjection(tree, 5.5, 5, -0.5);
-        checkBoundaryProjection(tree, 5.51, 6, -0.49);
-        checkBoundaryProjection(tree, 5.9, 6, -0.1);
-        checkBoundaryProjection(tree, 6, 6, 0);
-        checkBoundaryProjection(tree, 6.1, 6, 0.1);
+        checkBoundaryProjection(tree, 4.9, 5);
+        checkBoundaryProjection(tree, 5, 5);
+        checkBoundaryProjection(tree, 5.1, 5);
+        checkBoundaryProjection(tree, 5.49, 5);
+        checkBoundaryProjection(tree, 5.5, 5);
+        checkBoundaryProjection(tree, 5.51, 6);
+        checkBoundaryProjection(tree, 5.9, 6);
+        checkBoundaryProjection(tree, 6, 6);
+        checkBoundaryProjection(tree, 6.1, 6);
 
-        checkBoundaryProjection(tree, 7, 6, 1);
+        checkBoundaryProjection(tree, 7, 6);
 
-        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 6, Double.POSITIVE_INFINITY);
+        checkBoundaryProjection(tree, Double.POSITIVE_INFINITY, 6);
     }
 
     @Test
@@ -916,14 +915,12 @@ public class RegionBSPTree1DTest {
         }
     }
 
-    private static void checkBoundaryProjection(RegionBSPTree1D tree, double location, double projectedLocation, double offset) {
+    private static void checkBoundaryProjection(RegionBSPTree1D tree, double location, double projectedLocation) {
         Vector1D pt = Vector1D.of(location);
 
-        BoundaryProjection<Vector1D> proj = tree.projectToBoundary(pt);
+        Vector1D proj = tree.project(pt);
 
-        Assert.assertSame(pt, proj.getOriginal());
-        Assert.assertEquals(projectedLocation, proj.getProjected().getX(), TEST_EPS);
-        Assert.assertEquals(offset, proj.getOffset(), TEST_EPS);
+        Assert.assertEquals(projectedLocation, proj.getX(), TEST_EPS);
     }
 
     private static void checkInterval(Interval interval, double min, double max) {

@@ -196,7 +196,9 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * </p>
      */
     @Override
-    public BoundaryProjection<Vector1D> projectToBoundary(Vector1D pt) {
+    public Vector1D project(Vector1D pt) {
+
+        OrientedPoint boundary = null;
 
         if (minBoundary != null && maxBoundary != null) {
             // both boundaries are present; use the closest
@@ -209,20 +211,22 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
             // Project onto the max boundary if it's the closest or the point is on its plus side.
             // Otherwise, project onto the min boundary.
             if (maxDist < minDist || maxOffset > 0) {
-                return new BoundaryProjection<>(pt, maxBoundary.project(pt), maxOffset);
+                boundary = maxBoundary;
             }
-            return new BoundaryProjection<>(pt, minBoundary.project(pt), minOffset);
+            else {
+                boundary = minBoundary;
+            }
         }
         else if (minBoundary != null) {
             // only the min boundary is present
-            return new BoundaryProjection<>(pt, minBoundary.project(pt), minBoundary.offset(pt));
+            boundary = minBoundary;
         }
         else if (maxBoundary != null) {
             // only the max boundary is present
-            return new BoundaryProjection<>(pt, maxBoundary.project(pt), maxBoundary.offset(pt));
+            boundary = maxBoundary;
         }
 
-        return null;
+        return (boundary != null) ? boundary.project(pt) : null;
     }
 
     /** Transform this instance using the given {@link Transform}.

@@ -429,7 +429,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D closestContained(Vector1D point) {
+        public Vector1D closest(Vector1D point) {
             return hyperplane.project(point);
         }
 

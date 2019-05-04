@@ -134,15 +134,49 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** {@inheritDoc} */
     @Override
-    public BoundaryProjection<P> projectToBoundary(P pt) {
-        if (isFull() || isEmpty()) {
-            return null;
+    public P project(P pt) {
+
+        P closest = null;
+        P boundaryPt;
+        double dist;
+        double minDist = -1.0;
+        int cmp;
+
+        for (N node : this) {
+            if (node.isInternal() && (minDist < 0.0 || node.getCutHyperplane().offset(pt) <= minDist)) {
+                RegionCutBoundary<P> boundary = node.getCutBoundary();
+                boundaryPt = boundary.closest(pt);
+
+                dist = boundaryPt.distance(pt);
+                cmp = Double.compare(dist, minDist);
+
+                if (minDist < 0.0 || cmp < 0) {
+                    closest = boundaryPt;
+                    minDist = dist;
+                }
+                else if (cmp == 0) {
+                    // the two points are the _exact_ same distance from the reference point, so use
+                    // a separate method to disambiguate them
+                    closest = disambiguateClosestPoint(pt, closest, boundaryPt);
+                }
+            }
         }
 
-        final BoundaryProjector<P, N> projector = new BoundaryProjector<>(pt);
-        visit(projector);
+        return closest;
+    }
 
-        return projector.getProjection();
+    /** Method used to determine which of points {@code a} and {@code b} should be considered
+     * as the "closest" point to {@code target} when the points are exactly equidistant. This
+     * is used to make calculations that involve selecting points based on proximity more robust
+     * and consistent.
+     * @param target the target point
+     * @param a first point to consider
+     * @param b second point to consider
+     * @return which of {@code a} or {@code b} should be considered as the one closest to
+     *      {@code target}
+     */
+    protected P disambiguateClosestPoint(final P target, final P a, final P b) {
+        return a;
     }
 
     /** {@inheritDoc} */
@@ -706,8 +740,6 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         /** The current closest distance to the boundary found. */
         private double minDist = -1.0;
 
-        private N leaf;
-
         public BoundaryProjector(final P point) {
             this.point = point;
         }
@@ -727,14 +759,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         /** {@inheritDoc} */
         @Override
         public void visit(final N node) {
-            if (node.isLeaf()) {
-                // store the first leaf node; this will be the node that contains
-                // the test point
-                if (leaf == null) {
-                    leaf = node;
-                }
-            }
-            else {
+            if (node.isInternal()) {
                 // only check nodes where we haven't yet computed a dist yet or there is at least
                 // a chance that the projected point will be closer than our current closest
                 if (minDist < 0.0 || Math.abs(node.getCutHyperplane().offset(point)) < minDist) {
@@ -754,8 +779,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         }
 
         private P closestBoundaryPoint(final RegionCutBoundary<P> boundary) {
-            final P insideFacingPt = boundary.getInsideFacing().closestContained(point);
-            final P outsideFacingPt = boundary.getOutsideFacing().closestContained(point);
+            final P insideFacingPt = boundary.getInsideFacing().closest(point);
+            final P outsideFacingPt = boundary.getOutsideFacing().closest(point);
 
             if (insideFacingPt != null && outsideFacingPt != null) {
                 if (insideFacingPt.distance(point) < outsideFacingPt.distance(point)) {
@@ -770,14 +795,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         }
 
 
-        public BoundaryProjection<P> getProjection() {
-            if (projected != null) {
-                final double offset = minDist * (leaf.isInside() ? -1 : +1);
-
-                return new BoundaryProjection<>(point, projected, offset);
-            }
-
-            return null;
+        public P getProjection() {
+            return projected;
         }
     }
 

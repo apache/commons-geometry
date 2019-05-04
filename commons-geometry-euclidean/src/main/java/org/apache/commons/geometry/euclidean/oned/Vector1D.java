@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.Comparator;
+
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -50,6 +52,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector1D NEGATIVE_INFINITY =
         new Vector1D(Double.NEGATIVE_INFINITY);
+
+    /** Comparator that sorts vectors in component-wise ascending order.
+     * Vectors are only considered equal if their components match exactly.
+     */
+    public static final Comparator<Vector1D> STRICT_ASCENDING_ORDER = (a, b) ->
+        Double.compare(a.getX(), b.getX());
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;

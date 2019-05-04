@@ -123,12 +123,12 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D closestContained(TestPoint2D point) {
+    public TestPoint2D closest(TestPoint2D point) {
         TestPoint2D closest = null;
         double minDist = -1;
 
         for (TestLineSegment seg : segments) {
-            TestPoint2D pt = seg.closestContained(point);
+            TestPoint2D pt = seg.closest(point);
             double dist = pt.distance(point);
             if (minDist < 0 || dist < minDist) {
                 minDist = dist;
