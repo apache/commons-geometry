@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.bsp.BSPTree;
 import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partition.bsp.BSPTree.NodeCutRule;
-import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.NodeVisitOrder;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.Order;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
@@ -837,37 +837,37 @@ public class AbstractBSPTreeTest {
         TestNode minusPlus = minus.getPlus();
 
         // act/assert
-        TestVisitor plusMinusNode = new TestVisitor(NodeVisitOrder.PLUS_MINUS_NODE);
+        TestVisitor plusMinusNode = new TestVisitor(Order.PLUS_MINUS_NODE);
         tree.visit(plusMinusNode);
         Assert.assertEquals(
                 Arrays.asList(plus, minusPlus, minusMinus, minus, root),
                 plusMinusNode.getVisited());
 
-        TestVisitor plusNodeMinus = new TestVisitor(NodeVisitOrder.PLUS_NODE_MINUS);
+        TestVisitor plusNodeMinus = new TestVisitor(Order.PLUS_NODE_MINUS);
         tree.visit(plusNodeMinus);
         Assert.assertEquals(
                 Arrays.asList(plus, root, minusPlus, minus, minusMinus),
                 plusNodeMinus.getVisited());
 
-        TestVisitor minusPlusNode = new TestVisitor(NodeVisitOrder.MINUS_PLUS_NODE);
+        TestVisitor minusPlusNode = new TestVisitor(Order.MINUS_PLUS_NODE);
         tree.visit(minusPlusNode);
         Assert.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus, plus, root),
                 minusPlusNode.getVisited());
 
-        TestVisitor minusNodePlus = new TestVisitor(NodeVisitOrder.MINUS_NODE_PLUS);
+        TestVisitor minusNodePlus = new TestVisitor(Order.MINUS_NODE_PLUS);
         tree.visit(minusNodePlus);
         Assert.assertEquals(
                 Arrays.asList(minusMinus, minus, minusPlus, root, plus),
                 minusNodePlus.getVisited());
 
-        TestVisitor nodeMinusPlus = new TestVisitor(NodeVisitOrder.NODE_MINUS_PLUS);
+        TestVisitor nodeMinusPlus = new TestVisitor(Order.NODE_MINUS_PLUS);
         tree.visit(nodeMinusPlus);
         Assert.assertEquals(
                 Arrays.asList(root, minus, minusMinus, minusPlus, plus),
                 nodeMinusPlus.getVisited());
 
-        TestVisitor nodePlusMinus = new TestVisitor(NodeVisitOrder.NODE_PLUS_MINUS);
+        TestVisitor nodePlusMinus = new TestVisitor(Order.NODE_PLUS_MINUS);
         tree.visit(nodePlusMinus);
         Assert.assertEquals(
                 Arrays.asList(root, plus, minus, minusPlus, minusMinus),
@@ -886,7 +886,7 @@ public class AbstractBSPTreeTest {
         TestNode minusMinus = minus.getMinus();
         TestNode minusPlus = minus.getPlus();
 
-        TestVisitor visitor = new TestVisitor(NodeVisitOrder.NODE_MINUS_PLUS);
+        TestVisitor visitor = new TestVisitor(Order.NODE_MINUS_PLUS);
 
         // act
         minus.visit(visitor);
@@ -1669,11 +1669,11 @@ public class AbstractBSPTreeTest {
 
     private static class TestVisitor implements BSPTreeVisitor<TestPoint2D, TestNode> {
 
-        private final NodeVisitOrder order;
+        private final Order order;
 
         private final List<TestNode> visited = new ArrayList<>();
 
-        public TestVisitor(NodeVisitOrder order) {
+        public TestVisitor(Order order) {
             this.order = order;
         }
 
@@ -1683,7 +1683,7 @@ public class AbstractBSPTreeTest {
         }
 
         @Override
-        public NodeVisitOrder visitOrder(TestNode node) {
+        public Order visitOrder(TestNode node) {
             return order;
         }
 

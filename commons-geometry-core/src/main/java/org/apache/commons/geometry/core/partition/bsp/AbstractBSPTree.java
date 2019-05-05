@@ -29,7 +29,7 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.NodeVisitOrder;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.Order;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
@@ -322,7 +322,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             visitor.visit(node);
         }
         else {
-            final NodeVisitOrder order = visitor.visitOrder(node);
+            final Order order = visitor.visitOrder(node);
 
             if (order != null) {
 

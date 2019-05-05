@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.ClosestFirstVisitor;
 
 /** {@link BSPTree} specialized for representing regions of space. For example, this
  * class can be used to represent polygons in Euclidean 2D space and polyhedrons
@@ -135,48 +136,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** {@inheritDoc} */
     @Override
     public P project(P pt) {
+        final BoundaryProjector<P, N> projector = new BoundaryProjector<>(pt);
+        visit(projector);
 
-        P closest = null;
-        P boundaryPt;
-        double dist;
-        double minDist = -1.0;
-        int cmp;
-
-        for (N node : this) {
-            if (node.isInternal() && (minDist < 0.0 || node.getCutHyperplane().offset(pt) <= minDist)) {
-                RegionCutBoundary<P> boundary = node.getCutBoundary();
-                boundaryPt = boundary.closest(pt);
-
-                dist = boundaryPt.distance(pt);
-                cmp = Double.compare(dist, minDist);
-
-                if (minDist < 0.0 || cmp < 0) {
-                    closest = boundaryPt;
-                    minDist = dist;
-                }
-                else if (cmp == 0) {
-                    // the two points are the _exact_ same distance from the reference point, so use
-                    // a separate method to disambiguate them
-                    closest = disambiguateClosestPoint(pt, closest, boundaryPt);
-                }
-            }
-        }
-
-        return closest;
-    }
-
-    /** Method used to determine which of points {@code a} and {@code b} should be considered
-     * as the "closest" point to {@code target} when the points are exactly equidistant. This
-     * is used to make calculations that involve selecting points based on proximity more robust
-     * and consistent.
-     * @param target the target point
-     * @param a first point to consider
-     * @param b second point to consider
-     * @return which of {@code a} or {@code b} should be considered as the one closest to
-     *      {@code target}
-     */
-    protected P disambiguateClosestPoint(final P target, final P a, final P b) {
-        return a;
+        return projector.getProjected();
     }
 
     /** {@inheritDoc} */
@@ -728,11 +691,15 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         }
     }
 
+    /** Class used to compute the point on the region's boundary that is closest to a target point.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
     protected static class BoundaryProjector<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        implements BSPTreeVisitor<P, N> {
+        extends ClosestFirstVisitor<P, N> {
 
-        /** The point to project onto the region boundary */
-        private final P point;
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190504L;
 
         /** The projected point. */
         private P projected;
@@ -740,62 +707,53 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         /** The current closest distance to the boundary found. */
         private double minDist = -1.0;
 
+        /** Simple constructor.
+         * @param point the point to project onto the region's boundary
+         */
         public BoundaryProjector(final P point) {
-            this.point = point;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public NodeVisitOrder visitOrder(final N node) {
-            // we want to visit the tree so that the first encountered
-            // leaf is the one closest to the test point
-            if (node.getCutHyperplane().offset(point) <= 0.0) {
-                return NodeVisitOrder.MINUS_NODE_PLUS;
-            } else {
-                return NodeVisitOrder.PLUS_NODE_MINUS;
-            }
+            super(point);
         }
 
         /** {@inheritDoc} */
         @Override
         public void visit(final N node) {
-            if (node.isInternal()) {
-                // only check nodes where we haven't yet computed a dist yet or there is at least
-                // a chance that the projected point will be closer than our current closest
-                if (minDist < 0.0 || Math.abs(node.getCutHyperplane().offset(point)) < minDist) {
-                    final P potentialProjected = closestBoundaryPoint(node.getCutBoundary());
+            final P point = getTarget();
 
-                    if (potentialProjected != null) {
-                        final double dist = potentialProjected.distance(point);
+            if (node.isInternal() && (minDist < 0.0 || node.getCutHyperplane().offset(point) <= minDist)) {
+                RegionCutBoundary<P> boundary = node.getCutBoundary();
+                final P boundaryPt = boundary.closest(point);
 
-                        if (minDist < 0.0 || dist < minDist) {
-                            // new winner!
-                            minDist = dist;
-                            projected = potentialProjected;
-                        }
-                    }
+                final double dist = boundaryPt.distance(point);
+                final int cmp = Double.compare(dist, minDist);
+
+                if (minDist < 0.0 || cmp < 0) {
+                    projected = boundaryPt;
+                    minDist = dist;
+                }
+                else if (cmp == 0) {
+                    // the two points are the _exact_ same distance from the reference point, so use
+                    // a separate method to disambiguate them
+                    projected = disambiguateClosestPoint(point, projected, boundaryPt);
                 }
             }
         }
 
-        private P closestBoundaryPoint(final RegionCutBoundary<P> boundary) {
-            final P insideFacingPt = boundary.getInsideFacing().closest(point);
-            final P outsideFacingPt = boundary.getOutsideFacing().closest(point);
-
-            if (insideFacingPt != null && outsideFacingPt != null) {
-                if (insideFacingPt.distance(point) < outsideFacingPt.distance(point)) {
-                    return insideFacingPt;
-                }
-                return outsideFacingPt;
-            }
-            else if (insideFacingPt != null) {
-                return insideFacingPt;
-            }
-            return outsideFacingPt;
+        /** Method used to determine which of points {@code a} and {@code b} should be considered
+         * as the "closest" point to {@code target} when the points are exactly equidistant.
+         * @param target the target point
+         * @param a first point to consider
+         * @param b second point to consider
+         * @return which of {@code a} or {@code b} should be considered as the one closest to
+         *      {@code target}
+         */
+        protected P disambiguateClosestPoint(final P target, final P a, final P b) {
+            return a;
         }
 
-
-        public P getProjection() {
+        /** Get the projected point on the region's boundary, or null if no point could be found.
+         * @return the projected point on the region's boundary
+         */
+        public P getProjected() {
             return projected;
         }
     }

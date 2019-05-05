@@ -35,7 +35,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Serializable UID */
     private static final long serialVersionUID = 20190405L;
 
-    /** Comparator used to sort BoundaryParis in ascending location.  */
+    /** Comparator used to sort BoundaryPairs by ascending location.  */
     private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
         return Double.compare(a.getMinValue(), b.getMinValue());
     };
@@ -92,6 +92,17 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
    @Override
    public double getBoundarySize() {
        return 0;
+   }
+
+   /** {@inheritDoc} */
+   @Override
+   public Vector1D project(Vector1D pt) {
+       // use our custom projector so that we can disambiguate points that are
+       // actually equidistant from the target point
+       final BoundaryProjector1D projector = new BoundaryProjector1D(pt);
+       visit(projector);
+
+       return projector.getProjected();
    }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
@@ -261,20 +272,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** {@inheritDoc} */
     @Override
-    protected Vector1D disambiguateClosestPoint(final Vector1D target, final Vector1D a, final Vector1D b) {
-        final int cmp = Vector1D.STRICT_ASCENDING_ORDER.compare(a, b);
-
-        if (target.isInfinite() && target.getX() > 0) {
-            // return the largest value (closest to +Infinity)
-            return cmp < 0 ? b : a;
-        }
-
-        // return the smallest value
-        return cmp < 0 ? a : b;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected RegionNode1D createNode() {
         return new RegionNode1D(this);
     }
@@ -348,7 +345,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** Internal class containing pairs of interval boundaries.
      */
-    private static class BoundaryPair implements Comparable<BoundaryPair> {
+    private static final class BoundaryPair implements Comparable<BoundaryPair> {
 
         /** The min boundary */
         private final OrientedPoint min;
@@ -356,19 +353,34 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** The max boundary */
         private final OrientedPoint max;
 
+        /** Simple constructor.
+         * @param min min boundary hyperplane
+         * @param max max boundary hyperplane
+         */
         BoundaryPair(final OrientedPoint min, final OrientedPoint max) {
             this.min = min;
             this.max = max;
         }
 
+        /** Get the minimum boundary hyperplane.
+         * @return the minimum boundary hyperplane.
+         */
         public OrientedPoint getMin() {
             return min;
         }
 
+        /** Get the maximum boundary hyperplane.
+         * @return the maximum boundary hyperplane.
+         */
         public OrientedPoint getMax() {
             return max;
         }
 
+        /** Get the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+         * if no minimum value exists.
+         * @return the minumum value of the interval or {@link Double#NEGATIVE_INFINITY}
+         *      if no minimum value exists.
+         */
         public double getMinValue() {
             return (min != null) ? min.getLocation() : Double.NEGATIVE_INFINITY;
         }
@@ -380,9 +392,38 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         }
     }
 
+    /** Class used to project points onto the region boundary.
+     */
+    private static final class BoundaryProjector1D extends BoundaryProjector<Vector1D, RegionNode1D> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 1L;
+
+        /** Simple constructor.
+         * @param point the point to project onto the region's boundary
+         */
+        public BoundaryProjector1D(Vector1D point) {
+            super(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector1D disambiguateClosestPoint(final Vector1D target, final Vector1D a, final Vector1D b) {
+            final int cmp = Vector1D.STRICT_ASCENDING_ORDER.compare(a, b);
+
+            if (target.isInfinite() && target.getX() > 0) {
+                // return the largest value (closest to +Infinity)
+                return cmp < 0 ? b : a;
+            }
+
+            // return the smallest value
+            return cmp < 0 ? a : b;
+        }
+    }
+
     /** Internal class for calculating size-related properties for a {@link RegionBSPTree1D}.
      */
-    private static class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
+    private static final class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
     {
         /** Number of inside intervals visited. */
         private int count = 0;
