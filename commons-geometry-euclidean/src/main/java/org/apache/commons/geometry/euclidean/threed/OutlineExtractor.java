@@ -213,16 +213,16 @@ public class OutlineExtractor {
                         final Vector3D current3D = plane.toSpace(loop[current]);
                         final Vector2D  cPoint    = Vector2D.of(current3D.dot(u),
                                                                  current3D.dot(v));
-                        final org.apache.commons.geometry.euclidean.twod.Line line =
-                            org.apache.commons.geometry.euclidean.twod.Line.fromPoints(pPoint, cPoint, precision);
+                        final org.apache.commons.geometry.euclidean.twod.Line_Old line =
+                            org.apache.commons.geometry.euclidean.twod.Line_Old.fromPoints(pPoint, cPoint, precision);
                         SubHyperplane_Old<Vector2D> edge = line.wholeHyperplane();
 
                         if (closed || (previous != 1)) {
                             // the previous point is a real vertex
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
-                            final org.apache.commons.geometry.euclidean.twod.Line l =
-                                org.apache.commons.geometry.euclidean.twod.Line.fromPointAndAngle(pPoint, angle, precision);
+                            final org.apache.commons.geometry.euclidean.twod.Line_Old l =
+                                org.apache.commons.geometry.euclidean.twod.Line_Old.fromPointAndAngle(pPoint, angle, precision);
                             edge = edge.split(l).getPlus();
                         }
 
@@ -230,8 +230,8 @@ public class OutlineExtractor {
                             // the current point is a real vertex
                             // it defines one bounding point of the edge
                             final double angle = line.getAngle() + 0.5 * Math.PI;
-                            final org.apache.commons.geometry.euclidean.twod.Line l =
-                                org.apache.commons.geometry.euclidean.twod.Line.fromPointAndAngle(cPoint, angle, precision);
+                            final org.apache.commons.geometry.euclidean.twod.Line_Old l =
+                                org.apache.commons.geometry.euclidean.twod.Line_Old.fromPointAndAngle(cPoint, angle, precision);
                             edge = edge.split(l).getMinus();
                         }
 

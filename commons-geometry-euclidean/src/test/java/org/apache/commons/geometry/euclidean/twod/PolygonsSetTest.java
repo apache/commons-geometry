@@ -101,7 +101,7 @@ public class PolygonsSetTest {
     @Test
     public void testInfiniteLines_single() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        Line_Old line = Line_Old.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line.wholeHyperplane());
@@ -137,8 +137,8 @@ public class PolygonsSetTest {
     @Test
     public void testInfiniteLines_twoIntersecting() {
         // arrange
-        Line line1 = Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
-        Line line2 = Line.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, 0), TEST_PRECISION);
+        Line_Old line1 = Line_Old.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        Line_Old line2 = Line_Old.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, 0), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
@@ -175,8 +175,8 @@ public class PolygonsSetTest {
     @Test
     public void testInfiniteLines_twoParallel_facingIn() {
         // arrange
-        Line line1 = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), TEST_PRECISION);
-        Line line2 = Line.fromPoints(Vector2D.of(0, -1), Vector2D.of(1, -1), TEST_PRECISION);
+        Line_Old line1 = Line_Old.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), TEST_PRECISION);
+        Line_Old line2 = Line_Old.fromPoints(Vector2D.of(0, -1), Vector2D.of(1, -1), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
@@ -221,8 +221,8 @@ public class PolygonsSetTest {
     @Test
     public void testInfiniteLines_twoParallel_facingOut() {
         // arrange
-        Line line1 = Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 1), TEST_PRECISION);
-        Line line2 = Line.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -1), TEST_PRECISION);
+        Line_Old line1 = Line_Old.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 1), TEST_PRECISION);
+        Line_Old line2 = Line_Old.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -1), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
@@ -267,8 +267,8 @@ public class PolygonsSetTest {
     @Test
     public void testMixedFiniteAndInfiniteLines_explicitInfiniteBoundaries() {
         // arrange
-        Line line1 = Line.fromPoints(Vector2D.of(3, 3), Vector2D.of(0, 3), TEST_PRECISION);
-        Line line2 = Line.fromPoints(Vector2D.of(0, -3), Vector2D.of(3, -3), TEST_PRECISION);
+        Line_Old line1 = Line_Old.fromPoints(Vector2D.of(3, 3), Vector2D.of(0, 3), TEST_PRECISION);
+        Line_Old line2 = Line_Old.fromPoints(Vector2D.of(0, -3), Vector2D.of(3, -3), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(line1.wholeHyperplane());
@@ -318,12 +318,12 @@ public class PolygonsSetTest {
     @Test
     public void testMixedFiniteAndInfiniteLines_impliedInfiniteBoundaries() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(3, 0), Vector2D.of(3, 3), TEST_PRECISION);
+        Line_Old line = Line_Old.fromPoints(Vector2D.of(3, 0), Vector2D.of(3, 3), TEST_PRECISION);
 
         List<SubHyperplane_Old<Vector2D>> boundaries = new ArrayList<SubHyperplane_Old<Vector2D>>();
         boundaries.add(buildSegment(Vector2D.of(0, 3), Vector2D.of(0, 0)));
         boundaries.add(buildSegment(Vector2D.of(0, 0), Vector2D.of(3, 0)));
-        boundaries.add(new SubLine(line, new IntervalsSet(0, Double.POSITIVE_INFINITY, TEST_PRECISION)));
+        boundaries.add(new SubLine_Old(line, new IntervalsSet(0, Double.POSITIVE_INFINITY, TEST_PRECISION)));
 
         // act
         PolygonsSet poly = new PolygonsSet(boundaries, TEST_PRECISION);
@@ -714,8 +714,8 @@ public class PolygonsSetTest {
         PolygonsSet set = buildSet(vertices);
 
         // assert
-        Line l1 = Line.fromPointAndAngle(Vector2D.of(-1.5, 0.0), Math.PI / 4, TEST_PRECISION);
-        SubLine s1 = (SubLine) set.intersection(l1.wholeHyperplane());
+        Line_Old l1 = Line_Old.fromPointAndAngle(Vector2D.of(-1.5, 0.0), Math.PI / 4, TEST_PRECISION);
+        SubLine_Old s1 = (SubLine_Old) set.intersection(l1.wholeHyperplane());
         List<Interval_Old> i1 = ((IntervalsSet) s1.getRemainingRegion()).asList();
         Assert.assertEquals(2, i1.size());
         Interval_Old v10 = i1.get(0);
@@ -733,8 +733,8 @@ public class PolygonsSetTest {
         Assert.assertEquals(1.5, p11Upper.getX(), TEST_EPS);
         Assert.assertEquals(3.0, p11Upper.getY(), TEST_EPS);
 
-        Line l2 = Line.fromPointAndAngle(Vector2D.of(-1.0, 2.0), 0, TEST_PRECISION);
-        SubLine s2 = (SubLine) set.intersection(l2.wholeHyperplane());
+        Line_Old l2 = Line_Old.fromPointAndAngle(Vector2D.of(-1.0, 2.0), 0, TEST_PRECISION);
+        SubLine_Old s2 = (SubLine_Old) set.intersection(l2.wholeHyperplane());
         List<Interval_Old> i2 = ((IntervalsSet) s2.getRemainingRegion()).asList();
         Assert.assertEquals(1, i2.size());
         Interval_Old v20 = i2.get(0);
@@ -1093,28 +1093,28 @@ public class PolygonsSetTest {
         // arrange
         double pi6   = Math.PI / 6.0;
         double sqrt3 = Math.sqrt(3.0);
-        SubLine[] hyp = {
-            Line.fromPointAndAngle(Vector2D.of(   0.0, 1.0),  5 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(-sqrt3, 1.0),  7 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(-sqrt3, 1.0),  9 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(-sqrt3, 0.0), 11 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(   0.0, 0.0), 13 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(   0.0, 1.0),  3 * pi6, TEST_PRECISION).wholeHyperplane(),
-            Line.fromPointAndAngle(Vector2D.of(-5.0 * sqrt3 / 6.0, 0.0), 9 * pi6, TEST_PRECISION).wholeHyperplane()
+        SubLine_Old[] hyp = {
+            Line_Old.fromPointAndAngle(Vector2D.of(   0.0, 1.0),  5 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(-sqrt3, 1.0),  7 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(-sqrt3, 1.0),  9 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(-sqrt3, 0.0), 11 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(   0.0, 0.0), 13 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(   0.0, 1.0),  3 * pi6, TEST_PRECISION).wholeHyperplane(),
+            Line_Old.fromPointAndAngle(Vector2D.of(-5.0 * sqrt3 / 6.0, 0.0), 9 * pi6, TEST_PRECISION).wholeHyperplane()
         };
-        hyp[1] = (SubLine) hyp[1].split(hyp[0].getHyperplane()).getMinus();
-        hyp[2] = (SubLine) hyp[2].split(hyp[1].getHyperplane()).getMinus();
-        hyp[3] = (SubLine) hyp[3].split(hyp[2].getHyperplane()).getMinus();
-        hyp[4] = (SubLine) hyp[4].split(hyp[3].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
-        hyp[5] = (SubLine) hyp[5].split(hyp[4].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
-        hyp[6] = (SubLine) hyp[6].split(hyp[3].getHyperplane()).getMinus().split(hyp[1].getHyperplane()).getMinus();
+        hyp[1] = (SubLine_Old) hyp[1].split(hyp[0].getHyperplane()).getMinus();
+        hyp[2] = (SubLine_Old) hyp[2].split(hyp[1].getHyperplane()).getMinus();
+        hyp[3] = (SubLine_Old) hyp[3].split(hyp[2].getHyperplane()).getMinus();
+        hyp[4] = (SubLine_Old) hyp[4].split(hyp[3].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
+        hyp[5] = (SubLine_Old) hyp[5].split(hyp[4].getHyperplane()).getMinus().split(hyp[0].getHyperplane()).getMinus();
+        hyp[6] = (SubLine_Old) hyp[6].split(hyp[3].getHyperplane()).getMinus().split(hyp[1].getHyperplane()).getMinus();
         BSPTree_Old<Vector2D> tree = new BSPTree_Old<>(Boolean.TRUE);
         for (int i = hyp.length - 1; i >= 0; --i) {
             tree = new BSPTree_Old<>(hyp[i], new BSPTree_Old<Vector2D>(Boolean.FALSE), tree, null);
         }
         PolygonsSet set = new PolygonsSet(tree, TEST_PRECISION);
-        SubLine splitter =
-            Line.fromPointAndAngle(Vector2D.of(-2.0 * sqrt3 / 3.0, 0.0), 9 * pi6, TEST_PRECISION).wholeHyperplane();
+        SubLine_Old splitter =
+            Line_Old.fromPointAndAngle(Vector2D.of(-2.0 * sqrt3 / 3.0, 0.0), 9 * pi6, TEST_PRECISION).wholeHyperplane();
 
         // act
         PolygonsSet slice =
@@ -1294,19 +1294,19 @@ public class PolygonsSetTest {
     @Test
     public void testBug20041003() {
         // arrange
-        Line[] l = {
-            Line.fromPoints(Vector2D.of(0.0, 0.625000007541172),
+        Line_Old[] l = {
+            Line_Old.fromPoints(Vector2D.of(0.0, 0.625000007541172),
                      Vector2D.of(1.0, 0.625000007541172), TEST_PRECISION),
-            Line.fromPoints(Vector2D.of(-0.19204433621902645, 0.0),
+            Line_Old.fromPoints(Vector2D.of(-0.19204433621902645, 0.0),
                      Vector2D.of(-0.19204433621902645, 1.0), TEST_PRECISION),
-            Line.fromPoints(Vector2D.of(-0.40303524786887,  0.4248364535319128),
+            Line_Old.fromPoints(Vector2D.of(-0.40303524786887,  0.4248364535319128),
                      Vector2D.of(-1.12851149797877, -0.2634107480798909), TEST_PRECISION),
-            Line.fromPoints(Vector2D.of(0.0, 2.0),
+            Line_Old.fromPoints(Vector2D.of(0.0, 2.0),
                      Vector2D.of(1.0, 2.0), TEST_PRECISION)
         };
 
         BSPTree_Old<Vector2D> node1 =
-            new BSPTree_Old<>(new SubLine(l[0],
+            new BSPTree_Old<>(new SubLine_Old(l[0],
                                                  new IntervalsSet(intersectionAbscissa(l[0], l[1]),
                                                                   intersectionAbscissa(l[0], l[2]),
                                                                   TEST_PRECISION)),
@@ -1314,7 +1314,7 @@ public class PolygonsSetTest {
                                      new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
         BSPTree_Old<Vector2D> node2 =
-            new BSPTree_Old<>(new SubLine(l[1],
+            new BSPTree_Old<>(new SubLine_Old(l[1],
                                                  new IntervalsSet(intersectionAbscissa(l[1], l[2]),
                                                                   intersectionAbscissa(l[1], l[3]),
                                                                   TEST_PRECISION)),
@@ -1322,7 +1322,7 @@ public class PolygonsSetTest {
                                      new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                      null);
         BSPTree_Old<Vector2D> node3 =
-            new BSPTree_Old<>(new SubLine(l[2],
+            new BSPTree_Old<>(new SubLine_Old(l[2],
                                                  new IntervalsSet(intersectionAbscissa(l[2], l[3]),
                                                  Double.POSITIVE_INFINITY, TEST_PRECISION)),
                                      node2,
@@ -1587,11 +1587,11 @@ public class PolygonsSetTest {
 
         // if tolerance is smaller than rectangle width, the rectangle is computed accurately
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1.0 / 256);
-        Hyperplane_Old<Vector2D>[] h1 = new Line[] {
-            Line.fromPoints(pA, pB, precision),
-            Line.fromPoints(pB, pC, precision),
-            Line.fromPoints(pC, pD, precision),
-            Line.fromPoints(pD, pA, precision)
+        Hyperplane_Old<Vector2D>[] h1 = new Line_Old[] {
+            Line_Old.fromPoints(pA, pB, precision),
+            Line_Old.fromPoints(pB, pC, precision),
+            Line_Old.fromPoints(pC, pD, precision),
+            Line_Old.fromPoints(pD, pA, precision)
         };
 
         // act
@@ -1618,11 +1618,11 @@ public class PolygonsSetTest {
 
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1.0 / 16);
 
-        Hyperplane_Old<Vector2D>[] h2 = new Line[] {
-                Line.fromPointAndDirection(pA, Vector2D.MINUS_Y, precision),
-                Line.fromPointAndDirection(pB, Vector2D.PLUS_X, precision),
-                Line.fromPointAndDirection(pC, Vector2D.PLUS_Y, precision),
-                Line.fromPointAndDirection(pD, Vector2D.MINUS_X, precision)
+        Hyperplane_Old<Vector2D>[] h2 = new Line_Old[] {
+                Line_Old.fromPointAndDirection(pA, Vector2D.MINUS_Y, precision),
+                Line_Old.fromPointAndDirection(pB, Vector2D.PLUS_X, precision),
+                Line_Old.fromPointAndDirection(pC, Vector2D.PLUS_Y, precision),
+                Line_Old.fromPointAndDirection(pD, Vector2D.MINUS_X, precision)
             };
 
         // act
@@ -1636,8 +1636,8 @@ public class PolygonsSetTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInconsistentHyperplanes() {
         // act
-        new RegionFactory_Old<Vector2D>().buildConvex(Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(0, 1), TEST_PRECISION),
-                                                     Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 0), TEST_PRECISION));
+        new RegionFactory_Old<Vector2D>().buildConvex(Line_Old.fromPoints(Vector2D.of(0, 0), Vector2D.of(0, 1), TEST_PRECISION),
+                                                     Line_Old.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 0), TEST_PRECISION));
     }
 
     @Test
@@ -1658,7 +1658,7 @@ public class PolygonsSetTest {
 
         // splitting the square in two halves increases the BSP tree
         // with 3 more cuts and 3 more leaf nodes
-        SubLine cut = Line.fromPointAndAngle(Vector2D.of(0.5, 0.5), 0.0, square.getPrecision()).wholeHyperplane();
+        SubLine_Old cut = Line_Old.fromPointAndAngle(Vector2D.of(0.5, 0.5), 0.0, square.getPrecision()).wholeHyperplane();
         PolygonsSet splitSquare = new PolygonsSet(square.getTree(false).split(cut),
                                                   square.getPrecision());
         Counter splitSquareCount = new Counter();
@@ -1720,27 +1720,27 @@ public class PolygonsSetTest {
     }
 
     private SubHyperplane_Old<Vector2D> buildLine(Vector2D start, Vector2D end) {
-        return Line.fromPoints(start, end, TEST_PRECISION).wholeHyperplane();
+        return Line_Old.fromPoints(start, end, TEST_PRECISION).wholeHyperplane();
     }
 
-    private double intersectionAbscissa(Line l0, Line l1) {
+    private double intersectionAbscissa(Line_Old l0, Line_Old l1) {
         Vector2D p = l0.intersection(l1);
         return (l0.toSubSpace(p)).getX();
     }
 
     private SubHyperplane_Old<Vector2D> buildHalfLine(Vector2D start, Vector2D end,
                                                      boolean startIsVirtual) {
-        Line   line  = Line.fromPoints(start, end, TEST_PRECISION);
+        Line_Old   line  = Line_Old.fromPoints(start, end, TEST_PRECISION);
         double lower = startIsVirtual ? Double.NEGATIVE_INFINITY : (line.toSubSpace(start)).getX();
         double upper = startIsVirtual ? (line.toSubSpace(end)).getX() : Double.POSITIVE_INFINITY;
-        return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));
+        return new SubLine_Old(line, new IntervalsSet(lower, upper, TEST_PRECISION));
     }
 
     private SubHyperplane_Old<Vector2D> buildSegment(Vector2D start, Vector2D end) {
-        Line   line  = Line.fromPoints(start, end, TEST_PRECISION);
+        Line_Old   line  = Line_Old.fromPoints(start, end, TEST_PRECISION);
         double lower = (line.toSubSpace(start)).getX();
         double upper = (line.toSubSpace(end)).getX();
-        return new SubLine(line, new IntervalsSet(lower, upper, TEST_PRECISION));
+        return new SubLine_Old(line, new IntervalsSet(lower, upper, TEST_PRECISION));
     }
 
     private void checkPoints(Region_Old.Location expected, PolygonsSet poly, Vector2D ... points) {

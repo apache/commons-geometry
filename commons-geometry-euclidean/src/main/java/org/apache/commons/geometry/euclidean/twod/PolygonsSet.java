@@ -151,7 +151,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
      * @param precision precision context used to compare floating point values
      * @return boundary of the box
      */
-    private static Line[] boxBoundary(final double xMin, final double xMax,
+    private static Line_Old[] boxBoundary(final double xMin, final double xMax,
                                       final double yMin, final double yMax,
                                       final DoublePrecisionContext precision) {
         if (precision.eq(xMin, xMax) || precision.eq(yMin, yMax)) {
@@ -162,11 +162,11 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
         final Vector2D minMax = Vector2D.of(xMin, yMax);
         final Vector2D maxMin = Vector2D.of(xMax, yMin);
         final Vector2D maxMax = Vector2D.of(xMax, yMax);
-        return new Line[] {
-            Line.fromPoints(minMin, maxMin, precision),
-            Line.fromPoints(maxMin, maxMax, precision),
-            Line.fromPoints(maxMax, minMax, precision),
-            Line.fromPoints(minMax, minMin, precision)
+        return new Line_Old[] {
+            Line_Old.fromPoints(minMin, maxMin, precision),
+            Line_Old.fromPoints(maxMin, maxMax, precision),
+            Line_Old.fromPoints(maxMax, minMax, precision),
+            Line_Old.fromPoints(minMax, minMin, precision)
         };
     }
 
@@ -210,9 +210,9 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
             // get the line supporting the edge, taking care not to recreate it
             // if it was already created earlier due to another edge being aligned
             // with the current one
-            Line line = start.sharedLineWith(end);
+            Line_Old line = start.sharedLineWith(end);
             if (line == null) {
-                line = Line.fromPoints(start.getLocation(), end.getLocation(), precision);
+                line = Line_Old.fromPoints(start.getLocation(), end.getLocation(), precision);
             }
 
             // create the edge and store it
@@ -346,7 +346,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
         private Edge outgoing;
 
         /** Lines bound with this vertex. */
-        private final List<Line> lines;
+        private final List<Line_Old> lines;
 
         /** Build a non-processed vertex not owned by any node yet.
          * @param location vertex location
@@ -368,7 +368,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
         /** Bind a line considered to contain this vertex.
          * @param line line to bind with this vertex
          */
-        public void bindWith(final Line line) {
+        public void bindWith(final Line_Old line) {
             lines.add(line);
         }
 
@@ -382,9 +382,9 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
          * @return line bound with both the instance and another vertex, or null if the
          * two vertices do not share a line yet
          */
-        public Line sharedLineWith(final Vertex vertex) {
-            for (final Line line1 : lines) {
-                for (final Line line2 : vertex.lines) {
+        public Line_Old sharedLineWith(final Vertex vertex) {
+            for (final Line_Old line1 : lines) {
+                for (final Line_Old line2 : vertex.lines) {
                     if (line1 == line2) {
                         return line1;
                     }
@@ -443,7 +443,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
         private final Vertex end;
 
         /** Line supporting the edge. */
-        private final Line line;
+        private final Line_Old line;
 
         /** Node whose cut hyperplane contains this edge. */
         private BSPTree_Old<Vector2D> node;
@@ -453,7 +453,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
          * @param end end vertex
          * @param line line supporting the edge
          */
-        Edge(final Vertex start, final Vertex end, final Line line) {
+        Edge(final Vertex start, final Vertex end, final Line_Old line) {
 
             this.start = start;
             this.end   = end;
@@ -483,7 +483,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
         /** Get the line supporting this edge.
          * @return line supporting this edge
          */
-        public Line getLine() {
+        public Line_Old getLine() {
             return line;
         }
 
@@ -511,7 +511,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
          * @param splitLine line splitting the edge in two halves
          * @return split vertex (its incoming and outgoing edges are the two halves)
          */
-        public Vertex split(final Line splitLine) {
+        public Vertex split(final Line_Old splitLine) {
             final Vertex splitVertex = new Vertex(line.intersection(splitLine));
             splitVertex.bindWith(splitLine);
             final Edge startHalf = new Edge(start, splitVertex, line);
@@ -630,9 +630,9 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
                 }
 
                 // create the segment loops
-                final ArrayList<List<Segment>> loops = new ArrayList<>();
+                final ArrayList<List<Segment_Old>> loops = new ArrayList<>();
                 for (ConnectableSegment s = getUnprocessed(segments); s != null; s = getUnprocessed(segments)) {
-                    final List<Segment> loop = followLoop(s);
+                    final List<Segment_Old> loop = followLoop(s);
                     if (loop != null) {
                         // an open loop is one that has fewer than two segments or has a null
                         // start point; the case where we have two segments in a closed loop
@@ -652,11 +652,11 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
                 vertices = new Vector2D[loops.size()][];
                 int i = 0;
 
-                for (final List<Segment> loop : loops) {
+                for (final List<Segment_Old> loop : loops) {
                     if (loop.size() < 2 ||
                         (loop.size() == 2 && loop.get(0).getStart() == null && loop.get(1).getEnd() == null)) {
                         // single infinite line
-                        final Line line = loop.get(0).getLine();
+                        final Line_Old line = loop.get(0).getLine();
                         vertices[i++] = new Vector2D[] {
                             null,
                             line.toSpace(Vector1D.of(-Float.MAX_VALUE)),
@@ -666,7 +666,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
                         // open loop with at least one real point
                         final Vector2D[] array = new Vector2D[loop.size() + 2];
                         int j = 0;
-                        for (Segment segment : loop) {
+                        for (Segment_Old segment : loop) {
 
                             if (j == 0) {
                                 // null point and first dummy point
@@ -691,7 +691,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
                     } else {
                         final Vector2D[] array = new Vector2D[loop.size()];
                         int j = 0;
-                        for (Segment segment : loop) {
+                        for (Segment_Old segment : loop) {
                             array[j++] = segment.getStart();
                         }
                         vertices[i++] = array;
@@ -814,9 +814,9 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
      * @return loop containing the segment (may be null if the loop is a
      * degenerated infinitely thin 2 points loop
      */
-    private List<Segment> followLoop(final ConnectableSegment defining) {
+    private List<Segment_Old> followLoop(final ConnectableSegment defining) {
 
-        final List<Segment> loop = new ArrayList<>();
+        final List<Segment_Old> loop = new ArrayList<>();
         loop.add(defining);
         defining.setProcessed(true);
 
@@ -854,7 +854,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
     /** Filter out spurious vertices on straight lines (at machine precision).
      * @param loop segments loop to filter (will be modified in-place)
      */
-    private void filterSpuriousVertices(final List<Segment> loop) {
+    private void filterSpuriousVertices(final List<Segment_Old> loop) {
         // we need at least 2 segments in order for one of the contained vertices
         // to be unnecessary
         if (loop.size() > 1) {
@@ -862,15 +862,15 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
             // one in line. We can remove the shared vertex if the segments
             // are not infinite and they lie on the same line.
             for (int i = 0; i < loop.size(); ++i) {
-                final Segment previous = loop.get(i);
+                final Segment_Old previous = loop.get(i);
                 int j = (i + 1) % loop.size();
-                final Segment next = loop.get(j);
+                final Segment_Old next = loop.get(j);
                 if (next != null &&
                     previous.getStart() != null && next.getEnd() != null &&
                     Precision.equals(previous.getLine().getAngle(), next.getLine().getAngle(), Precision.EPSILON)) {
                     // the vertex between the two edges is a spurious one
                     // replace the two segments by a single one
-                    loop.set(j, new Segment(previous.getStart(), next.getEnd(), previous.getLine()));
+                    loop.set(j, new Segment_Old(previous.getStart(), next.getEnd(), previous.getLine()));
                     loop.remove(i--);
                 }
             }
@@ -878,7 +878,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
     }
 
     /** Private extension of Segment allowing connection. */
-    private static class ConnectableSegment extends Segment {
+    private static class ConnectableSegment extends Segment_Old {
 
         /** Node containing segment. */
         private final BSPTree_Old<Vector2D> node;
@@ -906,7 +906,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
          * @param startNode node whose intersection with current node defines start point
          * @param endNode node whose intersection with current node defines end point
          */
-        ConnectableSegment(final Vector2D start, final Vector2D end, final Line line,
+        ConnectableSegment(final Vector2D start, final Vector2D end, final Line_Old line,
                            final BSPTree_Old<Vector2D> node,
                            final BSPTree_Old<Vector2D> startNode,
                            final BSPTree_Old<Vector2D> endNode) {
@@ -1039,7 +1039,7 @@ public class PolygonsSet extends AbstractRegion_Old<Vector2D, Vector1D> {
             @SuppressWarnings("unchecked")
             final AbstractSubHyperplane_Old<Vector2D, Vector1D> absSub =
                 (AbstractSubHyperplane_Old<Vector2D, Vector1D>) sub;
-            final Line line      = (Line) sub.getHyperplane();
+            final Line_Old line      = (Line_Old) sub.getHyperplane();
             final List<Interval_Old> intervals = ((IntervalsSet) absSub.getRemainingRegion()).asList();
             for (final Interval_Old i : intervals) {
 

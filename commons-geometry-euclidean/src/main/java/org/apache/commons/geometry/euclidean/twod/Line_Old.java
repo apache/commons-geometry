@@ -16,20 +16,48 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Embedding;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.AbstractHyperplane;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Embedding_Old;
+import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.core.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
-public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vector2D, Vector1D> {
+/** This class represents an oriented line in the 2D plane.
+
+ * <p>An oriented line can be defined either by extending a line
+ * segment between two points past these points, by specifying a
+ * point and a direction, or by specifying a point and an angle
+ * relative to the x-axis.</p>
+
+ * <p>Since the line oriented, the two half planes on its sides are
+ * unambiguously identified as the left half plane and the right half
+ * plane. This can be used to identify the interior and the exterior
+ * in a simple way when a line is used to define a portion of a polygon
+ * boundary.</p>
+
+ * <p>A line can also be used to completely define a reference frame
+ * in the plane. It is sufficient to select one specific point in the
+ * line (the orthogonal projection of the original reference frame on
+ * the line) and to use the unit vector in the line direction (see
+ * {@link #getDirection()} and the orthogonal vector oriented from the
+ * left half plane to the right half plane (see {@link #getOffsetDirection()}.
+ * We define two coordinates by the process, the <em>abscissa</em> along
+ * the line, and the <em>offset</em> across the line. All points of the
+ * plane are uniquely identified by these two coordinates. The line is
+ * the set of points at zero offset, the left half plane is the set of
+ * points with negative offsets and the right half plane is the set of
+ * points with positive offsets.</p>
+ */
+public final class Line_Old implements Hyperplane_Old<Vector2D>, Embedding_Old<Vector2D, Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190120L;
@@ -40,16 +68,18 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
     /** The distance between the origin and the line. */
     private final double originOffset;
 
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
+
     /** Simple constructor.
      * @param direction The direction of the line.
      * @param originOffset The signed distance between the line and the origin.
      * @param precision Precision context used to compare floating point numbers.
      */
-    private Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
-        super(precision);
-
+    private Line_Old(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
         this.direction = direction;
         this.originOffset = originOffset;
+        this.precision = precision;
     }
 
     /** Get the angle of the line in radians with respect to the abscissa (+x) axis. The
@@ -95,48 +125,24 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
         return originOffset;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public DoublePrecisionContext getPrecision() {
+        return precision;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Line_Old copySelf() {
+        return this;
+    }
+
     /** Get the reverse of the instance, meaning a line containing the same
      * points but with the opposite orientation.
      * @return a new line, with orientation opposite to the instance orientation
      */
-    public Line reverse() {
-        return new Line(direction.negate(), -originOffset, getPrecision());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D plusPoint() {
-        return pointAt(0, +Math.floor(getPrecision().getMaxZero()) + 1.0);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D minusPoint() {
-         return pointAt(0, -Math.floor(getPrecision().getMaxZero()) + 1.0);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D onPoint() {
-        return getOrigin();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Line transform(Transform<Vector2D> transform) {
-        final Vector2D origin = getOrigin();
-
-        final Vector2D transformedOrigin = transform.apply(origin);
-        final Vector2D transformedOriginPlusDir = transform.apply(origin.add(getDirection()));
-
-        return fromPoints(transformedOrigin, transformedOriginPlusDir, getPrecision());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ConvexSubHyperplane<Vector2D> span() {
-        // TODO Auto-generated method stub
-        return null;
+    public Line_Old reverse() {
+        return new Line_Old(direction.negate(), -originOffset, precision);
     }
 
     /** {@inheritDoc} */
@@ -167,9 +173,9 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      *      or null if there is no unique intersection point (ie, the lines
      *      are parallel or coincident)
      */
-    public Vector2D intersection(final Line other) {
+    public Vector2D intersection(final Line_Old other) {
         final double area = this.direction.signedArea(other.direction);
-        if (getPrecision().eqZero(area)) {
+        if (precision.eqZero(area)) {
             // lines are parallel
             return null;
         }
@@ -193,7 +199,22 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
 
     /** {@inheritDoc} */
     @Override
-    public double offset(final Vector2D point) {
+    public SubLine_Old wholeHyperplane() {
+        return new SubLine_Old(this, new IntervalsSet(precision));
+    }
+
+    /** Build a region covering the whole space.
+     * @return a region containing the instance (really a {@link
+     * PolygonsSet PolygonsSet} instance)
+     */
+    @Override
+    public PolygonsSet wholeSpace() {
+        return new PolygonsSet(precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getOffset(final Vector2D point) {
         return originOffset - direction.signedArea(point);
     }
 
@@ -211,7 +232,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @return offset of the line
      * @see #distance(Line_Old)
      */
-    public double offset(final Line line) {
+    public double getOffset(final Line_Old line) {
         if (isParallel(line)) {
             // since the lines are parallel, the offset between
             // them is simply the difference between their origin offsets,
@@ -227,8 +248,8 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
 
     /** {@inheritDoc} */
     @Override
-    public boolean similarOrientation(final Hyperplane<Vector2D> other) {
-        final Line otherLine = (Line) other;
+    public boolean sameOrientationAs(final Hyperplane_Old<Vector2D> other) {
+        final Line_Old otherLine = (Line_Old) other;
         return direction.dot(otherLine.direction) >= 0.0;
     }
 
@@ -252,9 +273,8 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @param p point to check
      * @return true if p belongs to the line
      */
-    @Override
     public boolean contains(final Vector2D p) {
-        return getPrecision().eqZero(offset(p));
+        return precision.eqZero(getOffset(p));
     }
 
     /** Check if this instance completely contains the other line.
@@ -263,8 +283,8 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @param line line to check
      * @return true if this instance contains all points in the given line
      */
-    public boolean contains(final Line line) {
-        return isParallel(line) && getPrecision().eqZero(offset(line));
+    public boolean contains(final Line_Old line) {
+        return isParallel(line) && precision.eqZero(getOffset(line));
     }
 
     /** Compute the distance between the instance and a point.
@@ -276,7 +296,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @return distance between the instance and the point
      */
     public double distance(final Vector2D p) {
-        return Math.abs(offset(p));
+        return Math.abs(getOffset(p));
     }
 
     /** Compute the shortest distance between this instance and
@@ -285,10 +305,10 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @param line line to compute the closest distance to
      * @return the shortest distance between this instance and the
      *      given line
-     * @see #offset(Line_Old)
+     * @see #getOffset(Line_Old)
      */
-    public double distance(final Line line) {
-        return Math.abs(offset(line));
+    public double distance(final Line_Old line) {
+        return Math.abs(getOffset(line));
     }
 
     /** Check if the instance is parallel to another line.
@@ -296,9 +316,22 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @return true if the instance is parallel to the other line
      *  (they can have either the same or opposite orientations)
      */
-    public boolean isParallel(final Line line) {
+    public boolean isParallel(final Line_Old line) {
         final double area = direction.signedArea(line.direction);
-        return getPrecision().eqZero(area);
+        return precision.eqZero(area);
+    }
+
+    /** Transform this instance with the given transform.
+     * @param transform transform to apply to this instance
+     * @return a new transformed line
+     */
+    public Line_Old transform(final Transform_Old<Vector2D, Vector1D> transform) {
+        final Vector2D origin = getOrigin();
+
+        final Vector2D p1 = transform.apply(origin);
+        final Vector2D p2 = transform.apply(origin.add(direction));
+
+        return Line_Old.fromPoints(p1, p2, precision);
     }
 
     /** {@inheritDoc} */
@@ -309,7 +342,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
         int result = 1;
         result = (prime * result) + Objects.hashCode(direction);
         result = (prime * result) + Double.hashCode(originOffset);
-        result = (prime * result) + Objects.hashCode(getPrecision());
+        result = (prime * result) + Objects.hashCode(precision);
 
         return result;
     }
@@ -320,15 +353,15 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
         if (this == obj) {
             return true;
         }
-        else if (!(obj instanceof Line)) {
+        else if (!(obj instanceof Line_Old)) {
             return false;
         }
 
-        Line other = (Line) obj;
+        Line_Old other = (Line_Old) obj;
 
         return Objects.equals(this.direction, other.direction) &&
                 Double.compare(this.originOffset, other.originOffset) == 0 &&
-                Objects.equals(this.getPrecision(), other.getPrecision());
+                Objects.equals(this.precision, other.precision);
     }
 
     /** {@inheritDoc} */
@@ -355,7 +388,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @throws GeometryValueException If the vector between {@code p1} and {@code p2} has zero length,
      *      as evaluated by the given precision context
      */
-    public static Line fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
+    public static Line_Old fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
         return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
     }
 
@@ -367,7 +400,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @throws GeometryValueException If {@code dir} has zero length, as evaluated by the
      *      given precision context
      */
-    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir, final DoublePrecisionContext precision) {
+    public static Line_Old fromPointAndDirection(final Vector2D pt, final Vector2D dir, final DoublePrecisionContext precision) {
         if (dir.isZero(precision)) {
             throw new GeometryValueException("Line direction cannot be zero");
         }
@@ -375,7 +408,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
         final Vector2D normalizedDir = dir.normalize();
         final double originOffset = normalizedDir.signedArea(pt);
 
-        return new Line(normalizedDir, originOffset, precision);
+        return new Line_Old(normalizedDir, originOffset, precision);
     }
 
     /** Create a line from a point lying on the line and an angle relative to the abscissa (x) axis. Note that the
@@ -386,8 +419,67 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
      * @return new line containing {@code pt} and forming the given angle with the
      *      abscissa (x) axis.
      */
-    public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
+    public static Line_Old fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
         final Vector2D dir = Vector2D.normalize(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
+    }
+
+    // TODO: Remove this method and associated class after the Transform interface has been simplified.
+    // See GEOMETRY-24.
+
+    /** Create a {@link Transform_Old} instance from a set of column vectors. The returned object can be used
+     * to transform {@link SubLine_Old} instances.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @param t third column vector; this corresponds to the translation of the transform
+     * @return a new transform instance
+     */
+    public static Transform_Old<Vector2D, Vector1D> getTransform(final Vector2D u, final Vector2D v, final Vector2D t) {
+        final AffineTransformMatrix2D matrix = AffineTransformMatrix2D.fromColumnVectors(u, v, t);
+        return new LineTransform(matrix);
+    }
+
+    /** Class wrapping an {@link AffineTransformMatrix2D} with the methods necessary to fulfill the full
+     * {@link Transform_Old} interface.
+     */
+    private static class LineTransform implements Transform_Old<Vector2D, Vector1D> {
+
+        /** Transform matrix */
+        private final AffineTransformMatrix2D matrix;
+
+        /** Simple constructor.
+         * @param matrix transform matrix
+         */
+        LineTransform(final AffineTransformMatrix2D matrix) {
+            this.matrix = matrix;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D apply(final Vector2D point) {
+            return matrix.apply(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Line_Old apply(final Hyperplane_Old<Vector2D> hyperplane) {
+            final Line_Old line = (Line_Old) hyperplane;
+            return line.transform(matrix);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubHyperplane_Old<Vector1D> apply(final SubHyperplane_Old<Vector1D> sub,
+                                                final Hyperplane_Old<Vector2D> original,
+                                                final Hyperplane_Old<Vector2D> transformed) {
+            final OrientedPoint_Old op = (OrientedPoint_Old) sub.getHyperplane();
+            final Line_Old originalLine  = (Line_Old) original;
+            final Line_Old transformedLine = (Line_Old) transformed;
+            final Vector1D newLoc =
+                transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
+            return OrientedPoint_Old.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
+        }
     }
 }

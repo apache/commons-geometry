@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.Line_Old;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
@@ -147,7 +147,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
             final Vector2D p1 = hull.get(size - 2);
             final Vector2D p2 = hull.get(size - 1);
 
-            final double offset = Line.fromPoints(p1, p2, precision).getOffset(point);
+            final double offset = Line_Old.fromPoints(p1, p2, precision).getOffset(point);
             if (precision.eqZero(offset)) {
                 // the point is collinear to the line (p1, p2)
 

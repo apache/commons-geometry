@@ -31,15 +31,15 @@ import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
-/** This class represents a sub-hyperplane for {@link Line}.
+/** This class represents a sub-hyperplane for {@link Line_Old}.
  */
-public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
+public class SubLine_Old extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubLine(final Hyperplane_Old<Vector2D> hyperplane,
+    public SubLine_Old(final Hyperplane_Old<Vector2D> hyperplane,
                    final Region_Old<Vector1D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
@@ -49,14 +49,14 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
      * @param end end point
      * @param precision precision context used to compare floating point values
      */
-    public SubLine(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        super(Line.fromPoints(start, end, precision), buildIntervalSet(start, end, precision));
+    public SubLine_Old(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
+        super(Line_Old.fromPoints(start, end, precision), buildIntervalSet(start, end, precision));
     }
 
     /** Create a sub-line from a segment.
      * @param segment single segment forming the sub-line
      */
-    public SubLine(final Segment segment) {
+    public SubLine_Old(final Segment_Old segment) {
         super(segment.getLine(),
               buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getPrecision()));
     }
@@ -75,16 +75,16 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
      * </p>
      * @return list of segments endpoints
      */
-    public List<Segment> getSegments() {
+    public List<Segment_Old> getSegments() {
 
-        final Line line = (Line) getHyperplane();
+        final Line_Old line = (Line_Old) getHyperplane();
         final List<Interval_Old> list = ((IntervalsSet) getRemainingRegion()).asList();
-        final List<Segment> segments = new ArrayList<>(list.size());
+        final List<Segment_Old> segments = new ArrayList<>(list.size());
 
         for (final Interval_Old interval : list) {
             final Vector2D start = line.toSpace(Vector1D.of(interval.getInf()));
             final Vector2D end   = line.toSpace(Vector1D.of(interval.getSup()));
-            segments.add(new Segment(start, end, line));
+            segments.add(new Segment_Old(start, end, line));
         }
 
         return segments;
@@ -93,8 +93,8 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
 
     /** Get the intersection of the instance and another sub-line.
      * <p>
-     * This method is related to the {@link Line#intersection(Line)
-     * intersection} method in the {@link Line Line} class, but in addition
+     * This method is related to the {@link Line_Old#intersection(Line_Old)
+     * intersection} method in the {@link Line_Old Line} class, but in addition
      * to compute the point along infinite lines, it also checks the point
      * lies on both sub-line ranges.
      * </p>
@@ -105,11 +105,11 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
      * occurring on endpoints lead to null being returned
      * @return the intersection point if there is one, null if the sub-lines don't intersect
      */
-    public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
+    public Vector2D intersection(final SubLine_Old subLine, final boolean includeEndPoints) {
 
         // retrieve the underlying lines
-        Line line1 = (Line) getHyperplane();
-        Line line2 = (Line) subLine.getHyperplane();
+        Line_Old line1 = (Line_Old) getHyperplane();
+        Line_Old line2 = (Line_Old) subLine.getHyperplane();
 
         // compute the intersection on infinite line
         Vector2D v2D = line1.intersection(line2);
@@ -138,7 +138,7 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
      * @return an interval set
      */
     private static IntervalsSet buildIntervalSet(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        final Line line = Line.fromPoints(start, end, precision);
+        final Line_Old line = Line_Old.fromPoints(start, end, precision);
         return new IntervalsSet(line.toSubSpace(start).getX(),
                                 line.toSubSpace(end).getX(),
                                 precision);
@@ -148,15 +148,15 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
     @Override
     protected AbstractSubHyperplane_Old<Vector2D, Vector1D> buildNew(final Hyperplane_Old<Vector2D> hyperplane,
                                                                        final Region_Old<Vector1D> remainingRegion) {
-        return new SubLine(hyperplane, remainingRegion);
+        return new SubLine_Old(hyperplane, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
     public SplitSubHyperplane<Vector2D> split(final Hyperplane_Old<Vector2D> hyperplane) {
 
-        final Line    thisLine  = (Line) getHyperplane();
-        final Line    otherLine = (Line) hyperplane;
+        final Line_Old    thisLine  = (Line_Old) getHyperplane();
+        final Line_Old    otherLine = (Line_Old) hyperplane;
         final Vector2D crossing = thisLine.intersection(otherLine);
         final DoublePrecisionContext precision = thisLine.getPrecision();
 
@@ -191,8 +191,8 @@ public class SubLine extends AbstractSubHyperplane_Old<Vector2D, Vector1D> {
                                                new BSPTree_Old<Vector1D>(Boolean.FALSE) :
                                                new BSPTree_Old<>(subMinus, new BSPTree_Old<Vector1D>(Boolean.FALSE),
                                                                         splitTree.getMinus(), null);
-        return new SplitSubHyperplane<>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree, precision)),
-                                                   new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree, precision)));
+        return new SplitSubHyperplane<>(new SubLine_Old(thisLine.copySelf(), new IntervalsSet(plusTree, precision)),
+                                                   new SubLine_Old(thisLine.copySelf(), new IntervalsSet(minusTree, precision)));
 
     }
 

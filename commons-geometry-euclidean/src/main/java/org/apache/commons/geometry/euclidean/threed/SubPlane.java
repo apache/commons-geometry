@@ -84,9 +84,9 @@ public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
             q           = tmp;
         }
         final SubHyperplane_Old<Vector2D> l2DMinus =
-            org.apache.commons.geometry.euclidean.twod.Line.fromPoints(p, q, precision).wholeHyperplane();
+            org.apache.commons.geometry.euclidean.twod.Line_Old.fromPoints(p, q, precision).wholeHyperplane();
         final SubHyperplane_Old<Vector2D> l2DPlus =
-            org.apache.commons.geometry.euclidean.twod.Line.fromPoints(q, p, precision).wholeHyperplane();
+            org.apache.commons.geometry.euclidean.twod.Line_Old.fromPoints(q, p, precision).wholeHyperplane();
 
         final BSPTree_Old<Vector2D> splitTree = getRemainingRegion().getTree(false).split(l2DMinus);
         final BSPTree_Old<Vector2D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?

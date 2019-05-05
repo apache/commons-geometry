@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
-import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.SubLine_Old;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -699,9 +699,9 @@ public class PolyhedronsSetTest {
                 projPts[ptIdx] = polyPlane.toSubSpace(vertices[ptIdx]);
             }
 
-            SubLine lineInPlane = null;
+            SubLine_Old lineInPlane = null;
             for (int ptIdx = 0; ptIdx < projPts.length; ptIdx++) {
-                lineInPlane = new SubLine(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_PRECISION);
+                lineInPlane = new SubLine_Old(projPts[ptIdx], projPts[(ptIdx + 1) % projPts.length], TEST_PRECISION);
                 lines.add(lineInPlane);
             }
             Region_Old<Vector2D> polyRegion = new PolygonsSet(lines, TEST_PRECISION);

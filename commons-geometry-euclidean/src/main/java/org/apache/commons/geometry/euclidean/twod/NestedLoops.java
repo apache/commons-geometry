@@ -93,12 +93,12 @@ class NestedLoops {
         for (int i = 0; i < loop.length; ++i) {
             final Vector2D previous = current;
             current = loop[i];
-            final Line   line   = Line.fromPoints(previous, current, precision);
+            final Line_Old   line   = Line_Old.fromPoints(previous, current, precision);
             final IntervalsSet region =
                 new IntervalsSet(line.toSubSpace(previous).getX(),
                                  line.toSubSpace(current).getX(),
                                  precision);
-            edges.add(new SubLine(line, region));
+            edges.add(new SubLine_Old(line, region));
         }
         polygon = new PolygonsSet(edges, precision);
 

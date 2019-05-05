@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 /** Simple container for a two-points segment.
  */
-public class Segment {
+public class Segment_Old {
 
     /** Start point of the segment. */
     private final Vector2D start;
@@ -27,14 +27,14 @@ public class Segment {
     private final Vector2D end;
 
     /** Line containing the segment. */
-    private final Line     line;
+    private final Line_Old     line;
 
     /** Build a segment.
      * @param start start point of the segment
      * @param end end point of the segment
      * @param line line containing the segment
      */
-    public Segment(final Vector2D start, final Vector2D end, final Line line) {
+    public Segment_Old(final Vector2D start, final Vector2D end, final Line_Old line) {
         this.start  = start;
         this.end    = end;
         this.line   = line;
@@ -57,7 +57,7 @@ public class Segment {
     /** Get the line containing the segment.
      * @return line containing the segment
      */
-    public Line getLine() {
+    public Line_Old getLine() {
         return line;
     }
 

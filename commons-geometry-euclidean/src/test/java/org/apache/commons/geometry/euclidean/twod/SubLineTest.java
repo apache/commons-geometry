@@ -37,9 +37,9 @@ public class SubLineTest {
     public void testEndPoints() {
         Vector2D p1 = Vector2D.of(-1, -7);
         Vector2D p2 = Vector2D.of(7, -1);
-        Segment segment = new Segment(p1, p2, Line.fromPoints(p1, p2, TEST_PRECISION));
-        SubLine sub = new SubLine(segment);
-        List<Segment> segments = sub.getSegments();
+        Segment_Old segment = new Segment_Old(p1, p2, Line_Old.fromPoints(p1, p2, TEST_PRECISION));
+        SubLine_Old sub = new SubLine_Old(segment);
+        List<Segment_Old> segments = sub.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertEquals(0.0, Vector2D.of(-1, -7).distance(segments.get(0).getStart()), TEST_EPS);
         Assert.assertEquals(0.0, Vector2D.of( 7, -1).distance(segments.get(0).getEnd()), TEST_EPS);
@@ -47,8 +47,8 @@ public class SubLineTest {
 
     @Test
     public void testNoEndPoints() {
-        SubLine wholeLine = Line.fromPoints(Vector2D.of(-1, 7), Vector2D.of(7, 1), TEST_PRECISION).wholeHyperplane();
-        List<Segment> segments = wholeLine.getSegments();
+        SubLine_Old wholeLine = Line_Old.fromPoints(Vector2D.of(-1, 7), Vector2D.of(7, 1), TEST_PRECISION).wholeHyperplane();
+        List<Segment_Old> segments = wholeLine.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
                           segments.get(0).getStart().getX() < 0);
@@ -62,26 +62,26 @@ public class SubLineTest {
 
     @Test
     public void testNoSegments() {
-        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine_Old empty = new SubLine_Old(Line_Old.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new RegionFactory_Old<Vector1D>().getComplement(new IntervalsSet(TEST_PRECISION)));
-        List<Segment> segments = empty.getSegments();
+        List<Segment_Old> segments = empty.getSegments();
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testSeveralSegments() {
-        SubLine twoSubs = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine_Old twoSubs = new SubLine_Old(Line_Old.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new RegionFactory_Old<Vector1D>().union(new IntervalsSet(1, 2, TEST_PRECISION),
                                                                            new IntervalsSet(3, 4, TEST_PRECISION)));
-        List<Segment> segments = twoSubs.getSegments();
+        List<Segment_Old> segments = twoSubs.getSegments();
         Assert.assertEquals(2, segments.size());
     }
 
     @Test
     public void testHalfInfiniteNeg() {
-        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine_Old empty = new SubLine_Old(Line_Old.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new IntervalsSet(Double.NEGATIVE_INFINITY, 0.0, TEST_PRECISION));
-        List<Segment> segments = empty.getSegments();
+        List<Segment_Old> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
                           segments.get(0).getStart().getX() < 0);
@@ -92,9 +92,9 @@ public class SubLineTest {
 
     @Test
     public void testHalfInfinitePos() {
-        SubLine empty = new SubLine(Line.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
+        SubLine_Old empty = new SubLine_Old(Line_Old.fromPoints(Vector2D.of(-1, -7), Vector2D.of(7, -1), TEST_PRECISION),
                                     new IntervalsSet(0.0, Double.POSITIVE_INFINITY, TEST_PRECISION));
-        List<Segment> segments = empty.getSegments();
+        List<Segment_Old> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertEquals(0.0, Vector2D.of(3, -4).distance(segments.get(0).getStart()), TEST_EPS);
         Assert.assertTrue(Double.isInfinite(segments.get(0).getEnd().getX()) &&
@@ -105,56 +105,56 @@ public class SubLineTest {
 
     @Test
     public void testIntersectionInsideInside() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 2), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 2), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)), TEST_EPS);
         Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, false)), TEST_EPS);
     }
 
     @Test
     public void testIntersectionInsideBoundary() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 1), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 1), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)), TEST_EPS);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionInsideOutside() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryBoundary() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(2, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 1), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(2, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 1), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector2D.of(2, 1).distance(sub1.intersection(sub2, true)), TEST_EPS);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryOutside() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(2, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(2, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionOutsideOutside() {
-        SubLine sub1 = new SubLine(Vector2D.of(1, 1), Vector2D.of(1.5, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
+        SubLine_Old sub1 = new SubLine_Old(Vector2D.of(1, 1), Vector2D.of(1.5, 1), TEST_PRECISION);
+        SubLine_Old sub2 = new SubLine_Old(Vector2D.of(2, 0), Vector2D.of(2, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionParallel() {
-        final SubLine sub1 = new SubLine(Vector2D.of(0, 1), Vector2D.of(0, 2), TEST_PRECISION);
-        final SubLine sub2 = new SubLine(Vector2D.of(66, 3), Vector2D.of(66, 4), TEST_PRECISION);
+        final SubLine_Old sub1 = new SubLine_Old(Vector2D.of(0, 1), Vector2D.of(0, 2), TEST_PRECISION);
+        final SubLine_Old sub2 = new SubLine_Old(Vector2D.of(66, 3), Vector2D.of(66, 4), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }

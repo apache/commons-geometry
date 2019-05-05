@@ -35,9 +35,9 @@ import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.PolyhedronsSet;
 import org.apache.commons.geometry.euclidean.threed.SubPlane;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.Line_Old;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
-import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.SubLine_Old;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 
@@ -243,7 +243,7 @@ public class EuclideanTestUtils {
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane_Old<Vector2D> hyperplane) {
-                final Line h = (Line) hyperplane;
+                final Line_Old h = (Line_Old) hyperplane;
                 final Vector2D p = h.toSpace(Vector1D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e",
                                       p.getX(), p.getY(), h.getAngle());
@@ -315,9 +315,9 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            public Line parseHyperplane()
+            public Line_Old parseHyperplane()
                 throws ParseException {
-                return Line.fromPointAndAngle(Vector2D.of(getNumber(), getNumber()), getNumber(), getPrecision());
+                return Line_Old.fromPointAndAngle(Vector2D.of(getNumber(), getNumber()), getNumber(), getPrecision());
             }
 
         };
@@ -429,8 +429,8 @@ public class EuclideanTestUtils {
         /** {@inheritDoc} */
         @Override
         protected void writeInternalNode(BSPTree_Old<Vector2D> node) {
-            SubLine cut = (SubLine) node.getCut();
-            Line line = (Line) cut.getHyperplane();
+            SubLine_Old cut = (SubLine_Old) node.getCut();
+            Line_Old line = (Line_Old) cut.getHyperplane();
             IntervalsSet remainingRegion = (IntervalsSet) cut.getRemainingRegion();
 
             write("cut = { angle: " + Math.toDegrees(line.getAngle()) + ", origin: " + line.toSpace(Vector1D.ZERO) + "}");

@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
-import org.apache.commons.geometry.euclidean.twod.SubLine;
+import org.apache.commons.geometry.euclidean.twod.SubLine_Old;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a 3D region: a set of polyhedrons.
@@ -628,12 +628,12 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
 
                 cachedOriginal  = (Plane) original;
                 cachedTransform =
-                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(
+                        org.apache.commons.geometry.euclidean.twod.Line_Old.getTransform(
                                 tP00.vectorTo(tP10),
                                 tP00.vectorTo(tP01),
                                 tP00);
             }
-            return ((SubLine) sub).applyTransform(cachedTransform);
+            return ((SubLine_Old) sub).applyTransform(cachedTransform);
         }
 
     }
@@ -692,13 +692,13 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
 
                 cachedOriginal  = (Plane) original;
                 cachedTransform =
-                        org.apache.commons.geometry.euclidean.twod.Line.getTransform(
+                        org.apache.commons.geometry.euclidean.twod.Line_Old.getTransform(
                                 Vector2D.PLUS_X,
                                 Vector2D.PLUS_Y,
                                 shift);
             }
 
-            return ((SubLine) sub).applyTransform(cachedTransform);
+            return ((SubLine_Old) sub).applyTransform(cachedTransform);
 
         }
 

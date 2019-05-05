@@ -32,7 +32,7 @@ public class SegmentTest {
     public void testDistance() {
         Vector2D start = Vector2D.of(2, 2);
         Vector2D end = Vector2D.of(-2, -2);
-        Segment segment = new Segment(start, end, Line.fromPoints(start, end, TEST_PRECISION));
+        Segment_Old segment = new Segment_Old(start, end, Line_Old.fromPoints(start, end, TEST_PRECISION));
 
         // distance to center of segment
         Assert.assertEquals(Math.sqrt(2), segment.distance(Vector2D.of(1, -1)), TEST_EPS);
