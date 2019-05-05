@@ -134,7 +134,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<Vector2D> span() {
+    public LineSegment span() {
         // TODO Auto-generated method stub
         return null;
     }
