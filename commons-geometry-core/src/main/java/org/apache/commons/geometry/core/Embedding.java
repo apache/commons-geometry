@@ -18,37 +18,37 @@ package org.apache.commons.geometry.core;
 
 import org.apache.commons.geometry.core.partition.Hyperplane;
 
-/** This interface defines mappers between a space and one of its sub-spaces.
+/** This interface defines mappers between a space and one of its subspaces.
 
- * <p>Sub-spaces are the lower dimensions subsets of a n-dimensions
- * space. The (n-1)-dimension sub-spaces are specific sub-spaces known
+ * <p>Subspaces are the lower dimensions subsets of a n-dimensions
+ * space. The (n-1)-dimension subspaces are specific subspaces known
  * as {@link Hyperplane hyperplanes}. This interface can be used regardless
  * of the dimensions differences. For example, a line in 3D Euclidean space
  * can map directly from 3 dimensions to 1.</p>
 
  * <p>In the 3D Euclidean space, hyperplanes are 2D planes, and the 1D
- * sub-spaces are lines.</p>
+ * subspaces are lines.</p>
 
  * @param <P> Point type defining the embedding space.
- * @param <S> Point type defining the embedded sub-space.
+ * @param <S> Point type defining the embedded subspace.
 
  * @see Hyperplane
  */
 public interface Embedding<P extends Point<P>, S extends Point<S>> {
 
-    /** Transform a space point into a sub-space point.
+    /** Transform a space point into a subspace point.
      * @param point n-dimension point of the space
-     * @return (n-1)-dimension point of the sub-space corresponding to
+     * @return (n-1)-dimension point of the subspace corresponding to
      *  the specified space point
      * @see #toSpace
      */
-    S toSubSpace(P point);
+    S toSubspace(P point);
 
     /** Transform a sub-space point into a space point.
      * @param point (n-1)-dimension point of the sub-space
      * @return n-dimension point of the space corresponding to the
      * specified sub-space point
-     * @see #toSubSpace
+     * @see #toSubspace(Point)
      */
     P toSpace(S point);
 }

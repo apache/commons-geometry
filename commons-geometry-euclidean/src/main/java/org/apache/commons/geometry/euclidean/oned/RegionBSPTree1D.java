@@ -210,10 +210,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         // of the hyperplane (for example, if the region is complemented)
 
         if (min != null && min.isPositiveFacing()) {
-            min = min.reverse();
+            min = min.flip();
         }
         if (max != null && !max.isPositiveFacing()) {
-            max = max.reverse();
+            max = max.flip();
         }
 
         return Interval.of(min, max);

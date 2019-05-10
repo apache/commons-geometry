@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -233,34 +234,60 @@ public class LineTest {
     }
 
     @Test
-    public void testReverse() {
+    public void testFlip() {
         // arrange
         Vector2D pt = Vector2D.of(0, 1);
         Vector2D dir = Vector2D.PLUS_X;
         Line line = Line.fromPointAndDirection(pt, dir, TEST_PRECISION);
 
         // act
-        Line reversed = line.reverse();
-        Line doubleReversed = reversed.reverse();
+        Line flipped = line.flip();
+        Line doubleFlipped = flipped.flip();
 
         // assert
-        checkLine(reversed, pt, dir.negate());
-        Assert.assertEquals(-1, reversed.getOriginOffset(), TEST_EPS);
+        checkLine(flipped, pt, dir.negate());
+        Assert.assertEquals(-1, flipped.getOriginOffset(), TEST_EPS);
 
-        checkLine(doubleReversed, pt, dir);
-        Assert.assertEquals(1, doubleReversed.getOriginOffset(), TEST_EPS);
+        checkLine(doubleFlipped, pt, dir);
+        Assert.assertEquals(1, doubleFlipped.getOriginOffset(), TEST_EPS);
     }
 
     @Test
-    public void testToSubSpace() {
+    public void testHyperplanePoints() {
+        for (double angle = Geometry.ZERO_PI; angle <= Geometry.TWO_PI; angle += 0.25) {
+            // arrange
+            Line line = Line.fromPointAndAngle(Vector2D.of(1, 2), angle, TEST_PRECISION);
+
+            // act/assert
+            Assert.assertEquals(HyperplaneLocation.MINUS, line.classify(line.minusPoint()));
+            Assert.assertEquals(HyperplaneLocation.PLUS, line.classify(line.plusPoint()));
+            Assert.assertEquals(HyperplaneLocation.ON, line.classify(line.onPoint()));
+        }
+    }
+
+    @Test
+    public void testHyperplanePoints_largeEpsilon() {
+        for (double angle = Geometry.ZERO_PI; angle <= Geometry.TWO_PI; angle += 0.25) {
+            // arrange
+            Line line = Line.fromPointAndAngle(Vector2D.of(1, 2), angle, new EpsilonDoublePrecisionContext(0.5));
+
+            // act/assert
+            Assert.assertEquals(HyperplaneLocation.MINUS, line.classify(line.minusPoint()));
+            Assert.assertEquals(HyperplaneLocation.PLUS, line.classify(line.plusPoint()));
+            Assert.assertEquals(HyperplaneLocation.ON, line.classify(line.onPoint()));
+        }
+    }
+
+    @Test
+    public void testToSubspace() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.toSubSpace(Vector2D.of(-3,  4)).getX(), TEST_EPS);
-        Assert.assertEquals(0.0, line.toSubSpace(Vector2D.of( 3, -4)).getX(), TEST_EPS);
-        Assert.assertEquals(-5.0, line.toSubSpace(Vector2D.of(7, -1)).getX(), TEST_EPS);
-        Assert.assertEquals(5.0, line.toSubSpace(Vector2D.of(-1, -7)).getX(), TEST_EPS);
+        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(-3,  4)).getX(), TEST_EPS);
+        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of( 3, -4)).getX(), TEST_EPS);
+        Assert.assertEquals(-5.0, line.toSubspace(Vector2D.of(7, -1)).getX(), TEST_EPS);
+        Assert.assertEquals(5.0, line.toSubspace(Vector2D.of(-1, -7)).getX(), TEST_EPS);
     }
 
     @Test
@@ -435,7 +462,7 @@ public class LineTest {
         // arrange
         Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line c = b.reverse();
+        Line c = b.flip();
 
         // act/assert
         Assert.assertEquals(0, a.offset(a), TEST_EPS);
@@ -470,7 +497,7 @@ public class LineTest {
     public void testOffset_point() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line reversed = line.reverse();
+        Line reversed = line.flip();
 
         // act/assert
         Assert.assertEquals(0.0, line.offset(Vector2D.of(-0.5, 1)), TEST_EPS);
@@ -580,7 +607,7 @@ public class LineTest {
         // arrange
         Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line c = b.reverse();
+        Line c = b.flip();
 
         // act/assert
         Assert.assertEquals(0, a.distance(a), TEST_EPS);
@@ -653,7 +680,7 @@ public class LineTest {
                 Vector2D point = line.pointAt(abscissa, offset);
 
                 // assert
-                Assert.assertEquals(abscissa, line.toSubSpace(point).getX(), TEST_EPS);
+                Assert.assertEquals(abscissa, line.toSubspace(point).getX(), TEST_EPS);
                 Assert.assertEquals(offset, line.offset(point), TEST_EPS);
             }
         }
@@ -762,7 +789,7 @@ public class LineTest {
     public void testDistance_point() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line reversed = line.reverse();
+        Line reversed = line.flip();
 
         // act/assert
         Assert.assertEquals(0.0, line.distance(Vector2D.of(-0.5, 1)), TEST_EPS);

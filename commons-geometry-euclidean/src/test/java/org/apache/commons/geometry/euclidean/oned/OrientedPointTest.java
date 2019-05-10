@@ -54,20 +54,20 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testReverse() {
+    public void testFlip() {
         // act/assert
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).flip(),
                 0.0, false, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).flip(),
                 -1.0, true, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).flip(),
                 1.0, false, TEST_PRECISION);
 
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(0), true, TEST_PRECISION).flip().flip(),
                 0.0, true, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(-1), false, TEST_PRECISION).flip().flip(),
                 -1.0, false, TEST_PRECISION);
-        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).reverse().reverse(),
+        assertOrientedPoint(OrientedPoint.fromPointAndDirection(Vector1D.of(1), true, TEST_PRECISION).flip().flip(),
                 1.0, true, TEST_PRECISION);
     }
 

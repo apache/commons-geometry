@@ -22,13 +22,38 @@ import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
+/** This class represents an oriented line in the 2D plane.
+
+ * <p>An oriented line can be defined either by extending a line
+ * segment between two points past these points, by specifying a
+ * point and a direction, or by specifying a point and an angle
+ * relative to the x-axis.</p>
+
+ * <p>Since the line oriented, the two half planes on its sides are
+ * unambiguously identified as the left half plane and the right half
+ * plane. This can be used to identify the interior and the exterior
+ * in a simple way when a line is used to define a portion of a polygon
+ * boundary.</p>
+
+ * <p>A line can also be used to completely define a reference frame
+ * in the plane. It is sufficient to select one specific point in the
+ * line (the orthogonal projection of the original reference frame on
+ * the line) and to use the unit vector in the line direction (see
+ * {@link #getDirection()} and the orthogonal vector oriented from the
+ * left half plane to the right half plane (see {@link #getOffsetDirection()}.
+ * We define two coordinates by the process, the <em>abscissa</em> along
+ * the line, and the <em>offset</em> across the line. All points of the
+ * plane are uniquely identified by these two coordinates. The line is
+ * the set of points at zero offset, the left half plane is the set of
+ * points with negative offsets and the right half plane is the set of
+ * points with positive offsets.</p>
+ */
 public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vector2D, Vector1D> {
 
     /** Serializable UID. */
@@ -95,30 +120,28 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
         return originOffset;
     }
 
-    /** Get the reverse of the instance, meaning a line containing the same
-     * points but with the opposite orientation.
-     * @return a new line, with orientation opposite to the instance orientation
-     */
-    public Line reverse() {
-        return new Line(direction.negate(), -originOffset, getPrecision());
-    }
-
     /** {@inheritDoc} */
     @Override
     public Vector2D plusPoint() {
-        return pointAt(0, +Math.floor(getPrecision().getMaxZero()) + 1.0);
+        return pointAt(0, +(Math.floor(getPrecision().getMaxZero()) + 1.0));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D minusPoint() {
-         return pointAt(0, -Math.floor(getPrecision().getMaxZero()) + 1.0);
+         return pointAt(0, -(Math.floor(getPrecision().getMaxZero()) + 1.0));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D onPoint() {
         return getOrigin();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Line flip() {
+        return new Line(direction.negate(), -originOffset, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -135,21 +158,27 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
     /** {@inheritDoc} */
     @Override
     public LineSegment span() {
-        // TODO Auto-generated method stub
-        return null;
+        return LineSegment.fromInterval(this, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D toSubSpace(final Vector2D point) {
+    public Vector1D toSubspace(final Vector2D point) {
         return Vector1D.of(direction.dot(point));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D toSpace(final Vector1D point) {
-        final double abscissa = point.getX();
+        return toSpace(point.getX());
+    }
 
+    /** Convert the given abscissa value (1D location on the line)
+     * into a 2D point.
+     * @param abscissa value to convert
+     * @return 2D point corresponding to the line abscissa value
+     */
+    public Vector2D toSpace(final double abscissa) {
         // The 2D coordinate is equal to the projection of the
         // 2D origin onto the line plus the direction multiplied
         // by the abscissa. We can combine everything into a single
@@ -188,7 +217,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
     /** {@inheritDoc} */
     @Override
     public Vector2D project(final Vector2D point) {
-        return toSpace(toSubSpace(point));
+        return toSpace(toSubspace(point));
     }
 
     /** {@inheritDoc} */

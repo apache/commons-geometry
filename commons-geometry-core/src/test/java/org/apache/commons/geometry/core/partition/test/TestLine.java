@@ -19,7 +19,6 @@ package org.apache.commons.geometry.core.partition.test;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 
@@ -149,7 +148,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      * @param point point to project into the line's 1D space
      * @return location of the point in the line's 1D space
      */
-    public double toSubSpace(TestPoint2D point) {
+    public double toSubspace(TestPoint2D point) {
         return (directionX * point.getX()) + (directionY * point.getY());
     }
 
@@ -192,7 +191,14 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
     /** {@inheritDoc} */
     @Override
     public TestPoint2D project(final TestPoint2D point) {
-        return toSpace(toSubSpace(point));
+        return toSpace(toSubspace(point));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestLine flip() {
+        TestPoint2D pt = getOrigin();
+        return new TestLine(pt.getX(), pt.getY(), -directionX, -directionY);
     }
 
     /** {@inheritDoc} */
@@ -214,7 +220,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<TestPoint2D> span() {
+    public TestLineSegment span() {
         return new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, this);
     }
 

@@ -98,14 +98,6 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return positiveFacing;
     }
 
-    /** Get an instance with the same location and precision but the opposite
-     * direction.
-     * @return a copy of this instance with the opposite direction
-     */
-    public OrientedPoint reverse() {
-        return new OrientedPoint(point, !positiveFacing, getPrecision());
-    }
-
     /** {@inheritDoc} */
     @Override
     public Vector1D plusPoint() {
@@ -124,6 +116,12 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     @Override
     public Vector1D onPoint() {
         return point;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OrientedPoint flip() {
+        return new OrientedPoint(point, !positiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */

@@ -74,6 +74,13 @@ public interface Hyperplane<P extends Point<P>> {
      */
     P onPoint();
 
+    /** Return a hyperplane that has the opposite orientation as this instance.
+     * That is, the plus side of this instance is the minus side of the returned
+     * instance and vice versa.
+     * @return a hyperplane with the opposite orientation
+     */
+    Hyperplane<P> flip();
+
     /** Transform this instance using the given {@link Transform}.
      * @param transform object to transform this instance with
      * @return a new, transformed hyperplane

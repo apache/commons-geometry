@@ -50,8 +50,8 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     public TestLineSegment(final TestPoint2D start, final TestPoint2D end) {
         this.line = new TestLine(start, end);
 
-        final double startValue = line.toSubSpace(start);
-        final double endValue = line.toSubSpace(end);
+        final double startValue = line.toSubspace(start);
+        final double endValue = line.toSubspace(end);
 
         this.start = Math.min(startValue, endValue);
         this.end = Math.max(startValue, endValue);
@@ -141,7 +141,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     @Override
     public RegionLocation classify(TestPoint2D point) {
         if (line.contains(point)) {
-            final double value = line.toSubSpace(point);
+            final double value = line.toSubspace(point);
 
             final int startCmp = PartitionTestUtils.PRECISION.compare(value, start);
             final int endCmp = PartitionTestUtils.PRECISION.compare(value, end);
@@ -160,7 +160,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
     /** {@inheritDoc} */
     @Override
     public TestPoint2D closest(TestPoint2D point) {
-        double value = line.toSubSpace(point);
+        double value = line.toSubspace(point);
         value = Math.max(Math.min(value, end), start);
 
         return line.toSpace(value);
@@ -205,8 +205,8 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         TestPoint2D p1 = transform.apply(line.toSpace(1));
 
         TestLine tLine = new TestLine(p0, p1);
-        double translation = tLine.toSubSpace(p0);
-        double scale = tLine.toSubSpace(p1);
+        double translation = tLine.toSubspace(p0);
+        double scale = tLine.toSubspace(p1);
 
         double tStart = (start * scale) + translation;
         double tEnd = (end * scale) + translation;
@@ -251,7 +251,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         }
         else {
             // the lines intersect
-            final double intersectionAbscissa = line.toSubSpace(intersection);
+            final double intersectionAbscissa = line.toSubspace(intersection);
 
             TestLineSegment startSegment = null;
             TestLineSegment endSegment = null;
@@ -313,7 +313,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
         // we need to split the line
         final TestPoint2D intersection = splitter.intersection(line);
-        final double intersectionAbscissa = line.toSubSpace(intersection);
+        final double intersectionAbscissa = line.toSubspace(intersection);
 
         final TestLineSegment startSegment = new TestLineSegment(start, intersectionAbscissa, line);
         final TestLineSegment endSegment = new TestLineSegment(intersectionAbscissa, end, line);
