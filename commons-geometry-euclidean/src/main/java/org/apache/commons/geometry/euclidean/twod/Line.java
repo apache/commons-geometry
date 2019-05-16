@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -158,7 +159,7 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
     /** {@inheritDoc} */
     @Override
     public LineSegment span() {
-        return LineSegment.fromInterval(this, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        return LineSegment.fromInterval(this, Interval.full());
     }
 
     /** {@inheritDoc} */

@@ -32,24 +32,14 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
     /** The underlying line for the line segment. */
     private final Line line;
 
-    /** Abscissa of the line segment start point. */
-    private final double subspaceStart;
+    /** The interval representing the region of the line contained in
+     * the line segment.
+     */
+    private final Interval interval;
 
-    /** Abscissa of the line segment end point. */
-    private final double subspaceEnd;
-
-    private final Vector2D start;
-
-    private final Vector2D end;
-
-    private LineSegment(final Line line, final double subspaceStart, final double subspaceEnd) {
+    private LineSegment(final Line line, final Interval interval) {
         this.line = line;
-
-        this.subspaceStart = subspaceStart;
-        this.subspaceEnd = subspaceEnd;
-
-        this.start = Double.isFinite(subspaceStart) ? line.toSpace(subspaceStart): null;
-        this.end = Double.isFinite(subspaceEnd) ? line.toSpace(subspaceEnd): null;
+        this.interval = interval;
     }
 
     /** Get the line that this segment lies on. This method is an alias
@@ -71,14 +61,14 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      * @return the start value in the 1D subspace of the line.
      */
     public double getSubspaceStart() {
-        return subspaceStart;
+        return interval.getMin();
     }
 
     /** Get the end value in the 1D subspace of the line.
      * @return the end value in the 1D subspace of the line
      */
     public double getSubspaceEnd() {
-        return subspaceEnd;
+        return interval.getMax();
     }
 
     /** Get the start point of the line segment or null if no start point
@@ -87,7 +77,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      *      exists
      */
     public Vector2D getStart() {
-        return start;
+        return interval.hasMinBoundary() ? line.toSpace(interval.getMin()): null;
     }
 
     /** Get the end point of the line segment or null if no end point
@@ -96,14 +86,14 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      *      exists
      */
     public Vector2D getEnd() {
-        return end;
+        return interval.hasMaxBoundary() ? line.toSpace(interval.getMax()): null;
     }
 
     /** Return the 1D interval for the line segment.
      * @return the 1D interval for the line segment
      */
     public Interval getInterval() {
-        return Interval.of(subspaceStart, subspaceEnd, getPrecision());
+        return interval;
     }
 
     /** Return the object used to perform floating point comparisons, which is the
@@ -117,7 +107,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
     /** {@inheritDoc} */
     @Override
     public boolean isFull() {
-        return start == null && end == null;
+        return interval.isFull();
     }
 
     /** {@inheritDoc}
@@ -127,41 +117,28 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return interval.isEmpty();
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        return start == null || end == null;
+        return interval.isInfinite();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        if (isInfinite()) {
-            return Double.POSITIVE_INFINITY;
-        }
-
-        return subspaceEnd - subspaceStart;
+        return interval.getSize();
     }
 
     /** {@inheritDoc} */
     @Override
     public RegionLocation classify(Vector2D point) {
         if (line.contains(point)) {
-            final double loc = line.project(point).getX();
+            final Vector1D loc = line.toSubspace(point);
 
-            final DoublePrecisionContext precision = getPrecision();
-            final int startCmp = precision.compare(loc, subspaceStart);
-            final int endCmp = precision.compare(loc, subspaceEnd);
-
-            if (startCmp == 0 || endCmp == 0) {
-                return RegionLocation.BOUNDARY;
-            }
-            else if (startCmp > 0 && endCmp < 0) {
-                return RegionLocation.INSIDE;
-            }
+            return interval.classify(loc);
         }
 
         return RegionLocation.OUTSIDE;
@@ -174,18 +151,12 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
                 point :
                 line.project(point);
 
-        final double loc = line.project(pointOnLine).getX();
-
-        final DoublePrecisionContext precision = line.getPrecision();
-
-        if (precision.lte(loc, subspaceStart)) {
-            return start;
-        }
-        else if (precision.gte(loc, subspaceEnd)) {
-            return end;
+        final Vector1D loc = line.toSubspace(pointOnLine);
+        if (interval.contains(loc)) {
+            return pointOnLine;
         }
 
-        return pointOnLine;
+        return line.toSpace(interval.project(loc));
     }
 
     /** {@inheritDoc} */
@@ -227,8 +198,8 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
         double translation = tLine.toSubspace(tOrigin).getX();
         double scale = tLine.toSubspace(tOne).getX();
 
-        double tStart = (subspaceStart * scale) + translation;
-        double tEnd = (subspaceEnd * scale) + translation;
+        double tStart = (getSubspaceStart() * scale) + translation;
+        double tEnd = (getSubspaceEnd() * scale) + translation;
 
         return fromInterval(tLine, tStart, tEnd);
     }
@@ -242,20 +213,11 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
     }
 
     public static LineSegment fromInterval(final Line line, final Interval interval) {
-        return new LineSegment(line, interval.getMin(), interval.getMax());
+        return new LineSegment(line, interval);
     }
 
     public static LineSegment fromInterval(final Line line, final double a, final double b) {
-        final double start = Math.min(a, b);
-        final double end = Math.max(a, b);
-
-        if (Double.isNaN(start) || Double.isNaN(end) ||
-                (Double.isInfinite(start) && Double.compare(start, end) == 0)) {
-
-            throw new IllegalArgumentException("Invalid line segment interval values: [" + start + ", " + end + "]");
-        }
-
-        return new LineSegment(line, start, end);
+        return fromInterval(line, Interval.of(a, b, line.getPrecision()));
     }
 
     public static LineSegment fromInterval(final Line line, final Vector1D a, final Vector1D b) {
