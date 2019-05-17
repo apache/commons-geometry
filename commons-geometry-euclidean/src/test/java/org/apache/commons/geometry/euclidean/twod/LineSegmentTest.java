@@ -23,6 +23,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane.Split;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -391,6 +392,230 @@ public class LineSegmentTest {
         checkSegment(segment.transform(rotation), Vector2D.of(-1, 0), Vector2D.of(-3, 2));
         checkSegment(segment.transform(scale), Vector2D.of(0, 3), Vector2D.of(4, 9));
         checkSegment(segment.transform(reflect), Vector2D.of(0, -1), Vector2D.of(2, -3));
+    }
+
+    @Test
+    public void testTransform_full() {
+        // arrange
+        LineSegment segment = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+
+        // act/assert
+        LineSegment translated = segment.transform(translation);
+        Assert.assertTrue(translated.isFull());
+        Assert.assertTrue(translated.contains(Vector2D.of(-1, 1)));
+        Assert.assertTrue(translated.contains(Vector2D.of(1, 2)));
+        Assert.assertNull(translated.getStart());
+        Assert.assertNull(translated.getEnd());
+
+        LineSegment rotated = segment.transform(rotation);
+        Assert.assertTrue(rotated.isFull());
+        Assert.assertTrue(rotated.contains(Vector2D.ZERO));
+        Assert.assertTrue(rotated.contains(Vector2D.of(-1, 2)));
+        Assert.assertNull(rotated.getStart());
+        Assert.assertNull(rotated.getEnd());
+
+        LineSegment scaled = segment.transform(scale);
+        Assert.assertTrue(scaled.isFull());
+        Assert.assertTrue(scaled.contains(Vector2D.ZERO));
+        Assert.assertTrue(scaled.contains(Vector2D.of(4, 3)));
+        Assert.assertNull(scaled.getStart());
+        Assert.assertNull(scaled.getEnd());
+
+        LineSegment reflected = segment.transform(reflect);
+        Assert.assertTrue(reflected.isFull());
+        Assert.assertTrue(reflected.contains(Vector2D.ZERO));
+        Assert.assertTrue(reflected.contains(Vector2D.of(2, -1)));
+        Assert.assertNull(reflected.getStart());
+        Assert.assertNull(reflected.getEnd());
+    }
+
+    @Test
+    public void testTransform_positiveHalfspace() {
+        // arrange
+        LineSegment segment = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
+                0.0, Double.POSITIVE_INFINITY);
+
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+
+        // act/assert
+        LineSegment translated = segment.transform(translation);
+        Assert.assertTrue(translated.isInfinite());
+        Assert.assertTrue(translated.contains(Vector2D.of(-1, 1)));
+        Assert.assertTrue(translated.contains(Vector2D.of(1, 2)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), translated.getStart(), TEST_EPS);
+        Assert.assertNull(translated.getEnd());
+
+        LineSegment rotated = segment.transform(rotation);
+        Assert.assertTrue(rotated.isInfinite());
+        Assert.assertTrue(rotated.contains(Vector2D.ZERO));
+        Assert.assertTrue(rotated.contains(Vector2D.of(-1, 2)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, rotated.getStart(), TEST_EPS);
+        Assert.assertNull(rotated.getEnd());
+
+        LineSegment scaled = segment.transform(scale);
+        Assert.assertTrue(scaled.isInfinite());
+        Assert.assertTrue(scaled.contains(Vector2D.ZERO));
+        Assert.assertTrue(scaled.contains(Vector2D.of(4, 3)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, scaled.getStart(), TEST_EPS);
+        Assert.assertNull(scaled.getEnd());
+
+        LineSegment reflected = segment.transform(reflect);
+        Assert.assertTrue(reflected.isInfinite());
+        Assert.assertTrue(reflected.contains(Vector2D.ZERO));
+        Assert.assertTrue(reflected.contains(Vector2D.of(2, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, reflected.getStart(), TEST_EPS);
+        Assert.assertNull(reflected.getEnd());
+    }
+
+    @Test
+    public void testTransform_negativeHalfspace() {
+        // arrange
+        LineSegment segment = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
+                Double.NEGATIVE_INFINITY, 0.0);
+
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+
+        // act/assert
+        LineSegment translated = segment.transform(translation);
+        Assert.assertTrue(translated.isInfinite());
+        Assert.assertTrue(translated.contains(Vector2D.of(-1, 1)));
+        Assert.assertTrue(translated.contains(Vector2D.of(-3, 0)));
+        Assert.assertNull(translated.getStart());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), translated.getEnd(), TEST_EPS);
+
+        LineSegment rotated = segment.transform(rotation);
+        Assert.assertTrue(rotated.isInfinite());
+        Assert.assertTrue(rotated.contains(Vector2D.ZERO));
+        Assert.assertTrue(rotated.contains(Vector2D.of(1, -2)));
+        Assert.assertNull(rotated.getStart());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, rotated.getEnd(), TEST_EPS);
+
+        LineSegment scaled = segment.transform(scale);
+        Assert.assertTrue(scaled.isInfinite());
+        Assert.assertTrue(scaled.contains(Vector2D.ZERO));
+        Assert.assertTrue(scaled.contains(Vector2D.of(-4, -3)));
+        Assert.assertNull(scaled.getStart());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, scaled.getEnd(), TEST_EPS);
+
+        LineSegment reflected = segment.transform(reflect);
+        Assert.assertTrue(reflected.isInfinite());
+        Assert.assertTrue(reflected.contains(Vector2D.ZERO));
+        Assert.assertTrue(reflected.contains(Vector2D.of(-2, 1)));
+        Assert.assertNull(reflected.getStart());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, reflected.getEnd(), TEST_EPS);
+    }
+
+    @Test
+    public void testSplit_finite() {
+        // arrange
+        Vector2D start = Vector2D.of(1, 1);
+        Vector2D end = Vector2D.of(3, 2);
+        Vector2D middle = start.lerp(end, 0.5);
+
+        LineSegment seg = LineSegment.fromPoints(start, end, TEST_PRECISION);
+
+
+        // act/assert
+        Split<Vector2D> both = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(1, -2), TEST_PRECISION));
+        checkSegment((LineSegment) both.getMinus(), middle, end);
+        checkSegment((LineSegment) both.getPlus(), start, middle);
+
+        Split<Vector2D> minusOnlyOrthogonal = seg.split(Line.fromPointAndDirection(start, Vector2D.of(1, -2), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyOrthogonal.getMinus());
+        Assert.assertNull(minusOnlyOrthogonal.getPlus());
+
+        Split<Vector2D> minusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyParallel.getMinus());
+        Assert.assertNull(minusOnlyParallel.getPlus());
+
+        Split<Vector2D> plusOnlyOrthogonal = seg.split(Line.fromPointAndDirection(end, Vector2D.of(1, -2), TEST_PRECISION));
+        Assert.assertNull(plusOnlyOrthogonal.getMinus());
+        Assert.assertSame(seg, plusOnlyOrthogonal.getPlus());
+
+        Split<Vector2D> plusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
+        Assert.assertNull(plusOnlyParallel.getMinus());
+        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+
+        Split<Vector2D> hyper = seg.split(Line.fromPointAndDirection(start, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertNull(hyper.getMinus());
+        Assert.assertNull(hyper.getPlus());
+    }
+
+    @Test
+    public void testHashCode() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+
+        LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+
+        LineSegment b = LineSegment.fromPoints(Vector2D.of(-1, 0), Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment c = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 0), TEST_PRECISION);
+        LineSegment d = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, precision);
+
+        LineSegment e = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
+                Interval.of(0, 1, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(a.hashCode(), a.hashCode());
+
+        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+        Assert.assertNotEquals(a.hashCode(), c.hashCode());
+        Assert.assertNotEquals(a.hashCode(), d.hashCode());
+
+        Assert.assertEquals(a.hashCode(), e.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+
+        LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+
+        LineSegment b = LineSegment.fromPoints(Vector2D.of(-1, 0), Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment c = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 0), TEST_PRECISION);
+        LineSegment d = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, precision);
+
+        LineSegment e = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
+                Interval.of(0, 1, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertTrue(a.equals(a));
+
+        Assert.assertFalse(a.equals(null));
+        Assert.assertFalse(a.equals(new Object()));
+        Assert.assertFalse(a.equals(b));
+        Assert.assertFalse(a.equals(c));
+        Assert.assertFalse(a.equals(d));
+
+        Assert.assertTrue(a.equals(e));
+        Assert.assertTrue(e.equals(a));
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        LineSegment segment = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+
+        // act
+        String str = segment.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("LineSegment"));
+        Assert.assertTrue(str.contains("start= (0.0, 0.0)"));
+        Assert.assertTrue(str.contains("end= (1.0, 0.0)"));
     }
 
     private static void checkClassify(LineSegment segment, RegionLocation loc, Vector2D ... points) {

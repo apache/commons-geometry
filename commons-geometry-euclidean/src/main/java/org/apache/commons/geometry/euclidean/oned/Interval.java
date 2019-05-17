@@ -245,7 +245,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
     /** {@inheritDoc}
      *
-     *  <p>This method always returns true since there is always at least
+     *  <p>This method always returns false since there is always at least
      *  one point that can be classified as not being on the outside of
      *  the region.</p>
      */
