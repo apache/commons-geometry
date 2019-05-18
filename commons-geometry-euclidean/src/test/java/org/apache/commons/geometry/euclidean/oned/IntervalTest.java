@@ -194,49 +194,49 @@ public class IntervalTest {
     }
 
     @Test
-    public void testFromMin() {
+    public void testMin() {
         // act/assert
-        checkInterval(Interval.fromMin(Double.NEGATIVE_INFINITY, TEST_PRECISION),
+        checkInterval(Interval.min(Double.NEGATIVE_INFINITY, TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-        checkInterval(Interval.fromMin(0, TEST_PRECISION), 0, Double.POSITIVE_INFINITY);
-        checkInterval(Interval.fromMin(1, TEST_PRECISION), 1, Double.POSITIVE_INFINITY);
-        checkInterval(Interval.fromMin(-1, TEST_PRECISION), -1, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.min(0, TEST_PRECISION), 0, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.min(1, TEST_PRECISION), 1, Double.POSITIVE_INFINITY);
+        checkInterval(Interval.min(-1, TEST_PRECISION), -1, Double.POSITIVE_INFINITY);
     }
 
     @Test
-    public void testFromMin_invalidArgs() {
+    public void testMin_invalidArgs() {
         // arrange
         Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
-                () -> Interval.fromMin(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
+                () -> Interval.min(Double.POSITIVE_INFINITY, TEST_PRECISION), excType);
         GeometryTestUtils.assertThrows(
-                () -> Interval.fromMin(Double.NaN, TEST_PRECISION), excType);
+                () -> Interval.min(Double.NaN, TEST_PRECISION), excType);
     }
 
     @Test
-    public void testFromMax() {
+    public void testMax() {
         // act/assert
-        checkInterval(Interval.fromMax(Double.POSITIVE_INFINITY, TEST_PRECISION),
+        checkInterval(Interval.max(Double.POSITIVE_INFINITY, TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-        checkInterval(Interval.fromMax(0, TEST_PRECISION), Double.NEGATIVE_INFINITY, 0);
-        checkInterval(Interval.fromMax(1, TEST_PRECISION), Double.NEGATIVE_INFINITY, 1);
-        checkInterval(Interval.fromMax(-1, TEST_PRECISION), Double.NEGATIVE_INFINITY, -1);
+        checkInterval(Interval.max(0, TEST_PRECISION), Double.NEGATIVE_INFINITY, 0);
+        checkInterval(Interval.max(1, TEST_PRECISION), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(Interval.max(-1, TEST_PRECISION), Double.NEGATIVE_INFINITY, -1);
     }
 
     @Test
-    public void testFromMax_invalidArgs() {
+    public void testMax_invalidArgs() {
         // arrange
         Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
-                () -> Interval.fromMax(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
+                () -> Interval.max(Double.NEGATIVE_INFINITY, TEST_PRECISION), excType);
         GeometryTestUtils.assertThrows(
-                () -> Interval.fromMax(Double.NaN, TEST_PRECISION), excType);
+                () -> Interval.max(Double.NaN, TEST_PRECISION), excType);
     }
 
     @Test

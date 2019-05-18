@@ -50,14 +50,14 @@ public class LineSegmentTest {
 
         // act/assert
 
-        checkSegment(LineSegment.fromPoints(p0, p1, TEST_PRECISION), p0, p1);
-        checkSegment(LineSegment.fromPoints(p1, p0, TEST_PRECISION), p1, p0);
+        checkFiniteSegment(LineSegment.fromPoints(p0, p1, TEST_PRECISION), p0, p1);
+        checkFiniteSegment(LineSegment.fromPoints(p1, p0, TEST_PRECISION), p1, p0);
 
-        checkSegment(LineSegment.fromPoints(p0, p2, TEST_PRECISION), p0, p2);
-        checkSegment(LineSegment.fromPoints(p2, p0, TEST_PRECISION), p2, p0);
+        checkFiniteSegment(LineSegment.fromPoints(p0, p2, TEST_PRECISION), p0, p2);
+        checkFiniteSegment(LineSegment.fromPoints(p2, p0, TEST_PRECISION), p2, p0);
 
-        checkSegment(LineSegment.fromPoints(p0, p3, TEST_PRECISION), p0, p3);
-        checkSegment(LineSegment.fromPoints(p3, p0, TEST_PRECISION), p3, p0);
+        checkFiniteSegment(LineSegment.fromPoints(p0, p3, TEST_PRECISION), p0, p3);
+        checkFiniteSegment(LineSegment.fromPoints(p3, p0, TEST_PRECISION), p3, p0);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class LineSegmentTest {
 
         // assert
         double side = 1.0 / Math.sqrt(2);
-        checkSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
+        checkFiniteSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
 
         Assert.assertSame(TEST_PRECISION, segment.getPrecision());
     }
@@ -124,7 +124,7 @@ public class LineSegmentTest {
     public void testFromInterval_intervalArg_positiveHalfSpace() {
         // arrange
         DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.fromMin(-1, intervalPrecision);
+        Interval interval = Interval.min(-1, intervalPrecision);
 
         Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -148,7 +148,7 @@ public class LineSegmentTest {
     public void testFromInterval_intervalArg_negativeHalfSpace() {
         // arrange
         DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.fromMax(2, intervalPrecision);
+        Interval interval = Interval.max(2, intervalPrecision);
 
         Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
@@ -178,7 +178,7 @@ public class LineSegmentTest {
 
         // assert
         double side = 1.0 / Math.sqrt(2);
-        checkSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
+        checkFiniteSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
 
         Assert.assertSame(TEST_PRECISION, segment.getPrecision());
     }
@@ -251,7 +251,7 @@ public class LineSegmentTest {
 
         // assert
         double side = 1.0 / Math.sqrt(2);
-        checkSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
+        checkFiniteSegment(segment, Vector2D.of(-side, -side), Vector2D.of(2 * side, 2 * side));
 
         Assert.assertSame(TEST_PRECISION, segment.getPrecision());
     }
@@ -265,8 +265,8 @@ public class LineSegmentTest {
         Assert.assertTrue(LineSegment.fromInterval(line, Interval.full()).isFull());
         Assert.assertTrue(LineSegment.fromInterval(line, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isFull());
 
-        Assert.assertFalse(LineSegment.fromInterval(line, Interval.fromMin(0, TEST_PRECISION)).isFull());
-        Assert.assertFalse(LineSegment.fromInterval(line, Interval.fromMax(0, TEST_PRECISION)).isFull());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).isFull());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).isFull());
 
         Assert.assertFalse(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isFull());
 
@@ -282,8 +282,8 @@ public class LineSegmentTest {
         Assert.assertTrue(LineSegment.fromInterval(line, Interval.full()).isInfinite());
         Assert.assertTrue(LineSegment.fromInterval(line, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isInfinite());
 
-        Assert.assertTrue(LineSegment.fromInterval(line, Interval.fromMin(0, TEST_PRECISION)).isInfinite());
-        Assert.assertTrue(LineSegment.fromInterval(line, Interval.fromMax(0, TEST_PRECISION)).isInfinite());
+        Assert.assertTrue(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).isInfinite());
+        Assert.assertTrue(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).isInfinite());
 
         Assert.assertFalse(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isEmpty());
 
@@ -299,8 +299,8 @@ public class LineSegmentTest {
         Assert.assertFalse(LineSegment.fromInterval(line, Interval.full()).isEmpty());
         Assert.assertFalse(LineSegment.fromInterval(line, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isEmpty());
 
-        Assert.assertFalse(LineSegment.fromInterval(line, Interval.fromMin(0, TEST_PRECISION)).isEmpty());
-        Assert.assertFalse(LineSegment.fromInterval(line, Interval.fromMax(0, TEST_PRECISION)).isEmpty());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).isEmpty());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).isEmpty());
 
         Assert.assertFalse(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isEmpty());
 
@@ -316,8 +316,8 @@ public class LineSegmentTest {
         GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Interval.full()).getSize());
         GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).getSize());
 
-        GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Interval.fromMin(0, TEST_PRECISION)).getSize());
-        GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Interval.fromMax(0, TEST_PRECISION)).getSize());
+        GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).getSize());
+        GeometryTestUtils.assertPositiveInfinity(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).getSize());
 
         Assert.assertEquals(Math.sqrt(2), LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).getSize(), TEST_EPS);
         Assert.assertEquals(9.0, LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 10), TEST_PRECISION).getSize(), TEST_EPS);
@@ -388,10 +388,10 @@ public class LineSegmentTest {
         Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
 
         // act/assert
-        checkSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(1, 4));
-        checkSegment(segment.transform(rotation), Vector2D.of(-1, 0), Vector2D.of(-3, 2));
-        checkSegment(segment.transform(scale), Vector2D.of(0, 3), Vector2D.of(4, 9));
-        checkSegment(segment.transform(reflect), Vector2D.of(0, -1), Vector2D.of(2, -3));
+        checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(1, 4));
+        checkFiniteSegment(segment.transform(rotation), Vector2D.of(-1, 0), Vector2D.of(-3, 2));
+        checkFiniteSegment(segment.transform(scale), Vector2D.of(0, 3), Vector2D.of(4, 9));
+        checkFiniteSegment(segment.transform(reflect), Vector2D.of(0, -1), Vector2D.of(2, -3));
     }
 
     @Test
@@ -526,11 +526,14 @@ public class LineSegmentTest {
 
         LineSegment seg = LineSegment.fromPoints(start, end, TEST_PRECISION);
 
-
         // act/assert
         Split<Vector2D> both = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(1, -2), TEST_PRECISION));
-        checkSegment((LineSegment) both.getMinus(), middle, end);
-        checkSegment((LineSegment) both.getPlus(), start, middle);
+        checkFiniteSegment((LineSegment) both.getMinus(), middle, end);
+        checkFiniteSegment((LineSegment) both.getPlus(), start, middle);
+
+        Split<Vector2D> bothReversed = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(-1, 2), TEST_PRECISION));
+        checkFiniteSegment((LineSegment) bothReversed.getMinus(), start, middle);
+        checkFiniteSegment((LineSegment) bothReversed.getPlus(), middle, end);
 
         Split<Vector2D> minusOnlyOrthogonal = seg.split(Line.fromPointAndDirection(start, Vector2D.of(1, -2), TEST_PRECISION));
         Assert.assertSame(seg, minusOnlyOrthogonal.getMinus());
@@ -549,6 +552,113 @@ public class LineSegmentTest {
         Assert.assertSame(seg, plusOnlyParallel.getPlus());
 
         Split<Vector2D> hyper = seg.split(Line.fromPointAndDirection(start, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertNull(hyper.getMinus());
+        Assert.assertNull(hyper.getPlus());
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        Vector2D p1 = Vector2D.of(1, 1);
+        Vector2D p2 = Vector2D.of(3, 2);
+        Vector2D middle = p1.lerp(p2, 0.5);
+
+        Line line = Line.fromPoints(p1, p2, TEST_PRECISION);
+
+        LineSegment seg = LineSegment.fromInterval(line, Interval.full());
+
+        // act/assert
+        Split<Vector2D> both = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(1, -2), TEST_PRECISION));
+        checkInfiniteSegment((LineSegment) both.getMinus(), line,  middle, null);
+        checkInfiniteSegment((LineSegment) both.getPlus(), line, null, middle);
+
+        Split<Vector2D> bothReversed = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(-1, 2), TEST_PRECISION));
+        checkInfiniteSegment((LineSegment) bothReversed.getMinus(), line,  null, middle);
+        checkInfiniteSegment((LineSegment) bothReversed.getPlus(), line, middle, null);
+
+        Split<Vector2D> minusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyParallel.getMinus());
+        Assert.assertNull(minusOnlyParallel.getPlus());
+
+        Split<Vector2D> plusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
+        Assert.assertNull(plusOnlyParallel.getMinus());
+        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+
+        Split<Vector2D> hyper = seg.split(Line.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertNull(hyper.getMinus());
+        Assert.assertNull(hyper.getPlus());
+    }
+
+    @Test
+    public void testSplit_positiveHalfSpace() {
+        // arrange
+        Vector2D p1 = Vector2D.of(1, 1);
+        Vector2D p2 = Vector2D.of(3, 2);
+        Vector2D middle = p1.lerp(p2, 0.5);
+
+        Line line = Line.fromPoints(p1, p2, TEST_PRECISION);
+
+        LineSegment seg = LineSegment.fromInterval(line, Interval.min(line.toSubspace(p1).getX(), TEST_PRECISION));
+
+        // act/assert
+        Split<Vector2D> both = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(1, -2), TEST_PRECISION));
+        checkInfiniteSegment((LineSegment) both.getMinus(), line,  middle, null);
+        checkFiniteSegment((LineSegment) both.getPlus(), p1, middle);
+
+        Split<Vector2D> bothReversed = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(-1, 2), TEST_PRECISION));
+        checkFiniteSegment((LineSegment) bothReversed.getMinus(), p1, middle);
+        checkInfiniteSegment((LineSegment) bothReversed.getPlus(), line, middle, null);
+
+        Split<Vector2D> minusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyParallel.getMinus());
+        Assert.assertNull(minusOnlyParallel.getPlus());
+
+        Split<Vector2D> minusOnlyOrthogonal = seg.split(Line.fromPointAndDirection(p1, Vector2D.of(1, -2), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyOrthogonal.getMinus());
+        Assert.assertNull(minusOnlyOrthogonal.getPlus());
+
+        Split<Vector2D> plusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
+        Assert.assertNull(plusOnlyParallel.getMinus());
+        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+
+        Split<Vector2D> hyper = seg.split(Line.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertNull(hyper.getMinus());
+        Assert.assertNull(hyper.getPlus());
+    }
+
+    @Test
+    public void testSplit_negativeHalfSpace() {
+        // arrange
+        Vector2D p1 = Vector2D.of(1, 1);
+        Vector2D p2 = Vector2D.of(3, 2);
+        Vector2D middle = p1.lerp(p2, 0.5);
+
+        Line line = Line.fromPoints(p1, p2, TEST_PRECISION);
+
+        LineSegment seg = LineSegment.fromInterval(line, Interval.max(line.toSubspace(p2).getX(), TEST_PRECISION));
+
+        // act/assert
+        Split<Vector2D> both = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(1, -2), TEST_PRECISION));
+        checkFiniteSegment((LineSegment) both.getMinus(), middle, p2);
+        checkInfiniteSegment((LineSegment) both.getPlus(), line, null, middle);
+
+        Split<Vector2D> bothReversed = seg.split(Line.fromPointAndDirection(middle, Vector2D.of(-1, 2), TEST_PRECISION));
+        checkInfiniteSegment((LineSegment) bothReversed.getMinus(), line, null, middle);
+        checkFiniteSegment((LineSegment) bothReversed.getPlus(), middle, p2);
+
+        Split<Vector2D> minusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION));
+        Assert.assertSame(seg, minusOnlyParallel.getMinus());
+        Assert.assertNull(minusOnlyParallel.getPlus());
+
+        Split<Vector2D> plusOnlyParallel = seg.split(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(-2, -1), TEST_PRECISION));
+        Assert.assertNull(plusOnlyParallel.getMinus());
+        Assert.assertSame(seg, plusOnlyParallel.getPlus());
+
+        Split<Vector2D> plusOnlyOrthogonal = seg.split(Line.fromPointAndDirection(p2, Vector2D.of(1, -2), TEST_PRECISION));
+        Assert.assertNull(plusOnlyOrthogonal.getMinus());
+        Assert.assertSame(seg, plusOnlyOrthogonal.getPlus());
+
+        Split<Vector2D> hyper = seg.split(Line.fromPointAndDirection(p1, Vector2D.of(2, 1), TEST_PRECISION));
         Assert.assertNull(hyper.getMinus());
         Assert.assertNull(hyper.getPlus());
     }
@@ -626,11 +736,13 @@ public class LineSegmentTest {
         }
     }
 
-    private static void checkSegment(LineSegment segment, Vector2D start, Vector2D end) {
-        checkSegment(segment, start, end, TEST_PRECISION);
+    private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
+        checkFiniteSegment(segment, start, end, TEST_PRECISION);
     }
 
-    private static void checkSegment(LineSegment segment, Vector2D start, Vector2D end, DoublePrecisionContext precision) {
+    private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end, DoublePrecisionContext precision) {
+        Assert.assertFalse(segment.isInfinite());
+
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStart(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEnd(), TEST_EPS);
 
@@ -640,6 +752,37 @@ public class LineSegmentTest {
 
         Assert.assertEquals(line.toSubspace(segment.getStart()).getX(), segment.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(line.toSubspace(segment.getEnd()).getX(), segment.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertSame(precision, segment.getPrecision());
+        Assert.assertSame(precision, line.getPrecision());
+    }
+
+    private static void checkInfiniteSegment(LineSegment segment, Line line, Vector2D start, Vector2D end) {
+        checkInfiniteSegment(segment, line, start, end, TEST_PRECISION);
+    }
+
+    private static void checkInfiniteSegment(LineSegment segment, Line line, Vector2D start, Vector2D end,
+            DoublePrecisionContext precision) {
+
+        Assert.assertTrue(segment.isInfinite());
+
+        Assert.assertEquals(line, segment.getLine());
+
+        if (start == null) {
+            Assert.assertNull(segment.getStart());
+        }
+        else {
+            EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStart(), TEST_EPS);
+            Assert.assertEquals(line.toSubspace(segment.getStart()).getX(), segment.getSubspaceStart(), TEST_EPS);
+        }
+
+        if (end == null) {
+            Assert.assertNull(segment.getEnd());
+        }
+        else {
+            EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEnd(), TEST_EPS);
+            Assert.assertEquals(line.toSubspace(segment.getEnd()).getX(), segment.getSubspaceEnd(), TEST_EPS);
+        }
 
         Assert.assertSame(precision, segment.getPrecision());
         Assert.assertSame(precision, line.getPrecision());

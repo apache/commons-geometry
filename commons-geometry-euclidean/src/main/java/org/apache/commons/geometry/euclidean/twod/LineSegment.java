@@ -261,45 +261,55 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      * @return the split convex subhyperplane
      */
     private ConvexSubHyperplane.Split<Vector2D> splitInfinite(Line splitter) {
-        // TODO
-//        final Vector2D intersection = splitter.intersection(line);
-//
-//        if (intersection == null) {
-//            // the lines are parallel
-//            final double originOffset = splitter.offset(line.getOrigin());
-//
-//            final int sign = getPrecision().sign(originOffset);
-//            if (sign < 0) {
-//                return new ConvexSubHyperplane.Split<Vector2D>(this, null);
-//            }
-//            else if (sign > 0) {
-//                return new ConvexSubHyperplane.Split<Vector2D>(null, this);
-//            }
-//            return new ConvexSubHyperplane.Split<Vector2D>(null, null);
-//        }
-//        else {
-//            // the lines intersect
-//            final double intersectionAbscissa = line.toSubspace(intersection).getX();
-//
-//            LineSegment startSegment = null;
-//            LineSegment endSegment = null;
-//
-//            if (start < intersectionAbscissa) {
-//                startSegment = new LineSegment(line, start, intersectionAbscissa, line);
-//            }
-//            if (intersectionAbscissa < end) {
-//                endSegment = new TestLineSegment(intersectionAbscissa, end, line);
-//            }
-//
-//            final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
-//            final double startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
-//
-//            final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
-//            final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
-//
-//            return new ConvexSubHyperplane.Split<TestPoint2D>(minus, plus);
-//        }
-        return null;
+        final Vector2D intersection = splitter.intersection(line);
+
+        if (intersection == null) {
+            // the lines are parallel
+            final double originOffset = splitter.offset(line.getOrigin());
+
+            final int sign = getPrecision().sign(originOffset);
+            if (sign < 0) {
+                return new ConvexSubHyperplane.Split<Vector2D>(this, null);
+            }
+            else if (sign > 0) {
+                return new ConvexSubHyperplane.Split<Vector2D>(null, this);
+            }
+            return new ConvexSubHyperplane.Split<Vector2D>(null, null);
+        }
+        else {
+            // the lines intersect
+            final double intersectionAbscissa = line.toSubspace(intersection).getX();
+
+            final double startAbscissa = getSubspaceStart();
+            final double endAbscissa = getSubspaceEnd();
+
+            LineSegment startSegment = null;
+            LineSegment endSegment = null;
+
+            if (endAbscissa <= intersectionAbscissa) {
+                // the entire segment is before the intersection
+                startSegment = this;
+                endSegment = null;
+            }
+            else if (startAbscissa >= intersectionAbscissa) {
+                // the entire segment is after the intersection
+                startSegment = null;
+                endSegment = this;
+            }
+            else {
+                // the intersection is in the middle
+                startSegment = fromInterval(line, Interval.of(startAbscissa, intersectionAbscissa, getPrecision()));
+                endSegment = fromInterval(line, Interval.of(intersectionAbscissa, endAbscissa, getPrecision()));
+            }
+
+            final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
+            final double startCmp = getPrecision().sign(startOffset);
+
+            final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+            final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
+
+            return new ConvexSubHyperplane.Split<Vector2D>(minus, plus);
+        }
     }
 
     /** Method used to split the instance with the given line when the instance has

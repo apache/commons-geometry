@@ -229,7 +229,7 @@ public class RegionBSPTree1DTest {
     public void testProjectToBoundary_multipleIntervals() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
-                    Interval.fromMax(-1, TEST_PRECISION),
+                    Interval.max(-1, TEST_PRECISION),
                     Interval.point(1, TEST_PRECISION),
                     Interval.of(2, 3, TEST_PRECISION),
                     Interval.of(5, 6, TEST_PRECISION)

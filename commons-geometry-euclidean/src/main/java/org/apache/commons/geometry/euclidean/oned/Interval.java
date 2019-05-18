@@ -457,7 +457,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point numbers
      * @return an interval with the given min value and no max.
      */
-    public static Interval fromMin(final double min, final DoublePrecisionContext precision) {
+    public static Interval min(final double min, final DoublePrecisionContext precision) {
         return of(min, Double.POSITIVE_INFINITY, precision);
     }
 
@@ -466,7 +466,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @param precision precision context used to compare floating point numbers
      * @return an interval with the given max value and no min.
      */
-    public static Interval fromMax(final double max, final DoublePrecisionContext precision) {
+    public static Interval max(final double max, final DoublePrecisionContext precision) {
         return of(Double.NEGATIVE_INFINITY, max, precision);
     }
 
