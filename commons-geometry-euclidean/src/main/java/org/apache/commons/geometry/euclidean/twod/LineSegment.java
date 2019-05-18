@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -32,10 +32,8 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  * need not be finite, in which case the start or end point (or both)
  * will be null.
  */
-public class LineSegment implements ConvexSubHyperplane<Vector2D> {
-
-    /** The underlying line for the line segment. */
-    private final Line line;
+public final class LineSegment extends AbstractSubLine<Interval>
+    implements ConvexSubHyperplane<Vector2D> {
 
     /** The interval representing the region of the line contained in
      * the line segment.
@@ -48,23 +46,9 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      * @param interval 1D interval on the line defining the line segment
      */
     private LineSegment(final Line line, final Interval interval) {
-        this.line = line;
+        super(line);
+
         this.interval = interval;
-    }
-
-    /** Get the line that this segment lies on. This method is an alias
-     * for {@link getHyperplane()}.
-     * @return the line that this segment lies on
-     * @see #getHyperplane()
-     */
-    public Line getLine() {
-        return getHyperplane();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Line getHyperplane() {
-        return line;
     }
 
     /** Get the start value in the 1D subspace of the line.
@@ -87,7 +71,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      *      exists
      */
     public Vector2D getStart() {
-        return interval.hasMinBoundary() ? line.toSpace(interval.getMin()): null;
+        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()): null;
     }
 
     /** Get the end point of the line segment or null if no end point
@@ -96,7 +80,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      *      exists
      */
     public Vector2D getEnd() {
-        return interval.hasMaxBoundary() ? line.toSpace(interval.getMax()): null;
+        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()): null;
     }
 
     /** Return the 1D interval for the line segment.
@@ -106,74 +90,17 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
         return interval;
     }
 
-    /** Return the object used to perform floating point comparisons, which is the
-     * same object used by the underlying {@link Line).
-     * @return precision object used to perform floating point comparisons.
-     */
-    public DoublePrecisionContext getPrecision() {
-        return line.getPrecision();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isFull() {
-        return interval.isFull();
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>This method simply returns false since all line segments
-     * contain at least a single point.</p>
-     */
-    @Override
-    public boolean isEmpty() {
-        return interval.isEmpty();
-    }
-
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
+        // TODO Auto-generated method stub
         return interval.isInfinite();
     }
 
     /** {@inheritDoc} */
     @Override
-    public double getSize() {
-        return interval.getSize();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RegionLocation classify(Vector2D point) {
-        if (line.contains(point)) {
-            final Vector1D loc = line.toSubspace(point);
-
-            return interval.classify(loc);
-        }
-
-        return RegionLocation.OUTSIDE;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D closest(Vector2D point) {
-        final Vector2D pointOnLine = line.contains(point) ?
-                point :
-                line.project(point);
-
-        final Vector1D loc = line.toSubspace(pointOnLine);
-        if (interval.contains(loc)) {
-            return pointOnLine;
-        }
-
-        return line.toSpace(interval.project(loc));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Builder<Vector2D> builder() {
-        // TODO Auto-generated method stub
-        return null;
+    public Interval getSubspaceRegion() {
+        return getInterval();
     }
 
     /** {@inheritDoc} */
@@ -196,32 +123,36 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
     /** {@inheritDoc} */
     @Override
     public LineSegment transform(Transform<Vector2D> transform) {
+        final Line line = getLine();
+
         if (!isInfinite()) {
-            // simple case; just transform the points directly
+            // simple case; just transform the line and points directly
+            final Line tLine = line.transform(transform);
             final Vector2D tStart = transform.apply(getStart());
             final Vector2D tEnd = transform.apply(getEnd());
 
-            return LineSegment.fromPoints(tStart, tEnd, getPrecision());
+            return fromPointsOnLine(tLine, tStart, tEnd);
         }
+        else {
+            // determine how the line has transformed
+            final Vector2D tOrigin = transform.apply(line.toSpace(0));
+            final Vector2D tOne = transform.apply(line.toSpace(1));
+            final Line tLine = Line.fromPoints(tOrigin, tOne, getPrecision());
 
-        // determine how the line has transformed
-        final Vector2D tOrigin = transform.apply(line.toSpace(0));
-        final Vector2D tOne = transform.apply(line.toSpace(1));
-        final Line tLine = Line.fromPoints(tOrigin, tOne, getPrecision());
+            final double translation = tLine.toSubspace(tOrigin).getX();
+            final double scale = tLine.toSubspace(tOne.subtract(tOrigin)).getX();
 
-        final double translation = tLine.toSubspace(tOrigin).getX();
-        final double scale = tLine.toSubspace(tOne.subtract(tOrigin)).getX();
+            final double tStart = (getSubspaceStart() * scale) + translation;
+            final double tEnd = (getSubspaceEnd() * scale) + translation;
 
-        final double tStart = (getSubspaceStart() * scale) + translation;
-        final double tEnd = (getSubspaceEnd() * scale) + translation;
-
-        return fromInterval(tLine, tStart, tEnd);
+            return fromInterval(tLine, tStart, tEnd);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(line, getStart(), getEnd());
+        return Objects.hash(getLine(), interval);
     }
 
     /** {@inheritDoc} */
@@ -236,9 +167,8 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
 
         LineSegment other = (LineSegment) obj;
 
-        return Objects.equals(line, other.line) &&
-                Objects.equals(getStart(), other.getStart()) &&
-                Objects.equals(getEnd(), other.getEnd());
+        return Objects.equals(getLine(), other.getLine()) &&
+                Objects.equals(interval, other.interval);
     }
 
     /** {@inheritDoc} */
@@ -246,7 +176,9 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
-            .append("[start= ")
+            .append("[line= ")
+            .append(getLine())
+            .append(", start= ")
             .append(getStart())
             .append(", end= ")
             .append(getEnd())
@@ -261,6 +193,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      * @return the split convex subhyperplane
      */
     private ConvexSubHyperplane.Split<Vector2D> splitInfinite(Line splitter) {
+        final Line line = getLine();
         final Vector2D intersection = splitter.intersection(line);
 
         if (intersection == null) {
@@ -356,11 +289,13 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
         }
 
         // we need to split the line
+        final Line line = getLine();
+
         final Vector2D intersection = splitter.intersection(line);
         final double intersectionAbscissa = line.toSubspace(intersection).getX();
 
-        final LineSegment startSegment = LineSegment.fromInterval(line, getSubspaceStart(), intersectionAbscissa);
-        final LineSegment endSegment = LineSegment.fromInterval(line, intersectionAbscissa, getSubspaceEnd());
+        final LineSegment startSegment = fromInterval(line, getSubspaceStart(), intersectionAbscissa);
+        final LineSegment endSegment = fromInterval(line, intersectionAbscissa, getSubspaceEnd());
 
         final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
         final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
@@ -377,10 +312,7 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      */
     public static LineSegment fromPoints(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
         final Line line = Line.fromPoints(start, end, precision);
-        final double subspaceStart = line.toSubspace(start).getX();
-        final double subspaceEnd = line.toSubspace(end).getX();
-
-        return fromInterval(line, subspaceStart, subspaceEnd);
+        return fromPointsOnLine(line, start, end);
     }
 
     /** Create a line segment from an underlying line and a 1D interval on the line.
@@ -410,5 +342,18 @@ public class LineSegment implements ConvexSubHyperplane<Vector2D> {
      */
     public static LineSegment fromInterval(final Line line, final Vector1D a, final Vector1D b) {
         return fromInterval(line, a.getX(), b.getX());
+    }
+
+    /** Create a new line segment from a line and points known to lie on the line.
+     * @param line the line that the line segment will belong to
+     * @param start line segment start point known to lie on the line
+     * @param end line segment end poitn known to lie on the line
+     * @return a new line segment created from the line and points
+     */
+    private static LineSegment fromPointsOnLine(final Line line, final Vector2D start, final Vector2D end) {
+        final double subspaceStart = line.toSubspace(start).getX();
+        final double subspaceEnd = line.toSubspace(end).getX();
+
+        return fromInterval(line, subspaceStart, subspaceEnd);
     }
 }

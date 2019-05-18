@@ -18,65 +18,61 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.SubHyperplane;;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;;
 
-public class SubLine implements SubHyperplane<Vector2D> {
+public class SubLine extends AbstractSubLine<RegionBSPTree1D> {
 
-    @Override
-    public Hyperplane<Vector2D> getHyperplane() {
-        // TODO Auto-generated method stub
-        return null;
+    /** The 1D region representing the area on the line */
+    private final RegionBSPTree1D region;
+
+    private SubLine(final Line line, final RegionBSPTree1D region) {
+        super(line);
+
+        this.region = region;
     }
 
-    @Override
-    public boolean isFull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        // TODO Auto-generated method stub
-        return false;
+        return Double.isInfinite(region.getSize());
     }
 
+    /** {@inheritDoc} */
     @Override
-    public double getSize() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public RegionLocation classify(Vector2D point) {
+    public List<LineSegment> toConvex() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public Vector2D closest(Vector2D point) {
-        // TODO Auto-generated method stub
-        return null;
+    public RegionBSPTree1D getSubspaceRegion() {
+        RegionBSPTree1D copy = new RegionBSPTree1D();
+        copy.copy(region);
+
+        return copy;
     }
 
-    @Override
-    public Builder<Vector2D> builder() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D>{
 
-    @Override
-    public List<? extends ConvexSubHyperplane<Vector2D>> toConvex() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        @Override
+        public void add(SubHyperplane<Vector2D> sub) {
+            // TODO Auto-generated method stub
 
+        }
+
+        @Override
+        public void add(ConvexSubHyperplane<Vector2D> sub) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public SubLine build() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+    }
 }

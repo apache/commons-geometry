@@ -395,6 +395,24 @@ public class LineSegmentTest {
     }
 
     @Test
+    public void testTransform_singlePoint() {
+        // arrange
+        LineSegment segment = LineSegment.fromInterval(Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 1), TEST_PRECISION),
+                Interval.point(0, TEST_PRECISION));
+
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+
+        // act/assert
+        checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(-1, 2));
+        checkFiniteSegment(segment.transform(rotation), Vector2D.of(-1, 0), Vector2D.of(-1, 0));
+        checkFiniteSegment(segment.transform(scale), Vector2D.of(0, 3), Vector2D.of(0, 3));
+        checkFiniteSegment(segment.transform(reflect), Vector2D.of(0, -1), Vector2D.of(0, -1));
+    }
+
+    @Test
     public void testTransform_full() {
         // arrange
         LineSegment segment = LineSegment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
