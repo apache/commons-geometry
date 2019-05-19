@@ -24,7 +24,8 @@ import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
 
 /** Internal base class for subline implementations.
  */
-public abstract class AbstractSubLine<R extends Region<Vector1D>> extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, R> {
+abstract class AbstractSubLine<R extends Region<Vector1D>>
+    extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, Line> {
 
     /** The line defining this instance. */
     private final Line line;
@@ -51,19 +52,7 @@ public abstract class AbstractSubLine<R extends Region<Vector1D>> extends Abstra
     /** {@inheritDoc} */
     @Override
     public SubLineBuilder builder() {
-        return new SubLineBuilder();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D toSubspace(Vector2D point) {
-        return line.toSubspace(point);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D toSpace(Vector1D point) {
-        return line.toSpace(point);
+        return new SubLineBuilder(line);
     }
 
     /** Return the object used to perform floating point comparisons, which is the

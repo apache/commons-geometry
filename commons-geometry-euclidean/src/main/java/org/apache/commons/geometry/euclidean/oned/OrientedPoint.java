@@ -24,6 +24,7 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -39,7 +40,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class OrientedPoint extends AbstractHyperplane<Vector1D>
-    implements Hyperplane<Vector1D>, Serializable {
+    implements Hyperplane<Vector1D>, Equivalency<OrientedPoint>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -210,19 +211,22 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new SubOrientedPoint(this);
     }
 
-    /** Return true if this instance should be considered equal to the argument. Instances
-     * are considered equivalent if they
+    /** {@inheritDoc}
+     *
+     * <p>Instances are considered equivalent if they
      * <ul>
      *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
      *  <li>have equivalent locations as evaluated by the precision context, and</li>
      *  <li>point in the same direction</li>
      * </ul>
+     * </p>
      * @param other the point to compare with
      * @return true if this instance should be considered equivalent to the argument
      */
-    public boolean eq(OrientedPoint other) {
+    @Override
+    public boolean eq(final OrientedPoint other) {
         return getPrecision().equals(other.getPrecision()) &&
-                point.equals(other.point, getPrecision()) &&
+                point.eq(other.point, getPrecision()) &&
                 positiveFacing == other.positiveFacing;
     }
 

@@ -21,16 +21,17 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
-/** Class representing a line segment in 2D Euclidean space. Segments
+/** <p>Class representing a line segment in 2D Euclidean space. Segments
  * need not be finite, in which case the start or end point (or both)
- * will be null.
+ * will be null.</p>
+ *
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class LineSegment extends AbstractSubLine<Interval>
     implements ConvexSubHyperplane<Vector2D> {

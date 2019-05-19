@@ -16,17 +16,29 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;;
 
-public class SubLine extends AbstractSubLine<RegionBSPTree1D> {
+/** Class representing an arbitrary region of a line. This class can represent
+ * both convex and non-convex regions of its underlying line.
+ *
+ * <p>This class is <em>not</em> thread safe.</p>
+ */
+public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
 
     /** The 1D region representing the area on the line */
     private final RegionBSPTree1D region;
 
+    /** Construct a new instance from its defining line and subspace region.
+     * @param line
+     * @param region
+     */
     private SubLine(final Line line, final RegionBSPTree1D region) {
         super(line);
 
@@ -42,37 +54,103 @@ public class SubLine extends AbstractSubLine<RegionBSPTree1D> {
     /** {@inheritDoc} */
     @Override
     public List<LineSegment> toConvex() {
-        // TODO Auto-generated method stub
-        return null;
+        final List<Interval> intervals = region.toIntervals();
+
+        final Line line = getLine();
+        final List<LineSegment> segments = new ArrayList<>(intervals.size());
+
+        for (Interval interval : intervals)
+        {
+            segments.add(LineSegment.fromInterval(line, interval));
+        }
+
+        return segments;
     }
 
     /** {@inheritDoc} */
     @Override
     public RegionBSPTree1D getSubspaceRegion() {
-        RegionBSPTree1D copy = new RegionBSPTree1D();
-        copy.copy(region);
-
-        return copy;
+        return region;
     }
 
-    public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D>{
+    /** {@link Builder} implementation for sublines.
+     */
+    public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D> {
 
-        @Override
-        public void add(SubHyperplane<Vector2D> sub) {
-            // TODO Auto-generated method stub
+        /** Line defining the subline */
+        private final Line line;
 
+        /** One dimensional region on the line. */
+        private final RegionBSPTree1D region;
+
+        /** Construct a new instance for building subline region for the given line.
+         * @param line the underlying line for the subline region
+         */
+        public SubLineBuilder(final Line line) {
+            this.line = line;
+            this.region = RegionBSPTree1D.empty();
         }
 
+        /** {@inheritDoc} */
         @Override
-        public void add(ConvexSubHyperplane<Vector2D> sub) {
-            // TODO Auto-generated method stub
-
+        public void add(final SubHyperplane<Vector2D> sub) {
+            addInternal(sub);
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public void add(final ConvexSubHyperplane<Vector2D> sub) {
+            addInternal(sub);
+        }
+
+        /** {@inheritDoc} */
         @Override
         public SubLine build() {
-            // TODO Auto-generated method stub
-            return null;
+            return new SubLine(line, region);
+        }
+
+        /** Internal method for adding subhyperplanes to this builder.
+         * @param sub the subhyperplane to add; either convex or non-convex
+         */
+        private void addInternal(final SubHyperplane<Vector2D> sub) {
+            validateHyperplane(sub.getHyperplane());
+
+            if (sub instanceof LineSegment) {
+                addLineSegment((LineSegment) sub);
+            }
+            else if (sub instanceof SubLine) {
+                addSubLine((SubLine) sub);
+            }
+            else {
+                throw new IllegalStateException("Unsupported subhyperplane type: " + sub.getClass().getName());
+            }
+        }
+
+        /** Add a line segment to this builder.
+         * @param segment line segment to add
+         */
+        private void addLineSegment(final LineSegment segment) {
+            region.add(segment.getSubspaceRegion());
+        }
+
+        /** Add a subline to this builder.
+         * @param subline subline to add
+         */
+        private void addSubLine(final SubLine subline) {
+            region.union(subline.getSubspaceRegion());
+        }
+
+        /** Validate the given subhyperplane lies on the same hyperplane
+         * @param sub
+         */
+        private void validateHyperplane(final Hyperplane<Vector2D> hyper) {
+            final Line inputLine = (Line) hyper;
+
+            if (!line.eq(inputLine)) {
+                throw new IllegalArgumentException("Argument is not on the same " +
+                        "line. Expected " + line + " but was " +
+                        inputLine);
+            }
         }
     }
 }

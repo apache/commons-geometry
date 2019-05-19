@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partition;
 
-import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -25,10 +24,10 @@ import org.apache.commons.geometry.core.RegionLocation;
  * an embedding hyperplane.
  * @param <P> Point implementation type
  * @param <S> Subspace point implementation type
- * @param <R> Subspace region type
+ * @param <H> Hyperplane containing the embedded subspace
  */
-public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S extends Point<S>, R extends Region<S>>
-    implements SubHyperplane<P>, Embedding<P, S> {
+public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S extends Point<S>, H extends EmbeddingHyperplane<P, S>>
+    implements SubHyperplane<P> {
 
     /** {@inheritDoc} */
     @Override
@@ -51,8 +50,10 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
     /** {@inheritDoc} */
     @Override
     public RegionLocation classify(P point) {
-        if (getHyperplane().contains(point)) {
-            S subPoint = toSubspace(point);
+        final H hyperplane = getHyperplane();
+
+        if (hyperplane.contains(point)) {
+            S subPoint = hyperplane.toSubspace(point);
 
             return getSubspaceRegion().classify(subPoint);
         }
@@ -62,15 +63,21 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
     /** {@inheritDoc} */
     @Override
     public P closest(P point) {
-        final P projected = getHyperplane().project(point);
-        final S subProjected = toSubspace(projected);
+        final H hyperplane = getHyperplane();
+
+        final P projected = hyperplane.project(point);
+        final S subProjected = hyperplane.toSubspace(projected);
 
         final Region<S> region = getSubspaceRegion();
         if (region.contains(subProjected)) {
             return projected;
         }
-        return toSpace(region.project(subProjected));
+        return hyperplane.toSpace(region.project(subProjected));
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public abstract H getHyperplane();
 
     /** Return the embedded subspace region for this instance.
      * @return the embedded subspace region for this instance

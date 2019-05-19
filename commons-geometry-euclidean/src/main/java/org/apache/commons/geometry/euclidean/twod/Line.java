@@ -18,10 +18,10 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
+import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -55,7 +55,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * points with negative offsets and the right half plane is the set of
  * points with positive offsets.</p>
  */
-public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vector2D, Vector1D> {
+public final class Line extends AbstractHyperplane<Vector2D> implements EmbeddingHyperplane<Vector2D, Vector1D> {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190120L;
@@ -329,6 +329,26 @@ public class Line extends AbstractHyperplane<Vector2D> implements Embedding<Vect
     public boolean isParallel(final Line line) {
         final double area = direction.signedArea(line.direction);
         return getPrecision().eqZero(area);
+    }
+
+    /** {@inheritDoc}
+    *
+    * <p>Instances are considered equivalent if they
+    * <ul>
+    *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+    *  <li>have equivalent locations (as evaluated by the precision context), and</li>
+    *  <li>point in the same direction (as evaluated by the precision context)</li>
+    * </ul>
+    * </p>
+    * @param other the point to compare with
+    * @return true if this instance should be considered equivalent to the argument
+    */
+    public boolean eq(final Line other) {
+        final DoublePrecisionContext precision = getPrecision();
+
+        return precision.equals(other.getPrecision()) &&
+                getOrigin().eq(other.getOrigin(), precision) &&
+                precision.eq(getAngle(), other.getAngle());
     }
 
     /** {@inheritDoc} */

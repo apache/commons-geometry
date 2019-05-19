@@ -21,6 +21,9 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
+/** Base class for hyperplane implementations.
+ * @param <P> Point implementation type
+ */
 public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P>, Serializable {
 
     /** Serializable UID */
@@ -29,6 +32,9 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
     /** Precision object used to perform floating point comparisons */
     private final DoublePrecisionContext precision;
 
+    /** Construct an instance using the given precision context.
+     * @param precision object used to perform floating point comparisons
+     */
     protected AbstractHyperplane(final DoublePrecisionContext precision) {
         this.precision = precision;
     }

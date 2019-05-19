@@ -230,7 +230,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(final Vector1D vec, final DoublePrecisionContext precision) {
+    public boolean eq(final Vector1D vec, final DoublePrecisionContext precision) {
         return precision.eq(x, vec.x);
     }
 

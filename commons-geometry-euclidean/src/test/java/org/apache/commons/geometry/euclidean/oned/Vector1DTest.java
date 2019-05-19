@@ -490,17 +490,17 @@ public class Vector1DTest {
         Vector1D vec = Vector1D.of(1);
 
         // act/assert
-        Assert.assertTrue(vec.equals(vec, smallEps));
-        Assert.assertTrue(vec.equals(vec, largeEps));
+        Assert.assertTrue(vec.eq(vec, smallEps));
+        Assert.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), smallEps));
-        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), largeEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.0000007), smallEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.0000007), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector1D.of(1.004), smallEps));
-        Assert.assertTrue(vec.equals(Vector1D.of(1.004), largeEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(1.004), smallEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.004), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector1D.of(2), smallEps));
-        Assert.assertFalse(vec.equals(Vector1D.of(-2), largeEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(2), smallEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(-2), largeEps));
     }
 
     @Test

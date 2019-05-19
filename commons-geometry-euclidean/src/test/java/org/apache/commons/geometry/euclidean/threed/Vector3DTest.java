@@ -944,26 +944,26 @@ public class Vector3DTest {
         Vector3D vec = Vector3D.of(1, -2, 3);
 
         // act/assert
-        Assert.assertTrue(vec.equals(vec, smallEps));
-        Assert.assertTrue(vec.equals(vec, largeEps));
+        Assert.assertTrue(vec.eq(vec, smallEps));
+        Assert.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.equals(Vector3D.of(1.0000007, -2.0000009, 3.0000009), smallEps));
-        Assert.assertTrue(vec.equals(Vector3D.of(1.0000007, -2.0000009, 3.0000009), largeEps));
+        Assert.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), smallEps));
+        Assert.assertTrue(vec.eq(Vector3D.of(1.0000007, -2.0000009, 3.0000009), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector3D.of(1.004, -2, 3), smallEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -2.004, 3), smallEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 2.999), smallEps));
-        Assert.assertTrue(vec.equals(Vector3D.of(1.004, -2.004, 2.999), largeEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1.004, -2, 3), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -2.004, 3), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 2.999), smallEps));
+        Assert.assertTrue(vec.eq(Vector3D.of(1.004, -2.004, 2.999), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector3D.of(2, -2, 3), smallEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -3, 3), smallEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 4), smallEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(2, -3, 4), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(2, -2, 3), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -3, 3), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 4), smallEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(2, -3, 4), smallEps));
 
-        Assert.assertFalse(vec.equals(Vector3D.of(2, -2, 3), largeEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -3, 3), largeEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(1, -2, 4), largeEps));
-        Assert.assertFalse(vec.equals(Vector3D.of(2, -3, 4), largeEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(2, -2, 3), largeEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -3, 3), largeEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(1, -2, 4), largeEps));
+        Assert.assertFalse(vec.eq(Vector3D.of(2, -3, 4), largeEps));
     }
 
     @Test

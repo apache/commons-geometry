@@ -778,20 +778,20 @@ public class Vector2DTest {
         Vector2D vec = Vector2D.of(1, -2);
 
         // act/assert
-        Assert.assertTrue(vec.equals(vec, smallEps));
-        Assert.assertTrue(vec.equals(vec, largeEps));
+        Assert.assertTrue(vec.eq(vec, smallEps));
+        Assert.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), smallEps));
-        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), largeEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), smallEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector2D.of(1.004, -2), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -2.004), smallEps));
-        Assert.assertTrue(vec.equals(Vector2D.of(1.004, -2.004), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1.004, -2), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -2.004), smallEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.004, -2.004), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), largeEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), largeEps));
     }
 
     @Test
