@@ -40,7 +40,7 @@ public class PlaneTest {
     public void testUAndVAreCollinear() {
         Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
     }
-    
+
     @Test(expected=IllegalNormException.class)
     public void testUAndVAreCollinear2() {
         Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
@@ -50,7 +50,7 @@ public class PlaneTest {
     public void testPointsDoNotConstituteAPlane() {
         Plane.fromPoints(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 1, 0), TEST_PRECISION);
     }
-    
+
     @Test
     public void testContains() {
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
@@ -65,25 +65,25 @@ public class PlaneTest {
         Line line = new Line(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 1), TEST_PRECISION);
         Assert.assertTrue(plane.contains(line));
     }
-    
+
     @Test(expected=IllegalNormException.class)
     public void testFromPointPlaneVectorsWithZeroVector()
     {
         Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.ZERO, Vector3D.of(1,0,0), TEST_PRECISION);
     }
-    
+
     @Test(expected=IllegalNormException.class)
     public void testFromPointAndNormalWithZeroNormal()
     {
         Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
     }
-     
+
     @Test(expected=IllegalNormException.class)
     public void testFromNormal()
     {
         Plane.fromNormal(Vector3D.ZERO, TEST_PRECISION);
     }
-     
+
     @Test
     public void testIsParallelAndGetOffset()
     {
@@ -95,10 +95,10 @@ public class PlaneTest {
         Assert.assertFalse(plane.isParallel(nonParallelLine));
         Assert.assertEquals(0.0, plane.getOffset(nonParallelLine), TEST_EPS);
     }
-    
+
     @Test
     public void testCreation()
-    {  
+    {
         Vector3D normalAliasW =  Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1),normalAliasW , TEST_PRECISION);
         Assert.assertEquals(normalAliasW, plane.getW());
@@ -110,7 +110,7 @@ public class PlaneTest {
         Vector3D expectedOrigin = Vector3D.of(0, 0, 1);
         Assert.assertEquals(expectedOrigin, plane.getOrigin());
     }
-    
+
     @Test
     public void testReverse()
     {
@@ -124,7 +124,7 @@ public class PlaneTest {
         Vector3D p1XYswapped = Vector3D.of(0,1,1);
         Assert.assertTrue(reversePlane.contains(p1XYswapped));
     }
-    
+
     @Test
     public void testIsPlaneParallel()
     {
@@ -136,7 +136,7 @@ public class PlaneTest {
         Plane nonParallelPlane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(1, 1.5, 1), Vector3D.of(0,1,1), TEST_PRECISION);
         Assert.assertFalse(plane.isParallel(nonParallelPlane));
     }
-    
+
     @Test
     public void testProjectLine() {
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
@@ -144,7 +144,7 @@ public class PlaneTest {
         Line expectedProjection = new Line(Vector3D.of(1, 0, 1),Vector3D.of(2, 0, 1), TEST_PRECISION);
         Assert.assertEquals(expectedProjection, plane.project(line));
     }
-    
+
     @Test
     public void testOffset() {
         Vector3D p1 = Vector3D.of(1, 1, 1);
@@ -165,7 +165,7 @@ public class PlaneTest {
       Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1), Vector3D.of(2, 0, 0), Vector3D.of(2,0,0), TEST_PRECISION);
     }
 
-    
+
     @Test
     public void testVectorsAreNormalizedForSuppliedUAndV() {
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1), Vector3D.of(2, 0, 0), Vector3D.of(0,2,0), TEST_PRECISION);
@@ -174,8 +174,8 @@ public class PlaneTest {
         Assert.assertEquals(1.0, plane.getU().norm(), TEST_EPS);
     }
 
-    
-    
+
+
     @Test
     public void testVectorsAreNormalized() {
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(2, -3, 1), Vector3D.of(1, 4, 9), TEST_PRECISION);
@@ -184,7 +184,7 @@ public class PlaneTest {
         Assert.assertEquals(1.0, plane.getU().norm(), TEST_EPS);
     }
 
-    
+
     @Test
     public void testPoint() {
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(2, -3, 1), Vector3D.of(1, 4, 9), TEST_PRECISION);

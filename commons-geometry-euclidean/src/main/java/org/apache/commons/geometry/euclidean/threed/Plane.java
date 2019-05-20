@@ -62,8 +62,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         this.u = u;
         this.v = v;
         this.w = w;
-        if (areCoplanar(u, v, w, precision))
-        {
+        if (areCoplanar(u, v, w, precision)) {
             throw new IllegalArgumentException("Provided vectors must not be coplanar.");
         }
         this.originOffset = originOffset;
@@ -80,8 +79,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
      * @throws IllegalArgumentException if the provided vectors are collinear
      */
-    public static Plane fromPointAndPlaneVectors (final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
-    {
+    public static Plane fromPointAndPlaneVectors (final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision) {
         Vector3D uNorm = u.normalize();
         Vector3D vNorm = uNorm.orthogonal(v);
         Vector3D wNorm = uNorm.cross(vNorm).normalize();
@@ -97,7 +95,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return a new plane
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
      */
-    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision){
+    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
         return fromPointAndNormal(Vector3D.ZERO, normal, precision);
     }
 
@@ -167,8 +165,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      *
      *  @return the offset of the origin with respect to the plane.
      */
-    public double getOriginOffset()
-    {
+    public double getOriginOffset() {
         return originOffset;
     }
 
@@ -243,8 +240,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param line the line to project
      * @return the projection of the given line onto the plane.
      */
-    public Line project(final Line line)
-    {
+    public Line project(final Line line) {
         Vector3D direction = line.getDirection();
         Vector3D projection = w.multiply(direction.dot(w) * (1/w.normSq()));
         Vector3D projectedLineDirection = direction.subtract(projection);
@@ -487,8 +483,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param line line to check
      * @return true if line is contained in this plane
      */
-    public boolean contains(final Line line)
-    {
+    public boolean contains(final Line line) {
         Vector3D origin = line.getOrigin();
         Vector3D direction = line.getDirection();
         return contains(origin) && areCoplanar(u, v, direction, precision);
@@ -542,9 +537,8 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @return the distance or 0.0, if the line is not parallel to the plane instance.
      */
     public double getOffset(final Line line) {
-        if (!isParallel(line))
-        {
-            return 0.0;
+        if (!isParallel(line)) {
+            return 0;
         }
         return getOffset(line.getOrigin());
     }
@@ -575,7 +569,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     @Override
     public boolean sameOrientationAs(final Hyperplane<Vector3D> other) {
-        return (((Plane) other).w).dot(w) > 0.0;
+        return (((Plane) other).w).dot(w) > 0;
     }
 
     @Override
@@ -592,13 +586,13 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj){
+        if (this == obj) {
             return true;
         }
-        if (obj == null){
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()){
+        if (getClass() != obj.getClass()) {
             return false;
         }
         Plane other = (Plane) obj;
@@ -614,8 +608,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param precision precision context used to compare floating point values
      * @return true if vectors are coplanar, false otherwise.
      */
-    private static boolean areCoplanar(final Vector3D u, final Vector3D v, final Vector3D w, final DoublePrecisionContext precision)
-    {
+    private static boolean areCoplanar(final Vector3D u, final Vector3D v, final Vector3D w, final DoublePrecisionContext precision) {
         return precision.eqZero(u.dot(v.cross(w)));
     }
 }
