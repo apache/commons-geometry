@@ -297,7 +297,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
      * @return a BSP tree representing the same region
      */
     public RegionBSPTree1D toTree() {
-        final RegionBSPTree1D tree = new RegionBSPTree1D();
+        final RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         RegionNode1D node = tree.getRoot();
 

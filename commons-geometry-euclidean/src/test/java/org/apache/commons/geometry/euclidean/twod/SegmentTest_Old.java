@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SegmentTest {
+public class SegmentTest_Old {
 
     private static final double TEST_EPS = 1e-10;
 

@@ -35,11 +35,29 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
     /** The 1D region representing the area on the line */
     private final RegionBSPTree1D region;
 
-    /** Construct a new instance from its defining line and subspace region.
-     * @param line
-     * @param region
+    /** Construct a new, empty subline for the given line.
+     * @param line line defining the subline
      */
-    private SubLine(final Line line, final RegionBSPTree1D region) {
+    public SubLine(final Line line) {
+        this(line, false);
+    }
+
+    /** Construct a new subline for the given line. If {@code full}
+     * is true, then the subline will cover the entire line; otherwise,
+     * it will be empty.
+     * @param line line defining the subline
+     * @param full if true, the subline will cover the entire space;
+     *      otherwise it will be empty
+     */
+    public SubLine(final Line line, boolean full) {
+        this(line, new RegionBSPTree1D(full));
+    }
+
+    /** Construct a new instance from its defining line and subspace region.
+     * @param line line defining the subline
+     * @param region subspace region for the subline
+     */
+    public SubLine(final Line line, final RegionBSPTree1D region) {
         super(line);
 
         this.region = region;

@@ -38,7 +38,7 @@ import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PolygonsSetTest {
+public class PolygonsSetTest_Old {
 
     private static final double TEST_EPS = 1e-10;
 

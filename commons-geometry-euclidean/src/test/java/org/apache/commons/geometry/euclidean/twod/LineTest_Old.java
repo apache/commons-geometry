@@ -28,7 +28,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Line_OldTest {
+public class LineTest_Old {
 
     private static final double TEST_EPS = 1e-10;
 

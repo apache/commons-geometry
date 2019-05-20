@@ -225,8 +225,14 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      */
     @Override
     public boolean eq(final OrientedPoint other) {
-        return getPrecision().equals(other.getPrecision()) &&
-                point.eq(other.point, getPrecision()) &&
+        if (this == other) {
+            return true;
+        }
+
+        final DoublePrecisionContext precision = getPrecision();
+
+        return precision.equals(other.getPrecision()) &&
+                point.eq(other.point, precision) &&
                 positiveFacing == other.positiveFacing;
     }
 

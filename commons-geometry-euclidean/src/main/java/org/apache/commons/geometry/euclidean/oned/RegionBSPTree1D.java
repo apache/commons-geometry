@@ -40,10 +40,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         return Double.compare(a.getMinValue(), b.getMinValue());
     };
 
-    /** Create a new region representing the entire number line.
+    /** Create a new, empty region.
      */
     public RegionBSPTree1D() {
-        this(true);
+        this(false);
     }
 
     /** Create a new region. If {@code full} is true, then the region will
@@ -330,7 +330,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         private static final long serialVersionUID = 20190405L;
 
         /** Simple constructor.
-         * @param tree the owning tre instance
+         * @param tree the owning tree instance
          */
         private RegionNode1D(AbstractBSPTree<Vector1D, RegionNode1D> tree) {
             super(tree);

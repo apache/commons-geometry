@@ -344,6 +344,10 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
     * @return true if this instance should be considered equivalent to the argument
     */
     public boolean eq(final Line other) {
+        if (this == other) {
+            return true;
+        }
+
         final DoublePrecisionContext precision = getPrecision();
 
         return precision.equals(other.getPrecision()) &&
