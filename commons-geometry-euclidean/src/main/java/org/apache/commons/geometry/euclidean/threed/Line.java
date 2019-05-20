@@ -238,7 +238,7 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     public SubLine wholeLine() {
         return new SubLine(this, new IntervalsSet(precision));
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
@@ -248,12 +248,15 @@ public class Line implements Embedding<Vector3D, Vector1D> {
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()){
             return false;
+        }
         Line other = (Line) obj;
         return this.direction.equals(other.direction, precision) && this.zero.equals(other.zero, precision);
     }

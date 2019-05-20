@@ -47,13 +47,13 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
-    /** 
+    /**
      * Constructor to build a new plane with the given values.
      * Made private to prevent inheritance.
      * @param u u vector (on plane)
      * @param v v vector (on plane)
      * @param w unit normal vector
-     * @param origin orthogonal projection of the 3D-space origin in the plane.
+     * @param originOffset offset of the origin with respect to the plane.
      * @param precision precision context used to compare floating point values
      * @throws IllegalArgumentException if the provided vectors are coplanar or not normalized
      */
@@ -62,7 +62,6 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         this.u = u;
         this.v = v;
         this.w = w;
-      
         if (areCoplanar(u, v, w, precision))
         {
             throw new IllegalArgumentException("Provided vectors must not be coplanar.");
@@ -70,7 +69,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         this.originOffset = originOffset;
         this.precision = precision;
     }
-    
+
     /**
      * Build a plane from a point and two (on plane) vectors.
      * @param p the provided point (on plane)
@@ -79,7 +78,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param precision precision context used to compare floating point values
      * @return a new plane
      * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
-     * @throws IllegalArgumentException if the provided vectors are collinear 
+     * @throws IllegalArgumentException if the provided vectors are collinear
      */
     public static Plane fromPointAndPlaneVectors (final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision)
     {
@@ -89,10 +88,10 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         double originOffset = -p.dot(wNorm);
         return new Plane(uNorm, vNorm, wNorm, originOffset, precision);
     }
-    
+
     /**
      * Build a plane from a normal.
-     * Chooses origin as point on plane. 
+     * Chooses origin as point on plane.
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
@@ -104,7 +103,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Build a plane from a point and a normal.
-     * 
+     *
      * @param p         point belonging to the plane
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
@@ -118,13 +117,13 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         Vector3D v = w.cross(u);
         return new Plane(u, v, w, originOffset, precision);
     }
-    
+
     /**
      * Build a plane from three points.
      * <p>
      * The plane is oriented in the direction of {@code (p2-p1) ^ (p3-p1)}
      * </p>
-     * 
+     *
      * @param p1        first point belonging to the plane
      * @param p2        second point belonging to the plane
      * @param p3        third point belonging to the plane
@@ -136,7 +135,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
             final DoublePrecisionContext precision) {
         return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
     }
-   
+
     // This should be removed after GEOMETRY-32 is done.
     /**
      * Copy the instance.
@@ -145,7 +144,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * copy is used, none of the underlying objects are shared (except for immutable
      * objects).
      * </p>
-     * 
+     *
      * @return a new hyperplane, copy of the instance
      */
     @Deprecated
@@ -155,31 +154,31 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     }
 
     /**
-     * Get the orthogonal projection of the 3D-space origin in the plane.      
+     * Get the orthogonal projection of the 3D-space origin in the plane.
      * @return the origin point of the plane frame (point closest to the 3D-space
      *         origin)
      */
     public Vector3D getOrigin() {
         return w.multiply(-originOffset);
     }
-    
+
     /**
-     *  Get the offset of the origin with respect to the plane. 
-     *  
-     *  @return the offset of the origin with respect to the plane. 
+     *  Get the offset of the origin with respect to the plane.
+     *
+     *  @return the offset of the origin with respect to the plane.
      */
     public double getOriginOffset()
     {
         return originOffset;
     }
-    
+
     /**
      * Get the plane first canonical vector.
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
      * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
-     * 
+     *
      * @return normalized first canonical vector
      * @see #getV
      * @see #getNormal
@@ -194,7 +193,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
      * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
-     * 
+     *
      * @return normalized second canonical vector
      * @see #getU
      * @see #getNormal
@@ -202,14 +201,14 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Vector3D getV() {
         return v;
     }
-    
+
     /**
      * Get the normalized normal vector, alias for getNormal().
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
      * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
-     * 
+     *
      * @return normalized normal vector
      * @see #getU
      * @see #getV
@@ -217,14 +216,14 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Vector3D getW() {
         return w;
     }
-    
+
     /**
      * Get the normalized normal vector.
      * <p>
      * The frame defined by ({@link #getU getU}, {@link #getV getV},
      * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
      * </p>
-     * 
+     *
      * @return normalized normal vector
      * @see #getU
      * @see #getV
@@ -232,7 +231,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     public Vector3D getNormal() {
         return w;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Vector3D project(final Vector3D point) {
@@ -275,16 +274,16 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     public Plane reverse() {
         final Vector3D tmp = u;
-        Vector3D u = v;
-        Vector3D v = tmp;
-        Vector3D w = this.w.negate();
-        double originOffset = -this.originOffset;
-        return new Plane(u, v, w, originOffset, this.precision);
+        Vector3D uTmp = v;
+        Vector3D vTmp = tmp;
+        Vector3D wTmp = this.w.negate();
+        double originOffsetTmp = -this.originOffset;
+        return new Plane(uTmp, vTmp, wTmp, originOffsetTmp, this.precision);
     }
 
     /**
      * Transform a 3D space point into an in-plane point.
-     * 
+     *
      * @param point point of the space (must be a {@link Vector3D} instance)
      * @return in-plane point
      * @see #toSpace
@@ -297,7 +296,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Transform an in-plane point into a 3D space point.
-     * 
+     *
      * @param point in-plane point (must be a {@link Vector2D} instance)
      * @return 3D space point
      * @see #toSubSpace
@@ -309,7 +308,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Get one point from the 3D-space.
-     * 
+     *
      * @param inPlane desired in-plane coordinates for the point in the plane
      * @param offset  desired offset for the point
      * @return one point in the 3D-space, with given coordinates and offset relative
@@ -325,24 +324,24 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * Planes are considered similar if they contain the same points. This does not
      * mean they are equal since they can have opposite normals.
      * </p>
-     * 
+     *
      * @param plane plane to which the instance is compared
      * @return true if the planes are similar
      */
     public boolean contains(final Plane plane) {
         final double angle = w.angle(plane.w);
-        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset))
-                || ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
+        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
+                ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
     }
-    
-    
+
+
 
     /**
      * Rotate the plane around the specified point.
      * <p>
      * The instance is not modified, a new instance is created.
      * </p>
-     * 
+     *
      * @param center   rotation center
      * @param rotation 3-dimensional rotation
      * @return a new plane
@@ -351,11 +350,11 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         final Vector3D delta = getOrigin().subtract(center);
         Vector3D p = center.add(rotation.apply(delta));
         Vector3D normal = rotation.apply(this.w);
-        Vector3D w = normal.normalize();
-        double originOffset = -p.dot(w);
-        Vector3D u = rotation.apply(this.u);
-        Vector3D v = rotation.apply(this.v);
-        return new Plane(u, v, w, originOffset, this.precision);
+        Vector3D wTmp = normal.normalize();
+        double originOffsetTmp = -p.dot(wTmp);
+        Vector3D uTmp = rotation.apply(this.u);
+        Vector3D vTmp = rotation.apply(this.v);
+        return new Plane(uTmp, vTmp, wTmp, originOffsetTmp, this.precision);
     }
 
     /**
@@ -363,21 +362,21 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * <p>
      * The instance is not modified, a new instance is created.
      * </p>
-     * 
+     *
      * @param translation translation to apply
      * @return a new plane
      */
     public Plane translate(final Vector3D translation) {
         Vector3D p = getOrigin().add(translation);
         Vector3D normal = this.w;
-        Vector3D w = normal.normalize();
-        double originOffset = -p.dot(w);
-        return new Plane(this.u, this.v, w, originOffset, this.precision);
+        Vector3D wTmp = normal.normalize();
+        double originOffsetTmp = -p.dot(wTmp);
+        return new Plane(this.u, this.v, wTmp, originOffsetTmp, this.precision);
     }
 
     /**
      * Get the intersection of a line with the instance.
-     * 
+     *
      * @param line line intersecting the instance
      * @return intersection point between between the line and the instance (null if
      *         the line is parallel to the instance)
@@ -395,7 +394,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Build the line shared by the instance and another plane.
-     * 
+     *
      * @param other other plane
      * @return line at the intersection of the instance and the other plane (really
      *         a {@link Line Line} instance)
@@ -411,7 +410,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Get the intersection point of three planes.
-     * 
+     *
      * @param plane1 first plane1
      * @param plane2 second plane2
      * @param plane3 third plane2
@@ -454,7 +453,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Build a region covering the whole hyperplane.
-     * 
+     *
      * @return a region covering the whole hyperplane
      */
     @Override
@@ -464,7 +463,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Build a region covering the whole space.
-     * 
+     *
      * @return a region containing the instance (really a {@link PolyhedronsSet
      *         PolyhedronsSet} instance)
      */
@@ -475,14 +474,14 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Check if the instance contains a point.
-     * 
+     *
      * @param p point to check
      * @return true if p belongs to the plane
      */
     public boolean contains(final Vector3D p) {
         return precision.eqZero(getOffset(p));
     }
-    
+
     /**
      * Check if the instance contains a line
      * @param line line to check
@@ -492,7 +491,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     {
         Vector3D origin = line.getOrigin();
         Vector3D direction = line.getDirection();
-        return (contains(origin) && areCoplanar(u, v, direction, precision));
+        return contains(origin) && areCoplanar(u, v, direction, precision);
     }
 
     /** Check, if the line is parallel to the instance.
@@ -516,7 +515,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         return precision.eqZero(w.cross(plane.w).norm());
     }
 
-    
+
     /**
      * Get the offset (oriented distance) of a parallel plane.
      * <p>
@@ -528,7 +527,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * on the plus side of the instance and negative if it is on the minus side,
      * according to its natural orientation.
      * </p>
-     * 
+     *
      * @param plane plane to check
      * @return offset of the plane
      */
@@ -549,7 +548,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
         }
         return getOffset(line.getOrigin());
     }
-    
+
     /**
      * Get the offset (oriented distance) of a point.
      * <p>
@@ -558,7 +557,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * if the point is on the other side, according to the hyperplane natural
      * orientation.
      * </p>
-     * 
+     *
      * @param point point to check
      * @return offset of the point
      */
@@ -569,7 +568,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
 
     /**
      * Check if the instance has the same orientation as another hyperplane.
-     * 
+     *
      * @param other other hyperplane to check against the instance
      * @return true if the instance and the other hyperplane have the same
      *         orientation
@@ -593,17 +592,20 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
     /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj){
             return true;
-        if (obj == null)
+        }
+        if (obj == null){
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()){
             return false;
+        }
         Plane other = (Plane) obj;
-        return  Double.doubleToLongBits(originOffset) == Double.doubleToLongBits(other.originOffset)
-                && Objects.equals(u, other.u) && Objects.equals(v, other.v) && Objects.equals(w, other.w);
+        return  Double.doubleToLongBits(originOffset) == Double.doubleToLongBits(other.originOffset) &&
+                Objects.equals(u, other.u) && Objects.equals(v, other.v) && Objects.equals(w, other.w);
     }
-    
+
     /**
      * Check if provided vectors are coplanar.
      * @param u first vector
