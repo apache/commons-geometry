@@ -340,7 +340,7 @@ public class EuclideanTestUtils {
             @Override
             public Plane parseHyperplane()
                 throws ParseException {
-                return new Plane(Vector3D.of(getNumber(), getNumber(), getNumber()),
+                return Plane.fromPointAndNormal(Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  getPrecision());
             }

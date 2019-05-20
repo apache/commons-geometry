@@ -96,7 +96,7 @@ public class PolyhedronsSetTest {
     public void testHalfSpace() {
         // arrange
         List<SubHyperplane<Vector3D>> boundaries = new ArrayList<>();
-        boundaries.add(new SubPlane(new Plane(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION),
+        boundaries.add(new SubPlane(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION),
                 new PolygonsSet(TEST_PRECISION)));
 
         // act
@@ -465,10 +465,10 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
-                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
-                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
-                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
+                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
+                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
@@ -539,10 +539,10 @@ public class PolyhedronsSetTest {
         // act
         PolyhedronsSet tree =
             (PolyhedronsSet) new RegionFactory<Vector3D>().buildConvex(
-                new Plane(vertex3, vertex2, vertex1, TEST_PRECISION),
-                new Plane(vertex2, vertex3, vertex4, TEST_PRECISION),
-                new Plane(vertex4, vertex3, vertex1, TEST_PRECISION),
-                new Plane(vertex1, vertex2, vertex4, TEST_PRECISION));
+                Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
+                Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
+                Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION));
 
         // assert
         Vector3D barycenter = tree.getBarycenter();
@@ -691,7 +691,7 @@ public class PolyhedronsSetTest {
             Vector3D v_2 = Vector3D.of(coords[idxB], coords[idxB + 1], coords[idxB + 2]);
             Vector3D v_3 = Vector3D.of(coords[idxC], coords[idxC + 1], coords[idxC + 2]);
             Vector3D[] vertices = {v_1, v_2, v_3};
-            Plane polyPlane = new Plane(v_1, v_2, v_3, TEST_PRECISION);
+            Plane polyPlane = Plane.fromPoints(v_1, v_2, v_3, TEST_PRECISION);
             ArrayList<SubHyperplane<Vector2D>> lines = new ArrayList<>();
 
             Vector2D[] projPts = new Vector2D[vertices.length];
@@ -1476,12 +1476,12 @@ public class PolyhedronsSetTest {
         double offset = size * 0.5;
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
 
-        Plane xMinus = new Plane(center.add(Vector3D.of(-offset, 0, 0)), Vector3D.MINUS_X, precision);
-        Plane xPlus = new Plane(center.add(Vector3D.of(offset, 0, 0)), Vector3D.PLUS_X, precision);
-        Plane yPlus = new Plane(center.add(Vector3D.of(0, offset, 0)), Vector3D.PLUS_Y, precision);
-        Plane yMinus = new Plane(center.add(Vector3D.of(0, -offset, 0)), Vector3D.MINUS_Y, precision);
-        Plane zPlus = new Plane(center.add(Vector3D.of(0, 0, offset)), Vector3D.PLUS_Z, precision);
-        Plane zMinus = new Plane(center.add(Vector3D.of(0, 0, -offset)), Vector3D.MINUS_Z, precision);
+        Plane xMinus = Plane.fromPointAndNormal(center.add(Vector3D.of(-offset, 0, 0)), Vector3D.MINUS_X, precision);
+        Plane xPlus = Plane.fromPointAndNormal(center.add(Vector3D.of(offset, 0, 0)), Vector3D.PLUS_X, precision);
+        Plane yPlus = Plane.fromPointAndNormal(center.add(Vector3D.of(0, offset, 0)), Vector3D.PLUS_Y, precision);
+        Plane yMinus = Plane.fromPointAndNormal(center.add(Vector3D.of(0, -offset, 0)), Vector3D.MINUS_Y, precision);
+        Plane zPlus = Plane.fromPointAndNormal(center.add(Vector3D.of(0, 0, offset)), Vector3D.PLUS_Z, precision);
+        Plane zMinus = Plane.fromPointAndNormal(center.add(Vector3D.of(0, 0, -offset)), Vector3D.MINUS_Z, precision);
 
         // +x
         boundaries.add(createSubPlane(xPlus,
@@ -1546,8 +1546,8 @@ public class PolyhedronsSetTest {
         Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
         Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
 
-        planes.add(new Plane(topZ, Vector3D.PLUS_Z, TEST_PRECISION));
-        planes.add(new Plane(bottomZ, Vector3D.MINUS_Z, TEST_PRECISION));
+        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.PLUS_Z, TEST_PRECISION));
+        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.MINUS_Z, TEST_PRECISION));
 
         // add the side planes
         double vDelta = Math.PI / stacks;
@@ -1580,7 +1580,7 @@ public class PolyhedronsSetTest {
                 norm = Vector3D.of(x, y, stackHeight).normalize();
                 pt = center.add(norm.multiply(adjustedRadius));
 
-                planes.add(new Plane(pt, norm, TEST_PRECISION));
+                planes.add(Plane.fromPointAndNormal(pt, norm, TEST_PRECISION));
             }
         }
 

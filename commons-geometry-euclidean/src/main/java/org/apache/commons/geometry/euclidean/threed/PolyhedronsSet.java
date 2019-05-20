@@ -155,12 +155,12 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
             // too thin box, build an empty polygons set
             return new BSPTree<>(Boolean.FALSE);
         }
-        final Plane pxMin = new Plane(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, precision);
-        final Plane pxMax = new Plane(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  precision);
-        final Plane pyMin = new Plane(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, precision);
-        final Plane pyMax = new Plane(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
-        final Plane pzMin = new Plane(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
-        final Plane pzMax = new Plane(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
+        final Plane pxMin = Plane.fromPointAndNormal(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, precision);
+        final Plane pxMax = Plane.fromPointAndNormal(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  precision);
+        final Plane pyMin = Plane.fromPointAndNormal(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, precision);
+        final Plane pyMax = Plane.fromPointAndNormal(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
+        final Plane pzMin = Plane.fromPointAndNormal(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
+        final Plane pzMax = Plane.fromPointAndNormal(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
         final Region<Vector3D> boundary =
         new RegionFactory<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
@@ -218,7 +218,7 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         for (final int[] facet : facets) {
 
             // define facet plane from the first 3 points
-            Plane plane = new Plane(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
+            Plane plane = Plane.fromPoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
                                     precision);
 
             // check all points are in the plane

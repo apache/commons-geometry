@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Objects;
+
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
@@ -237,4 +239,31 @@ public class Line implements Embedding<Vector3D, Vector1D> {
         return new SubLine(this, new IntervalsSet(precision));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return Objects.hash(direction, precision, zero);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Line other = (Line) obj;
+        return this.direction.equals(other.direction, precision) && this.zero.equals(other.zero, precision);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Line [direction=" + direction + ", zero=" + zero + "]";
+    }
 }
