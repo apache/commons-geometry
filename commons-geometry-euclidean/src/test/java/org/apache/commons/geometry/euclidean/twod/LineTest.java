@@ -234,22 +234,22 @@ public class LineTest {
     }
 
     @Test
-    public void testFlip() {
+    public void testReverse() {
         // arrange
         Vector2D pt = Vector2D.of(0, 1);
         Vector2D dir = Vector2D.PLUS_X;
         Line line = Line.fromPointAndDirection(pt, dir, TEST_PRECISION);
 
         // act
-        Line flipped = line.flip();
-        Line doubleFlipped = flipped.flip();
+        Line reversed = line.reverse();
+        Line doubleReversed = reversed.reverse();
 
         // assert
-        checkLine(flipped, pt, dir.negate());
-        Assert.assertEquals(-1, flipped.getOriginOffset(), TEST_EPS);
+        checkLine(reversed, pt, dir.negate());
+        Assert.assertEquals(-1, reversed.getOriginOffset(), TEST_EPS);
 
-        checkLine(doubleFlipped, pt, dir);
-        Assert.assertEquals(1, doubleFlipped.getOriginOffset(), TEST_EPS);
+        checkLine(doubleReversed, pt, dir);
+        Assert.assertEquals(1, doubleReversed.getOriginOffset(), TEST_EPS);
     }
 
     @Test
@@ -462,7 +462,7 @@ public class LineTest {
         // arrange
         Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line c = b.flip();
+        Line c = b.reverse();
 
         // act/assert
         Assert.assertEquals(0, a.offset(a), TEST_EPS);
@@ -497,7 +497,7 @@ public class LineTest {
     public void testOffset_point() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line reversed = line.flip();
+        Line reversed = line.reverse();
 
         // act/assert
         Assert.assertEquals(0.0, line.offset(Vector2D.of(-0.5, 1)), TEST_EPS);
@@ -607,7 +607,7 @@ public class LineTest {
         // arrange
         Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line c = b.flip();
+        Line c = b.reverse();
 
         // act/assert
         Assert.assertEquals(0, a.distance(a), TEST_EPS);
@@ -789,7 +789,7 @@ public class LineTest {
     public void testDistance_point() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line reversed = line.flip();
+        Line reversed = line.reverse();
 
         // act/assert
         Assert.assertEquals(0.0, line.distance(Vector2D.of(-0.5, 1)), TEST_EPS);

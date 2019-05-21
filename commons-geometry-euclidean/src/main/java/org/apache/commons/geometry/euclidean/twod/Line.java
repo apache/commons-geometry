@@ -141,7 +141,7 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
 
     /** {@inheritDoc} */
     @Override
-    public Line flip() {
+    public Line reverse() {
         return new Line(direction.negate(), -originOffset, getPrecision());
     }
 

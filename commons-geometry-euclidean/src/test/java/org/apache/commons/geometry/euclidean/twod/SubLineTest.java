@@ -136,6 +136,27 @@ public class SubLineTest {
     }
 
     @Test
+    public void testBuilder_instanceMethod() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        SubLineBuilder builder = new SubLine(line).builder();
+
+        // act
+        SubLine subline = builder.build();
+
+        // assert
+        Assert.assertFalse(subline.isFull());
+        Assert.assertTrue(subline.isEmpty());
+
+        List<LineSegment> segments = subline.toConvex();
+        Assert.assertEquals(0, segments.size());
+
+        Assert.assertSame(line, subline.getLine());
+        Assert.assertSame(line, subline.getHyperplane());
+        Assert.assertSame(TEST_PRECISION, subline.getPrecision());
+    }
+
+    @Test
     public void testBuilder_createEmpty() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);

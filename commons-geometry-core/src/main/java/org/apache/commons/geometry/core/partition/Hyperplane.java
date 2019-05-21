@@ -79,7 +79,7 @@ public interface Hyperplane<P extends Point<P>> {
      * instance and vice versa.
      * @return a hyperplane with the opposite orientation
      */
-    Hyperplane<P> flip();
+    Hyperplane<P> reverse();
 
     /** Transform this instance using the given {@link Transform}.
      * @param transform object to transform this instance with

@@ -121,7 +121,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public OrientedPoint flip() {
+    public OrientedPoint reverse() {
         return new OrientedPoint(point, !positiveFacing, getPrecision());
     }
 

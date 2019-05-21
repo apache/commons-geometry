@@ -196,7 +196,7 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public TestLine flip() {
+    public TestLine reverse() {
         TestPoint2D pt = getOrigin();
         return new TestLine(pt.getX(), pt.getY(), -directionX, -directionY);
     }
