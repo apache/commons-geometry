@@ -95,18 +95,14 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
      */
     public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D> {
 
-        /** Line defining the subline */
-        private final Line line;
-
-        /** One dimensional region on the line. */
-        private final RegionBSPTree1D region;
+        /** SubLine instance created by this builder. */
+        private final SubLine subline;
 
         /** Construct a new instance for building subline region for the given line.
          * @param line the underlying line for the subline region
          */
         public SubLineBuilder(final Line line) {
-            this.line = line;
-            this.region = RegionBSPTree1D.empty();
+            this.subline = new SubLine(line);
         }
 
         /** {@inheritDoc} */
@@ -124,7 +120,7 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
         /** {@inheritDoc} */
         @Override
         public SubLine build() {
-            return new SubLine(line, region);
+            return subline;
         }
 
         /** Internal method for adding subhyperplanes to this builder.
@@ -140,28 +136,29 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
                 addSubLine((SubLine) sub);
             }
             else {
-                throw new IllegalStateException("Unsupported subhyperplane type: " + sub.getClass().getName());
+                throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }
         }
 
         /** Add a line segment to this builder.
          * @param segment line segment to add
          */
-        private void addLineSegment(final LineSegment segment) {
-            region.add(segment.getSubspaceRegion());
+        private void addLineSegment(final LineSegment inputSegment) {
+            subline.getSubspaceRegion().add(inputSegment.getSubspaceRegion());
         }
 
         /** Add a subline to this builder.
          * @param subline subline to add
          */
-        private void addSubLine(final SubLine subline) {
-            region.union(subline.getSubspaceRegion());
+        private void addSubLine(final SubLine inputSubLine) {
+            subline.getSubspaceRegion().union(inputSubLine.getSubspaceRegion());
         }
 
         /** Validate the given subhyperplane lies on the same hyperplane
          * @param sub
          */
         private void validateHyperplane(final Hyperplane<Vector2D> hyper) {
+            final Line line = subline.getLine();
             final Line inputLine = (Line) hyper;
 
             if (!line.eq(inputLine)) {
