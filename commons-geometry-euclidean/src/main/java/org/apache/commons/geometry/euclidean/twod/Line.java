@@ -159,7 +159,41 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
     /** {@inheritDoc} */
     @Override
     public LineSegment span() {
-        return LineSegment.fromInterval(this, Interval.full());
+        return segment(Interval.full());
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param interval interval representing the 1D region for the line segment
+     * @return a new line segment on this line
+     */
+    public LineSegment segment(final Interval interval) {
+        return LineSegment.fromInterval(this, interval);
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param a first 1D location for the interval
+     * @param b second 1D location for the interval
+     * @return a new line segment on this line
+     */
+    public LineSegment segment(final double a, final double b) {
+        return LineSegment.fromInterval(this, a, b);
+    }
+
+    /** Create a new line segment for the given points. The points are projected
+     * onto the line to create the segment.
+     * @param a first point
+     * @param b second point
+     * @return a new line segment on this line
+     */
+    public LineSegment segment(final Vector2D a, final Vector2D b) {
+        return LineSegment.fromInterval(this, toSubspace(a), toSubspace(b));
+    }
+
+    /** Create a new, empty subline based on this line.
+     * @return a new, empty subline based on this line
+     */
+    public SubLine subline() {
+        return new SubLine(this);
     }
 
     /** {@inheritDoc} */

@@ -23,6 +23,7 @@ import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -434,6 +435,75 @@ public class LineTest {
         // assert
         Assert.assertSame(line, result.getHyperplane());
         GeometryTestUtils.assertPositiveInfinity(result.getSize());
+    }
+
+    @Test
+    public void testSegment_interval() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Interval interval = Interval.of(1, 2, TEST_PRECISION);
+
+        // act
+        LineSegment segment = line.segment(interval);
+
+        // assert
+        Assert.assertSame(line, segment.getLine());
+        Assert.assertSame(interval, segment.getSubspaceRegion());
+    }
+
+    @Test
+    public void testSegment_doubles() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        LineSegment segment = line.segment(1, 2);
+
+        // assert
+        Assert.assertSame(line, segment.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segment.getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEnd(), TEST_EPS);
+    }
+
+    @Test
+    public void testSegment_pointsOnLine() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        LineSegment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
+
+        // assert
+        Assert.assertSame(line, segment.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 1), segment.getEnd(), TEST_EPS);
+    }
+
+    @Test
+    public void testSegment_pointsProjectedOnLine() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        LineSegment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
+
+        // assert
+        Assert.assertSame(line, segment.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEnd(), TEST_EPS);
+    }
+
+    @Test
+    public void testSubline() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        SubLine subline = line.subline();
+
+        // assert
+        Assert.assertSame(line, subline.getLine());
+        Assert.assertTrue(subline.isEmpty());
     }
 
     @Test
