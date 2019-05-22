@@ -132,7 +132,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_full() {
+    public void testProject_full() {
         // arrange
         RegionBSPTree1D full = RegionBSPTree1D.full();
 
@@ -143,7 +143,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_empty() {
+    public void testProject_empty() {
         // arrange
         RegionBSPTree1D empty = RegionBSPTree1D.empty();
 
@@ -154,7 +154,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_singlePoint() {
+    public void testProject_singlePoint() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
 
@@ -172,7 +172,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_noMinBoundary() {
+    public void testProject_noMinBoundary() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
 
@@ -188,7 +188,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_noMaxBoundary() {
+    public void testProject_noMaxBoundary() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION));
 
@@ -204,7 +204,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_closedInterval() {
+    public void testProject_closedInterval() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, 3, TEST_PRECISION));
 
@@ -226,7 +226,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testProjectToBoundary_multipleIntervals() {
+    public void testProject_multipleIntervals() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
                     Interval.max(-1, TEST_PRECISION),
