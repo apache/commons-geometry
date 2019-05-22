@@ -44,6 +44,17 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
+    public Vector2D project(Vector2D pt) {
+        // use our custom projector so that we can disambiguate points that are
+        // actually equidistant from the target point
+        final BoundaryProjector2D projector = new BoundaryProjector2D(pt);
+        visit(projector);
+
+        return projector.getProjected();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected RegionSizeProperties<Vector2D> computeRegionSizeProperties() {
         // TODO Auto-generated method stub
         return null;
@@ -87,6 +98,29 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         @Override
         protected RegionNode2D getSelf() {
             return this;
+        }
+    }
+
+    /** Class used to project points onto the region boundary.
+     */
+    private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 1L;
+
+        /** Simple constructor.
+         * @param point the point to project onto the region's boundary
+         */
+        public BoundaryProjector2D(Vector2D point) {
+            super(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector2D disambiguateClosestPoint(final Vector2D target, final Vector2D a, final Vector2D b) {
+            // return the point with the smallest coordinate values
+            final int cmp = Vector2D.STRICT_ASCENDING_ORDER.compare(a, b);
+            return cmp < 0 ? a : b;
         }
     }
 }

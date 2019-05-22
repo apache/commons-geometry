@@ -19,13 +19,14 @@ package org.apache.commons.geometry.core.partition.test;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
+public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D>, Serializable {
 
     /** Line pointing along the positive x-axis. */
     public static final TestLine X_AXIS = new TestLine(0, 0, 1, 0);
@@ -148,8 +149,14 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
      * @param point point to project into the line's 1D space
      * @return location of the point in the line's 1D space
      */
-    public double toSubspace(TestPoint2D point) {
+    public double toSubspaceValue(TestPoint2D point) {
         return (directionX * point.getX()) + (directionY * point.getY());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint1D toSubspace(TestPoint2D point) {
+        return new TestPoint1D(toSubspaceValue(point));
     }
 
     /** Get the 2D location of the given 1D location in the line's 1D space.
@@ -190,8 +197,14 @@ public class TestLine implements Hyperplane<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public TestPoint2D toSpace(TestPoint1D point) {
+        return toSpace(point.getX());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public TestPoint2D project(final TestPoint2D point) {
-        return toSpace(toSubspace(point));
+        return toSpace(toSubspaceValue(point));
     }
 
     /** {@inheritDoc} */

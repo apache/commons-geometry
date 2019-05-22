@@ -136,6 +136,92 @@ public class SubLineTest {
     }
 
     @Test
+    public void testAdd_lineSegment() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
+
+        SubLine subline = new SubLine(line);
+
+        // act
+        subline.add(LineSegment.fromInterval(line, 2, 4));
+        subline.add(LineSegment.fromInterval(otherLine, 1, 3));
+        subline.add(LineSegment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(subline.isFull());
+        Assert.assertFalse(subline.isEmpty());
+
+        List<LineSegment> segments = subline.toConvex();
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEnd(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segments.get(1).getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEnd(), TEST_EPS);
+    }
+
+    @Test
+    public void testAdd_subLine() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        SubLine a = new SubLine(line);
+        RegionBSPTree1D aTree = a.getSubspaceRegion();
+        aTree.add(Interval.max(-3, TEST_PRECISION));
+        aTree.add(Interval.of(1, 2, TEST_PRECISION));
+
+        SubLine b = new SubLine(line);
+        RegionBSPTree1D bTree = b.getSubspaceRegion();
+        bTree.add(Interval.of(2, 4, TEST_PRECISION));
+        bTree.add(Interval.of(-4, -2, TEST_PRECISION));
+
+        SubLine subline = new SubLine(line);
+
+        int aTreeCount = aTree.count();
+        int bTreeCount = bTree.count();
+
+        // act
+        subline.add(a);
+        subline.add(b);
+
+        // assert
+        Assert.assertFalse(subline.isFull());
+        Assert.assertFalse(subline.isEmpty());
+
+        List<LineSegment> segments = subline.toConvex();
+
+        Assert.assertEquals(2, segments.size());
+
+        Assert.assertNull(segments.get(0).getStart());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, 1), segments.get(0).getEnd(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segments.get(1).getStart(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEnd(), TEST_EPS);
+
+        Assert.assertEquals(aTreeCount, aTree.count());
+        Assert.assertEquals(bTreeCount, bTree.count());
+    }
+
+    @Test
+    public void testAdd_argumentsFromDifferentLine() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
+
+        SubLine subline = new SubLine(line);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            subline.add(LineSegment.fromInterval(otherLine, 0, 1));
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            subline.add(new SubLine(otherLine));
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
     public void testBuilder_instanceMethod() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);

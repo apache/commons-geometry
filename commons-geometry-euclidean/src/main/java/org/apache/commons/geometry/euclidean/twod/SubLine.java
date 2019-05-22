@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;;
@@ -91,6 +90,45 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
         return region;
     }
 
+    /** Add a line segment to this instance..
+     * @param segment line segment to add
+     * @throws IllegalArgumentException if the given line segment is not from
+     *      a line equivalent to this instance
+     */
+    public void add(final LineSegment segment) {
+        validateLine(segment.getLine());
+
+        region.add(segment.getSubspaceRegion());
+    }
+
+    /** Add the region represented by the given subline to this instance.
+     * The argument is not modified.
+     * @param subline subline to add
+     * @throws IllegalArgumentException if the given subline is not from
+     *      a line equivalent to this instance
+     */
+    public void add(final SubLine subLine) {
+        validateLine(subLine.getLine());
+
+        region.union(subLine.getSubspaceRegion());
+    }
+
+    /** Validate that the given line is equivalent to the line
+     * defining this subline.
+     * @param inputLine the line to validate
+     * @throws IllegalArgumentException if the given line is not equivalent
+     *      to the line for this instance
+     */
+    private void validateLine(final Line inputLine) {
+        final Line line = getLine();
+
+        if (!line.eq(inputLine)) {
+            throw new IllegalArgumentException("Argument is not on the same " +
+                    "line. Expected " + line + " but was " +
+                    inputLine);
+        }
+    }
+
     /** {@link Builder} implementation for sublines.
      */
     public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D> {
@@ -127,44 +165,14 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
          * @param sub the subhyperplane to add; either convex or non-convex
          */
         private void addInternal(final SubHyperplane<Vector2D> sub) {
-            validateHyperplane(sub.getHyperplane());
-
             if (sub instanceof LineSegment) {
-                addLineSegment((LineSegment) sub);
+                subline.add((LineSegment) sub);
             }
             else if (sub instanceof SubLine) {
-                addSubLine((SubLine) sub);
+                subline.add((SubLine) sub);
             }
             else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
-            }
-        }
-
-        /** Add a line segment to this builder.
-         * @param segment line segment to add
-         */
-        private void addLineSegment(final LineSegment inputSegment) {
-            subline.getSubspaceRegion().add(inputSegment.getSubspaceRegion());
-        }
-
-        /** Add a subline to this builder.
-         * @param subline subline to add
-         */
-        private void addSubLine(final SubLine inputSubLine) {
-            subline.getSubspaceRegion().union(inputSubLine.getSubspaceRegion());
-        }
-
-        /** Validate the given subhyperplane lies on the same hyperplane
-         * @param sub
-         */
-        private void validateHyperplane(final Hyperplane<Vector2D> hyper) {
-            final Line line = subline.getLine();
-            final Line inputLine = (Line) hyper;
-
-            if (!line.eq(inputLine)) {
-                throw new IllegalArgumentException("Argument is not on the same " +
-                        "line. Expected " + line + " but was " +
-                        inputLine);
             }
         }
     }

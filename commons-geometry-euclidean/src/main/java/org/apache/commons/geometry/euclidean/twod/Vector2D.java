@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Comparator;
+
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -56,6 +58,17 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector2D NEGATIVE_INFINITY =
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+
+    /** Comparator that sorts vectors in component-wise ascending order.
+     * Vectors are only considered equal if their components match exactly.
+     */
+    public static final Comparator<Vector2D> STRICT_ASCENDING_ORDER = (a, b) -> {
+        int cmp = Double.compare(a.getX(), b.getX());
+        if (cmp == 0) {
+            cmp = Double.compare(a.getY(), b.getY());
+        }
+        return cmp;
+    };
 
     /** Serializable UID */
     private static final long serialVersionUID = 20180710L;

@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -62,6 +63,21 @@ public class Vector2DTest {
 
         Assert.assertSame(Vector2D.PLUS_Y.normalize(), Vector2D.PLUS_Y);
         Assert.assertSame(Vector2D.MINUS_Y.normalize(), Vector2D.MINUS_Y);
+    }
+
+    @Test
+    public void testStrictAscendingOrderComparator() {
+        // arrange
+        Comparator<Vector2D> cmp = Vector2D.STRICT_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(0, 2), Vector2D.of(1, 2)));
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 1), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(1, cmp.compare(Vector2D.of(2, 2), Vector2D.of(1, 2)));
+        Assert.assertEquals(1, cmp.compare(Vector2D.of(1, 3), Vector2D.of(1, 2)));
     }
 
     @Test
