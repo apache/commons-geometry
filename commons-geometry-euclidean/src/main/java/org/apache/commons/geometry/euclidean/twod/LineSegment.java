@@ -94,7 +94,6 @@ public final class LineSegment extends AbstractSubLine<Interval>
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        // TODO Auto-generated method stub
         return interval.isInfinite();
     }
 
