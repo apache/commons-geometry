@@ -85,6 +85,12 @@ public final class S1Point implements Point<S1Point>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(azimuth);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double distance(final S1Point point) {
         return distance(this, point);
     }

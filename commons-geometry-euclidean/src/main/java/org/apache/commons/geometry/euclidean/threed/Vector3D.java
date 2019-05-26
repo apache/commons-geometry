@@ -136,6 +136,12 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(x) && Double.isFinite(y) && Double.isFinite(z);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector3D getZero() {
         return ZERO;
     }

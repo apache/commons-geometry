@@ -143,6 +143,26 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(Vector3D.ZERO.isFinite());
+        Assert.assertTrue(Vector3D.of(1, 1, 1).isFinite());
+
+        Assert.assertFalse(Vector3D.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(Vector3D.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
+        Assert.assertFalse(Vector3D.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector3D.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
+
+        Assert.assertFalse(Vector3D.of(0, 0, Double.NaN).isFinite());
+        Assert.assertFalse(Vector3D.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(Vector3D.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector3D.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
+        Assert.assertFalse(Vector3D.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+    }
+
+    @Test
     public void testZero() {
         // act
         Vector3D zero = Vector3D.of(1, 2, 3).getZero();

@@ -80,6 +80,12 @@ public class TestPoint2D implements Point<TestPoint2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(x) && Double.isFinite(y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double distance(TestPoint2D p) {
         final double dx = x - p.x;
         final double dy = y - p.y;

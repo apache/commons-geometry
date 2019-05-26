@@ -141,6 +141,24 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(Vector2D.ZERO.isFinite());
+        Assert.assertTrue(Vector2D.of(1, 1).isFinite());
+
+        Assert.assertFalse(Vector2D.of(0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(Vector2D.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 0).isFinite());
+
+        Assert.assertFalse(Vector2D.of(0, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+    }
+
+    @Test
     public void testGetZero() {
         // act/assert
         checkVector(Vector2D.of(1.0, 1.0).getZero(), 0, 0);

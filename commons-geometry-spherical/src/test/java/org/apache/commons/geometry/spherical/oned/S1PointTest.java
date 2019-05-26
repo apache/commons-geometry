@@ -42,6 +42,27 @@ public class S1PointTest {
     }
 
     @Test
+    public void testInfinite() {
+        // act/assert
+        Assert.assertTrue(S1Point.of(Double.POSITIVE_INFINITY).isInfinite());
+        Assert.assertTrue(S1Point.of(Double.NEGATIVE_INFINITY).isInfinite());
+
+        Assert.assertFalse(S1Point.NaN.isInfinite());
+        Assert.assertFalse(S1Point.of(1).isInfinite());
+    }
+
+    @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(S1Point.of(0).isFinite());
+        Assert.assertTrue(S1Point.of(1).isFinite());
+
+        Assert.assertFalse(S1Point.of(Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(S1Point.of(Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(S1Point.NaN.isFinite());
+    }
+
+    @Test
     public void testEquals() {
         S1Point a = S1Point.of(1.0);
         S1Point b = S1Point.of(1.0);

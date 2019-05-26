@@ -46,6 +46,32 @@ public class S2PointTest {
     }
 
     @Test
+    public void testInfinite() {
+        // act/assert
+        Assert.assertTrue(S2Point.of(0, Double.POSITIVE_INFINITY).isInfinite());
+        Assert.assertTrue(S2Point.of(Double.POSITIVE_INFINITY, 0).isInfinite());
+
+        Assert.assertTrue(S2Point.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isInfinite());
+
+        Assert.assertFalse(S2Point.of(0, 0).isInfinite());
+        Assert.assertFalse(S2Point.of(1, 1).isInfinite());
+        Assert.assertFalse(S2Point.NaN.isInfinite());
+    }
+
+    @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(S2Point.of(0, 0).isFinite());
+        Assert.assertTrue(S2Point.of(1, 1).isFinite());
+
+        Assert.assertFalse(S2Point.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(S2Point.of(Double.POSITIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(S2Point.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
+
+        Assert.assertFalse(S2Point.NaN.isInfinite());
+    }
+
+    @Test
     public void testEquals() {
         S2Point a = S2Point.of(1.0, 1.0);
         S2Point b = S2Point.of(1.0, 1.0);

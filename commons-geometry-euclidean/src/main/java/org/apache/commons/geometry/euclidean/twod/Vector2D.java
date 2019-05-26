@@ -129,6 +129,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(x) && Double.isFinite(y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector2D vectorTo(Vector2D v) {
         return v.subtract(this);
     }

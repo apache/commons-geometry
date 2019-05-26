@@ -115,6 +115,12 @@ public final class S2Point implements Point<S2Point>, Serializable {
         return !isNaN() && (Double.isInfinite(azimuth) || Double.isInfinite(polar));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return Double.isFinite(azimuth) && Double.isFinite(polar);
+    }
+
     /** Get the opposite of the instance.
      * @return a new vector which is opposite to the instance
      */

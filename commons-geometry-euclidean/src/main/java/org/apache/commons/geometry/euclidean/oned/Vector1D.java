@@ -100,6 +100,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector1D vectorTo(Vector1D v) {
         return v.subtract(this);
     }

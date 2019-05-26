@@ -65,6 +65,12 @@ public class TestPoint1D implements Point<TestPoint1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return Double.isFinite(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double distance(final TestPoint1D p) {
         return Math.abs(this.x - p.x);
     }

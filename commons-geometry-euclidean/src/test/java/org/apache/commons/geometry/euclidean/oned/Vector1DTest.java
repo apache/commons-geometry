@@ -111,6 +111,18 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(Vector1D.ZERO.isFinite());
+        Assert.assertTrue(Vector1D.of(1).isFinite());
+
+        Assert.assertFalse(Vector1D.of(Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector1D.of(Double.POSITIVE_INFINITY).isFinite());
+
+        Assert.assertFalse(Vector1D.of(Double.NaN).isFinite());
+    }
+
+    @Test
     public void testZero() {
         // act
         Vector1D zero = Vector1D.of(1).getZero();

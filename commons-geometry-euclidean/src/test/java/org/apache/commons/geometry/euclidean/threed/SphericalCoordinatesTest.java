@@ -237,6 +237,25 @@ public class SphericalCoordinatesTest {
     }
 
     @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(SphericalCoordinates.of(1, 1, 1).isFinite());
+
+        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(Double.NEGATIVE_INFINITY, 0, 0).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(0, Double.POSITIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, 0, 0).isFinite());
+
+        Assert.assertFalse(SphericalCoordinates.of(0, 0, Double.NaN).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(0, Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(Double.NaN, 0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(Double.POSITIVE_INFINITY, Double.NaN, 0).isFinite());
+        Assert.assertFalse(SphericalCoordinates.of(0, Double.NaN, Double.POSITIVE_INFINITY).isFinite());
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         SphericalCoordinates a = SphericalCoordinates.of(1, 2, 3);

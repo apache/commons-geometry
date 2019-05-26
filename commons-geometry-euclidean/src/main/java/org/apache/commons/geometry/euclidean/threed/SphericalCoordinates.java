@@ -137,6 +137,12 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth) || Double.isInfinite(polar));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return Double.isFinite(radius) && Double.isFinite(azimuth) && Double.isFinite(polar);
+    }
+
     /** Convert this set of spherical coordinates to a Cartesian form.
      * @return A 3-dimensional vector with an equivalent set of
      *      Cartesian coordinates.

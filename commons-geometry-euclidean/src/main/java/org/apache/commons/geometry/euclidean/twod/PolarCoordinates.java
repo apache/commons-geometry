@@ -108,6 +108,12 @@ public final class PolarCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return Double.isFinite(radius) && Double.isFinite(azimuth);
+    }
+
     /** Convert this set of polar coordinates to Cartesian coordinates.
      * @return A 2-dimensional vector with an equivalent set of
      *      coordinates in Cartesian form
