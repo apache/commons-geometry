@@ -308,7 +308,7 @@ public class LineSegmentPathTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             LineSegmentPath.fromVertices(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
-        }, IllegalStateException.class, "");
+        }, IllegalStateException.class);
     }
 
     @Test
@@ -479,7 +479,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(1, 0);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -500,14 +500,33 @@ public class LineSegmentPathTest {
     }
 
     @Test
-    public void testBuilder_prependAndAppend_cannotCreateLineBetweenVertices() {
+    public void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
         Vector2D p = Vector2D.ZERO;
-
         LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
-        builder.append(p);
 
-        // act
+        String msg = "Unable to create line segment: no vertex precision specified";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.append(p);
+        }, IllegalStateException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.prepend(p);
+        }, IllegalStateException.class, msg);
+    }
+
+    @Test
+    public void testBuilder_prependAndAppend_addingToInfinitePath() {
+        // arrange
+        Vector2D p = Vector2D.PLUS_X;
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
+
+        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
+
+        // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.append(p);
         }, IllegalStateException.class);
@@ -518,23 +537,98 @@ public class LineSegmentPathTest {
     }
 
     @Test
+    public void testBuilder_prependAndAppend_ignoresEquivalentVertices() {
+        // arrange
+        Vector2D p = Vector2D.ZERO;
+
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        builder.append(p);
+
+        // act
+        builder.append(p)
+            .prepend(p)
+            .append(Vector2D.of(0, 1e-20))
+            .prepend(Vector2D.of(1e-20, 0));
+
+        builder.append(Vector2D.PLUS_X);
+
+        // assert
+        LineSegmentPath path = builder.build();
+
+        List<LineSegment> segments = path.getSegments();
+        Assert.assertEquals(1, segments.size());
+        assertFiniteSegment(segments.get(0), p, Vector2D.PLUS_X);
+    }
+
+    @Test
     public void testBuilder_prependAndAppend_mixedVerticesAndSegments() {
         // arrange
         Vector2D p1 = Vector2D.ZERO;
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
-        Vector2D p4 = Vector2D.of(1, 0);
+        Vector2D p4 = Vector2D.of(0, 1);
 
         LineSegment a = LineSegment.fromPoints(p1, p2, TEST_PRECISION);
         LineSegment c = LineSegment.fromPoints(p3, p4, TEST_PRECISION);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
+            .append(p3)
             .append(c)
             .prepend(a)
-            .append(p4);
+            .append(p1);
+
+        LineSegmentPath path = builder.build();
+
+        // assert
+        List<LineSegment> segments = path.getSegments();
+        Assert.assertEquals(4, segments.size());
+        assertFiniteSegment(segments.get(0), p1, p2);
+        assertFiniteSegment(segments.get(1), p2, p3);
+        assertFiniteSegment(segments.get(2), p3, p4);
+        assertFiniteSegment(segments.get(3), p4, p1);
+    }
+
+    @Test
+    public void testBuilder_appendVertices() {
+        // arrange
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(1, 0);
+        Vector2D p3 = Vector2D.of(1, 1);
+        Vector2D p4 = Vector2D.of(0, 1);
+
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+
+        // act
+        builder.appendVertices(p1, p2)
+            .appendVertices(Arrays.asList(p3, p4, p1));
+
+        LineSegmentPath path = builder.build();
+
+        // assert
+        List<LineSegment> segments = path.getSegments();
+        Assert.assertEquals(4, segments.size());
+        assertFiniteSegment(segments.get(0), p1, p2);
+        assertFiniteSegment(segments.get(1), p2, p3);
+        assertFiniteSegment(segments.get(2), p3, p4);
+        assertFiniteSegment(segments.get(3), p4, p1);
+    }
+
+    @Test
+    public void testBuilder_prependVertices() {
+        // arrange
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(1, 0);
+        Vector2D p3 = Vector2D.of(1, 1);
+        Vector2D p4 = Vector2D.of(0, 1);
+
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+
+        // act
+        builder.prependVertices(p3, p4, p1)
+            .prependVertices(Arrays.asList(p1, p2));
 
         LineSegmentPath path = builder.build();
 
@@ -554,7 +648,8 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -578,7 +673,8 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -594,6 +690,53 @@ public class LineSegmentPathTest {
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
         assertFiniteSegment(segments.get(2), p3, p1);
+    }
+
+    @Test
+    public void testBuilder_close_infiniteSegmentAtStart() {
+        // arrange
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
+
+        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION)
+                .segment(Double.NEGATIVE_INFINITY, 1))
+            .append(Vector2D.of(1, 1));
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.close();
+        }, IllegalStateException.class, "Unable to close line segment path: path is infinite");
+    }
+
+    @Test
+    public void testBuilder_close_infiniteSegmentAtEnd() {
+        // arrange
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
+
+        builder
+            .append(Vector2D.ZERO)
+            .append(Vector2D.PLUS_X)
+            .append(Line.fromPointAndAngle(Vector2D.PLUS_X, Geometry.HALF_PI, TEST_PRECISION)
+                .segment(0, Double.POSITIVE_INFINITY));
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.close();
+        }, IllegalStateException.class, "Unable to close line segment path: path is infinite");
+    }
+
+    @Test
+    public void testBuilder_close_emptyPath() {
+        // arrange
+        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+                .setPrecision(TEST_PRECISION);
+
+        // act
+        LineSegmentPath path = builder.close();
+
+        // assert
+        Assert.assertEquals(0, path.getSegments().size());
     }
 
     private static void assertFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
