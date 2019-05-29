@@ -457,6 +457,7 @@ public class OrientedPointTest {
         Assert.assertFalse(sub.isFull());
         Assert.assertFalse(sub.isEmpty());
         Assert.assertFalse(sub.isInfinite());
+        Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
 
         List<SubOrientedPoint> list = sub.toConvex();

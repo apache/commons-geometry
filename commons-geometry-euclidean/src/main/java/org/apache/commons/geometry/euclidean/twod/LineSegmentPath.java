@@ -125,6 +125,14 @@ public class LineSegmentPath implements Serializable {
         return !isEmpty() && (getStartVertex() == null || getEndVertex() == null);
     }
 
+    /** Return true if the path has a finite length, ie if all line segments are
+     * finite.
+     * @return true if the path is finite
+     */
+    public boolean isFinite() {
+        return !isInfinite();
+    }
+
     /** Return true if the path does not contain any line segments.
      * @return true if the path does not contain any line segments
      */

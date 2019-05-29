@@ -99,6 +99,12 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return interval.isFinite();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Interval getSubspaceRegion() {
         return getInterval();
     }

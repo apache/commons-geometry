@@ -44,6 +44,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertTrue(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertNull(path.getStart());
@@ -68,6 +69,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -94,6 +96,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertTrue(path.isInfinite());
+        Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -125,6 +128,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -158,6 +162,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -187,6 +192,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertTrue(path.isInfinite());
+        Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -215,6 +221,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertTrue(path.isInfinite());
+        Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -243,6 +250,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertTrue(path.isInfinite());
+        Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertSame(a, path.getStart());
@@ -290,6 +298,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertTrue(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         Assert.assertNull(path.getStart());
@@ -323,6 +332,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         assertFiniteSegment(path.getStart(), p1, p2);
@@ -352,6 +362,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
         assertFiniteSegment(path.getStart(), p1, p2);
@@ -383,6 +394,7 @@ public class LineSegmentPathTest {
         // assert
         Assert.assertFalse(path.isEmpty());
         Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
         assertFiniteSegment(path.getStart(), p1, p2);
@@ -741,6 +753,7 @@ public class LineSegmentPathTest {
 
     private static void assertFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
+        Assert.assertTrue(segment.isFinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStart(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEnd(), TEST_EPS);

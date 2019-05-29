@@ -412,6 +412,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         }
 
         /** {@inheritDoc}
+        *
+        * <p>This method simply returns true.</p>
+        */
+       @Override
+       public boolean isFinite() {
+           return true;
+       }
+
+        /** {@inheritDoc}
          *
          *  <p>This method simply returns {@code 0}.</p>
          */

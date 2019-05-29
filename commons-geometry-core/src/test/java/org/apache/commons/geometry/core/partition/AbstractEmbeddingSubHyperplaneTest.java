@@ -79,6 +79,11 @@ public class AbstractEmbeddingSubHyperplaneTest {
         }
 
         @Override
+        public boolean isFinite() {
+            return true;
+        }
+
+        @Override
         public Builder<TestPoint2D> builder() {
             return null;
         }

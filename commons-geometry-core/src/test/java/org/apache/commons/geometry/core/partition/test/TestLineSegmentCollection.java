@@ -95,6 +95,12 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return !isInfinite();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double getSize() {
         double size = 0.0;
 

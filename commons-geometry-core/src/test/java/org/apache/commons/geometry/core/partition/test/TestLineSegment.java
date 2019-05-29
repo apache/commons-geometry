@@ -133,6 +133,12 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return !isInfinite();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double getSize() {
         return Math.abs(start - end);
     }

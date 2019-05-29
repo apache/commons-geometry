@@ -70,6 +70,12 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isFinite() {
+        return !isInfinite();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<LineSegment> toConvex() {
         final List<Interval> intervals = region.toIntervals();
 

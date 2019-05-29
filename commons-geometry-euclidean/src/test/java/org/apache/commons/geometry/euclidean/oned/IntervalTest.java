@@ -250,6 +250,16 @@ public class IntervalTest {
     }
 
     @Test
+    public void testIsFinite() {
+        // act/assert
+        Assert.assertTrue(Interval.of(1, 2, TEST_PRECISION).isFinite());
+
+        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION).isFinite());
+        Assert.assertFalse(Interval.of(2, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
+        Assert.assertFalse(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).isFinite());
+    }
+
+    @Test
     public void testClassify_finite() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);

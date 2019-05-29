@@ -50,6 +50,11 @@ public interface SubHyperplane<P extends Point<P>> {
      */
     boolean isInfinite();
 
+    /** Return true if this instance has finite size.
+     * @return true if this instance has finite size
+     */
+    boolean isFinite();
+
     /** Return the size of this instance. This will have different
      * meanings in different spaces and dimensions. For example, in
      * Euclidean space, this will be length in 2D and area in 3D.

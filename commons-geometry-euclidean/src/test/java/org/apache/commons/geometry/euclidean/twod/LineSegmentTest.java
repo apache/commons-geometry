@@ -285,9 +285,24 @@ public class LineSegmentTest {
         Assert.assertTrue(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).isInfinite());
         Assert.assertTrue(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).isInfinite());
 
-        Assert.assertFalse(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isEmpty());
+        Assert.assertFalse(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isInfinite());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.point(1, TEST_PRECISION)).isInfinite());
+    }
 
-        Assert.assertFalse(LineSegment.fromInterval(line, Interval.point(1, TEST_PRECISION)).isEmpty());
+    @Test
+    public void testIsFinite() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(4, 5), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertTrue(LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).isFinite());
+        Assert.assertTrue(LineSegment.fromInterval(line, Interval.point(1, TEST_PRECISION)).isFinite());
+
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.full()).isFinite());
+        Assert.assertFalse(LineSegment.fromInterval(line, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isFinite());
+
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.min(0, TEST_PRECISION)).isFinite());
+        Assert.assertFalse(LineSegment.fromInterval(line, Interval.max(0, TEST_PRECISION)).isFinite());
     }
 
     @Test

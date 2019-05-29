@@ -53,6 +53,7 @@ public class SubLineTest {
         Assert.assertFalse(sub.isFull());
         Assert.assertTrue(sub.isEmpty());
         Assert.assertFalse(sub.isInfinite());
+        Assert.assertTrue(sub.isFinite());
     }
 
     @Test
@@ -67,6 +68,7 @@ public class SubLineTest {
         Assert.assertTrue(sub.isFull());
         Assert.assertFalse(sub.isEmpty());
         Assert.assertTrue(sub.isInfinite());
+        Assert.assertFalse(sub.isFinite());
     }
 
     @Test
@@ -85,6 +87,7 @@ public class SubLineTest {
         Assert.assertTrue(sub.isFull());
         Assert.assertFalse(sub.isEmpty());
         Assert.assertTrue(sub.isInfinite());
+        Assert.assertFalse(sub.isFinite());
     }
 
     @Test
@@ -360,6 +363,11 @@ public class SubLineTest {
             @Override
             public boolean isInfinite() {
                 return false;
+            }
+
+            @Override
+            public boolean isFinite() {
+                return true;
             }
 
             @Override
