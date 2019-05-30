@@ -24,10 +24,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiPredicate;
 
-import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.LineSegmentPathBuilder;
-import org.apache.commons.numbers.angle.PlaneAngle;
 
 /** Abstract class for joining collections of line segments into connected
  * paths. Two default implementations are available through the static factory

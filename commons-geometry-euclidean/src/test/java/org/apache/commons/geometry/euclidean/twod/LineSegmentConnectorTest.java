@@ -21,14 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
-import org.junit.Test;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class LineSegmentConnectorTest {
 
