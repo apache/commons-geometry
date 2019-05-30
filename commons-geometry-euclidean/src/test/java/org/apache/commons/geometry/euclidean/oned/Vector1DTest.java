@@ -60,9 +60,9 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testStrictAscendingOrderComparator() {
+    public void testCoordinateAscendingOrderComparator() {
         // arrange
-        Comparator<Vector1D> cmp = Vector1D.STRICT_ASCENDING_ORDER;
+        Comparator<Vector1D> cmp = Vector1D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
         Assert.assertEquals(0, cmp.compare(Vector1D.of(1), Vector1D.of(1)));
@@ -72,6 +72,10 @@ public class Vector1DTest {
         Assert.assertEquals(0, cmp.compare(Vector1D.of(0), Vector1D.of(0)));
         Assert.assertEquals(1, cmp.compare(Vector1D.of(1e-15), Vector1D.of(0)));
         Assert.assertEquals(-1, cmp.compare(Vector1D.of(-1e-15), Vector1D.of(0)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(1), null));
+        Assert.assertEquals(1, cmp.compare(null, Vector1D.of(1)));
+        Assert.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test

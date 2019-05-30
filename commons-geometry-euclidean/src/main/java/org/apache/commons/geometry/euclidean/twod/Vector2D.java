@@ -60,13 +60,25 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
     /** Comparator that sorts vectors in component-wise ascending order.
-     * Vectors are only considered equal if their components match exactly.
+     * Vectors are only considered equal if their coordinates match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
      */
-    public static final Comparator<Vector2D> STRICT_ASCENDING_ORDER = (a, b) -> {
-        int cmp = Double.compare(a.getX(), b.getX());
-        if (cmp == 0) {
-            cmp = Double.compare(a.getY(), b.getY());
+    public static final Comparator<Vector2D> COORDINATE_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getX(), b.getX());
+            if (cmp == 0) {
+                cmp = Double.compare(a.getY(), b.getY());
+            }
         }
+        else if (a != null) {
+            cmp = -1;
+        }
+        else if (b != null) {
+            cmp = 1;
+        }
+
         return cmp;
     };
 

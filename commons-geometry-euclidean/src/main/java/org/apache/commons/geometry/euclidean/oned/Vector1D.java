@@ -54,10 +54,24 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         new Vector1D(Double.NEGATIVE_INFINITY);
 
     /** Comparator that sorts vectors in component-wise ascending order.
-     * Vectors are only considered equal if their components match exactly.
+     * Vectors are only considered equal if their coordinates match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
      */
-    public static final Comparator<Vector1D> STRICT_ASCENDING_ORDER = (a, b) ->
-        Double.compare(a.getX(), b.getX());
+    public static final Comparator<Vector1D> COORDINATE_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getX(), b.getX());
+        }
+        else if (a != null) {
+            cmp = -1;
+        }
+        else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;

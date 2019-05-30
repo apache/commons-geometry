@@ -409,7 +409,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** {@inheritDoc} */
         @Override
         protected Vector1D disambiguateClosestPoint(final Vector1D target, final Vector1D a, final Vector1D b) {
-            final int cmp = Vector1D.STRICT_ASCENDING_ORDER.compare(a, b);
+            final int cmp = Vector1D.COORDINATE_ASCENDING_ORDER.compare(a, b);
 
             if (target.isInfinite() && target.getX() > 0) {
                 // return the largest value (closest to +Infinity)

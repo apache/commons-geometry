@@ -434,6 +434,21 @@ public class LineSegmentPathTest {
     }
 
     @Test
+    public void testToString() {
+        // arrange
+        LineSegmentPath path = LineSegmentPath.builder(TEST_PRECISION)
+                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X).build();
+
+        // act
+        String str = path.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("LineSegmentPath"));
+        Assert.assertTrue(str.contains("segments= "));
+        Assert.assertTrue(str.contains("start= (0.0, 0.0), end= (1.0, 0.0)"));
+    }
+
+    @Test
     public void testBuilder_prependAndAppend_segments() {
         // arrange
         Vector2D p1 = Vector2D.ZERO;

@@ -119,7 +119,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         @Override
         protected Vector2D disambiguateClosestPoint(final Vector2D target, final Vector2D a, final Vector2D b) {
             // return the point with the smallest coordinate values
-            final int cmp = Vector2D.STRICT_ASCENDING_ORDER.compare(a, b);
+            final int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
             return cmp < 0 ? a : b;
         }
     }

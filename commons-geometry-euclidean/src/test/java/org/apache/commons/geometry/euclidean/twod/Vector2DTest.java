@@ -66,9 +66,9 @@ public class Vector2DTest {
     }
 
     @Test
-    public void testStrictAscendingOrderComparator() {
+    public void testCoordinateAscendingOrder() {
         // arrange
-        Comparator<Vector2D> cmp = Vector2D.STRICT_ASCENDING_ORDER;
+        Comparator<Vector2D> cmp = Vector2D.COORDINATE_ASCENDING_ORDER;
 
         // act/assert
         Assert.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
@@ -78,6 +78,10 @@ public class Vector2DTest {
 
         Assert.assertEquals(1, cmp.compare(Vector2D.of(2, 2), Vector2D.of(1, 2)));
         Assert.assertEquals(1, cmp.compare(Vector2D.of(1, 3), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 3), null));
+        Assert.assertEquals(1, cmp.compare(null, Vector2D.of(1, 2)));
+        Assert.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test

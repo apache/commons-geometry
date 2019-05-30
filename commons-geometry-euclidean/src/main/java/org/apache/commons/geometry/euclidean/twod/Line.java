@@ -179,14 +179,34 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
         return LineSegment.fromInterval(this, a, b);
     }
 
-    /** Create a new line segment for the given points. The points are projected
-     * onto the line to create the segment.
+    /** Create a new line segment between the projections of the two
+     * given points onto this line.
      * @param a first point
      * @param b second point
      * @return a new line segment on this line
      */
     public LineSegment segment(final Vector2D a, final Vector2D b) {
         return LineSegment.fromInterval(this, toSubspace(a), toSubspace(b));
+    }
+
+    /** Create a new line segment that starts at infinity and continues along
+     * the line up to the projection of the given point.
+     * @param pt point defining the end point of the line segment; the end point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public LineSegment segmentTo(final Vector2D pt) {
+        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    }
+
+    /** Create a new line segment that starts at the projection of the given point
+     * and continues in the direction of the line to infinity, similar to a ray.
+     * @param pt point defining the start point of the line segment; the start point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public LineSegment segmentFrom(final Vector2D pt) {
+        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
     }
 
     /** Create a new, empty subline based on this line.

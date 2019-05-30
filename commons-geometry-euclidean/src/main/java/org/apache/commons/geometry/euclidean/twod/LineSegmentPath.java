@@ -32,7 +32,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public class LineSegmentPath implements Serializable {
 
-    /** Serializable UID */
     private static final long serialVersionUID = 20190522L;
 
     /** List of line segments comprising the path. */
@@ -170,6 +169,18 @@ public class LineSegmentPath implements Serializable {
         }
 
         return tree;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[segments= ")
+            .append(segments)
+            .append("]");
+
+        return sb.toString();
     }
 
     /** Return a default {@link LineSegmentPathBuilder} instance. The returned instance
