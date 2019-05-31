@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiPredicate;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.LineSegmentPathBuilder;
@@ -40,7 +39,7 @@ import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.LineSegmentPat
  * attempting to minimize the angle between the incoming and outgoing segments.
  * This implementation favors large concave paths as opposed to convex ones.
  */
-public abstract class LineSegmentConnector implements Serializable {
+public abstract class AbstractLineSegmentConnector implements Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190528L;
@@ -73,8 +72,6 @@ public abstract class LineSegmentConnector implements Serializable {
 
         unusedSegments = new ArrayList<>(segments);
         Collections.sort(unusedSegments, getSegmentComparator());
-
-        potentialConnections.clear();
     }
 
     private List<LineSegmentPath> endConnect() {
@@ -96,10 +93,7 @@ public abstract class LineSegmentConnector implements Serializable {
             followForwardConnections(current);
             followReverseConnections(current);
 
-            LineSegmentPath path = builder.build();
-            if (!path.isEmpty()) {
-                paths.add(path);
-            }
+            paths.add(builder.build());
         }
     }
 
@@ -176,76 +170,5 @@ public abstract class LineSegmentConnector implements Serializable {
             // with the smallest coordinates will be at the end of the sorted list
             return Vector2D.COORDINATE_ASCENDING_ORDER.compare(b.getStart(), a.getStart());
         };
-    }
-
-    public static LineSegmentConnector minimizeAngles() {
-        return new MinAngleConnector();
-    }
-
-    public static LineSegmentConnector maximizeAngles() {
-        return new MaxAngleConnector();
-    }
-
-    private static class AngleBasedConnector extends LineSegmentConnector {
-
-        /** Serializable UID */
-        private static final long serialVersionUID = 20190528L;
-
-        private final BiPredicate<Double, Double> anglePredicate;
-
-        AngleBasedConnector(final BiPredicate<Double, Double> preferAnglePredicate) {
-            this.anglePredicate = preferAnglePredicate;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected LineSegment selectConnection(final LineSegment segment, final List<LineSegment> connections,
-                final boolean forward) {
-
-            // simple case first
-            if (connections.size() == 1) {
-                return connections.get(0);
-            }
-
-            // search for the best connection
-            final double segmentAngle = segment.getLine().getAngle();
-
-            double selectedDiffAngle = Double.POSITIVE_INFINITY;
-            LineSegment selected = null;
-
-            for (LineSegment connection : connections) {
-                double connectionAngle = connection.getLine().getAngle();
-                double diffAngle = forward ?
-                        connectionAngle - segmentAngle :
-                        segmentAngle - connectionAngle;
-
-                if (selected == null || anglePredicate.test(selectedDiffAngle, diffAngle)) {
-                    selectedDiffAngle = diffAngle;
-                    selected = connection;
-                }
-            }
-
-            return selected;
-        }
-    }
-
-    private static class MaxAngleConnector extends AngleBasedConnector {
-
-        /** Serializable UID */
-        private static final long serialVersionUID = 20190528L;
-
-        MaxAngleConnector() {
-            super((prev, current) -> current > prev);
-        }
-    }
-
-    private static class MinAngleConnector extends AngleBasedConnector {
-
-        /** Serializable UID */
-        private static final long serialVersionUID = 20190528L;
-
-        MinAngleConnector() {
-            super((prev, current) -> current < prev);
-        }
     }
 }
