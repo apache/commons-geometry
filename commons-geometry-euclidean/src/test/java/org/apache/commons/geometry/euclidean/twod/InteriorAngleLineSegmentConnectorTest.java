@@ -72,6 +72,26 @@ public class InteriorAngleLineSegmentConnectorTest {
     }
 
     @Test
+    public void testConnect_dualConnectedSegments() {
+        runWithMaxAndMin(connector -> {
+            // arrange
+            List<LineSegment> segments = Arrays.asList(
+                        LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
+                        LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
+                    );
+
+            // act
+            List<LineSegmentPath> paths = connector.connect(segments);
+
+            // assert
+            Assert.assertEquals(1, paths.size());
+
+            Assert.assertTrue(paths.get(0).isClosed());
+            assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.ZERO);
+        });
+    }
+
+    @Test
     public void testConnect_singleFiniteSegmentLoop() {
         runWithMaxAndMin(connector -> {
             // arrange
@@ -153,9 +173,6 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegment> segments = new ArrayList<>();
         segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(0, 2), Vector2D.ZERO, TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(1, 2), Vector2D.ZERO, TEST_PRECISION));
-
         segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
         segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
@@ -163,15 +180,12 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegmentPath> paths = connector.connect(segments);
 
         // assert
-        Assert.assertEquals(3, paths.size());
+        Assert.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
-                Vector2D.of(1, 2), Vector2D.ZERO,
-                Vector2D.of(2, 2), Vector2D.of(1, 3));
+                Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(2, 4));
 
-        assertFinitePath(paths.get(1), Vector2D.of(0, 2), Vector2D.ZERO);
-
-        assertFinitePath(paths.get(2), Vector2D.of(2, 2), Vector2D.of(2, 4));
+        assertFinitePath(paths.get(1), Vector2D.of(2, 2), Vector2D.of(1, 3));
     }
 
     @Test
@@ -206,9 +220,6 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegment> segments = new ArrayList<>();
         segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(0, 2), Vector2D.ZERO, TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(1, 2), Vector2D.ZERO, TEST_PRECISION));
-
         segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
         segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
@@ -216,15 +227,12 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegmentPath> paths = connector.connect(segments);
 
         // assert
-        Assert.assertEquals(3, paths.size());
+        Assert.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
-                Vector2D.of(0, 2), Vector2D.ZERO,
-                Vector2D.of(2, 2), Vector2D.of(2, 4));
+                Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(1, 3));
 
-        assertFinitePath(paths.get(1), Vector2D.of(1, 2), Vector2D.ZERO);
-
-        assertFinitePath(paths.get(2), Vector2D.of(2, 2), Vector2D.of(1, 3));
+        assertFinitePath(paths.get(1), Vector2D.of(2, 2), Vector2D.of(2, 4));
     }
 
     /**

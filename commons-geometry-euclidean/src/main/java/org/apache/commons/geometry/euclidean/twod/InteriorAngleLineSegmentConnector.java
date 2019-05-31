@@ -18,6 +18,9 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
+
 /** Line segment connector subclass that selects between multiple connection
  * options based on the resulting interior angle. An interior angle in this
  * case is the angle created between an incoming segment and an outgoing segment
@@ -37,29 +40,21 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
 
     /** {@inheritDoc} */
     @Override
-    protected LineSegment selectConnection(LineSegment segment, List<LineSegment> connections,
-            boolean forward) {
-
-        // simple case first
-        if (connections.size() == 1) {
-            return connections.get(0);
-        }
+    protected ConnectorEntry selectConnection(ConnectorEntry incoming, List<ConnectorEntry> outgoing) {
 
         // search for the best connection
-        final double segmentAngle = segment.getLine().getAngle();
+        final double segmentAngle = incoming.getSegment().getLine().getAngle();
 
-        double selectedDiffAngle = Double.POSITIVE_INFINITY;
-        LineSegment selected = null;
+        double selectedInteriorAngle = Double.POSITIVE_INFINITY;
+        ConnectorEntry selected = null;
 
-        for (LineSegment connection : connections) {
-            double connectionAngle = connection.getLine().getAngle();
-            double diffAngle = forward ?
-                    connectionAngle - segmentAngle :
-                    segmentAngle - connectionAngle;
+        for (ConnectorEntry candidate : outgoing) {
+            double candidateAngle = candidate.getSegment().getLine().getAngle();
+            double interiorAngle = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(Geometry.PI - candidateAngle - segmentAngle);
 
-            if (selected == null || isBetterAngle(diffAngle, selectedDiffAngle)) {
-                selectedDiffAngle = diffAngle;
-                selected = connection;
+            if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
+                selectedInteriorAngle = interiorAngle;
+                selected = candidate;
             }
         }
 
