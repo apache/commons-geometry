@@ -43,7 +43,7 @@
 Apache Commons Geometry
 ===================
 
-[![Build Status](https://travis-ci.org/apache/commons-geometry.svg?branch=master)](https://travis-ci.org/apache/commons-geometry-parent)
+[![Build Status](https://travis-ci.org/apache/commons-geometry.svg?branch=master)](https://travis-ci.org/apache/commons-geometry)
 [![Coverage Status](https://coveralls.io/repos/github/apache/commons-geometry/badge.svg?branch=master)](https://coveralls.io/github/apache/commons-geometry?branch=master)
 <!---
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.apache.commons/commons-geometry-core/)
