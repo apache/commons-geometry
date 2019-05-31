@@ -182,6 +182,11 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         }
     }
 
+    /** Method called to select a connection to use for a given entry when multiple connections are available.
+     * @param incoming the incoming entry
+     * @param outgoing list of available outgoing connections
+     * @return the connection to use
+     */
     protected abstract ConnectorEntry selectConnection(final ConnectorEntry incoming, final List<ConnectorEntry> outgoing);
 
 
