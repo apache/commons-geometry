@@ -14,7 +14,6 @@
 # limitations under the License.
 
 language: java
-sudo: false
 
 jdk:
   - oraclejdk8
@@ -22,5 +21,9 @@ jdk:
   - openjdk10
   - openjdk11
 
-after_success:
+# Skip the installation step:
+#   https://docs.travis-ci.com/user/job-lifecycle/#skipping-the-installation-phase
+install: true
+
+script: 
   - mvn clean test pmd:pmd spotbugs:spotbugs checkstyle:checkstyle jacoco:report coveralls:report
