@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.LineSegmentPathBuilder;
 
 /** Abstract class for joining collections of line segments into connected
  * paths. Two default implementations are available through the static factory
@@ -130,7 +129,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
     private void findPossibleConnections(final ConnectorEntry entry) {
         possibleConnections.clear();
 
-        final Vector2D end = entry.getSegment().getEnd();
+        final Vector2D end = entry.getSegment().getEndPoint();
         if (end != null) {
             // find entries that have a start point equal to our end point;
             // use a binary search to determine where to start looking
@@ -221,7 +220,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @param segment line segment
          */
         public ConnectorEntry(final LineSegment segment) {
-            this(segment.getStart(), segment);
+            this(segment.getStartPoint(), segment);
         }
 
         /** Create a new instance with the given start point and line segment.
@@ -268,7 +267,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          *      other instances
          */
         public boolean hasConnectableEndPoint() {
-            return segment.getEnd() != null;
+            return segment.getEndPoint() != null;
         }
 
         /** Return true if this instance can connect to the given entry.
@@ -277,7 +276,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          */
         public boolean canConnectTo(final ConnectorEntry next) {
             if (!next.hasPrevious()) {
-                final Vector2D end = segment.getEnd();
+                final Vector2D end = segment.getEndPoint();
                 final Vector2D start = next.getStart();
 
                 return end != null && start != null &&
@@ -305,7 +304,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          */
         public LineSegmentPath exportPath() {
             if (!exported) {
-                LineSegmentPathBuilder builder = LineSegmentPath.builder();
+                LineSegmentPath.Builder builder = LineSegmentPath.builder();
 
                 // add ourselves
                 exportPathInternal(builder, true);
@@ -341,7 +340,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @param append if true, the entry's segment should be appended to the builder;
          *      if false, it should be prepended
          */
-        private void exportPathInternal(final LineSegmentPathBuilder builder, final boolean append) {
+        private void exportPathInternal(final LineSegmentPath.Builder builder, final boolean append) {
             if (append) {
                 builder.append(segment);
             }

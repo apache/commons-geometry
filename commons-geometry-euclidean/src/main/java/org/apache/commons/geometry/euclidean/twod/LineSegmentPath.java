@@ -30,7 +30,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>This class is guaranteed to be immutable.</p>
  */
-public class LineSegmentPath implements Serializable {
+public final class LineSegmentPath implements Serializable {
 
     private static final long serialVersionUID = 20190522L;
 
@@ -54,7 +54,7 @@ public class LineSegmentPath implements Serializable {
     /** Get the start segment for the path or null if the path is empty.
      * @return the start segment for the path or null if the path is empty
      */
-    public LineSegment getStart() {
+    public LineSegment getStartSegment() {
         if (!isEmpty()) {
             return segments.get(0);
         }
@@ -64,7 +64,7 @@ public class LineSegmentPath implements Serializable {
     /** Get the end segment for the path or null if the path is empty.
      * @return the end segment for the path or null if the path is empty
      */
-    public LineSegment getEnd() {
+    public LineSegment getEndSegment() {
         if (!isEmpty()) {
             return segments.get(segments.size() - 1);
         }
@@ -76,8 +76,8 @@ public class LineSegmentPath implements Serializable {
      * @return the start vertex for the path
      */
     public Vector2D getStartVertex() {
-        final LineSegment seg = getStart();
-        return (seg != null) ? seg.getStart() : null;
+        final LineSegment seg = getStartSegment();
+        return (seg != null) ? seg.getStartPoint() : null;
     }
 
     /** Get the end vertex for the path or null if the path is empty
@@ -85,8 +85,8 @@ public class LineSegmentPath implements Serializable {
      * @return the end vertex for the path
      */
     public Vector2D getEndVertex() {
-        final LineSegment seg = getEnd();
-        return (seg != null) ? seg.getEnd() : null;
+        final LineSegment seg = getEndSegment();
+        return (seg != null) ? seg.getEndPoint() : null;
     }
 
     /** Get the vertices contained in the path in the order they appear.
@@ -107,7 +107,7 @@ public class LineSegmentPath implements Serializable {
 
         // add end points
         for (LineSegment seg : segments) {
-            pt = seg.getEnd();
+            pt = seg.getEndPoint();
             if (pt != null) {
                 vertices.add(pt);
             }
@@ -146,11 +146,11 @@ public class LineSegmentPath implements Serializable {
      *      equal to the start point for the path.
      */
     public boolean isClosed() {
-        final LineSegment endSegment = getEnd();
+        final LineSegment endSegment = getEndSegment();
 
         if (endSegment != null) {
             final Vector2D start = getStartVertex();
-            final Vector2D end = endSegment.getEnd();
+            final Vector2D end = endSegment.getEndPoint();
 
             return start != null && end != null && start.eq(end, endSegment.getPrecision());
         }
@@ -183,24 +183,24 @@ public class LineSegmentPath implements Serializable {
         return sb.toString();
     }
 
-    /** Return a default {@link LineSegmentPathBuilder} instance. The returned instance
+    /** Return a default {@link LineSegmentPath.Builder} instance. The returned instance
      * must be given a precision context if raw vertices are to be used in the construction
      * of the path.
-     * @return a default {@link LineSegmentPathBuilder} instance
-     * @see LineSegmentPathBuilder#LineSegmentPathBuilder()
+     * @return a default {@link LineSegmentPath.Builder} instance
+     * @see Builder
      */
-    public static LineSegmentPathBuilder builder() {
-        return new LineSegmentPathBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
-    /** Return a {@link LineSegmentPathBuilder} instance configured with the given precision
+    /** Return a {@link Builder} instance configured with the given precision
      * context.
      * @param precision precision context to use when building line segments from raw vertices
-     * @return a new {@link LineSegmentPathBuilder} instance
-     * @see LineSegmentPathBuilder#LineSegmentPathBuilder(DoublePrecisionContext)
+     * @return a new {@link Builder} instance
+     * @see Builder#LineSegmentPathBuilder(DoublePrecisionContext)
      */
-    public static LineSegmentPathBuilder builder(final DoublePrecisionContext precision) {
-        return new LineSegmentPathBuilder(precision);
+    public static Builder builder(final DoublePrecisionContext precision) {
+        return new Builder(precision);
     }
 
     /** Build a new line segment path from the given segments.
@@ -218,7 +218,7 @@ public class LineSegmentPath implements Serializable {
      * @throws IllegalStateException if the segments to not form a connected path
      */
     public static LineSegmentPath fromSegments(final Collection<LineSegment> segments) {
-        LineSegmentPathBuilder builder = builder();
+        Builder builder = builder();
 
         for (LineSegment segment : segments) {
             builder.append(segment);
@@ -241,7 +241,7 @@ public class LineSegmentPath implements Serializable {
 
     /** Class used to build line segment paths.
      */
-    public static class LineSegmentPathBuilder implements Serializable {
+    public static class Builder implements Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190522L;
@@ -269,7 +269,7 @@ public class LineSegmentPath implements Serializable {
         /** Default constructor. No vertex precision is configured when this constructor
          * is used.
          */
-        public LineSegmentPathBuilder() {
+        public Builder() {
             this(null);
         }
 
@@ -278,7 +278,7 @@ public class LineSegmentPath implements Serializable {
          * @param vertexPrecision precision context to use when creating line segments
          *      from vertices
          */
-        public LineSegmentPathBuilder(final DoublePrecisionContext vertexPrecision) {
+        public Builder(final DoublePrecisionContext vertexPrecision) {
             setPrecision(vertexPrecision);
         }
 
@@ -289,7 +289,7 @@ public class LineSegmentPath implements Serializable {
          *      from vertices
          * @return this instance
          */
-        public LineSegmentPathBuilder setPrecision(final DoublePrecisionContext precision) {
+        public Builder setPrecision(final DoublePrecisionContext precision) {
             this.precision = precision;
 
             return this;
@@ -301,7 +301,7 @@ public class LineSegmentPath implements Serializable {
          *      and the end vertex of the previous segment is not equivalent to the
          *      start vertex of the given segment.
          */
-        public LineSegmentPathBuilder append(final LineSegment segment) {
+        public Builder append(final LineSegment segment) {
             validateSegmentsConnected(getEnd(), segment);
             appendInternal(segment);
 
@@ -315,7 +315,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #setPrecision(DoublePrecisionContext)
          */
-        public LineSegmentPathBuilder append(final Vector2D vertex) {
+        public Builder append(final Vector2D vertex) {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (endVertex == null) {
@@ -344,7 +344,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public LineSegmentPathBuilder appendVertices(final Collection<Vector2D> vertices) {
+        public Builder appendVertices(final Collection<Vector2D> vertices) {
             for (Vector2D vertex : vertices) {
                 append(vertex);
             }
@@ -357,7 +357,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public LineSegmentPathBuilder appendVertices(final Vector2D ... vertices) {
+        public Builder appendVertices(final Vector2D ... vertices) {
             return appendVertices(Arrays.asList(vertices));
         }
 
@@ -367,7 +367,7 @@ public class LineSegmentPath implements Serializable {
          *      and the end vertex of the given segment is not equivalent to the
          *      start vertex of the start segment.
          */
-        public LineSegmentPathBuilder prepend(final LineSegment segment) {
+        public Builder prepend(final LineSegment segment) {
             validateSegmentsConnected(segment, getStart());
             prependInternal(segment);
 
@@ -381,7 +381,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #setPrecision(DoublePrecisionContext)
          */
-        public LineSegmentPathBuilder prepend(final Vector2D vertex) {
+        public Builder prepend(final Vector2D vertex) {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (startVertex == null) {
@@ -414,7 +414,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #prepend(Vector2D)
          */
-        public LineSegmentPathBuilder prependVertices(final Collection<Vector2D> vertices) {
+        public Builder prependVertices(final Collection<Vector2D> vertices) {
             return prependVertices(vertices.toArray(new Vector2D[0]));
         }
 
@@ -427,7 +427,7 @@ public class LineSegmentPath implements Serializable {
          * @return this instance
          * @see #prepend(Vector2D)
          */
-        public LineSegmentPathBuilder prependVertices(final Vector2D ... vertices) {
+        public Builder prependVertices(final Vector2D ... vertices) {
             for (int i=vertices.length - 1; i >=0 ; --i) {
                 prepend(vertices[i]);
             }
@@ -500,8 +500,8 @@ public class LineSegmentPath implements Serializable {
          */
         private void validateSegmentsConnected(final LineSegment previous, final LineSegment next) {
             if (previous != null && next != null) {
-                final Vector2D nextStartVertex = next.getStart();
-                final Vector2D previousEndVertex = previous.getEnd();
+                final Vector2D nextStartVertex = next.getStartPoint();
+                final Vector2D previousEndVertex = previous.getEndPoint();
                 final DoublePrecisionContext precision = previous.getPrecision();
 
                 if (nextStartVertex == null || previousEndVertex == null ||
@@ -536,10 +536,10 @@ public class LineSegmentPath implements Serializable {
 
             if (appendedSegments.isEmpty() &&
                     (prependedSegments == null || prependedSegments.isEmpty())) {
-                startVertex = segment.getStart();
+                startVertex = segment.getStartPoint();
             }
 
-            endVertex = segment.getEnd();
+            endVertex = segment.getEndPoint();
             endVertexPrecision = segment.getPrecision();
 
             appendedSegments.add(segment);
@@ -553,11 +553,11 @@ public class LineSegmentPath implements Serializable {
                 prependedSegments = new ArrayList<>();
             }
 
-            startVertex = segment.getStart();
+            startVertex = segment.getStartPoint();
 
             if (prependedSegments.isEmpty() &&
                     (appendedSegments == null || appendedSegments.isEmpty())) {
-                endVertex = segment.getEnd();
+                endVertex = segment.getEndPoint();
                 endVertexPrecision = segment.getPrecision();
             }
 

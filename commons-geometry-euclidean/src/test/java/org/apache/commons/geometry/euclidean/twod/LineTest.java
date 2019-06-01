@@ -461,8 +461,8 @@ public class LineTest {
 
         // assert
         Assert.assertSame(line, segment.getLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segment.getStart(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEnd(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segment.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEndPoint(), TEST_EPS);
     }
 
     @Test
@@ -475,8 +475,8 @@ public class LineTest {
 
         // assert
         Assert.assertSame(line, segment.getLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getStart(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 1), segment.getEnd(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 1), segment.getEndPoint(), TEST_EPS);
     }
 
     @Test
@@ -489,8 +489,8 @@ public class LineTest {
 
         // assert
         Assert.assertSame(line, segment.getLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStart(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEnd(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), segment.getEndPoint(), TEST_EPS);
     }
 
     @Test
@@ -504,8 +504,8 @@ public class LineTest {
         // assert
         Assert.assertSame(line, segment.getLine());
         Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStart());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEnd(), TEST_EPS);
+        Assert.assertNull(segment.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
 
         Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
         Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
@@ -522,8 +522,8 @@ public class LineTest {
         // assert
         Assert.assertSame(line, segment.getLine());
         Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStart());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEnd(), TEST_EPS);
+        Assert.assertNull(segment.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
 
         Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
         Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
@@ -540,8 +540,8 @@ public class LineTest {
         // assert
         Assert.assertSame(line, segment.getLine());
         Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStart(), TEST_EPS);
-        Assert.assertNull(segment.getEnd());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
+        Assert.assertNull(segment.getEndPoint());
 
         Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
         Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));
@@ -558,8 +558,8 @@ public class LineTest {
         // assert
         Assert.assertSame(line, segment.getLine());
         Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStart(), TEST_EPS);
-        Assert.assertNull(segment.getEnd());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
+        Assert.assertNull(segment.getEndPoint());
 
         Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
         Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));

@@ -71,7 +71,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @return the start point of the line segment or null if no start point
      *      exists
      */
-    public Vector2D getStart() {
+    public Vector2D getStartPoint() {
         return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()): null;
     }
 
@@ -80,7 +80,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @return the end point of the line segment or null if no end point
      *      exists
      */
-    public Vector2D getEnd() {
+    public Vector2D getEndPoint() {
         return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()): null;
     }
 
@@ -134,8 +134,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
         if (!isInfinite()) {
             // simple case; just transform the line and points directly
             final Line tLine = line.transform(transform);
-            final Vector2D tStart = transform.apply(getStart());
-            final Vector2D tEnd = transform.apply(getEnd());
+            final Vector2D tStart = transform.apply(getStartPoint());
+            final Vector2D tEnd = transform.apply(getEndPoint());
 
             return fromPointsOnLine(tLine, tStart, tEnd);
         }
@@ -185,9 +185,9 @@ public final class LineSegment extends AbstractSubLine<Interval>
             .append("[line= ")
             .append(getLine())
             .append(", start= ")
-            .append(getStart())
+            .append(getStartPoint())
             .append(", end= ")
-            .append(getEnd())
+            .append(getEndPoint())
             .append(']');
 
         return sb.toString();
@@ -260,8 +260,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
         final DoublePrecisionContext precision = getPrecision();
 
-        final Vector2D start = getStart();
-        final Vector2D end = getEnd();
+        final Vector2D start = getStartPoint();
+        final Vector2D end = getEndPoint();
 
         final double startOffset = splitter.offset(start);
         final double endOffset = splitter.offset(end);

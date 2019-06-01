@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.LineSegmentPathBuilder;
+import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.Builder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -47,10 +47,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertNull(path.getStart());
+        Assert.assertNull(path.getStartSegment());
         Assert.assertNull(path.getStartVertex());
 
-        Assert.assertNull(path.getEnd());
+        Assert.assertNull(path.getEndSegment());
         Assert.assertNull(path.getEndVertex());
 
         Assert.assertEquals(0, path.getSegments().size());
@@ -72,10 +72,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, path.getStartVertex(), TEST_EPS);
 
-        Assert.assertSame(a, path.getEnd());
+        Assert.assertSame(a, path.getEndSegment());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -99,10 +99,10 @@ public class LineSegmentPathTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         Assert.assertNull(path.getStartVertex());
 
-        Assert.assertSame(a, path.getEnd());
+        Assert.assertSame(a, path.getEndSegment());
         Assert.assertNull(path.getEndVertex());
 
         List<LineSegment> segments = path.getSegments();
@@ -131,10 +131,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
 
-        Assert.assertSame(b, path.getEnd());
+        Assert.assertSame(b, path.getEndSegment());
         EuclideanTestUtils.assertCoordinatesEqual(p3, path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -165,10 +165,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
 
-        Assert.assertSame(c, path.getEnd());
+        Assert.assertSame(c, path.getEndSegment());
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -195,10 +195,10 @@ public class LineSegmentPathTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         Assert.assertNull(path.getStartVertex());
 
-        Assert.assertSame(b, path.getEnd());
+        Assert.assertSame(b, path.getEndSegment());
         Assert.assertNull(path.getEndVertex());
 
         List<LineSegment> segments = path.getSegments();
@@ -224,10 +224,10 @@ public class LineSegmentPathTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         Assert.assertNull(path.getStartVertex());
 
-        Assert.assertSame(b, path.getEnd());
+        Assert.assertSame(b, path.getEndSegment());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -253,10 +253,10 @@ public class LineSegmentPathTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getStartSegment());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, path.getStartVertex(), TEST_EPS);
 
-        Assert.assertSame(b, path.getEnd());
+        Assert.assertSame(b, path.getEndSegment());
         Assert.assertNull(path.getEndVertex());
 
         List<LineSegment> segments = path.getSegments();
@@ -301,10 +301,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertNull(path.getStart());
+        Assert.assertNull(path.getStartSegment());
         Assert.assertNull(path.getStartVertex());
 
-        Assert.assertNull(path.getEnd());
+        Assert.assertNull(path.getEndSegment());
         Assert.assertNull(path.getEndVertex());
 
         Assert.assertEquals(0, path.getSegments().size());
@@ -335,10 +335,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        assertFiniteSegment(path.getStart(), p1, p2);
+        assertFiniteSegment(path.getStartSegment(), p1, p2);
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
 
-        Assert.assertSame(path.getStart(), path.getEnd());
+        Assert.assertSame(path.getStartSegment(), path.getEndSegment());
         EuclideanTestUtils.assertCoordinatesEqual(p2, path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -365,10 +365,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        assertFiniteSegment(path.getStart(), p1, p2);
+        assertFiniteSegment(path.getStartSegment(), p1, p2);
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
 
-        assertFiniteSegment(path.getEnd(), p3, p4);
+        assertFiniteSegment(path.getEndSegment(), p3, p4);
         EuclideanTestUtils.assertCoordinatesEqual(p4, path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -397,10 +397,10 @@ public class LineSegmentPathTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        assertFiniteSegment(path.getStart(), p1, p2);
+        assertFiniteSegment(path.getStartSegment(), p1, p2);
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
 
-        assertFiniteSegment(path.getEnd(), p4, p1);
+        assertFiniteSegment(path.getEndSegment(), p4, p1);
         EuclideanTestUtils.assertCoordinatesEqual(p1, path.getEndVertex(), TEST_EPS);
 
         List<LineSegment> segments = path.getSegments();
@@ -461,7 +461,7 @@ public class LineSegmentPathTest {
         LineSegment c = LineSegment.fromPoints(p3, p4, TEST_PRECISION);
         LineSegment d = LineSegment.fromPoints(p4, p1, TEST_PRECISION);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        Builder builder = new Builder();
 
         // act
         builder.prepend(b)
@@ -485,7 +485,7 @@ public class LineSegmentPathTest {
         // arrange
         LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        Builder builder = new Builder();
         builder.append(a);
 
         // act
@@ -506,7 +506,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(1, 0);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        Builder builder = new Builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -530,7 +530,7 @@ public class LineSegmentPathTest {
     public void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
         Vector2D p = Vector2D.ZERO;
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder();
+        Builder builder = new Builder();
 
         String msg = "Unable to create line segment: no vertex precision specified";
 
@@ -548,7 +548,7 @@ public class LineSegmentPathTest {
     public void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
         Vector2D p = Vector2D.PLUS_X;
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
@@ -568,7 +568,7 @@ public class LineSegmentPathTest {
         // arrange
         Vector2D p = Vector2D.ZERO;
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        Builder builder = new Builder(TEST_PRECISION);
         builder.append(p);
 
         // act
@@ -598,7 +598,7 @@ public class LineSegmentPathTest {
         LineSegment a = LineSegment.fromPoints(p1, p2, TEST_PRECISION);
         LineSegment c = LineSegment.fromPoints(p3, p4, TEST_PRECISION);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        Builder builder = new Builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -626,7 +626,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        Builder builder = new Builder(TEST_PRECISION);
 
         // act
         builder.appendVertices(p1, p2)
@@ -651,7 +651,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder(TEST_PRECISION);
+        Builder builder = new Builder(TEST_PRECISION);
 
         // act
         builder.prependVertices(p3, p4, p1)
@@ -675,7 +675,7 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         // act
@@ -700,7 +700,7 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         // act
@@ -722,7 +722,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtStart() {
         // arrange
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION)
@@ -738,7 +738,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtEnd() {
         // arrange
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         builder
@@ -756,7 +756,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_emptyPath() {
         // arrange
-        LineSegmentPathBuilder builder = new LineSegmentPathBuilder()
+        Builder builder = new Builder()
                 .setPrecision(TEST_PRECISION);
 
         // act
@@ -770,7 +770,7 @@ public class LineSegmentPathTest {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 
-        EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStart(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEnd(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }
 }

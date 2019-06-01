@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -67,6 +68,26 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
      * @return
      */
     protected abstract boolean isBetterAngle(final double newAngle, final double previousAngle);
+
+    /** Convenience method for connecting a set of line segments with interior angles maximized
+     * when possible. This method is equivalent to {@code new Maximize().connect(segments)}.
+     * @param segments line segments to connect
+     * @return a list of connected line segment paths
+     * @see Maximize
+     */
+    public static List<LineSegmentPath> connectMaximized(final Collection<LineSegment> segments) {
+        return new Maximize().connect(segments);
+    }
+
+    /** Convenience method for connecting a set of line segments with interior angles minimized
+     * when possible. This method is equivalent to {@code new Minimize().connect(segments)}.
+     * @param segments line segments to connect
+     * @return a list of connected line segment paths
+     * @see Minimize
+     */
+    public static List<LineSegmentPath> connectMinimized(final Collection<LineSegment> segments) {
+        return new Minimize().connect(segments);
+    }
 
     /** Implementation of {@link InteriorAngleLineSegmentConnector} that chooses line segment
      * connections that produce the largest interior angles. Another way to visualize this is

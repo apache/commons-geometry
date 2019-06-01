@@ -235,6 +235,48 @@ public class InteriorAngleLineSegmentConnectorTest {
         assertFinitePath(paths.get(1), Vector2D.of(2, 2), Vector2D.of(2, 4));
     }
 
+    @Test
+    public void tesConnectMaximized() {
+        // arrange
+        List<LineSegment> segments = new ArrayList<>();
+        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+
+        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+
+        // act
+        List<LineSegmentPath> paths = InteriorAngleLineSegmentConnector.connectMaximized(segments);
+
+        // assert
+        Assert.assertEquals(2, paths.size());
+
+        assertFinitePath(paths.get(0),
+                Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(2, 4));
+
+        assertFinitePath(paths.get(1), Vector2D.of(2, 2), Vector2D.of(1, 3));
+    }
+
+    @Test
+    public void testConnectMinimized() {
+        // arrange
+        List<LineSegment> segments = new ArrayList<>();
+        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+
+        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+
+        // act
+        List<LineSegmentPath> paths = InteriorAngleLineSegmentConnector.connectMinimized(segments);
+
+        // assert
+        Assert.assertEquals(2, paths.size());
+
+        assertFinitePath(paths.get(0),
+                Vector2D.ZERO, Vector2D.of(2, 2), Vector2D.of(1, 3));
+
+        assertFinitePath(paths.get(1), Vector2D.of(2, 2), Vector2D.of(2, 4));
+    }
+
     /**
      * Run the given consumer function twice, once with a Maximize instance and once with
      * a Minimize instance.
@@ -272,8 +314,8 @@ public class InteriorAngleLineSegmentConnectorTest {
         Assert.assertTrue(path.isInfinite());
         Assert.assertFalse(path.isFinite());
 
-        Assert.assertEquals(start, path.getStart());
-        Assert.assertEquals(end, path.getEnd());
+        Assert.assertEquals(start, path.getStartSegment());
+        Assert.assertEquals(end, path.getEndSegment());
 
         assertPathVertices(path, vertices);
     }
