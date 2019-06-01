@@ -108,13 +108,13 @@ public class DoublePrecisionContextTest {
     @Test
     public void testCompare_wrapper() {
         // act/assert
-        Assert.assertEquals(0, ctx.compare(new Double(1), new Double(1)));
-        Assert.assertEquals(-1, ctx.compare(new Double(1), new Double(2)));
-        Assert.assertEquals(1, ctx.compare(new Double(2), new Double(1)));
+        Assert.assertEquals(0, ctx.compare(Double.valueOf(1), Double.valueOf(1)));
+        Assert.assertEquals(-1, ctx.compare(Double.valueOf(1), Double.valueOf(2)));
+        Assert.assertEquals(1, ctx.compare(Double.valueOf(2), Double.valueOf(1)));
 
-        Assert.assertEquals(0, ctx.compare(new Double(-1), new Double(-1)));
-        Assert.assertEquals(1, ctx.compare(new Double(-1), new Double(-2)));
-        Assert.assertEquals(-1, ctx.compare(new Double(-2), new Double(-1)));
+        Assert.assertEquals(0, ctx.compare(Double.valueOf(-1), Double.valueOf(-1)));
+        Assert.assertEquals(1, ctx.compare(Double.valueOf(-1), Double.valueOf(-2)));
+        Assert.assertEquals(-1, ctx.compare(Double.valueOf(-2), Double.valueOf(-1)));
     }
 
     private static class StubContext extends DoublePrecisionContext {

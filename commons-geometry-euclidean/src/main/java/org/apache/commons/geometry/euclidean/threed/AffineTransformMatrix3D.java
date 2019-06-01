@@ -316,7 +316,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      * @return inverse transform
      * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
      */
-    public AffineTransformMatrix3D inverse() {
+    public AffineTransformMatrix3D inverse() throws NonInvertibleTransformException {
 
         // Our full matrix is 4x4 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 0 1].
@@ -609,7 +609,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      * @throws NonInvertibleTransformException if the element is not valid for use
      *  in calculating a matrix inverse, ie if it is NaN or infinite.
      */
-    private static void validateElementForInverse(final double element) {
+    private static void validateElementForInverse(final double element) throws NonInvertibleTransformException {
         if (!Double.isFinite(element)) {
             throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " + element);
         }

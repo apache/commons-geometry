@@ -96,9 +96,9 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Get a normalized vector aligned with the instance. The returned
      * vector has a magnitude of 1.
      * @return a new normalized vector
-     * @exception IllegalNormException if the norm is zero, NaN, or infinite
+     * @throws IllegalNormException if the norm is zero, NaN, or infinite
      */
-    V normalize();
+    V normalize() throws IllegalNormException;
 
     /** Multiply the instance by a scalar.
      * @param a scalar
@@ -131,7 +131,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
      * @return angular separation between this instance and v in radians
-     * @exception IllegalNormException if either vector has a zero, NaN, or infinite norm
+     * @throws IllegalNormException if either vector has a zero, NaN, or infinite norm
      */
-    double angle(V v);
+    double angle(V v) throws IllegalNormException;
 }

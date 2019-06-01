@@ -201,7 +201,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @return inverse transform
      * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
      */
-    public AffineTransformMatrix1D inverse() {
+    public AffineTransformMatrix1D inverse() throws NonInvertibleTransformException {
 
         final double det = this.m00;
 
@@ -356,7 +356,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @throws NonInvertibleTransformException if the element is not valid for use
      *  in calculating a matrix inverse, ie if it is NaN or infinite.
      */
-    private static void validateElementForInverse(final double element) {
+    private static void validateElementForInverse(final double element) throws NonInvertibleTransformException {
         if (!Double.isFinite(element)) {
             throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " + element);
         }
