@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.Builder;
+import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.PathBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -444,8 +444,7 @@ public class LineSegmentPathTest {
 
         // assert
         Assert.assertTrue(str.contains("LineSegmentPath"));
-        Assert.assertTrue(str.contains("segments= "));
-        Assert.assertTrue(str.contains("start= (0.0, 0.0), end= (1.0, 0.0)"));
+        Assert.assertTrue(str.contains("vertices= "));
     }
 
     @Test
@@ -461,7 +460,7 @@ public class LineSegmentPathTest {
         LineSegment c = LineSegment.fromPoints(p3, p4, TEST_PRECISION);
         LineSegment d = LineSegment.fromPoints(p4, p1, TEST_PRECISION);
 
-        Builder builder = new Builder();
+        PathBuilder builder = LineSegmentPath.builder(null);
 
         // act
         builder.prepend(b)
@@ -485,7 +484,7 @@ public class LineSegmentPathTest {
         // arrange
         LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
-        Builder builder = new Builder();
+        PathBuilder builder = LineSegmentPath.builder(null);
         builder.append(a);
 
         // act
@@ -506,7 +505,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(1, 0);
 
-        Builder builder = new Builder(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -530,7 +529,7 @@ public class LineSegmentPathTest {
     public void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
         Vector2D p = Vector2D.ZERO;
-        Builder builder = new Builder();
+        PathBuilder builder = LineSegmentPath.builder(null);
 
         String msg = "Unable to create line segment: no vertex precision specified";
 
@@ -548,8 +547,7 @@ public class LineSegmentPathTest {
     public void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
         Vector2D p = Vector2D.PLUS_X;
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
 
@@ -568,7 +566,7 @@ public class LineSegmentPathTest {
         // arrange
         Vector2D p = Vector2D.ZERO;
 
-        Builder builder = new Builder(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
         builder.append(p);
 
         // act
@@ -598,7 +596,7 @@ public class LineSegmentPathTest {
         LineSegment a = LineSegment.fromPoints(p1, p2, TEST_PRECISION);
         LineSegment c = LineSegment.fromPoints(p3, p4, TEST_PRECISION);
 
-        Builder builder = new Builder(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -626,7 +624,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = new Builder(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.appendVertices(p1, p2)
@@ -651,7 +649,7 @@ public class LineSegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = new Builder(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.prependVertices(p3, p4, p1)
@@ -675,8 +673,7 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -700,8 +697,7 @@ public class LineSegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -722,8 +718,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtStart() {
         // arrange
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION)
                 .segment(Double.NEGATIVE_INFINITY, 1))
@@ -738,8 +733,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtEnd() {
         // arrange
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         builder
             .append(Vector2D.ZERO)
@@ -756,8 +750,7 @@ public class LineSegmentPathTest {
     @Test
     public void testBuilder_close_emptyPath() {
         // arrange
-        Builder builder = new Builder()
-                .setPrecision(TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
 
         // act
         LineSegmentPath path = builder.close();

@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
@@ -338,6 +339,29 @@ public class AbstractRegionBSPTreeTest {
         // act/assert
         Assert.assertEquals(Double.POSITIVE_INFINITY, halfPos.getBoundarySize(), PartitionTestUtils.EPS);
         Assert.assertEquals(Double.POSITIVE_INFINITY, halfPosComplement.getBoundarySize(), PartitionTestUtils.EPS);
+    }
+
+    @Test
+    public void testGetBoundarySize_alignedCuts() {
+        // arrange
+        TestPoint2D p0 = TestPoint2D.ZERO;
+        TestPoint2D p1 = new TestPoint2D(0, 3);
+
+        TestRegionNode node = tree.getRoot();
+
+        tree.setNodeCut(node, new TestLineSegment(p0, p1));
+        node = node.getMinus();
+
+        tree.setNodeCut(node, new TestLineSegment(0, 0, new TestLine(p1, new TestPoint2D(-1, 3))));
+        node = node.getMinus();
+
+        tree.setNodeCut(node, new TestLineSegment(p1, p0));
+        node = node.getMinus();
+
+        tree.setNodeCut(node, new TestLineSegment(0, 0, new TestLine(p0, new TestPoint2D(1, 3))));
+
+        // act/assert
+        Assert.assertEquals(6, tree.getBoundarySize(), PartitionTestUtils.EPS);
     }
 
     @Test
@@ -1878,6 +1902,15 @@ public class AbstractRegionBSPTreeTest {
 
         TestRegionBSPTree(final boolean full) {
             super(full);
+        }
+
+        /**
+         * Expose the direct node cut method for easier creation of test tree structures.
+         */
+        @Override
+        public void setNodeCut(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut)
+        {
+            super.setNodeCut(node, cut);
         }
 
         @Override

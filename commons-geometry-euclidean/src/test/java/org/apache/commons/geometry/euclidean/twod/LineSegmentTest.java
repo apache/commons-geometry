@@ -757,8 +757,8 @@ public class LineSegmentTest {
 
         // assert
         Assert.assertTrue(str.contains("LineSegment"));
-        Assert.assertTrue(str.contains("start= (0.0, 0.0)"));
-        Assert.assertTrue(str.contains("end= (1.0, 0.0)"));
+        Assert.assertTrue(str.contains("startPoint= (0.0, 0.0)"));
+        Assert.assertTrue(str.contains("endPoint= (1.0, 0.0)"));
     }
 
     private static void checkClassify(LineSegment segment, RegionLocation loc, Vector2D ... points) {

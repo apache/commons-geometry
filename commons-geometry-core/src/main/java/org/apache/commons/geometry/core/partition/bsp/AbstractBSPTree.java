@@ -91,8 +91,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final BSPTreeVisitor<P, N> visitor) {
-        visit(getRoot(), visitor);
+    public void accept(final BSPTreeVisitor<P, N> visitor) {
+        acceptVisitor(getRoot(), visitor);
     }
 
     /** {@inheritDoc} */
@@ -173,7 +173,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     public String treeString(final int maxDepth) {
         BSPTreePrinter<P, N> printer = new BSPTreePrinter<>(maxDepth);
-        visit(printer);
+        accept(printer);
 
         return printer.toString();
     }
@@ -252,7 +252,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst the destination node to place under the extracted path
      * @return the root node of the extracted path
      */
-    private N extractParentPath(final N src, final N dst) {
+    protected N extractParentPath(final N src, final N dst) {
         N dstParent = dst;
         N dstChild;
         N dstOtherChild;
@@ -294,7 +294,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    private N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
+    protected N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
         Hyperplane<P> cutHyper = start.getCutHyperplane();
         if (cutHyper != null) {
             HyperplaneLocation cutLoc = cutHyper.classify(pt);
@@ -317,7 +317,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node the node to begin the visit process
      * @param visitor the visitor to pass nodes to
      */
-    private void visit(final N node, BSPTreeVisitor<P, N> visitor) {
+    protected void acceptVisitor(final N node, BSPTreeVisitor<P, N> visitor) {
         if (node.isLeaf()){
             visitor.visit(node);
         }
@@ -328,34 +328,34 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
                 switch (order) {
                     case PLUS_MINUS_NODE:
-                        visit(node.getPlus(), visitor);
-                        visit(node.getMinus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
                         visitor.visit(node);
                         break;
                     case PLUS_NODE_MINUS:
-                        visit(node.getPlus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
                         visitor.visit(node);
-                        visit(node.getMinus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
                         break;
                     case MINUS_PLUS_NODE:
-                        visit(node.getMinus(), visitor);
-                        visit(node.getPlus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
                         visitor.visit(node);
                         break;
                     case MINUS_NODE_PLUS:
-                        visit(node.getMinus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
                         visitor.visit(node);
-                        visit(node.getPlus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
                         break;
                     case NODE_PLUS_MINUS:
                         visitor.visit(node);
-                        visit(node.getPlus(), visitor);
-                        visit(node.getMinus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
                         break;
                     case NODE_MINUS_PLUS:
                         visitor.visit(node);
-                        visit(node.getMinus(), visitor);
-                        visit(node.getPlus(), visitor);
+                        acceptVisitor(node.getMinus(), visitor);
+                        acceptVisitor(node.getPlus(), visitor);
                         break;
                 }
             }
@@ -369,7 +369,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param cutter the hyperplane to cut the node with
      * @return true if the node was cut; otherwise fasel
      */
-    private boolean insertCut(final N node, final Hyperplane<P> cutter) {
+    protected boolean insertCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.span());
@@ -388,7 +388,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node the node to remove the cut from
      * @return true if the node previously had a cut
      */
-    private boolean clearCut(final N node) {
+    protected boolean clearCut(final N node) {
         boolean hadCut = node.getCut() != null;
         setNodeCut(node, null);
 
@@ -430,7 +430,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param sub the subhyperplane to fit into the cell
      * @return the subhyperplane fit to the cell
      */
-    private ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
+    protected ConvexSubHyperplane<P> fitToCell(final N node, final ConvexSubHyperplane<P> sub) {
 
         ConvexSubHyperplane<P> result = sub;
 
@@ -465,7 +465,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param trimmed convex subhyperplane containing the result of splitting the entire
      *      space with each hyperplane from this node to the root
      */
-    private void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
+    protected void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
             setNodeCut(node, trimmed);
@@ -489,12 +489,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Set the cut subhyperplane for the given node. If {@code cut} is null, any existing child nodes
-     * are removed. If {@code cut} is not null, two new child nodes are created.
+    /** Set the cut subhyperplane for the given node and increment the tree version.
+     * If {@code cut} is null, any existing child nodes are removed. If {@code cut}
+     * is not null, two new child nodes are created.
      * @param node
      * @param cut
      */
-    private void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
+    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
         N plus = null;;
         N minus = null;
 
@@ -518,7 +519,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param swapChildren if true, the plus and minus child nodes of each internal node
      *      will be swapped; this should be the case when the transform is a reflection
      */
-    private void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
+    protected void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
         if (node.isInternal()) {
             // transform our cut
             final ConvexSubHyperplane<P> transformedCut = node.getCut().transform(t);
@@ -540,7 +541,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param transform the transform to test
      * @return true if the transform should swap the plus and minus child nodes in the tree
      */
-    private boolean shouldTransformSwapChildren(final Transform<P> transform) {
+    protected boolean shouldTransformSwapChildren(final Transform<P> transform) {
         final Hyperplane<P> hyperplane = getRoot().getCutHyperplane();
 
         if (hyperplane != null) {
@@ -695,8 +696,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
-        public void visit(final BSPTreeVisitor<P, N> visitor) {
-            tree.visit(getSelf(), visitor);
+        public void accept(final BSPTreeVisitor<P, N> visitor) {
+            tree.acceptVisitor(getSelf(), visitor);
         }
 
         /** {@inheritDoc} */
@@ -816,7 +817,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
             if (minus != null) {
                 minus.setParent(self);
-                plus.setDepth(childDepth);
+                minus.setDepth(childDepth);
             }
             this.minus = minus;
 

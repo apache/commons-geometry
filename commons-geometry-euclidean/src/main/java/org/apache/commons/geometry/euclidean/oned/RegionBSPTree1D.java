@@ -60,7 +60,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @param interval the interval to add
      */
     public void add(final Interval interval) {
-        union(interval.toTree());
+        union(fromInterval(interval));
     }
 
     /** Classify a point location with respect to the region. This is
@@ -100,7 +100,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
        // use our custom projector so that we can disambiguate points that are
        // actually equidistant from the target point
        final BoundaryProjector1D projector = new BoundaryProjector1D(pt);
-       visit(projector);
+       accept(projector);
 
        return projector.getProjected();
    }
@@ -298,6 +298,32 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     public static RegionBSPTree1D empty() {
         return new RegionBSPTree1D(false);
+    }
+
+    /** Construct a new instance from the given interval.
+     * @param interval the input interval
+     * @return a new instance representing the same region as the
+     *      given interval
+     */
+    public static RegionBSPTree1D fromInterval(final Interval interval) {
+        final OrientedPoint minBoundary = interval.getMinBoundary();
+        final OrientedPoint maxBoundary = interval.getMaxBoundary();
+
+        final RegionBSPTree1D tree = full();
+
+        RegionNode1D node = tree.getRoot();
+
+        if (minBoundary != null) {
+            tree.setNodeCut(node, minBoundary.span());
+
+            node = node.getMinus();
+        }
+
+        if (maxBoundary != null) {
+            tree.setNodeCut(node, maxBoundary.span());
+        }
+
+        return tree;
     }
 
     /** Construct a new instance from the given collection of intervals.

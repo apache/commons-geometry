@@ -815,7 +815,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        tree.visit(node -> nodes.add(node));
+        tree.accept(node -> nodes.add(node));
 
         // assert
         Assert.assertEquals(
@@ -838,37 +838,37 @@ public class AbstractBSPTreeTest {
 
         // act/assert
         TestVisitor plusMinusNode = new TestVisitor(Order.PLUS_MINUS_NODE);
-        tree.visit(plusMinusNode);
+        tree.accept(plusMinusNode);
         Assert.assertEquals(
                 Arrays.asList(plus, minusPlus, minusMinus, minus, root),
                 plusMinusNode.getVisited());
 
         TestVisitor plusNodeMinus = new TestVisitor(Order.PLUS_NODE_MINUS);
-        tree.visit(plusNodeMinus);
+        tree.accept(plusNodeMinus);
         Assert.assertEquals(
                 Arrays.asList(plus, root, minusPlus, minus, minusMinus),
                 plusNodeMinus.getVisited());
 
         TestVisitor minusPlusNode = new TestVisitor(Order.MINUS_PLUS_NODE);
-        tree.visit(minusPlusNode);
+        tree.accept(minusPlusNode);
         Assert.assertEquals(
                 Arrays.asList(minusMinus, minusPlus, minus, plus, root),
                 minusPlusNode.getVisited());
 
         TestVisitor minusNodePlus = new TestVisitor(Order.MINUS_NODE_PLUS);
-        tree.visit(minusNodePlus);
+        tree.accept(minusNodePlus);
         Assert.assertEquals(
                 Arrays.asList(minusMinus, minus, minusPlus, root, plus),
                 minusNodePlus.getVisited());
 
         TestVisitor nodeMinusPlus = new TestVisitor(Order.NODE_MINUS_PLUS);
-        tree.visit(nodeMinusPlus);
+        tree.accept(nodeMinusPlus);
         Assert.assertEquals(
                 Arrays.asList(root, minus, minusMinus, minusPlus, plus),
                 nodeMinusPlus.getVisited());
 
         TestVisitor nodePlusMinus = new TestVisitor(Order.NODE_PLUS_MINUS);
-        tree.visit(nodePlusMinus);
+        tree.accept(nodePlusMinus);
         Assert.assertEquals(
                 Arrays.asList(root, plus, minus, minusPlus, minusMinus),
                 nodePlusMinus.getVisited());
@@ -889,7 +889,7 @@ public class AbstractBSPTreeTest {
         TestVisitor visitor = new TestVisitor(Order.NODE_MINUS_PLUS);
 
         // act
-        minus.visit(visitor);
+        minus.accept(visitor);
 
         // assert
         Assert.assertEquals(
@@ -913,7 +913,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        tree.visit(node -> nodes.add(node));
+        tree.accept(node -> nodes.add(node));
 
         // assert
         Assert.assertEquals(

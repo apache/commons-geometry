@@ -24,7 +24,6 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanRegion;
-import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
 
 /** Class representing an interval in one dimension. The interval is defined
  * by minimum and maximum values. One or both of these values may be infinite
@@ -303,23 +302,10 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.
      * @return a BSP tree representing the same region
+     * @see RegionBSPTree1D#fromInterval(Interval)
      */
     public RegionBSPTree1D toTree() {
-        final RegionBSPTree1D tree = RegionBSPTree1D.full();
-
-        RegionNode1D node = tree.getRoot();
-
-        if (minBoundary != null) {
-            node.cut(minBoundary);
-
-            node = node.getMinus();
-        }
-
-        if (maxBoundary != null) {
-            node.cut(maxBoundary);
-        }
-
-        return tree;
+        return RegionBSPTree1D.fromInterval(this);
     }
 
     /** {@inheritDoc} */

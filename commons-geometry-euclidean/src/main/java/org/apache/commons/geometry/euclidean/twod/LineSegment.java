@@ -182,12 +182,12 @@ public final class LineSegment extends AbstractSubLine<Interval>
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
-            .append("[line= ")
-            .append(getLine())
-            .append(", start= ")
+            .append("[startPoint= ")
             .append(getStartPoint())
-            .append(", end= ")
+            .append(", endPoint= ")
             .append(getEndPoint())
+            .append(", line= ")
+            .append(getLine())
             .append(']');
 
         return sb.toString();

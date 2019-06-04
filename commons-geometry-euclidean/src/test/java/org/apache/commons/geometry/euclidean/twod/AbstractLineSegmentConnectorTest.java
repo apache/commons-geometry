@@ -236,6 +236,36 @@ public class AbstractLineSegmentConnectorTest {
                 Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3), Vector2D.of(0, 2));
     }
 
+    @Test
+    public void testConnect_intersectingPaths() {
+        // arrange
+        LineSegmentPath a = LineSegmentPath.builder(TEST_PRECISION)
+                .appendVertices(Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1))
+                .build();
+
+        LineSegmentPath b = LineSegmentPath.builder(TEST_PRECISION)
+                .appendVertices(Vector2D.of(1, 1), Vector2D.of(-0.5, 0), Vector2D.of(1, -1))
+                .build();
+
+        List<LineSegment> segments = new ArrayList<>();
+        segments.addAll(a.getSegments());
+        segments.addAll(b.getSegments());
+
+        shuffle(segments);
+
+        // act
+        List<LineSegmentPath> paths = connector.connect(segments);
+
+        // assert
+        Assert.assertEquals(2, paths.size());
+
+        assertFinitePath(paths.get(0),
+                Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1));
+
+        assertFinitePath(paths.get(1),
+                Vector2D.of(1, 1), Vector2D.of(-0.5, 0), Vector2D.of(1, -1));
+    }
+
     private static List<LineSegment> shuffle(final List<LineSegment> segments) {
         return shuffle(segments, 1);
     }

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.PathBuilder;
 
 /** Abstract class for joining collections of line segments into connected
  * paths. Two default implementations are available through the static factory
@@ -304,7 +305,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          */
         public LineSegmentPath exportPath() {
             if (!exported) {
-                LineSegmentPath.Builder builder = LineSegmentPath.builder();
+                PathBuilder builder = LineSegmentPath.builder(null);
 
                 // add ourselves
                 exportPathInternal(builder, true);
@@ -340,7 +341,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @param append if true, the entry's segment should be appended to the builder;
          *      if false, it should be prepended
          */
-        private void exportPathInternal(final LineSegmentPath.Builder builder, final boolean append) {
+        private void exportPathInternal(final PathBuilder builder, final boolean append) {
             if (append) {
                 builder.append(segment);
             }

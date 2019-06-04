@@ -39,11 +39,10 @@ public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> ex
      */
     int height();
 
-    /** Call the given {@link BSPTreeVisitor} with each node from the
-     * subtree.
-     * @param visitor visitor call with each subtree node
+    /** Accept a visitor instance, calling it with each node from the subtree.
+     * @param visitor visitor called with each subtree node
      */
-    void visit(BSPTreeVisitor<P, N> visitor);
+    void accept(BSPTreeVisitor<P, N> visitor);
 
     /** Create a stream over the nodes in this subtree.
      * @return a stream for accessing the nodes in this subtree
