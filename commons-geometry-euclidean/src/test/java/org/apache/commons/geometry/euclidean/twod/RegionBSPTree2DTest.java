@@ -463,8 +463,35 @@ public class RegionBSPTree2DTest {
         List<LineSegmentPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, 0),
-                Vector2D.ZERO, Vector2D.ZERO);
+        checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.ZERO);
+    }
+
+    @Test
+    public void testGeometricProperties_singlePoint() {
+        // arrange
+        Vector2D pt = Vector2D.of(1, 2);
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(pt, pt, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(pt, tree.getBarycenter(), TEST_EPS);
+
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+
+        List<LineSegment> segments = new ArrayList<>(tree.getBoundarySegments());
+        Collections.sort(segments, SEGMENT_COMPARATOR);
+
+        Assert.assertEquals(4, segments.size());
+
+        checkFiniteSegment(segments.get(0), pt, pt);
+        checkFiniteSegment(segments.get(1), pt, pt);
+        checkFiniteSegment(segments.get(2), pt, pt);
+        checkFiniteSegment(segments.get(3), pt, pt);
+
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        checkVertices(paths.get(0), pt, pt);
     }
 
     @Test

@@ -124,7 +124,7 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         return minBoundary == null || maxBoundary == null;
     }
 
-    /** True if the region is finite, meaning that at both the minimum and maximum
+    /** True if the region is finite, meaning that both the minimum and maximum
      * boundaries exist and the region size is finite.
      * @return true if the region is finite
      */

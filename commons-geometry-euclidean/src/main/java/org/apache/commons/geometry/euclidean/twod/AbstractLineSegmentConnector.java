@@ -69,7 +69,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         LineSegmentPath path;
         for (ConnectorEntry entry : entries) {
             path = entry.exportPath();
-            if (path != null) {
+            if (path != null && !path.isEmpty()) {
                 paths.add(path);
             }
         }
@@ -104,7 +104,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         ConnectorEntry current = start;
         ConnectorEntry next = null;
 
-        while (current != null && current.hasConnectableEndPoint() && !current.hasNext()) {
+        while (current != null && !current.isIgnore() && current.hasConnectableEndPoint() && !current.hasNext()) {
             findPossibleConnections(current);
 
             if (!possibleConnections.isEmpty()) {
@@ -148,17 +148,17 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             for (int i=0; i<size; ++i) {
                 candidate = entries.get(i);
 
-                if (entry.canConnectTo(candidate)) {
-                    possibleConnections.add(candidate);
-                }
-                else {
-                    // Break out of the loop if the candidate's start point is null or
-                    // its x coordinate is greater than the x coordinate of the end point.
-                    // Either of these cases indicate that no further sorted points will
-                    // match this entry.
-                    candidateStart = candidate.getStart();
-                    if (candidateStart == null || precision.gt(candidateStart.getX(), end.getX())) {
-                        break;
+                if (entry != candidate) {
+                    if (!addPossibleConnection(entry, candidate)) {
+
+                        // Break out of the loop if the candidate's start point is null or
+                        // its x coordinate is greater than the x coordinate of the end point.
+                        // Either of these cases indicate that no further sorted points will
+                        // match this entry.
+                        candidateStart = candidate.getStart();
+                        if (candidateStart == null || precision.gt(candidateStart.getX(), end.getX())) {
+                            break;
+                        }
                     }
                 }
             }
@@ -167,19 +167,43 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             for (int i=startIdx-1; i>=0; --i) {
                 candidate = entries.get(i);
 
-                if (entry.canConnectTo(candidate)) {
-                    possibleConnections.add(candidate);
-                }
-                else {
-                    // Break out of the loop if the candidate's start point is null or
-                    // its x coordinate is less than the x coordinate of the end point.
-                    candidateStart = candidate.getStart();
-                    if (candidateStart == null || precision.lt(candidateStart.getX(), end.getX())) {
-                        break;
+                if (entry != candidate) {
+                    if (!addPossibleConnection(entry, candidate)) {
+
+                        // Break out of the loop if the candidate's start point is null or
+                        // its x coordinate is less than the x coordinate of the end point.
+                        candidateStart = candidate.getStart();
+                        if (candidateStart == null || precision.lt(candidateStart.getX(), end.getX())) {
+                            break;
+                        }
                     }
                 }
             }
         }
+    }
+
+    /** Add {@code candidate} to the given list if it is a possible connection candidate for {@code entry}.
+     * Returns true if the candidate was added and false otherwise. If the candidate entry is connected
+     * and is a line segment consisting of a single point, it is set as ignored.
+     * consisting of a single point
+     * @param entry the entry to find possible connections for
+     * @param candidate candidate connection entry
+     * @return true if candidate is a possible connection and was added to {@code possibleConnections}
+     */
+    private boolean addPossibleConnection(final ConnectorEntry entry, final ConnectorEntry candidate) {
+
+        if (entry.canConnectTo(candidate)) {
+            // set connected candidates consisting of a single point to ignore
+            if (entry.endPointsEq(candidate)) {
+                candidate.setIgnore(true);
+            }
+            else {
+                possibleConnections.add(candidate);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** Method called to select a connection to use for a given entry when multiple connections are available.
@@ -205,6 +229,9 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
 
         /** Previous connected entry. */
         private ConnectorEntry previous;
+
+        /** Flag set to true when an entry should be ignored in further processing. */
+        private boolean ignore;
 
         /** Flag set to true when this entry has exported its line segment to a path. */
         private boolean exported = false;
@@ -261,6 +288,21 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             return previous != null;
         }
 
+        /** Return true if the entry should be ignored for further processing.
+         * @return true if the entry should be ignored for further processing
+         */
+        public boolean isIgnore() {
+            return ignore;
+        }
+
+        /** Set the flag indicating whether or not the entry should be ignored for
+         * further processing.
+         * @param ignore true to prevent further processing
+         */
+        public void setIgnore(final boolean ignore) {
+            this.ignore = ignore;
+        }
+
         /**
          * Return true if the line segment has an end point that can be connected
          * to other instances.
@@ -276,7 +318,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @return true if this instance can connect to {@code next}
          */
         public boolean canConnectTo(final ConnectorEntry next) {
-            if (!next.hasPrevious()) {
+            if (!ignore && !next.hasPrevious()) {
                 final Vector2D end = segment.getEndPoint();
                 final Vector2D start = next.getStart();
 
@@ -285,6 +327,32 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             }
 
             return false;
+        }
+
+        /** Return true if the start point for this instance and the given argument exist
+         * and are equivalent as evaluated by the precision context for this instance.
+         * @param other entry to compare start points with
+         * @return true if both start points exist and are equivalent
+         */
+        public boolean startPointsEq(final ConnectorEntry other) {
+            final Vector2D thisStart = segment.getStartPoint();
+            final Vector2D otherStart = other.segment.getStartPoint();
+
+            return thisStart != null && otherStart != null &&
+                    thisStart.eq(otherStart, segment.getPrecision());
+        }
+
+        /** Return true if the end point for this instance and the given argument exist
+         * and are equivalent as evaluated by the precision context for this instance.
+         * @param other entry to compare end points with
+         * @return true if both end points exist and are equivalent
+         */
+        public boolean endPointsEq(final ConnectorEntry other) {
+            final Vector2D thisEnd = segment.getEndPoint();
+            final Vector2D otherEnd = other.segment.getEndPoint();
+
+            return thisEnd != null && otherEnd != null &&
+                    thisEnd.eq(otherEnd, segment.getPrecision());
         }
 
         /** Connect this instance's end point to the given entry's start point. No validation
@@ -304,11 +372,16 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          *      already been exported
          */
         public LineSegmentPath exportPath() {
-            if (!exported) {
+            if (!ignore && !exported) {
                 PathBuilder builder = LineSegmentPath.builder(null);
 
-                // add ourselves
-                exportPathInternal(builder, true);
+                // add ourselves, but only if we don't have a next entry OR
+                // the next entry's start point is not equal to ours (meaning
+                // that we are a point). This helps filter out single points
+                // in connected paths.
+                if (next == null || !startPointsEq(next)) {
+                    exportPathInternal(builder, true);
+                }
 
                 // export the other portions of the path, moving both
                 // forward and backward
