@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.PathBuilder;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Abstract class for joining collections of line segments into connected
  * paths. Two default implementations are available through the static factory
@@ -51,6 +52,8 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
     /** List used to store possible connections for the current line segment entry. */
     private List<ConnectorEntry> possibleConnections = new ArrayList<>();
 
+    private List<ConnectorEntry> possiblePointConnections = new ArrayList<>();
+
     /** Convert a collection of line segments into a set of connected line segment paths.
      * @param segments the segments to connect
      * @return a list of connected paths
@@ -69,7 +72,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         LineSegmentPath path;
         for (ConnectorEntry entry : entries) {
             path = entry.exportPath();
-            if (path != null && !path.isEmpty()) {
+            if (path != null) {
                 paths.add(path);
             }
         }
@@ -92,7 +95,30 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             result.add(new ConnectorEntry(segment));
         }
 
-        Collections.sort(result);
+        // Sort the list in the standard ordering of ConnectorEntry but also adding the
+        // conditions that
+        //  1) point-like segments come after ones with non-zero length and
+        //  2) lines pointing down and to the right come first.
+        // We add these extra conditions here and not in the ConnectorEntry compareTo method since
+        // that method is used when comparing ConnectorEntry instances that don't have a line
+        // segment when performing binary searches. When sorting here, we know that all instances
+        // have a line segment.
+        Collections.sort(result, (a, b) -> {
+            int cmp = a.compareTo(b);
+            if (cmp == 0) {
+                cmp = Boolean.compare(a.isPointLike(), b.isPointLike());
+
+                if (cmp == 0) {
+                    final double aAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                            a.getSegment().getLine().getAngle());
+                    final double bAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                            b.getSegment().getLine().getAngle());
+
+                    return Double.compare(aAngle, bAngle);
+                }
+            }
+            return cmp;
+        });
 
         return result;
     }
@@ -104,18 +130,25 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         ConnectorEntry current = start;
         ConnectorEntry next = null;
 
-        while (current != null && !current.isIgnore() && current.hasConnectableEndPoint() && !current.hasNext()) {
+        while (current != null && current.hasConnectableEndPoint() && !current.hasNext()) {
+
             findPossibleConnections(current);
 
-            if (!possibleConnections.isEmpty()) {
+            // select from all available connections, handling point-like segments first
+            if (!possiblePointConnections.isEmpty()) {
+                next = (possiblePointConnections.size() == 1) ?
+                        possiblePointConnections.get(0) :
+                        selectPointConnection(current, possiblePointConnections);
+            }
+            else if (!possibleConnections.isEmpty()) {
 
                 next = (possibleConnections.size() == 1) ?
                         possibleConnections.get(0) :
                         selectConnection(current, possibleConnections);
+            }
 
-                if (next != null) {
-                    current.connectTo(next);
-                }
+            if (next != null) {
+                current.connectTo(next);
             }
 
             current = next;
@@ -129,6 +162,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      */
     private void findPossibleConnections(final ConnectorEntry entry) {
         possibleConnections.clear();
+        possiblePointConnections.clear();
 
         final Vector2D end = entry.getSegment().getEndPoint();
         if (end != null) {
@@ -148,17 +182,14 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             for (int i=0; i<size; ++i) {
                 candidate = entries.get(i);
 
-                if (entry != candidate) {
-                    if (!addPossibleConnection(entry, candidate)) {
-
-                        // Break out of the loop if the candidate's start point is null or
-                        // its x coordinate is greater than the x coordinate of the end point.
-                        // Either of these cases indicate that no further sorted points will
-                        // match this entry.
-                        candidateStart = candidate.getStart();
-                        if (candidateStart == null || precision.gt(candidateStart.getX(), end.getX())) {
-                            break;
-                        }
+                if (!addPossibleConnection(entry, candidate)) {
+                    // Break out of the loop if the candidate's start point is null or
+                    // its x coordinate is greater than the x coordinate of the end point.
+                    // Either of these cases indicate that no further sorted points will
+                    // match this entry.
+                    candidateStart = candidate.getStart();
+                    if (candidateStart == null || precision.gt(candidateStart.getX(), end.getX())) {
+                        break;
                     }
                 }
             }
@@ -167,46 +198,76 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             for (int i=startIdx-1; i>=0; --i) {
                 candidate = entries.get(i);
 
-                if (entry != candidate) {
-                    if (!addPossibleConnection(entry, candidate)) {
-
-                        // Break out of the loop if the candidate's start point is null or
-                        // its x coordinate is less than the x coordinate of the end point.
-                        candidateStart = candidate.getStart();
-                        if (candidateStart == null || precision.lt(candidateStart.getX(), end.getX())) {
-                            break;
-                        }
+                if (!addPossibleConnection(entry, candidate)) {
+                    // Break out of the loop if the candidate's start point is null or
+                    // its x coordinate is less than the x coordinate of the end point.
+                    candidateStart = candidate.getStart();
+                    if (candidateStart == null || precision.lt(candidateStart.getX(), end.getX())) {
+                        break;
                     }
                 }
             }
         }
     }
 
-    /** Add {@code candidate} to the given list if it is a possible connection candidate for {@code entry}.
-     * Returns true if the candidate was added and false otherwise. If the candidate entry is connected
-     * and is a line segment consisting of a single point, it is set as ignored.
-     * consisting of a single point
-     * @param entry the entry to find possible connections for
+    /** Add the candidate to the connections lists if it represents a possible connection. Returns
+     * true the candidate has added, otherwise false.
+     * @param entry entry to check for connections with
      * @param candidate candidate connection entry
-     * @return true if candidate is a possible connection and was added to {@code possibleConnections}
+     * @return true if the candidate is a possible connection
      */
     private boolean addPossibleConnection(final ConnectorEntry entry, final ConnectorEntry candidate) {
-
-        if (entry.canConnectTo(candidate)) {
-            // set connected candidates consisting of a single point to ignore
+        if (entry != candidate && entry.canConnectTo(candidate)) {
             if (entry.endPointsEq(candidate)) {
-                candidate.setIgnore(true);
+                possiblePointConnections.add(candidate);
             }
             else {
                 possibleConnections.add(candidate);
-                return true;
             }
+
+            return true;
         }
 
         return false;
     }
 
-    /** Method called to select a connection to use for a given entry when multiple connections are available.
+    /** Method called to select a connection to use for a given entry when multiple zero-length connections are available.
+     * The algorithm here attempts to choose the point most likely to produce a logical path by selecting the outgoing segment
+     * with the line angle closest to the incoming segment, with unconnected segments preferred over ones that are already
+     * connected (thereby allowing other connections to occur in the path).
+     * @param incoming the incoming entry
+     * @param outgoing list of available outgoing point-like connections
+     * @return the connection to use
+     */
+    protected ConnectorEntry selectPointConnection(final ConnectorEntry incoming, final List<ConnectorEntry> outgoing) {
+
+        final double incomingLineAngle = incoming.getSegment().getLine().getAngle();
+
+        double angleDiff;
+        boolean isUnconnected;
+
+        double smallestAngleDiff = 0.0;
+        ConnectorEntry bestEntry = null;
+        boolean bestIsUnconnected = false;
+
+        for (ConnectorEntry entry : outgoing) {
+            angleDiff = Math.abs(PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                    incomingLineAngle - entry.getSegment().getLine().getAngle()));
+            isUnconnected = !entry.hasNext();
+
+            if (bestEntry == null || (!bestIsUnconnected && isUnconnected) ||
+                    (bestIsUnconnected == isUnconnected && angleDiff < smallestAngleDiff)) {
+
+                smallestAngleDiff = angleDiff;
+                bestEntry = entry;
+                bestIsUnconnected = isUnconnected;
+            }
+        }
+
+        return bestEntry;
+    }
+
+    /** Method called to select a connection to use for a given entry when multiple non-length-zero connections are available.
      * @param incoming the incoming entry
      * @param outgoing list of available outgoing connections
      * @return the connection to use
@@ -229,9 +290,6 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
 
         /** Previous connected entry. */
         private ConnectorEntry previous;
-
-        /** Flag set to true when an entry should be ignored in further processing. */
-        private boolean ignore;
 
         /** Flag set to true when this entry has exported its line segment to a path. */
         private boolean exported = false;
@@ -288,21 +346,6 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             return previous != null;
         }
 
-        /** Return true if the entry should be ignored for further processing.
-         * @return true if the entry should be ignored for further processing
-         */
-        public boolean isIgnore() {
-            return ignore;
-        }
-
-        /** Set the flag indicating whether or not the entry should be ignored for
-         * further processing.
-         * @param ignore true to prevent further processing
-         */
-        public void setIgnore(final boolean ignore) {
-            this.ignore = ignore;
-        }
-
         /**
          * Return true if the line segment has an end point that can be connected
          * to other instances.
@@ -311,35 +354,6 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          */
         public boolean hasConnectableEndPoint() {
             return segment.getEndPoint() != null;
-        }
-
-        /** Return true if this instance can connect to the given entry.
-         * @param next the potential next entry
-         * @return true if this instance can connect to {@code next}
-         */
-        public boolean canConnectTo(final ConnectorEntry next) {
-            if (!ignore && !next.hasPrevious()) {
-                final Vector2D end = segment.getEndPoint();
-                final Vector2D start = next.getStart();
-
-                return end != null && start != null &&
-                        end.eq(start, segment.getPrecision());
-            }
-
-            return false;
-        }
-
-        /** Return true if the start point for this instance and the given argument exist
-         * and are equivalent as evaluated by the precision context for this instance.
-         * @param other entry to compare start points with
-         * @return true if both start points exist and are equivalent
-         */
-        public boolean startPointsEq(final ConnectorEntry other) {
-            final Vector2D thisStart = segment.getStartPoint();
-            final Vector2D otherStart = other.segment.getStartPoint();
-
-            return thisStart != null && otherStart != null &&
-                    thisStart.eq(otherStart, segment.getPrecision());
         }
 
         /** Return true if the end point for this instance and the given argument exist
@@ -353,6 +367,30 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
 
             return thisEnd != null && otherEnd != null &&
                     thisEnd.eq(otherEnd, segment.getPrecision());
+        }
+
+        /** Return true if the line segment has a length of zero according to the
+         * instance's precision.
+         * @return true if this instance is point-like
+         */
+        public boolean isPointLike() {
+            return segment.getPrecision().eqZero(segment.getSize());
+        }
+
+        /** Return true if this instance can connect to the given entry.
+         * @param next the potential next entry
+         * @return true if this instance can connect to {@code next}
+         */
+        public boolean canConnectTo(final ConnectorEntry next) {
+            if (!next.hasPrevious()) {
+                final Vector2D end = segment.getEndPoint();
+                final Vector2D start = next.getStart();
+
+                return end != null && start != null &&
+                        end.eq(start, segment.getPrecision());
+            }
+
+            return false;
         }
 
         /** Connect this instance's end point to the given entry's start point. No validation
@@ -372,16 +410,11 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          *      already been exported
          */
         public LineSegmentPath exportPath() {
-            if (!ignore && !exported) {
+            if (!exported) {
                 PathBuilder builder = LineSegmentPath.builder(null);
 
-                // add ourselves, but only if we don't have a next entry OR
-                // the next entry's start point is not equal to ours (meaning
-                // that we are a point). This helps filter out single points
-                // in connected paths.
-                if (next == null || !startPointsEq(next)) {
-                    exportPathInternal(builder, true);
-                }
+                // add ourselves
+                exportPathInternal(builder, true);
 
                 // export the other portions of the path, moving both
                 // forward and backward

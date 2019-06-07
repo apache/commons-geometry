@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -30,7 +31,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>This class is guaranteed to be immutable.</p>
  */
-public final class LineSegmentPath implements Serializable {
+public final class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
     private static final long serialVersionUID = 20190522L;
 
@@ -163,12 +164,15 @@ public final class LineSegmentPath implements Serializable {
      */
     public RegionBSPTree2D toTree() {
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-
-        for (LineSegment segment : segments) {
-            tree.insert(segment);
-        }
+        tree.insert(this);
 
         return tree;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterator<LineSegment> iterator() {
+        return segments.iterator();
     }
 
     /** {@inheritDoc} */

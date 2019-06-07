@@ -463,7 +463,16 @@ public class RegionBSPTree2DTest {
         List<LineSegmentPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.ZERO);
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_X,
+                path.getSegments().get(0).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y,
+                path.getSegments().get(1).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_X,
+                path.getSegments().get(2).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_Y,
+                path.getSegments().get(3).getLine().getDirection(), TEST_EPS);
     }
 
     @Test
@@ -489,9 +498,19 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(3), pt, pt);
 
         List<LineSegmentPath> paths = tree.getBoundaryPaths();
+
         Assert.assertEquals(1, paths.size());
 
-        checkVertices(paths.get(0), pt, pt);
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_X,
+                path.getSegments().get(0).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_Y,
+                path.getSegments().get(1).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_X,
+                path.getSegments().get(2).getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y,
+                path.getSegments().get(3).getLine().getDirection(), TEST_EPS);
     }
 
     @Test

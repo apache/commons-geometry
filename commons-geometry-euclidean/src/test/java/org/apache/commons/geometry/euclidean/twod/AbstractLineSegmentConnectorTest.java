@@ -144,7 +144,7 @@ public class AbstractLineSegmentConnectorTest {
                 .close();
 
         LineSegmentPath b = LineSegmentPath.builder(TEST_PRECISION)
-                .appendVertices(Vector2D.of(0, 1), Vector2D.of(-1, 0), Vector2D.ZERO)
+                .appendVertices(Vector2D.of(0, 1), Vector2D.of(-1, 0), Vector2D.of(-0.5, 0))
                 .close();
 
         LineSegmentPath c = LineSegmentPath.builder(TEST_PRECISION)
@@ -165,7 +165,7 @@ public class AbstractLineSegmentConnectorTest {
         Assert.assertEquals(3, paths.size());
 
         assertFinitePath(paths.get(0),
-                Vector2D.of(-1, 0), Vector2D.ZERO, Vector2D.of(0, 1), Vector2D.of(-1, 0));
+                Vector2D.of(-1, 0), Vector2D.of(-0.5, 0), Vector2D.of(0, 1), Vector2D.of(-1, 0));
 
         assertFinitePath(paths.get(1),
                 Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, 1), Vector2D.ZERO);
@@ -260,11 +260,12 @@ public class AbstractLineSegmentConnectorTest {
         Vector2D p2 = Vector2D.of(1, 1);
 
         Vector2D almostP0 = Vector2D.of(-1e-20, -1e-20);
+        Vector2D almostP1 = Vector2D.of(1 - 1e-15, 0);
 
         LineSegmentPath input = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(p0, p1)
-                .append(Line.fromPointAndAngle(p1, 0, TEST_PRECISION).segment(p1, p1))
                 .append(Line.fromPointAndAngle(p1, 0.25 * Geometry.PI, TEST_PRECISION).segment(p1, p1))
+                .append(Line.fromPointAndAngle(p1, Geometry.ZERO_PI, TEST_PRECISION).segment(almostP1, almostP1))
                 .append(p2)
                 .append(p0)
                 .append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION)
@@ -280,7 +281,60 @@ public class AbstractLineSegmentConnectorTest {
         // assert
         Assert.assertEquals(1, paths.size());
 
-        assertFinitePath(paths.get(0), p0, p1, p2, p0);
+        assertFinitePath(paths.get(0), p0, p1, almostP1, p1, p2, p0, almostP0);
+    }
+
+    @Test
+    public void testConnect_flatLineRegion() {
+        // arrange
+        Vector2D p0 = Vector2D.ZERO;
+        Vector2D p1 = Vector2D.of(1, 0);
+
+        LineSegment seg0 = LineSegment.fromPoints(p0, p1, TEST_PRECISION);
+        LineSegment seg1 = LineSegment.fromPoints(p1, p0, TEST_PRECISION);
+        LineSegment seg2 = Line.fromPointAndAngle(p1, Geometry.HALF_PI, TEST_PRECISION).segment(p1, p1);
+        LineSegment seg3 = Line.fromPointAndAngle(p0, Geometry.MINUS_HALF_PI, TEST_PRECISION).segment(p0, p0);
+
+        List<LineSegment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
+        shuffle(segments);
+
+        // act
+        List<LineSegmentPath> paths = connector.connect(segments);
+
+        // assert
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertSame(seg0, path.getSegments().get(0));
+        Assert.assertSame(seg2, path.getSegments().get(1));
+        Assert.assertSame(seg1, path.getSegments().get(2));
+        Assert.assertSame(seg3, path.getSegments().get(3));
+    }
+
+    @Test
+    public void testConnect_singlePointRegion() {
+        // arrange
+        Vector2D p0 = Vector2D.of(1, 0);
+
+        LineSegment seg0 = Line.fromPointAndAngle(p0, Geometry.ZERO_PI, TEST_PRECISION).segment(p0, p0);
+        LineSegment seg1 = Line.fromPointAndAngle(p0, Geometry.HALF_PI, TEST_PRECISION).segment(p0, p0);
+        LineSegment seg2 = Line.fromPointAndAngle(p0, Geometry.PI, TEST_PRECISION).segment(p0, p0);
+        LineSegment seg3 = Line.fromPointAndAngle(p0, Geometry.MINUS_HALF_PI, TEST_PRECISION).segment(p0, p0);
+
+        List<LineSegment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
+        shuffle(segments);
+
+        // act
+        List<LineSegmentPath> paths = connector.connect(segments);
+
+        // assert
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertSame(seg2, path.getSegments().get(0));
+        Assert.assertSame(seg3, path.getSegments().get(1));
+        Assert.assertSame(seg0, path.getSegments().get(2));
+        Assert.assertSame(seg1, path.getSegments().get(3));
     }
 
     @Test
@@ -289,11 +343,11 @@ public class AbstractLineSegmentConnectorTest {
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
 
-        List<LineSegment> segments = new ArrayList<>(Arrays.asList(
-                    Line.fromPointAndAngle(p1, 0, TEST_PRECISION).segment(p1, p1),
-                    Line.fromPointAndAngle(p1, 0.25 * Geometry.PI, TEST_PRECISION).segment(p1, p1),
-                    Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0)
-                ));
+        LineSegment seg0 = Line.fromPointAndAngle(p1, Geometry.ZERO_PI, TEST_PRECISION).segment(p1, p1);
+        LineSegment seg1 = Line.fromPointAndAngle(p1, 0.25 * Geometry.PI, TEST_PRECISION).segment(p1, p1);
+        LineSegment seg2 = Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0);
+
+        List<LineSegment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
 
         shuffle(segments);
 
@@ -303,25 +357,28 @@ public class AbstractLineSegmentConnectorTest {
         // assert
         Assert.assertEquals(2, paths.size());
 
-        assertFinitePath(paths.get(0), p0, p0);
-        assertFinitePath(paths.get(1), p1, p1);
+        LineSegmentPath path0 = paths.get(0);
+        Assert.assertEquals(1, path0.getSegments().size());
+        Assert.assertSame(seg2, path0.getSegments().get(0));
+
+        LineSegmentPath path1 = paths.get(1);
+        Assert.assertEquals(2, path1.getSegments().size());
+        Assert.assertSame(seg0, path1.getSegments().get(0));
+        Assert.assertSame(seg1, path1.getSegments().get(1));
     }
 
     @Test
-    public void testConnect_pathStartingWithPoints() {
+    public void testConnect_pathStartingWithPoint() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
         Vector2D p2 = Vector2D.of(1, 1);
 
-        List<LineSegment> segments = new ArrayList<>(Arrays.asList(
-                    Line.fromPointAndAngle(p0, Geometry.MINUS_HALF_PI, TEST_PRECISION).segment(p0, p0),
-                    Line.fromPointAndAngle(p0, Geometry.HALF_PI, TEST_PRECISION).segment(p0, p0),
-                    Line.fromPointAndAngle(p0, Geometry.PI, TEST_PRECISION).segment(p0, p0),
+        LineSegment seg0 = Line.fromPointAndAngle(p0, Geometry.PI, TEST_PRECISION).segment(p0, p0);
+        LineSegment seg1 = LineSegment.fromPoints(p0, p1, TEST_PRECISION);
+        LineSegment seg2 = LineSegment.fromPoints(p1, p2, TEST_PRECISION);
 
-                    LineSegment.fromPoints(p0, p1, TEST_PRECISION),
-                    LineSegment.fromPoints(p1, p2, TEST_PRECISION)
-                ));
+        List<LineSegment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
 
         shuffle(segments);
 
@@ -331,7 +388,10 @@ public class AbstractLineSegmentConnectorTest {
         // assert
         Assert.assertEquals(1, paths.size());
 
-        assertFinitePath(paths.get(0), p0, p1, p2);
+        LineSegmentPath path = paths.get(0);
+        Assert.assertSame(seg0, path.getSegments().get(0));
+        Assert.assertSame(seg1, path.getSegments().get(1));
+        Assert.assertSame(seg2, path.getSegments().get(2));
     }
 
     @Test

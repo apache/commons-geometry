@@ -54,13 +54,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         super(full);
     }
 
-    /** Insert the line segment path into this instance.
-     * @param path the path to insert
-     */
-    public void insert(final LineSegmentPath path) {
-        insert(path.getSegments());
-    }
-
     /** Get the boundary of the region as a list of unconnected line segments. The
      * line segments are oriented such that their minus (left) side lies on the
      * interior of the region. The order of the returned segments depends on the
