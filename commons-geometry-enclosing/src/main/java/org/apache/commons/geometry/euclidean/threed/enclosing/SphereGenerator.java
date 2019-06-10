@@ -94,16 +94,16 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                         // Note that the minors m_11, m_12, m_13 and m_14 all have the last column
                         // filled with 1.0, hence simplifying the computation
                         final BigFraction[] c2 = new BigFraction[] {
-                            new BigFraction(vA.getX()), new BigFraction(vB.getX()),
-                            new BigFraction(vC.getX()), new BigFraction(vD.getX())
+                            BigFraction.from(vA.getX()), BigFraction.from(vB.getX()),
+                            BigFraction.from(vC.getX()), BigFraction.from(vD.getX())
                         };
                         final BigFraction[] c3 = new BigFraction[] {
-                            new BigFraction(vA.getY()), new BigFraction(vB.getY()),
-                            new BigFraction(vC.getY()), new BigFraction(vD.getY())
+                            BigFraction.from(vA.getY()), BigFraction.from(vB.getY()),
+                            BigFraction.from(vC.getY()), BigFraction.from(vD.getY())
                         };
                         final BigFraction[] c4 = new BigFraction[] {
-                            new BigFraction(vA.getZ()), new BigFraction(vB.getZ()),
-                            new BigFraction(vC.getZ()), new BigFraction(vD.getZ())
+                            BigFraction.from(vA.getZ()), BigFraction.from(vB.getZ()),
+                            BigFraction.from(vC.getZ()), BigFraction.from(vD.getZ())
                         };
                         final BigFraction[] c1 = new BigFraction[] {
                             c2[0].multiply(c2[0]).add(c3[0].multiply(c3[0])).add(c4[0].multiply(c4[0])),

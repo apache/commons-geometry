@@ -67,10 +67,10 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
                     // Note that the minors m_11, m_12 and m_13 all have the last column
                     // filled with 1.0, hence simplifying the computation
                     final BigFraction[] c2 = new BigFraction[] {
-                        new BigFraction(vA.getX()), new BigFraction(vB.getX()), new BigFraction(vC.getX())
+                        BigFraction.from(vA.getX()), BigFraction.from(vB.getX()), BigFraction.from(vC.getX())
                     };
                     final BigFraction[] c3 = new BigFraction[] {
-                        new BigFraction(vA.getY()), new BigFraction(vB.getY()), new BigFraction(vC.getY())
+                            BigFraction.from(vA.getY()), BigFraction.from(vB.getY()), BigFraction.from(vC.getY())
                     };
                     final BigFraction[] c1 = new BigFraction[] {
                         c2[0].multiply(c2[0]).add(c3[0].multiply(c3[0])),
