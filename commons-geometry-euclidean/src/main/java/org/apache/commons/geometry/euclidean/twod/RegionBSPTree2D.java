@@ -36,8 +36,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** Serializable UID */
     private static final long serialVersionUID = 20190519L;
 
-    /** List of line segments comprising the region boundary. */
-    private List<LineSegment> boundarySegments;
+    /** List of line segment paths comprising the region boundary. */
+    private List<LineSegmentPath> boundaryPaths;
 
     /** Create a new, empty region.
      */
@@ -56,29 +56,27 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** Get the boundary of the region as a list of unconnected line segments. The
      * line segments are oriented such that their minus (left) side lies on the
-     * interior of the region. The order of the returned segments depends on the
-     * internal structure of the tree and should not be expected to be in any
-     * particular sequence.
+     * interior of the region.
      * @return the boundary of the region as list of unconnected line segments
      */
     public List<LineSegment> getBoundarySegments() {
-        if (boundarySegments == null) {
-            boundarySegments = Collections.unmodifiableList(computeBoundarySegments());
+        List<LineSegment> segments = new ArrayList<>();
+        for (LineSegmentPath path : getBoundaryPaths()) {
+            segments.addAll(path.getSegments());
         }
-        return boundarySegments;
+        return segments;
     }
 
     /** Get the boundary of the region as a list of connected line segment paths. The
      * line segments are oriented such that their minus (left) side lies on the
-     * interior of the region. This method uses the
-     * {@link InteriorAngleLineSegmentConnector#connectMinimized(java.util.Collection)}
-     * method to connect the paths, meaning that when multiple connection options are
-     * available for a given vertex, the option is chosen that minimizes the interior
-     * angles of the path.
+     * interior of the region.
      * @return line segment paths representing the region boundary
      */
     public List<LineSegmentPath> getBoundaryPaths() {
-        return InteriorAngleLineSegmentConnector.connectMinimized(getBoundarySegments());
+        if (boundaryPaths == null) {
+            boundaryPaths = Collections.unmodifiableList(computeBoundaryPaths());
+        }
+        return boundaryPaths;
     }
 
     /** {@inheritDoc} */
@@ -92,15 +90,15 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return projector.getProjected();
     }
 
-    /** Compute the line segments comprising the region boundary, ensuring that
+    /** Compute the line segment paths comprising the region boundary, ensuring that
      * the minus side of the line segments points to the region interior.
-     * @return the line segments comprising the region boundary
+     * @return the line segment paths comprising the region boundary
      */
-    protected List<LineSegment> computeBoundarySegments() {
-        final LineSegmentBoundaryBuilder2D builder = new LineSegmentBoundaryBuilder2D();
-        accept(builder);
+    protected List<LineSegmentPath> computeBoundaryPaths() {
+        final BoundaryPathConnector connector = new BoundaryPathConnector();
+        accept(connector);
 
-        return builder.getSegments();
+        return connector.getBoundaryPaths();
     }
 
     /** {@inheritDoc} */
@@ -130,9 +128,10 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         double sumX;
         double sumY;
 
-        List<LineSegment> boundary = getBoundarySegments();
+        final List<LineSegment> boundary = getBoundarySegments();
 
         for (LineSegment segment : boundary) {
+
             if (segment.isInfinite()) {
                 // at least on boundary is infinite, meaning that
                 // the size is also infinite
@@ -187,7 +186,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     protected void invalidateRegionProperties() {
         super.invalidateRegionProperties();
 
-        boundarySegments = null;
+        boundaryPaths = null;
     }
 
     /** {@inheritDoc} */
@@ -303,44 +302,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         }
     }
 
-    /** Visitor class for constructing a region boundary as a list of line segments. */
-    private static final class LineSegmentBoundaryBuilder2D implements BSPTreeVisitor<Vector2D, RegionNode2D> {
-
-        /** List containing the discovered boundary line segments. */
-        private final List<LineSegment> segments = new ArrayList<>();
-
-        /** {@inheritDoc} */
-        @Override
-        public void visit(RegionNode2D node) {
-            if (node.isInternal()) {
-                RegionCutBoundary<Vector2D> boundary = node.getCutBoundary();
-
-                SubLine insideFacing = (SubLine) boundary.getInsideFacing();
-                SubLine outsideFacing = (SubLine) boundary.getOutsideFacing();
-
-                if (insideFacing != null && !insideFacing.isEmpty()) {
-                    Line reversedLine = insideFacing.getLine().reverse();
-
-                    for (Interval interval : insideFacing.getSubspaceRegion().toIntervals()) {
-                        segments.add(LineSegment.fromInterval(reversedLine,
-                                interval.transform(Vector1D::negate)));
-                    }
-                }
-
-                if (outsideFacing != null && !outsideFacing.isEmpty()) {
-                    segments.addAll(outsideFacing.toConvex());
-                }
-            }
-        }
-
-        /** Get the line segments for this instance.
-         * @return line segment for this instance
-         */
-        public List<LineSegment> getSegments() {
-            return segments;
-        }
-    }
-
     /** Class used to project points onto the region boundary.
      */
     private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
@@ -361,6 +322,76 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             // return the point with the smallest coordinate values
             final int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
             return cmp < 0 ? a : b;
+        }
+    }
+
+    private static final class BoundaryPathConnector extends InteriorAngleLineSegmentConnector.Minimize
+        implements BSPTreeVisitor<Vector2D, RegionNode2D> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190610L;
+
+        private final List<LineSegment> nodeSegments = new ArrayList<>();
+
+        /** {@inheritDoc} */
+        @Override
+        public Order visitOrder(final RegionNode2D internalNode) {
+            return Order.MINUS_PLUS_NODE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void visit(RegionNode2D node) {
+            if (node.isInternal()) {
+                nodeSegments.clear();
+
+                RegionCutBoundary<Vector2D> boundary = node.getCutBoundary();
+
+                SubLine insideFacing = (SubLine) boundary.getInsideFacing();
+                SubLine outsideFacing = (SubLine) boundary.getOutsideFacing();
+
+                if (insideFacing != null && !insideFacing.isEmpty()) {
+                    // reverse inside-facing boundary segments to point toward the outside
+                    Line reversedLine = insideFacing.getLine().reverse();
+
+                    for (Interval interval : insideFacing.getSubspaceRegion().toIntervals()) {
+                        nodeSegments.add(LineSegment.fromInterval(reversedLine,
+                                interval.transform(Vector1D::negate)));
+                    }
+                }
+
+                if (outsideFacing != null && !outsideFacing.isEmpty()) {
+                    nodeSegments.addAll(outsideFacing.toConvex());
+                }
+
+                if (!nodeSegments.isEmpty()) {
+                    connectNodeSegments();
+                }
+            }
+        }
+
+        private void connectNodeSegments() {
+            if (!nodeSegments.isEmpty()) {
+                List<ConnectorEntry> entries = new ArrayList<>();
+
+                for (LineSegment segment : nodeSegments) {
+                    entries.add(new ConnectorEntry(segment));
+                }
+
+                getEntries().addAll(entries);
+
+                for (ConnectorEntry entry : entries) {
+                    makeForwardConnection(entry);
+                }
+            }
+        }
+
+        public List<LineSegmentPath> getBoundaryPaths() {
+            for (ConnectorEntry entry : getEntries()) {
+                followForwardConnections(entry);
+            }
+
+            return exportPaths();
         }
     }
 }

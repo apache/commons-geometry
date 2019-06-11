@@ -99,43 +99,43 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGetBoundarySegments_cachesResult() {
+    public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
         // act
-        List<LineSegment> a = tree.getBoundarySegments();
-        List<LineSegment> b = tree.getBoundarySegments();
+        List<LineSegmentPath> a = tree.getBoundaryPaths();
+        List<LineSegmentPath> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertSame(a, b);
     }
 
     @Test
-    public void testGetBoundarySegments_recomputesResultOnChange() {
+    public void testGetBoundaryPaths_recomputesResultOnChange() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
         // act
-        List<LineSegment> a = tree.getBoundarySegments();
+        List<LineSegmentPath> a = tree.getBoundaryPaths();
         tree.insert(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION));
-        List<LineSegment> b = tree.getBoundarySegments();
+        List<LineSegmentPath> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertNotSame(a, b);
     }
 
     @Test
-    public void testGetBoundarySegments_isUnmodifiable() {
+    public void testGetBoundaryPaths_isUnmodifiable() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.insert(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            tree.getBoundarySegments().add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION));
+            tree.getBoundaryPaths().add(LineSegmentPath.builder(null).build());
         }, UnsupportedOperationException.class);
     }
 
@@ -194,7 +194,7 @@ public class RegionBSPTree2DTest {
 
         LineSegmentPath path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertSame(segment, path.getSegments().get(0));
+        Assert.assertEquals(segment, path.getSegments().get(0));
     }
 
     @Test
@@ -224,7 +224,7 @@ public class RegionBSPTree2DTest {
 
         LineSegmentPath path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertSame(segment, path.getSegments().get(0));
+        Assert.assertEquals(segment, path.getSegments().get(0));
     }
 
     @Test
@@ -260,8 +260,8 @@ public class RegionBSPTree2DTest {
 
         LineSegmentPath path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
-        Assert.assertSame(secondSegment, path.getSegments().get(0));
-        Assert.assertSame(firstSegment, path.getSegments().get(1));
+        Assert.assertEquals(secondSegment, path.getSegments().get(0));
+        Assert.assertEquals(firstSegment, path.getSegments().get(1));
     }
 
     @Test
@@ -299,8 +299,8 @@ public class RegionBSPTree2DTest {
 
         LineSegmentPath path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
-        Assert.assertSame(secondSegment, path.getSegments().get(0));
-        Assert.assertSame(firstSegment, path.getSegments().get(1));
+        Assert.assertEquals(secondSegment, path.getSegments().get(0));
+        Assert.assertEquals(firstSegment, path.getSegments().get(1));
     }
 
     @Test
@@ -498,7 +498,6 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(3), pt, pt);
 
         List<LineSegmentPath> paths = tree.getBoundaryPaths();
-
         Assert.assertEquals(1, paths.size());
 
         LineSegmentPath path = paths.get(0);

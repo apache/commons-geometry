@@ -19,39 +19,35 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.PathBuilder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Abstract class for joining collections of line segments into connected
- * paths. Two default implementations are available through the static factory
- * methods {@link #maximizeAngles()} and {@link #minimizAngles()}, with the
- * implementations differing in the way they select connections when more than
- * one segment can be connected to a particular vertex. The object returned
- * by {@link #maximizeAngles()} attempts to maximize the angle measured from
- * the incoming line segment to the outgoing line segment, with positive angles
- * moving counterclockwise and negative angles moving clockwise. This results
- * in behavior favoring small convex paths instead of larger concave ones.
- * The {@link #minimizAngles()} method returns an object that does the opposite,
- * attempting to minimize the angle between the incoming and outgoing segments.
- * This implementation favors large concave paths as opposed to convex ones.
- *
- * <p>This class is not thread-safe.</p>
+ * paths. This class is not thread-safe.
  */
 public abstract class AbstractLineSegmentConnector implements Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190528L;
 
-    /** List of connector entries sorted by ascending start point coordinates. */
-    private List<ConnectorEntry> entries;
+    /** List of connector entries used internally. */
+    private NavigableSet<ConnectorEntry> entries = new TreeSet<ConnectorEntry>();
+
+    /** View of the entry set in descending order. */
+    private NavigableSet<ConnectorEntry> entriesDescending = entries.descendingSet();
 
     /** List used to store possible connections for the current line segment entry. */
     private List<ConnectorEntry> possibleConnections = new ArrayList<>();
 
+    /** List used to store possible point-like (zero-length) connections for the current line
+     * segment entry.
+     */
     private List<ConnectorEntry> possiblePointConnections = new ArrayList<>();
 
     /** Convert a collection of line segments into a set of connected line segment paths.
@@ -59,15 +55,22 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * @return a list of connected paths
      */
     public List<LineSegmentPath> connect(final Collection<LineSegment> segments) {
+        for (LineSegment segment : segments) {
+            entries.add(new ConnectorEntry(segment));
+        }
 
-        entries = createSortedEntries(segments);
-
-        // follow loops starting from each entry
         for (ConnectorEntry entry : entries) {
             followForwardConnections(entry);
         }
 
-        // export the paths
+        return exportPaths();
+    }
+
+    protected Set<ConnectorEntry> getEntries() {
+        return entries;
+    }
+
+    protected List<LineSegmentPath> exportPaths() {
         List<LineSegmentPath> paths = new ArrayList<>();
         LineSegmentPath path;
         for (ConnectorEntry entry : entries) {
@@ -77,83 +80,47 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             }
         }
 
-        // tear down
-        entries = null;
+        entries.clear();
         possibleConnections.clear();
+        possiblePointConnections.clear();
 
         return paths;
-    }
-
-    /** Create a list of sorted connector entries for the given line segments.
-     * @param segments line segments
-     * @return a list of sorted connector entries
-     */
-    private List<ConnectorEntry> createSortedEntries(final Collection<LineSegment> segments) {
-        List<ConnectorEntry> result = new ArrayList<>(segments.size());
-
-        for (LineSegment segment : segments) {
-            result.add(new ConnectorEntry(segment));
-        }
-
-        // Sort the list in the standard ordering of ConnectorEntry but also adding the
-        // conditions that
-        //  1) point-like segments come after ones with non-zero length and
-        //  2) lines pointing down and to the right come first.
-        // We add these extra conditions here and not in the ConnectorEntry compareTo method since
-        // that method is used when comparing ConnectorEntry instances that don't have a line
-        // segment when performing binary searches. When sorting here, we know that all instances
-        // have a line segment.
-        Collections.sort(result, (a, b) -> {
-            int cmp = a.compareTo(b);
-            if (cmp == 0) {
-                cmp = Boolean.compare(a.isPointLike(), b.isPointLike());
-
-                if (cmp == 0) {
-                    final double aAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
-                            a.getSegment().getLine().getAngle());
-                    final double bAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
-                            b.getSegment().getLine().getAngle());
-
-                    return Double.compare(aAngle, bAngle);
-                }
-            }
-            return cmp;
-        });
-
-        return result;
     }
 
     /** Find and follow line segment forward connections from the given start entry.
      * @param start entry to begin the connection operation with
      */
-    private void followForwardConnections(final ConnectorEntry start) {
+    protected void followForwardConnections(final ConnectorEntry start) {
         ConnectorEntry current = start;
-        ConnectorEntry next = null;
 
         while (current != null && current.hasConnectableEndPoint() && !current.hasNext()) {
-
-            findPossibleConnections(current);
-
-            // select from all available connections, handling point-like segments first
-            if (!possiblePointConnections.isEmpty()) {
-                next = (possiblePointConnections.size() == 1) ?
-                        possiblePointConnections.get(0) :
-                        selectPointConnection(current, possiblePointConnections);
-            }
-            else if (!possibleConnections.isEmpty()) {
-
-                next = (possibleConnections.size() == 1) ?
-                        possibleConnections.get(0) :
-                        selectConnection(current, possibleConnections);
-            }
-
-            if (next != null) {
-                current.connectTo(next);
-            }
-
-            current = next;
-            next = null;
+            current = makeForwardConnection(current);
         }
+    }
+
+    protected ConnectorEntry makeForwardConnection(final ConnectorEntry entry) {
+        findPossibleConnections(entry);
+
+        ConnectorEntry next = null;;
+
+        // select from all available connections, handling point-like segments first
+        if (!possiblePointConnections.isEmpty()) {
+            next = (possiblePointConnections.size() == 1) ?
+                    possiblePointConnections.get(0) :
+                    selectPointConnection(entry, possiblePointConnections);
+        }
+        else if (!possibleConnections.isEmpty()) {
+
+            next = (possibleConnections.size() == 1) ?
+                    possibleConnections.get(0) :
+                    selectConnection(entry, possibleConnections);
+        }
+
+        if (next != null) {
+            entry.connectTo(next);
+        }
+
+        return next;
     }
 
     /** Find possible connections for the given entry and place them in the
@@ -166,22 +133,13 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
 
         final Vector2D end = entry.getSegment().getEndPoint();
         if (end != null) {
-            // find entries that have a start point equal to our end point;
-            // use a binary search to determine where to start looking
-            final ConnectorEntry startKey = new ConnectorEntry(end);
-            final int search = Collections.binarySearch(entries, startKey);
-            final int startIdx = (search >= 0) ? search : Math.abs(search + 1);
-
-            final int size = entries.size();
+            final ConnectorEntry searchKey = new ConnectorEntry(end);
             final DoublePrecisionContext precision = entry.getSegment().getPrecision();
 
-            ConnectorEntry candidate;
             Vector2D candidateStart;
 
             // search up
-            for (int i=0; i<size; ++i) {
-                candidate = entries.get(i);
-
+            for (ConnectorEntry candidate : entries.tailSet(searchKey)) {
                 if (!addPossibleConnection(entry, candidate)) {
                     // Break out of the loop if the candidate's start point is null or
                     // its x coordinate is greater than the x coordinate of the end point.
@@ -195,9 +153,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
             }
 
             // search down
-            for (int i=startIdx-1; i>=0; --i) {
-                candidate = entries.get(i);
-
+            for (ConnectorEntry candidate : entriesDescending.tailSet(searchKey, false)) {
                 if (!addPossibleConnection(entry, candidate)) {
                     // Break out of the loop if the candidate's start point is null or
                     // its x coordinate is less than the x coordinate of the end point.
@@ -461,7 +417,31 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         /** {@inheritDoc} */
         @Override
         public int compareTo(ConnectorEntry other) {
-            return Vector2D.COORDINATE_ASCENDING_ORDER.compare(start, other.start);
+            // sort by coordinates
+            int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(start, other.start);
+            if (cmp == 0) {
+                // sort entries without segments before ones with segments
+                final boolean thisHasSegment = segment != null;
+                final boolean otherHasSegment = other.segment != null;
+
+                cmp = Boolean.compare(thisHasSegment, otherHasSegment);
+
+                if (cmp == 0 && thisHasSegment) {
+                    // place point-like segments before ones with non-zero length
+                    cmp = Boolean.compare(this.isPointLike(), other.isPointLike());
+
+                    if (cmp == 0) {
+                        // sort by line angle
+                        final double aAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                                this.getSegment().getLine().getAngle());
+                        final double bAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
+                                other.getSegment().getLine().getAngle());
+
+                        cmp = Double.compare(aAngle, bAngle);
+                    }
+                }
+            }
+            return cmp;
         }
     }
 }
