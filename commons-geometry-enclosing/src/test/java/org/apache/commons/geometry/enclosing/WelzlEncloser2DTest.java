@@ -101,6 +101,21 @@ public class WelzlEncloser2DTest {
         }
     }
 
+    @Test
+    public void testEnclosingWithPrecision() {
+        final List<Vector2D> points = Arrays.asList(
+                Vector2D.of(271.59, 57.282),
+                Vector2D.of(269.145, 57.063),
+                Vector2D.of(309.117, 77.187),
+                Vector2D.of(316.989, 34.835),
+                Vector2D.of(323.101, 53.972)
+        );
+        double precision = 1;
+        DoublePrecisionContext precisionContext = new EpsilonDoublePrecisionContext(precision);
+        WelzlEncloser< Vector2D> encloser = new WelzlEncloser<>(precisionContext, new DiskGenerator());
+        encloser.enclose(points);
+    }
+
     private List<Vector2D> buildList(final double ... coordinates) {
         List<Vector2D> list = new ArrayList<>(coordinates.length / 2);
         for (int i = 0; i < coordinates.length; i += 2) {
