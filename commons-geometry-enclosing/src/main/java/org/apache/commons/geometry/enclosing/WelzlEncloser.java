@@ -98,7 +98,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             support.add(farthest);
             EnclosingBall<P> savedBall = ball;
             ball = moveToFrontBall(extreme, extreme.size(), support);
-            if (ball.getRadius() < savedBall.getRadius()) {
+            if (this.precision.lt(ball.getRadius(), savedBall.getRadius())) {
                 // this should never happen
                 throw new GeometryInternalError();
             }
