@@ -72,7 +72,12 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
         if (region.contains(subProjected)) {
             return projected;
         }
-        return hyperplane.toSpace(region.project(subProjected));
+
+        final S subRegionBoundary = region.project(subProjected);
+        if (subRegionBoundary != null) {
+            return hyperplane.toSpace(subRegionBoundary);
+        }
+        return null;
     }
 
     /** {@inheritDoc} */

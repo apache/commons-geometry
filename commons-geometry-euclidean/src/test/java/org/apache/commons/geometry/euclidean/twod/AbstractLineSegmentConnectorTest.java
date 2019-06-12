@@ -42,21 +42,21 @@ public class AbstractLineSegmentConnectorTest {
     private TestConnector connector = new TestConnector();
 
     @Test
-    public void testConnect_emptyCollection() {
+    public void testGetPaths_emptyCollection() {
         // act
-        List<LineSegmentPath> paths = connector.connect(Collections.emptyList());
+        List<LineSegmentPath> paths = connector.getPaths(Collections.emptyList());
 
         // assert
         Assert.assertEquals(0, paths.size());
     }
 
     @Test
-    public void testConnect_singleInfiniteLine() {
+    public void testGetPaths_singleInfiniteLine() {
         // arrange
         LineSegment segment = Y_AXIS.span();
 
         // act
-        List<LineSegmentPath> paths = connector.connect(Arrays.asList(segment));
+        List<LineSegmentPath> paths = connector.getPaths(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -67,12 +67,12 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_singleHalfInfiniteLine_noEndPoint() {
+    public void testGetPaths_singleHalfInfiniteLine_noEndPoint() {
         // arrange
         LineSegment segment = Y_AXIS.segmentFrom(Vector2D.ZERO);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(Arrays.asList(segment));
+        List<LineSegmentPath> paths = connector.getPaths(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -83,12 +83,12 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_singleHalfInfiniteLine_noStartPoint() {
+    public void testGetPaths_singleHalfInfiniteLine_noStartPoint() {
         // arrange
         LineSegment segment = Y_AXIS.segmentTo(Vector2D.ZERO);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(Arrays.asList(segment));
+        List<LineSegmentPath> paths = connector.getPaths(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -99,7 +99,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_disjointSegments() {
+    public void testGetPaths_disjointSegments() {
         // arrange
         LineSegment a = Y_AXIS.segment(Vector2D.of(0, 1), Vector2D.of(0, 2));
         LineSegment b = Y_AXIS.segment(Vector2D.of(0, -1), Vector2D.ZERO);
@@ -107,7 +107,7 @@ public class AbstractLineSegmentConnectorTest {
         List<LineSegment> segments = Arrays.asList(a, b);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -117,7 +117,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_singleClosedPath() {
+    public void testGetPaths_singleClosedPath() {
         // arrange
         LineSegmentPath input = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -127,7 +127,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -137,7 +137,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_multipleClosedPaths() {
+    public void testGetPaths_multipleClosedPaths() {
         // arrange
         LineSegmentPath a = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -159,7 +159,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -175,7 +175,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_singleOpenPath() {
+    public void testGetPaths_singleOpenPath() {
         // arrange
         LineSegmentPath input = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -185,7 +185,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -195,7 +195,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_mixOfOpenConnectedAndInfinite() {
+    public void testGetPaths_mixOfOpenConnectedAndInfinite() {
         // arrange
         LineSegment inputYInf = Y_AXIS.segmentTo(Vector2D.ZERO);
         LineSegment inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.MINUS_X, TEST_PRECISION)
@@ -218,7 +218,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -237,14 +237,14 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_pathWithSinglePoint() {
+    public void testGetPaths_pathWithSinglePoint() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
 
         List<LineSegment> segments = Arrays.asList(Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -253,7 +253,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_pathWithPointLikeConnectedSegments() {
+    public void testGetPaths_pathWithPointLikeConnectedSegments() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -276,7 +276,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -285,7 +285,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_flatLineRegion() {
+    public void testGetPaths_flatLineRegion() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -299,7 +299,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -312,7 +312,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_singlePointRegion() {
+    public void testGetPaths_singlePointRegion() {
         // arrange
         Vector2D p0 = Vector2D.of(1, 0);
 
@@ -325,7 +325,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -338,7 +338,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_pathWithPointLikeUnconnectedSegments() {
+    public void testGetPaths_pathWithPointLikeUnconnectedSegments() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -352,7 +352,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -368,7 +368,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_pathStartingWithPoint() {
+    public void testGetPaths_pathStartingWithPoint() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -383,7 +383,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -395,7 +395,7 @@ public class AbstractLineSegmentConnectorTest {
     }
 
     @Test
-    public void testConnect_intersectingPaths() {
+    public void testGetPaths_intersectingPaths() {
         // arrange
         LineSegmentPath a = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1))
@@ -412,7 +412,7 @@ public class AbstractLineSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.connect(segments);
+        List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -422,6 +422,64 @@ public class AbstractLineSegmentConnectorTest {
 
         assertFinitePath(paths.get(1),
                 Vector2D.of(1, 1), Vector2D.of(-0.5, 0), Vector2D.of(1, -1));
+    }
+
+    @Test
+    public void testInstancesCanBeReused() {
+        // arrange
+        LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment b = LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.PLUS_Y, TEST_PRECISION);
+
+        // act
+        List<LineSegmentPath> firstPaths = connector.getPaths(Arrays.asList(a));
+        List<LineSegmentPath> secondPaths = connector.getPaths(Arrays.asList(b));
+
+        // assert
+        Assert.assertEquals(1, firstPaths.size());
+        Assert.assertEquals(1, secondPaths.size());
+
+        Assert.assertSame(a, firstPaths.get(0).getSegments().get(0));
+        Assert.assertSame(b, secondPaths.get(0).getSegments().get(0));
+    }
+
+    @Test
+    public void testAdd() {
+        // arrange
+        LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment b = LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        LineSegment c = LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+
+        // act
+        connector.add(Arrays.asList(a, b));
+        connector.add(Arrays.asList(c));
+
+        List<LineSegmentPath> paths = connector.getPaths();
+
+        // assert
+        Assert.assertEquals(2, paths.size());
+
+        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(2, 0));
+        assertFinitePath(paths.get(1), Vector2D.PLUS_X, Vector2D.of(1, 1));
+    }
+
+    @Test
+    public void testConnect() {
+        // arrange
+        LineSegment a = LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment b = LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        LineSegment c = LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+
+        // act
+        connector.connect(Arrays.asList(a, b));
+        connector.connect(Arrays.asList(c));
+
+        List<LineSegmentPath> paths = connector.getPaths();
+
+        // assert
+        Assert.assertEquals(2, paths.size());
+
+        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1));
+        assertFinitePath(paths.get(1), Vector2D.PLUS_X, Vector2D.of(2, 0));
     }
 
     private static List<LineSegment> shuffle(final List<LineSegment> segments) {

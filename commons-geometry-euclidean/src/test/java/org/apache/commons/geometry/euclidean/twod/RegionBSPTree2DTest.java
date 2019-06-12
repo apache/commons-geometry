@@ -631,6 +631,51 @@ public class RegionBSPTree2DTest {
         checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(2, 1.5));
     }
 
+    @Test
+    public void testProject_fullAndEmpty() {
+        // act/assert
+        Assert.assertNull(RegionBSPTree2D.full().project(Vector2D.ZERO));
+        Assert.assertNull(RegionBSPTree2D.empty().project(Vector2D.of(1, 2)));
+    }
+
+    @Test
+    public void testProject_halfSpace() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        tree.getRoot().cut(X_AXIS);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, tree.project(Vector2D.ZERO), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0), tree.project(Vector2D.of(-1, 0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 0),
+                tree.project(Vector2D.of(2, -1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 0),
+                tree.project(Vector2D.of(-3, 1)), TEST_EPS);
+    }
+
+    @Test
+    public void testProject_rect() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), tree.project(Vector2D.ZERO), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), tree.project(Vector2D.of(1, 0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1), tree.project(Vector2D.of(1.5, 0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), tree.project(Vector2D.of(2, 0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), tree.project(Vector2D.of(3, 0)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), tree.project(Vector2D.of(1, 3)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), tree.project(Vector2D.of(1, 3)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 2), tree.project(Vector2D.of(1.5, 3)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), tree.project(Vector2D.of(2, 3)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), tree.project(Vector2D.of(3, 3)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.5), tree.project(Vector2D.of(0, 1.5)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.5), tree.project(Vector2D.of(1.5, 1.5)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.project(Vector2D.of(3, 1.5)), TEST_EPS);
+    }
+
     private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);

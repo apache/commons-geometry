@@ -26,7 +26,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * options based on the resulting interior angle. An interior angle in this
  * case is the angle created between an incoming segment and an outgoing segment
  * as measured on the minus (interior) side of the incoming line. If looking
- * down along the direction of the incoming line segment, smaller interior angles
+ * along the direction of the incoming line segment, smaller interior angles
  * point more to the left and larger ones point more to the right.
  *
  * <p>This class provides two concrete implementations: {@link Maximize} and
@@ -76,7 +76,7 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
      * @see Maximize
      */
     public static List<LineSegmentPath> connectMaximized(final Collection<LineSegment> segments) {
-        return new Maximize().connect(segments);
+        return new Maximize().getPaths(segments);
     }
 
     /** Convenience method for connecting a set of line segments with interior angles minimized
@@ -86,7 +86,7 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
      * @see Minimize
      */
     public static List<LineSegmentPath> connectMinimized(final Collection<LineSegment> segments) {
-        return new Minimize().connect(segments);
+        return new Minimize().getPaths(segments);
     }
 
     /** Implementation of {@link InteriorAngleLineSegmentConnector} that chooses line segment

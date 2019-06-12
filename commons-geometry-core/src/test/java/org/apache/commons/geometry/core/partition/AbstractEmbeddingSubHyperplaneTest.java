@@ -71,7 +71,19 @@ public class AbstractEmbeddingSubHyperplaneTest {
         PartitionTestUtils.assertPointsEqual(new TestPoint2D(-1, 0), sub.closest(new TestPoint2D(-1, -1)));
     }
 
+    @Test
+    public void testClosest_nullSubspaceRegionProjection() {
+        // arrange
+        StubSubHyperplane sub = new StubSubHyperplane();
+        sub.region.projected = null;
+
+        // act/assert
+        Assert.assertNull(sub.closest(new TestPoint2D(1, 1)));
+    }
+
     private static class StubSubHyperplane extends AbstractEmbeddingSubHyperplane<TestPoint2D, TestPoint1D, TestLine> {
+
+        private StubRegion1D region = new StubRegion1D();
 
         @Override
         public boolean isInfinite() {
@@ -100,7 +112,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         @Override
         public Region<TestPoint1D> getSubspaceRegion() {
-            return new StubRegion1D();
+            return region;
         }
     }
 
@@ -108,6 +120,8 @@ public class AbstractEmbeddingSubHyperplaneTest {
      * on the inside of the region.
      */
     private static class StubRegion1D implements Region<TestPoint1D> {
+
+        private TestPoint1D projected = new TestPoint1D(0);
 
         @Override
         public boolean isFull() {
@@ -149,7 +163,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         @Override
         public TestPoint1D project(TestPoint1D pt) {
-            return new TestPoint1D(0);
+            return projected;
         }
     }
 }

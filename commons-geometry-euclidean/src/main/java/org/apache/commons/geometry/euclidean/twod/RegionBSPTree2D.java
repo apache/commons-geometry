@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +96,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @return the line segment paths comprising the region boundary
      */
     protected List<LineSegmentPath> computeBoundaryPaths() {
-        final BoundaryPathConnector connector = new BoundaryPathConnector();
+        final BoundaryPathVisitor2D connector = new BoundaryPathVisitor2D();
         accept(connector);
 
         return connector.getBoundaryPaths();
@@ -302,7 +303,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         }
     }
 
-    /** Class used to project points onto the region boundary.
+    /** Class used to project points onto the 2D region boundary.
      */
     private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
 
@@ -325,17 +326,24 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         }
     }
 
-    private static final class BoundaryPathConnector extends InteriorAngleLineSegmentConnector.Minimize
-        implements BSPTreeVisitor<Vector2D, RegionNode2D> {
+    /** Class used to compute the 2D boundary paths.
+     */
+    private static final class BoundaryPathVisitor2D implements BSPTreeVisitor<Vector2D, RegionNode2D>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190610L;
 
+        /** List of line segments comprising the region boundary for the current node. */
         private final List<LineSegment> nodeSegments = new ArrayList<>();
+
+        /** Connector instance used to connect the line segments from the nodes into connected paths. */
+        private final InteriorAngleLineSegmentConnector connector = new InteriorAngleLineSegmentConnector.Minimize();
 
         /** {@inheritDoc} */
         @Override
         public Order visitOrder(final RegionNode2D internalNode) {
+            // give each node a chance to connect its boundary segments to those of
+            // its descendants
             return Order.MINUS_PLUS_NODE;
         }
 
@@ -370,28 +378,20 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             }
         }
 
+        /** Add the boundary segments for the current node to the connector, connecting
+         * them with any existing segments.
+         */
         private void connectNodeSegments() {
             if (!nodeSegments.isEmpty()) {
-                List<ConnectorEntry> entries = new ArrayList<>();
-
-                for (LineSegment segment : nodeSegments) {
-                    entries.add(new ConnectorEntry(segment));
-                }
-
-                getEntries().addAll(entries);
-
-                for (ConnectorEntry entry : entries) {
-                    makeForwardConnection(entry);
-                }
+                connector.connect(nodeSegments);
             }
         }
 
+        /** Get the computed boundary paths for the tree.
+         * @return the boundary paths for the tree
+         */
         public List<LineSegmentPath> getBoundaryPaths() {
-            for (ConnectorEntry entry : getEntries()) {
-                followForwardConnections(entry);
-            }
-
-            return exportPaths();
+            return connector.getPaths();
         }
     }
 }

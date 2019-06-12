@@ -18,10 +18,8 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -50,27 +48,62 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      */
     private List<ConnectorEntry> possiblePointConnections = new ArrayList<>();
 
-    /** Convert a collection of line segments into a set of connected line segment paths.
-     * @param segments the segments to connect
-     * @return a list of connected paths
+    /** Add a collection of line segments to the connector, leaving them unconnected
+     * until a later call to {@link #connect(Iterable)} or
+     * {@link #getPaths()}.
+     * @param segments line segments to add
+     * @see #connect(Iterable)
+     * @see #getPaths()
      */
-    public List<LineSegmentPath> connect(final Collection<LineSegment> segments) {
+    public void add(final Iterable<LineSegment> segments) {
         for (LineSegment segment : segments) {
             entries.add(new ConnectorEntry(segment));
         }
+    }
 
+    /** Add a collection of line segments to the connector and attempt to connect each new
+     * segment with existing segments.
+     * @param segments line segments to connect
+     */
+    public void connect(final Iterable<LineSegment> segments) {
+        List<ConnectorEntry> newEntries = new ArrayList<>();
+
+        for (LineSegment segment : segments) {
+            newEntries.add(new ConnectorEntry(segment));
+        }
+
+        entries.addAll(newEntries);
+
+        for (ConnectorEntry entry : newEntries) {
+            makeForwardConnection(entry);
+        }
+    }
+
+    /** Add the given line segments to this instance and get the connected line segment
+     * paths. This call is equivalent to
+     * <pre>
+     *      connector.add(segments);
+     *      List&lt;LineSegmentPath&gt; result = connector.getPaths();
+     * </pre>
+     * @param segments line segments to add
+     * @return the connected line segment paths
+     * @see #add(Iterable)
+     * @see #getPaths()
+     */
+    public List<LineSegmentPath> getPaths(final Iterable<LineSegment> segments) {
+        add(segments);
+        return getPaths();
+    }
+
+    /** Get the connected line segment paths. The connector is reset after this call.
+     * Further calls to add line segments will result in new paths being generated.
+     * @return the connected line segments paths
+     */
+    public List<LineSegmentPath> getPaths() {
         for (ConnectorEntry entry : entries) {
             followForwardConnections(entry);
         }
 
-        return exportPaths();
-    }
-
-    protected Set<ConnectorEntry> getEntries() {
-        return entries;
-    }
-
-    protected List<LineSegmentPath> exportPaths() {
         List<LineSegmentPath> paths = new ArrayList<>();
         LineSegmentPath path;
         for (ConnectorEntry entry : entries) {
@@ -98,6 +131,11 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         }
     }
 
+    /** Connect the end point of the given entry to the start point of another entry. Returns
+     * the newly connected entry or null if no forward connection was made.
+     * @param entry entry to connect
+     * @return the next entry in the path or null if no connection was made
+     */
     protected ConnectorEntry makeForwardConnection(final ConnectorEntry entry) {
         findPossibleConnections(entry);
 
@@ -124,7 +162,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
     }
 
     /** Find possible connections for the given entry and place them in the
-     * {@link #possibleConnections} list.
+     * {@link #possibleConnections} and {@link #possiblePointConnections} lists.
      * @param entry the entry to find connections for
      */
     private void findPossibleConnections(final ConnectorEntry entry) {
@@ -166,8 +204,8 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         }
     }
 
-    /** Add the candidate to the connections lists if it represents a possible connection. Returns
-     * true the candidate has added, otherwise false.
+    /** Add the candidate to one of the connection lists if it represents a possible connection. Returns
+     * true the candidate was added, otherwise false.
      * @param entry entry to check for connections with
      * @param candidate candidate connection entry
      * @return true if the candidate is a possible connection
