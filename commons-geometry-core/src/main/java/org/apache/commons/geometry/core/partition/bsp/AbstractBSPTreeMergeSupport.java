@@ -18,6 +18,7 @@ package org.apache.commons.geometry.core.partition.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree.AbstractNode;
 
@@ -125,8 +126,8 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
      */
     private N splitSubtreeCut(final N node, final ConvexSubHyperplane<P> partitioner) {
         // split the partitioner and node cut with each other's hyperplanes to determine their relative positions
-        final ConvexSubHyperplane.Split<P> partitionerSplit = partitioner.split(node.getCutHyperplane());
-        final ConvexSubHyperplane.Split<P> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
+        final Split<? extends ConvexSubHyperplane<P>> partitionerSplit = partitioner.split(node.getCutHyperplane());
+        final Split<? extends ConvexSubHyperplane<P>> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
 
         final SplitLocation partitionerSplitSide = partitionerSplit.getLocation();
         final SplitLocation nodeCutSplitSide = nodeCutSplit.getLocation();

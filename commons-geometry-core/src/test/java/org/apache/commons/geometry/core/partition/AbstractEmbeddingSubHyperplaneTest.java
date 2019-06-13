@@ -114,6 +114,11 @@ public class AbstractEmbeddingSubHyperplaneTest {
         public Region<TestPoint1D> getSubspaceRegion() {
             return region;
         }
+
+        @Override
+        public Split<StubSubHyperplane> split(Hyperplane<TestPoint2D> splitter) {
+            return null;
+        }
     }
 
     /** Stub region implementation with some hard-coded values. Negative numbers are

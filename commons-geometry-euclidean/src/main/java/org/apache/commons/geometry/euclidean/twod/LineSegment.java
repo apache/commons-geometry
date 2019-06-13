@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -117,7 +118,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
     /** {@inheritDoc} */
     @Override
-    public Split<Vector2D> split(Hyperplane<Vector2D> splitter) {
+    public Split<LineSegment> split(Hyperplane<Vector2D> splitter) {
         final Line splitterLine = (Line) splitter;
 
         if (isInfinite()) {
@@ -198,7 +199,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private ConvexSubHyperplane.Split<Vector2D> splitInfinite(Line splitter) {
+    private Split<LineSegment> splitInfinite(Line splitter) {
         final Line line = getLine();
         final Vector2D intersection = splitter.intersection(line);
 
@@ -208,12 +209,12 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
             final int sign = getPrecision().sign(originOffset);
             if (sign < 0) {
-                return new ConvexSubHyperplane.Split<Vector2D>(this, null);
+                return new Split<LineSegment>(this, null);
             }
             else if (sign > 0) {
-                return new ConvexSubHyperplane.Split<Vector2D>(null, this);
+                return new Split<LineSegment>(null, this);
             }
-            return new ConvexSubHyperplane.Split<Vector2D>(null, null);
+            return new Split<LineSegment>(null, null);
         }
         else {
             // the lines intersect
@@ -247,7 +248,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
             final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
             final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-            return new ConvexSubHyperplane.Split<Vector2D>(minus, plus);
+            return new Split<LineSegment>(minus, plus);
         }
     }
 
@@ -256,7 +257,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private ConvexSubHyperplane.Split<Vector2D> splitFinite(Line splitter) {
+    private Split<LineSegment> splitFinite(Line splitter) {
 
         final DoublePrecisionContext precision = getPrecision();
 
@@ -283,15 +284,15 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
         if (startCmp == 0 && endCmp == 0) {
             // the entire line segment is directly on the splitter line
-            return new ConvexSubHyperplane.Split<Vector2D>(null, null);
+            return new Split<LineSegment>(null, null);
         }
         else if (startCmp <= 0 && endCmp <= 0) {
             // the entire line segment is on the minus side
-            return new ConvexSubHyperplane.Split<Vector2D>(this, null);
+            return new Split<LineSegment>(this, null);
         }
         else if (startCmp >= 0 && endCmp >= 0) {
             // the entire line segment is on the plus side
-            return new ConvexSubHyperplane.Split<Vector2D>(null, this);
+            return new Split<LineSegment>(null, this);
         }
 
         // we need to split the line
@@ -306,7 +307,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
         final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
         final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-        return new ConvexSubHyperplane.Split<Vector2D>(minus, plus);
+        return new Split<LineSegment>(minus, plus);
     }
 
     /** Create a line segment between two points. The underlying line points in the direction from {@code start}

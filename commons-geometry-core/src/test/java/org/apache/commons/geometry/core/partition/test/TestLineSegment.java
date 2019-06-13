@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** Class representing a line segment in two dimensional Euclidean space. This
@@ -180,7 +181,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane.Split<TestPoint2D> split(Hyperplane<TestPoint2D> splitter) {
+    public Split<TestLineSegment> split(Hyperplane<TestPoint2D> splitter) {
         final TestLine splitterLine = (TestLine) splitter;
 
         if (isInfinite()) {
@@ -239,7 +240,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private ConvexSubHyperplane.Split<TestPoint2D> splitInfinite(TestLine splitter) {
+    private Split<TestLineSegment> splitInfinite(TestLine splitter) {
         final TestPoint2D intersection = splitter.intersection(line);
 
         if (intersection == null) {
@@ -248,12 +249,12 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
             final int sign = PartitionTestUtils.PRECISION.sign(originOffset);
             if (sign < 0) {
-                return new ConvexSubHyperplane.Split<TestPoint2D>(this, null);
+                return new Split<TestLineSegment>(this, null);
             }
             else if (sign > 0) {
-                return new ConvexSubHyperplane.Split<TestPoint2D>(null, this);
+                return new Split<TestLineSegment>(null, this);
             }
-            return new ConvexSubHyperplane.Split<TestPoint2D>(null, null);
+            return new Split<TestLineSegment>(null, null);
         }
         else {
             // the lines intersect
@@ -275,7 +276,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
             final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
             final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-            return new ConvexSubHyperplane.Split<TestPoint2D>(minus, plus);
+            return new Split<TestLineSegment>(minus, plus);
         }
     }
 
@@ -284,7 +285,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private ConvexSubHyperplane.Split<TestPoint2D> splitFinite(TestLine splitter) {
+    private Split<TestLineSegment> splitFinite(TestLine splitter) {
 
         final double startOffset = splitter.offset(line.toSpace(start));
         final double endOffset = splitter.offset(line.toSpace(end));
@@ -306,15 +307,15 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
         if (startCmp == 0 && endCmp == 0) {
             // the entire line segment is directly on the splitter line
-            return new ConvexSubHyperplane.Split<TestPoint2D>(null, null);
+            return new Split<TestLineSegment>(null, null);
         }
         else if (startCmp < 1 && endCmp < 1) {
             // the entire line segment is on the minus side
-            return new ConvexSubHyperplane.Split<TestPoint2D>(this, null);
+            return new Split<TestLineSegment>(this, null);
         }
         else if (startCmp > -1 && endCmp > -1) {
             // the entire line segment is on the plus side
-            return new ConvexSubHyperplane.Split<TestPoint2D>(null, this);
+            return new Split<TestLineSegment>(null, this);
         }
 
         // we need to split the line
@@ -327,6 +328,6 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
         final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
         final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-        return new ConvexSubHyperplane.Split<TestPoint2D>(minus, plus);
+        return new Split<TestLineSegment>(minus, plus);
     }
 }

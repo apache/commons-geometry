@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 
 /** Class containing a collection line segments. This class should only be used for
@@ -109,6 +110,35 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
         }
 
         return size;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Split<TestLineSegmentCollection> split(Hyperplane<TestPoint2D> splitter) {
+        final List<TestLineSegment> minusList = new ArrayList<>();
+        final List<TestLineSegment> plusList = new ArrayList<>();
+
+        for (TestLineSegment segment : segments) {
+            Split<TestLineSegment> split = segment.split(splitter);
+
+            if (split.getMinus() != null) {
+                minusList.add(split.getMinus());
+            }
+
+            if (split.getPlus() != null) {
+                plusList.add(split.getPlus());
+            }
+        }
+
+        final TestLineSegmentCollection minus = minusList.isEmpty() ?
+                null :
+                new TestLineSegmentCollection(minusList);
+
+        final TestLineSegmentCollection plus = plusList.isEmpty() ?
+                null :
+                new TestLineSegmentCollection(plusList);
+
+        return new Split<TestLineSegmentCollection>(minus, plus);
     }
 
     /** {@inheritDoc} */

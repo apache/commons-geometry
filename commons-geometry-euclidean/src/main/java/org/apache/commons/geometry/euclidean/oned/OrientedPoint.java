@@ -29,6 +29,7 @@ import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
@@ -452,7 +453,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public Split<Vector1D> split(Hyperplane<Vector1D> splitter) {
+        public Split<SubOrientedPoint> split(Hyperplane<Vector1D> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
             SubOrientedPoint minus = null;

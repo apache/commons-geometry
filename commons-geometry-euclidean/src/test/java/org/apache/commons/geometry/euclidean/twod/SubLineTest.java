@@ -22,6 +22,9 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -377,6 +380,11 @@ public class SubLineTest {
 
             @Override
             public Region<Vector1D> getSubspaceRegion() {
+                return null;
+            }
+
+            @Override
+            public Split<? extends SubHyperplane<Vector2D>> split(Hyperplane<Vector2D> splitter) {
                 return null;
             }
         };

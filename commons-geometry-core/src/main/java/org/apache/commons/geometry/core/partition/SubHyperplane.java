@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 
  * @param <P> Point implementation type
  */
-public interface SubHyperplane<P extends Point<P>> {
+public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHyperplane<P>> {
 
     /** Get the hyperplane that this instance is embedded in.
      * @return the hyperplane that this instance is embedded in.

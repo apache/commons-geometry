@@ -29,68 +29,12 @@ public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P
      * @param splitter the splitting hyperplane
      * @return the results of the split operation
      */
-    Split<P> split(Hyperplane<P> splitter);
+    @Override
+    Split<? extends ConvexSubHyperplane<P>> split(Hyperplane<P> splitter);
 
-    ConvexSubHyperplane<P> transform(Transform<P> transform);
-
-    /** Class containing the result of splitting a convex subhyperplane with a hyperplane.
-     * @param <P> Point implementation type
+    /** Transform this instance using the argument.
+     * @param transform the transform instance to apply
+     * @return transformed convex subhyerplane
      */
-    static class Split<P extends Point<P>> {
-
-        /** Part of the sub-hyperplane on the minus side of the splitting hyperplane. */
-        private final ConvexSubHyperplane<P> minus;
-
-        /** Part of the  sub-hyperplane on the plus side of the splitting hyperplane. */
-        private final ConvexSubHyperplane<P> plus;
-
-        /** Build a SplitSubHyperplane from its parts.
-         * @param minus part of the sub-hyperplane on the minus side of the
-         *      splitting hyperplane
-         * @param plus part of the sub-hyperplane on the plus side of the
-         *      splitting hyperplane
-         */
-        public Split(final ConvexSubHyperplane<P> minus, final ConvexSubHyperplane<P> plus) {
-            this.plus  = plus;
-            this.minus = minus;
-        }
-
-        /** Get the part of the sub-hyperplane on the minus side of the splitting hyperplane.
-         * @return part of the sub-hyperplane on the minus side of the splitting hyperplane
-         */
-        public ConvexSubHyperplane<P> getMinus() {
-            return minus;
-        }
-
-        /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.
-         * @return part of the sub-hyperplane on the plus side of the splitting hyperplane
-         */
-        public ConvexSubHyperplane<P> getPlus() {
-            return plus;
-        }
-
-        /** Get the location of the split sub-hyperplane with respect to its splitter.
-         * @return {@link SplitLocation#PLUS} if only {@link #getPlus()} is neither null nor empty,
-         * {@link SplitLocation#MINUS} if only {@link #getMinus()} is neither null nor empty,
-         * {@link SplitLocation#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
-         * are neither null nor empty or {@link SplitLocation#ON} if both {@link #getPlus()} and
-         * {@link #getMinus()} are either null or empty
-         */
-        public SplitLocation getLocation() {
-            if (plus != null && !plus.isEmpty()) {
-                if (minus != null && !minus.isEmpty()) {
-                    return SplitLocation.BOTH;
-                }
-                else {
-                    return SplitLocation.PLUS;
-                }
-            }
-            else if (minus != null && !minus.isEmpty()) {
-                return SplitLocation.MINUS;
-            }
-            else {
-                return SplitLocation.ON;
-            }
-        }
-    }
+    ConvexSubHyperplane<P> transform(Transform<P> transform);
 }

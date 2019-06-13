@@ -27,6 +27,7 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.Order;
@@ -438,9 +439,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         N currentNode = node;
 
         while (parentNode != null && result != null) {
-            ConvexSubHyperplane.Split<P> split = result.split(parentNode.getCutHyperplane());
+            final Split<? extends ConvexSubHyperplane<P>> split = result.split(parentNode.getCutHyperplane());
 
-            if (split.getLocation() == SplitLocation.ON) {
+            if (split.getLocation() == SplitLocation.NEITHER) {
                 // if we're directly on the splitter and have the same orientation, then
                 // we say the subhyperplane does not lie in the node's region (no new information
                 // is added to the tree in this case)
@@ -471,13 +472,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             setNodeCut(node, trimmed);
         }
         else {
-            final ConvexSubHyperplane.Split<P> insertSplit = insert.split(node.getCutHyperplane());
+            Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
 
             final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
             final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
 
             if (minus != null || plus != null) {
-                final ConvexSubHyperplane.Split<P> trimmedSplit = trimmed.split(node.getCutHyperplane());
+                final Split<? extends ConvexSubHyperplane<P>> trimmedSplit = trimmed.split(node.getCutHyperplane());
 
                 if (minus != null) {
                     insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus());

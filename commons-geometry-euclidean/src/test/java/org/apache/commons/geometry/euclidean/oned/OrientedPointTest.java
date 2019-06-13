@@ -22,8 +22,8 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane.Split;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.partition.SubHyperplane.Builder;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -440,7 +440,7 @@ public class OrientedPointTest {
     }
 
     private void checkSplit(SubOrientedPoint sub, OrientedPoint splitter, boolean minus, boolean plus) {
-        Split<Vector1D> split = sub.split(splitter);
+        Split<SubOrientedPoint> split = sub.split(splitter);
 
         Assert.assertSame(minus ? sub : null, split.getMinus());
         Assert.assertSame(plus ? sub : null, split.getPlus());

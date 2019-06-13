@@ -25,6 +25,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.ClosestFirstVisitor;
@@ -430,11 +431,11 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 }
             }
             else {
-                ConvexSubHyperplane.Split<P> split = sub.split(node.getCutHyperplane());
+                final Split<? extends ConvexSubHyperplane<P>> split = sub.split(node.getCutHyperplane());
 
-                // Continue further on down the subtree with the same  subhyperplane if the
+                // Continue further on down the subtree with the same subhyperplane if the
                 // subhyperplane lies directly on the current node's cut
-                if (split.getLocation() == SplitLocation.ON) {
+                if (split.getLocation() == SplitLocation.NEITHER) {
                     characterizeSubHyperplane(sub, node.getPlus(), in, out);
                     characterizeSubHyperplane(sub, node.getMinus(), in, out);
                 }

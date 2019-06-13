@@ -16,30 +16,15 @@
  */
 package org.apache.commons.geometry.core.partition;
 
-/** Enumeration representing the location of a split object with respect
- * to its splitting {@link Hyperplane hyperplane}.
+import org.apache.commons.geometry.core.Point;
+
+/** Interface representing objects that can be split by hyperplanes.
  */
-public enum SplitLocation {
+public interface Splittable<P extends Point<P>, S extends Splittable<P, S>> {
 
-    /** Value indicating that the split object lies entirely on the
-     * plus side of the splitting hyperplane.
+    /** Split this instance with the given hyperplane.
+     * @param splitter the hyperplane to split this object with.
+     * @return result of the split operation
      */
-    PLUS,
-
-    /** Value indicating that the split object lies entirely on the
-     * minus side of the splitting hyperplane.
-     */
-    MINUS,
-
-    /** Value indicating that the split object lies in both the plus
-     * and minus sides of the splitting hyperplane.
-     */
-    BOTH,
-
-    /** Value indicating that the split object lies neither on the plus
-     * or minus sides of the splitting hyperplane. This is the case when
-     * the object lies entirely on the hyperplane or is empty (and
-     * therefore "lies" nowhere).
-     */
-    NEITHER;
+    Split<? extends S> split(Hyperplane<P> splitter);
 }

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;;
@@ -94,6 +96,13 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
     @Override
     public RegionBSPTree1D getSubspaceRegion() {
         return region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Split<SubLine> split(Hyperplane<Vector2D> splitter) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /** Add a line segment to this instance..
