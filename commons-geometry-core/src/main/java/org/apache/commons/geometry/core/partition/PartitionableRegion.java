@@ -16,17 +16,22 @@
  */
 package org.apache.commons.geometry.core.partition;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Region;
 
-/** Interface representing objects that can be split by hyperplanes.
- * @param <T> Point implementation type
- * @param <S> Split type
+/** Interface representing regions with boundaries defined by hyperplanes.
+ * Regions of this type can be split by additional hyperplanes into smaller
+ * regions with similar general properties.
+ * @param <P> Point implementation type
  */
-public interface Splittable<P extends Point<P>, S extends Splittable<P, S>> {
+public interface PartitionableRegion<P extends Point<P>>
+    extends Region<P>, Splittable<P, PartitionableRegion<P>> {
 
-    /** Split this instance with the given hyperplane.
-     * @param splitter the hyperplane to split this object with.
-     * @return result of the split operation
+    /** Convert this instance into a list of convex regions.
+     * @return a list of convex region covering the same space as this
+     *      instance
      */
-    Split<? extends S> split(Hyperplane<P> splitter);
+    List<? extends ConvexRegion<P>> toConvex();
 }

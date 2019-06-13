@@ -25,9 +25,10 @@ import org.apache.commons.geometry.core.Transform;
  */
 public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P> {
 
-    /** Split a convex subhyperplane with a hyperplane.
-     * @param splitter the splitting hyperplane
-     * @return the results of the split operation
+    /** {@inheritDoc}
+     *
+     * <p>The parts resulting from a split operation with a convex subhyperplane
+     * are guaranteed to also be convex.</p>
      */
     @Override
     Split<? extends ConvexSubHyperplane<P>> split(Hyperplane<P> splitter);
