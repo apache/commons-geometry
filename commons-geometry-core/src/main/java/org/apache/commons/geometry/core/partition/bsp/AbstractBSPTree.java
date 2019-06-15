@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -72,10 +73,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected void setRoot(final N root) {
         this.root = root;
 
-        this.root.setParent(null);
-        this.root.setDepth(0);
+        this.root.makeRoot();
 
-        incrementVersion();
+        invalidate();
     }
 
     /** {@inheritDoc} */
@@ -132,15 +132,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void copy(final BSPTree<P, N> src) {
-        copyRecursive(src.getRoot(), getRoot());
+        copySubtree(src.getRoot(), getRoot());
     }
 
     /** {@inheritDoc} */
     @Override
     public void extract(final N node) {
         // copy downward
-        final N extracted = createNode();
-        copyRecursive(node, extracted);
+        final N extracted = importSubtree(node);
 
         // extract upward
         final N newRoot = extractParentPath(node, extracted);
@@ -155,9 +154,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         final boolean swapChildren = shouldTransformSwapChildren(transform);
         transformRecursive(getRoot(), transform, swapChildren);
 
-        // increment the version to invalidate any computed properties that might
-        // depend on the cuts
-        incrementVersion();
+        invalidate();
     }
 
     /** Get a simple string representation of the tree structure. The returned string contains
@@ -216,12 +213,27 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected void initChildNode(final N parent, final N child, final boolean isPlus) {
     }
 
+    /** Create a copy of the given node using {@link #copyNodeProperties(AbstractNode, AbstractNode)}.
+     * Only non-structural properties are copied.
+     * @param src the node to copy; does not need to belong to the current tree
+     * @return the copied node
+     */
+    protected N copyNode(final N src) {
+        final N copy = createNode();
+        copyNodeProperties(src, copy);
+
+        return copy;
+    }
+
     /** Recursively copy a subtree.
-     * @param src the node representing the source subtree
+     *
+     * <p>This method does not modify the current structure of the tree.</p>
+     * @param src the node representing the source subtree; does not need to belong to the
+     *      current tree
      * @param dst the node representing the destination subtree
      * @return the copied node, ie {@code dst}
      */
-    protected N copyRecursive(final N src, final N dst) {
+    protected N copySubtree(final N src, final N dst) {
         if (src != dst) {
             ConvexSubHyperplane<P> cut = null;
             N minus = null;
@@ -231,16 +243,35 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 final AbstractBSPTree<P, N> dstTree = dst.getTree();
 
                 cut = src.getCut();
-                minus = copyRecursive(src.getMinus(), dstTree.createNode());
-                plus = copyRecursive(src.getPlus(), dstTree.createNode());
+                minus = copySubtree(src.getMinus(), dstTree.createNode());
+                plus = copySubtree(src.getPlus(), dstTree.createNode());
             }
 
-            dst.setCutState(cut, minus, plus);
+            dst.setSubtree(cut, minus, plus);
 
             copyNodeProperties(src, dst);
         }
 
         return dst;
+    }
+
+    /** Import the given subtree into this tree. If the given node already belongs to
+     * this tree, then the node is returned without modification. If the node does
+     * not belong to this tree, a new node is created and the src node subtree is copied
+     * into it.
+     *
+     * <p>This method does not modify the current structure of the tree.</p>
+     * @param src node to import
+     * @return the given node if it belongs to this tree, otherwise a new node containing
+     *      a copy of the given node's subtree
+     */
+    protected N importSubtree(final N src) {
+        // create a copy of the node if it's not already in this tree
+        if (src.getTree() != this) {
+            return copySubtree(src, createNode());
+        }
+
+        return src;
     }
 
     /** Extract the path from {@code src} to the root of its tree and
@@ -256,28 +287,25 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected N extractParentPath(final N src, final N dst) {
         N dstParent = dst;
         N dstChild;
-        N dstOtherChild;
 
         N srcChild = src;
         N srcParent = srcChild.getParent();
 
         while (srcParent != null) {
             dstChild = dstParent;
-
-            dstParent = createNode();
-            copyNodeProperties(srcParent, dstParent);
-
-            dstOtherChild = createNode();
+            dstParent = copyNode(srcParent);
 
             if (srcChild.isMinus()) {
-                copyNodeProperties(srcParent.getPlus(), dstOtherChild);
-
-                dstParent.setCutState(srcParent.getCut(), dstChild, dstOtherChild);
+                dstParent.setSubtree(
+                        srcParent.getCut(),
+                        dstChild,
+                        copyNode(srcParent.getPlus()));
             }
             else {
-                copyNodeProperties(srcParent.getMinus(), dstOtherChild);
-
-                dstParent.setCutState(srcParent.getCut(), dstOtherChild, dstChild);
+                dstParent.setSubtree(
+                        srcParent.getCut(),
+                        copyNode(srcParent.getMinus()),
+                        dstChild);
             }
 
             srcChild = srcParent;
@@ -363,14 +391,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Insert a cut into the given node. The node becomes a leaf node if the hyperplane
+    /** Cut a node with a hyperplane. The node becomes a leaf node if the hyperplane
      * does not intersect the node's region and a parent node with two new children
      * if it does.
      * @param node the node to cut
      * @param cutter the hyperplane to cut the node with
-     * @return true if the node was cut; otherwise fasel
+     * @return true if the node was cut; otherwise false
      */
-    protected boolean insertCut(final N node, final Hyperplane<P> cutter) {
+    protected boolean insertNodeCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
         ConvexSubHyperplane<P> cut = fitToCell(node, cutter.span());
@@ -382,18 +410,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         setNodeCut(node, cut);
         return true;
-    }
-
-    /** Remove the cut from the given node. Returns true if the node had a cut before
-     * the call to this method.
-     * @param node the node to remove the cut from
-     * @return true if the node previously had a cut
-     */
-    protected boolean clearCut(final N node) {
-        boolean hadCut = node.getCut() != null;
-        setNodeCut(node, null);
-
-        return hadCut;
     }
 
     /** Fit the subhyperplane to the region defined by the given node. This method cuts the
@@ -460,6 +476,43 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return result;
     }
 
+    /** Remove the cut from the given node. Returns true if the node had a cut before
+     * the call to this method.
+     * @param node the node to remove the cut from
+     * @return true if the node previously had a cut
+     */
+    protected boolean clearNodeCut(final N node) {
+        boolean hadCut = node.getCut() != null;
+        setNodeCut(node, null);
+
+        return hadCut;
+    }
+
+    /** Set the cut subhyperplane for the given node and increment the tree version.
+     * If {@code cut} is null, any existing child nodes are removed. If {@code cut}
+     * is not null, two new child nodes are created.
+     *
+     * <p>This method calls {@link #invalidate()} to invalidate cached tree properties.</p>
+     * @param node
+     * @param cut
+     */
+    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
+        N plus = null;;
+        N minus = null;
+
+        if (cut != null) {
+            minus = createNode();
+            initChildNode(node, minus, false);
+
+            plus = createNode();
+            initChildNode(node, plus, true);
+        }
+
+        node.setSubtree(cut, minus, plus);
+
+        invalidate();
+    }
+
     /** Recursively insert a convex subhyperplane into the tree at the given node.
      * @param node the node to begin insertion with
      * @param insert the convex subhyperplane to insert
@@ -490,30 +543,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Set the cut subhyperplane for the given node and increment the tree version.
-     * If {@code cut} is null, any existing child nodes are removed. If {@code cut}
-     * is not null, two new child nodes are created.
-     * @param node
-     * @param cut
-     */
-    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut) {
-        N plus = null;;
-        N minus = null;
-
-        if (cut != null) {
-            minus = createNode();
-            initChildNode(node, minus, false);
-
-            plus = createNode();
-            initChildNode(node, plus, true);
-        }
-
-        node.setCutState(cut, minus, plus);
-
-        // a structural change occurred, so increment the tree version
-        incrementVersion();
-    }
-
     /** Transform the subtree rooted as {@code node} recursively.
      * @param node the root node of the subtree to transform
      * @param t the transform to apply
@@ -533,7 +562,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final N transformedPlus = swapChildren ? node.getMinus() : node.getPlus();
 
             // set our new state
-            node.setCutState(transformedCut, transformedMinus, transformedPlus);
+            node.setSubtree(transformedCut, transformedMinus, transformedPlus);
         }
     }
 
@@ -559,17 +588,162 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return false;
     }
 
-
-    /** Increment the version of the tree. This method should be called any time structural
-     * changes occur to the tree.
+    /** Split this tree with the given hyperplane, placing the split contents into the given
+     * target trees. One of the given trees may be null, in which case that portion of the split
+     * will not be exported.
+     * @param splitter splitting hyperplane
+     * @param minus tree that will contain the portion of the tree on the minus side of the splitter
+     * @param plus tree that will contain the portion of the tree on the plus side of the splitter
      */
-    protected void incrementVersion() {
-        ++version;
+    protected void splitIntoTrees(final Hyperplane<P> splitter,
+            final AbstractBSPTree<P, N> minus, final AbstractBSPTree<P, N> plus) {
+
+        AbstractBSPTree<P, N> temp = (minus != null) ? minus : plus;
+
+        N splitRoot = temp.importSplitSubtree(this.getRoot(), splitter.span());
+
+        if (temp == minus) {
+            if (plus != null) {
+                plus.extract(splitRoot.getPlus());
+            }
+            minus.extract(splitRoot.getMinus());
+        }
+        else {
+            if (minus != null) {
+                minus.extract(splitRoot.getMinus());
+            }
+            plus.extract(splitRoot.getPlus());
+        }
+    }
+
+    /** Split subtree rooted at the given node by a partitioning convex subhyperplane defined
+     * on the same region as the node. The subtree rooted at {@code node} is imported into
+     * this tree, meaning that if it comes from a different tree, the other tree is not
+     * modified.
+     * @param node the root node of the subtree to split; the node may be a leaf node
+     * @param partitioner partitioning convex subhyperplane
+     * @return node containing the split subtree
+     */
+    protected N importSplitSubtree(final N node, final ConvexSubHyperplane<P> partitioner) {
+        if (node.isLeaf()) {
+            return importSplitLeafNode(node, partitioner);
+        }
+        return importSplitInternalNode(node, partitioner);
+    }
+
+    /** Split the given leaf node by a partitioning convex subhyperplane defined on the
+     * same region and import it into this tree.
+     * @param node the leaf node to split
+     * @param partitioner partitioning convex subhyperplane
+     * @return node containing the split subtree
+     */
+    private N importSplitLeafNode(final N node, final ConvexSubHyperplane<P> partitioner) {
+        // in this case, we just create a new parent node with the partitioner as its
+        // cut and two copies of the original node as children
+        final N parent = createNode();
+        parent.setSubtree(partitioner, copyNode(node), copyNode(node));
+
+        return parent;
+    }
+
+    /** Split the given internal node by a partitioning convex subhyperplane defined on the same region
+     * as the node and import it into this tree.
+     * @param node the internal node to split
+     * @param partitioner partitioning convex subhyperplane
+     * @return node containing the split subtree
+     */
+    private N importSplitInternalNode(final N node, final ConvexSubHyperplane<P> partitioner) {
+        // split the partitioner and node cut with each other's hyperplanes to determine their relative positions
+        final Split<? extends ConvexSubHyperplane<P>> partitionerSplit = partitioner.split(node.getCutHyperplane());
+        final Split<? extends ConvexSubHyperplane<P>> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
+
+        final SplitLocation partitionerSplitSide = partitionerSplit.getLocation();
+        final SplitLocation nodeCutSplitSide = nodeCutSplit.getLocation();
+
+        final N result = createNode();
+
+        N resultMinus;
+        N resultPlus;
+
+        if (partitionerSplitSide == SplitLocation.PLUS) {
+            if (nodeCutSplitSide == SplitLocation.PLUS) {
+                // partitioner is on node cut plus side, node cut is on partitioner plus side
+                final N nodePlusSplit = importSplitSubtree(node.getPlus(), partitioner);
+
+                resultMinus = nodePlusSplit.getMinus();
+
+                resultPlus = copyNode(node);
+                resultPlus.setSubtree(node.getCut(), importSubtree(node.getMinus()), nodePlusSplit.getPlus());
+            }
+            else {
+                // partitioner is on node cut plus side, node cut is on partitioner minus side
+                final N nodePlusSplit = importSplitSubtree(node.getPlus(), partitioner);
+
+                resultMinus = copyNode(node);
+                resultMinus.setSubtree(node.getCut(), importSubtree(node.getMinus()), nodePlusSplit.getMinus());
+
+                resultPlus = nodePlusSplit.getPlus();
+            }
+        }
+        else if (partitionerSplitSide == SplitLocation.MINUS) {
+            if (nodeCutSplitSide == SplitLocation.MINUS) {
+                // partitioner is on node cut minus side, node cut is on partitioner minus side
+                final N nodeMinusSplit = importSplitSubtree(node.getMinus(), partitioner);
+
+                resultMinus = copyNode(node);
+                resultMinus.setSubtree(node.getCut(), nodeMinusSplit.getMinus(), importSubtree(node.getPlus()));
+
+                resultPlus = nodeMinusSplit.getPlus();
+            }
+            else {
+                // partitioner is on node cut minus side, node cut is on partitioner plus side
+                final N nodeMinusSplit = importSplitSubtree(node.getMinus(), partitioner);
+
+                resultMinus = nodeMinusSplit.getMinus();
+
+                resultPlus = copyNode(node);
+                resultPlus.setSubtree(node.getCut(), nodeMinusSplit.getPlus(), importSubtree(node.getPlus()));
+            }
+        }
+        else if (partitionerSplitSide == SplitLocation.BOTH) {
+            // partitioner and node cut split each other
+            final N nodeMinusSplit = importSplitSubtree(node.getMinus(), partitionerSplit.getMinus());
+            final N nodePlusSplit = importSplitSubtree(node.getPlus(), partitionerSplit.getPlus());
+
+            resultMinus = copyNode(node);
+            resultMinus.setSubtree(nodeCutSplit.getMinus(), nodeMinusSplit.getMinus(), nodePlusSplit.getMinus());
+
+            resultPlus = copyNode(node);
+            resultPlus.setSubtree(nodeCutSplit.getPlus(), nodeMinusSplit.getPlus(), nodePlusSplit.getPlus());
+        }
+        else {
+            // partitioner and node cut are parallel or anti-parallel
+            final boolean sameOrientation = partitioner.getHyperplane().similarOrientation(node.getCutHyperplane());
+
+            resultMinus = importSubtree(sameOrientation ? node.getMinus() : node.getPlus());
+            resultPlus = importSubtree(sameOrientation ? node.getPlus() : node.getMinus());
+        }
+
+        result.setSubtree(partitioner, resultMinus, resultPlus);
+
+        return result;
+    }
+
+    /** Invalidate any previously computed properties that rely on the internal structure of the tree.
+     * This method must be called any time the tree's internal structure changes in order to force cacheable
+     * tree and node properties to be recomputed the next time they are requested.
+     *
+     * <p>This method increments the tree's {@link #version} property.</p>
+     * @see #getVersion()
+     */
+    protected void invalidate() {
+        version = Math.max(0, version + 1); // positive values only
     }
 
     /** Get the current structural version of the tree. This is incremented each time the
-     * tree structure changes and can be used by nodes to allow caching of computed values.
+     * tree structure is changes and can be used by nodes to allow caching of computed values.
      * @return the current version of the tree structure
+     * @see #invalidate()
      */
     protected int getVersion() {
         return version;
@@ -608,7 +782,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * and is used to detect when certain values need to be recomputed due to
          * structural changes in the tree.
          */
-        private int version = -1;
+        private int nodeVersion = -1;
 
         /** The depth of this node in the tree. This will be zero for the root node and
          * {@link AbstractBSPTree#UNKNOWN_VALUE} when the value needs to be computed.
@@ -659,7 +833,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int height() {
-            checkTreeUpdated();
+            checkValid();
 
             if (height == UNKNOWN_VALUE) {
                 if (isLeaf()) {
@@ -676,7 +850,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int count() {
-            checkTreeUpdated();
+            checkValid();
 
             if (count == UNKNOWN_VALUE) {
                 count = 1;
@@ -758,13 +932,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public boolean insertCut(final Hyperplane<P> cutter) {
-            return tree.insertCut(getSelf(), cutter);
+            return tree.insertNodeCut(getSelf(), cutter);
         }
 
         /** {@inheritDoc} */
         @Override
         public boolean clearCut() {
-            return tree.clearCut(getSelf());
+            return tree.clearNodeCut(getSelf());
         }
 
         /** {@inheritDoc} */
@@ -787,69 +961,72 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             return sb.toString();
         }
 
-        /** Set the depth of the node in the tree.
-         * @param depth the depth of the node in the tree
-         */
-        protected void setDepth(final int depth) {
-            this.depth = depth;
-        }
-
-        /** Set the parent node for the instance.
-         * @param parent the parent node for the instance
-         */
-        protected void setParent(final N parent) {
-            this.parent = parent;
-        }
-
-        /** Set the cut state of node. The arguments should either be all null or all
-         * non-null.
+        /** Set the parameters for the subtree rooted at this node. The arguments should either be
+         * all null or all non-null.
          * @param cut the new cut subhyperplane for the node
          * @param minus the new minus child for the node
          * @param plus the new plus child for the node
          */
-        protected void setCutState(final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
+        protected void setSubtree(final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
             this.cut = cut;
 
             final N self = getSelf();
+
+            // cast for access to private members
+            AbstractNode<P, N> minusNode = minus;
+            AbstractNode<P, N> plusNode = plus;
 
             // get the child depth now if we know it offhand, otherwise set it to the unknown value
             // and have the child pull it when needed
             final int childDepth = (depth != UNKNOWN_VALUE) ? depth + 1 : UNKNOWN_VALUE;
 
             if (minus != null) {
-                minus.setParent(self);
-                minus.setDepth(childDepth);
+                minusNode.parent = self;
+                minusNode.depth = childDepth;
             }
             this.minus = minus;
 
             if (plus != null) {
-                plus.setParent(self);
-                plus.setDepth(childDepth);
+                plusNode.parent = self;
+                plusNode.depth = childDepth;
             }
             this.plus = plus;
         }
 
-        /** Check if any updates have occurred in the tree since the last
-         * call to this method and call {@link #treeUpdated()} if so.
+        /**
+         * Make this node a root node, detaching it from its parent and settings its depth to zero.
+         * Any previous parent node will be left in an invalid state since one of its children now
+         * does not have a reference back to it.
          */
-        protected void checkTreeUpdated() {
+        protected void makeRoot() {
+            parent = null;
+            depth = 0;
+        }
+
+        /** Check if the node is valid, meaning that no structural updates have occurred
+         * in the tree since the last call to this method. If updates have occurred, the
+         * {@link #nodeInvalidated()} method is called to clear cached properties. This method
+         * should be called at the beginning of any method that fetches cacheable properties
+         * to ensure that no stale values are returned.
+         */
+        protected void checkValid() {
             final int treeVersion = tree.getVersion();
 
-            if (version != treeVersion) {
+            if (nodeVersion != treeVersion) {
                 // the tree structure changed somewhere
-                treeUpdated();
+                nodeInvalidated();
 
                 // store the current version
-                version = treeVersion;
+                nodeVersion = treeVersion;
             }
         }
 
-        /** Method called from {@link #checkTreeUpdated()} when updates
+        /** Method called from {@link #checkValid()} when updates
          * are detected in the tree. This method should clear out any
          * computed properties that rely on the structure of the tree
          * and prepare them for recalculation.
          */
-        protected void treeUpdated() {
+        protected void nodeInvalidated() {
             count = UNKNOWN_VALUE;
             height = UNKNOWN_VALUE;
         }

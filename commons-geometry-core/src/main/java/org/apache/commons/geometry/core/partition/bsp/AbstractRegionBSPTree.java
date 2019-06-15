@@ -20,11 +20,12 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.PartitionableRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -36,7 +37,7 @@ import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.ClosestFirs
  * @param <P> Point implementation type
  */
 public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
-    extends AbstractBSPTree<P, N> implements Region<P> {
+    extends AbstractBSPTree<P, N> implements PartitionableRegion<P> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;
@@ -150,6 +151,33 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         return getRegionSizeProperties().getBarycenter();
     }
 
+    /** Helper method implementing the algorithm for splitting a tree by a hyperplane. Subclasses
+     * should call this method with two instantiated trees of the correct type.
+     * @param splitter splitting hyperplane
+     * @param tree1 first tree object
+     * @param tree2 second tree object
+     * @return result of splitting this tree with the given hyperplane
+     */
+    protected <T extends AbstractRegionBSPTree<P, N>> Split<T> split(final Hyperplane<P> splitter,
+            final T minus, final T plus) {
+
+        splitIntoTrees(splitter, minus, plus);
+
+        T splitMinus = null;
+        T splitPlus = null;
+
+        if (minus != null) {
+            minus.getRoot().getPlus().setLocation(RegionLocation.OUTSIDE);
+            splitMinus = minus.isEmpty() ? null : minus;
+        }
+        if (plus != null) {
+            plus.getRoot().getMinus().setLocation(RegionLocation.OUTSIDE);
+            splitPlus = plus.isEmpty() ? null : plus;
+        }
+
+        return new Split<T>(splitMinus, splitPlus);
+    }
+
     /** Get the size-related properties for the region. The value is computed
      * lazily and cached.
      * @return the size-related properties for the region
@@ -226,7 +254,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param tree the tree to become the complement of
      */
     public void complement(final AbstractRegionBSPTree<P, N> tree) {
-        copyRecursive(tree.getRoot(), getRoot());
+        copySubtree(tree.getRoot(), getRoot());
         complementRecursive(getRoot());
     }
 
@@ -457,8 +485,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** {@inheritDoc} */
     @Override
-    protected void incrementVersion() {
-        super.incrementVersion();
+    protected void invalidate() {
+        super.invalidate();
 
         invalidateRegionProperties();
     }
@@ -534,7 +562,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
          */
         public RegionCutBoundary<P> getCutBoundary() {
             if (!isLeaf()) {
-                checkTreeUpdated();
+                checkValid();
 
                 if (cutBoundary == null) {
                     cutBoundary = getTree().computeBoundary(getSelf());
@@ -560,8 +588,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
         /** {@inheritDoc} */
         @Override
-        protected void treeUpdated() {
-            super.treeUpdated();
+        protected void nodeInvalidated() {
+            super.nodeInvalidated();
 
             // null any computed boundary value since it is no longer valid
             cutBoundary = null;

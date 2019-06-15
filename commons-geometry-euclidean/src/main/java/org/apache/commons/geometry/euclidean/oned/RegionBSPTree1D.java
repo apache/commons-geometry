@@ -24,6 +24,10 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partition.ConvexRegion;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.PartitionableRegion;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
 
@@ -103,6 +107,23 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
        accept(projector);
 
        return projector.getProjected();
+   }
+
+   /** {@inheritDoc}
+    *
+    * <p>This method is an alias for {@link #toIntervals()}.</p>
+    * @see #toIntervals()
+    */
+   @Override
+   public List<Interval> toConvex() {
+       return toIntervals();
+   }
+
+   /** {@inheritDoc} */
+   @Override
+   public Split<RegionBSPTree1D> split(Hyperplane<Vector1D> splitter) {
+       // TODO
+//       return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
    }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}

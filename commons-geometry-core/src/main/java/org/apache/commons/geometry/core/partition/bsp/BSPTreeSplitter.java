@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean;
+package org.apache.commons.geometry.core.partition.bsp;
 
-import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree.AbstractNode;
 
-public interface EuclideanRegion<V extends EuclideanVector<V>> extends Region<V> {
+public class BSPTreeSplitter<P extends Point<P>, N extends AbstractNode<P, N>> extends
+    AbstractBSPTreeSplitSupport<P, N> {
 
-    /** Get the size of the region. The units of this value will depend on the
-     * dimensions of the region.
-     * @return the size of the region
-     */
-    double getSize();
+    public void split(final AbstractBSPTree<P, N> tree, final Hyperplane<P> splitter,
+            final AbstractBSPTree<P, N> outputTree) {
 
-    /** Get the barycenter of the region or null if no barycenter exists.
-     * @return the barycenter of the region or null if none exists
-     */
-    V getBarycenter();
+        setOutputTree(outputTree);
+
+        N splitRoot = splitSubtree(tree.getRoot(), splitter.span());
+
+        getOutputTree().setRoot(splitRoot);
+    }
 }

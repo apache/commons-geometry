@@ -17,13 +17,17 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.ConvexRegion;
+import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.EuclideanRegion;
 
 /** Class representing an interval in one dimension. The interval is defined
  * by minimum and maximum values. One or both of these values may be infinite
@@ -31,7 +35,7 @@ import org.apache.commons.geometry.euclidean.EuclideanRegion;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Interval implements EuclideanRegion<Vector1D>, Serializable {
+public class Interval implements ConvexRegion<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -298,6 +302,22 @@ public class Interval implements EuclideanRegion<Vector1D>, Serializable {
         final double max = getMax();
 
         return Vector1D.of((0.5 * (max - min)) + min);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns a list containing this instance.</p>
+     */
+    @Override
+    public List<Interval> toConvex() {
+        return Arrays.asList(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Split<Interval> split(Hyperplane<Vector1D> splitter) {
+        // TODO
+//        return null;
     }
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.

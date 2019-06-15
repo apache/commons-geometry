@@ -1318,7 +1318,7 @@ public class AbstractBSPTreeTest {
         // assert
         TestNode resultNode = tree.findNode(pt);
         Assert.assertNotNull(resultNode);
-        Assert.assertNotSame(node, resultNode);
+        Assert.assertSame(node, resultNode);
 
         Assert.assertEquals(7, tree.count());
 

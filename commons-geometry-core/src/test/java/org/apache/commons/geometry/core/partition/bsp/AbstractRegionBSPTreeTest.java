@@ -24,11 +24,12 @@ import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.ConvexRegion;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree.AbstractRegionNode;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree.RegionSizeProperties;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -1509,6 +1510,49 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
+    public void testSplit_empty() {
+        // arrange
+        TestRegionBSPTree tree = emptyTree();
+
+        // act
+        Split<TestRegionBSPTree> split = tree.split(TestLine.X_AXIS);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        TestRegionBSPTree tree = fullTree();
+
+        // act
+        Split<TestRegionBSPTree> split = tree.split(TestLine.X_AXIS);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        TestRegionBSPTree minus = split.getMinus();
+        assertPointLocations(minus, RegionLocation.INSIDE,
+                new TestPoint2D(-1, 1), new TestPoint2D(0, 1), new TestPoint2D(1, 1));
+        assertPointLocations(minus, RegionLocation.BOUNDARY,
+                new TestPoint2D(-1, 0), new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+        assertPointLocations(minus, RegionLocation.OUTSIDE,
+                new TestPoint2D(-1, -1), new TestPoint2D(0, -1), new TestPoint2D(1, -1));
+
+        TestRegionBSPTree plus = split.getPlus();
+        assertPointLocations(plus, RegionLocation.OUTSIDE,
+                new TestPoint2D(-1, 1), new TestPoint2D(0, 1), new TestPoint2D(1, 1));
+        assertPointLocations(plus, RegionLocation.BOUNDARY,
+                new TestPoint2D(-1, 0), new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+        assertPointLocations(plus, RegionLocation.INSIDE,
+                new TestPoint2D(-1, -1), new TestPoint2D(0, -1), new TestPoint2D(1, -1));
+    }
+
+    @Test
     public void testToString() {
         // arrange
         TestRegionBSPTree tree = fullTree();
@@ -1927,6 +1971,16 @@ public class AbstractRegionBSPTreeTest {
         @Override
         public boolean contains(TestPoint2D pt) {
             return classify(pt) != RegionLocation.OUTSIDE;
+        }
+
+        @Override
+        public List<? extends ConvexRegion<TestPoint2D>> toConvex() {
+            return null;
+        }
+
+        @Override
+        public Split<TestRegionBSPTree> split(Hyperplane<TestPoint2D> splitter) {
+            return split(splitter, new TestRegionBSPTree(), new TestRegionBSPTree());
         }
     }
 

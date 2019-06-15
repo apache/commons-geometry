@@ -19,7 +19,7 @@ package org.apache.commons.geometry.core.partition;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface representing a convex region of space with boundaries defined by
- * hyperplane.
+ * hyperplanes.
  * @param <P> Point implementation type
  */
 public interface ConvexRegion<P extends Point<P>> extends PartitionableRegion<P> {
