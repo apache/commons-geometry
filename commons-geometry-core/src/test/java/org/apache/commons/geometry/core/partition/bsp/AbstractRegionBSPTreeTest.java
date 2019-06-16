@@ -350,16 +350,16 @@ public class AbstractRegionBSPTreeTest {
 
         TestRegionNode node = tree.getRoot();
 
-        tree.setNodeCut(node, new TestLineSegment(p0, p1));
+        tree.cutNode(node, new TestLineSegment(p0, p1));
         node = node.getMinus();
 
-        tree.setNodeCut(node, new TestLineSegment(0, 0, new TestLine(p1, new TestPoint2D(-1, 3))));
+        tree.cutNode(node, new TestLineSegment(0, 0, new TestLine(p1, new TestPoint2D(-1, 3))));
         node = node.getMinus();
 
-        tree.setNodeCut(node, new TestLineSegment(p1, p0));
+        tree.cutNode(node, new TestLineSegment(p1, p0));
         node = node.getMinus();
 
-        tree.setNodeCut(node, new TestLineSegment(0, 0, new TestLine(p0, new TestPoint2D(1, 3))));
+        tree.cutNode(node, new TestLineSegment(0, 0, new TestLine(p0, new TestPoint2D(1, 3))));
 
         // act/assert
         Assert.assertEquals(6, tree.getBoundarySize(), PartitionTestUtils.EPS);
@@ -1952,9 +1952,9 @@ public class AbstractRegionBSPTreeTest {
          * Expose the direct node cut method for easier creation of test tree structures.
          */
         @Override
-        public void setNodeCut(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut)
+        public void cutNode(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut)
         {
-            super.setNodeCut(node, cut);
+            super.cutNode(node, cut);
         }
 
         @Override

@@ -335,13 +335,13 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         RegionNode1D node = tree.getRoot();
 
         if (minBoundary != null) {
-            tree.setNodeCut(node, minBoundary.span());
+            tree.cutNode(node, minBoundary.span());
 
             node = node.getMinus();
         }
 
         if (maxBoundary != null) {
-            tree.setNodeCut(node, maxBoundary.span());
+            tree.cutNode(node, maxBoundary.span());
         }
 
         return tree;

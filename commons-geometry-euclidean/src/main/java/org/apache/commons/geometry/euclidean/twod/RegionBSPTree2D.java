@@ -264,19 +264,19 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
         // construct the tree by directly setting the node cut subhyperplanes so that
         // we can represent areas with zero size
-        tree.setNodeCut(node, Line.fromPointAndDirection(lowerLeft, Vector2D.PLUS_X, precision)
+        tree.cutNode(node, Line.fromPointAndDirection(lowerLeft, Vector2D.PLUS_X, precision)
                 .segment(lowerLeft, lowerRight));
         node = node.getMinus();
 
-        tree.setNodeCut(node, Line.fromPointAndDirection(lowerRight, Vector2D.PLUS_Y, precision)
+        tree.cutNode(node, Line.fromPointAndDirection(lowerRight, Vector2D.PLUS_Y, precision)
                 .segment(lowerRight, upperRight));
         node = node.getMinus();
 
-        tree.setNodeCut(node, Line.fromPointAndDirection(upperRight, Vector2D.MINUS_X, precision)
+        tree.cutNode(node, Line.fromPointAndDirection(upperRight, Vector2D.MINUS_X, precision)
                 .segment(upperRight, upperLeft));
         node = node.getMinus();
 
-        tree.setNodeCut(node, Line.fromPointAndDirection(upperLeft, Vector2D.MINUS_Y, precision)
+        tree.cutNode(node, Line.fromPointAndDirection(upperLeft, Vector2D.MINUS_Y, precision)
                 .segment(upperLeft, lowerLeft));
 
         return tree;
