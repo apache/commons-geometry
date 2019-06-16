@@ -26,7 +26,7 @@ import java.util.function.BiConsumer;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partition.ConvexRegion;
 import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.PartitionableRegion;
+import org.apache.commons.geometry.core.partition.SplittableRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;

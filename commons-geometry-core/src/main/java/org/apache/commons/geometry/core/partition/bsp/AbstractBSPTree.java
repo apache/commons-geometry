@@ -644,16 +644,13 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         N splitRoot = temp.splitSubtree(this.getRoot(), splitter.span());
 
-        if (temp == minus) {
+        if (minus != null) {
             if (plus != null) {
                 plus.extract(splitRoot.getPlus());
             }
             minus.extract(splitRoot.getMinus());
         }
         else {
-            if (minus != null) {
-                minus.extract(splitRoot.getMinus());
-            }
             plus.extract(splitRoot.getPlus());
         }
     }

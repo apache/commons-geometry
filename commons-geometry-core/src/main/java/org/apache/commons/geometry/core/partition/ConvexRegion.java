@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.Point;
  * hyperplanes.
  * @param <P> Point implementation type
  */
-public interface ConvexRegion<P extends Point<P>> extends PartitionableRegion<P> {
+public interface ConvexRegion<P extends Point<P>> extends SplittableRegion<P> {
 
     /** {@inheritDoc}
     *

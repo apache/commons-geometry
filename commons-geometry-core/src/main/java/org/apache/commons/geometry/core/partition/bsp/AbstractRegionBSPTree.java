@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
-import org.apache.commons.geometry.core.partition.PartitionableRegion;
+import org.apache.commons.geometry.core.partition.SplittableRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -37,7 +37,7 @@ import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor.ClosestFirs
  * @param <P> Point implementation type
  */
 public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
-    extends AbstractBSPTree<P, N> implements PartitionableRegion<P> {
+    extends AbstractBSPTree<P, N> implements SplittableRegion<P> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;

@@ -1602,6 +1602,119 @@ public class AbstractBSPTreeTest {
         Assert.assertTrue(str.contains("cut= TestLineSegment"));
     }
 
+    @Test
+    public void testSplitIntoTree() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        TestBSPTree minus = new TestBSPTree();
+        TestBSPTree plus = new TestBSPTree();
+
+        TestLine splitter = new TestLine(new TestPoint2D(0,  0), new TestPoint2D(-1, 1));
+
+        // act
+        tree.splitIntoTrees(splitter, minus, plus);
+
+        // assert
+        TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY, splitter);
+
+        Assert.assertEquals(5, tree.count());
+        Assert.assertEquals(2, tree.height());
+
+        Assert.assertEquals(5, minus.count());
+        Assert.assertEquals(2, minus.height());
+
+        List<TestLineSegment> minusSegments = getLineSegments(minus);
+        Assert.assertEquals(2, minusSegments.size());
+        PartitionTestUtils.assertSegmentsEqual(splitSegment, minusSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(Double.NEGATIVE_INFINITY, 0, TestLine.X_AXIS),
+                minusSegments.get(1));
+
+        Assert.assertEquals(7, plus.count());
+        Assert.assertEquals(3, plus.height());
+
+        List<TestLineSegment> plusSegments = getLineSegments(plus);
+        Assert.assertEquals(3, plusSegments.size());
+        PartitionTestUtils.assertSegmentsEqual(splitSegment, plusSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                plusSegments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.Y_AXIS),
+                plusSegments.get(2));
+    }
+
+    @Test
+    public void testSplitIntoTree_minusOnly() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        TestBSPTree minus = new TestBSPTree();
+
+        TestLine splitter = new TestLine(new TestPoint2D(0,  0), new TestPoint2D(-1, 1));
+
+        // act
+        tree.splitIntoTrees(splitter, minus, null);
+
+        // assert
+        TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY, splitter);
+
+        Assert.assertEquals(5, tree.count());
+        Assert.assertEquals(2, tree.height());
+
+        Assert.assertEquals(5, minus.count());
+        Assert.assertEquals(2, minus.height());
+
+        List<TestLineSegment> minusSegments = getLineSegments(minus);
+        Assert.assertEquals(2, minusSegments.size());
+        PartitionTestUtils.assertSegmentsEqual(splitSegment, minusSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(Double.NEGATIVE_INFINITY, 0, TestLine.X_AXIS),
+                minusSegments.get(1));
+    }
+
+    @Test
+    public void testSplitIntoTree_plusOnly() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+        tree.getRoot()
+            .cut(TestLine.X_AXIS)
+            .getMinus()
+                .cut(TestLine.Y_AXIS);
+
+        TestBSPTree plus = new TestBSPTree();
+
+        TestLine splitter = new TestLine(new TestPoint2D(0,  0), new TestPoint2D(-1, 1));
+
+        // act
+        tree.splitIntoTrees(splitter, null, plus);
+
+        // assert
+        TestLineSegment splitSegment = new TestLineSegment(Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY, splitter);
+
+        Assert.assertEquals(5, tree.count());
+        Assert.assertEquals(2, tree.height());
+
+        Assert.assertEquals(7, plus.count());
+        Assert.assertEquals(3, plus.height());
+
+        List<TestLineSegment> plusSegments = getLineSegments(plus);
+        Assert.assertEquals(3, plusSegments.size());
+        PartitionTestUtils.assertSegmentsEqual(splitSegment, plusSegments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.X_AXIS),
+                plusSegments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(new TestLineSegment(0, Double.POSITIVE_INFINITY, TestLine.Y_AXIS),
+                plusSegments.get(2));
+    }
+
     private void assertNodesCopiedRecursive(final TestNode orig, final TestNode copy) {
         Assert.assertNotSame(orig, copy);
 

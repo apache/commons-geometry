@@ -29,12 +29,12 @@ import org.apache.commons.geometry.core.Point;
 public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> extends Iterable<N> {
 
     /** Return the total number of nodes in the subtree.
-     * @return
+     * @return the total number of nodes in the subtree.
      */
     int count();
 
     /** The height of the subtree, ie the length of the longest downward path from
-     * the subtree root to a leaf node.
+     * the subtree root to a leaf node. A leaf node has a height of 0.
      * @return the height of the subtree.
      */
     int height();

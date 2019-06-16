@@ -26,8 +26,8 @@ import org.apache.commons.geometry.core.Region;
  * regions with similar general properties.
  * @param <P> Point implementation type
  */
-public interface PartitionableRegion<P extends Point<P>>
-    extends Region<P>, Splittable<P, PartitionableRegion<P>> {
+public interface SplittableRegion<P extends Point<P>>
+    extends Region<P>, Splittable<P, SplittableRegion<P>> {
 
     /** Convert this instance into a list of convex regions.
      * @return a list of convex region covering the same space as this

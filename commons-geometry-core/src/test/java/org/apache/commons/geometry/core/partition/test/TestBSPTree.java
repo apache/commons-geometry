@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
+import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
@@ -29,6 +30,18 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
     @Override
     protected TestNode createNode() {
         return new TestNode(this);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>Exposed as public for testing.</p>
+     */
+    @Override
+    public void splitIntoTrees(Hyperplane<TestPoint2D> splitter,
+            final AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> minus,
+            final AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> plus) {
+
+        super.splitIntoTrees(splitter, minus, plus);
     }
 
     /** BSP Tree node class for {@link TestBSPTree}.

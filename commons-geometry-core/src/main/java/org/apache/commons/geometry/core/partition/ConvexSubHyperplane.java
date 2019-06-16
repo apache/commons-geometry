@@ -27,7 +27,7 @@ public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P
 
     /** {@inheritDoc}
      *
-     * <p>The parts resulting from a split operation with a convex subhyperplane
+     * <p>The parts resulting from a partition operation with a convex subhyperplane
      * are guaranteed to also be convex.</p>
      */
     @Override

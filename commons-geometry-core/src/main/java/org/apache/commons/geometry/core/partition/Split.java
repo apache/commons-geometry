@@ -21,20 +21,18 @@ package org.apache.commons.geometry.core.partition;
  */
 public class Split<T> {
 
-    /** Part of the split object lying on the minus side of the
-     * splitting hyperplane.
+    /** Part of the object lying on the minus side of the splitting hyperplane.
      */
     private final T minus;
 
-    /** Part of the split object lying on the plus side of the splitting
-     * hyperplane.
+    /** Part of the object lying on the plus side of the splitting hyperplane.
      */
     private final T plus;
 
     /** Build a new instance from its parts.
-     * @param minus part of the split object lying on the minus side of the
+     * @param minus part of the object lying on the minus side of the
      *      splitting hyperplane or null if no such part exists
-     * @param plus part of the split object lying on the plus side of the
+     * @param plus part of the object lying on the plus side of the
      *      splitting hyperplane or null if no such part exists.
      */
     public Split(final T minus, final T plus) {
@@ -60,7 +58,7 @@ public class Split<T> {
         return plus;
     }
 
-    /** Get the location of the split object with respect to its splitting
+    /** Get the location of the object with respect to its splitting
      * hyperplane.
      * @return
      *  <ul>
