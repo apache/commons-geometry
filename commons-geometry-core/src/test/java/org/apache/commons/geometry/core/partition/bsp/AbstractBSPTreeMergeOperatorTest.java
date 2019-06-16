@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition.bsp;
 
-import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTreeMergeSupport;
+import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTreeMergeOperator;
 import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.BSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AttributeBSPTree.AttributeNode;
@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractBSPTreeMergeSupportTest {
+public class AbstractBSPTreeMergeOperatorTest {
 
     @Test
     public void testMerge_singleNodeTreeWithSingleNodeTree() {
@@ -530,7 +530,7 @@ public class AbstractBSPTreeMergeSupportTest {
         PartitionTestUtils.assertTreeStructure(b);
     }
 
-    private static class TestMergeOperator extends AbstractBSPTreeMergeSupport<TestPoint2D, AttributeNode<TestPoint2D, String>> {
+    private static class TestMergeOperator extends AbstractBSPTreeMergeOperator<TestPoint2D, AttributeNode<TestPoint2D, String>> {
 
         /** Perform the test merge operation with the given arguments.
          * @param input1

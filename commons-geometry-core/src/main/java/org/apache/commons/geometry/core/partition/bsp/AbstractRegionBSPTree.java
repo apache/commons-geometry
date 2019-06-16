@@ -614,7 +614,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
      */
-    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends AbstractBSPTreeMergeSupport<P, N> {
+    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends AbstractBSPTreeMergeOperator<P, N> {
 
         /** Merge two input trees, storing the output in the third. The output tree can be one of the
          * input trees. The output tree is condensed before the method returns.

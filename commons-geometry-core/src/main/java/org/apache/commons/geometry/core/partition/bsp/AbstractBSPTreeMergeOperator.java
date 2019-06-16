@@ -30,25 +30,45 @@ import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree.AbstractNo
  * cleanly at this level.</p>
  *
  * <p>This class maintains state during the merging process and is therefore
- * not thread-safe.</p>
+ * <em>not</em> thread-safe.</p>
  */
-public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends AbstractNode<P, N>>
-    extends AbstractBSPTreeSplitSupport<P, N> {
+public abstract class AbstractBSPTreeMergeOperator<P extends Point<P>, N extends AbstractNode<P, N>> {
+
+    /** The tree that the merge operation output will be written to. All existing content
+     * in this tree is overwritten.
+     */
+    private AbstractBSPTree<P, N> outputTree;
+
+    /** Set the tree used as output for this instance.
+     * @param outputTree the tree used as output for this instance
+     */
+    protected void setOutputTree(final AbstractBSPTree<P, N> outputTree) {
+        this.outputTree = outputTree;
+    }
+
+    /** Get the tree used as output for this instance.
+     * @return the tree used as output for this instance
+     */
+    protected AbstractBSPTree<P, N> getOutputTree() {
+        return outputTree;
+    }
 
     /** Perform a merge operation with the two input trees and store the result in the output tree. The
      * output tree may be one of the input trees, in which case, the tree is modified in place.
      * @param inputTree1 first input tree
      * @param inputTree2 second input tree
-     * @param outputTree output tree
+     * @param outputTree output tree all previous content in this tree is overwritten
      */
     protected void performMerge(final AbstractBSPTree<P, N> inputTree1, final AbstractBSPTree<P, N> inputTree2,
             final AbstractBSPTree<P, N> outputTree) {
+
         setOutputTree(outputTree);
 
         final N root1 = inputTree1.getRoot();
         final N root2 = inputTree2.getRoot();
 
         final N outputRoot = performMergeRecursive(root1, root2);
+
         getOutputTree().setRoot(outputRoot);
     }
 
@@ -66,20 +86,48 @@ public abstract class AbstractBSPTreeMergeSupport<P extends Point<P>, N extends 
 
             // copy the merged node to the output if needed (in case mergeLeaf
             // returned one of the input nodes directly)
-            return outputSubtree(merged);
+            return outputTree.importSubtree(merged);
         }
         else {
-            final N partitioned = splitSubtree(node2, node1.getCut());
+            final N partitioned = outputTree.splitSubtree(node2, node1.getCut());
 
             final N minus = performMergeRecursive(node1.getMinus(), partitioned.getMinus());
 
             final N plus = performMergeRecursive(node1.getPlus(), partitioned.getPlus());
 
-            final N outputNode = outputNode(node1);
+            final N outputNode = outputTree.copyNode(node1);
             outputNode.setSubtree(node1.getCut(), minus, plus);
 
             return outputNode;
         }
+    }
+
+    /** Create a new node in the output tree. The node is associated with the output tree but
+     * is not attached to a parent node.
+     * @return a new node associated with the output tree but not yet attached to a parent
+     */
+    protected N outputNode() {
+        return outputTree.createNode();
+    }
+
+    /** Create a new node in the output tree with the same non-structural properties as the given
+     * node. Non-structural properties are properties other than parent, children, or cut. The
+     * returned node is associated with the output tree but is not attached to a parent node.
+     * Note that this method only copies the given node and <strong>not</strong> any of its children.
+     * @param node the input node to copy properties from
+     * @return a new node in the output tree
+     */
+    protected N outputNode(final N node) {
+        return outputTree.copyNode(node);
+    }
+
+    /** Place the subtree rooted at the given input node into the output tree. The subtree
+     * is copied if needed.
+     * @param node the root of the subtree to copy
+     * @return a subtree in the output tree
+     */
+    protected N outputSubtree(final N node) {
+        return outputTree.importSubtree(node);
     }
 
     /** Merge a leaf node from one input with a subtree from another.

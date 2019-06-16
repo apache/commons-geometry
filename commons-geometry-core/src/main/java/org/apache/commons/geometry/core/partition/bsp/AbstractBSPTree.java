@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -67,8 +66,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return root;
     }
 
-    /** Set the root node for the tree.
-     * @return
+    /** Set the root node for the tree. Cached tree properties are invalidated
+     * with {@link #invalidate()}.
      */
     protected void setRoot(final N root) {
         this.root = root;
@@ -633,7 +632,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** Split this tree with the given hyperplane, placing the split contents into the given
      * target trees. One of the given trees may be null, in which case that portion of the split
-     * will not be exported.
+     * will not be exported. The current tree is not modified.
      * @param splitter splitting hyperplane
      * @param minus tree that will contain the portion of the tree on the minus side of the splitter
      * @param plus tree that will contain the portion of the tree on the plus side of the splitter
@@ -663,7 +662,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * on the same region as the node. The subtree rooted at {@code node} is imported into
      * this tree, meaning that if it comes from a different tree, the other tree is not
      * modified.
-     * @param node the root node of the subtree to split; the node may be a leaf node
+     * @param node the root node of the subtree to split; may come from a different tree,
+     *      in which case the other tree is not modified
      * @param partitioner partitioning convex subhyperplane
      * @return node containing the split subtree
      */
