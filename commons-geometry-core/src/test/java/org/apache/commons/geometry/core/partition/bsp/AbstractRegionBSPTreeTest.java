@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexRegion;
+import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -2117,7 +2117,7 @@ public class AbstractRegionBSPTreeTest {
         }
 
         @Override
-        public List<? extends ConvexRegion<TestPoint2D>> toConvex() {
+        public List<? extends ConvexHyperplaneBoundedRegion<TestPoint2D>> toConvex() {
             return null;
         }
 

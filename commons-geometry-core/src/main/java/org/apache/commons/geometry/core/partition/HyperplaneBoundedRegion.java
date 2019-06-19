@@ -21,17 +21,18 @@ import java.util.List;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 
-/** Interface representing regions with boundaries defined by hyperplanes.
- * Regions of this type can be split by additional hyperplanes into smaller
- * regions with similar general properties.
+/** Interface representing regions with boundaries defined by hyperplanes or
+ * portions of hyperplanes. This interface is intended to represent closed regions
+ * with finite sizes as well as infinite and empty spaces. Regions of this type
+ * can be recursively split by hyperplanes into similar regions.
  * @param <P> Point implementation type
  */
-public interface SplittableRegion<P extends Point<P>>
-    extends Region<P>, Splittable<P, SplittableRegion<P>> {
+public interface HyperplaneBoundedRegion<P extends Point<P>>
+    extends Region<P>, Splittable<P, HyperplaneBoundedRegion<P>> {
 
     /** Convert this instance into a list of convex regions.
      * @return a list of convex region covering the same space as this
      *      instance
      */
-    List<? extends ConvexRegion<P>> toConvex();
+    List<? extends ConvexHyperplaneBoundedRegion<P>> toConvex();
 }

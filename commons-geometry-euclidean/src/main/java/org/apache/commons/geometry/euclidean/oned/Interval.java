@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexRegion;
+import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.Split;
@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Interval implements ConvexRegion<Vector1D>, Serializable {
+public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;

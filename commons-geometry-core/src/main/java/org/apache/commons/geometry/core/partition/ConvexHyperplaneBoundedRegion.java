@@ -19,10 +19,10 @@ package org.apache.commons.geometry.core.partition;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface representing a convex region of space with boundaries defined by
- * hyperplanes.
+ * hyperplanes. The regions may have infinite size.
  * @param <P> Point implementation type
  */
-public interface ConvexRegion<P extends Point<P>> extends SplittableRegion<P> {
+public interface ConvexHyperplaneBoundedRegion<P extends Point<P>> extends HyperplaneBoundedRegion<P> {
 
     /** {@inheritDoc}
     *
@@ -30,5 +30,5 @@ public interface ConvexRegion<P extends Point<P>> extends SplittableRegion<P> {
     * are guaranteed to also be convex.</p>
     */
     @Override
-    Split<? extends ConvexRegion<P>> split(Hyperplane<P> splitter);
+    Split<? extends ConvexHyperplaneBoundedRegion<P>> split(Hyperplane<P> splitter);
 }
