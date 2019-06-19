@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.ConvexRegion;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor;
@@ -82,6 +86,19 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
+    public List<? extends ConvexRegion<Vector2D>> toConvex() {
+        // TODO
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Split<RegionBSPTree2D> split(Hyperplane<Vector2D> splitter) {
+        return split(splitter, RegionBSPTree2D.empty(), RegionBSPTree2D.empty());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Vector2D project(Vector2D pt) {
         // use our custom projector so that we can disambiguate points that are
         // actually equidistant from the target point
@@ -106,18 +123,15 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     @Override
     protected RegionSizeProperties<Vector2D> computeRegionSizeProperties() {
         // handle simple cases
-        if (isEmpty()) {
-            return new RegionSizeProperties<>(0, null);
+        if (isFull()) {
+           return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
         }
-        else if (isFull()) {
-            return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
+        else if (isEmpty()) {
+            return new RegionSizeProperties<>(0, null);
         }
 
         // compute the size based on the boundary segments
         double quadrilateralAreaSum = 0.0;
-
-        double simpleSumX = 0.0;
-        double simpleSumY = 0.0;
 
         double scaledSumX = 0.0;
         double scaledSumY = 0.0;
@@ -125,9 +139,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         Vector2D startPoint;
         Vector2D endPoint;
         double signedArea;
-
-        double sumX;
-        double sumY;
 
         final List<LineSegment> boundary = getBoundarySegments();
 
@@ -149,33 +160,22 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
             quadrilateralAreaSum += signedArea;
 
-            // compute raw and scaled coordinate values for the barycenter
-            sumX = (startPoint.getX() + endPoint.getX());
-            sumY = (startPoint.getY() + endPoint.getY());
-
-            simpleSumX += sumX;
-            simpleSumY += sumY;
-
-            scaledSumX += signedArea * sumX;
-            scaledSumY += signedArea * sumY;
+            // compute scaled coordinate values for the barycenter
+            scaledSumX += signedArea * (startPoint.getX() + endPoint.getX());
+            scaledSumY += signedArea * (startPoint.getY() + endPoint.getY());
         }
 
-        if (quadrilateralAreaSum < 0.0) {
-            // negative size, meaning that the shape is inside out, and
-            // has an infinite "inside"
-            return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
-        }
-
-        final double size = 0.5 * quadrilateralAreaSum;
-
+        double size = Double.POSITIVE_INFINITY;
         Vector2D barycenter = null;
-        if (Double.isFinite(quadrilateralAreaSum)) {
+
+        // The area is finite only if the computed quadrilateral area is finite and non-negative.
+        // Negative areas indicate that the region is inside-out, with a finite outside surrounded
+        // by an infinite inside.
+        if (quadrilateralAreaSum >= 0.0 && Double.isFinite(quadrilateralAreaSum)) {
+            size = 0.5 * quadrilateralAreaSum;
+
             if (quadrilateralAreaSum > 0.0) {
                 barycenter = Vector2D.of(scaledSumX, scaledSumY).multiply(1.0 / (3.0 * quadrilateralAreaSum));
-            }
-            else {
-                // area is zero; use the simple centroid for the barycenter
-                barycenter = Vector2D.of(simpleSumX, simpleSumY).multiply(1.0 / (2.0 * boundary.size()));
             }
         }
 
@@ -184,8 +184,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
-    protected void invalidateRegionProperties() {
-        super.invalidateRegionProperties();
+    protected void invalidate() {
+        super.invalidate();
 
         boundaryPaths = null;
     }
@@ -217,7 +217,9 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * as its lower-left corner and will have a width and height of {@code xDelta} and {@code yDelta}
      * respectively.
      *
-     * <p>This method supports construction of infinitely thin or point-like regions.</p>
+     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
+     * The length and width of the created region must be non-zero as evaluated by the given precision
+     * content.</p>
      *
      * @param pt point lying in a corner of the region
      * @param xDelta distance to move along the x axis to place the other points in the
@@ -228,6 +230,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      *      on the top of the rectangle
      * @param precision precision context to use for floating point comparisons
      * @return a new bsp tree instance representing a rectangular region
+     * @throws GeometryValueException if the width or height of the defined rectangle is zero
+     *      as evaluated by the given precision context.
      */
     public static RegionBSPTree2D rect(final Vector2D pt, final double xDelta, final double yDelta,
             final DoublePrecisionContext precision) {
@@ -238,12 +242,16 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** Construct a bsp tree representing an axis-oriented rectangular region. The points {@code a} and {@code b}
      * are taken to represent opposite corner points in the rectangle and may be specified in any order.
      *
-     * <p>This method supports construction of infinitely thin or point-like regions.</p>
+     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
+     * The length and width of the created region must be non-zero as evaluated by the given precision
+     * content.</p>
      *
      * @param a first corner point in the rectangle (opposite of {@code b})
      * @param b second corner point in the rectangle (opposite of {@code a})
      * @param precision precision context to use for floating point comparisons
      * @return a new bsp tree instance representing a rectangular region
+     * @throws GeometryValueException if the width or height of the defined rectangle is zero
+     *      as evaluated by the given precision context.
      */
     public static RegionBSPTree2D rect(final Vector2D a, final Vector2D b, final DoublePrecisionContext precision) {
 
@@ -253,31 +261,36 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         final double minY = Math.min(a.getY(), b.getY());
         final double maxY = Math.max(a.getY(), b.getY());
 
+        if (precision.eq(minX, maxX) || precision.eq(minY, maxY)) {
+            throw new GeometryValueException("Rectangle has zero size: " + a + ", " + b + ".");
+        }
+
         final Vector2D lowerLeft = Vector2D.of(minX, minY);
         final Vector2D upperLeft = Vector2D.of(minX, maxY);
 
         final Vector2D upperRight = Vector2D.of(maxX, maxY);
         final Vector2D lowerRight = Vector2D.of(maxX, minY);
 
+        final Line bottomLine = Line.fromPointAndDirection(lowerLeft, Vector2D.PLUS_X, precision);
+        final Line rightLine = Line.fromPointAndDirection(lowerRight, Vector2D.PLUS_Y, precision);
+        final Line topLine = Line.fromPointAndDirection(upperRight, Vector2D.MINUS_X, precision);
+        final Line leftLine = Line.fromPointAndDirection(upperLeft, Vector2D.MINUS_Y, precision);
+
         final RegionBSPTree2D tree = empty();
         RegionNode2D node = tree.getRoot();
 
         // construct the tree by directly setting the node cut subhyperplanes so that
         // we can represent areas with zero size
-        tree.cutNode(node, Line.fromPointAndDirection(lowerLeft, Vector2D.PLUS_X, precision)
-                .segment(lowerLeft, lowerRight));
+        tree.cutNode(node, bottomLine.span());
         node = node.getMinus();
 
-        tree.cutNode(node, Line.fromPointAndDirection(lowerRight, Vector2D.PLUS_Y, precision)
-                .segment(lowerRight, upperRight));
+        tree.cutNode(node, topLine.span());
         node = node.getMinus();
 
-        tree.cutNode(node, Line.fromPointAndDirection(upperRight, Vector2D.MINUS_X, precision)
-                .segment(upperRight, upperLeft));
+        tree.cutNode(node, rightLine.segment(minY, maxY));
         node = node.getMinus();
 
-        tree.cutNode(node, Line.fromPointAndDirection(upperLeft, Vector2D.MINUS_Y, precision)
-                .segment(upperLeft, lowerLeft));
+        tree.cutNode(node, leftLine.segment(-maxY, -minY));
 
         return tree;
     }
@@ -383,6 +396,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          */
         private void connectNodeSegments() {
             if (!nodeSegments.isEmpty()) {
+//                System.out.println(nodeSegments);
                 connector.connect(nodeSegments);
             }
         }

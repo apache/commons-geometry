@@ -19,7 +19,7 @@ package org.apache.commons.geometry.core.partition;
 /** Class containing the result of splitting an object with a hyperplane.
  * @param <T> Split type
  */
-public class Split<T> {
+public final class Split<T> {
 
     /** Part of the object lying on the minus side of the splitting hyperplane.
      */
@@ -78,5 +78,21 @@ public class Split<T> {
             return SplitLocation.PLUS;
         }
         return SplitLocation.NEITHER;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[location= ")
+            .append(getLocation())
+            .append(", minus= ")
+            .append(minus)
+            .append(", plus= ")
+            .append(plus)
+            .append("]");
+
+        return sb.toString();
     }
 }

@@ -24,9 +24,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partition.ConvexRegion;
 import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.SplittableRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
@@ -119,11 +117,17 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
        return toIntervals();
    }
 
-   /** {@inheritDoc} */
+   /** {@inheritDoc}
+    *
+    * <p>When splitting trees representing single points with a splitter lying directly
+    * on the point, the result point is placed on one side of the splitter based on its
+    * orientation: if the splitter is positive-facing, the point is placed on the plus
+    * side of the split; if the splitter is negative-facing, the point is placed on the
+    * minus side of the split.</p>
+    */
    @Override
-   public Split<RegionBSPTree1D> split(Hyperplane<Vector1D> splitter) {
-       // TODO
-//       return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
+   public Split<RegionBSPTree1D> split(final Hyperplane<Vector1D> splitter) {
+       return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
    }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
@@ -392,7 +396,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** Internal class containing pairs of interval boundaries.
      */
-    private static final class BoundaryPair implements Comparable<BoundaryPair> {
+    private static final class BoundaryPair {
 
         /** The min boundary */
         private final OrientedPoint min;
@@ -430,12 +434,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          */
         public double getMinValue() {
             return (min != null) ? min.getLocation() : Double.NEGATIVE_INFINITY;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int compareTo(BoundaryPair other) {
-            return Double.compare(this.getMinValue(), other.getMinValue());
         }
     }
 

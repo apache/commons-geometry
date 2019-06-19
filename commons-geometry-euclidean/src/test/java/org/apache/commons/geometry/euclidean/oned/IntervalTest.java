@@ -16,9 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -648,6 +652,203 @@ public class IntervalTest {
 
         checkInterval(Interval.of(-1, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform),
                 Double.NEGATIVE_INFINITY, 1);
+    }
+
+    @Test
+    public void testToConvex() {
+        // arrange
+        Interval interval = Interval.of(1, 2, TEST_PRECISION);
+
+        // act
+        List<Interval> result = interval.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+        Assert.assertSame(interval, result.get(0));
+    }
+
+    @Test
+    public void testSplit_full_positiveFacingSplitter() {
+        // arrange
+        Interval interval = Interval.full();
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkInterval(split.getMinus(), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testSplit_full_negativeFacingSplitter() {
+        // arrange
+        Interval interval = Interval.full();
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkInterval(split.getMinus(), Double.NEGATIVE_INFINITY, 1);
+        checkInterval(split.getPlus(), 1, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testSplit_halfSpace_positiveFacingSplitter() {
+        // arrange
+        Interval interval = Interval.min(-1, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), false, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkInterval(split.getMinus(), 1, Double.POSITIVE_INFINITY);
+        checkInterval(split.getPlus(), -1, 1);
+    }
+
+
+    @Test
+    public void testSplit_halfSpace_negativeFacingSplitter() {
+        // arrange
+        Interval interval = Interval.min(-1, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), false, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkInterval(split.getMinus(), 1, Double.POSITIVE_INFINITY);
+        checkInterval(split.getPlus(), -1, 1);
+    }
+
+    @Test
+    public void testSplit_splitterBelowInterval() {
+        // arrange
+        Interval interval = Interval.of(5, 10, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertSame(interval, split.getPlus());
+    }
+
+    @Test
+    public void testSplit_splitterOnMinBoundary() {
+        // arrange
+        Interval interval = Interval.of(5, 10, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(5), false, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(interval, split.getMinus());
+    }
+
+    @Test
+    public void testSplit_splitterAboveInterval() {
+        // arrange
+        Interval interval = Interval.of(5, 10, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(11), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(interval, split.getMinus());
+    }
+
+    @Test
+    public void testSplit_splitterOnMaxBoundary() {
+        // arrange
+        Interval interval = Interval.of(5, 10, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(10), false, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertSame(interval, split.getPlus());
+    }
+
+    @Test
+    public void testSplit_point_minusOnly() {
+        // arrange
+        Interval interval = Interval.point(2, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), false, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        checkInterval(split.getMinus(), 2, 2);
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_point_plusOnly() {
+        // arrange
+        Interval interval = Interval.point(2, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        checkInterval(split.getPlus(), 2, 2);
+    }
+
+    @Test
+    public void testSplit_point_onPoint() {
+        // arrange
+        Interval interval = Interval.point(1, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+                Vector1D.of(1), true, TEST_PRECISION);
+
+        // act
+        Split<Interval> split = interval.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
     }
 
     @Test

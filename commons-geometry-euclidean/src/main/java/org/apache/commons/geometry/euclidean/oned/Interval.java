@@ -315,9 +315,41 @@ public class Interval implements ConvexRegion<Vector1D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Split<Interval> split(Hyperplane<Vector1D> splitter) {
-        // TODO
-//        return null;
+    public Split<Interval> split(final Hyperplane<Vector1D> splitter) {
+        final OrientedPoint splitOrientedPoint = (OrientedPoint) splitter;
+        final Vector1D splitPoint = splitOrientedPoint.getPoint();
+
+        final HyperplaneLocation splitterMinLoc = (minBoundary != null) ? minBoundary.classify(splitPoint) : null;
+        final HyperplaneLocation splitterMaxLoc = (maxBoundary != null) ? maxBoundary.classify(splitPoint) : null;
+
+        Interval low = null;
+        Interval high = null;
+
+        if (splitterMinLoc != HyperplaneLocation.ON || splitterMaxLoc != HyperplaneLocation.ON) {
+
+            if (splitterMinLoc != null && splitterMinLoc != HyperplaneLocation.MINUS) {
+                // splitter is on or below min boundary
+                high = this;
+            }
+            else if (splitterMaxLoc != null && splitterMaxLoc != HyperplaneLocation.MINUS) {
+                // splitter is on or above max boundary
+                low = this;
+            }
+            else {
+                // the interval is split in two
+                low = new Interval(minBoundary, OrientedPoint.createPositiveFacing(
+                        splitPoint, splitOrientedPoint.getPrecision()));
+                high = new Interval(OrientedPoint.createNegativeFacing(
+                        splitPoint, splitOrientedPoint.getPrecision()), maxBoundary);
+            }
+        }
+
+        // assign minus/plus based on the orientation of the splitter
+        final boolean lowIsMinus = splitOrientedPoint.isPositiveFacing();
+        final Interval minus = lowIsMinus ? low : high;
+        final Interval plus = lowIsMinus ? high : low;
+
+        return new Split<>(minus, plus);
     }
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.

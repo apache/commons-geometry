@@ -168,10 +168,14 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
         if (minus != null) {
             minus.getRoot().getPlus().setLocation(RegionLocation.OUTSIDE);
+            minus.condense();
+
             splitMinus = minus.isEmpty() ? null : minus;
         }
         if (plus != null) {
             plus.getRoot().getMinus().setLocation(RegionLocation.OUTSIDE);
+            plus.condense();
+
             splitPlus = plus.isEmpty() ? null : plus;
         }
 
@@ -488,14 +492,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     protected void invalidate() {
         super.invalidate();
 
-        invalidateRegionProperties();
-    }
-
-    /**
-     * Invalidate properties computed for the region. The properties should be recomputed
-     * when next requested.
-     */
-    protected void invalidateRegionProperties() {
+        // clear cached region properties
         boundarySize = UNKNOWN_SIZE;
         regionSizeProperties = null;
     }

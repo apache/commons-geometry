@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -566,6 +568,186 @@ public class RegionBSPTree1DTest {
         checkInterval(intervals.get(0), -2, -1);
         checkInterval(intervals.get(1), 1, 4);
         checkInterval(intervals.get(2), 5, 6);
+    }
+
+    @Test
+    public void testToConvex() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        tree.add(Interval.of(-1, 6, precision));
+
+        // act
+        List<Interval> intervals = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+        checkInterval(intervals.get(0), -1, 6);
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.full();
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, true, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        List<Interval> minusIntervals = split.getMinus().toConvex();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), Double.NEGATIVE_INFINITY, 2);
+
+        List<Interval> plusIntervals = split.getPlus().toConvex();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 2, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testSplit_empty() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, true, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_bothSides() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.max(-2, TEST_PRECISION));
+        tree.add(Interval.of(1, 4, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        List<Interval> minusIntervals = split.getMinus().toConvex();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 2, 4);
+
+        List<Interval> plusIntervals = split.getPlus().toConvex();
+        Assert.assertEquals(2, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), Double.NEGATIVE_INFINITY, -2);
+        checkInterval(plusIntervals.get(1), 1, 2);
+    }
+
+    @Test
+    public void testSplit_splitterOnBoundary_minus() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 4, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        List<Interval> minusIntervals = split.getMinus().toConvex();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 1, 4);
+
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_splitterOnBoundary_plus() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+        tree.add(Interval.of(1, 4, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(4, false, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<Interval> plusIntervals = split.getPlus().toConvex();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 4);
+    }
+
+    @Test
+    public void testSplit_point() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1.0, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<Interval> plusIntervals = split.getPlus().toConvex();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1);
+    }
+
+    @Test
+    public void testSplit_point_splitOnPoint_positiveFacingSplitter() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<Interval> plusIntervals = split.getPlus().toConvex();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1);
+    }
+
+    @Test
+    public void testSplit_point_splitOnPoint_negativeFacingSplitter() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1, TEST_PRECISION));
+
+        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        List<Interval> minusIntervals = split.getMinus().toConvex();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 1, 1);
+
+        Assert.assertNull(split.getPlus());
     }
 
     @Test

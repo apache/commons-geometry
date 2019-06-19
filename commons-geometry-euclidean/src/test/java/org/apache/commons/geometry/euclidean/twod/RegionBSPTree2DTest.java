@@ -21,8 +21,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -137,6 +141,126 @@ public class RegionBSPTree2DTest {
         GeometryTestUtils.assertThrows(() -> {
             tree.getBoundaryPaths().add(LineSegmentPath.builder(null).build());
         }, UnsupportedOperationException.class);
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree2D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        checkClassify(split.getMinus(), RegionLocation.INSIDE, Vector2D.of(0, 1));
+        checkClassify(split.getMinus(), RegionLocation.OUTSIDE, Vector2D.of(1, -1));
+
+        List<LineSegmentPath> minusBoundaryList = split.getMinus().getBoundaryPaths();
+        Assert.assertEquals(1, minusBoundaryList.size());
+
+        LineSegmentPath minusBoundary = minusBoundaryList.get(0);
+        Assert.assertEquals(1, minusBoundary.getSegments().size());
+        Assert.assertTrue(minusBoundary.isInfinite());
+        Assert.assertSame(splitter, minusBoundary.getStartSegment().getLine());
+
+        checkClassify(split.getPlus(), RegionLocation.OUTSIDE, Vector2D.of(0, 1));
+        checkClassify(split.getPlus(), RegionLocation.INSIDE, Vector2D.of(1, -1));
+
+        List<LineSegmentPath> plusBoundaryList = split.getPlus().getBoundaryPaths();
+        Assert.assertEquals(1, plusBoundaryList.size());
+
+        LineSegmentPath plusBoundary = minusBoundaryList.get(0);
+        Assert.assertEquals(1, plusBoundary.getSegments().size());
+        Assert.assertTrue(plusBoundary.isInfinite());
+        Assert.assertSame(splitter, plusBoundary.getStartSegment().getLine());
+    }
+
+    @Test
+    public void testSplit_empty() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree2D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_bothSides() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree2D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        List<LineSegmentPath> minusPath = split.getMinus().getBoundaryPaths();
+        Assert.assertEquals(1, minusPath.size());
+        checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(1, 1),
+                Vector2D.of(0, 1), Vector2D.ZERO);
+
+        List<LineSegmentPath> plusPath = split.getPlus().getBoundaryPaths();
+        Assert.assertEquals(1, plusPath.size());
+        checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
+                Vector2D.of(2, 1), Vector2D.of(1, 1), Vector2D.ZERO);
+    }
+
+    @Test
+    public void testSplit_plusSideOnly() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree2D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<LineSegmentPath> plusPath = split.getPlus().getBoundaryPaths();
+        Assert.assertEquals(1, plusPath.size());
+        checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
+                Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
+    }
+
+    @Test
+    public void testSplit_minusSideOnly() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION)
+                .reverse();
+
+        // act
+        Split<RegionBSPTree2D> split = tree.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        List<LineSegmentPath> minusPath = split.getMinus().getBoundaryPaths();
+        Assert.assertEquals(1, minusPath.size());
+        checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
+                Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
+
+        Assert.assertNull(split.getPlus());
     }
 
     @Test
@@ -440,79 +564,6 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testGeometricProperties_infinitelyThinRectangle() {
-        // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-
-        // act/assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0), tree.getBarycenter(), TEST_EPS);
-
-        Assert.assertEquals(2, tree.getBoundarySize(), TEST_EPS);
-
-        List<LineSegment> segments = new ArrayList<>(tree.getBoundarySegments());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
-
-        Assert.assertEquals(4, segments.size());
-
-        checkFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
-        checkFiniteSegment(segments.get(1), Vector2D.ZERO, Vector2D.ZERO);
-        checkFiniteSegment(segments.get(2), Vector2D.of(1, 0), Vector2D.of(1, 0));
-        checkFiniteSegment(segments.get(3), Vector2D.of(1, 0), Vector2D.ZERO);
-
-        List<LineSegmentPath> paths = tree.getBoundaryPaths();
-        Assert.assertEquals(1, paths.size());
-
-        LineSegmentPath path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_X,
-                path.getSegments().get(0).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y,
-                path.getSegments().get(1).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_X,
-                path.getSegments().get(2).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_Y,
-                path.getSegments().get(3).getLine().getDirection(), TEST_EPS);
-    }
-
-    @Test
-    public void testGeometricProperties_singlePoint() {
-        // arrange
-        Vector2D pt = Vector2D.of(1, 2);
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(pt, pt, TEST_PRECISION);
-
-        // act/assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(pt, tree.getBarycenter(), TEST_EPS);
-
-        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-
-        List<LineSegment> segments = new ArrayList<>(tree.getBoundarySegments());
-        Collections.sort(segments, SEGMENT_COMPARATOR);
-
-        Assert.assertEquals(4, segments.size());
-
-        checkFiniteSegment(segments.get(0), pt, pt);
-        checkFiniteSegment(segments.get(1), pt, pt);
-        checkFiniteSegment(segments.get(2), pt, pt);
-        checkFiniteSegment(segments.get(3), pt, pt);
-
-        List<LineSegmentPath> paths = tree.getBoundaryPaths();
-        Assert.assertEquals(1, paths.size());
-
-        LineSegmentPath path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_X,
-                path.getSegments().get(0).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.MINUS_Y,
-                path.getSegments().get(1).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_X,
-                path.getSegments().get(2).getLine().getDirection(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y,
-                path.getSegments().get(3).getLine().getDirection(), TEST_EPS);
-    }
-
-    @Test
     public void testRect_pointArguments_lowerLeftAndUpperRight() {
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION);
@@ -547,54 +598,31 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testRect_pointArguments_noWidth() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
+    public void testRect_zeroSize() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(1, 1), 0, 2, TEST_PRECISION);
+        }, GeometryValueException.class);
 
-        // assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), tree.getBarycenter(), TEST_EPS);
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(1, 1), 2, 0, TEST_PRECISION);
+        }, GeometryValueException.class);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0, 2), Vector2D.of(2, 2),
-                Vector2D.of(1, 0.5), Vector2D.of(1, 3.5));
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(2, 3), 0, 0, TEST_PRECISION);
+        }, GeometryValueException.class);
 
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector2D.of(1, 2));
-    }
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
+        }, GeometryValueException.class);
 
-    @Test
-    public void testRect_pointArguments_noHeight() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        }, GeometryValueException.class);
 
-        // assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), tree.getBarycenter(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0.5, 1.5), Vector2D.of(3.5, 0.5),
-                Vector2D.of(2, 0.5), Vector2D.of(2, 2.5));
-
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector2D.of(2, 1));
-    }
-
-    @Test
-    public void testRect_pointArguments_noWidthOrHeight() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
-
-        // assert
-        Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 3), tree.getBarycenter(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(1.5, 3), Vector2D.of(2.5, 3),
-                Vector2D.of(2, 2.5), Vector2D.of(2, 3.5));
-
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector2D.of(2, 3));
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree2D.rect(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
+        }, GeometryValueException.class);
     }
 
     @Test
@@ -702,14 +730,6 @@ public class RegionBSPTree2DTest {
 
         for (int i=0; i<vertices.length; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(vertices[i], actual.get(i), TEST_EPS);
-        }
-    }
-
-    private static void checkContains(RegionBSPTree2D tree, boolean contains, Vector2D ... points) {
-        for (Vector2D point : points) {
-            String msg = "Unexpected contains status for point " + point;
-
-            Assert.assertEquals(msg, contains, tree.contains(point));
         }
     }
 }
