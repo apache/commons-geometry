@@ -265,7 +265,7 @@ public class AbstractLineSegmentConnectorTest {
         LineSegmentPath input = LineSegmentPath.builder(TEST_PRECISION)
                 .appendVertices(p0, p1)
                 .append(Line.fromPointAndAngle(p1, 0.25 * Geometry.PI, TEST_PRECISION).segment(p1, p1))
-                .append(Line.fromPointAndAngle(p1, Geometry.ZERO_PI, TEST_PRECISION).segment(almostP1, almostP1))
+                .append(Line.fromPointAndAngle(p1, -0.25 * Geometry.PI, TEST_PRECISION).segment(almostP1, almostP1))
                 .append(p2)
                 .append(p0)
                 .append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION)

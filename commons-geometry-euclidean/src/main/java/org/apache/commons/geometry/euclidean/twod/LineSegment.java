@@ -343,8 +343,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
     /** Create a line segment from an underlying line and a 1D interval on the line.
      * @param line the line that the line segment will belong to
-     * @param a first 1D point on the line
-     * @param b second 1D point on the line
+     * @param a first 1D point on the line; must not be null
+     * @param b second 1D point on the line; must not be null
      * @return a line segment defined by the given line and interval
      */
     public static LineSegment fromInterval(final Line line, final Vector1D a, final Vector1D b) {

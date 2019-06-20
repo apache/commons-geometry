@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>This class is guaranteed to be immutable.</p>
  */
-public final class LineSegmentPath implements Iterable<LineSegment>, Serializable {
+public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
     private static final long serialVersionUID = 20190522L;
 
@@ -167,6 +167,60 @@ public final class LineSegmentPath implements Iterable<LineSegment>, Serializabl
         tree.insert(this);
 
         return tree;
+    }
+
+    /** Simplify this path, if possible, by combining adjacent segments that lie on the
+     * same line (as determined by {@link Line#equals(Object)}).
+     * @return a simplified path instance
+     */
+    public LineSegmentPath simplify() {
+        final List<LineSegment> simplified = new ArrayList<>();
+
+        final int size = segments.size();
+
+        LineSegment current;
+        Line currentLine;
+        double end;
+
+        int idx = 0;
+        int testIdx;
+        while (idx < size) {
+            current = segments.get(idx);
+            currentLine = current.getLine();
+            end = current.getSubspaceEnd();
+
+            // try to combine with forward neighbors
+            testIdx = idx + 1;
+            while (testIdx < size && currentLine.equals(segments.get(testIdx).getLine())) {
+                end = Math.max(end, segments.get(testIdx).getSubspaceEnd());
+                ++testIdx;
+            }
+
+            if (testIdx > idx + 1) {
+                // we found something to merge
+                simplified.add(currentLine.segment(current.getSubspaceStart(), end));
+            }
+            else {
+                simplified.add(current);
+            }
+
+            idx = testIdx;
+        }
+
+        // combine the first and last items if needed
+        if (isClosed() && simplified.size() > 2 && simplified.get(0).getLine().equals(
+                simplified.get(simplified.size() -1).getLine())) {
+
+            final LineSegment startSegment = simplified.get(0);
+            final LineSegment endSegment = simplified.remove(simplified.size() - 1);
+
+            final LineSegment combined = endSegment.getLine().segment(endSegment.getSubspaceStart(),
+                    startSegment.getSubspaceEnd());
+
+            simplified.set(0, combined);
+        }
+
+        return new SimplifiedLineSegmentPath(simplified);
     }
 
     /** {@inheritDoc} */
@@ -605,6 +659,27 @@ public final class LineSegmentPath implements Iterable<LineSegment>, Serializabl
                 return list.get(list.size() - 1);
             }
             return null;
+        }
+    }
+
+    /** Internal class returned when a line segment path is simplified to remove
+     * unecessary line segments divisions. The {@link #simplify()} method on this
+     * class simply returns the same instance.
+     */
+    private static class SimplifiedLineSegmentPath extends LineSegmentPath
+    {
+        /** Serializable UID */
+        private static final long serialVersionUID = 2934824388300890563L;
+
+        private SimplifiedLineSegmentPath(final List<LineSegment> segments) {
+            super(segments);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public LineSegmentPath simplify() {
+            // already simplified
+            return this;
         }
     }
 }

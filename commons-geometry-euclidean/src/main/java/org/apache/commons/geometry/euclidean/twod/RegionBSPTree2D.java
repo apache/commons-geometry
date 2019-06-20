@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
@@ -396,16 +397,17 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          */
         private void connectNodeSegments() {
             if (!nodeSegments.isEmpty()) {
-//                System.out.println(nodeSegments);
                 connector.connect(nodeSegments);
             }
         }
 
-        /** Get the computed boundary paths for the tree.
+        /** Get the computed boundary paths for the tree. The paths are simplified
+         * to combine adjacent segments on the same line before being returned.
          * @return the boundary paths for the tree
          */
         public List<LineSegmentPath> getBoundaryPaths() {
-            return connector.getPaths();
+            return connector.getPaths().stream()
+                    .map(LineSegmentPath::simplify).collect(Collectors.toList());
         }
     }
 }

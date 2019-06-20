@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -434,6 +436,217 @@ public class LineSegmentPathTest {
     }
 
     @Test
+    public void testIterable() {
+        // arrange
+        LineSegmentPath path = LineSegmentPath.builder(TEST_PRECISION)
+                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1)).build();
+
+        // act
+        List<LineSegment> segments = new ArrayList<>();
+        for (LineSegment segment : path) {
+            segments.add(segment);
+        }
+
+        // assert
+        Assert.assertEquals(2, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.PLUS_X);
+        assertFiniteSegment(segments.get(1), Vector2D.PLUS_X, Vector2D.of(1, 1));
+    }
+
+    @Test
+    public void testToTree() {
+        // arrange
+        LineSegmentPath path = LineSegmentPath.builder(TEST_PRECISION)
+                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
+                .close();
+
+        // act
+        RegionBSPTree2D tree = path.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
+
+        Assert.assertEquals(RegionLocation.INSIDE, tree.classify(Vector2D.of(0.5, 0.5)));
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(Vector2D.of(0.5, -1)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(Vector2D.of(0.5, 2)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(Vector2D.of(-1, 0.5)));
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.classify(Vector2D.of(2, 0.5)));
+    }
+
+    @Test
+    public void testSimplify() {
+        // arrange
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+
+        LineSegmentPath path = builder.appendVertices(
+                Vector2D.of(-1, 0),
+                Vector2D.ZERO,
+                Vector2D.of(1, 0),
+                Vector2D.of(1, 1),
+                Vector2D.of(1, 2))
+            .build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(2, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
+        assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(1, 2));
+    }
+
+    @Test
+    public void testSimplify_startAndEndCombined() {
+        // arrange
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+
+        LineSegmentPath path = builder.appendVertices(
+                Vector2D.ZERO,
+                Vector2D.of(1, 0),
+                Vector2D.of(0, 1),
+                Vector2D.of(-1, 0))
+            .close();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertTrue(result.isClosed());
+        Assert.assertFalse(result.isInfinite());
+
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(3, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
+        assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(0, 1));
+        assertFiniteSegment(segments.get(2), Vector2D.of(0, 1), Vector2D.of(-1, 0));
+    }
+
+    @Test
+    public void testSimplify_empty() {
+        // arrange
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+
+        LineSegmentPath path = builder.build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertFalse(result.isInfinite());
+
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(0, segments.size());
+    }
+
+    @Test
+    public void testSimplify_infiniteSegment() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+        LineSegmentPath path = builder
+                .append(line.span())
+                .build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertTrue(result.isInfinite());
+
+        Assert.assertNull(result.getStartVertex());
+        Assert.assertNull(result.getEndVertex());
+
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(1, segments.size());
+        Assert.assertSame(line, segments.get(0).getLine());
+    }
+
+    @Test
+    public void testSimplify_combinedInfiniteSegment() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Split<LineSegment> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+        LineSegmentPath path = builder
+                .append(split.getMinus())
+                .append(split.getPlus())
+                .build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertTrue(result.isInfinite());
+
+        Assert.assertNull(result.getStartVertex());
+        Assert.assertNull(result.getEndVertex());
+
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(1, segments.size());
+        Assert.assertSame(line, segments.get(0).getLine());
+    }
+
+    @Test
+    public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
+        // arrange
+        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+
+        LineSegmentPath path = builder
+                .append(xAxis.segment(0, 1))
+                .appendVertices(
+                        Vector2D.of(2, 1),
+                        Vector2D.of(3, 0))
+                .append(xAxis.segment(3, 4))
+            .build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertFalse(result.isInfinite());
+
+        List<LineSegment> segments = result.getSegments();
+        Assert.assertEquals(4, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
+        assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
+        assertFiniteSegment(segments.get(2), Vector2D.of(2, 1), Vector2D.of(3, 0));
+        assertFiniteSegment(segments.get(3), Vector2D.of(3, 0), Vector2D.of(4, 0));
+    }
+
+    @Test
+    public void testSimplify_subsequentCallsToReturnedObjectReturnSameObject() {
+        // arrange
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+        LineSegmentPath path = builder.appendVertices(
+                    Vector2D.ZERO,
+                    Vector2D.of(1, 0),
+                    Vector2D.of(2, 0))
+                .build();
+
+        // act
+        LineSegmentPath result = path.simplify();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertSame(result, result.simplify());
+    }
+
+    @Test
     public void testToString() {
         // arrange
         LineSegmentPath path = LineSegmentPath.builder(TEST_PRECISION)
@@ -757,6 +970,22 @@ public class LineSegmentPathTest {
 
         // assert
         Assert.assertEquals(0, path.getSegments().size());
+    }
+
+    @Test
+    public void testBuilder_close_obtuseTriangle() {
+        // arrange
+        PathBuilder builder = LineSegmentPath.builder(TEST_PRECISION);
+        builder.appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1));
+
+        // act
+        LineSegmentPath path = builder.close();
+
+        // assert
+        Assert.assertEquals(3, path.getSegments().size());
+        assertFiniteSegment(path.getSegments().get(0), Vector2D.ZERO, Vector2D.of(1, 0));
+        assertFiniteSegment(path.getSegments().get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
+        assertFiniteSegment(path.getSegments().get(2), Vector2D.of(2, 1), Vector2D.ZERO);
     }
 
     private static void assertFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {

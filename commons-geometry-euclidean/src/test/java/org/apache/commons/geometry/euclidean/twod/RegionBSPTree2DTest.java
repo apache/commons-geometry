@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
@@ -702,6 +703,149 @@ public class RegionBSPTree2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.5), tree.project(Vector2D.of(0, 1.5)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.5), tree.project(Vector2D.of(1.5, 1.5)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.project(Vector2D.of(3, 1.5)), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 2, 1, TEST_PRECISION);
+
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
+                .rotate(Geometry.HALF_PI)
+                .translate(Vector2D.of(0, -1));
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-4, -0.5), Vector2D.of(-2, -0.5));
+        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-2, -0.5), Vector2D.of(-2, 0.5));
+        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-2, 0.5), Vector2D.of(-4, 0.5));
+        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-4, 0.5), Vector2D.of(-4, -0.5));
+    }
+
+    @Test
+    public void testTransform_halfSpace() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION));
+
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
+                .rotate(Geometry.HALF_PI)
+                .translate(Vector2D.of(1, 0));
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(1, path.getSegments().size());
+        LineSegment segment = path.getStartSegment();
+        Assert.assertNull(segment.getStartPoint());
+        Assert.assertNull(segment.getEndPoint());
+
+        Line expectedLine = Line.fromPointAndAngle(Vector2D.of(-1, 0), Geometry.HALF_PI, TEST_PRECISION);
+        Assert.assertTrue(expectedLine.eq(segment.getLine()));
+    }
+
+    @Test
+    public void testTransform_fullAndEmpty() {
+        // arrange
+        RegionBSPTree2D full = RegionBSPTree2D.full();
+        RegionBSPTree2D empty = RegionBSPTree2D.empty();
+
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+
+        // act
+        full.transform(transform);
+        empty.transform(transform);
+
+        // assert
+        Assert.assertTrue(full.isFull());
+        Assert.assertTrue(empty.isEmpty());
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+
+        Transform<Vector2D> transform = v -> Vector2D.of(-v.getX(), v.getY());
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, 1), Vector2D.of(-1, 1));
+        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, 1), Vector2D.of(-1, 2));
+        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-1, 2), Vector2D.of(-2, 2));
+        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-2, 2), Vector2D.of(-2, 1));
+    }
+
+    @Test
+    public void testTransform_doubleReflection() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+
+        Transform<Vector2D> transform = Vector2D::negate;
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        LineSegmentPath path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, -2), Vector2D.of(-1, -2));
+        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, -2), Vector2D.of(-1, -1));
+        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-1, -1), Vector2D.of(-2, -1));
+        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-2, -1), Vector2D.of(-2, -2));
+    }
+
+    @Test
+    public void testBooleanOperations() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 3, 3, TEST_PRECISION);
+        RegionBSPTree2D temp;
+
+        // act
+        temp = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+        temp.complement();
+        tree.intersection(temp);
+
+        temp = RegionBSPTree2D.rect(Vector2D.of(3, 0), 3, 3, TEST_PRECISION);
+        tree.union(temp);
+
+        temp = RegionBSPTree2D.rect(Vector2D.of(2, 1), 3, 1, TEST_PRECISION);
+        tree.difference(temp);
+
+        temp.setFull();
+        tree.xor(temp);
+
+        // assert
+        List<LineSegmentPath> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(2, paths.size());
+
+        checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(0, 3), Vector2D.of(6, 3),
+                Vector2D.of(6, 0), Vector2D.ZERO);
+
+        checkVertices(paths.get(1), Vector2D.of(1, 1), Vector2D.of(5, 1), Vector2D.of(5, 2),
+                Vector2D.of(1, 2), Vector2D.of(1, 1));
     }
 
     private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
