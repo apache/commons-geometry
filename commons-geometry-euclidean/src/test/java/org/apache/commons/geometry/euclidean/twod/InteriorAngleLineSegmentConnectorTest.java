@@ -154,19 +154,17 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
-        Assert.assertEquals(2, paths.size());
+        Assert.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
+                Vector2D.of(2, 1), Vector2D.of(2, 2),
+                Vector2D.of(1, 2), Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
-
-        assertFinitePath(paths.get(1),
-                Vector2D.of(1, 1), Vector2D.of(2, 1), Vector2D.of(2, 2),
-                Vector2D.of(1, 2), Vector2D.of(1, 1));
     }
 
     @Test
-    public void tesConnect_mutipleSegmentsAtVertex_maximize() {
+    public void testGetPaths_mutipleSegmentsAtVertex_maximize() {
         // arrange
         Maximize connector = new Maximize();
 
@@ -203,13 +201,15 @@ public class InteriorAngleLineSegmentConnectorTest {
         List<LineSegmentPath> paths = connector.getPaths(segments);
 
         // assert
-        Assert.assertEquals(1, paths.size());
+        Assert.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
                 Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
-                Vector2D.of(2, 1), Vector2D.of(2, 2),
-                Vector2D.of(1, 2), Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
+
+        assertFinitePath(paths.get(1),
+                Vector2D.of(1, 1), Vector2D.of(2, 1), Vector2D.of(2, 2),
+                Vector2D.of(1, 2), Vector2D.of(1, 1));
     }
 
     @Test
@@ -236,7 +236,7 @@ public class InteriorAngleLineSegmentConnectorTest {
     }
 
     @Test
-    public void tesConnectMaximized() {
+    public void testConnectMaximized() {
         // arrange
         List<LineSegment> segments = new ArrayList<>();
         segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
@@ -257,7 +257,7 @@ public class InteriorAngleLineSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPathsMinimized() {
+    public void testConnectMinimized() {
         // arrange
         List<LineSegment> segments = new ArrayList<>();
         segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));

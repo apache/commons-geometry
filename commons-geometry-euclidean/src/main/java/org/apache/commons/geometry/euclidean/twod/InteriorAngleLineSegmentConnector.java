@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Line segment connector subclass that selects between multiple connection
  * options based on the resulting interior angle. An interior angle in this
@@ -44,14 +43,13 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
     protected ConnectorEntry selectConnection(ConnectorEntry incoming, List<ConnectorEntry> outgoing) {
 
         // search for the best connection
-        final double segmentAngle = incoming.getSegment().getLine().getAngle();
+        final Line segmentLine = incoming.getSegment().getLine();
 
         double selectedInteriorAngle = Double.POSITIVE_INFINITY;
         ConnectorEntry selected = null;
 
         for (ConnectorEntry candidate : outgoing) {
-            double candidateAngle = candidate.getSegment().getLine().getAngle();
-            double interiorAngle = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(Geometry.PI - candidateAngle - segmentAngle);
+            double interiorAngle = Geometry.PI - segmentLine.angle(candidate.getSegment().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
                 selectedInteriorAngle = interiorAngle;

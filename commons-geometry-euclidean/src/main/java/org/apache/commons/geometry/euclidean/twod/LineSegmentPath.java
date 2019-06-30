@@ -35,6 +35,9 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
     private static final long serialVersionUID = 20190522L;
 
+    /** Line semgent path instance containing no segments. */
+    private static final LineSegmentPath EMPTY = new LineSegmentPath(Collections.emptyList());
+
     /** List of line segments comprising the path. */
     private List<LineSegment> segments;
 
@@ -125,8 +128,8 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         return !isEmpty() && (getStartVertex() == null || getEndVertex() == null);
     }
 
-    /** Return true if the path has a finite length, ie if all line segments are
-     * finite.
+    /** Return true if the path has a finite length. This will be true if there are
+     * no segments in the path or if all segments have a finite length.
      * @return true if the path is finite
      */
     public boolean isFinite() {
@@ -251,7 +254,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * context. The precision context is used when building line segments from
      * vertices and may be omitted if raw vertices are not used.
      * @param precision precision context to use when building line segments from
-     *      raw vertices
+     *      raw vertices; may be null if raw vertices are not used.
      * @return a new {@link PathBuilder} instance
      */
     public static PathBuilder builder(final DoublePrecisionContext precision) {
@@ -292,6 +295,13 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             final DoublePrecisionContext precision) {
 
         return builder(precision).appendVertices(vertices).build();
+    }
+
+    /** Return a line segment path containing no segments.
+     * @return a line segment path containing no segments.
+     */
+    public static LineSegmentPath empty() {
+        return EMPTY;
     }
 
     /** Class used to build line segment paths.
@@ -344,6 +354,30 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             return this;
         }
 
+        /** Get the line segment at the start of the path or null if
+         * it does not exist.
+         * @return the line segment at the start of the path
+         */
+        public LineSegment getStartSegment() {
+            LineSegment start = getLast(prependedSegments);
+            if (start == null) {
+                start = getFirst(appendedSegments);
+            }
+            return start;
+        }
+
+        /** Get the line segment at the end of the path or null if
+         * it does not exist.
+         * @return the line segment at the end of the path
+         */
+        public LineSegment getEndSegment() {
+            LineSegment end = getLast(appendedSegments);
+            if (end == null) {
+                end = getFirst(prependedSegments);
+            }
+            return end;
+        }
+
         /** Append a line segment to the end of the path.
          * @return the current builder instance
          * @throws IllegalStateException if the path contains a previous segment
@@ -351,7 +385,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          *      start vertex of the given segment.
          */
         public PathBuilder append(final LineSegment segment) {
-            validateSegmentsConnected(getEnd(), segment);
+            validateSegmentsConnected(getEndSegment(), segment);
             appendInternal(segment);
 
             return this;
@@ -369,7 +403,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
             if (endVertex == null) {
                 // make sure that we're not adding to an infinite segment
-                final LineSegment end = getEnd();
+                final LineSegment end = getEndSegment();
                 if (end != null) {
                     throw new IllegalStateException("Cannot add vertex " + vertex + " after infinite line segment: " + end);
                 }
@@ -417,7 +451,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          *      start vertex of the start segment.
          */
         public PathBuilder prepend(final LineSegment segment) {
-            validateSegmentsConnected(segment, getStart());
+            validateSegmentsConnected(segment, getStartSegment());
             prependInternal(segment);
 
             return this;
@@ -435,7 +469,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
             if (startVertex == null) {
                 // make sure that we're not adding to an infinite segment
-                final LineSegment start = getStart();
+                final LineSegment start = getStartSegment();
                 if (start != null) {
                     throw new IllegalStateException("Cannot add vertex " + vertex + " before infinite line segment: " + start);
                 }
@@ -488,7 +522,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return line segment path
          */
         public LineSegmentPath close() {
-            final LineSegment end = getEnd();
+            final LineSegment end = getEndSegment();
 
             if (end != null) {
                 if (startVertex != null && endVertex != null) {
@@ -537,8 +571,9 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             appendedSegments = null;
             prependedSegments = null;
 
-            // build the final path instance
-            return new LineSegmentPath(result);
+            // build the final path instance, using the shared empty instance if
+            // no segments are present
+            return result.isEmpty() ? empty() : new LineSegmentPath(result);
         }
 
         /** Validate that the given segments are connected, meaning that the end vertex of {@code previous}
@@ -613,30 +648,6 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             prependedSegments.add(segment);
         }
 
-        /** Get the line segment at the start of the path or null if
-         * it does not exist.
-         * @return the line segment at the start of the path
-         */
-        private LineSegment getStart() {
-            LineSegment start = getLast(prependedSegments);
-            if (start == null) {
-                start = getFirst(appendedSegments);
-            }
-            return start;
-        }
-
-        /** Get the line segment at the end of the path or null if
-         * it does not exist.
-         * @return the line segment at the end of the path
-         */
-        private LineSegment getEnd() {
-            LineSegment end = getLast(appendedSegments);
-            if (end == null) {
-                end = getFirst(prependedSegments);
-            }
-            return end;
-        }
-
         /** Get the first element in the list or null if the list is null
          * or empty.
          * @param list the list to return the first item from
@@ -669,8 +680,13 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
     private static class SimplifiedLineSegmentPath extends LineSegmentPath
     {
         /** Serializable UID */
-        private static final long serialVersionUID = 2934824388300890563L;
+        private static final long serialVersionUID = 20190619;
 
+        /** Create a new instance containing the given line segments. No validation is
+         * performed on the inputs. Caller must ensure that the given segments represent
+         * a valid, simplified path.
+         * @param segments line segments comprising the path
+         */
         private SimplifiedLineSegmentPath(final List<LineSegment> segments) {
             super(segments);
         }

@@ -551,6 +551,97 @@ public class LineSegmentTest {
     }
 
     @Test
+    public void testIntersection_line() {
+        // arrange
+        LineSegment aSeg = LineSegment.fromPoints(Vector2D.of(1, 0), Vector2D.of(2, 0), TEST_PRECISION);
+        LineSegment bSeg = LineSegment.fromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
+
+        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line yAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION);
+        Line angledLine = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertNull(aSeg.intersection(xAxis));
+        Assert.assertNull(aSeg.intersection(yAxis));
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bSeg.intersection(xAxis), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bSeg.intersection(yAxis), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), bSeg.intersection(angledLine), TEST_EPS);
+    }
+
+    @Test
+    public void testIntersection_lineSegment() {
+        // arrange
+        LineSegment a = LineSegment.fromPoints(Vector2D.of(1, 0), Vector2D.of(2, 0), TEST_PRECISION);
+        LineSegment b = LineSegment.fromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
+        LineSegment c = LineSegment.fromPoints(Vector2D.of(-1, 0), Vector2D.ZERO, TEST_PRECISION);
+        LineSegment d = LineSegment.fromPoints(Vector2D.of(0, 3), Vector2D.of(3, 0), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertNull(a.intersection(a));
+        Assert.assertNull(a.intersection(c));
+        Assert.assertNull(a.intersection(b));
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, b.intersection(c), TEST_EPS);
+
+        Assert.assertNull(b.intersection(d));
+        Assert.assertNull(d.intersection(b));
+    }
+
+    @Test
+    public void testReverse_full() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment segment = line.span();
+
+        // act
+        LineSegment result = segment.reverse();
+
+        // assert
+        checkInfiniteSegment(result, segment.getLine().reverse(), null, null);
+    }
+
+    @Test
+    public void testReverse_positiveHalfSpace() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment segment = line.segment(1, Double.POSITIVE_INFINITY);
+
+        // act
+        LineSegment result = segment.reverse();
+
+        // assert
+        checkInfiniteSegment(result, segment.getLine().reverse(), null, Vector2D.of(1, 0));
+    }
+
+    @Test
+    public void testReverse_negativeHalfSpace() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment segment = line.segment(Double.NEGATIVE_INFINITY, 1);
+
+        // act
+        LineSegment result = segment.reverse();
+
+        // assert
+        checkInfiniteSegment(result, segment.getLine().reverse(), Vector2D.of(1, 0), null);
+    }
+
+    @Test
+    public void testReverse_finiteSegment() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        LineSegment segment = line.segment(3, 4);
+
+        // act
+        LineSegment result = segment.reverse();
+
+        // assert
+        checkFiniteSegment(result, Vector2D.of(4, 0), Vector2D.of(3, 0));
+    }
+
+    @Test
     public void testSplit_finite() {
         // arrange
         Vector2D start = Vector2D.of(1, 1);
@@ -759,6 +850,20 @@ public class LineSegmentTest {
         Assert.assertTrue(str.contains("LineSegment"));
         Assert.assertTrue(str.contains("startPoint= (0.0, 0.0)"));
         Assert.assertTrue(str.contains("endPoint= (1.0, 0.0)"));
+    }
+
+    @Test
+    public void testEmpty() {
+        // act
+        LineSegmentPath path = LineSegmentPath.empty();
+
+        // assert
+        Assert.assertTrue(path.isEmpty());
+        Assert.assertFalse(path.isClosed());
+        Assert.assertTrue(path.isFinite());
+        Assert.assertFalse(path.isInfinite());
+
+        Assert.assertEquals(0, path.getSegments().size());
     }
 
     private static void checkClassify(LineSegment segment, RegionLocation loc, Vector2D ... points) {

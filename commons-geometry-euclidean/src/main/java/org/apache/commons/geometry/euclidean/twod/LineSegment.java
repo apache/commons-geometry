@@ -156,6 +156,43 @@ public final class LineSegment extends AbstractSubLine<Interval>
         }
     }
 
+    /** Get the unique intersection of this segment with the given line. Null is
+     * returned if no unique intersection point exists (ie, the lines are
+     * parallel or coincident) or the line does not intersect the segment.
+     * @param line line to intersect with this segment
+     * @return the unique intersection point between the line and this segment
+     *      or null if no such point exists.
+     * @see Line#intersection(Line)
+     */
+    public Vector2D intersection(final Line line) {
+        final Vector2D pt = getLine().intersection(line);
+        return (pt != null && contains(pt)) ? pt : null;
+    }
+
+    /** Get the unique intersection of this instance with the given segment. Null
+     * is returned if the lines containing the segments do not have a unique intersection
+     * point (ie, they are parallel or coincident) or the intersection point is unique
+     * but in not contained in both segments.
+     * @param segment segment to intersect with
+     * @return the unique intersection point between this segment and the argument or
+     *      null if no such point exists.
+     * @see Line#intersection(Line)
+     */
+    public Vector2D intersection(final LineSegment segment) {
+        final Vector2D pt = intersection(segment.getLine());
+        return (pt != null && segment.contains(pt)) ? pt : null;
+    }
+
+    /** Return a line segment containing the same 2D points as this instance but
+     * with a line pointing in the opposite direction.
+     * @return a line segment containing the same points but with a line pointing
+     *      in the opposite direction.
+     */
+    public LineSegment reverse() {
+        final Interval reversedInterval = interval.transform(Vector1D::negate);
+        return fromInterval(getLine().reverse(), reversedInterval);
+    }
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
@@ -209,12 +246,12 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
             final int sign = getPrecision().sign(originOffset);
             if (sign < 0) {
-                return new Split<LineSegment>(this, null);
+                return new Split<>(this, null);
             }
             else if (sign > 0) {
-                return new Split<LineSegment>(null, this);
+                return new Split<>(null, this);
             }
-            return new Split<LineSegment>(null, null);
+            return new Split<>(null, null);
         }
         else {
             // the lines intersect
@@ -248,7 +285,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
             final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
             final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-            return new Split<LineSegment>(minus, plus);
+            return new Split<>(minus, plus);
         }
     }
 
@@ -284,15 +321,15 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
         if (startCmp == 0 && endCmp == 0) {
             // the entire line segment is directly on the splitter line
-            return new Split<LineSegment>(null, null);
+            return new Split<>(null, null);
         }
         else if (startCmp <= 0 && endCmp <= 0) {
             // the entire line segment is on the minus side
-            return new Split<LineSegment>(this, null);
+            return new Split<>(this, null);
         }
         else if (startCmp >= 0 && endCmp >= 0) {
             // the entire line segment is on the plus side
-            return new Split<LineSegment>(null, this);
+            return new Split<>(null, this);
         }
 
         // we need to split the line
@@ -307,7 +344,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
         final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
         final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
-        return new Split<LineSegment>(minus, plus);
+        return new Split<>(minus, plus);
     }
 
     /** Create a line segment between two points. The underlying line points in the direction from {@code start}

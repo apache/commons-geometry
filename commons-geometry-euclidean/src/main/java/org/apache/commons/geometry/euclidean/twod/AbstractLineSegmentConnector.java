@@ -54,11 +54,22 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * @param segments line segments to add
      * @see #connect(Iterable)
      * @see #getPaths()
+     * @see #add(LineSegment)
      */
     public void add(final Iterable<LineSegment> segments) {
         for (LineSegment segment : segments) {
-            entries.add(new ConnectorEntry(segment));
+            add(segment);
         }
+    }
+
+    /** Add a line segment to the connector, leaving it unconnected until a later call to
+     * to {@link #connect(Iterable)} or {@link #getPaths()}.
+     * @param segment line segment to add
+     * @see #connect(Iterable)
+     * @see #getPaths()
+     */
+    public void add(final LineSegment segment) {
+        entries.add(new ConnectorEntry(segment));
     }
 
     /** Add a collection of line segments to the connector and attempt to connect each new

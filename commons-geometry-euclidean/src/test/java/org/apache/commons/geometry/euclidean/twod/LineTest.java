@@ -398,6 +398,27 @@ public class LineTest {
     }
 
     @Test
+    public void testAngle() {
+        // arrange
+        Line a = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line b = Line.fromPointAndAngle(Vector2D.of(1, 4), Geometry.PI, TEST_PRECISION);
+        Line c = Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(Geometry.ZERO_PI, a.angle(a), TEST_EPS);
+        Assert.assertEquals(-Geometry.PI, a.angle(b), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, a.angle(c), TEST_EPS);
+
+        Assert.assertEquals(Geometry.ZERO_PI, b.angle(b), TEST_EPS);
+        Assert.assertEquals(-Geometry.PI, b.angle(a), TEST_EPS);
+        Assert.assertEquals(-0.75 * Geometry.PI, b.angle(c), TEST_EPS);
+
+        Assert.assertEquals(Geometry.ZERO_PI, c.angle(c), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, c.angle(a), TEST_EPS);
+        Assert.assertEquals(0.75 * Geometry.PI, c.angle(b), TEST_EPS);
+    }
+
+    @Test
     public void testProject() {
         // --- arrange
         Line xAxis = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);

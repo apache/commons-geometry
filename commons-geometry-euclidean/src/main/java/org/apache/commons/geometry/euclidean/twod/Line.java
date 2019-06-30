@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -55,7 +56,8 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * points with negative offsets and the right half plane is the set of
  * points with positive offsets.</p>
  */
-public final class Line extends AbstractHyperplane<Vector2D> implements EmbeddingHyperplane<Vector2D, Vector1D> {
+public final class Line extends AbstractHyperplane<Vector2D>
+    implements EmbeddingHyperplane<Vector2D, Vector1D>, Equivalency<Line> {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190120L;
@@ -269,6 +271,20 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
         return Vector2D.of(x, y);
     }
 
+    /** Compute the angle in radians between this instance's direction and the direction
+     * of the given line. The return value is in the range {@code [-pi, +pi)}. Note
+     * that this method always returns a value, even for parallel or coincident lines.
+     * @param other other line
+     * @return the angle required to rotate this line to point in the direction of
+     *      the given line
+     */
+    public double angle(final Line other) {
+        final double thisAngle = Math.atan2(direction.getY(), direction.getX());
+        final double otherAngle = Math.atan2(other.direction.getY(), other.direction.getX());
+
+        return PlaneAngleRadians.normalizeBetweenMinusPiAndPi(otherAngle - thisAngle);
+    }
+
     /** {@inheritDoc} */
     @Override
     public Vector2D project(final Vector2D point) {
@@ -397,6 +413,7 @@ public final class Line extends AbstractHyperplane<Vector2D> implements Embeddin
     * @param other the point to compare with
     * @return true if this instance should be considered equivalent to the argument
     */
+    @Override
     public boolean eq(final Line other) {
         if (this == other) {
             return true;

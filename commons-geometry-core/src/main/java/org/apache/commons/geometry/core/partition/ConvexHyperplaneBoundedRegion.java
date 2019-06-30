@@ -18,9 +18,10 @@ package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Interface representing a convex region of space with boundaries defined by
- * hyperplanes. The regions may have infinite size.
+/** Interface representing a convex, possibly infinite, region of space with
+ * boundaries defined by hyperplanes.
  * @param <P> Point implementation type
+ * @see HyperplaneBoundedRegion
  */
 public interface ConvexHyperplaneBoundedRegion<P extends Point<P>> extends HyperplaneBoundedRegion<P> {
 
