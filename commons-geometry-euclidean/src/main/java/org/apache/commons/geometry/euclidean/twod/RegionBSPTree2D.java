@@ -87,8 +87,34 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** {@inheritDoc} */
     @Override
     public List<ConvexArea> toConvex() {
-        // TODO
-        return null;
+        final List<ConvexArea> result = new ArrayList<>();
+
+        toConvexRecursive(getRoot(), ConvexArea.full(), result);
+
+        return result;
+    }
+
+    /** Recursive method to compute the convex areas of all inside leaf nodes in the subtree rooted at the given
+     * node. The computed convex areas are added to the given list.
+     * @param node root of the subtree to compute the convex areas for
+     * @param nodeArea the convex area for the current node; this will be split by the node's cut hyperplane to
+     *      form the convex areas for any child nodes
+     * @param result list containing the results of the computation
+     */
+    private void toConvexRecursive(final RegionNode2D node, final ConvexArea nodeArea, final List<ConvexArea> result) {
+        if (node.isLeaf()) {
+            // base case; only add to the result list if the node is inside
+            if (node.isInside()) {
+                result.add(nodeArea);
+            }
+        }
+        else {
+            // recurse
+            Split<ConvexArea> split = nodeArea.split(node.getCutHyperplane());
+
+            toConvexRecursive(node.getMinus(), split.getMinus(), result);
+            toConvexRecursive(node.getPlus(), split.getPlus(), result);
+        }
     }
 
     /** {@inheritDoc} */

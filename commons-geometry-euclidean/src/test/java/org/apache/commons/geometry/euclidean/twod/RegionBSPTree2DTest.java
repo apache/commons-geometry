@@ -17,12 +17,14 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
@@ -142,6 +144,151 @@ public class RegionBSPTree2DTest {
         GeometryTestUtils.assertThrows(() -> {
             tree.getBoundaryPaths().add(LineSegmentPath.builder(null).build());
         }, UnsupportedOperationException.class);
+    }
+
+    @Test
+    public void testToConvex_full() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+        Assert.assertTrue(result.get(0).isFull());
+    }
+
+    @Test
+    public void testToConvex_empty() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testToConvex_halfSpace() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+
+        ConvexArea area = result.get(0);
+        Assert.assertFalse(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+
+        checkClassify(area, RegionLocation.INSIDE, Vector2D.of(0, 1));
+        checkClassify(area, RegionLocation.BOUNDARY, Vector2D.ZERO);
+        checkClassify(area, RegionLocation.OUTSIDE, Vector2D.of(0, -1));
+    }
+
+    @Test
+    public void testToConvex_quadrantComplement() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.PI, TEST_PRECISION))
+            .getPlus().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+
+        tree.complement();
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+
+        ConvexArea area = result.get(0);
+        Assert.assertFalse(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+
+        checkClassify(area, RegionLocation.INSIDE, Vector2D.of(1, 1));
+        checkClassify(area, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(0, 1));
+        checkClassify(area, RegionLocation.OUTSIDE, Vector2D.of(1, -1), Vector2D.of(-1, -1), Vector2D.of(-1, 1));
+    }
+
+    @Test
+    public void testToConvex_square() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 1, 1, TEST_PRECISION);
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+
+        ConvexArea area = result.get(0);
+        Assert.assertFalse(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+
+        Assert.assertEquals(1, area.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
+
+        checkClassify(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
+        checkClassify(area, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1));
+        checkClassify(area, RegionLocation.OUTSIDE,
+                Vector2D.of(0.5, -1), Vector2D.of(0.5, 2),
+                Vector2D.of(-1, 0.5), Vector2D.of(2, 0.5));
+    }
+
+    @Test
+    public void testToConvex_multipleConvexAreas() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(Arrays.asList(
+                    LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION),
+
+                    LineSegment.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), TEST_PRECISION),
+                    LineSegment.fromPoints(Vector2D.of(0, 1), Vector2D.ZERO, TEST_PRECISION),
+
+                    LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
+                    LineSegment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
+                ));
+
+        // act
+        List<ConvexArea> result = tree.toConvex();
+
+        // assert
+        Collections.sort(result, (a, b) ->
+            Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getBarycenter(), b.getBarycenter()));
+
+        Assert.assertEquals(2, result.size());
+
+        ConvexArea firstArea = result.get(0);
+        Assert.assertFalse(firstArea.isFull());
+        Assert.assertFalse(firstArea.isEmpty());
+
+        Assert.assertEquals(0.5, firstArea.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.0 / 3.0, 2.0 / 3.0), firstArea.getBarycenter(), TEST_EPS);
+
+        checkClassify(firstArea, RegionLocation.INSIDE, Vector2D.of(1.0 / 3.0, 2.0 / 3.0));
+        checkClassify(firstArea, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1), Vector2D.of(0.5, 0.5));
+        checkClassify(firstArea, RegionLocation.OUTSIDE,
+                Vector2D.of(0.25, -1), Vector2D.of(0.25, 2),
+                Vector2D.of(-1, 0.5), Vector2D.of(0.75, 0.5));
+
+        ConvexArea secondArea = result.get(1);
+        Assert.assertFalse(secondArea.isFull());
+        Assert.assertFalse(secondArea.isEmpty());
+
+        Assert.assertEquals(0.5, secondArea.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2.0 / 3.0, 1.0 / 3.0), secondArea.getBarycenter(), TEST_EPS);
+
+        checkClassify(secondArea, RegionLocation.INSIDE, Vector2D.of(2.0 / 3.0, 1.0 / 3.0));
+        checkClassify(secondArea, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1), Vector2D.of(0.5, 0.5));
+        checkClassify(secondArea, RegionLocation.OUTSIDE,
+                Vector2D.of(0.75, -1), Vector2D.of(0.75, 2),
+                Vector2D.of(2, 0.5), Vector2D.of(0.25, 0.5));
     }
 
     @Test
@@ -853,11 +1000,11 @@ public class RegionBSPTree2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }
 
-    private static void checkClassify(RegionBSPTree2D tree, RegionLocation loc, Vector2D ... points) {
+    private static void checkClassify(Region<Vector2D> region, RegionLocation loc, Vector2D ... points) {
         for (Vector2D point : points) {
             String msg = "Unexpected location for point " + point;
 
-            Assert.assertEquals(msg, loc, tree.classify(point));
+            Assert.assertEquals(msg, loc, region.classify(point));
         }
     }
 
