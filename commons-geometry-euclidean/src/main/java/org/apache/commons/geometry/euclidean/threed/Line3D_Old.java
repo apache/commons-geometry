@@ -31,7 +31,7 @@ import org.apache.commons.numbers.core.Precision;
  * which is closest to the origin. Abscissa increases in the line
  * direction.</p>0
  */
-public class Line implements Embedding_Old<Vector3D, Vector1D> {
+public class Line3D_Old implements Embedding_Old<Vector3D, Vector1D> {
 
     /** Line direction. */
     private Vector3D direction;
@@ -48,7 +48,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points are equal
      */
-    public Line(final Vector3D p1, final Vector3D p2, final DoublePrecisionContext precision)
+    public Line3D_Old(final Vector3D p1, final Vector3D p2, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
         reset(p1, p2);
         this.precision = precision;
@@ -59,7 +59,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * original instance, it is a deep copy.</p>
      * @param line line to copy
      */
-    public Line(final Line line) {
+    public Line3D_Old(final Line3D_Old line) {
         this.direction = line.direction;
         this.zero      = line.zero;
         this.precision = line.precision;
@@ -90,8 +90,8 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
     /** Get a line with reversed direction.
      * @return a new instance, with reversed direction
      */
-    public Line revert() {
-        final Line reverted = new Line(this);
+    public Line3D_Old revert() {
+        final Line3D_Old reverted = new Line3D_Old(this);
         reverted.direction = reverted.direction.negate();
         return reverted;
     }
@@ -156,7 +156,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * @param line line to which instance should be compared
      * @return true if the lines are similar
      */
-    public boolean isSimilarTo(final Line line) {
+    public boolean isSimilarTo(final Line3D_Old line) {
         final double angle = direction.angle(line.direction);
         return (precision.eqZero(angle) || precision.eq(angle, Math.PI)) && contains(line.zero);
     }
@@ -183,7 +183,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * @param line line to check against the instance
      * @return shortest distance between the instance and the line
      */
-    public double distance(final Line line) {
+    public double distance(final Line3D_Old line) {
 
         final Vector3D normal = direction.cross(line.direction);
         final double n = normal.norm();
@@ -203,7 +203,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * @param line line to check against the instance
      * @return point of the instance closest to another line
      */
-    public Vector3D closestPoint(final Line line) {
+    public Vector3D closestPoint(final Line3D_Old line) {
 
         final double cos = direction.dot(line.direction);
         final double n = 1 - cos * cos;
@@ -225,7 +225,7 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
      * @return intersection point of the instance and the other line
      * or null if there are no intersection points
      */
-    public Vector3D intersection(final Line line) {
+    public Vector3D intersection(final Line3D_Old line) {
         final Vector3D closest = closestPoint(line);
         return line.contains(closest) ? closest : null;
     }
@@ -233,8 +233,8 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
     /** Build a sub-line covering the whole line.
      * @return a sub-line covering the whole line
      */
-    public SubLine wholeLine() {
-        return new SubLine(this, new IntervalsSet(precision));
+    public SubLine3D_Old wholeLine() {
+        return new SubLine3D_Old(this, new IntervalsSet(precision));
     }
 
     /** {@inheritDoc} */
@@ -255,8 +255,8 @@ public class Line implements Embedding_Old<Vector3D, Vector1D> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Line other = (Line) obj;
-        return this.direction.equals(other.direction, precision) && this.zero.equals(other.zero, precision);
+        Line3D_Old other = (Line3D_Old) obj;
+        return this.direction.equals(other.direction) && this.zero.equals(other.zero);
     }
 
     /** {@inheritDoc} */

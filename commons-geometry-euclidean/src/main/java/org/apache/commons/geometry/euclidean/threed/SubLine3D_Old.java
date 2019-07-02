@@ -25,12 +25,12 @@ import org.apache.commons.geometry.euclidean.oned.Interval_Old;
 import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
-/** This class represents a subset of a {@link Line}.
+/** This class represents a subset of a {@link Line3D_Old}.
  */
-public class SubLine {
+public class SubLine3D_Old {
 
     /** Underlying line. */
-    private final Line line;
+    private final Line3D_Old line;
 
     /** Remaining region of the hyperplane. */
     private final IntervalsSet remainingRegion;
@@ -39,7 +39,7 @@ public class SubLine {
      * @param line underlying line
      * @param remainingRegion remaining region of the line
      */
-    public SubLine(final Line line, final IntervalsSet remainingRegion) {
+    public SubLine3D_Old(final Line3D_Old line, final IntervalsSet remainingRegion) {
         this.line            = line;
         this.remainingRegion = remainingRegion;
     }
@@ -50,16 +50,16 @@ public class SubLine {
      * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if the points are equal
      */
-    public SubLine(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision)
+    public SubLine3D_Old(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        this(new Line(start, end, precision), buildIntervalSet(start, end, precision));
+        this(new Line3D_Old(start, end, precision), buildIntervalSet(start, end, precision));
     }
 
     /** Create a sub-line from a segment.
      * @param segment single segment forming the sub-line
      * @exception IllegalArgumentException if the segment endpoints are equal
      */
-    public SubLine(final Segment segment) {
+    public SubLine3D_Old(final Segment3D_Old segment) {
         this(segment.getLine(),
              buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getPrecision()));
     }
@@ -78,15 +78,15 @@ public class SubLine {
      * </p>
      * @return list of segments endpoints
      */
-    public List<Segment> getSegments() {
+    public List<Segment3D_Old> getSegments() {
 
         final List<Interval_Old> list = remainingRegion.asList();
-        final List<Segment> segments = new ArrayList<>(list.size());
+        final List<Segment3D_Old> segments = new ArrayList<>(list.size());
 
         for (final Interval_Old interval : list) {
             final Vector3D start = line.toSpace(Vector1D.of(interval.getInf()));
             final Vector3D end   = line.toSpace(Vector1D.of(interval.getSup()));
-            segments.add(new Segment(start, end, line));
+            segments.add(new Segment3D_Old(start, end, line));
         }
 
         return segments;
@@ -95,8 +95,8 @@ public class SubLine {
 
     /** Get the intersection of the instance and another sub-line.
      * <p>
-     * This method is related to the {@link Line#intersection(Line)
-     * intersection} method in the {@link Line Line} class, but in addition
+     * This method is related to the {@link Line3D_Old#intersection(Line3D_Old)
+     * intersection} method in the {@link Line3D_Old Line} class, but in addition
      * to compute the point along infinite lines, it also checks the point
      * lies on both sub-line ranges.
      * </p>
@@ -107,7 +107,7 @@ public class SubLine {
      * occurring on endpoints lead to null being returned
      * @return the intersection point if there is one, null if the sub-lines don't intersect
      */
-    public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+    public Vector3D intersection(final SubLine3D_Old subLine, final boolean includeEndPoints) {
 
         // compute the intersection on infinite line
         Vector3D v1D = line.intersection(subLine.line);
@@ -138,7 +138,7 @@ public class SubLine {
      */
     private static IntervalsSet buildIntervalSet(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
-        final Line line = new Line(start, end, precision);
+        final Line3D_Old line = new Line3D_Old(start, end, precision);
         return new IntervalsSet(line.toSubSpace(start).getX(),
                                 line.toSubSpace(end).getX(),
                                 precision);

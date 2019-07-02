@@ -32,7 +32,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * <p>This class extracts the 2D outlines from {{@link PolygonsSet
  * polyhedrons sets} in a specified projection plane.</p>
  */
-public class OutlineExtractor {
+public class OutlineExtractor_Old {
 
     /** Abscissa axis of the projection plane. */
     private final Vector3D u;
@@ -47,7 +47,7 @@ public class OutlineExtractor {
      * @param u abscissa axis of the projection point
      * @param v ordinate axis of the projection point
      */
-    public OutlineExtractor(final Vector3D u, final Vector3D v) {
+    public OutlineExtractor_Old(final Vector3D u, final Vector3D v) {
         this.u = u;
         this.v = v;
         this.w = u.cross(v);
@@ -167,7 +167,7 @@ public class OutlineExtractor {
             @SuppressWarnings("unchecked")
             final AbstractSubHyperplane_Old<Vector3D, Vector2D> absFacet =
                 (AbstractSubHyperplane_Old<Vector3D, Vector2D>) facet;
-            final Plane plane    = (Plane) facet.getHyperplane();
+            final Plane_Old plane    = (Plane_Old) facet.getHyperplane();
 
             final double scal = plane.getNormal().dot(w);
             if (Math.abs(scal) > 1.0e-3) {

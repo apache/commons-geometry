@@ -31,9 +31,9 @@ import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.SubOrientedPoint_Old;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.threed.Plane;
+import org.apache.commons.geometry.euclidean.threed.Plane_Old;
 import org.apache.commons.geometry.euclidean.threed.PolyhedronsSet;
-import org.apache.commons.geometry.euclidean.threed.SubPlane;
+import org.apache.commons.geometry.euclidean.threed.SubPlane3D_Old;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Line_Old;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
@@ -266,7 +266,7 @@ public class EuclideanTestUtils {
             /** {@inheritDoc} */
             @Override
             protected void formatHyperplane(final Hyperplane_Old<Vector3D> hyperplane) {
-                final Plane h = (Plane) hyperplane;
+                final Plane_Old h = (Plane_Old) hyperplane;
                 final Vector3D p = h.toSpace(Vector2D.ZERO);
                 getFormatter().format("%22.15e %22.15e %22.15e %22.15e %22.15e %22.15e",
                                       p.getX(), p.getY(), p.getZ(),
@@ -338,9 +338,9 @@ public class EuclideanTestUtils {
 
             /** {@inheritDoc} */
             @Override
-            public Plane parseHyperplane()
+            public Plane_Old parseHyperplane()
                 throws ParseException {
-                return Plane.fromPointAndNormal(Vector3D.of(getNumber(), getNumber(), getNumber()),
+                return Plane_Old.fromPointAndNormal(Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  Vector3D.of(getNumber(), getNumber(), getNumber()),
                                  getPrecision());
             }
@@ -458,8 +458,8 @@ public class EuclideanTestUtils {
         /** {@inheritDoc} */
         @Override
         protected void writeInternalNode(BSPTree_Old<Vector3D> node) {
-            SubPlane cut = (SubPlane) node.getCut();
-            Plane plane = (Plane) cut.getHyperplane();
+            SubPlane3D_Old cut = (SubPlane3D_Old) node.getCut();
+            Plane_Old plane = (Plane_Old) cut.getHyperplane();
             PolygonsSet polygon = (PolygonsSet) cut.getRemainingRegion();
 
             write("cut = { normal: " + plane.getNormal() + ", origin: " + plane.getOrigin() + "}");

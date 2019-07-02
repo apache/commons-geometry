@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 /** Simple container for a two-points segment.
  */
-public class Segment {
+public class Segment3D_Old {
 
     /** Start point of the segment. */
     private final Vector3D start;
@@ -28,14 +28,14 @@ public class Segment {
     private final Vector3D end;
 
     /** Line containing the segment. */
-    private final Line     line;
+    private final Line3D_Old     line;
 
     /** Build a segment.
      * @param start start point of the segment
      * @param end end point of the segment
      * @param line line containing the segment
      */
-    public Segment(final Vector3D start, final Vector3D end, final Line line) {
+    public Segment3D_Old(final Vector3D start, final Vector3D end, final Line3D_Old line) {
         this.start  = start;
         this.end    = end;
         this.line   = line;
@@ -58,7 +58,7 @@ public class Segment {
     /** Get the line containing the segment.
      * @return line containing the segment
      */
-    public Line getLine() {
+    public Line3D_Old getLine() {
         return line;
     }
 

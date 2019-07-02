@@ -197,10 +197,10 @@ public class OBJWriter {
             BoundaryAttribute_Old<Vector3D> attr = (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
 
             if (attr.getPlusOutside() != null) {
-                addBoundary((SubPlane) attr.getPlusOutside());
+                addBoundary((SubPlane3D_Old) attr.getPlusOutside());
             }
             else if (attr.getPlusInside() != null) {
-                addBoundary((SubPlane) attr.getPlusInside());
+                addBoundary((SubPlane3D_Old) attr.getPlusInside());
             }
         }
 
@@ -210,12 +210,12 @@ public class OBJWriter {
             // do nothing
         }
 
-        /** Adds the region boundary defined by the given {@link SubPlane}
+        /** Adds the region boundary defined by the given {@link SubPlane3D_Old}
          * to the mesh.
          * @param subplane
          */
-        private void addBoundary(SubPlane subplane) {
-            Plane plane = (Plane) subplane.getHyperplane();
+        private void addBoundary(SubPlane3D_Old subplane) {
+            Plane_Old plane = (Plane_Old) subplane.getHyperplane();
             PolygonsSet poly = (PolygonsSet) subplane.getRemainingRegion();
 
             TriangleExtractor triExtractor = new TriangleExtractor(precision);

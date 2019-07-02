@@ -26,15 +26,15 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.PolygonsSet;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** This class represents a sub-hyperplane for {@link Plane}.
+/** This class represents a sub-hyperplane for {@link Plane_Old}.
  */
-public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
+public class SubPlane3D_Old extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
 
     /** Simple constructor.
      * @param hyperplane underlying hyperplane
      * @param remainingRegion remaining region of the hyperplane
      */
-    public SubPlane(final Hyperplane_Old<Vector3D> hyperplane,
+    public SubPlane3D_Old(final Hyperplane_Old<Vector3D> hyperplane,
                     final Region_Old<Vector2D> remainingRegion) {
         super(hyperplane, remainingRegion);
     }
@@ -43,7 +43,7 @@ public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
     @Override
     protected AbstractSubHyperplane_Old<Vector3D, Vector2D> buildNew(final Hyperplane_Old<Vector3D> hyperplane,
                                                                        final Region_Old<Vector2D> remainingRegion) {
-        return new SubPlane(hyperplane, remainingRegion);
+        return new SubPlane3D_Old(hyperplane, remainingRegion);
     }
 
     /** Split the instance in two parts by an hyperplane.
@@ -55,9 +55,9 @@ public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
     @Override
     public SplitSubHyperplane<Vector3D> split(Hyperplane_Old<Vector3D> hyperplane) {
 
-        final Plane otherPlane = (Plane) hyperplane;
-        final Plane thisPlane  = (Plane) getHyperplane();
-        final Line  inter      = otherPlane.intersection(thisPlane);
+        final Plane_Old otherPlane = (Plane_Old) hyperplane;
+        final Plane_Old thisPlane  = (Plane_Old) getHyperplane();
+        final Line3D_Old  inter      = otherPlane.intersection(thisPlane);
         final DoublePrecisionContext precision = thisPlane.getPrecision();
 
         if (inter == null) {
@@ -99,8 +99,8 @@ public class SubPlane extends AbstractSubHyperplane_Old<Vector3D, Vector2D> {
                                                    new BSPTree_Old<>(l2DMinus, new BSPTree_Old<Vector2D>(Boolean.FALSE),
                                                                             splitTree.getMinus(), null);
 
-        return new SplitSubHyperplane<>(new SubPlane(thisPlane.copySelf(), new PolygonsSet(plusTree, precision)),
-                                                   new SubPlane(thisPlane.copySelf(), new PolygonsSet(minusTree, precision)));
+        return new SplitSubHyperplane<>(new SubPlane3D_Old(thisPlane.copySelf(), new PolygonsSet(plusTree, precision)),
+                                                   new SubPlane3D_Old(thisPlane.copySelf(), new PolygonsSet(minusTree, precision)));
 
     }
 

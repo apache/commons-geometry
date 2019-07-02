@@ -155,12 +155,12 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
             // too thin box, build an empty polygons set
             return new BSPTree_Old<>(Boolean.FALSE);
         }
-        final Plane pxMin = new Plane(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, precision);
-        final Plane pxMax = new Plane(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  precision);
-        final Plane pyMin = new Plane(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, precision);
-        final Plane pyMax = new Plane(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
-        final Plane pzMin = new Plane(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
-        final Plane pzMax = new Plane(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
+        final Plane_Old pxMin = Plane_Old.fromPointAndNormal(Vector3D.of(xMin, 0,    0),   Vector3D.MINUS_X, precision);
+        final Plane_Old pxMax = Plane_Old.fromPointAndNormal(Vector3D.of(xMax, 0,    0),   Vector3D.PLUS_X,  precision);
+        final Plane_Old pyMin = Plane_Old.fromPointAndNormal(Vector3D.of(0,    yMin, 0),   Vector3D.MINUS_Y, precision);
+        final Plane_Old pyMax = Plane_Old.fromPointAndNormal(Vector3D.of(0,    yMax, 0),   Vector3D.PLUS_Y,  precision);
+        final Plane_Old pzMin = Plane_Old.fromPointAndNormal(Vector3D.of(0,    0,   zMin), Vector3D.MINUS_Z, precision);
+        final Plane_Old pzMax = Plane_Old.fromPointAndNormal(Vector3D.of(0,    0,   zMax), Vector3D.PLUS_Z,  precision);
         final Region_Old<Vector3D> boundary =
         new RegionFactory_Old<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
@@ -218,7 +218,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
         for (final int[] facet : facets) {
 
             // define facet plane from the first 3 points
-            Plane plane = new Plane(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
+            Plane_Old plane = Plane_Old.fromPoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
                                     precision);
 
             // check all points are in the plane
@@ -232,7 +232,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
             }
 
             // create the polygonal facet
-            boundary.add(new SubPlane(plane, new PolygonsSet(precision, two2Points)));
+            boundary.add(new SubPlane3D_Old(plane, new PolygonsSet(precision, two2Points)));
 
         }
 
@@ -439,14 +439,14 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
          */
         private void addContribution(final SubHyperplane_Old<Vector3D> facet, final boolean reversed) {
 
-            final Region_Old<Vector2D> polygon = ((SubPlane) facet).getRemainingRegion();
+            final Region_Old<Vector2D> polygon = ((SubPlane3D_Old) facet).getRemainingRegion();
             final double area = polygon.getSize();
 
             if (Double.isInfinite(area)) {
                 volumeSum = Double.POSITIVE_INFINITY;
                 barycenterSum = Vector3D.NaN;
             } else {
-                final Plane plane = (Plane) facet.getHyperplane();
+                final Plane_Old plane = (Plane_Old) facet.getHyperplane();
                 final Vector3D facetBarycenter = plane.toSpace(polygon.getBarycenter());
 
                 // the volume here is actually 3x the actual pyramid volume; we'll apply
@@ -469,7 +469,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
      * given point, or null if the line does not intersect any
      * sub-hyperplane
      */
-    public SubHyperplane_Old<Vector3D> firstIntersection(final Vector3D point, final Line line) {
+    public SubHyperplane_Old<Vector3D> firstIntersection(final Vector3D point, final Line3D_Old line) {
         return recurseFirstIntersection(getTree(true), point, line);
     }
 
@@ -483,7 +483,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
      */
     private SubHyperplane_Old<Vector3D> recurseFirstIntersection(final BSPTree_Old<Vector3D> node,
                                                                 final Vector3D point,
-                                                                final Line line) {
+                                                                final Line3D_Old line) {
 
         final SubHyperplane_Old<Vector3D> cut = node.getCut();
         if (cut == null) {
@@ -491,7 +491,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
         }
         final BSPTree_Old<Vector3D> minus = node.getMinus();
         final BSPTree_Old<Vector3D> plus  = node.getPlus();
-        final Plane                plane = (Plane) cut.getHyperplane();
+        final Plane_Old                plane = (Plane_Old) cut.getHyperplane();
 
         // establish search order
         final double offset = plane.getOffset(point);
@@ -547,16 +547,16 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
      */
     private SubHyperplane_Old<Vector3D> boundaryFacet(final Vector3D point,
                                                      final BSPTree_Old<Vector3D> node) {
-        final Vector2D Vector2D = ((Plane) node.getCut().getHyperplane()).toSubSpace(point);
+        final Vector2D Vector2D = ((Plane_Old) node.getCut().getHyperplane()).toSubSpace(point);
         @SuppressWarnings("unchecked")
         final BoundaryAttribute_Old<Vector3D> attribute =
             (BoundaryAttribute_Old<Vector3D>) node.getAttribute();
         if ((attribute.getPlusOutside() != null) &&
-            (((SubPlane) attribute.getPlusOutside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
+            (((SubPlane3D_Old) attribute.getPlusOutside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
             return attribute.getPlusOutside();
         }
         if ((attribute.getPlusInside() != null) &&
-            (((SubPlane) attribute.getPlusInside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
+            (((SubPlane3D_Old) attribute.getPlusInside()).getRemainingRegion().checkPoint(Vector2D) != Location.OUTSIDE)) {
             return attribute.getPlusInside();
         }
         return null;
@@ -582,7 +582,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
         private final QuaternionRotation   rotation;
 
         /** Cached original hyperplane. */
-        private Plane cachedOriginal;
+        private Plane_Old cachedOriginal;
 
         /** Cached 2D transform valid inside the cached original hyperplane. */
         private Transform_Old<Vector2D, Vector1D>  cachedTransform;
@@ -605,8 +605,8 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Plane apply(final Hyperplane_Old<Vector3D> hyperplane) {
-            return ((Plane) hyperplane).rotate(center, rotation);
+        public Plane_Old apply(final Hyperplane_Old<Vector3D> hyperplane) {
+            return ((Plane_Old) hyperplane).rotate(center, rotation);
         }
 
         /** {@inheritDoc} */
@@ -617,8 +617,8 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
             if (original != cachedOriginal) {
                 // we have changed hyperplane, reset the in-hyperplane transform
 
-                final Plane    oPlane = (Plane) original;
-                final Plane    tPlane = (Plane) transformed;
+                final Plane_Old    oPlane = (Plane_Old) original;
+                final Plane_Old    tPlane = (Plane_Old) transformed;
                 final Vector3D p00    = oPlane.getOrigin();
                 final Vector3D p10    = oPlane.toSpace(Vector2D.of(1.0, 0.0));
                 final Vector3D p01    = oPlane.toSpace(Vector2D.of(0.0, 1.0));
@@ -626,7 +626,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
                 final Vector2D tP10   = tPlane.toSubSpace(apply(p10));
                 final Vector2D tP01   = tPlane.toSubSpace(apply(p01));
 
-                cachedOriginal  = (Plane) original;
+                cachedOriginal  = (Plane_Old) original;
                 cachedTransform =
                         org.apache.commons.geometry.euclidean.twod.Line_Old.getTransform(
                                 tP00.vectorTo(tP10),
@@ -654,7 +654,7 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
         private final Vector3D   translation;
 
         /** Cached original hyperplane. */
-        private Plane cachedOriginal;
+        private Plane_Old cachedOriginal;
 
         /** Cached 2D transform valid inside the cached original hyperplane. */
         private Transform_Old<Vector2D, Vector1D>  cachedTransform;
@@ -674,8 +674,8 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Plane apply(final Hyperplane_Old<Vector3D> hyperplane) {
-            return ((Plane) hyperplane).translate(translation);
+        public Plane_Old apply(final Hyperplane_Old<Vector3D> hyperplane) {
+            return ((Plane_Old) hyperplane).translate(translation);
         }
 
         /** {@inheritDoc} */
@@ -686,11 +686,11 @@ public class PolyhedronsSet extends AbstractRegion_Old<Vector3D, Vector2D> {
             if (original != cachedOriginal) {
                 // we have changed hyperplane, reset the in-hyperplane transform
 
-                final Plane   oPlane = (Plane) original;
-                final Plane   tPlane = (Plane) transformed;
+                final Plane_Old   oPlane = (Plane_Old) original;
+                final Plane_Old   tPlane = (Plane_Old) transformed;
                 final Vector2D shift  = tPlane.toSubSpace(apply(oPlane.getOrigin()));
 
-                cachedOriginal  = (Plane) original;
+                cachedOriginal  = (Plane_Old) original;
                 cachedTransform =
                         org.apache.commons.geometry.euclidean.twod.Line_Old.getTransform(
                                 Vector2D.PLUS_X,

@@ -26,7 +26,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SubLineTest {
+public class SubLine3D_OldTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -37,9 +37,9 @@ public class SubLineTest {
     public void testEndPoints() {
         Vector3D p1 = Vector3D.of(-1, -7, 2);
         Vector3D p2 = Vector3D.of(7, -1, 0);
-        Segment segment = new Segment(p1, p2, new Line(p1, p2, TEST_PRECISION));
-        SubLine sub = new SubLine(segment);
-        List<Segment> segments = sub.getSegments();
+        Segment3D_Old segment = new Segment3D_Old(p1, p2, new Line3D_Old(p1, p2, TEST_PRECISION));
+        SubLine3D_Old sub = new SubLine3D_Old(segment);
+        List<Segment3D_Old> segments = sub.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertEquals(0.0, Vector3D.of(-1, -7, 2).distance(segments.get(0).getStart()), TEST_EPS);
         Assert.assertEquals(0.0, Vector3D.of( 7, -1, 0).distance(segments.get(0).getEnd()), TEST_EPS);
@@ -47,8 +47,8 @@ public class SubLineTest {
 
     @Test
     public void testNoEndPoints() {
-        SubLine wholeLine = new Line(Vector3D.of(-1, 7, 2), Vector3D.of(7, 1, 0), TEST_PRECISION).wholeLine();
-        List<Segment> segments = wholeLine.getSegments();
+        SubLine3D_Old wholeLine = new Line3D_Old(Vector3D.of(-1, 7, 2), Vector3D.of(7, 1, 0), TEST_PRECISION).wholeLine();
+        List<Segment3D_Old> segments = wholeLine.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
                           segments.get(0).getStart().getX() < 0);
@@ -66,26 +66,26 @@ public class SubLineTest {
 
     @Test
     public void testNoSegments() {
-        SubLine empty = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
+        SubLine3D_Old empty = new SubLine3D_Old(new Line3D_Old(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
                                     (IntervalsSet) new RegionFactory_Old<Vector1D>().getComplement(new IntervalsSet(TEST_PRECISION)));
-        List<Segment> segments = empty.getSegments();
+        List<Segment3D_Old> segments = empty.getSegments();
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testSeveralSegments() {
-        SubLine twoSubs = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
+        SubLine3D_Old twoSubs = new SubLine3D_Old(new Line3D_Old(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, 0), TEST_PRECISION),
                                       (IntervalsSet) new RegionFactory_Old<Vector1D>().union(new IntervalsSet(1, 2, TEST_PRECISION),
                                                                                             new IntervalsSet(3, 4, TEST_PRECISION)));
-        List<Segment> segments = twoSubs.getSegments();
+        List<Segment3D_Old> segments = twoSubs.getSegments();
         Assert.assertEquals(2, segments.size());
     }
 
     @Test
     public void testHalfInfiniteNeg() {
-        SubLine empty = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, -2), TEST_PRECISION),
+        SubLine3D_Old empty = new SubLine3D_Old(new Line3D_Old(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, -2), TEST_PRECISION),
                                     new IntervalsSet(Double.NEGATIVE_INFINITY, 0.0, TEST_PRECISION));
-        List<Segment> segments = empty.getSegments();
+        List<Segment3D_Old> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertTrue(Double.isInfinite(segments.get(0).getStart().getX()) &&
                           segments.get(0).getStart().getX() < 0);
@@ -98,9 +98,9 @@ public class SubLineTest {
 
     @Test
     public void testHalfInfinitePos() {
-        SubLine empty = new SubLine(new Line(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, -2), TEST_PRECISION),
+        SubLine3D_Old empty = new SubLine3D_Old(new Line3D_Old(Vector3D.of(-1, -7, 2), Vector3D.of(7, -1, -2), TEST_PRECISION),
                                     new IntervalsSet(0.0, Double.POSITIVE_INFINITY, TEST_PRECISION));
-        List<Segment> segments = empty.getSegments();
+        List<Segment3D_Old> segments = empty.getSegments();
         Assert.assertEquals(1, segments.size());
         Assert.assertEquals(0.0, Vector3D.of(3, -4, 0).distance(segments.get(0).getStart()), 1.0e-10);
         Assert.assertTrue(Double.isInfinite(segments.get(0).getEnd().getX()) &&
@@ -113,56 +113,56 @@ public class SubLineTest {
 
     @Test
     public void testIntersectionInsideInside() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 2, 2), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 2, 2), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector3D.of(2, 1, 1).distance(sub1.intersection(sub2, true)), TEST_EPS);
         Assert.assertEquals(0.0, Vector3D.of(2, 1, 1).distance(sub1.intersection(sub2, false)), TEST_EPS);
     }
 
     @Test
     public void testIntersectionInsideBoundary() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 1, 1), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector3D.of(2, 1, 1).distance(sub1.intersection(sub2, true)), TEST_EPS);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionInsideOutside() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryBoundary() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(2, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(2, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 1, 1), TEST_PRECISION);
         Assert.assertEquals(0.0, Vector3D.of(2, 1, 1).distance(sub1.intersection(sub2, true)),  TEST_EPS);
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionBoundaryOutside() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(2, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(2, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionOutsideOutside() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(1.5, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(1.5, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 0, 0), Vector3D.of(2, 0.5, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
 
     @Test
     public void testIntersectionNotIntersecting() {
-        SubLine sub1 = new SubLine(Vector3D.of(1, 1, 1), Vector3D.of(1.5, 1, 1), TEST_PRECISION);
-        SubLine sub2 = new SubLine(Vector3D.of(2, 3, 0), Vector3D.of(2, 3, 0.5), TEST_PRECISION);
+        SubLine3D_Old sub1 = new SubLine3D_Old(Vector3D.of(1, 1, 1), Vector3D.of(1.5, 1, 1), TEST_PRECISION);
+        SubLine3D_Old sub2 = new SubLine3D_Old(Vector3D.of(2, 3, 0), Vector3D.of(2, 3, 0.5), TEST_PRECISION);
         Assert.assertNull(sub1.intersection(sub2, true));
         Assert.assertNull(sub1.intersection(sub2, false));
     }
