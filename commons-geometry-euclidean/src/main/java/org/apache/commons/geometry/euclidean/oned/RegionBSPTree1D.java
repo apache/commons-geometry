@@ -295,6 +295,17 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         visitor.accept(min, max);
     }
 
+    /** Compute the region represented by the given node.
+     * @param node the node to compute the region for
+     * @return the region represented by the given node
+     */
+    private Interval computeNodeRegion(final RegionNode1D node) {
+        final NodeRegionVisitor visitor = new NodeRegionVisitor();
+        visitNodeInterval(node, visitor);
+
+        return visitor.getInterval();
+    }
+
     /** {@inheritDoc} */
     @Override
     protected RegionNode1D createNode() {
@@ -387,6 +398,15 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             super(tree);
         }
 
+        /** Get the region represented by this node. The returned region contains
+         * the entire area contained in this node, regardless of the attributes of
+         * any child nodes.
+         * @return the region represented by this node
+         */
+        public Interval getNodeRegion() {
+            return ((RegionBSPTree1D) getTree()).computeNodeRegion(this);
+        }
+
         /** {@inheritDoc} */
         @Override
         protected RegionNode1D getSelf() {
@@ -466,10 +486,35 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         }
     }
 
+    /** Internal class for calculating the region of a single tree node.
+     */
+    private static final class NodeRegionVisitor implements BiConsumer<OrientedPoint, OrientedPoint> {
+
+        /** The min boundary for the region. */
+        private OrientedPoint min;
+
+        /** The max boundary for the region. */
+        private OrientedPoint max;
+
+        /** {@inheritDoc} */
+        @Override
+        public void accept(OrientedPoint min, OrientedPoint max) {
+            // reverse the oriented point directions if needed
+            this.min = (min != null && min.isPositiveFacing()) ? min.reverse() : min;
+            this.max = (max != null && !max.isPositiveFacing()) ? max.reverse() : max;
+        }
+
+        /** Return the computed interval.
+         * @return the computed interval.
+         */
+        public Interval getInterval() {
+            return Interval.of(min, max);
+        }
+    }
+
     /** Internal class for calculating size-related properties for a {@link RegionBSPTree1D}.
      */
-    private static final class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint>
-    {
+    private static final class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint> {
         /** Number of inside intervals visited. */
         private int count = 0;
 

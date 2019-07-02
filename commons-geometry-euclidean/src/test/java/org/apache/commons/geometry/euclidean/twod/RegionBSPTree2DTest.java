@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -289,6 +290,38 @@ public class RegionBSPTree2DTest {
         checkClassify(secondArea, RegionLocation.OUTSIDE,
                 Vector2D.of(0.75, -1), Vector2D.of(0.75, 2),
                 Vector2D.of(2, 0.5), Vector2D.of(0.25, 0.5));
+    }
+
+    @Test
+    public void testGetNodeRegion() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        RegionNode2D root = tree.getRoot();
+        root.cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+
+        RegionNode2D minus = root.getMinus();
+        minus.cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+
+        Vector2D origin = Vector2D.ZERO;
+
+        Vector2D a = Vector2D.of(1, 0);
+        Vector2D b = Vector2D.of(1, 1);
+        Vector2D c = Vector2D.of(0, 1);
+        Vector2D d = Vector2D.of(-1, 1);
+        Vector2D e = Vector2D.of(-1, 0);
+        Vector2D f = Vector2D.of(-1, -1);
+        Vector2D g = Vector2D.of(0, -1);
+        Vector2D h = Vector2D.of(1, -1);
+
+        // act/assert
+        checkConvexArea(root.getNodeRegion(), Arrays.asList(origin, a, b, c, d, e, f, g, h), Arrays.asList());
+
+        checkConvexArea(minus.getNodeRegion(), Arrays.asList(b, c, d), Arrays.asList(f, g, h));
+        checkConvexArea(root.getPlus().getNodeRegion(), Arrays.asList(f, g, h), Arrays.asList(b, c, d));
+
+        checkConvexArea(minus.getMinus().getNodeRegion(), Arrays.asList(d), Arrays.asList(a, b, f, g, h));
+        checkConvexArea(minus.getPlus().getNodeRegion(), Arrays.asList(b), Arrays.asList(d, e, f, g, h));
     }
 
     @Test
@@ -1006,6 +1039,11 @@ public class RegionBSPTree2DTest {
 
             Assert.assertEquals(msg, loc, region.classify(point));
         }
+    }
+
+    private static void checkConvexArea(final ConvexArea area, final List<Vector2D> inside, final List<Vector2D> outside) {
+        checkClassify(area, RegionLocation.INSIDE, inside.toArray(new Vector2D[0]));
+        checkClassify(area, RegionLocation.OUTSIDE, outside.toArray(new Vector2D[0]));
     }
 
     /** Assert that the given path is finite and contains the given vertices.

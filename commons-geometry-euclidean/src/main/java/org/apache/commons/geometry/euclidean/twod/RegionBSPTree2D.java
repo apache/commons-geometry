@@ -138,7 +138,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * the minus side of the line segments points to the region interior.
      * @return the line segment paths comprising the region boundary
      */
-    protected List<LineSegmentPath> computeBoundaryPaths() {
+    private List<LineSegmentPath> computeBoundaryPaths() {
         final BoundaryPathVisitor2D connector = new BoundaryPathVisitor2D();
         accept(connector);
 
@@ -206,6 +206,27 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         }
 
         return new RegionSizeProperties<>(size, barycenter);
+    }
+
+    /** Compute the region represented by the given node.
+     * @param node the node to compute the region for
+     * @return the region represented by the given node
+     */
+    private ConvexArea computeNodeRegion(final RegionNode2D node) {
+        ConvexArea area = ConvexArea.full();
+
+        RegionNode2D child = node;
+        RegionNode2D parent;
+
+        while ((parent = child.getParent()) != null) {
+            Split<ConvexArea> split = area.split(parent.getCutHyperplane());
+
+            area = child.isMinus() ? split.getMinus() : split.getPlus();
+
+            child = parent;
+        }
+
+        return area;
     }
 
     /** {@inheritDoc} */
@@ -333,6 +354,15 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          */
         private RegionNode2D(AbstractBSPTree<Vector2D, RegionNode2D> tree) {
             super(tree);
+        }
+
+        /** Get the region represented by this node. The returned region contains
+         * the entire area contained in this node, regardless of the attributes of
+         * any child nodes.
+         * @return the region represented by this node
+         */
+        public ConvexArea getNodeRegion() {
+            return ((RegionBSPTree2D) getTree()).computeNodeRegion(this);
         }
 
         /** {@inheritDoc} */

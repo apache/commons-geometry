@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D.RegionNode1D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -584,6 +585,27 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(1, intervals.size());
         checkInterval(intervals.get(0), -1, 6);
+    }
+
+    @Test
+    public void testGetNodeRegion() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+        RegionNode1D root = tree.getRoot();
+        root.cut(OrientedPoint.createPositiveFacing(1.0, TEST_PRECISION));
+
+        RegionNode1D minus = root.getMinus();
+        minus.cut(OrientedPoint.createNegativeFacing(0.0, TEST_PRECISION));
+
+        // act/assert
+        checkInterval(root.getNodeRegion(), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        checkInterval(minus.getNodeRegion(), Double.NEGATIVE_INFINITY, 1.0);
+        checkInterval(root.getPlus().getNodeRegion(), 1.0, Double.POSITIVE_INFINITY);
+
+        checkInterval(minus.getPlus().getNodeRegion(), Double.NEGATIVE_INFINITY, 0.0);
+        checkInterval(minus.getMinus().getNodeRegion(), 0.0, 1.0);
     }
 
     @Test
