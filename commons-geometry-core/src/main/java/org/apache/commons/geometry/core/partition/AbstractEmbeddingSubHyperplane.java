@@ -43,6 +43,18 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
 
     /** {@inheritDoc} */
     @Override
+    public boolean isInfinite() {
+        return Double.isInfinite(getSize());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return !isInfinite();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double getSize() {
         return getSubspaceRegion().getSize();
     }

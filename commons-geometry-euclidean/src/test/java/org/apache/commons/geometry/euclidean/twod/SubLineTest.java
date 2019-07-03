@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -228,6 +229,210 @@ public class SubLineTest {
     }
 
     @Test
+    public void testSplit_both_anglePositive() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        Assert.assertEquals(1, minusSegments.size());
+        checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
+
+        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        Assert.assertEquals(2, plusSegments.size());
+        checkFiniteSegment(plusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
+        checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+    }
+
+    @Test
+    public void testSplit_both_angleNegative() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        Assert.assertEquals(2, minusSegments.size());
+        checkFiniteSegment(minusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
+        checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+
+        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        Assert.assertEquals(1, plusSegments.size());
+        checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
+    }
+
+    @Test
+    public void testSplit_intersection_plusOnly() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        Assert.assertEquals(2, plusSegments.size());
+        checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
+        checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+    }
+
+    @Test
+    public void testSplit_intersection_minusOnly() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        Assert.assertEquals(2, minusSegments.size());
+        checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
+        checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_parallel_plus() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        Assert.assertEquals(2, plusSegments.size());
+        checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
+        checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+    }
+
+    @Test
+    public void testSplit_parallel_minus() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        Assert.assertEquals(2, minusSegments.size());
+        checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
+        checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_coincident_sameDirection() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_coincident_oppositeDirection() {
+        // arrange
+        RegionBSPTree1D subRegion = RegionBSPTree1D.empty();
+        subRegion.add(Interval.of(0,  2, TEST_PRECISION));
+        subRegion.add(Interval.of(3,  4, TEST_PRECISION));
+
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        SubLine subline = new SubLine(line, subRegion);
+
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<SubLine> split = subline.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
     public void testBuilder_instanceMethod() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
@@ -395,5 +600,12 @@ public class SubLineTest {
         GeometryTestUtils.assertThrows(() -> {
             builder.add(unknownType);
         }, IllegalArgumentException.class);
+    }
+
+    private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
+        Assert.assertFalse(segment.isInfinite());
+
+        EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }
 }

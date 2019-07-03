@@ -297,9 +297,9 @@ public final class Line extends AbstractHyperplane<Vector2D>
         return originOffset - direction.signedArea(point);
     }
 
-    /** Get the offset (oriented distance) of a line. Since an infinite
-     * number of distances can be calculated between points on two different
-     * lines, this methods returns the value closest to zero. For intersecting
+    /** Get the offset (oriented distance) of the given line relative to this instance.
+     * Since an infinite number of distances can be calculated between points on two
+     * different lines, this method returns the value closest to zero. For intersecting
      * lines, this will simply be zero. For parallel lines, this will be the
      * perpendicular distance between the two lines, as a signed value.
      *
