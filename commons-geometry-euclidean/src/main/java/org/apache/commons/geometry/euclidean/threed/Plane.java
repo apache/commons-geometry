@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -226,7 +227,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      * @param line the line to project
      * @return the projection of the given line onto the plane.
      */
-    public Line3D project(final Line3D_Old line) {
+    public Line3D project(final Line3D line) {
         Vector3D direction = line.getDirection();
         Vector3D projection = w.multiply(direction.dot(w) * (1 / w.normSq()));
 
@@ -234,9 +235,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         Vector3D p1 = project(line.getOrigin());
         Vector3D p2 = p1.add(projectedLineDirection);
 
-        // TODO
-        return null;
-//        return new Line3D_Old(p1,p2, getPrecision());
+        return Line3D.fromPoints(p1,p2, getPrecision());
     }
 
     /**
@@ -392,16 +391,14 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      *         the line is parallel to the instance)
      */
     public Vector3D intersection(final Line3D line) {
-        // TODO
-        return null;
-//        final Vector3D direction = line.getDirection();
-//        final double dot = w.dot(direction);
-//        if (getPrecision().eqZero(dot)) {
-//            return null;
-//        }
-//        final Vector3D point = line.toSpace(Vector1D.ZERO);
-//        final double k = -(originOffset + w.dot(point)) / dot;
-//        return Vector3D.linearCombination(1.0, point, k, direction);
+        final Vector3D direction = line.getDirection();
+        final double dot = w.dot(direction);
+        if (getPrecision().eqZero(dot)) {
+            return null;
+        }
+        final Vector3D point = line.toSpace(Vector1D.ZERO);
+        final double k = -(originOffset + w.dot(point)) / dot;
+        return Vector3D.linearCombination(1.0, point, k, direction);
     }
 
     /**
@@ -409,15 +406,15 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      *
      * @param other other plane
      * @return line at the intersection of the instance and the other plane (really
-     *         a {@link Line3D_Old Line} instance)
+     *         a {@link Line3D} instance)
      */
-    public Line3D_Old intersection(final Plane other) {
+    public Line3D intersection(final Plane other) {
         final Vector3D direction = w.cross(other.w);
         if (getPrecision().eqZero(direction.norm())) {
             return null;
         }
         final Vector3D point = intersection(this, other, Plane.fromNormal(direction, getPrecision()));
-        return new Line3D_Old(point, point.add(direction), getPrecision());
+        return Line3D.fromPointAndDirection(point, direction, getPrecision());
     }
 
     /**
@@ -490,7 +487,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      * @param line line to check
      * @return true if line is contained in this plane
      */
-    public boolean contains(final Line3D_Old line) {
+    public boolean contains(final Line3D line) {
         Vector3D origin = line.getOrigin();
         Vector3D direction = line.getDirection();
         return contains(origin) && areCoplanar(u, v, direction, getPrecision());
@@ -500,7 +497,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      * @param line line to check.
      * @return true if the line is parallel to the instance, false otherwise.
      */
-    public boolean isParallel(final Line3D_Old line) {
+    public boolean isParallel(final Line3D line) {
         final Vector3D direction = line.getDirection();
         final double dot = w.dot(direction);
         if (getPrecision().eqZero(dot)) {
@@ -543,7 +540,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      * @param line to calculate the distance to the plane instance
      * @return the distance or 0.0, if the line is not parallel to the plane instance.
      */
-    public double offset(final Line3D_Old line) {
+    public double offset(final Line3D line) {
         if (!isParallel(line)) {
             return 0;
         }

@@ -218,10 +218,24 @@ public final class Line extends AbstractHyperplane<Vector2D>
         return new SubLine(this);
     }
 
+    /** Get the abscissa of the given point on the line. The abscissa represents
+     * the distance the projection of the point on the line is from the line's
+     * origin point (the point on the line closest to the origin of the
+     * 2D space). Abscissa values increase in the direction of the line. This method
+     * is exactly equivalent to {@link #toSubspace(Vector2D)} except that this method
+     * returns a double instead of a {@link Vector1D}.
+     * @param point point to compute the abscissa for
+     * @return abscissa value of the point
+     * @see #toSubspace(Vector2D)
+     */
+    public double abscissa(final Vector2D point) {
+        return direction.dot(point);
+    }
+
     /** {@inheritDoc} */
     @Override
     public Vector1D toSubspace(final Vector2D point) {
-        return Vector1D.of(direction.dot(point));
+        return Vector1D.of(abscissa(point));
     }
 
     /** {@inheritDoc} */

@@ -280,6 +280,18 @@ public class LineTest {
     }
 
     @Test
+    public void testAbscissa() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(-3,  4)), TEST_EPS);
+        Assert.assertEquals(0.0, line.abscissa(Vector2D.of( 3, -4)), TEST_EPS);
+        Assert.assertEquals(5.0, line.abscissa(Vector2D.of(7, -1)), TEST_EPS);
+        Assert.assertEquals(-5.0, line.abscissa(Vector2D.of(-1, -7)), TEST_EPS);
+    }
+
+    @Test
     public void testToSubspace() {
         // arrange
         Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
