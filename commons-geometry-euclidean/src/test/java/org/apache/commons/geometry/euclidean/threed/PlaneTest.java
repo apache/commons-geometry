@@ -16,12 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
+
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 
 public class PlaneTest {
 
@@ -30,28 +33,143 @@ public class PlaneTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    @Test(expected=IllegalNormException.class)
-    public void testUAndVAreIdentical() {
-        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
-    }
+    @Test
+    public void testFromNormal() {
+        // act/assert
+        checkPlane(Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+        checkPlane(Plane.fromNormal(Vector3D.of(7, 0, 0), TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
 
-    @Test(expected=IllegalNormException.class)
-    public void testUAndVAreCollinear() {
-        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
-    }
+        checkPlane(Plane.fromNormal(Vector3D.PLUS_Y, TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.MINUS_Z, Vector3D.MINUS_X);
+        checkPlane(Plane.fromNormal(Vector3D.of(0, 5, 0), TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.MINUS_Z, Vector3D.MINUS_X);
 
-    @Test(expected=IllegalNormException.class)
-    public void testUAndVAreCollinear2() {
-        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
-    }
-
-    @Test(expected=IllegalNormException.class)
-    public void testPointsDoNotConstituteAPlane() {
-        Plane.fromPoints(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 1, 0), TEST_PRECISION);
+        checkPlane(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_X);
+        checkPlane(Plane.fromNormal(Vector3D.of(0, 0, 0.01), TEST_PRECISION),
+                Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_X);
     }
 
     @Test
-    public void testContains() {
+    public void testFromNormal_illegalArguments() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromNormal(Vector3D.ZERO, TEST_PRECISION);
+        }, IllegalNormException.class);
+    }
+
+    @Test
+    public void testFromPointAndNormal() {
+        // arrange
+        Vector3D pt = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        checkPlane(Plane.fromPointAndNormal(pt, Vector3D.of(0.1, 0, 0), TEST_PRECISION),
+                Vector3D.of(1, 0, 0), Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+        checkPlane(Plane.fromPointAndNormal(pt, Vector3D.of(0, 2, 0), TEST_PRECISION),
+                Vector3D.of(0, 2, 0), Vector3D.MINUS_Z, Vector3D.MINUS_X);
+        checkPlane(Plane.fromPointAndNormal(pt, Vector3D.of(0, 0, 5), TEST_PRECISION),
+                Vector3D.of(0, 0, 3), Vector3D.PLUS_Y, Vector3D.MINUS_X);
+    }
+
+    @Test
+    public void testFromPointAndNormal_illegalArguments() {
+        // arrange
+        Vector3D pt = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPointAndNormal(pt, Vector3D.ZERO, TEST_PRECISION);
+        }, IllegalNormException.class);
+    }
+
+    @Test
+    public void testFromPointAndPlaneVectors() {
+        // arrange
+        Vector3D pt = Vector3D.of(1, 2, 3);
+
+        // act/assert
+        checkPlane(Plane.fromPointAndPlaneVectors(pt, Vector3D.of(2, 0, 0), Vector3D.of(1, 0.1, 0),  TEST_PRECISION),
+                Vector3D.of(0, 0, 3), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPointAndPlaneVectors(pt, Vector3D.of(2, 0, 0), Vector3D.of(1, -0.1, 0),  TEST_PRECISION),
+                Vector3D.of(0, 0, 3), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+
+        checkPlane(Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0.1, 0), Vector3D.of(0, -1, 1),  TEST_PRECISION),
+                Vector3D.of(1, 0, 0), Vector3D.PLUS_Y, Vector3D.PLUS_Z);
+    }
+
+    @Test
+    public void testFromPointAndPlaneVectors_illegalArguments() {
+        // arrange
+        Vector3D pt = Vector3D.of(1, 2, 3);
+
+        // act/assert
+
+        // identical vectors
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        // zero vector
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        // collinear vectors
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        // collinear vectors - reversed
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
+        }, IllegalNormException.class);
+    }
+
+    @Test
+    public void testFromPoints() {
+        // arrange
+        Vector3D a = Vector3D.of(1, 1, 1);
+        Vector3D b = Vector3D.of(1, 1, 4.3);
+        Vector3D c = Vector3D.of(2.5, 1, 1);
+
+        // act/assert
+        checkPlane(Plane.fromPoints(a, b, c, TEST_PRECISION),
+                Vector3D.of(0, 1, 0), Vector3D.PLUS_Z, Vector3D.PLUS_X);
+
+        checkPlane(Plane.fromPoints(a, c, b, TEST_PRECISION),
+                Vector3D.of(0, 1, 0), Vector3D.PLUS_X, Vector3D.PLUS_Z);
+    }
+
+    @Test
+    public void testFromPoints_illegalArguments() {
+        // arrange
+        Vector3D a = Vector3D.of(1, 0, 0);
+        Vector3D b = Vector3D.of(0, 1, 0);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(a, a, a, TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(a, a, b, TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(a, b, a, TEST_PRECISION);
+        }, IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(b, a, a, TEST_PRECISION);
+        }, IllegalNormException.class);
+    }
+
+    @Test
+    public void testContains_point() {
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Assert.assertTrue(plane.contains(Vector3D.of(0, 0, 1)));
         Assert.assertTrue(plane.contains(Vector3D.of(17, -32, 1)));
@@ -59,28 +177,21 @@ public class PlaneTest {
     }
 
     @Test
-    public void testContainsLine() {
-        Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
-        Line3D line = Line3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 1), TEST_PRECISION);
-        Assert.assertTrue(plane.contains(line));
-    }
+    public void testContains_line() {
+        // arrange
+        Plane plane = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Z, TEST_PRECISION);
 
-    @Test(expected=IllegalNormException.class)
-    public void testFromPointPlaneVectorsWithZeroVector()
-    {
-        Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.ZERO, Vector3D.of(1,0,0), TEST_PRECISION);
-    }
+        // act/assert
+        Assert.assertTrue(plane.contains(
+                Line3D.fromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION)));
+        Assert.assertTrue(plane.contains(
+                Line3D.fromPoints(Vector3D.of(-1, 0, 0), Vector3D.of(-2, 0, 0), TEST_PRECISION)));
 
-    @Test(expected=IllegalNormException.class)
-    public void testFromPointAndNormalWithZeroNormal()
-    {
-        Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
-    }
+        Assert.assertFalse(plane.contains(
+                Line3D.fromPoints(Vector3D.of(1, 0, 2), Vector3D.of(2, 0, 2), TEST_PRECISION)));
 
-    @Test(expected=IllegalNormException.class)
-    public void testFromNormal()
-    {
-        Plane.fromNormal(Vector3D.ZERO, TEST_PRECISION);
+        Assert.assertFalse(plane.contains(
+                Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(2, 0, 2), TEST_PRECISION)));
     }
 
     @Test
@@ -301,5 +412,19 @@ public class PlaneTest {
                                                      p3.add(shift),
                                                      p2.add(shift),
                                                      TEST_PRECISION)));
+    }
+
+    private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {
+        u = u.normalize();
+        v = v.normalize();
+        Vector3D w = u.cross(v);
+
+        EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getOrigin(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(u, plane.getU(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(v, plane.getV(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(w, plane.getW(), TEST_EPS);
+
+        Assert.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(plane.getOriginOffset()), TEST_EPS);
     }
 }

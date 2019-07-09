@@ -60,82 +60,11 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
 
         super(precision);
 
-        if (areCoplanar(u, v, w, precision)) {
-            throw new IllegalArgumentException("Provided vectors must not be coplanar.");
-        }
-
         this.u = u;
         this.v = v;
         this.w = w;
 
         this.originOffset = originOffset;
-    }
-
-    /**
-     * Build a plane from a point and two (on plane) vectors.
-     * @param p the provided point (on plane)
-     * @param u u vector (on plane)
-     * @param v v vector (on plane)
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
-     * @throws IllegalArgumentException if the provided vectors are collinear
-     */
-    public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision) {
-        Vector3D uNorm = u.normalize();
-        Vector3D vNorm = uNorm.orthogonal(v);
-        Vector3D wNorm = uNorm.cross(vNorm).normalize();
-        double originOffset = -p.dot(wNorm);
-        return new Plane(uNorm, vNorm, wNorm, originOffset, precision);
-    }
-
-    /**
-     * Build a plane from a normal.
-     * Chooses origin as point on plane.
-     * @param normal    normal direction to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
-     */
-    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
-        return fromPointAndNormal(Vector3D.ZERO, normal, precision);
-    }
-
-    /**
-     * Build a plane from a point and a normal.
-     *
-     * @param p         point belonging to the plane
-     * @param normal    normal direction to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
-     */
-    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision) {
-        Vector3D w = normal.normalize();
-        double originOffset = -p.dot(w);
-
-        Vector3D u = w.orthogonal();
-        Vector3D v = w.cross(u);
-
-        return new Plane(u, v, w, originOffset, precision);
-    }
-
-    /**
-     * Build a plane from three points.
-     * <p>
-     * The plane is oriented in the direction of {@code (p2-p1) ^ (p3-p1)}
-     * </p>
-     *
-     * @param p1        first point belonging to the plane
-     * @param p2        second point belonging to the plane
-     * @param p3        third point belonging to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalNormException if the points do not constitute a plane
-     */
-    public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final DoublePrecisionContext precision) {
-        return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
     }
 
     /**
@@ -223,7 +152,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * 3D line projected onto plane
+     * Project a 3D line onto the plane.
      * @param line the line to project
      * @return the projection of the given line onto the plane.
      */
@@ -256,8 +185,8 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         final Vector3D tmp = u;
         Vector3D uTmp = v;
         Vector3D vTmp = tmp;
-        Vector3D wTmp = this.w.negate();
-        double originOffsetTmp = -this.originOffset;
+        Vector3D wTmp = w.negate();
+        double originOffsetTmp = -originOffset;
 
         return new Plane(uTmp, vTmp, wTmp, originOffsetTmp, getPrecision());
     }
@@ -286,18 +215,21 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         return Vector3D.linearCombination(point.getX(), u, point.getY(), v, -originOffset, w);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Vector3D plusPoint() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Vector3D minusPoint() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Vector3D onPoint() {
         // TODO Auto-generated method stub
@@ -339,8 +271,6 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
                 ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
     }
-
-
 
     /**
      * Rotate the plane around the specified point.
@@ -483,27 +413,22 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * Check if the instance contains a line
+     * Check if the instance contains a line.
      * @param line line to check
      * @return true if line is contained in this plane
      */
     public boolean contains(final Line3D line) {
-        Vector3D origin = line.getOrigin();
-        Vector3D direction = line.getDirection();
-        return contains(origin) && areCoplanar(u, v, direction, getPrecision());
+        return isParallel(line) && contains(line.getOrigin());
     }
 
-    /** Check, if the line is parallel to the instance.
+    /** Check if the line is parallel to the instance.
      * @param line line to check.
      * @return true if the line is parallel to the instance, false otherwise.
      */
     public boolean isParallel(final Line3D line) {
-        final Vector3D direction = line.getDirection();
-        final double dot = w.dot(direction);
-        if (getPrecision().eqZero(dot)) {
-            return true;
-        }
-        return false;
+        final double dot = w.dot(line.getDirection());
+
+        return getPrecision().eqZero(dot);
     }
 
     /** Check, if the plane is parallel to the instance.
@@ -513,7 +438,6 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     public boolean isParallel(final Plane plane) {
         return getPrecision().eqZero(w.cross(plane.w).norm());
     }
-
 
     /**
      * Get the offset (oriented distance) of a parallel plane.
@@ -605,14 +529,70 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * Check if provided vectors are coplanar.
-     * @param u first vector
-     * @param v second vector
-     * @param w third vector
+     * Build a plane from a point and two (on plane) vectors.
+     * @param p the provided point (on plane)
+     * @param u u vector (on plane)
+     * @param v v vector (on plane)
      * @param precision precision context used to compare floating point values
-     * @return true if vectors are coplanar, false otherwise.
+     * @return a new plane
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     * @throws IllegalArgumentException if the provided vectors are collinear
      */
-    private static boolean areCoplanar(final Vector3D u, final Vector3D v, final Vector3D w, final DoublePrecisionContext precision) {
-        return precision.eqZero(u.dot(v.cross(w)));
+    public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision) {
+        Vector3D uNorm = u.normalize();
+        Vector3D vNorm = uNorm.orthogonal(v);
+        Vector3D wNorm = uNorm.cross(vNorm).normalize();
+        double originOffset = -p.dot(wNorm);
+
+        return new Plane(uNorm, vNorm, wNorm, originOffset, precision);
+    }
+
+    /**
+     * Build a plane from a normal.
+     * Chooses origin as point on plane.
+     * @param normal    normal direction to the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     */
+    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
+        return fromPointAndNormal(Vector3D.ZERO, normal, precision);
+    }
+
+    /**
+     * Build a plane from a point and a normal.
+     *
+     * @param p         point belonging to the plane
+     * @param normal    normal direction to the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane
+     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     */
+    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision) {
+        Vector3D w = normal.normalize();
+        double originOffset = -p.dot(w);
+
+        Vector3D u = w.orthogonal();
+        Vector3D v = w.cross(u);
+
+        return new Plane(u, v, w, originOffset, precision);
+    }
+
+    /**
+     * Build a plane from three points.
+     * <p>
+     * The plane is oriented in the direction of {@code (p2-p1) ^ (p3-p1)}
+     * </p>
+     *
+     * @param p1        first point belonging to the plane
+     * @param p2        second point belonging to the plane
+     * @param p3        third point belonging to the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane
+     * @throws IllegalNormException if the points do not constitute a plane
+     */
+    public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
+            final DoublePrecisionContext precision) {
+        return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
     }
 }

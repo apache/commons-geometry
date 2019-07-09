@@ -268,7 +268,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
      */
     public static Line3D fromPoints(final Vector3D p1, final Vector3D p2,
             final DoublePrecisionContext precision) {
-        return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
+        return fromPointAndDirection(p1, p1.directionTo(p2), precision);
     }
 
     /** Create a new line instance from a point and a direction.

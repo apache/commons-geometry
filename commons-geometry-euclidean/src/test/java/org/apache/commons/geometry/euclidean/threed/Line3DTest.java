@@ -16,13 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 public class Line3DTest {
 
@@ -44,7 +47,7 @@ public class Line3DTest {
 
     @Test
     public void testFromPointAndDirection_normalizesDirection() {
-     // arrange
+        // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act/assert
@@ -76,6 +79,120 @@ public class Line3DTest {
     public void testFromPoints_pointsTooClose() {
         // act/assert
         Line3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(1, 1, 1 + 1e-16), TEST_PRECISION);
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        Vector3D pt = Vector3D.of(1, 2, 3);
+        Line3D line = Line3D.fromPointAndDirection(pt, Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(pt,
+                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+
+        // act
+        Line3D result = line.transform(mat);
+
+        // assert
+        Assert.assertTrue(result.contains(pt));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, -1).normalize(), result.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_reflectionInOneAxis() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        Transform<Vector3D> transform = v -> Vector3D.of(v.getX(), v.getY(), -v.getZ());
+
+        // act
+        Line3D result = line.transform(transform);
+
+        // assert
+        Assert.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, -1).normalize(), result.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_reflectionInTwoAxes() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        Transform<Vector3D> transform = v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ());
+
+        // act
+        Line3D result = line.transform(transform);
+
+        // assert
+        Assert.assertTrue(result.contains(Vector3D.of(1, 0, 0)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, -1).normalize(), result.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_reflectionInThreeAxes() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        Transform<Vector3D> transform = Vector3D::negate;
+
+        // act
+        Line3D result = line.transform(transform);
+
+        // assert
+        Assert.assertTrue(result.contains(Vector3D.of(-1, 0, 0)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, -1, -1).normalize(), result.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testAbscissa() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0.0, line.abscissa(line.getOrigin()), TEST_EPS);
+
+        Assert.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 0)), TEST_EPS);
+        Assert.assertEquals(5.0, line.abscissa(Vector3D.of(4, 3, 10)), TEST_EPS);
+
+        Assert.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, 0)), TEST_EPS);
+        Assert.assertEquals(-5.0, line.abscissa(Vector3D.of(-4, -3, -10)), TEST_EPS);
+    }
+
+    @Test
+    public void testToSubspace() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0.0, line.toSubspace(line.getOrigin()).getX(), TEST_EPS);
+
+        Assert.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, -1)).getX(), TEST_EPS);
+        Assert.assertEquals(5.0, line.toSubspace(Vector3D.of(4, 3, 10)).getX(), TEST_EPS);
+
+        Assert.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -1)).getX(), TEST_EPS);
+        Assert.assertEquals(-5.0, line.toSubspace(Vector3D.of(-4, -3, -10)).getX(), TEST_EPS);
+    }
+
+    @Test
+    public void testPointAt() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(line.getOrigin(), line.pointAt(0.0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4, 3, -1), line.pointAt(5.0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-4, -3, -1), line.pointAt(-5.0), TEST_EPS);
+    }
+
+    @Test
+    public void testToSpace() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, -1), Vector3D.of(4, 3, 0), TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(line.getOrigin(), line.toSpace(Vector1D.of(0.0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4, 3, -1), line.toSpace(Vector1D.of(5.0)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-4, -3, -1), line.toSpace(Vector1D.of(-5.0)), TEST_EPS);
     }
 
     @Test
@@ -183,17 +300,76 @@ public class Line3DTest {
 
     @Test
     public void testReverse() {
-
-        // setup
+        // arrange
         Line3D line = Line3D.fromPoints(Vector3D.of(1653345.6696423641, 6170370.041579291, 90000),
                              Vector3D.of(1650757.5050732433, 6160710.879908984, 0.9),
                              TEST_PRECISION);
         Vector3D expected = line.getDirection().negate();
 
-        // action
-        Line3D reverted = line.reverse();
+        // act
+        Line3D reversed = line.reverse();
 
-        // verify
-        Assert.assertArrayEquals(expected.toArray(), reverted.getDirection().toArray(), 0);
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(expected, reversed.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testHashCode() {
+        // arrange
+        Line3D a = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        Line3D b = Line3D.fromPointAndDirection(Vector3D.of(1, 2, -1), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        Line3D c = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, -1), TEST_PRECISION);
+        Line3D d = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS + 1e-3));
+
+        Line3D e = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS));
+
+        int hash = a.hashCode();
+
+        // act/assert
+        Assert.assertEquals(hash, a.hashCode());
+
+        Assert.assertNotEquals(hash, b.hashCode());
+        Assert.assertNotEquals(hash, c.hashCode());
+        Assert.assertNotEquals(hash, d.hashCode());
+
+        Assert.assertEquals(hash, e.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        Line3D a = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        Line3D b = Line3D.fromPointAndDirection(Vector3D.of(1, 2, -1), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        Line3D c = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, -1), TEST_PRECISION);
+        Line3D d = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS + 1e-3));
+
+        Line3D e = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), new EpsilonDoublePrecisionContext(TEST_EPS));
+
+        // act/assert
+        Assert.assertTrue(a.equals(a));
+
+        Assert.assertFalse(a.equals(null));
+        Assert.assertFalse(a.equals(new Object()));
+
+        Assert.assertFalse(a.equals(b));
+        Assert.assertFalse(a.equals(c));
+        Assert.assertFalse(a.equals(d));
+
+        Assert.assertTrue(a.equals(e));
+        Assert.assertTrue(e.equals(a));
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+
+        // act
+        String str = line.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("Line3D"));
+        Assert.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
+        Assert.assertTrue(str.matches(".*direction= \\(1(\\.0)?, 0(\\.0)?, 0(\\.0)?\\).*"));
     }
 }
