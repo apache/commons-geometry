@@ -116,30 +116,33 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * Get the normalized normal vector, alias for getNormal().
+     * Get the normalized normal vector.
      * <p>
-     * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
+     * The frame defined by {@link #getU()}, {@link #getV()},
+     * {@link #getW()} is a right-handed orthonormalized frame.
      * </p>
      *
      * @return normalized normal vector
-     * @see #getU
-     * @see #getV
+     * @see #getU()
+     * @see #getV()
+     * @see #getNormal()
      */
     public Vector3D getW() {
         return w;
     }
 
     /**
-     * Get the normalized normal vector.
+     * Get the normalized normal vector. This method is an alias
+     * for {@link #getW()}.
      * <p>
-     * The frame defined by ({@link #getU getU}, {@link #getV getV},
-     * {@link #getNormal getNormal}) is a right-handed orthonormalized frame).
+     * The frame defined by {@link #getU()}, {@link #getV()},
+     * {@link #getW()} is a right-handed orthonormalized frame.
      * </p>
      *
      * @return normalized normal vector
-     * @see #getU
-     * @see #getV
+     * @see #getU()
+     * @see #getV()
+     * @see #getW()
      */
     public Vector3D getNormal() {
         return w;
@@ -182,13 +185,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
      */
     @Override
     public Plane reverse() {
-        final Vector3D tmp = u;
-        Vector3D uTmp = v;
-        Vector3D vTmp = tmp;
-        Vector3D wTmp = w.negate();
-        double originOffsetTmp = -originOffset;
-
-        return new Plane(uTmp, vTmp, wTmp, originOffsetTmp, getPrecision());
+        return new Plane(v, u, w.negate(), -originOffset, getPrecision());
     }
 
     /**
@@ -348,12 +345,13 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * Get the intersection point of three planes.
+     * Get the intersection point of three planes. Returns null if no unique intersection point
+     * exists (ie, there are no intersection points or an infinite number).
      *
      * @param plane1 first plane1
      * @param plane2 second plane2
      * @param plane3 third plane2
-     * @return intersection point of three planes, null if some planes are parallel
+     * @return intersection point of the three planes or null if no unique intersection point exists
      */
     public static Vector3D intersection(final Plane plane1, final Plane plane2, final Plane plane3) {
 
@@ -379,7 +377,9 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         final double b23 = c2 * a3 - c3 * a2;
         final double c23 = a2 * b3 - a3 * b2;
         final double determinant = a1 * a23 + b1 * b23 + c1 * c23;
-        if (Math.abs(determinant) < 1.0e-10) {
+
+        // use the precision context of the first plane to determine equality
+        if (plane1.getPrecision().eqZero(determinant)) {
             return null;
         }
 
@@ -459,8 +459,8 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     *  Returns the distance of the given line to the plane instance.
-     *  Returns 0.0, if the line is not parallel to the plane instance.
+     * Returns the distance of the given line to the plane instance.
+     * Returns 0.0, if the line is not parallel to the plane instance.
      * @param line to calculate the distance to the plane instance
      * @return the distance or 0.0, if the line is not parallel to the plane instance.
      */
@@ -508,7 +508,7 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(originOffset, u, v, w);
+        return Objects.hash(u, v, w, originOffset, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -517,15 +517,17 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        else if (!(obj instanceof Plane)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+
         Plane other = (Plane) obj;
-        return Double.doubleToLongBits(originOffset) == Double.doubleToLongBits(other.originOffset) &&
-                Objects.equals(u, other.u) && Objects.equals(v, other.v) && Objects.equals(w, other.w);
+
+        return Objects.equals(this.u, other.u) &&
+                Objects.equals(this.v, other.v) &&
+                Objects.equals(this.w, other.w) &&
+                Double.compare(this.originOffset, other.originOffset) == 0 &&
+                Objects.equals(this.getPrecision(), other.getPrecision());
     }
 
     /**
