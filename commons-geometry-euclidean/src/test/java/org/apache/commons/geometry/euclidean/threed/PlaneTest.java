@@ -16,15 +16,17 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 
 public class PlaneTest {
 
@@ -285,7 +287,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIsPlaneParallel() {
+    public void testIsParallel_plane() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Plane parallelPlane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
@@ -336,6 +338,66 @@ public class PlaneTest {
         Assert.assertEquals(-0.3,
                             plane.offset(Vector3D.linearCombination(1.0, p1, -0.3, plane.getNormal())),
                             TEST_EPS);
+    }
+
+    @Test
+    public void testPointAt() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_Y, Vector3D.MINUS_X, TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(pt, plane.pointAt(Vector2D.ZERO, 0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, plane.pointAt(Vector2D.ZERO, -1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), plane.pointAt(Vector2D.ZERO, -2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 2), plane.pointAt(Vector2D.ZERO, 1), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 2, 1), plane.pointAt(Vector2D.of(2, 1), 0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4, -3, 6), plane.pointAt(Vector2D.of(-3, -4), 5), TEST_EPS);
+    }
+
+    @Test
+    public void testHyperplanePoints() {
+        EuclideanTestUtils.permuteSkipZero(-10, 10, 0.5, (x, y, z) -> {
+            // arrange
+            Vector3D pt = Vector3D.of(x, y, z);
+            Plane plane = Plane.fromPointAndNormal(pt, pt, TEST_PRECISION);
+
+            // act/assert
+            Assert.assertEquals(HyperplaneLocation.MINUS, plane.classify(plane.minusPoint()));
+            Assert.assertEquals(HyperplaneLocation.PLUS, plane.classify(plane.plusPoint()));
+            Assert.assertEquals(HyperplaneLocation.ON, plane.classify(plane.onPoint()));
+        });
+    }
+
+    @Test
+    public void testHyperplanePoints_largeEpsilon() {
+        EuclideanTestUtils.permuteSkipZero(-10, 10, 0.5, (x, y, z) -> {
+            // arrange
+            Vector3D pt = Vector3D.of(x, y, z);
+            Plane plane = Plane.fromPointAndNormal(pt, pt, new EpsilonDoublePrecisionContext(1.0));
+
+            // act/assert
+            Assert.assertEquals(HyperplaneLocation.MINUS, plane.classify(plane.minusPoint()));
+            Assert.assertEquals(HyperplaneLocation.PLUS, plane.classify(plane.plusPoint()));
+            Assert.assertEquals(HyperplaneLocation.ON, plane.classify(plane.onPoint()));
+        });
+    }
+
+    @Test
+    public void testTransform_rotationAroundPoint() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_Y, Vector3D.MINUS_X, TEST_PRECISION);
+
+        AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(pt,
+                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+
+        // act
+        Plane result = plane.transform(mat);
+
+        // assert
+        checkPlane(result, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.PLUS_Z);
     }
 
     @Test
@@ -592,6 +654,22 @@ public class PlaneTest {
 
         Assert.assertTrue(a.equals(f));
         Assert.assertTrue(f.equals(a));
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        // act
+        String str = plane.toString();
+
+        // assert
+        Assert.assertTrue(str.startsWith("Plane["));
+        Assert.assertTrue(str.matches(".*origin= \\(0(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assert.assertTrue(str.matches(".*u= \\(1(\\.0)?, 0(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assert.assertTrue(str.matches(".*v= \\(0(\\.0)?, 1(\\.0)?\\, 0(\\.0)?\\).*"));
+        Assert.assertTrue(str.matches(".*w= \\(0(\\.0)?, 0(\\.0)?\\, 1(\\.0)?\\).*"));
     }
 
     private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {

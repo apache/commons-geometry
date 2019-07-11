@@ -215,58 +215,33 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     /** {@inheritDoc} */
     @Override
     public Vector3D plusPoint() {
-        // TODO Auto-generated method stub
-        return null;
+        return pointAt(Vector2D.ZERO, +(Math.floor(getPrecision().getMaxZero()) + 1.0));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D minusPoint() {
-        // TODO Auto-generated method stub
-        return null;
+         return pointAt(Vector2D.ZERO, -(Math.floor(getPrecision().getMaxZero()) + 1.0));
+    }
+
+    /** {@inheritDoc}
+     * <p>This method simply returns the plane origin point, as provided by {@link #getOrigin()}.</p>
+     */
+    @Override
+    public Vector3D onPoint() {
+        return getOrigin();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D onPoint() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public Plane transform(Transform<Vector3D> transform) {
+        final Vector3D origin = getOrigin();
 
-    @Override
-    public Hyperplane<Vector3D> transform(Transform<Vector3D> transform) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        final Vector3D p1 = transform.apply(origin);
+        final Vector3D p2 = transform.apply(origin.add(u));
+        final Vector3D p3 = transform.apply(origin.add(v));
 
-    /**
-     * Get one point from the 3D-space.
-     *
-     * @param inPlane desired in-plane coordinates for the point in the plane
-     * @param offset  desired offset for the point
-     * @return one point in the 3D-space, with given coordinates and offset relative
-     *         to the plane
-     */
-    public Vector3D pointAt(final Vector2D inPlane, final double offset) {
-        return Vector3D.linearCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
-    }
-
-    /**
-     * Check if the instance contains another plane.
-     * <p>
-     * Planes are considered similar if they contain the same points. This does not
-     * mean they are equal since they can have opposite normals.
-     * </p>
-     *
-     * @param plane plane to which the instance is compared
-     * @return true if the planes are similar
-     */
-    public boolean contains(final Plane plane) {
-        final double angle = w.angle(plane.w);
-        final DoublePrecisionContext precision = getPrecision();
-
-        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
-                ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
+        return fromPoints(p1, p2, p3, getPrecision());
     }
 
     /**
@@ -308,6 +283,36 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         double originOffsetTmp = -p.dot(wTmp);
 
         return new Plane(this.u, this.v, wTmp, originOffsetTmp, getPrecision());
+    }
+
+    /**
+     * Get one point from the 3D-space.
+     *
+     * @param inPlane desired in-plane coordinates for the point in the plane
+     * @param offset  desired offset for the point
+     * @return one point in the 3D-space, with given coordinates and offset relative
+     *         to the plane
+     */
+    public Vector3D pointAt(final Vector2D inPlane, final double offset) {
+        return Vector3D.linearCombination(inPlane.getX(), u, inPlane.getY(), v, offset - originOffset, w);
+    }
+
+    /**
+     * Check if the instance contains another plane.
+     * <p>
+     * Planes are considered similar if they contain the same points. This does not
+     * mean they are equal since they can have opposite normals.
+     * </p>
+     *
+     * @param plane plane to which the instance is compared
+     * @return true if the planes are similar
+     */
+    public boolean contains(final Plane plane) {
+        final double angle = w.angle(plane.w);
+        final DoublePrecisionContext precision = getPrecision();
+
+        return ((precision.eqZero(angle)) && precision.eq(originOffset, plane.originOffset)) ||
+                ((precision.eq(angle, Math.PI)) && precision.eq(originOffset, -plane.originOffset));
     }
 
     /**
@@ -500,11 +505,6 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         return (((Plane) other).w).dot(w) > 0;
     }
 
-    @Override
-    public String toString() {
-        return "Plane [u=" + u + ", v=" + v + ", w=" + w  + "]";
-    }
-
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
@@ -528,6 +528,24 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
                 Objects.equals(this.w, other.w) &&
                 Double.compare(this.originOffset, other.originOffset) == 0 &&
                 Objects.equals(this.getPrecision(), other.getPrecision());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[origin= ")
+            .append(getOrigin())
+            .append(", u= ")
+            .append(u)
+            .append(", v= ")
+            .append(v)
+            .append(", w= ")
+            .append(w)
+            .append(']');
+
+        return sb.toString();
     }
 
     /**
