@@ -463,7 +463,7 @@ public class LineTest {
         Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
 
         // act
-        LineSegment result = line.span();
+        Segment result = line.span();
 
         // assert
         Assert.assertSame(line, result.getHyperplane());
@@ -477,7 +477,7 @@ public class LineTest {
         Interval interval = Interval.of(1, 2, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segment(interval);
+        Segment segment = line.segment(interval);
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -490,7 +490,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segment(1, 2);
+        Segment segment = line.segment(1, 2);
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -504,7 +504,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
+        Segment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -518,7 +518,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
+        Segment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -532,7 +532,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segmentTo(Vector2D.of(-3, 1));
+        Segment segment = line.segmentTo(Vector2D.of(-3, 1));
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -550,7 +550,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segmentTo(Vector2D.of(-3, 5));
+        Segment segment = line.segmentTo(Vector2D.of(-3, 5));
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -568,7 +568,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segmentFrom(Vector2D.of(-3, 1));
+        Segment segment = line.segmentFrom(Vector2D.of(-3, 1));
 
         // assert
         Assert.assertSame(line, segment.getLine());
@@ -586,7 +586,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION);
 
         // act
-        LineSegment segment = line.segmentFrom(Vector2D.of(-3, 5));
+        Segment segment = line.segmentFrom(Vector2D.of(-3, 5));
 
         // assert
         Assert.assertSame(line, segment.getLine());

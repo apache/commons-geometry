@@ -26,39 +26,39 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class representing a sequence of one or more line segments connected end
+/** Class representing a sequence of zero or more line segments connected end
  * to end.
  *
  * <p>This class is guaranteed to be immutable.</p>
  */
-public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
+public class SegmentPath implements Iterable<Segment>, Serializable {
 
     private static final long serialVersionUID = 20190522L;
 
     /** Line semgent path instance containing no segments. */
-    private static final LineSegmentPath EMPTY = new LineSegmentPath(Collections.emptyList());
+    private static final SegmentPath EMPTY = new SegmentPath(Collections.emptyList());
 
     /** List of line segments comprising the path. */
-    private List<LineSegment> segments;
+    private List<Segment> segments;
 
     /** Simple constructor. No validation is performed on the input segments.
      * @param segments line segments comprising the path
      */
-    private LineSegmentPath(final List<LineSegment> segments) {
+    private SegmentPath(final List<Segment> segments) {
         this.segments = Collections.unmodifiableList(segments);
     }
 
     /** Get the line segments comprising the path.
      * @return the line segments comprising the path
      */
-    public List<LineSegment> getSegments() {
+    public List<Segment> getSegments() {
         return segments;
     }
 
     /** Get the start segment for the path or null if the path is empty.
      * @return the start segment for the path or null if the path is empty
      */
-    public LineSegment getStartSegment() {
+    public Segment getStartSegment() {
         if (!isEmpty()) {
             return segments.get(0);
         }
@@ -68,7 +68,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
     /** Get the end segment for the path or null if the path is empty.
      * @return the end segment for the path or null if the path is empty
      */
-    public LineSegment getEndSegment() {
+    public Segment getEndSegment() {
         if (!isEmpty()) {
             return segments.get(segments.size() - 1);
         }
@@ -80,7 +80,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * @return the start vertex for the path
      */
     public Vector2D getStartVertex() {
-        final LineSegment seg = getStartSegment();
+        final Segment seg = getStartSegment();
         return (seg != null) ? seg.getStartPoint() : null;
     }
 
@@ -89,7 +89,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * @return the end vertex for the path
      */
     public Vector2D getEndVertex() {
-        final LineSegment seg = getEndSegment();
+        final Segment seg = getEndSegment();
         return (seg != null) ? seg.getEndPoint() : null;
     }
 
@@ -110,7 +110,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         }
 
         // add end points
-        for (LineSegment seg : segments) {
+        for (Segment seg : segments) {
             pt = seg.getEndPoint();
             if (pt != null) {
                 vertices.add(pt);
@@ -150,7 +150,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      *      equal to the start point for the path.
      */
     public boolean isClosed() {
-        final LineSegment endSegment = getEndSegment();
+        final Segment endSegment = getEndSegment();
 
         if (endSegment != null) {
             final Vector2D start = getStartVertex();
@@ -176,12 +176,12 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * same line (as determined by {@link Line#equals(Object)}).
      * @return a simplified path instance
      */
-    public LineSegmentPath simplify() {
-        final List<LineSegment> simplified = new ArrayList<>();
+    public SegmentPath simplify() {
+        final List<Segment> simplified = new ArrayList<>();
 
         final int size = segments.size();
 
-        LineSegment current;
+        Segment current;
         Line currentLine;
         double end;
 
@@ -214,10 +214,10 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         if (isClosed() && simplified.size() > 2 && simplified.get(0).getLine().equals(
                 simplified.get(simplified.size() -1).getLine())) {
 
-            final LineSegment startSegment = simplified.get(0);
-            final LineSegment endSegment = simplified.remove(simplified.size() - 1);
+            final Segment startSegment = simplified.get(0);
+            final Segment endSegment = simplified.remove(simplified.size() - 1);
 
-            final LineSegment combined = endSegment.getLine().segment(endSegment.getSubspaceStart(),
+            final Segment combined = endSegment.getLine().segment(endSegment.getSubspaceStart(),
                     startSegment.getSubspaceEnd());
 
             simplified.set(0, combined);
@@ -228,7 +228,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Iterator<LineSegment> iterator() {
+    public Iterator<Segment> iterator() {
         return segments.iterator();
     }
 
@@ -250,15 +250,15 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         return sb.toString();
     }
 
-    /** Return a {@link PathBuilder} instance configured with the given precision
+    /** Return a {@link Builder} instance configured with the given precision
      * context. The precision context is used when building line segments from
      * vertices and may be omitted if raw vertices are not used.
      * @param precision precision context to use when building line segments from
      *      raw vertices; may be null if raw vertices are not used.
-     * @return a new {@link PathBuilder} instance
+     * @return a new {@link Builder} instance
      */
-    public static PathBuilder builder(final DoublePrecisionContext precision) {
-        return new PathBuilder(precision);
+    public static Builder builder(final DoublePrecisionContext precision) {
+        return new Builder(precision);
     }
 
     /** Build a new line segment path from the given segments.
@@ -266,7 +266,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * @return new line segment path containing the given line segment in order
      * @throws IllegalStateException if the segments to not form a connected path
      */
-    public static LineSegmentPath fromSegments(final LineSegment ... segments) {
+    public static SegmentPath fromSegments(final Segment ... segments) {
         return fromSegments(Arrays.asList(segments));
     }
 
@@ -275,10 +275,10 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * @return new line segment path containing the given line segment in order
      * @throws IllegalStateException if the segments to not form a connected path
      */
-    public static LineSegmentPath fromSegments(final Collection<LineSegment> segments) {
-        PathBuilder builder = builder(null);
+    public static SegmentPath fromSegments(final Collection<Segment> segments) {
+        Builder builder = builder(null);
 
-        for (LineSegment segment : segments) {
+        for (Segment segment : segments) {
             builder.append(segment);
         }
 
@@ -291,7 +291,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      *      instances for the path
      * @return new line segment path constructed from the given vertices
      */
-    public static LineSegmentPath fromVertices(final Collection<Vector2D> vertices,
+    public static SegmentPath fromVertices(final Collection<Vector2D> vertices,
             final DoublePrecisionContext precision) {
 
         return builder(precision).appendVertices(vertices).build();
@@ -300,22 +300,22 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
     /** Return a line segment path containing no segments.
      * @return a line segment path containing no segments.
      */
-    public static LineSegmentPath empty() {
+    public static SegmentPath empty() {
         return EMPTY;
     }
 
     /** Class used to build line segment paths.
      */
-    public static final class PathBuilder implements Serializable {
+    public static final class Builder implements Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190522L;
 
         /** Line segments appended to the path. */
-        private List<LineSegment> appendedSegments = null;
+        private List<Segment> appendedSegments = null;
 
         /** Line segments prepended to the path. */
-        private List<LineSegment> prependedSegments = null;
+        private List<Segment> prependedSegments = null;
 
         /** Precision context used when creating line segments directly from vertices. */
         private DoublePrecisionContext precision;
@@ -337,18 +337,18 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @param precision precision context to use when creating line segments
          *      from vertices
          */
-        private PathBuilder(final DoublePrecisionContext precision) {
+        private Builder(final DoublePrecisionContext precision) {
             setPrecision(precision);
         }
 
         /** Set the precision context. This context is used only when creating line segments
          * from appended or prepended vertices. It is not used when adding existing
-         * {@link LineSegment} instances since those contain their own precision contexts.
+         * {@link Segment} instances since those contain their own precision contexts.
          * @param precision precision context to use when creating line segments
          *      from vertices
          * @return this instance
          */
-        public PathBuilder setPrecision(final DoublePrecisionContext precision) {
+        public Builder setPrecision(final DoublePrecisionContext precision) {
             this.precision = precision;
 
             return this;
@@ -358,8 +358,8 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * it does not exist.
          * @return the line segment at the start of the path
          */
-        public LineSegment getStartSegment() {
-            LineSegment start = getLast(prependedSegments);
+        public Segment getStartSegment() {
+            Segment start = getLast(prependedSegments);
             if (start == null) {
                 start = getFirst(appendedSegments);
             }
@@ -370,8 +370,8 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * it does not exist.
          * @return the line segment at the end of the path
          */
-        public LineSegment getEndSegment() {
-            LineSegment end = getLast(appendedSegments);
+        public Segment getEndSegment() {
+            Segment end = getLast(appendedSegments);
             if (end == null) {
                 end = getFirst(prependedSegments);
             }
@@ -384,7 +384,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          *      and the end vertex of the previous segment is not equivalent to the
          *      start vertex of the given segment.
          */
-        public PathBuilder append(final LineSegment segment) {
+        public Builder append(final Segment segment) {
             validateSegmentsConnected(getEndSegment(), segment);
             appendInternal(segment);
 
@@ -398,12 +398,12 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #setPrecision(DoublePrecisionContext)
          */
-        public PathBuilder append(final Vector2D vertex) {
+        public Builder append(final Vector2D vertex) {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (endVertex == null) {
                 // make sure that we're not adding to an infinite segment
-                final LineSegment end = getEndSegment();
+                final Segment end = getEndSegment();
                 if (end != null) {
                     throw new IllegalStateException("Cannot add vertex " + vertex + " after infinite line segment: " + end);
                 }
@@ -416,7 +416,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             else if (!endVertex.eq(vertex, endVertexPrecision)) {
                 // only add the vertex if its not equal to the end point
                 // of the last segment
-                appendInternal(LineSegment.fromPoints(endVertex, vertex, endVertexPrecision));
+                appendInternal(Segment.fromPoints(endVertex, vertex, endVertexPrecision));
             }
 
             return this;
@@ -427,7 +427,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public PathBuilder appendVertices(final Collection<Vector2D> vertices) {
+        public Builder appendVertices(final Collection<Vector2D> vertices) {
             for (Vector2D vertex : vertices) {
                 append(vertex);
             }
@@ -440,7 +440,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public PathBuilder appendVertices(final Vector2D ... vertices) {
+        public Builder appendVertices(final Vector2D ... vertices) {
             return appendVertices(Arrays.asList(vertices));
         }
 
@@ -450,7 +450,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          *      and the end vertex of the given segment is not equivalent to the
          *      start vertex of the start segment.
          */
-        public PathBuilder prepend(final LineSegment segment) {
+        public Builder prepend(final Segment segment) {
             validateSegmentsConnected(segment, getStartSegment());
             prependInternal(segment);
 
@@ -464,12 +464,12 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #setPrecision(DoublePrecisionContext)
          */
-        public PathBuilder prepend(final Vector2D vertex) {
+        public Builder prepend(final Vector2D vertex) {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (startVertex == null) {
                 // make sure that we're not adding to an infinite segment
-                final LineSegment start = getStartSegment();
+                final Segment start = getStartSegment();
                 if (start != null) {
                     throw new IllegalStateException("Cannot add vertex " + vertex + " before infinite line segment: " + start);
                 }
@@ -482,7 +482,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             else if (!vertex.eq(startVertex, vertexPrecision)) {
                 // only add if the vertex is not equal to the start
                 // point of the first segment
-                prependInternal(LineSegment.fromPoints(vertex, startVertex, vertexPrecision));
+                prependInternal(Segment.fromPoints(vertex, startVertex, vertexPrecision));
             }
 
             return this;
@@ -497,7 +497,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #prepend(Vector2D)
          */
-        public PathBuilder prependVertices(final Collection<Vector2D> vertices) {
+        public Builder prependVertices(final Collection<Vector2D> vertices) {
             return prependVertices(vertices.toArray(new Vector2D[0]));
         }
 
@@ -510,7 +510,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @return this instance
          * @see #prepend(Vector2D)
          */
-        public PathBuilder prependVertices(final Vector2D ... vertices) {
+        public Builder prependVertices(final Vector2D ... vertices) {
             for (int i=vertices.length - 1; i >=0 ; --i) {
                 prepend(vertices[i]);
             }
@@ -518,16 +518,16 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             return this;
         }
 
-        /** Close the current path and build a new {@link LineSegmentPath} instance.
+        /** Close the current path and build a new {@link SegmentPath} instance.
          * @return line segment path
          */
-        public LineSegmentPath close() {
-            final LineSegment end = getEndSegment();
+        public SegmentPath close() {
+            final Segment end = getEndSegment();
 
             if (end != null) {
                 if (startVertex != null && endVertex != null) {
                     if (!endVertex.eq(startVertex, endVertexPrecision)) {
-                        appendInternal(LineSegment.fromPoints(endVertex, startVertex, endVertexPrecision));
+                        appendInternal(Segment.fromPoints(endVertex, startVertex, endVertexPrecision));
                     }
                 }
                 else {
@@ -538,12 +538,12 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
             return build();
         }
 
-        /** Build a {@link LineSegmentPath} instance from the configured path.
+        /** Build a {@link SegmentPath} instance from the configured path.
          * @return line segment path
          */
-        public LineSegmentPath build() {
+        public SegmentPath build() {
             // combine all of the segments
-            List<LineSegment> result = null;
+            List<Segment> result = null;
 
             if (prependedSegments != null) {
                 result = prependedSegments;
@@ -573,7 +573,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
 
             // build the final path instance, using the shared empty instance if
             // no segments are present
-            return result.isEmpty() ? empty() : new LineSegmentPath(result);
+            return result.isEmpty() ? empty() : new SegmentPath(result);
         }
 
         /** Validate that the given segments are connected, meaning that the end vertex of {@code previous}
@@ -582,7 +582,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @throws IllegalStateException if previous and next are not null and the end vertex of previous
          *      is not equivalent the start vertex of next
          */
-        private void validateSegmentsConnected(final LineSegment previous, final LineSegment next) {
+        private void validateSegmentsConnected(final Segment previous, final Segment next) {
             if (previous != null && next != null) {
                 final Vector2D nextStartVertex = next.getStartPoint();
                 final Vector2D previousEndVertex = previous.getEndPoint();
@@ -613,7 +613,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         /** Append the given, validated segment to the path.
          * @param segment validated segment to append
          */
-        private void appendInternal(final LineSegment segment) {
+        private void appendInternal(final Segment segment) {
             if (appendedSegments == null) {
                 appendedSegments = new ArrayList<>();
             }
@@ -632,7 +632,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
         /** Prepend the given, validated segment to the path.
          * @param segment validated segment to prepend
          */
-        private void prependInternal(final LineSegment segment) {
+        private void prependInternal(final Segment segment) {
             if (prependedSegments == null) {
                 prependedSegments = new ArrayList<>();
             }
@@ -653,7 +653,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @param list the list to return the first item from
          * @return the first item from the given list or null if it does not exist
          */
-        private LineSegment getFirst(final List<LineSegment> list) {
+        private Segment getFirst(final List<Segment> list) {
             if (list != null && list.size() > 0) {
                 return list.get(0);
             }
@@ -665,7 +665,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * @param list the list to return the last item from
          * @return the last item from the given list or null if it does not exist
          */
-        private LineSegment getLast(final List<LineSegment> list) {
+        private Segment getLast(final List<Segment> list) {
             if (list != null && list.size() > 0) {
                 return list.get(list.size() - 1);
             }
@@ -677,7 +677,7 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
      * unecessary line segments divisions. The {@link #simplify()} method on this
      * class simply returns the same instance.
      */
-    private static class SimplifiedLineSegmentPath extends LineSegmentPath
+    private static class SimplifiedLineSegmentPath extends SegmentPath
     {
         /** Serializable UID */
         private static final long serialVersionUID = 20190619;
@@ -687,13 +687,13 @@ public class LineSegmentPath implements Iterable<LineSegment>, Serializable {
          * a valid, simplified path.
          * @param segments line segments comprising the path
          */
-        private SimplifiedLineSegmentPath(final List<LineSegment> segments) {
+        private SimplifiedLineSegmentPath(final List<Segment> segments) {
             super(segments);
         }
 
         /** {@inheritDoc} */
         @Override
-        public LineSegmentPath simplify() {
+        public SegmentPath simplify() {
             // already simplified
             return this;
         }

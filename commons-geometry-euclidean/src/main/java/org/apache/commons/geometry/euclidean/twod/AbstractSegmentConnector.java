@@ -23,13 +23,13 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.LineSegmentPath.PathBuilder;
+import org.apache.commons.geometry.euclidean.twod.SegmentPath.Builder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Abstract class for joining collections of line segments into connected
  * paths. This class is not thread-safe.
  */
-public abstract class AbstractLineSegmentConnector implements Serializable {
+public abstract class AbstractSegmentConnector implements Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190528L;
@@ -54,10 +54,10 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * @param segments line segments to add
      * @see #connect(Iterable)
      * @see #getPaths()
-     * @see #add(LineSegment)
+     * @see #add(Segment)
      */
-    public void add(final Iterable<LineSegment> segments) {
-        for (LineSegment segment : segments) {
+    public void add(final Iterable<Segment> segments) {
+        for (Segment segment : segments) {
             add(segment);
         }
     }
@@ -68,7 +68,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * @see #connect(Iterable)
      * @see #getPaths()
      */
-    public void add(final LineSegment segment) {
+    public void add(final Segment segment) {
         entries.add(new ConnectorEntry(segment));
     }
 
@@ -76,10 +76,10 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * segment with existing segments.
      * @param segments line segments to connect
      */
-    public void connect(final Iterable<LineSegment> segments) {
+    public void connect(final Iterable<Segment> segments) {
         List<ConnectorEntry> newEntries = new ArrayList<>();
 
-        for (LineSegment segment : segments) {
+        for (Segment segment : segments) {
             newEntries.add(new ConnectorEntry(segment));
         }
 
@@ -101,7 +101,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * @see #add(Iterable)
      * @see #getPaths()
      */
-    public List<LineSegmentPath> getPaths(final Iterable<LineSegment> segments) {
+    public List<SegmentPath> getPaths(final Iterable<Segment> segments) {
         add(segments);
         return getPaths();
     }
@@ -110,13 +110,13 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
      * Further calls to add line segments will result in new paths being generated.
      * @return the connected line segments paths
      */
-    public List<LineSegmentPath> getPaths() {
+    public List<SegmentPath> getPaths() {
         for (ConnectorEntry entry : entries) {
             followForwardConnections(entry);
         }
 
-        List<LineSegmentPath> paths = new ArrayList<>();
-        LineSegmentPath path;
+        List<SegmentPath> paths = new ArrayList<>();
+        SegmentPath path;
         for (ConnectorEntry entry : entries) {
             path = entry.exportPath();
             if (path != null) {
@@ -288,7 +288,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         private final Vector2D start;
 
         /** Line segment for the entry. */
-        private final LineSegment segment;
+        private final Segment segment;
 
         /** Next connected entry. */
         private ConnectorEntry next;
@@ -310,7 +310,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         /** Create a new instance from the given line segment
          * @param segment line segment
          */
-        public ConnectorEntry(final LineSegment segment) {
+        public ConnectorEntry(final Segment segment) {
             this(segment.getStartPoint(), segment);
         }
 
@@ -318,7 +318,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @param start start point
          * @param segment line segment
          */
-        private ConnectorEntry(final Vector2D start, final LineSegment segment) {
+        private ConnectorEntry(final Vector2D start, final Segment segment) {
             this.start = start;
             this.segment = segment;
         }
@@ -333,7 +333,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
         /** Get the line segment for this instance.
          * @return the line segment for this instance
          */
-        public LineSegment getSegment() {
+        public Segment getSegment() {
             return segment;
         }
 
@@ -414,9 +414,9 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          *  @return the path that this entry belong to or null if the path has
          *      already been exported
          */
-        public LineSegmentPath exportPath() {
+        public SegmentPath exportPath() {
             if (!exported) {
-                PathBuilder builder = LineSegmentPath.builder(null);
+                Builder builder = SegmentPath.builder(null);
 
                 // add ourselves
                 exportPathInternal(builder, true);
@@ -452,7 +452,7 @@ public abstract class AbstractLineSegmentConnector implements Serializable {
          * @param append if true, the entry's segment should be appended to the builder;
          *      if false, it should be prepended
          */
-        private void exportPathInternal(final PathBuilder builder, final boolean append) {
+        private void exportPathInternal(final Builder builder, final boolean append) {
             if (append) {
                 builder.append(segment);
             }

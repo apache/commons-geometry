@@ -27,12 +27,12 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleLineSegmentConnector.Maximize;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleLineSegmentConnector.Minimize;
+import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Maximize;
+import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Minimize;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class InteriorAngleLineSegmentConnectorTest {
+public class InteriorAngleSegmentConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,10 +43,10 @@ public class InteriorAngleLineSegmentConnectorTest {
     public void testGetPaths_noSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<LineSegment> segments = new ArrayList<>();
+            List<Segment> segments = new ArrayList<>();
 
             // act
-            List<LineSegmentPath> paths = connector.getPaths(segments);
+            List<SegmentPath> paths = connector.getPaths(segments);
 
             // assert
             Assert.assertEquals(0, paths.size());
@@ -57,12 +57,12 @@ public class InteriorAngleLineSegmentConnectorTest {
     public void testGetPaths_singleFiniteSegment() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<LineSegment> segments = Arrays.asList(
-                        LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION)
+            List<Segment> segments = Arrays.asList(
+                        Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION)
                     );
 
             // act
-            List<LineSegmentPath> paths = connector.getPaths(segments);
+            List<SegmentPath> paths = connector.getPaths(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -75,13 +75,13 @@ public class InteriorAngleLineSegmentConnectorTest {
     public void testGetPaths_dualConnectedSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<LineSegment> segments = Arrays.asList(
-                        LineSegment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
-                        LineSegment.fromPoints(Vector2D.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
+            List<Segment> segments = Arrays.asList(
+                        Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
+                        Segment.fromPoints(Vector2D.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
                     );
 
             // act
-            List<LineSegmentPath> paths = connector.getPaths(segments);
+            List<SegmentPath> paths = connector.getPaths(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -95,10 +95,10 @@ public class InteriorAngleLineSegmentConnectorTest {
     public void testGetPaths_singleFiniteSegmentLoop() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<LineSegment> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
+            List<Segment> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
 
             // act
-            List<LineSegmentPath> paths = connector.getPaths(segments);
+            List<SegmentPath> paths = connector.getPaths(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -113,12 +113,12 @@ public class InteriorAngleLineSegmentConnectorTest {
     public void testGetPaths_disjointPaths() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<LineSegment> segments = new ArrayList<>();
+            List<Segment> segments = new ArrayList<>();
             segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
 
             Vector2D pt = Vector2D.of(0, 2);
-            LineSegment a = Line.fromPointAndAngle(pt, Geometry.ZERO_PI, TEST_PRECISION).segmentTo(pt);
-            LineSegment b = Line.fromPointAndAngle(pt, Geometry.HALF_PI, TEST_PRECISION).segmentFrom(pt);
+            Segment a = Line.fromPointAndAngle(pt, Geometry.ZERO_PI, TEST_PRECISION).segmentTo(pt);
+            Segment b = Line.fromPointAndAngle(pt, Geometry.HALF_PI, TEST_PRECISION).segmentFrom(pt);
 
             segments.add(a);
             segments.add(b);
@@ -126,7 +126,7 @@ public class InteriorAngleLineSegmentConnectorTest {
             shuffle(segments);
 
             // act
-            List<LineSegmentPath> paths = connector.getPaths(segments);
+            List<SegmentPath> paths = connector.getPaths(segments);
 
             // assert
             Assert.assertEquals(2, paths.size());
@@ -144,14 +144,14 @@ public class InteriorAngleLineSegmentConnectorTest {
         // arrange
         Maximize connector = new Maximize();
 
-        List<LineSegment> segments = new ArrayList<>();
+        List<Segment> segments = new ArrayList<>();
         segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
         segments.addAll(createSquare(Vector2D.of(1, 1), 1, 1));
 
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.getPaths(segments);
+        List<SegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -168,14 +168,14 @@ public class InteriorAngleLineSegmentConnectorTest {
         // arrange
         Maximize connector = new Maximize();
 
-        List<LineSegment> segments = new ArrayList<>();
-        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+        List<Segment> segments = new ArrayList<>();
+        segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<LineSegmentPath> paths = connector.getPaths(segments);
+        List<SegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -191,14 +191,14 @@ public class InteriorAngleLineSegmentConnectorTest {
         // arrange
         Minimize connector = new Minimize();
 
-        List<LineSegment> segments = new ArrayList<>();
+        List<Segment> segments = new ArrayList<>();
         segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
         segments.addAll(createSquare(Vector2D.of(1, 1), 1, 1));
 
         shuffle(segments);
 
         // act
-        List<LineSegmentPath> paths = connector.getPaths(segments);
+        List<SegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -217,14 +217,14 @@ public class InteriorAngleLineSegmentConnectorTest {
         // arrange
         Minimize connector = new Minimize();
 
-        List<LineSegment> segments = new ArrayList<>();
-        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+        List<Segment> segments = new ArrayList<>();
+        segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<LineSegmentPath> paths = connector.getPaths(segments);
+        List<SegmentPath> paths = connector.getPaths(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -238,14 +238,14 @@ public class InteriorAngleLineSegmentConnectorTest {
     @Test
     public void testConnectMaximized() {
         // arrange
-        List<LineSegment> segments = new ArrayList<>();
-        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+        List<Segment> segments = new ArrayList<>();
+        segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<LineSegmentPath> paths = InteriorAngleLineSegmentConnector.connectMaximized(segments);
+        List<SegmentPath> paths = InteriorAngleSegmentConnector.connectMaximized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -259,14 +259,14 @@ public class InteriorAngleLineSegmentConnectorTest {
     @Test
     public void testConnectMinimized() {
         // arrange
-        List<LineSegment> segments = new ArrayList<>();
-        segments.add(LineSegment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
+        List<Segment> segments = new ArrayList<>();
+        segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
-        segments.add(LineSegment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
+        segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<LineSegmentPath> paths = InteriorAngleLineSegmentConnector.connectMinimized(segments);
+        List<SegmentPath> paths = InteriorAngleSegmentConnector.connectMinimized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -281,35 +281,35 @@ public class InteriorAngleLineSegmentConnectorTest {
      * Run the given consumer function twice, once with a Maximize instance and once with
      * a Minimize instance.
      */
-    private static void runWithMaxAndMin(Consumer<InteriorAngleLineSegmentConnector> body) {
+    private static void runWithMaxAndMin(Consumer<InteriorAngleSegmentConnector> body) {
         body.accept(new Maximize());
         body.accept(new Minimize());
     }
 
-    private static List<LineSegment> createSquare(final Vector2D lowerLeft, final double width, final double height) {
+    private static List<Segment> createSquare(final Vector2D lowerLeft, final double width, final double height) {
         final Vector2D lowerRight = Vector2D.of(lowerLeft.getX() + width, lowerLeft.getY());
         final Vector2D upperRight = Vector2D.of(lowerLeft.getX() + width, lowerLeft.getY() + height);
         final Vector2D upperLeft = Vector2D.of(lowerLeft.getX(), lowerLeft.getY() + height);
 
         return Arrays.asList(
-                    LineSegment.fromPoints(lowerLeft, lowerRight, TEST_PRECISION),
-                    LineSegment.fromPoints(lowerRight, upperRight, TEST_PRECISION),
-                    LineSegment.fromPoints(upperRight, upperLeft, TEST_PRECISION),
-                    LineSegment.fromPoints(upperLeft, lowerLeft, TEST_PRECISION)
+                    Segment.fromPoints(lowerLeft, lowerRight, TEST_PRECISION),
+                    Segment.fromPoints(lowerRight, upperRight, TEST_PRECISION),
+                    Segment.fromPoints(upperRight, upperLeft, TEST_PRECISION),
+                    Segment.fromPoints(upperLeft, lowerLeft, TEST_PRECISION)
                 );
     }
 
-    private static List<LineSegment> shuffle(final List<LineSegment> segments) {
+    private static List<Segment> shuffle(final List<Segment> segments) {
         return shuffle(segments, 1);
     }
 
-    private static List<LineSegment> shuffle(final List<LineSegment> segments, final int seed) {
+    private static List<Segment> shuffle(final List<Segment> segments, final int seed) {
         Collections.shuffle(segments, new Random(seed));
 
         return segments;
     }
 
-    private static void assertInfinitePath(LineSegmentPath path, LineSegment start, LineSegment end,
+    private static void assertInfinitePath(SegmentPath path, Segment start, Segment end,
             Vector2D ... vertices) {
         Assert.assertTrue(path.isInfinite());
         Assert.assertFalse(path.isFinite());
@@ -320,7 +320,7 @@ public class InteriorAngleLineSegmentConnectorTest {
         assertPathVertices(path, vertices);
     }
 
-    private static void assertFinitePath(LineSegmentPath path, Vector2D ... vertices)
+    private static void assertFinitePath(SegmentPath path, Vector2D ... vertices)
     {
         Assert.assertFalse(path.isInfinite());
         Assert.assertTrue(path.isFinite());
@@ -328,7 +328,7 @@ public class InteriorAngleLineSegmentConnectorTest {
         assertPathVertices(path, vertices);
     }
 
-    private static void assertPathVertices(LineSegmentPath path, Vector2D ... vertices) {
+    private static void assertPathVertices(SegmentPath path, Vector2D ... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
         List<Vector2D> actualVertices = path.getVertices();
 

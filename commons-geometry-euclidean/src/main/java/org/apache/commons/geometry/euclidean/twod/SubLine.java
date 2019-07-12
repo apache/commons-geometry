@@ -69,15 +69,15 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
 
     /** {@inheritDoc} */
     @Override
-    public List<LineSegment> toConvex() {
+    public List<Segment> toConvex() {
         final List<Interval> intervals = region.toIntervals();
 
         final Line line = getLine();
-        final List<LineSegment> segments = new ArrayList<>(intervals.size());
+        final List<Segment> segments = new ArrayList<>(intervals.size());
 
         for (Interval interval : intervals)
         {
-            segments.add(LineSegment.fromInterval(line, interval));
+            segments.add(Segment.fromInterval(line, interval));
         }
 
         return segments;
@@ -135,7 +135,7 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
      * @throws IllegalArgumentException if the given line segment is not from
      *      a line equivalent to this instance
      */
-    public void add(final LineSegment segment) {
+    public void add(final Segment segment) {
         validateLine(segment.getLine());
 
         region.add(segment.getSubspaceRegion());
@@ -205,8 +205,8 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
          * @param sub the subhyperplane to add; either convex or non-convex
          */
         private void addInternal(final SubHyperplane<Vector2D> sub) {
-            if (sub instanceof LineSegment) {
-                subline.add((LineSegment) sub);
+            if (sub instanceof Segment) {
+                subline.add((Segment) sub);
             }
             else if (sub instanceof SubLine) {
                 subline.add((SubLine) sub);

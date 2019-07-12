@@ -100,12 +100,12 @@ public class SubLineTest {
         SubLine sub = new SubLine(line, true);
 
         // act
-        List<LineSegment> segments = sub.toConvex();
+        List<Segment> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(1, segments.size());
 
-        LineSegment seg = segments.get(0);
+        Segment seg = segments.get(0);
         Assert.assertTrue(seg.isFull());
     }
 
@@ -115,7 +115,7 @@ public class SubLineTest {
         SubLine sub = new SubLine(line, false);
 
         // act
-        List<LineSegment> segments = sub.toConvex();
+        List<Segment> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -130,7 +130,7 @@ public class SubLineTest {
         tree.add(Interval.of(-1, 2, TEST_PRECISION));
 
         // act
-        List<LineSegment> segments = sub.toConvex();
+        List<Segment> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(2, segments.size());
@@ -151,15 +151,15 @@ public class SubLineTest {
         SubLine subline = new SubLine(line);
 
         // act
-        subline.add(LineSegment.fromInterval(line, 2, 4));
-        subline.add(LineSegment.fromInterval(otherLine, 1, 3));
-        subline.add(LineSegment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
+        subline.add(Segment.fromInterval(line, 2, 4));
+        subline.add(Segment.fromInterval(otherLine, 1, 3));
+        subline.add(Segment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEndPoint(), TEST_EPS);
@@ -196,7 +196,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
 
         Assert.assertEquals(2, segments.size());
 
@@ -220,7 +220,7 @@ public class SubLineTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            subline.add(LineSegment.fromInterval(otherLine, 0, 1));
+            subline.add(Segment.fromInterval(otherLine, 0, 1));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -246,11 +246,11 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        List<Segment> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(1, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
 
-        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        List<Segment> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(2, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -274,12 +274,12 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        List<Segment> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(2, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
 
-        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        List<Segment> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(1, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
     }
@@ -304,7 +304,7 @@ public class SubLineTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        List<Segment> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(2, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
         checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -328,7 +328,7 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        List<Segment> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(2, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
         checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -356,7 +356,7 @@ public class SubLineTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<LineSegment> plusSegments = split.getPlus().toConvex();
+        List<Segment> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(2, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
         checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -380,7 +380,7 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<LineSegment> minusSegments = split.getMinus().toConvex();
+        List<Segment> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(2, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
         checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -445,7 +445,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertTrue(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
         Assert.assertEquals(0, segments.size());
 
         Assert.assertSame(line, subline.getLine());
@@ -467,7 +467,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertTrue(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
         Assert.assertEquals(0, segments.size());
     }
 
@@ -480,9 +480,9 @@ public class SubLineTest {
         SubLineBuilder builder = new SubLineBuilder(line);
 
         // act
-        builder.add(LineSegment.fromInterval(line, 2, 4));
-        builder.add(LineSegment.fromInterval(otherLine, 1, 3));
-        builder.add(LineSegment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
+        builder.add(Segment.fromInterval(line, 2, 4));
+        builder.add(Segment.fromInterval(otherLine, 1, 3));
+        builder.add(Segment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
         SubLine subline = builder.build();
 
@@ -490,7 +490,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEndPoint(), TEST_EPS);
@@ -529,7 +529,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<LineSegment> segments = subline.toConvex();
+        List<Segment> segments = subline.toConvex();
 
         Assert.assertEquals(2, segments.size());
 
@@ -553,7 +553,7 @@ public class SubLineTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(LineSegment.fromInterval(otherLine, 0, 1));
+            builder.add(Segment.fromInterval(otherLine, 0, 1));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -602,7 +602,7 @@ public class SubLineTest {
         }, IllegalArgumentException.class);
     }
 
-    private static void checkFiniteSegment(LineSegment segment, Vector2D start, Vector2D end) {
+    private static void checkFiniteSegment(Segment segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);

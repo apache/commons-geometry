@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class LineSegment extends AbstractSubLine<Interval>
+public final class Segment extends AbstractSubLine<Interval>
     implements ConvexSubHyperplane<Vector2D> {
 
     /** The interval representing the region of the line contained in
@@ -47,7 +47,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param line the underlying line
      * @param interval 1D interval on the line defining the line segment
      */
-    private LineSegment(final Line line, final Interval interval) {
+    private Segment(final Line line, final Interval interval) {
         super(line);
 
         this.interval = interval;
@@ -112,13 +112,13 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
     /** {@inheritDoc} */
     @Override
-    public List<LineSegment> toConvex() {
+    public List<Segment> toConvex() {
         return Arrays.asList(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<LineSegment> split(Hyperplane<Vector2D> splitter) {
+    public Split<Segment> split(Hyperplane<Vector2D> splitter) {
         final Line splitterLine = (Line) splitter;
 
         if (isInfinite()) {
@@ -129,7 +129,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
 
     /** {@inheritDoc} */
     @Override
-    public LineSegment transform(Transform<Vector2D> transform) {
+    public Segment transform(Transform<Vector2D> transform) {
         final Line line = getLine();
 
         if (!isInfinite()) {
@@ -178,7 +178,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      *      null if no such point exists.
      * @see Line#intersection(Line)
      */
-    public Vector2D intersection(final LineSegment segment) {
+    public Vector2D intersection(final Segment segment) {
         final Vector2D pt = intersection(segment.getLine());
         return (pt != null && segment.contains(pt)) ? pt : null;
     }
@@ -188,7 +188,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @return a line segment containing the same points but with a line pointing
      *      in the opposite direction.
      */
-    public LineSegment reverse() {
+    public Segment reverse() {
         final Interval reversedInterval = interval.transform(Vector1D::negate);
         return fromInterval(getLine().reverse(), reversedInterval);
     }
@@ -205,11 +205,11 @@ public final class LineSegment extends AbstractSubLine<Interval>
         if (this == obj) {
             return true;
         }
-        else if (!(obj instanceof LineSegment)) {
+        else if (!(obj instanceof Segment)) {
             return false;
         }
 
-        LineSegment other = (LineSegment) obj;
+        Segment other = (Segment) obj;
 
         return Objects.equals(getLine(), other.getLine()) &&
                 Objects.equals(interval, other.interval);
@@ -236,7 +236,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private Split<LineSegment> splitInfinite(Line splitter) {
+    private Split<Segment> splitInfinite(Line splitter) {
         final Line line = getLine();
         final Vector2D intersection = splitter.intersection(line);
 
@@ -260,8 +260,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
             final double startAbscissa = getSubspaceStart();
             final double endAbscissa = getSubspaceEnd();
 
-            LineSegment startSegment = null;
-            LineSegment endSegment = null;
+            Segment startSegment = null;
+            Segment endSegment = null;
 
             if (endAbscissa <= intersectionAbscissa) {
                 // the entire segment is before the intersection
@@ -282,8 +282,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
             final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
             final double startCmp = getPrecision().sign(startOffset);
 
-            final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
-            final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
+            final Segment minus = (startCmp > 0) ? endSegment: startSegment;
+            final Segment plus = (startCmp > 0) ? startSegment : endSegment;
 
             return new Split<>(minus, plus);
         }
@@ -294,7 +294,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param splitter the splitter line
      * @return the split convex subhyperplane
      */
-    private Split<LineSegment> splitFinite(Line splitter) {
+    private Split<Segment> splitFinite(Line splitter) {
 
         final DoublePrecisionContext precision = getPrecision();
 
@@ -338,11 +338,11 @@ public final class LineSegment extends AbstractSubLine<Interval>
         final Vector2D intersection = splitter.intersection(line);
         final double intersectionAbscissa = line.toSubspace(intersection).getX();
 
-        final LineSegment startSegment = fromInterval(line, getSubspaceStart(), intersectionAbscissa);
-        final LineSegment endSegment = fromInterval(line, intersectionAbscissa, getSubspaceEnd());
+        final Segment startSegment = fromInterval(line, getSubspaceStart(), intersectionAbscissa);
+        final Segment endSegment = fromInterval(line, intersectionAbscissa, getSubspaceEnd());
 
-        final LineSegment minus = (startCmp > 0) ? endSegment: startSegment;
-        final LineSegment plus = (startCmp > 0) ? startSegment : endSegment;
+        final Segment minus = (startCmp > 0) ? endSegment: startSegment;
+        final Segment plus = (startCmp > 0) ? startSegment : endSegment;
 
         return new Split<>(minus, plus);
     }
@@ -354,7 +354,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param precision precision context used to determine floating point equality
      * @return a new line segment between {@code start} and {@code end}.
      */
-    public static LineSegment fromPoints(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
+    public static Segment fromPoints(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
         final Line line = Line.fromPoints(start, end, precision);
         return fromPointsOnLine(line, start, end);
     }
@@ -364,8 +364,8 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param interval 1D interval on the line
      * @return a line segment defined by the given line and interval
      */
-    public static LineSegment fromInterval(final Line line, final Interval interval) {
-        return new LineSegment(line, interval);
+    public static Segment fromInterval(final Line line, final Interval interval) {
+        return new Segment(line, interval);
     }
 
     /** Create a line segment from an underlying line and a 1D interval on the line.
@@ -374,7 +374,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param b second 1D location on the line
      * @return a line segment defined by the given line and interval
      */
-    public static LineSegment fromInterval(final Line line, final double a, final double b) {
+    public static Segment fromInterval(final Line line, final double a, final double b) {
         return fromInterval(line, Interval.of(a, b, line.getPrecision()));
     }
 
@@ -384,7 +384,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param b second 1D point on the line; must not be null
      * @return a line segment defined by the given line and interval
      */
-    public static LineSegment fromInterval(final Line line, final Vector1D a, final Vector1D b) {
+    public static Segment fromInterval(final Line line, final Vector1D a, final Vector1D b) {
         return fromInterval(line, a.getX(), b.getX());
     }
 
@@ -394,7 +394,7 @@ public final class LineSegment extends AbstractSubLine<Interval>
      * @param end line segment end poitn known to lie on the line
      * @return a new line segment created from the line and points
      */
-    private static LineSegment fromPointsOnLine(final Line line, final Vector2D start, final Vector2D end) {
+    private static Segment fromPointsOnLine(final Line line, final Vector2D start, final Vector2D end) {
         final double subspaceStart = line.toSubspace(start).getX();
         final double subspaceEnd = line.toSubspace(end).getX();
 

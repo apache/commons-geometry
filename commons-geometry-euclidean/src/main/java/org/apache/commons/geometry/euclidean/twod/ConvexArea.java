@@ -43,13 +43,13 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
 
-    private final List<LineSegment> boundarySegments;
+    private final List<Segment> boundarySegments;
 
     /** Simple constructor. Callers are responsible for ensuring that the given path
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaryPath the boundary of the convex area
      */
-    private ConvexArea(final List<LineSegment> boundaries) {
+    private ConvexArea(final List<Segment> boundaries) {
         this.boundarySegments = boundaries;
     }
 
@@ -58,7 +58,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      * The returned list will be empty if the instance represents the full area.
      * @return list of line segments comprising the boundary of the area.
      */
-    public List<LineSegment> getBoundarySegments() {
+    public List<Segment> getBoundarySegments() {
         return boundarySegments;
     }
 
@@ -76,8 +76,8 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      * </ul>
      * @return the line segment paths comprising the boundary of the area.
      */
-    public List<LineSegmentPath> getBoundaryPaths() {
-        return InteriorAngleLineSegmentConnector.connectMinimized(boundarySegments);
+    public List<SegmentPath> getBoundaryPaths() {
+        return InteriorAngleSegmentConnector.connectMinimized(boundarySegments);
     }
 
     /** {@inheritDoc} */
@@ -111,7 +111,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
 
         double quadrilateralAreaSum = 0.0;
 
-        for (LineSegment segment : boundarySegments) {
+        for (Segment segment : boundarySegments) {
             if (segment.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
             }
@@ -126,7 +126,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
     @Override
     public double getBoundarySize() {
         double sum = 0.0;
-        for (LineSegment seg : boundarySegments) {
+        for (Segment seg : boundarySegments) {
             sum += seg.getSize();
         }
 
@@ -145,7 +145,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
             Vector2D startPoint;
             Vector2D endPoint;
 
-            for (LineSegment seg : boundarySegments) {
+            for (Segment seg : boundarySegments) {
                 if (seg.isInfinite()) {
                     // infinite => no barycenter
                     return null;
@@ -174,7 +174,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
         boolean isOn = false;
 
         HyperplaneLocation loc;
-        for (LineSegment seg : boundarySegments) {
+        for (Segment seg : boundarySegments) {
             loc = seg.getLine().classify(pt);
 
             if (loc == HyperplaneLocation.PLUS) {
@@ -198,7 +198,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
         Vector2D closestPt = null;
         double closestDistSq = Double.POSITIVE_INFINITY;
 
-        for (LineSegment seg : boundarySegments) {
+        for (Segment seg : boundarySegments) {
             projected = seg.closest(pt);
             distSq = pt.distanceSq(projected);
 
@@ -218,9 +218,9 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      * @return the portion of the given segment that lies inside the region or
      *      null if the segment does not intersect the region
      */
-    public LineSegment trim(final LineSegment segment) {
-        LineSegment remaining = segment;
-        for (LineSegment boundary : boundarySegments) {
+    public Segment trim(final Segment segment) {
+        Segment remaining = segment;
+        for (Segment boundary : boundarySegments) {
             remaining = remaining.split(boundary.getLine()).getMinus();
             if (remaining == null) {
                 break;
@@ -258,7 +258,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      * @return the split instance
      */
     private Split<ConvexArea> splitBounded(final Line splitter) {
-        final LineSegment trimmedSplitter = trim(splitter.span());
+        final Segment trimmedSplitter = trim(splitter.span());
 
         if (trimmedSplitter == null) {
             // The splitter lies entirely outside of the region; we need
@@ -267,7 +267,7 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
             // on the minus side of the splitter or lies directly on the splitter and has
             // the same orientation, then the area lies on the minus side of the splitter.
             // Otherwise, it lies on the plus side.
-            LineSegment testSegment = boundarySegments.get(0);
+            Segment testSegment = boundarySegments.get(0);
             SplitLocation testLocation = testSegment.split(splitter).getLocation();
 
             if (SplitLocation.MINUS == testLocation ||
@@ -278,14 +278,14 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
             return new Split<>(null, this);
         }
 
-        final List<LineSegment> minusBoundary = new ArrayList<>();
-        final List<LineSegment> plusBoundary = new ArrayList<>();
+        final List<Segment> minusBoundary = new ArrayList<>();
+        final List<Segment> plusBoundary = new ArrayList<>();
 
-        Split<LineSegment> split;
-        LineSegment minusSegment;
-        LineSegment plusSegment;
+        Split<Segment> split;
+        Segment minusSegment;
+        Segment plusSegment;
 
-        for (LineSegment segment : boundarySegments) {
+        for (Segment segment : boundarySegments) {
             split = segment.split(splitter);
 
             minusSegment = split.getMinus();
@@ -358,11 +358,11 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
         final List<Line> uniqueBoundingLines = boundingLines.stream()
                 .distinct().collect(Collectors.toList());
 
-        final List<LineSegment> segments = new ArrayList<>();
+        final List<Segment> segments = new ArrayList<>();
 
         // cut each line by every other line in order to get the line segment boundaries
         for (Line line : uniqueBoundingLines) {
-            LineSegment segment = line.span();
+            Segment segment = line.span();
 
             for (Line splitter : uniqueBoundingLines) {
                 if (line != splitter) {

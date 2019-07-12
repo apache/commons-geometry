@@ -42,7 +42,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     private static final long serialVersionUID = 20190519L;
 
     /** List of line segment paths comprising the region boundary. */
-    private List<LineSegmentPath> boundaryPaths;
+    private List<SegmentPath> boundaryPaths;
 
     /** Create a new, empty region.
      */
@@ -64,9 +64,9 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * interior of the region.
      * @return the boundary of the region as list of unconnected line segments
      */
-    public List<LineSegment> getBoundarySegments() {
-        List<LineSegment> segments = new ArrayList<>();
-        for (LineSegmentPath path : getBoundaryPaths()) {
+    public List<Segment> getBoundarySegments() {
+        List<Segment> segments = new ArrayList<>();
+        for (SegmentPath path : getBoundaryPaths()) {
             segments.addAll(path.getSegments());
         }
         return segments;
@@ -77,7 +77,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * interior of the region.
      * @return line segment paths representing the region boundary
      */
-    public List<LineSegmentPath> getBoundaryPaths() {
+    public List<SegmentPath> getBoundaryPaths() {
         if (boundaryPaths == null) {
             boundaryPaths = Collections.unmodifiableList(computeBoundaryPaths());
         }
@@ -138,7 +138,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * the minus side of the line segments points to the region interior.
      * @return the line segment paths comprising the region boundary
      */
-    private List<LineSegmentPath> computeBoundaryPaths() {
+    private List<SegmentPath> computeBoundaryPaths() {
         final BoundaryPathVisitor2D connector = new BoundaryPathVisitor2D();
         accept(connector);
 
@@ -166,9 +166,9 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         Vector2D endPoint;
         double signedArea;
 
-        final List<LineSegment> boundary = getBoundarySegments();
+        final List<Segment> boundary = getBoundarySegments();
 
-        for (LineSegment segment : boundary) {
+        for (Segment segment : boundary) {
 
             if (segment.isInfinite()) {
                 // at least on boundary is infinite, meaning that
@@ -403,10 +403,10 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         private static final long serialVersionUID = 20190610L;
 
         /** List of line segments comprising the region boundary for the current node. */
-        private final List<LineSegment> nodeSegments = new ArrayList<>();
+        private final List<Segment> nodeSegments = new ArrayList<>();
 
         /** Connector instance used to connect the line segments from the nodes into connected paths. */
-        private final InteriorAngleLineSegmentConnector connector = new InteriorAngleLineSegmentConnector.Minimize();
+        private final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
 
         /** {@inheritDoc} */
         @Override
@@ -432,7 +432,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                     Line reversedLine = insideFacing.getLine().reverse();
 
                     for (Interval interval : insideFacing.getSubspaceRegion().toIntervals()) {
-                        nodeSegments.add(LineSegment.fromInterval(reversedLine,
+                        nodeSegments.add(Segment.fromInterval(reversedLine,
                                 interval.transform(Vector1D::negate)));
                     }
                 }
@@ -460,9 +460,9 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * to combine adjacent segments on the same line before being returned.
          * @return the boundary paths for the tree
          */
-        public List<LineSegmentPath> getBoundaryPaths() {
+        public List<SegmentPath> getBoundaryPaths() {
             return connector.getPaths().stream()
-                    .map(LineSegmentPath::simplify).collect(Collectors.toList());
+                    .map(SegmentPath::simplify).collect(Collectors.toList());
         }
     }
 }

@@ -160,7 +160,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
 
     /** {@inheritDoc} */
     @Override
-    public LineSegment span() {
+    public Segment span() {
         return segment(Interval.full());
     }
 
@@ -168,8 +168,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param interval interval representing the 1D region for the line segment
      * @return a new line segment on this line
      */
-    public LineSegment segment(final Interval interval) {
-        return LineSegment.fromInterval(this, interval);
+    public Segment segment(final Interval interval) {
+        return Segment.fromInterval(this, interval);
     }
 
     /** Create a new line segment from the given interval.
@@ -177,8 +177,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param b second 1D location for the interval
      * @return a new line segment on this line
      */
-    public LineSegment segment(final double a, final double b) {
-        return LineSegment.fromInterval(this, a, b);
+    public Segment segment(final double a, final double b) {
+        return Segment.fromInterval(this, a, b);
     }
 
     /** Create a new line segment between the projections of the two
@@ -187,8 +187,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param b second point
      * @return a new line segment on this line
      */
-    public LineSegment segment(final Vector2D a, final Vector2D b) {
-        return LineSegment.fromInterval(this, toSubspace(a), toSubspace(b));
+    public Segment segment(final Vector2D a, final Vector2D b) {
+        return Segment.fromInterval(this, toSubspace(a), toSubspace(b));
     }
 
     /** Create a new line segment that starts at infinity and continues along
@@ -197,7 +197,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      *      is equal to the projection of this point onto the line
      * @return a new, half-open line segment
      */
-    public LineSegment segmentTo(final Vector2D pt) {
+    public Segment segmentTo(final Vector2D pt) {
         return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
     }
 
@@ -207,7 +207,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      *      is equal to the projection of this point onto the line
      * @return a new, half-open line segment
      */
-    public LineSegment segmentFrom(final Vector2D pt) {
+    public Segment segmentFrom(final Vector2D pt) {
         return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
     }
 

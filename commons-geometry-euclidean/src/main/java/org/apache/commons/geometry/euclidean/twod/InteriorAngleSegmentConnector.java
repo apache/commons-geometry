@@ -33,7 +33,7 @@ import org.apache.commons.geometry.core.Geometry;
  * angles respectively.
  * </p>
  */
-public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegmentConnector {
+public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConnector {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190530L;
@@ -73,7 +73,7 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
      * @return a list of connected line segment paths
      * @see Maximize
      */
-    public static List<LineSegmentPath> connectMaximized(final Collection<LineSegment> segments) {
+    public static List<SegmentPath> connectMaximized(final Collection<Segment> segments) {
         return new Maximize().getPaths(segments);
     }
 
@@ -83,17 +83,17 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
      * @return a list of connected line segment paths
      * @see Minimize
      */
-    public static List<LineSegmentPath> connectMinimized(final Collection<LineSegment> segments) {
+    public static List<SegmentPath> connectMinimized(final Collection<Segment> segments) {
         return new Minimize().getPaths(segments);
     }
 
-    /** Implementation of {@link InteriorAngleLineSegmentConnector} that chooses line segment
+    /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment
      * connections that produce the largest interior angles. Another way to visualize this is
      * that when presented multiple connection options for a given line segment, this class will
      * choose the option that points most to the right when viewed in the direction of the incoming
      * line segment.
      */
-    public static class Maximize extends InteriorAngleLineSegmentConnector {
+    public static class Maximize extends InteriorAngleSegmentConnector {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190530L;
@@ -105,13 +105,13 @@ public abstract class InteriorAngleLineSegmentConnector extends AbstractLineSegm
         }
     }
 
-    /** Implementation of {@link InteriorAngleLineSegmentConnector} that chooses line segment
+    /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment
      * connections that produce the smallest interior angles. Another way to visualize this is
      * that when presented multiple connection options for a given line segment, this class will
      * choose the option that points most to the left when viewed in the direction of the incoming
      * line segment.
      */
-    public static class Minimize extends InteriorAngleLineSegmentConnector {
+    public static class Minimize extends InteriorAngleSegmentConnector {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190530L;

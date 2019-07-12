@@ -216,7 +216,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
     /** Return a new infinite segment representing the entire line.
      * @return a new infinite segment representing the entire line
      */
-    public LineSegment3D span() {
+    public Segment3D span() {
         // TODO
         return null;
     }
