@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -248,6 +249,25 @@ public class PlaneTest {
     }
 
     @Test
+    public void testReverse() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        // act
+        Plane reversed = plane.reverse();
+
+        // assert
+        checkPlane(reversed, pt, Vector3D.PLUS_Y, Vector3D.PLUS_X);
+
+        Assert.assertTrue(reversed.contains(Vector3D.of(1, 1, 1)));
+        Assert.assertTrue(reversed.contains(Vector3D.of(-1, -1, 1)));
+        Assert.assertFalse(reversed.contains(Vector3D.ZERO));
+
+        Assert.assertEquals(1.0, reversed.offset(Vector3D.ZERO), TEST_EPS);
+    }
+
+    @Test
     public void testIsParallelAndOffset_line() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
@@ -268,40 +288,30 @@ public class PlaneTest {
     }
 
     @Test
-    public void testReverse() {
-        // arrange
-        Vector3D pt = Vector3D.of(0, 0, 1);
-        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
-
-        // act
-        Plane reversed = plane.reverse();
-
-        // assert
-        checkPlane(reversed, pt, Vector3D.PLUS_Y, Vector3D.PLUS_X);
-
-        Assert.assertTrue(reversed.contains(Vector3D.of(1, 1, 1)));
-        Assert.assertTrue(reversed.contains(Vector3D.of(-1, -1, 1)));
-        Assert.assertFalse(reversed.contains(Vector3D.ZERO));
-
-        Assert.assertEquals(1.0, reversed.offset(Vector3D.ZERO), TEST_EPS);
-    }
-
-    @Test
-    public void testIsParallel_plane() {
+    public void testIsParallelAndOffset_plane() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Plane parallelPlane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Plane parallelPlane2 = Plane.fromPointAndNormal(Vector3D.of(0, 0, 2), Vector3D.of(0, 0, 1), TEST_PRECISION);
+        Plane parallelPlane3 = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_PRECISION).reverse();
         Plane nonParallelPlane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(1, 1.5, 1), Vector3D.of(0,1,1), TEST_PRECISION);
         Plane reversedPlane = plane.reverse();
 
         // act/assert
         Assert.assertTrue(plane.isParallel(parallelPlane));
+        Assert.assertEquals(0.0, plane.offset(parallelPlane), TEST_EPS);
+
         Assert.assertTrue(plane.isParallel(parallelPlane2));
+        Assert.assertEquals(1.0, plane.offset(parallelPlane2), TEST_EPS);
+
+        Assert.assertTrue(plane.isParallel(parallelPlane3));
+        Assert.assertEquals(-1.0, plane.offset(parallelPlane3), TEST_EPS);
 
         Assert.assertFalse(plane.isParallel(nonParallelPlane));
+        Assert.assertEquals(0.0, plane.offset(nonParallelPlane), TEST_EPS);
 
         Assert.assertTrue(plane.isParallel(reversedPlane));
+        Assert.assertEquals(0.0, plane.offset(nonParallelPlane), TEST_EPS);
     }
 
     @Test
@@ -398,6 +408,76 @@ public class PlaneTest {
 
         // assert
         checkPlane(result, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.PLUS_Z);
+    }
+
+    @Test
+    public void testTransform_asymmetricScaling() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 1, 0);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.MINUS_Z, Vector3D.of(-1, 1, 0), TEST_PRECISION);
+
+        AffineTransformMatrix3D mat = AffineTransformMatrix3D.createScale(2, 1, 1);
+
+        // act
+        Plane result = plane.transform(mat);
+
+        // assert
+        Vector3D expectedU = Vector3D.MINUS_Z;
+        Vector3D expectedV = Vector3D.normalize(-2, 1, 0);
+        Vector3D expectedNormal = Vector3D.normalize(1, 2, 0);
+
+        Vector3D transformedPt = mat.apply(plane.getOrigin());
+        Vector3D expectedOrigin = transformedPt.project(expectedNormal);
+
+        checkPlane(result, expectedOrigin, expectedU, expectedV);
+
+        Assert.assertTrue(result.contains(transformedPt));
+        Assert.assertFalse(plane.contains(transformedPt));
+    }
+
+    @Test
+    public void testTransform_negateOneComponent() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        Transform<Vector3D> transform = v -> Vector3D.of(-v.getX(), v.getY(), v.getZ());
+
+        // act
+        Plane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(0, 0, 1), Vector3D.MINUS_X, Vector3D.PLUS_Y);
+    }
+
+    @Test
+    public void testTransform_negateTwoComponents() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        Transform<Vector3D> transform = v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ());
+
+        // act
+        Plane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(0, 0, 1), Vector3D.MINUS_X, Vector3D.MINUS_Y);
+    }
+
+    @Test
+    public void testTransform_negateAllComponents() {
+        // arrange
+        Vector3D pt = Vector3D.of(0, 0, 1);
+        Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        Transform<Vector3D> transform = Vector3D::negate;
+
+        // act
+        Plane result = plane.transform(transform);
+
+        // assert
+        checkPlane(result, Vector3D.of(0, 0, -1), Vector3D.MINUS_X, Vector3D.MINUS_Y);
     }
 
     @Test
@@ -582,6 +662,24 @@ public class PlaneTest {
 
         // assert
         Assert.assertNull(result);
+    }
+
+    @Test
+    public void testSpan() {
+        // arrange
+        Plane plane = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Z, TEST_PRECISION);
+
+        // act
+        ConvexSubPlane sub = plane.span();
+
+        // assert
+        Assert.assertSame(plane, sub.getPlane());
+        Assert.assertTrue(sub.isFull());
+
+        Assert.assertTrue(sub.contains(Vector3D.ZERO));
+        Assert.assertTrue(sub.contains(Vector3D.of(1, 1, 0)));
+
+        Assert.assertFalse(sub.contains(Vector3D.of(0, 0, 1)));
     }
 
     @Test

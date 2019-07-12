@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 public final class Plane extends AbstractHyperplane<Vector3D> implements EmbeddingHyperplane<Vector3D, Vector2D> {
@@ -395,15 +396,10 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
 
     }
 
-    /**
-     * Build a region covering the whole hyperplane.
-     *
-     * @return a region covering the whole hyperplane
-     */
+    /** {@inheritDoc} */
     @Override
     public ConvexSubPlane span() {
-        // TODO
-        return null;
+        return ConvexSubPlane.fromConvexArea(this, ConvexArea.full());
     }
 
     /**
@@ -445,33 +441,29 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
     }
 
     /**
-     * Get the offset (oriented distance) of a parallel plane.
-     * <p>
-     * This method should be called only for parallel planes otherwise the result is
-     * not meaningful.
-     * </p>
-     * <p>
-     * The offset is 0 if both planes are the same, it is positive if the plane is
-     * on the plus side of the instance and negative if it is on the minus side,
-     * according to its natural orientation.
-     * </p>
-     *
-     * @param plane plane to check
-     * @return offset of the plane
+     * Get the offset (oriented distance) of the given plane with respect to this instance. The value
+     * closest to zero is returned, which will always be zero if the planes are not parallel.
+     * @param plane plane to calculate the offset of
+     * @return the offset of the plane with respect to this instance or 0.0 if the planes
+     *      are not parallel.
      */
     public double offset(final Plane plane) {
+        if (!isParallel(plane)) {
+            return 0.0;
+        }
         return originOffset + (similarOrientation(plane) ? -plane.originOffset : plane.originOffset);
     }
 
     /**
-     * Returns the distance of the given line to the plane instance.
-     * Returns 0.0, if the line is not parallel to the plane instance.
-     * @param line to calculate the distance to the plane instance
-     * @return the distance or 0.0, if the line is not parallel to the plane instance.
+     * Get the offset (oriented distance) of the given line with respect to the plane. The value
+     * closest to zero is returned, which will always be zero if the line is not parallel to the plane.
+     * @param line line to calculate the offset of
+     * @return the offset of the line with respect to the plane or 0.0 if the line
+     *      is not parallel to the plane.
      */
     public double offset(final Line3D line) {
         if (!isParallel(line)) {
-            return 0;
+            return 0.0;
         }
         return offset(line.getOrigin());
     }

@@ -28,8 +28,12 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     implements ConvexSubHyperplane<Vector3D>  {
 
-    private ConvexSubPlane(Plane plane) {
+    private final ConvexArea area;
+
+    private ConvexSubPlane(final Plane plane, final ConvexArea area) {
         super(plane);
+
+        this.area = area;
     }
 
     /** {@inheritDoc} */
@@ -55,7 +59,15 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     /** {@inheritDoc} */
     @Override
     public ConvexArea getSubspaceRegion() {
-        // TODO Auto-generated method stub
-        return null;
+        return area;
+    }
+
+    /** Create a new instance from a plane and an embedded convex subspace area.
+     * @param plane embedding plane for the area
+     * @param area area embedded in the plane
+     * @return a new convex sub plane instance
+     */
+    public static ConvexSubPlane fromConvexArea(final Plane plane, final ConvexArea area) {
+        return new ConvexSubPlane(plane, area);
     }
 }
