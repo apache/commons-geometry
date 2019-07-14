@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -104,6 +105,12 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
         Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
+    public void testFromConvexArea() {
+        // arrange
+        // TODO
     }
 
     @Test

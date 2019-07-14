@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
+import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -29,7 +30,8 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-public final class Plane extends AbstractHyperplane<Vector3D> implements EmbeddingHyperplane<Vector3D, Vector2D> {
+public final class Plane extends AbstractHyperplane<Vector3D>
+    implements EmbeddingHyperplane<Vector3D, Vector2D>, Equivalency<Plane> {
 
     /** Serializable version UID */
     private static final long serialVersionUID = 20190702L;
@@ -468,33 +470,43 @@ public final class Plane extends AbstractHyperplane<Vector3D> implements Embeddi
         return offset(line.getOrigin());
     }
 
-    /**
-     * Get the offset (oriented distance) of a point.
-     * <p>
-     * The offset is 0 if the point is on the underlying hyperplane, it is positive
-     * if the point is on one particular side of the hyperplane, and it is negative
-     * if the point is on the other side, according to the hyperplane natural
-     * orientation.
-     * </p>
-     *
-     * @param point point to check
-     * @return offset of the point
-     */
+    /** {@inheritDoc} */
     @Override
     public double offset(final Vector3D point) {
         return point.dot(w) + originOffset;
     }
 
-    /**
-     * Check if the instance has the same orientation as another hyperplane.
-     *
-     * @param other other hyperplane to check against the instance
-     * @return true if the instance and the other hyperplane have the same
-     *         orientation
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean similarOrientation(final Hyperplane<Vector3D> other) {
         return (((Plane) other).w).dot(w) > 0;
+    }
+
+
+    /** {@inheritDoc}
+    *
+    * <p>Instances are considered equivalent if they
+    * <ul>
+    *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+    *  <li>have equivalent origins (as evaluated by the precision context), and</li>
+    *  <li>have equivalent {@code u} and {@code v} vectors (as evaluated by the precision context)</li>
+    * </ul>
+    * </p>
+    * @param other the point to compare with
+    * @return true if this instance should be considered equivalent to the argument
+    */
+    @Override
+    public boolean eq(Plane other) {
+        if (this == other) {
+            return true;
+        }
+
+        final DoublePrecisionContext precision = getPrecision();
+
+        return precision.equals(other.getPrecision()) &&
+                getOrigin().eq(other.getOrigin(), precision) &&
+                u.eq(other.u, precision) &&
+                v.eq(other.v, precision);
     }
 
     /** {@inheritDoc} */

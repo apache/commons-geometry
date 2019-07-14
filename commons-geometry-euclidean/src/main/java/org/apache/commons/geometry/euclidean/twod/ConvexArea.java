@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.exception.GeometryException;
@@ -31,6 +30,7 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
  * The boundaries of this area, if any, are composed of line segments.
@@ -324,9 +324,91 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
         return FULL;
     }
 
+    /** Construct a convex area by creating lines between adjacent vertices. The vertices must be given in a counter-clockwise
+     * around order the interior of the shape. If the area is intended to be closed, the beginning point must be repeated
+     * at the end of the path.
+     * @param vertices vertices to use to construct the area
+     * @param precision precision context used to create new line instances
+     * @return a convex area constructed using lines between adjacent vertices
+     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
+     */
+    public static ConvexArea fromVertices(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+        return fromVertices(vertices, false, precision);
+    }
+
+    /** Construct a convex area by creating lines between adjacent vertices. An implicit line is created between the
+     * last vertex given and the first one. The vertices must be given in a counter-clockwise around order the interior
+     * of the shape.
+     * @param vertices vertices to use to construct the area
+     * @param precision precision context used to create new line instances
+     * @return a convex area constructed using lines between adjacent vertices
+     * @see #fromVertices(Collection, DoublePrecisionContext)
+     */
+    public static ConvexArea fromVertexLoop(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+        return fromVertices(vertices, true, precision);
+    }
+
+    /** Internal method for creating a convex area from lines between adjacent vertices.
+     * @param vertices vertices to use to construct the area
+     * @param close if true, an additional line will be created between the last and first vertex
+     * @param precision precision context used to create new line instances
+     * @return a convex area constructed using lines between adjacent vertices
+     */
+    private static ConvexArea fromVertices(final Collection<Vector2D> vertices, boolean close, final DoublePrecisionContext precision) {
+        if (vertices.isEmpty()) {
+            return full();
+        }
+
+        final List<Line> lines = new ArrayList<>();
+
+        Vector2D first = null;
+        Vector2D prev = null;
+        Vector2D cur = null;
+
+        for (Vector2D vertex : vertices) {
+            cur = vertex;
+
+            if (first == null) {
+                first = cur;
+            }
+
+            if (prev != null && !cur.eq(prev, precision)) {
+                lines.add(Line.fromPoints(prev, cur, precision));
+            }
+
+            prev = cur;
+        }
+
+        if (close && cur != null && !cur.eq(first, precision)) {
+            lines.add(Line.fromPoints(cur, first, precision));
+        }
+
+        if (!vertices.isEmpty() && lines.isEmpty()) {
+            throw new IllegalStateException("Unable to create convex area: only a single unique vertex provided");
+        }
+
+        return fromBounds(lines);
+    }
+
+    /** Construct a convex area from a line segment path. The area represents the intersection of all of the negative
+     * half-spaces of the lines in the path. The boundaries of the returned area may therefore not match the line
+     * segments in the path.
+     * @param path path to construct the area from
+     * @return a convex area constructed from the lines in the given path
+     */
+    public static ConvexArea fromPath(final SegmentPath path) {
+        final List<Line> lines = new ArrayList<>();
+        for (Segment segment : path) {
+            lines.add(segment.getLine());
+        }
+
+        return fromBounds(lines);
+    }
+
     /** Create a convex area formed by the intersection of the negative half-spaces of the
-     * given bounding lines. The returned instance represents the area that is not on the
-     * plus side of any of the lines.
+     * given bounding lines. The returned instance represents the area that is on the
+     * minus side of all of the given lines. Note that this method does not support areas
+     * of zero size (ie, infinitely thin areas or points.)
      * @param boundingLines lines used to define the convex area
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if no lines are
@@ -335,13 +417,14 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      *      meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
-    public static ConvexArea fromBoundingLines(final Line ... boundingLines) {
-        return fromBoundingLines(Arrays.asList(boundingLines));
+    public static ConvexArea fromBounds(final Line ... boundingLines) {
+        return fromBounds(Arrays.asList(boundingLines));
     }
 
     /** Create a convex area formed by the intersection of the negative half-spaces of the
-     * given bounding lines. The returned instance represents the area that is not on the
-     * plus side of any other of the lines.
+     * given bounding lines. The returned instance represents the area that is on the
+     * minus side of all of the given lines. Note that this method does not support areas
+     * of zero size (ie, infinitely thin areas or points.)
      * @param boundingLines lines used to define the convex area
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if the collection
@@ -350,27 +433,51 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      *      meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
-    public static ConvexArea fromBoundingLines(final Collection<Line> boundingLines) {
-        if (boundingLines.isEmpty()) {
-            return full();
-        }
-
-        final List<Line> uniqueBoundingLines = boundingLines.stream()
-                .distinct().collect(Collectors.toList());
-
+    public static ConvexArea fromBounds(final Iterable<Line> boundingLines) {
         final List<Segment> segments = new ArrayList<>();
 
         // cut each line by every other line in order to get the line segment boundaries
-        for (Line line : uniqueBoundingLines) {
+        boolean notConvex = false;
+        int outerIdx = 0;
+        for (Line line : boundingLines) {
+            ++outerIdx;
             Segment segment = line.span();
 
-            for (Line splitter : uniqueBoundingLines) {
+            int innerIdx = 0;
+            for (Line splitter : boundingLines) {
+                ++innerIdx;
+
                 if (line != splitter) {
-                    segment = segment.split(splitter).getMinus();
+                    Split<Segment> split = segment.split(splitter);
+
+                    if (split.getLocation() == SplitLocation.NEITHER) {
+                        if (line.similarOrientation(splitter)) {
+                            // two or more splitters are the equivalent; only
+                            // use the segment from the first one
+                            if (outerIdx > innerIdx) {
+                                segment = null;
+                            }
+                        }
+                        else {
+                            // two or more splitters are coincident and have opposite
+                            // orientations, meaning that no area is on the minus side
+                            // of both
+                            notConvex = true;
+                            break;
+                        }
+                    }
+                    else {
+                        segment = segment.split(splitter).getMinus();
+                    }
+
                     if (segment == null) {
                         break;
                     }
                 }
+            }
+
+            if (notConvex) {
+                break;
             }
 
             if (segment != null) {
@@ -378,7 +485,12 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
             }
         }
 
-        if (segments.isEmpty()) {
+        if (outerIdx < 1) {
+            // no lines were given
+            return full();
+        }
+
+        if (segments.isEmpty() || notConvex) {
             throw new GeometryException("Bounding lines do not produce a convex region: " + boundingLines);
         }
 

@@ -23,6 +23,8 @@ import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
+import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -30,6 +32,28 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
 
     private final RegionBSPTree2D region;
 
+    /** Construct a new, empty subplane for the given plane.
+     * @param plane plane defining the subplane
+     */
+    public SubPlane(final Plane plane) {
+        this(plane, false);
+    }
+
+    /** Construct a new subplane for the given plane. If {@code full}
+     * is true, then the subplane will cover the entire plane; otherwise,
+     * it will be empty.
+     * @param plane plane defining the subplane
+     * @param full if true, the subplane will cover the entire space;
+     *      otherwise it will be empty
+     */
+    public SubPlane(final Plane plane, boolean full) {
+        this(plane, new RegionBSPTree2D(full));
+    }
+
+    /** Construct a new instance from its defining plane and subspace region.
+     * @param plane plane defining the subplane
+     * @param region subspace region for the subplane
+     */
     public SubPlane(final Plane plane, final RegionBSPTree2D region) {
         super(plane);
 
@@ -52,8 +76,36 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Region<Vector2D> getSubspaceRegion() {
+    public RegionBSPTree2D getSubspaceRegion() {
         return region;
+    }
+
+    public void add(final ConvexSubPlane subplane) {
+        validatePlane(subplane.getPlane());
+
+        region.add(subplane.getSubspaceRegion());
+    }
+
+    public void add(final SubPlane subplane) {
+        validatePlane(subplane.getPlane());
+
+        region.union(subplane.getSubspaceRegion());
+    }
+
+    /** Validate that the given plane is equivalent to the plane
+     * defining this subplane.
+     * @param inputPlane
+     * @throws IllegalArgumentException if the given plane is not equivalent
+     *      to the plane for this instance
+     */
+    private void validatePlane(final Plane inputPlane) {
+        final Plane plane = getPlane();
+
+        if (!plane.eq(inputPlane)) {
+            throw new IllegalArgumentException("Argument is not on the same " +
+                    "plane. Expected " + plane + " but was " +
+                    inputPlane);
+        }
     }
 
     public static class SubPlaneBuilder implements SubHyperplane.Builder<Vector3D> {
@@ -64,18 +116,21 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
             this.plane = plane;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void add(SubHyperplane<Vector3D> sub) {
             // TODO Auto-generated method stub
 
         }
 
+        /** {@inheritDoc} */
         @Override
         public void add(ConvexSubHyperplane<Vector3D> sub) {
             // TODO Auto-generated method stub
 
         }
 
+        /** {@inheritDoc} */
         @Override
         public SubHyperplane<Vector3D> build() {
             // TODO Auto-generated method stub

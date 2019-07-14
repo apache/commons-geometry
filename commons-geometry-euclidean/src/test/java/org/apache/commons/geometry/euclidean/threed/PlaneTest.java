@@ -699,6 +699,41 @@ public class PlaneTest {
     }
 
     @Test
+    public void testEq() {
+        // arrange
+        double eps = 1e-3;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+
+        Vector3D pt = Vector3D.of(1, 2, 3);
+        Vector3D u = Vector3D.PLUS_X;
+        Vector3D v = Vector3D.PLUS_Y;
+
+        Vector3D ptPrime = Vector3D.of(1.0001, 2.0001, 3.0001);
+        Vector3D uPrime = Vector3D.normalize(1, 1e-4, 0);
+        Vector3D vPrime = Vector3D.normalize(0, 1, 1e-4);
+
+        Plane a = Plane.fromPointAndPlaneVectors(pt, u, v, precision);
+
+        Plane b = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 2, 4), u, v, precision);
+        Plane c = Plane.fromPointAndPlaneVectors(pt, Vector3D.MINUS_X, v, precision);
+        Plane d = Plane.fromPointAndPlaneVectors(pt, u, Vector3D.MINUS_Y, precision);
+        Plane e = Plane.fromPointAndPlaneVectors(pt, u, v, TEST_PRECISION);
+
+        Plane f = Plane.fromPointAndPlaneVectors(ptPrime, uPrime, vPrime, new EpsilonDoublePrecisionContext(eps));
+
+        // act/assert
+        Assert.assertTrue(a.eq(a));
+
+        Assert.assertFalse(a.eq(b));
+        Assert.assertFalse(a.eq(c));
+        Assert.assertFalse(a.eq(d));
+        Assert.assertFalse(a.eq(e));
+
+        Assert.assertTrue(a.eq(f));
+        Assert.assertTrue(f.eq(a));
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Vector3D pt = Vector3D.of(1, 2, 3);

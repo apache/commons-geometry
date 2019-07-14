@@ -59,6 +59,10 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         super(full);
     }
 
+    public void add(final ConvexArea area) {
+
+    }
+
     /** Get the boundary of the region as a list of unconnected line segments. The
      * line segments are oriented such that their minus (left) side lies on the
      * interior of the region.
@@ -255,6 +259,18 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      */
     public static RegionBSPTree2D empty() {
         return new RegionBSPTree2D(false);
+    }
+
+    /** Construct a tree from a convex area.
+     * @param area the area to construct a tree from
+     * @return tree instance representing the same area as the given
+     *      convex area
+     */
+    public static RegionBSPTree2D fromConvexArea(final ConvexArea area) {
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(area.getBoundarySegments());
+
+        return tree;
     }
 
     /** Construct a bsp tree representing an axis-oriented rectangular region. The region

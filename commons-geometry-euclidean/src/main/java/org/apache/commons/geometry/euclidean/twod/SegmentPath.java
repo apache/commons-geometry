@@ -297,6 +297,20 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return builder(precision).appendVertices(vertices).build();
     }
 
+    /** Build a new line segment path from the given vertices. A line segment is created
+     * from the last vertex given to the first one, if the two vertices are not considered
+     * equal using the given precision context.
+     * @param vertices the vertices to construct the closed path from
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new closed line segment path constructed from the given vertices
+     */
+    public static SegmentPath fromVertexLoop(final Collection<Vector2D> vertices,
+            final DoublePrecisionContext precision) {
+
+        return builder(precision).appendVertices(vertices).close();
+    }
+
     /** Return a line segment path containing no segments.
      * @return a line segment path containing no segments.
      */

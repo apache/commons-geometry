@@ -416,6 +416,86 @@ public class SegmentPathTest {
     }
 
     @Test
+    public void testFromVertexLoop_empty() {
+        // act
+        SegmentPath path = SegmentPath.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
+
+        // assert
+        Assert.assertTrue(path.isEmpty());
+        Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
+        Assert.assertFalse(path.isClosed());
+
+        Assert.assertNull(path.getStartSegment());
+        Assert.assertNull(path.getStartVertex());
+
+        Assert.assertNull(path.getEndSegment());
+        Assert.assertNull(path.getEndVertex());
+
+        Assert.assertEquals(0, path.getSegments().size());
+
+        Assert.assertEquals(0, path.getVertices().size());
+    }
+
+    @Test
+    public void testFromVertexLoop_singleVertex_failsToCreatePath() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            SegmentPath.fromVertexLoop(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
+        }, IllegalStateException.class);
+    }
+
+    @Test
+    public void testFromVertexLoop_closeRequired() {
+        // arrange
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(1, 0);
+        Vector2D p3 = Vector2D.of(1, 1);
+
+        // act
+        SegmentPath path = SegmentPath.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(path.isEmpty());
+        Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
+        Assert.assertTrue(path.isClosed());
+
+        List<Segment> segments = path.getSegments();
+        Assert.assertEquals(3, segments.size());
+        assertFiniteSegment(segments.get(0), p1, p2);
+        assertFiniteSegment(segments.get(1), p2, p3);
+        assertFiniteSegment(segments.get(2), p3, p1);
+
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertices());
+    }
+
+    @Test
+    public void testFromVertexLoop_closeNotRequired() {
+        // arrange
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(1, 0);
+        Vector2D p3 = Vector2D.of(1, 1);
+
+        // act
+        SegmentPath path = SegmentPath.fromVertexLoop(Arrays.asList(p1, p2, p3, Vector2D.of(0, 0)), TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(path.isEmpty());
+        Assert.assertFalse(path.isInfinite());
+        Assert.assertTrue(path.isFinite());
+        Assert.assertTrue(path.isClosed());
+
+        List<Segment> segments = path.getSegments();
+        Assert.assertEquals(3, segments.size());
+        assertFiniteSegment(segments.get(0), p1, p2);
+        assertFiniteSegment(segments.get(1), p2, p3);
+        assertFiniteSegment(segments.get(2), p3, p1);
+
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertices());
+    }
+
+    @Test
     public void testGetSegments_listIsNotModifiable() {
         // arrange
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
