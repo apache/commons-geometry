@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
@@ -52,6 +53,137 @@ public class ConvexAreaTest {
         Assert.assertEquals(0.0, area.getBoundarySize(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
+    }
+
+    @Test
+    public void testTransform_full() {
+        // arrange
+        Transform<Vector2D> transform = v -> v.multiply(3);
+        ConvexArea area = ConvexArea.full();
+
+        // act
+        ConvexArea transformed = area.transform(transform);
+
+        // assert
+        Assert.assertSame(area, transformed);
+    }
+
+    @Test
+    public void testTransform_infinite() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D
+                .createRotation(Vector2D.of(0, 1), Geometry.HALF_PI)
+                .scale(Vector2D.of(3, 2));
+
+        ConvexArea area = ConvexArea.fromBounds(
+                Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * Geometry.PI, TEST_PRECISION),
+                Line.fromPointAndAngle(Vector2D.ZERO, -0.25 * Geometry.PI, TEST_PRECISION));
+
+        // act
+        ConvexArea transformed = area.transform(mat);
+
+        // assert
+        Assert.assertNotSame(area, transformed);
+
+        List<SegmentPath> paths = transformed.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        List<Segment> segments = paths.get(0).getSegments();
+        Assert.assertEquals(2, segments.size());
+
+        Segment firstSegment = segments.get(0);
+        Assert.assertNull(firstSegment.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), firstSegment.getEndPoint(), TEST_EPS);
+        Assert.assertEquals(Math.atan2(2, 3), firstSegment.getLine().getAngle(), TEST_EPS);
+
+        Segment secondSegment = segments.get(1);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), secondSegment.getStartPoint(), TEST_EPS);
+        Assert.assertNull(secondSegment.getEndPoint());
+        Assert.assertEquals(Math.atan2(2, -3), secondSegment.getLine().getAngle(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_finite() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(1, 2));
+
+        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+                    Vector2D.of(1, 1), Vector2D.of(2, 1),
+                    Vector2D.of(2, 2), Vector2D.of(1, 2)
+                ), TEST_PRECISION);
+
+        // act
+        ConvexArea transformed = area.transform(mat);
+
+        // assert
+        Assert.assertNotSame(area, transformed);
+
+        List<Segment> segments = transformed.getBoundarySegments();
+        Assert.assertEquals(4, segments.size());
+
+        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 3), transformed.getBarycenter(), TEST_EPS);
+
+        checkRegion(transformed, RegionLocation.BOUNDARY,
+                Vector2D.of(1, 2), Vector2D.of(2, 2), Vector2D.of(2, 4), Vector2D.of(1, 4));
+        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
+    }
+
+    @Test
+    public void testTransform_finite_withSingleReflection() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
+
+        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+                    Vector2D.of(1, 1), Vector2D.of(2, 1),
+                    Vector2D.of(2, 2), Vector2D.of(1, 2)
+                ), TEST_PRECISION);
+
+        // act
+        ConvexArea transformed = area.transform(mat);
+
+        // assert
+        Assert.assertNotSame(area, transformed);
+
+        List<Segment> segments = transformed.getBoundarySegments();
+        Assert.assertEquals(4, segments.size());
+
+        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, 3), transformed.getBarycenter(), TEST_EPS);
+
+        checkRegion(transformed, RegionLocation.BOUNDARY,
+                Vector2D.of(-1, 2), Vector2D.of(-2, 2), Vector2D.of(-2, 4), Vector2D.of(-1, 4));
+        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
+    }
+
+    @Test
+    public void testTransform_finite_withDoubleReflection() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, -2));
+
+        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+                    Vector2D.of(1, 1), Vector2D.of(2, 1),
+                    Vector2D.of(2, 2), Vector2D.of(1, 2)
+                ), TEST_PRECISION);
+
+        // act
+        ConvexArea transformed = area.transform(mat);
+
+        // assert
+        Assert.assertNotSame(area, transformed);
+
+        List<Segment> segments = transformed.getBoundarySegments();
+        Assert.assertEquals(4, segments.size());
+
+        Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
+        Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, -3), transformed.getBarycenter(), TEST_EPS);
+
+        checkRegion(transformed, RegionLocation.BOUNDARY,
+                Vector2D.of(-1, -2), Vector2D.of(-2, -2), Vector2D.of(-2, -4), Vector2D.of(-1, -4));
+        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
     }
 
     @Test

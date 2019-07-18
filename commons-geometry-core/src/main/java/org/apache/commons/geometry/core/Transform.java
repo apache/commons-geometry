@@ -18,5 +18,10 @@ package org.apache.commons.geometry.core;
 
 import java.util.function.Function;
 
-public interface Transform<P extends Point<P>> extends Function<P, P>{
+/** This interface represents an inversible affine transform in a space.
+ * Inversible affine transform include, for example, scalings,
+ * translations, rotations.
+ * @param <P> Point implementation type
+ */
+public interface Transform<P extends Point<P>> extends Function<P, P> {
 }

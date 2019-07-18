@@ -19,11 +19,13 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
@@ -65,6 +67,29 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
         super(line);
 
         this.region = region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SubLine transform(Transform<Vector2D> transform) {
+        final Line origLine = getLine();
+
+        final Vector2D tOrigin = transform.apply(origLine.toSpace(0));
+        final Vector2D tOne = transform.apply(origLine.toSpace(1));
+        final Line tLine = Line.fromPoints(tOrigin, tOne, getPrecision());
+
+        final double scale = tLine.toSubspace(tOne.subtract(tOrigin)).getX();
+        final double translation = tLine.toSubspace(tOrigin).getX();
+
+        final AffineTransformMatrix1D subTransform = AffineTransformMatrix1D.identity()
+                .scale(scale)
+                .translate(translation);
+
+        final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
+        tRegion.copy(region);
+        tRegion.transform(subTransform);
+
+        return new SubLine(tLine, tRegion);
     }
 
     /** {@inheritDoc} */

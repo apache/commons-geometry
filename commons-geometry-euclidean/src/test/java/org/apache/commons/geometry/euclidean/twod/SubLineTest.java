@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -433,6 +434,59 @@ public class SubLineTest {
     }
 
     @Test
+    public void testTransform() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D
+                .createRotation(Vector2D.of(0, 1), Geometry.HALF_PI)
+                .scale(Vector2D.of(3, 2));
+
+        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
+        subline.getSubspaceRegion().add(Interval.min(3, TEST_PRECISION));
+
+        // act
+        SubLine transformed = subline.transform(mat);
+
+        // assert
+        Assert.assertNotSame(subline, transformed);
+
+        List<Segment> originalSegments = subline.toConvex();
+        Assert.assertEquals(2, originalSegments.size());
+        checkFiniteSegment(originalSegments.get(0), Vector2D.ZERO, Vector2D.PLUS_X);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), originalSegments.get(1).getStartPoint(), TEST_EPS);
+        Assert.assertNull(originalSegments.get(1).getEndPoint());
+
+        List<Segment> transformedSegments = transformed.toConvex();
+        Assert.assertEquals(2, transformedSegments.size());
+        checkFiniteSegment(transformedSegments.get(0), Vector2D.of(3, 2), Vector2D.of(3, 4));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 8), transformedSegments.get(1).getStartPoint(), TEST_EPS);
+        Assert.assertNull(transformedSegments.get(1).getEndPoint());
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
+
+        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION));
+        subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
+
+        // act
+        SubLine transformed = subline.transform(mat);
+
+        // assert
+        Assert.assertNotSame(subline, transformed);
+
+        List<Segment> originalSegments = subline.toConvex();
+        Assert.assertEquals(1, originalSegments.size());
+        checkFiniteSegment(originalSegments.get(0), Vector2D.of(0, 1), Vector2D.of(1, 1));
+
+        List<Segment> transformedSegments = transformed.toConvex();
+        Assert.assertEquals(1, transformedSegments.size());
+        checkFiniteSegment(transformedSegments.get(0), Vector2D.of(0, 2), Vector2D.of(-1, 2));
+    }
+
+    @Test
     public void testBuilder_instanceMethod() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
@@ -590,6 +644,11 @@ public class SubLineTest {
 
             @Override
             public Split<? extends SubHyperplane<Vector2D>> split(Hyperplane<Vector2D> splitter) {
+                return null;
+            }
+
+            @Override
+            public SubHyperplane<Vector2D> transform(Transform<Vector2D> transform) {
                 return null;
             }
         };

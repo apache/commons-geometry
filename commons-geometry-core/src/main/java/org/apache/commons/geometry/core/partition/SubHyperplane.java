@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 
 /** Interface representing subhyperplanes, which are regions
  * embedded in a hyperplane.
@@ -103,6 +104,13 @@ public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHype
      * @return a new builder instance
      */
     Builder<P> builder();
+
+    /** Return a new subhyperplane instance resulting from the application
+     * of the given transform. The current instance is not modified.
+     * @param transform the transform instance to apply
+     * @return new transformed subhyperplane instance
+     */
+    SubHyperplane<P> transform(Transform<P> transform);
 
     /** Convert this instance into a list of convex child
      * subhyperplanes.

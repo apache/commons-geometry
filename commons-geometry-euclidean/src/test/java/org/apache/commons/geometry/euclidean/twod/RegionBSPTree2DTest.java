@@ -33,7 +33,6 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -152,6 +151,33 @@ public class RegionBSPTree2DTest {
         GeometryTestUtils.assertThrows(() -> {
             tree.getBoundaryPaths().add(SegmentPath.builder(null).build());
         }, UnsupportedOperationException.class);
+    }
+
+    @Test
+    public void testAdd_convexArea() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        // act
+        tree.add(ConvexArea.fromVertexLoop(Arrays.asList(
+                    Vector2D.ZERO, Vector2D.of(2, 0),
+                    Vector2D.of(2, 2), Vector2D.of(0, 2)
+                ), TEST_PRECISION));
+        tree.add(ConvexArea.fromVertexLoop(Arrays.asList(
+                Vector2D.of(1, 1), Vector2D.of(3, 1),
+                Vector2D.of(3, 3), Vector2D.of(1, 3)
+            ), TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(7, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(12, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector2D.of(1, 1), Vector2D.of(1.5, 1.5), Vector2D.of(2, 2));
     }
 
     @Test
@@ -749,6 +775,61 @@ public class RegionBSPTree2DTest {
                 Vector2D.of(3, 0), Vector2D.ZERO);
         checkVertices(paths.get(1), Vector2D.of(1, 1), Vector2D.of(2, 1), Vector2D.of(2, 2),
                 Vector2D.of(1, 2), Vector2D.of(1, 1));
+    }
+
+    @Test
+    public void testFromConvexArea_full() {
+        // arrange
+        ConvexArea area = ConvexArea.full();
+
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+        Assert.assertNull(tree.getBarycenter());
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+    }
+
+    @Test
+    public void testFromConvexArea_infinite() {
+        // arrange
+        ConvexArea area = ConvexArea.fromVertices(
+                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_Y), TEST_PRECISION);
+
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+
+        // assert
+        GeometryTestUtils.assertPositiveInfinity(tree.getSize());
+        GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
+        Assert.assertNull(tree.getBarycenter());
+
+        checkClassify(tree, RegionLocation.OUTSIDE, Vector2D.of(1, 0));
+        checkClassify(tree, RegionLocation.BOUNDARY, Vector2D.ZERO);
+        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(-1, 0));
+    }
+
+    @Test
+    public void testFromConvexArea_finite() {
+        // arrange
+        ConvexArea area = ConvexArea.fromVertexLoop(
+                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.PLUS_Y), TEST_PRECISION);
+
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+
+        // assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector2D.of(-1, 0.5), Vector2D.of(2, 0.5),
+                Vector2D.of(0.5, -1), Vector2D.of(0.5, 2));
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Vector2D.of(0, 0.5), Vector2D.of(1, 0.5),
+                Vector2D.of(0.5, 0), Vector2D.of(0.5, 1));
+        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
     }
 
     @Test

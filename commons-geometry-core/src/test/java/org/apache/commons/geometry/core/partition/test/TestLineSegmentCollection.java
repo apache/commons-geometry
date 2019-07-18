@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -180,6 +181,12 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Se
     @Override
     public List<ConvexSubHyperplane<TestPoint2D>> toConvex() {
         return new ArrayList<>(segments);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SubHyperplane<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -78,6 +79,13 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
     @Override
     public RegionBSPTree2D getSubspaceRegion() {
         return region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SubPlane transform(final Transform<Vector3D> transform) {
+
+        return null;
     }
 
     public void add(final ConvexSubPlane subplane) {

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint1D;
@@ -117,6 +118,11 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         @Override
         public Split<StubSubHyperplane> split(Hyperplane<TestPoint2D> splitter) {
+            return null;
+        }
+
+        @Override
+        public SubHyperplane<TestPoint2D> transform(Transform<TestPoint2D> transform) {
             return null;
         }
     }

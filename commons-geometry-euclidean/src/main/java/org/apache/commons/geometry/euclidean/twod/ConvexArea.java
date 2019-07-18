@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.Hyperplane;
@@ -78,6 +79,43 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
      */
     public List<SegmentPath> getBoundaryPaths() {
         return InteriorAngleSegmentConnector.connectMinimized(boundarySegments);
+    }
+
+    /** Transform this instance using the given {@link Transform}.
+     * @return a new transformed convex area
+     */
+    public ConvexArea transform(final Transform<Vector2D> transform) {
+        if (isFull()) {
+            return this;
+        }
+
+        final int size = boundarySegments.size();
+        final List<Segment> tSegments = new ArrayList<>(size);
+
+        // determine if the lines should be flipped
+        Segment seg = boundarySegments.get(0);
+        Segment tSeg = seg.transform(transform);
+
+        final Vector2D plusPt = seg.getLine().plusPoint();
+        final boolean reverseDirection = tSeg.getLine().classify(transform.apply(plusPt)) == HyperplaneLocation.MINUS;
+
+        // transform all of the segments
+        if (reverseDirection) {
+            tSeg = tSeg.reverse();
+        }
+        tSegments.add(tSeg);
+
+        for (int i=1; i<boundarySegments.size(); ++i) {
+            tSeg = boundarySegments.get(i).transform(transform);
+
+            if (reverseDirection) {
+                tSeg = tSeg.reverse();
+            }
+
+            tSegments.add(tSeg);
+        }
+
+        return new ConvexArea(tSegments);
     }
 
     /** {@inheritDoc} */

@@ -33,9 +33,11 @@ public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P
     @Override
     Split<? extends ConvexSubHyperplane<P>> split(Hyperplane<P> splitter);
 
-    /** Transform this instance using the argument.
-     * @param transform the transform instance to apply
-     * @return transformed convex subhyerplane
+    /** {@inheritDoc}
+     *
+     * <p>Convex subhyperplanes subjected to affine transformations remain
+     * convex.</p>
      */
+    @Override
     ConvexSubHyperplane<P> transform(Transform<P> transform);
 }
