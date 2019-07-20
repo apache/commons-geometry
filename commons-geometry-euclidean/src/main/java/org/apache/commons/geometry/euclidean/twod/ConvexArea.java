@@ -44,14 +44,15 @@ public final class ConvexArea implements ConvexHyperplaneBoundedRegion<Vector2D>
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
 
+    /** Line segments forming the boundaries of the area. */
     private final List<Segment> boundarySegments;
 
     /** Simple constructor. Callers are responsible for ensuring that the given path
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaryPath the boundary of the convex area
      */
-    private ConvexArea(final List<Segment> boundaries) {
-        this.boundarySegments = boundaries;
+    private ConvexArea(final List<Segment> boundarySegments) {
+        this.boundarySegments = boundarySegments;
     }
 
     /** Get the list of line segments comprising the boundary of the area. The segments

@@ -44,13 +44,6 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
 
     /** {@inheritDoc} */
     @Override
-    public Split<ConvexSubPlane> split(Hyperplane<Vector3D> splitter) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public ConvexSubPlane transform(Transform<Vector3D> transform) {
         // TODO Auto-generated method stub
         return null;
@@ -60,6 +53,12 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     @Override
     public ConvexArea getSubspaceRegion() {
         return area;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Split<ConvexSubPlane> split(Hyperplane<Vector3D> splitter) {
+        return splitInternal(splitter, this, (p, r) -> new ConvexSubPlane(p, (ConvexArea) r));
     }
 
     /** Create a new instance from a plane and an embedded convex subspace area.

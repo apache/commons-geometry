@@ -16,13 +16,18 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.Region;
+import java.util.function.BiFunction;
+
 import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.SubPlane.SubPlaneBuilder;
+import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-abstract class AbstractSubPlane<R extends Region<Vector2D>>
+abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
     extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
 
     /** The plane defining this instance. */
@@ -59,5 +64,60 @@ abstract class AbstractSubPlane<R extends Region<Vector2D>>
      */
     public DoublePrecisionContext getPrecision() {
         return plane.getPrecision();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[plane= ")
+            .append(getPlane())
+            .append(", subspaceRegion= ")
+            .append(getSubspaceRegion());
+
+
+        return sb.toString();
+    }
+
+    protected <T extends AbstractSubPlane<R>> Split<T> splitInternal(final Hyperplane<Vector3D> splitter,
+            final T thisInstance, final BiFunction<Plane, HyperplaneBoundedRegion<Vector2D>, T> factory) {
+
+        final Plane thisPlane = thisInstance.getPlane();
+        final Plane splitterPlane = (Plane) splitter;
+        final DoublePrecisionContext precision = thisInstance.getPrecision();
+
+        final Line3D intersection = splitterPlane.intersection(thisPlane);
+        if (intersection == null) {
+            // the lines are parallel or coincident; check which side of
+            // the splitter we lie on
+            final double offset = splitterPlane.offset(thisPlane);
+            final int comp = precision.compare(offset, 0.0);
+
+            if (comp < 0) {
+                return new Split<>(thisInstance, null);
+            }
+            else if (comp > 0) {
+                return new Split<>(null, thisInstance);
+            }
+            else {
+                return new Split<>(null, null);
+            }
+        }
+        else {
+            // the lines intersect; split the subregion
+            final Vector3D intersectionOrigin = intersection.getOrigin();
+            final Vector2D subspaceP1 = thisPlane.toSubspace(intersectionOrigin);
+            final Vector2D subspaceP2 = thisPlane.toSubspace(intersectionOrigin.add(intersection.getDirection()));
+
+            final Line subspaceSplitter = Line.fromPoints(subspaceP1, subspaceP2, getPrecision());
+
+            Split<? extends HyperplaneBoundedRegion<Vector2D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+
+            final T minus = (split.getMinus() != null) ? factory.apply(getPlane(), split.getMinus()) : null;
+            final T plus = (split.getPlus() != null) ? factory.apply(getPlane(), split.getPlus()) : null;
+
+            return new Split<>(minus, plus);
+        }
     }
 }

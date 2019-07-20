@@ -337,11 +337,12 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     }
 
     /**
-     * Build the line shared by the instance and another plane.
+     * Build the line shared by the instance and another plane. Null is returned if
+     * the lines are parallel.
      *
      * @param other other plane
-     * @return line at the intersection of the instance and the other plane (really
-     *         a {@link Line3D} instance)
+     * @return line at the intersection of the instance and the other plane, or null
+     *      if no such line exists
      */
     public Line3D intersection(final Plane other) {
         final Vector3D direction = w.cross(other.w);

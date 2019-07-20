@@ -99,5 +99,5 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
     /** Return the embedded subspace region for this instance.
      * @return the embedded subspace region for this instance
      */
-    public abstract Region<S> getSubspaceRegion();
+    public abstract HyperplaneBoundedRegion<S> getSubspaceRegion();
 }

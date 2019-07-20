@@ -16,21 +16,31 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
+/** Class representing an arbitrary region of a plane. This class can represent
+ * both convex and non-convex regions of its underlying plane.
+ *
+ * <p>This class is mutable and <em>not</em> thread safe.</p>
+ */
+public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements Serializable {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190717L;
+
+    /** The 2D region representing the area on the plane */
     private final RegionBSPTree2D region;
 
     /** Construct a new, empty subplane for the given plane.
@@ -64,15 +74,22 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
     /** {@inheritDoc} */
     @Override
     public List<ConvexSubPlane> toConvex() {
-        // TODO Auto-generated method stub
-        return null;
+        final List<ConvexArea> areas = region.toConvex();
+
+        final Plane plane = getPlane();
+        final List<ConvexSubPlane> subplanes = new ArrayList<>(areas.size());
+
+        for (ConvexArea area : areas) {
+            subplanes.add(ConvexSubPlane.fromConvexArea(plane, area));
+        }
+
+        return subplanes;
     }
 
     /** {@inheritDoc} */
     @Override
     public Split<SubPlane> split(Hyperplane<Vector3D> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+        return splitInternal(splitter, this, (p, r) -> new SubPlane(p, (RegionBSPTree2D) r));
     }
 
     /** {@inheritDoc} */
@@ -84,16 +101,42 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
     /** {@inheritDoc} */
     @Override
     public SubPlane transform(final Transform<Vector3D> transform) {
+        final Plane origPlane = getPlane();
 
-        return null;
+        final Vector3D tOrigin = transform.apply(origPlane.getOrigin());
+        final Vector3D tU = transform.apply(origPlane.toSpace(Vector2D.PLUS_X)).subtract(tOrigin);
+        final Vector3D tV = transform.apply(origPlane.toSpace(Vector2D.PLUS_Y)).subtract(tOrigin);
+
+        final Plane tPlane = Plane.fromPointAndPlaneVectors(tOrigin, tU, tV, getPrecision());
+
+        final AffineTransformMatrix2D subTransform = AffineTransformMatrix2D.fromColumnVectors(
+                    tPlane.toSubspace(tU),
+                    tPlane.toSubspace(tV))
+                .translate(tPlane.toSubspace(tOrigin));
+
+        final RegionBSPTree2D tRegion = RegionBSPTree2D.empty();
+        tRegion.copy(region);
+        tRegion.transform(subTransform);
+
+        return new SubPlane(tPlane, tRegion);
     }
 
+    /** Add a convex subplane to this instance.
+     * @param subplane convex subplane to add
+     * @throws IllegalArgumentException if the given convex subplane is not from
+     *      a plane equivalent to this instance
+     */
     public void add(final ConvexSubPlane subplane) {
         validatePlane(subplane.getPlane());
 
         region.add(subplane.getSubspaceRegion());
     }
 
+    /** Add a subplane to this instance.
+     * @param subplane subplane to add
+     * @throws IllegalArgumentException if the given convex subplane is not from
+     *      a plane equivalent to this instance
+     */
     public void add(final SubPlane subplane) {
         validatePlane(subplane.getPlane());
 
@@ -116,33 +159,51 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
         }
     }
 
+    /** {@link Builder} implementation for sublines.
+     */
     public static class SubPlaneBuilder implements SubHyperplane.Builder<Vector3D> {
 
-        private final Plane plane;
+        /** Subplane instance created by this builder. */
+        private final SubPlane subplane;
 
+        /** Construct a new instance for building subplane region for the given plane.
+         * @param plane the underlying plane for the subplane region
+         */
         public SubPlaneBuilder(final Plane plane) {
-            this.plane = plane;
+            this.subplane = new SubPlane(plane);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(SubHyperplane<Vector3D> sub) {
-            // TODO Auto-generated method stub
-
+        public void add(final SubHyperplane<Vector3D> sub) {
+            addInternal(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(ConvexSubHyperplane<Vector3D> sub) {
-            // TODO Auto-generated method stub
-
+        public void add(final ConvexSubHyperplane<Vector3D> sub) {
+            addInternal(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane<Vector3D> build() {
-            // TODO Auto-generated method stub
-            return null;
+        public SubPlane build() {
+            return subplane;
+        }
+
+        /** Internal method for adding subhyperplanes to this builder.
+         * @param sub the subhyperplane to add; either convex or non-convex
+         */
+        private void addInternal(final SubHyperplane<Vector3D> sub) {
+            if (sub instanceof ConvexSubPlane) {
+                subplane.add((ConvexSubPlane) sub);
+            }
+            else if (sub instanceof SubPlane) {
+                subplane.add((SubPlane) sub);
+            }
+            else {
+                throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
+            }
         }
     }
 }

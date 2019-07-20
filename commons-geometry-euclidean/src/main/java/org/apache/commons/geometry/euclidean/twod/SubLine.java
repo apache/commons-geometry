@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,10 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
+public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements Serializable {
+
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190717L;
 
     /** The 1D region representing the area on the line */
     private final RegionBSPTree1D region;
@@ -100,8 +104,7 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> {
         final Line line = getLine();
         final List<Segment> segments = new ArrayList<>(intervals.size());
 
-        for (Interval interval : intervals)
-        {
+        for (Interval interval : intervals) {
             segments.add(Segment.fromInterval(line, interval));
         }
 
