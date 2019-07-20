@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -638,7 +638,7 @@ public class SubLineTest {
             }
 
             @Override
-            public Region<Vector1D> getSubspaceRegion() {
+            public HyperplaneBoundedRegion<Vector1D> getSubspaceRegion() {
                 return null;
             }
 

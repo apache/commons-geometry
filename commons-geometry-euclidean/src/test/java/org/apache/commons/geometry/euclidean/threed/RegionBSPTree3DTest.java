@@ -21,9 +21,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Test;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 
 public class RegionBSPTree3DTest {
 

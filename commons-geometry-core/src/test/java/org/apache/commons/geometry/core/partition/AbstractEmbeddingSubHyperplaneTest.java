@@ -18,7 +18,6 @@ package org.apache.commons.geometry.core.partition;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -112,7 +111,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
         }
 
         @Override
-        public Region<TestPoint1D> getSubspaceRegion() {
+        public HyperplaneBoundedRegion<TestPoint1D> getSubspaceRegion() {
             return region;
         }
 
@@ -130,7 +129,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
     /** Stub region implementation with some hard-coded values. Negative numbers are
      * on the inside of the region.
      */
-    private static class StubRegion1D implements Region<TestPoint1D> {
+    private static class StubRegion1D implements HyperplaneBoundedRegion<TestPoint1D> {
 
         private TestPoint1D projected = new TestPoint1D(0);
 
@@ -175,6 +174,16 @@ public class AbstractEmbeddingSubHyperplaneTest {
         @Override
         public TestPoint1D project(TestPoint1D pt) {
             return projected;
+        }
+
+        @Override
+        public Split<? extends HyperplaneBoundedRegion<TestPoint1D>> split(Hyperplane<TestPoint1D> splitter) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<? extends ConvexHyperplaneBoundedRegion<TestPoint1D>> toConvex() {
+            throw new UnsupportedOperationException();
         }
     }
 }
