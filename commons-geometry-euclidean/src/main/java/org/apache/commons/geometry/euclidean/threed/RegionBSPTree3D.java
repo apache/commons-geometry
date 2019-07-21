@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -91,37 +92,32 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
     public static RegionBSPTree3D fromFacets(final Vector3D[] vertices, final int[][] facetIndices, final DoublePrecisionContext precision) {
         final RegionBSPTree3D tree = empty();
 
-        List<Vector2D> subspaceVertices = new ArrayList<>();
-        SegmentPath subspacePath;
-        Vector3D vertex;
-        Plane plane;
+        List<Vector3D> facetVertices = new ArrayList<>();
 
         for (int[] facet : facetIndices) {
-            if (facet.length < 3) {
-                throw new IllegalArgumentException("Facets must have at least 3 vertices; found " + facet.length);
-            }
-
-            plane = Plane.fromPoints(vertices[facet[0]], vertices[facet[1]], vertices[facet[2]], precision);
-
             for (int i=0; i<facet.length; ++i) {
-                vertex = vertices[facet[i]];
-
-                if (i > 2 && !plane.contains(vertex)) {
-                    throw new IllegalArgumentException("Facet vertex does not lie in facet plane: vertex= " + vertex +
-                            ", plane= " + plane);
-                }
-
-                subspaceVertices.add(plane.toSubspace(vertex));
+                facetVertices.add(vertices[facet[i]]);
             }
 
-            subspacePath = SegmentPath.fromVertexLoop(subspaceVertices, precision);
+            insertFacet(tree, facetVertices, precision);
 
-            tree.insert(new SubPlane(plane, subspacePath.toTree()));
-
-            subspaceVertices.clear();
+            facetVertices.clear();
         }
 
         return tree;
+    }
+
+    private static void insertFacet(final RegionBSPTree3D tree, final List<Vector3D> vertices,
+            final DoublePrecisionContext precision) {
+
+        final Plane plane = Plane.fromPoints(vertices, precision);
+        final List<Vector2D> subspaceVertices = vertices.stream()
+                .map(plane::toSubspace).collect(Collectors.toList());
+
+        final SegmentPath path = SegmentPath.fromVertexLoop(subspaceVertices, precision);
+        final SubPlane subplane = new SubPlane(plane, path.toTree());
+
+        tree.insert(subplane);
     }
 
     /** BSP tree node for three dimensional Euclidean space.

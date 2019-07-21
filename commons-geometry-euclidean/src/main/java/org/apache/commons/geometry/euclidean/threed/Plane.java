@@ -16,9 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partition.AbstractHyperplane;
@@ -619,5 +621,75 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
         return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
+    }
+
+    /** Construct a plane from a collection of points lying on the plane.
+     * @param pts collection of points lying on the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane containing the given points
+     */
+    public static Plane fromPoints(final List<Vector3D> pts, final DoublePrecisionContext precision) {
+        final int size = pts.size();
+        if (size < 3) {
+            throw new IllegalArgumentException("At least 3 points are required to define a plane.");
+        }
+
+        Vector3D p0 = pts.get(0);
+        Vector3D p1 = pts.get(1);
+
+        Vector3D temp0 = p0;
+        Vector3D temp1 = p1;
+        Vector3D temp2 = null;
+
+        Vector3D cross;
+        double crossNorm;
+        double crossDot;
+        double crossDotSum = 0.0;
+
+        Vector3D normal = null;
+
+        for (int i=2; i<pts.size(); ++i) {
+            temp2 = pts.get(i);
+
+            cross = temp0.vectorTo(temp1).cross(temp0.vectorTo(temp2));
+            crossNorm = cross.norm();
+
+            if (!precision.eqZero(crossNorm)) {
+                // remember the first normal we find
+                if (normal == null) {
+                    normal = cross.normalize();
+                }
+
+                // compute the dot product with our previously found normal
+                crossDot = normal.dot(cross);
+
+                // check that the normalized dot product is either +1 or -1; if not,
+                // then the points are not all coplanar
+                if (!precision.eq(1.0, Math.abs(crossDot / crossNorm))) {
+                    throw new GeometryException("Points do not all lie in the same plane: " + pts);
+                }
+
+                crossDotSum += crossDot;
+            }
+
+            // swap points for the next iteration
+            temp0 = temp1;
+            temp1 = temp2;
+        }
+
+        if (normal == null) {
+            throw new GeometryException("Points do not define a unique plane: " + pts);
+        }
+
+        // reverse the normal if the dot sum is less than 0, meaning that the signed volume of
+        // most vector pairs are oriented in the opposite direction
+        if (crossDotSum < 0.0) {
+            normal = normal.negate();
+        }
+
+        Vector3D u = p0.vectorTo(p1);
+        Vector3D v = normal.cross(u);
+
+        return Plane.fromPointAndPlaneVectors(p0, u, v, precision);
     }
 }
