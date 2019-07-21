@@ -216,9 +216,16 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         final List<SubHyperplane<Vector3D>> boundary = new ArrayList<>();
 
         for (final int[] facet : facets) {
+          
+            // find vertices that have the same orientation as the facet
+            int indexOnHull = vertexOnConvexHull( vertices, facet, precision );
+            int indexPrev   = (indexOnHull - 1 + facet.length ) % facet.length;
+            int indexNext   = (indexOnHull + 1 + facet.length ) % facet.length;
 
-            // define facet plane from the first 3 points
-            Plane plane = Plane.fromPoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
+            // define facet plane from found points
+            Plane plane = Plane.fromPoints(vertices.get(facet[indexPrev]),
+                                    vertices.get(facet[indexOnHull]),
+                                    vertices.get(facet[indexNext]),
                                     precision);
 
             // check all points are in the plane
@@ -324,6 +331,48 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
         return successors;
 
+    }
+
+    /** A binary predicate checking if a vector is less than another according
+     * to lexical comparison of the coordinates 
+     * @param v1 a vector
+     * @param v2 a vector
+     * @param precision precision context used to compare floating point values
+     * @return result of comparison 
+     */
+     static boolean minXyzPredicate(final Vector3D v1, final Vector3D v2,
+        final DoublePrecisionContext precision) {
+        int cx = precision.compare(v1.getX(), v2.getX());    
+        if (cx != 0) {
+            return cx < 1;
+        }
+
+        final int cy = precision.compare(v1.getY(), v2.getY());    
+        if (cy != 0) {
+            return cy < 1;
+        }
+
+        return precision.lte(v1.getZ(), v2.getZ());
+    }
+
+    /** find index of a facet vertex on convex hull of facet   
+     * @param vertices vertices list
+     * @param facet array containing vertices indices in the vertices list
+     * @param precision precision context used to compare floating point values
+     * @return index of a vertex on convex hull 
+     */
+    static int vertexOnConvexHull(final List<Vector3D> vertices, final int[] facet,
+        final DoublePrecisionContext precision)
+    {
+        Vector3D vMin = vertices.get( facet[0] );
+        int iMin = 0;
+        for (int i = 1; i < facet.length; ++i) {
+          if (minXyzPredicate(vertices.get(facet[i]), vMin, precision)) {
+              vMin = vertices.get(facet[i]);
+              iMin = i;
+            }
+        }
+        return iMin;
     }
 
     /** {@inheritDoc} */
