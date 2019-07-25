@@ -27,12 +27,18 @@ import org.apache.commons.geometry.euclidean.threed.SubPlane.SubPlaneBuilder;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
+/** Internal base class for subplane implementations.
+ * @param <R> Subspace region type
+ */
 abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
     extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
 
     /** The plane defining this instance. */
     private final Plane plane;
 
+    /** Construct a new instance based on the given plane.
+     * @param plane the plane defining the subplane
+     */
     AbstractSubPlane(final Plane plane) {
         this.plane = plane;
     }
@@ -80,6 +86,14 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
         return sb.toString();
     }
 
+    /** Generic, internal split method. Subclasses should call this from their
+     * {@link #split(Hyperplane)} methods.
+     * @param splitter splitting hyperplane
+     * @param thisInstance a reference to the current instance; this is passed as
+     *      an argument in order to allow it to be a generic type
+     * @param factory function used to create new subhyperplane instances
+     * @return the result of the split operation
+     */
     protected <T extends AbstractSubPlane<R>> Split<T> splitInternal(final Hyperplane<Vector3D> splitter,
             final T thisInstance, final BiFunction<Plane, HyperplaneBoundedRegion<Vector2D>, T> factory) {
 

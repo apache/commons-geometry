@@ -23,7 +23,9 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     implements ConvexSubHyperplane<Vector3D>  {
@@ -67,6 +69,27 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
      * @return a new convex sub plane instance
      */
     public static ConvexSubPlane fromConvexArea(final Plane plane, final ConvexArea area) {
+        return new ConvexSubPlane(plane, area);
+    }
+
+    public static ConvexSubPlane fromVertices(final List<Vector3D> pts, final DoublePrecisionContext precision) {
+        return fromVertices(pts, precision, false);
+    }
+
+    public static ConvexSubPlane fromVertexLoop(final List<Vector3D> pts, final DoublePrecisionContext precision) {
+        return fromVertices(pts, precision, true);
+    }
+
+    private static ConvexSubPlane fromVertices(final List<Vector3D> pts, final DoublePrecisionContext precision,
+            final boolean makeLoop) {
+
+        final Plane plane = Plane.fromPoints(pts, precision);
+
+        final List<Vector2D> subspacePts = plane.toSubspace(pts);
+        final ConvexArea area = makeLoop ?
+                ConvexArea.fromVertexLoop(subspacePts, precision) :
+                ConvexArea.fromVertices(subspacePts, precision);
+
         return new ConvexSubPlane(plane, area);
     }
 }

@@ -16,6 +16,10 @@
  */
 package org.apache.commons.geometry.core;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.geometry.core.partition.Hyperplane;
 
 /** This interface defines mappers between a space and one of its subspaces.
@@ -38,17 +42,35 @@ public interface Embedding<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a space point into a subspace point.
      * @param point n-dimension point of the space
-     * @return (n-1)-dimension point of the subspace corresponding to
-     *  the specified space point
+     * @return lower-dimension point of the subspace corresponding to
+     *      the specified space point
      * @see #toSpace
      */
     S toSubspace(P point);
 
-    /** Transform a sub-space point into a space point.
-     * @param point (n-1)-dimension point of the sub-space
+    /** Transform a collection of space points into subspace points.
+     * @param points collection of n-dimension points to transform
+     * @return collection of transformed lower-dimension points.
+     * @see #toSubspace(Point)
+     */
+    default List<S> toSubspace(final Collection<P> points) {
+        return points.stream().map(this::toSubspace).collect(Collectors.toList());
+    }
+
+    /** Transform a subspace point into a space point.
+     * @param point lower-dimension point of the subspace
      * @return n-dimension point of the space corresponding to the
-     * specified sub-space point
+     *      specified subspace point
      * @see #toSubspace(Point)
      */
     P toSpace(S point);
+
+    /** Transform a collection of subspace points into space points.
+     * @param points collection of lower-dimension points to transform
+     * @return collection of transformed n-dimension points.
+     * @see #toSpace(Point)
+     */
+    default List<P> toSpace(final Collection<S> points) {
+        return points.stream().map(this::toSpace).collect(Collectors.toList());
+    }
 }
