@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -176,19 +177,19 @@ public class PlaneTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, a, a, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, a, b, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, b, a, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(b, a, a, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -205,6 +206,10 @@ public class PlaneTest {
 
         // assert
         checkPlane(plane, Vector3D.PLUS_Y, Vector3D.MINUS_Z, Vector3D.MINUS_X);
+
+        Assert.assertTrue(plane.contains(pts.get(0)));
+        Assert.assertTrue(plane.contains(pts.get(1)));
+        Assert.assertTrue(plane.contains(pts.get(2)));
     }
 
     @Test
@@ -222,6 +227,66 @@ public class PlaneTest {
 
         // assert
         checkPlane(plane, Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        Assert.assertTrue(plane.contains(pts.get(0)));
+        Assert.assertTrue(plane.contains(pts.get(1)));
+        Assert.assertTrue(plane.contains(pts.get(2)));
+        Assert.assertTrue(plane.contains(pts.get(3)));
+    }
+
+    @Test
+    public void testFromPoints_collection_concaveWithCollinearAndDuplicatePoints() {
+        // arrange
+        List<Vector3D> pts = Arrays.asList(
+                    Vector3D.of(1, 0, 1),
+                    Vector3D.of(1, 0, 0.5),
+
+                    Vector3D.of(1, 0, 0),
+                    Vector3D.of(1, 1, -1),
+                    Vector3D.of(1, 2, 0),
+                    Vector3D.of(1, 2, 1e-15),
+                    Vector3D.of(1, 1, -0.5),
+                    Vector3D.of(1, 1 + 1e-15, -0.5),
+                    Vector3D.of(1 - 1e-15, 1, -0.5),
+                    Vector3D.of(1, 0, 0),
+
+                    Vector3D.of(1, 0, 0.5),
+                    Vector3D.of(1, 0, 1)
+                );
+
+        Vector3D origin = Vector3D.of(1, 0, 0);
+
+        // act
+        checkPlane(Plane.fromPoints(pts, TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+        checkPlane(Plane.fromPoints(rotate(pts, 1), TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(rotate(pts, 2), TEST_PRECISION),
+                origin, Vector3D.normalize(0, 1, -1), Vector3D.normalize(0, 1, 1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 3), TEST_PRECISION),
+                origin, Vector3D.normalize(0, 1, 1), Vector3D.normalize(0, -1, 1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 4), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 5), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 6), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 7), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 8), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 9), TEST_PRECISION),
+                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+        checkPlane(Plane.fromPoints(rotate(pts, 10), TEST_PRECISION),
+                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+
+        checkPlane(Plane.fromPoints(rotate(pts, 11), TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
     }
 
     @Test
@@ -247,7 +312,7 @@ public class PlaneTest {
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(3.5, -1, 2),
                 Vector3D.of(4, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(1, 0, 2),
@@ -329,6 +394,27 @@ public class PlaneTest {
                         Vector3D.PLUS_X,
                         Vector3D.of(2, 0, 0),
                         Vector3D.of(3, 0, 0)
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+    }
+
+    @Test
+    public void testFromPoints_collection_notEnoughUniquePoints() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.ZERO,
+                        Vector3D.of(1e-12, 1e-12, 0),
+                        Vector3D.PLUS_X
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.of(1e-12, 0, 0),
+                        Vector3D.ZERO
                     ), TEST_PRECISION);
         }, GeometryException.class);
     }
@@ -987,5 +1073,17 @@ public class PlaneTest {
         double offset = plane.getOriginOffset();
         Assert.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
+    }
+
+    private static <T> List<T> rotate(List<T> list, int shift) {
+        int size = list.size();
+
+        List<T> result = new ArrayList<>(size);
+
+        for (int i=0; i<size; ++i) {
+            result.add(list.get((i + shift) % size));
+        }
+
+        return result;
     }
 }

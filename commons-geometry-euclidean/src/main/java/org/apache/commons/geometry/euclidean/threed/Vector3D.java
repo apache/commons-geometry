@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Comparator;
 
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
@@ -63,6 +64,32 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** A vector with all coordinates set to negative infinity. */
     public static final Vector3D NEGATIVE_INFINITY =
         new Vector3D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+
+    /** Comparator that sorts vectors in component-wise ascending order.
+     * Vectors are only considered equal if their coordinates match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
+     */
+    public static final Comparator<Vector3D> COORDINATE_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getX(), b.getX());
+            if (cmp == 0) {
+                cmp = Double.compare(a.getY(), b.getY());
+                if (cmp == 0) {
+                    cmp = Double.compare(a.getZ(), b.getZ());
+                }
+            }
+        }
+        else if (a != null) {
+            cmp = -1;
+        }
+        else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180903L;

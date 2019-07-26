@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
@@ -616,80 +618,98 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param p3        third point belonging to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws IllegalNormException if the points do not constitute a plane
+     * @throws GeometryException if the points do not define a unique plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
-        return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
+        return Plane.fromPoints(Arrays.asList(p1, p2, p3), precision);
     }
 
     /** Construct a plane from a collection of points lying on the plane.
-     * @param pts collection of points lying on the plane
+     * @param pts collection of sequenced points lying on the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane containing the given points
+     * @throws IllegalArgumentException if the given collection does not contain at least 3 points
+     * @throws GeometryException if the points do not define a unique plane
      */
-    public static Plane fromPoints(final List<Vector3D> pts, final DoublePrecisionContext precision) {
-        final int size = pts.size();
-        if (size < 3) {
-            throw new IllegalArgumentException("At least 3 points are required to define a plane.");
+    public static Plane fromPoints(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+
+        if (pts.size() < 3) {
+            throw new IllegalArgumentException("At least 3 points are required to define a plane; " +
+                    "argument contains only " + pts.size() + ".");
         }
 
-        Vector3D p0 = pts.get(0);
-        Vector3D p1 = pts.get(1);
+        final Iterator<Vector3D> it = pts.iterator();
 
-        Vector3D temp0 = p0;
-        Vector3D temp1 = p1;
-        Vector3D temp2 = null;
+        Vector3D startPt = it.next();
 
-        Vector3D cross;
+        Vector3D u = null;
+        Vector3D w = null;
+
+        Vector3D currentPt;
+        Vector3D prevPt = startPt;
+
+        Vector3D currentVector = null;
+        Vector3D prevVector = null;
+
+        Vector3D cross = null;
         double crossNorm;
-        double crossDot;
-        double crossDotSum = 0.0;
+        double crossSumX = 0.0;
+        double crossSumY = 0.0;
+        double crossSumZ = 0.0;
 
-        Vector3D normal = null;
+        boolean nonPlanar = false;
 
-        for (int i=2; i<pts.size(); ++i) {
-            temp2 = pts.get(i);
+        while (it.hasNext()) {
+            currentPt = it.next();
 
-            cross = temp0.vectorTo(temp1).cross(temp0.vectorTo(temp2));
-            crossNorm = cross.norm();
+            if (!currentPt.eq(prevPt, precision)) {
+                currentVector = startPt.vectorTo(currentPt);
 
-            if (!precision.eqZero(crossNorm)) {
-                // remember the first normal we find
-                if (normal == null) {
-                    normal = cross.normalize();
+                if (u == null) {
+                    // save the first non-zero vector as our u vector
+                    u = currentVector.normalize();
+                }
+                if (prevVector != null) {
+                    cross = prevVector.cross(currentVector);
+
+                    crossSumX += cross.getX();
+                    crossSumY += cross.getY();
+                    crossSumZ += cross.getZ();
+
+                    crossNorm = cross.norm();
+
+                    if (!precision.eqZero(crossNorm)) {
+                        // the cross product has non-zero magnitude
+                        if (w == null) {
+                            // save the first non-zero cross product as our normal
+                            w = cross.normalize();
+                        }
+                        else if (!precision.eq(1.0, Math.abs(w.dot(cross) / crossNorm))) {
+                            // if the normalized dot product is not either +1 or -1, then
+                            // the points are not coplanar
+                            nonPlanar = true;
+                            break;
+                        }
+                    }
                 }
 
-                // compute the dot product with our previously found normal
-                crossDot = normal.dot(cross);
-
-                // check that the normalized dot product is either +1 or -1; if not,
-                // then the points are not all coplanar
-                if (!precision.eq(1.0, Math.abs(crossDot / crossNorm))) {
-                    throw new GeometryException("Points do not all lie in the same plane: " + pts);
-                }
-
-                crossDotSum += crossDot;
+                prevVector = currentVector;
+                prevPt = currentPt;
             }
-
-            // swap points for the next iteration
-            temp0 = temp1;
-            temp1 = temp2;
         }
 
-        if (normal == null) {
-            throw new GeometryException("Points do not define a unique plane: " + pts);
+        if (u == null || w == null || nonPlanar) {
+            throw new GeometryException("Points do not define a plane: " + pts);
         }
 
-        // reverse the normal if the dot sum is less than 0, meaning that the signed volume of
-        // most vector pairs are oriented in the opposite direction
-        if (crossDotSum < 0.0) {
-            normal = normal.negate();
+        if (w.dot(Vector3D.of(crossSumX, crossSumY, crossSumZ)) < 0) {
+            w = w.negate();
         }
 
-        Vector3D u = p0.vectorTo(p1);
-        Vector3D v = normal.cross(u);
+        final Vector3D v = w.cross(u);
+        final double originOffset = -startPt.dot(w);
 
-        return Plane.fromPointAndPlaneVectors(p0, u, v, precision);
+        return new Plane(u, v, w, originOffset, precision);
     }
 }

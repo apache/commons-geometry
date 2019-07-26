@@ -17,6 +17,7 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -74,6 +75,27 @@ public class Vector3DTest {
 
         Assert.assertSame(Vector3D.PLUS_Z.normalize(), Vector3D.PLUS_Z);
         Assert.assertSame(Vector3D.MINUS_Z.normalize(), Vector3D.MINUS_Z);
+    }
+
+    @Test
+    public void testCoordinateAscendingOrder() {
+        // arrange
+        Comparator<Vector3D> cmp = Vector3D.COORDINATE_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, cmp.compare(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector3D.of(0, 2, 3), Vector3D.of(1, 2, 3)));
+        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 1, 3), Vector3D.of(1, 2, 3)));
+        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 2), Vector3D.of(1, 2, 3)));
+
+        Assert.assertEquals(1, cmp.compare(Vector3D.of(2, 2, 3), Vector3D.of(1, 2, 3)));
+        Assert.assertEquals(1, cmp.compare(Vector3D.of(1, 3, 3), Vector3D.of(1, 2, 3)));
+        Assert.assertEquals(1, cmp.compare(Vector3D.of(1, 2, 4), Vector3D.of(1, 2, 3)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector3D.of(1, 2, 3), null));
+        Assert.assertEquals(1, cmp.compare(null, Vector3D.of(1, 2, 3)));
+        Assert.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test
