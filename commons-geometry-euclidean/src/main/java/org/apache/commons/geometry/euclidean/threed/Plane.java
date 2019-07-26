@@ -16,8 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.partitioning.Embedding;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -127,11 +131,103 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      * @param p3        third point belonging to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws IllegalNormException if the points do not constitute a plane
+     * @throws GeometryException if the points do not define a unique plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
-        return Plane.fromPointAndPlaneVectors(p1, p1.vectorTo(p2), p1.vectorTo(p3), precision);
+        return Plane.fromPoints(Arrays.asList(p1, p2, p3), precision);
+    }
+
+    /** Construct a plane from a collection of points lying on the plane. The plane orientation is
+     * determined by the overall orientation of the point sequence. For example, if the points wind
+     * around the z-axis in a counter-clockwise direction, then the plane normal will point up the
+     * +z axis. If the points wind in the opposite direction, then the plane normal will point down
+     * the -z axis. The {@code u} vector for the plane is set to the first non-zero vector between
+     * points in the sequence (ie, the first direction in the path).
+     *
+     * @param pts collection of sequenced points lying on the plane
+     * @param precision precision context used to compare floating point values
+     * @return a new plane containing the given points
+     * @throws IllegalArgumentException if the given collection does not contain at least 3 points
+     * @throws GeometryException if the points do not define a unique plane
+     */
+    public static Plane fromPoints(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+
+        if (pts.size() < 3) {
+            throw new IllegalArgumentException("At least 3 points are required to define a plane; " +
+                    "argument contains only " + pts.size() + ".");
+        }
+
+        final Iterator<Vector3D> it = pts.iterator();
+
+        Vector3D startPt = it.next();
+
+        Vector3D u = null;
+        Vector3D w = null;
+
+        Vector3D currentPt;
+
+        Vector3D currentVector = null;
+        Vector3D prevVector = null;
+
+        Vector3D cross = null;
+        double crossNorm;
+        double crossSumX = 0.0;
+        double crossSumY = 0.0;
+        double crossSumZ = 0.0;
+
+        boolean nonPlanar = false;
+
+        while (it.hasNext()) {
+            currentPt = it.next();
+            currentVector = startPt.vectorTo(currentPt);
+
+            if (!precision.eqZero(currentVector.norm())) {
+
+                if (u == null) {
+                    // save the first non-zero vector as our u vector
+                    u = currentVector.normalize();
+                }
+                if (prevVector != null) {
+                    cross = prevVector.cross(currentVector);
+
+                    crossSumX += cross.getX();
+                    crossSumY += cross.getY();
+                    crossSumZ += cross.getZ();
+
+                    crossNorm = cross.norm();
+
+                    if (!precision.eqZero(crossNorm)) {
+                        // the cross product has non-zero magnitude
+                        if (w == null) {
+                            // save the first non-zero cross product as our normal
+                            w = cross.normalize();
+                        }
+                        else if (!precision.eq(1.0, Math.abs(w.dot(cross) / crossNorm))) {
+                            // if the normalized dot product is not either +1 or -1, then
+                            // the points are not coplanar
+                            nonPlanar = true;
+                            break;
+                        }
+                    }
+                }
+
+                prevVector = currentVector;
+            }
+        }
+
+        if (u == null || w == null || nonPlanar) {
+            throw new GeometryException("Points do not define a plane: " + pts);
+        }
+
+        if (w.dot(Vector3D.of(crossSumX, crossSumY, crossSumZ)) < 0) {
+            w = w.negate();
+        }
+
+        final Vector3D v = w.cross(u);
+        final double originOffset = -startPt.dot(w);
+
+        return new Plane(u, v, w, originOffset, precision);
     }
 
     // This should be removed after GEOMETRY-32 is done.

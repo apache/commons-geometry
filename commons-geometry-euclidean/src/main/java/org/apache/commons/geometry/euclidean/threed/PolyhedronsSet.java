@@ -214,26 +214,26 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
         }
 
         final List<SubHyperplane<Vector3D>> boundary = new ArrayList<>();
+        final List<Vector3D> facetVertices = new ArrayList<>();
 
         for (final int[] facet : facets) {
 
-            // define facet plane from the first 3 points
-            Plane plane = Plane.fromPoints(vertices.get(facet[0]), vertices.get(facet[1]), vertices.get(facet[2]),
-                                    precision);
+            for (int i=0; i<facet.length; ++i) {
+                facetVertices.add(vertices.get(facet[i]));
+            }
 
-            // check all points are in the plane
+            Plane plane = Plane.fromPoints(facetVertices, precision);
+
+            // convert to subspace points
             final Vector2D[] two2Points = new Vector2D[facet.length];
-            for (int i = 0 ; i < facet.length; ++i) {
-                final Vector3D v = vertices.get(facet[i]);
-                if (!plane.contains(v)) {
-                    throw new IllegalArgumentException("Point " + v + " is out of plane");
-                }
-                two2Points[i] = plane.toSubSpace(v);
+            for (int i=0 ; i<facet.length; ++i) {
+                two2Points[i] = plane.toSubSpace(facetVertices.get(i));
             }
 
             // create the polygonal facet
             boundary.add(new SubPlane(plane, new PolygonsSet(precision, two2Points)));
 
+            facetVertices.clear();
         }
 
         return boundary;
