@@ -388,8 +388,7 @@ public final class Plane implements Hyperplane<Vector3D>, Embedding<Vector3D, Ve
      */
     @Override
     public Vector2D toSubSpace(final Vector3D point) {
-        Vector3D vec = point;
-        return Vector2D.of(vec.dot(u), vec.dot(v));
+        return Vector2D.of(point.dot(u), point.dot(v));
     }
 
     /**
