@@ -799,6 +799,47 @@ public class PolyhedronsSetTest {
         Assert.assertEquals(22.0, polyhedron.getBoundarySize(), TEST_EPS);
     }
 
+    // GEOMETRY-59
+    @Test
+    public void testCreateFromBRep_slightlyConcavePrism() {
+        // arrange
+        Vector3D vertices[] = {
+                Vector3D.of( 0, 0, 0 ),
+                Vector3D.of( 2, 1e-7, 0 ),
+                Vector3D.of( 4, 0, 0 ),
+                Vector3D.of( 2, 2, 0 ),
+                Vector3D.of( 0, 0, 2 ),
+                Vector3D.of( 2, 1e-7, 2 ),
+                Vector3D.of( 4, 0, 2 ),
+                Vector3D.of( 2, 2, 2 )
+        };
+
+        int facets[][] = {
+                { 4, 5, 6, 7 },
+                { 3, 2, 1, 0 },
+                { 0, 1, 5, 4 },
+                { 1, 2, 6, 5 },
+                { 2, 3, 7, 6 },
+                { 3, 0, 4, 7 }
+        };
+
+        // act
+        PolyhedronsSet prism = new PolyhedronsSet(
+                Arrays.asList(vertices),
+                Arrays.asList(facets),
+                TEST_PRECISION);
+
+
+        // assert
+        Assert.assertTrue(Double.isFinite(prism.getSize()));
+
+        checkPoints(Region.Location.INSIDE, prism, Vector3D.of(2, 1, 1));
+        checkPoints(Region.Location.OUTSIDE, prism,
+                Vector3D.of(2, 1, 3), Vector3D.of(2, 1, -3),
+                Vector3D.of(2, -1, 1), Vector3D.of(2, 3, 1),
+                Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
+    }
+
     @Test
     public void testCreateFromBRep_verticesTooClose() throws IOException, ParseException {
         checkError("pentomino-N-too-close.ply", "Vertices are too close");
@@ -811,7 +852,7 @@ public class PolyhedronsSetTest {
 
     @Test
     public void testCreateFromBRep_nonPlanar() throws IOException, ParseException {
-        checkError("pentomino-N-out-of-plane.ply", "out of plane");
+        checkError("pentomino-N-out-of-plane.ply", "do not define a plane");
     }
 
     @Test
@@ -842,7 +883,7 @@ public class PolyhedronsSetTest {
         try {
             new PolyhedronsSet(vertices, facets, TEST_PRECISION);
             Assert.fail("an exception should have been thrown");
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             String actual = e.getMessage();
             Assert.assertTrue("Expected string to contain \"" + expected + "\" but was \"" + actual + "\"",
                     actual.contains(expected));

@@ -16,9 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +53,7 @@ public class PlaneTest {
         Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
     }
 
-    @Test(expected=IllegalNormException.class)
+    @Test(expected=GeometryException.class)
     public void testPointsDoNotConstituteAPlane() {
         Plane.fromPoints(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), Vector3D.of(0, 1, 0), TEST_PRECISION);
     }
@@ -203,6 +210,246 @@ public class PlaneTest {
     }
 
     @Test
+    public void testFromPoints_collection_threePoints() {
+        // arrange
+        List<Vector3D> pts = Arrays.asList(
+                    Vector3D.of(1, 1, 0),
+                    Vector3D.of(1, 1, -1),
+                    Vector3D.of(0, 1, 0)
+                );
+
+        // act
+        Plane plane = Plane.fromPoints(pts, TEST_PRECISION);
+
+        // assert
+        checkPlane(plane, Vector3D.PLUS_Y, Vector3D.MINUS_Z, Vector3D.MINUS_X);
+
+        Assert.assertTrue(plane.contains(pts.get(0)));
+        Assert.assertTrue(plane.contains(pts.get(1)));
+        Assert.assertTrue(plane.contains(pts.get(2)));
+    }
+
+    @Test
+    public void testFromPoints_collection_someCollinearPoints() {
+        // arrange
+        List<Vector3D> pts = Arrays.asList(
+                    Vector3D.of(1, 0, 2),
+                    Vector3D.of(2, 0, 2),
+                    Vector3D.of(3, 0, 2),
+                    Vector3D.of(0, 1, 2)
+                );
+
+        // act
+        Plane plane = Plane.fromPoints(pts, TEST_PRECISION);
+
+        // assert
+        checkPlane(plane, Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        Assert.assertTrue(plane.contains(pts.get(0)));
+        Assert.assertTrue(plane.contains(pts.get(1)));
+        Assert.assertTrue(plane.contains(pts.get(2)));
+        Assert.assertTrue(plane.contains(pts.get(3)));
+    }
+
+    @Test
+    public void testFromPoints_collection_concaveWithCollinearAndDuplicatePoints() {
+        // arrange
+        List<Vector3D> pts = Arrays.asList(
+                    Vector3D.of(1, 0, 1),
+                    Vector3D.of(1, 0, 0.5),
+
+                    Vector3D.of(1, 0, 0),
+                    Vector3D.of(1, 1, -1),
+                    Vector3D.of(1, 2, 0),
+                    Vector3D.of(1, 2, 1e-15),
+                    Vector3D.of(1, 1, -0.5),
+                    Vector3D.of(1, 1 + 1e-15, -0.5),
+                    Vector3D.of(1 - 1e-15, 1, -0.5),
+                    Vector3D.of(1, 0, 0),
+
+                    Vector3D.of(1, 0, 0.5),
+                    Vector3D.of(1, 0, 1)
+                );
+
+        Vector3D origin = Vector3D.of(1, 0, 0);
+
+        // act
+        checkPlane(Plane.fromPoints(pts, TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+        checkPlane(Plane.fromPoints(rotate(pts, 1), TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(rotate(pts, 2), TEST_PRECISION),
+                origin, Vector3D.normalize(0, 1, -1), Vector3D.normalize(0, 1, 1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 3), TEST_PRECISION),
+                origin, Vector3D.normalize(0, 1, 1), Vector3D.normalize(0, -1, 1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 4), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 5), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 6), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 7), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+        checkPlane(Plane.fromPoints(rotate(pts, 8), TEST_PRECISION),
+                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+
+        checkPlane(Plane.fromPoints(rotate(pts, 9), TEST_PRECISION),
+                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+        checkPlane(Plane.fromPoints(rotate(pts, 10), TEST_PRECISION),
+                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+
+        checkPlane(Plane.fromPoints(rotate(pts, 11), TEST_PRECISION),
+                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+    }
+
+    @Test
+    public void testFromPoints_collection_choosesBestOrientation() {
+        // act/assert
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(2, 0, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(3.5, 1, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(2, 0, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(3.5, -1, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(2, 0, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(3.5, -1, 2),
+                Vector3D.of(4, 0, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(2, 0, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(3.5, 1, 2),
+                Vector3D.of(4, -1, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(0, 0, 2),
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(1, 1, 2),
+                Vector3D.of(0, 1, 2),
+                Vector3D.of(0, 0, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(0, 0, 2),
+                Vector3D.of(0, 1, 2),
+                Vector3D.of(1, 1, 2),
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(0, 0, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_Y, Vector3D.PLUS_X);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(0, 0, 2),
+                Vector3D.of(1, 0, 2),
+                Vector3D.of(2, 1, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(2, 4, 2),
+                Vector3D.of(0, 0, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+
+        checkPlane(Plane.fromPoints(Arrays.asList(
+                Vector3D.of(0, 0, 2),
+                Vector3D.of(0, 1, 2),
+                Vector3D.of(2, 4, 2),
+                Vector3D.of(3, 0, 2),
+                Vector3D.of(2, 1, 2),
+                Vector3D.of(0, 0, 2)
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_Y, Vector3D.PLUS_X);
+    }
+
+    @Test
+    public void testFromPoints_collection_illegalArguments() {
+        // arrange
+        Vector3D a = Vector3D.ZERO;
+        Vector3D b = Vector3D.PLUS_X;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(), TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(a), TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(a, b), TEST_PRECISION);
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testFromPoints_collection_allPointsCollinear() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.PLUS_X,
+                        Vector3D.of(2, 0, 0)
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.PLUS_X,
+                        Vector3D.of(2, 0, 0),
+                        Vector3D.of(3, 0, 0)
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+    }
+
+    @Test
+    public void testFromPoints_collection_notEnoughUniquePoints() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.ZERO,
+                        Vector3D.of(1e-12, 1e-12, 0),
+                        Vector3D.PLUS_X
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.of(1e-12, 0, 0),
+                        Vector3D.ZERO
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+    }
+
+    @Test
+    public void testFromPoints_collection_pointsNotOnSamePlane() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Plane.fromPoints(Arrays.asList(
+                        Vector3D.ZERO,
+                        Vector3D.PLUS_X,
+                        Vector3D.PLUS_Y,
+                        Vector3D.PLUS_Z
+                    ), TEST_PRECISION);
+        }, GeometryException.class);
+    }
+
+    @Test
     public void testRotate() {
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -304,4 +551,41 @@ public class PlaneTest {
                                                      TEST_PRECISION)));
     }
 
+    private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {
+        u = u.normalize();
+        v = v.normalize();
+        Vector3D w = u.cross(v);
+
+        EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getOrigin(), TEST_EPS);
+        Assert.assertTrue(plane.contains(origin));
+
+        EuclideanTestUtils.assertCoordinatesEqual(u, plane.getU(), TEST_EPS);
+        Assert.assertEquals(1.0, plane.getU().norm(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(v, plane.getV(), TEST_EPS);
+        Assert.assertEquals(1.0, plane.getV().norm(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(w, plane.getW(), TEST_EPS);
+        Assert.assertEquals(1.0, plane.getW().norm(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(w, plane.getNormal(), TEST_EPS);
+        Assert.assertEquals(1.0, plane.getNormal().norm(), TEST_EPS);
+
+        double offset = plane.getOriginOffset();
+        Assert.assertEquals(Vector3D.ZERO.distance(plane.getOrigin()), Math.abs(offset), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
+    }
+
+
+    private static <T> List<T> rotate(List<T> list, int shift) {
+        int size = list.size();
+
+        List<T> result = new ArrayList<>(size);
+
+        for (int i=0; i<size; ++i) {
+            result.add(list.get((i + shift) % size));
+        }
+
+        return result;
+    }
 }
