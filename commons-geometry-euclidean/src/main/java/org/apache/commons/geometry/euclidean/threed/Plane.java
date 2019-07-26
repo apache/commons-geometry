@@ -625,7 +625,13 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         return Plane.fromPoints(Arrays.asList(p1, p2, p3), precision);
     }
 
-    /** Construct a plane from a collection of points lying on the plane.
+    /** Construct a plane from a collection of points lying on the plane. The plane orientation is
+     * determined by the overall orientation of the point sequence. For example, if the points wind
+     * around the z-axis in a counter-clockwise direction, then the plane normal will point up the
+     * +z axis. If the points wind in the opposite direction, then the plane normal will point down
+     * the -z axis. The {@code u} vector for the plane is set to the first non-zero vector between
+     * points in the sequence (ie, the first direction in the path).
+     *
      * @param pts collection of sequenced points lying on the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane containing the given points
