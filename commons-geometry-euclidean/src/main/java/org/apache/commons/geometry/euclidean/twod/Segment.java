@@ -37,6 +37,9 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 public final class Segment extends AbstractSubLine<Interval>
     implements ConvexSubHyperplane<Vector2D> {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190729L;
+
     /** The interval representing the region of the line contained in
      * the line segment.
      */

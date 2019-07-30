@@ -622,6 +622,9 @@ public class SubLineTest {
 
         AbstractSubLine<Interval> unknownType = new AbstractSubLine<Interval>(line) {
 
+            /** Serializable UID */
+            private static final long serialVersionUID = 20190729L;
+
             @Override
             public boolean isInfinite() {
                 return false;

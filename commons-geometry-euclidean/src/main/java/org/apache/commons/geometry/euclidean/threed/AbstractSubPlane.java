@@ -33,6 +33,9 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
     extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
 
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190729L;
+
     /** The plane defining this instance. */
     private final Plane plane;
 
@@ -101,7 +104,7 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
         final Plane splitterPlane = (Plane) splitter;
         final DoublePrecisionContext precision = thisInstance.getPrecision();
 
-        final Line3D intersection = splitterPlane.intersection(thisPlane);
+        final Line3D intersection = thisPlane.intersection(splitterPlane);
         if (intersection == null) {
             // the lines are parallel or coincident; check which side of
             // the splitter we lie on

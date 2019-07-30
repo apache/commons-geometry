@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.partitioning.TreeBuilder;
@@ -210,12 +212,49 @@ public class EuclideanTestUtils {
         Assert.assertTrue(msg, value < 0);
     }
 
+    /** Assert that all of the given points lie within the specified location relative to
+     * {@code region}.
+     * @param region
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(Region<Vector1D> region, RegionLocation loc, Vector1D ... pts) {
+        for (Vector1D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
+        }
+    }
+
+    /** Assert that all of the given points lie within the specified location relative to
+     * {@code region}.
+     * @param region
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(Region<Vector2D> region, RegionLocation loc, Vector2D ... pts) {
+        for (Vector2D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
+        }
+    }
+
+    /** Assert that all of the given points lie within the specified location relative to
+     * {@code region}.
+     * @param region
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(Region<Vector3D> region, RegionLocation loc, Vector3D ... pts) {
+        for (Vector3D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
+        }
+    }
+
     /**
      * Get a string representation of an {@link IntervalsSet}.
      *
      * @param intervalsSet region to dump
      * @return string representation of the region
      */
+    @Deprecated
     public static String dump(final IntervalsSet intervalsSet) {
         final TreeDumper<Vector1D> visitor = new TreeDumper<Vector1D>("IntervalsSet") {
 
@@ -237,6 +276,7 @@ public class EuclideanTestUtils {
      * @param polygonsSet region to dump
      * @return string representation of the region
      */
+    @Deprecated
     public static String dump(final PolygonsSet polygonsSet) {
         final TreeDumper<Vector2D> visitor = new TreeDumper<Vector2D>("PolygonsSet") {
 
@@ -260,6 +300,7 @@ public class EuclideanTestUtils {
      * @param polyhedronsSet region to dump
      * @return string representation of the region
      */
+    @Deprecated
     public static String dump(final PolyhedronsSet polyhedronsSet) {
         final TreeDumper<Vector3D> visitor = new TreeDumper<Vector3D>("PolyhedronsSet") {
 
@@ -286,6 +327,7 @@ public class EuclideanTestUtils {
      * @return parsed region
      * @exception ParseException if the string cannot be parsed
      */
+    @Deprecated
     public static IntervalsSet parseIntervalsSet(final String str, final DoublePrecisionContext precision)
         throws ParseException {
         final TreeBuilder<Vector1D> builder = new TreeBuilder<Vector1D>("IntervalsSet", str, precision) {
@@ -309,6 +351,7 @@ public class EuclideanTestUtils {
      * @return parsed region
      * @exception ParseException if the string cannot be parsed
      */
+    @Deprecated
     public static PolygonsSet parsePolygonsSet(final String str, final DoublePrecisionContext precision)
         throws ParseException {
         final TreeBuilder<Vector2D> builder = new TreeBuilder<Vector2D>("PolygonsSet", str, precision) {
@@ -332,6 +375,7 @@ public class EuclideanTestUtils {
      * @return parsed region
      * @exception ParseException if the string cannot be parsed
      */
+    @Deprecated
     public static PolyhedronsSet parsePolyhedronsSet(final String str, final DoublePrecisionContext precision)
         throws ParseException {
         final TreeBuilder<Vector3D> builder = new TreeBuilder<Vector3D>("PolyhedronsSet", str, precision) {
@@ -355,6 +399,7 @@ public class EuclideanTestUtils {
      *
      * @param tree
      */
+    @Deprecated
     public static void printTree1D(BSPTree_Old<Vector1D> tree) {
         TreePrinter1D printer = new TreePrinter1D();
         System.out.println(printer.writeAsString(tree));
@@ -366,6 +411,7 @@ public class EuclideanTestUtils {
      *
      * @param tree
      */
+    @Deprecated
     public static void printTree2D(BSPTree_Old<Vector2D> tree) {
         TreePrinter2D printer = new TreePrinter2D();
         System.out.println(printer.writeAsString(tree));
@@ -377,6 +423,7 @@ public class EuclideanTestUtils {
      *
      * @param tree
      */
+    @Deprecated
     public static void printTree3D(BSPTree_Old<Vector3D> tree) {
         TreePrinter3D printer = new TreePrinter3D();
         System.out.println(printer.writeAsString(tree));

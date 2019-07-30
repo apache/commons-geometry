@@ -21,7 +21,6 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class RegionBSPTree3DTest {
@@ -31,8 +30,7 @@ public class RegionBSPTree3DTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    // TODO: GEOMETRY-59
-    @Ignore
+    // GEOMETRY-59
     @Test
     public void testSlightlyConcavePrism() {
         // arrange
@@ -59,14 +57,15 @@ public class RegionBSPTree3DTest {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.fromFacets(vertices, facets, TEST_PRECISION);
 
-        System.out.println(tree.treeString());
-
         // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
         checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(2, 1, 1));
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(2, 1, 3), Vector3D.of(2, 1, -3),
                 Vector3D.of(2, -1, 1), Vector3D.of(2, 3, 1),
-                Vector3D.of(-1, 1, 1), Vector3D.of(3, 1, 1));
+                Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
     }
 
     private static void checkClassify(Region<Vector3D> region, RegionLocation loc, Vector3D ... points) {
