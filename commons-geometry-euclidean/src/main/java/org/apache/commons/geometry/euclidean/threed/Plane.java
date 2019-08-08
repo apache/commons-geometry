@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -241,7 +243,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
     /** {@inheritDoc} */
     @Override
-    public Plane transform(Transform<Vector3D> transform) {
+    public Plane transform(final Transform<Vector3D> transform) {
         final Vector3D origin = getOrigin();
 
         final Vector3D p1 = transform.apply(origin);
@@ -249,6 +251,47 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final Vector3D p3 = transform.apply(origin.add(v));
 
         return fromPoints(p1, p2, p3, getPrecision());
+    }
+
+    /** Get an object containing the current plane transformed by the argument along with a
+     * 2D transform that can be applied to subspace points. The subspace transform transforms
+     * subspace points such that their 3D location in the transformed plane is the same as their
+     * 3D location in the original plane after the 3D transform is applied. For example, consider
+     * the code below:
+     * <pre>
+     *      TransformedPlane tp = plane.getTransformedPlane(transform);
+     *
+     *      Vector2D subPt = Vector2D.of(1, 1);
+     *
+     *      Vector3D a = transform.apply(plane.toSpace(subPt)); // transform in 3D space
+     *      Vector3D b = tp.getPlane().toSpace(tp.getSubspaceTransform().apply(subPt)); // transform in 2D space
+     * </pre>
+     * At the end of execution, the points {@code a} (which was transformed using the original
+     * 3D transform) and {@code b} (which was transformed in 2D using the subspace transform)
+     * are equivalent.
+     *
+     * @param transform the transform to apply to this instance
+     * @return an object containing the transformed plane along with a transform that can be applied
+     *      to subspace points
+     * @see #transform(Transform)
+     */
+    public TransformedPlane getTransformedPlane(final Transform<Vector3D> transform) {
+        final Vector3D origin = getOrigin();
+
+        final Vector3D p1 = transform.apply(origin);
+        final Vector3D p2 = transform.apply(origin.add(u));
+        final Vector3D p3 = transform.apply(origin.add(v));
+
+        final Plane tPlane = fromPoints(p1, p2, p3, getPrecision());
+
+        final Vector2D tSubspaceOrigin = tPlane.toSubspace(p1);
+        final Vector2D tSubspaceU = tSubspaceOrigin.vectorTo(tPlane.toSubspace(p2));
+        final Vector2D tSubspaceV = tSubspaceOrigin.vectorTo(tPlane.toSubspace(p3));
+
+        final AffineTransformMatrix2D subspaceTransform =
+                AffineTransformMatrix2D.fromColumnVectors(tSubspaceU, tSubspaceV, tSubspaceOrigin);
+
+        return new TransformedPlane(tPlane, subspaceTransform);
     }
 
     /**
@@ -263,13 +306,13 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      */
     public Plane rotate(final Vector3D center, final QuaternionRotation rotation) {
         final Vector3D delta = getOrigin().subtract(center);
-        Vector3D p = center.add(rotation.apply(delta));
-        Vector3D normal = rotation.apply(this.w);
-        Vector3D wTmp = normal.normalize();
+        final Vector3D p = center.add(rotation.apply(delta));
+        final Vector3D normal = rotation.apply(this.w);
+        final Vector3D wTmp = normal.normalize();
 
         double originOffsetTmp = -p.dot(wTmp);
-        Vector3D uTmp = rotation.apply(this.u);
-        Vector3D vTmp = rotation.apply(this.v);
+        final Vector3D uTmp = rotation.apply(this.u);
+        final Vector3D vTmp = rotation.apply(this.v);
 
         return new Plane(uTmp, vTmp, wTmp, originOffsetTmp, getPrecision());
     }
@@ -341,8 +384,13 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     }
 
     /**
-     * Build the line shared by the instance and another plane. Null is returned if
-     * the lines are parallel.
+     * Get the line formed by the intersection of this instance with the given plane.
+     * The returned line lies in both planes and points in the direction of
+     * the cross product <code>n<sub>1</sub> x n<sub>2</sub></code>, where <code>n<sub>1</sub></code>
+     * is the normal of the current instance and <code>n<sub>2</sub></code> is the normal
+     * of the argument.
+     *
+     * <p>Null is returned if the planes are parallel.</p>
      *
      * @param other other plane
      * @return line at the intersection of the instance and the other plane, or null
@@ -386,10 +434,10 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
         // direct Cramer resolution of the linear system
         // (this is still feasible for a 3x3 system)
-        final double a23 = b2 * c3 - b3 * c2;
-        final double b23 = c2 * a3 - c3 * a2;
-        final double c23 = a2 * b3 - a3 * b2;
-        final double determinant = a1 * a23 + b1 * b23 + c1 * c23;
+        final double a23 = (b2 * c3) - (b3 * c2);
+        final double b23 = (c2 * a3) - (c3 * a2);
+        final double c23 = (a2 * b3) - (a3 * b2);
+        final double determinant = (a1 * a23) + (b1 * b23) + (c1 * c23);
 
         // use the precision context of the first plane to determine equality
         if (plane1.getPrecision().eqZero(determinant)) {
@@ -717,5 +765,44 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final double originOffset = -startPt.dot(w);
 
         return new Plane(u, v, w, originOffset, precision);
+    }
+
+    /** Class containing a transformed plane instance along with a subspace transform. The subspace
+     * transform produces the equivalent of the 3D transform in 2D.
+     */
+    public static final class TransformedPlane implements Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190807L;
+
+        /** The transformed plane. */
+        private final Plane plane;
+
+        /** The subspace transform instance. */
+        private final AffineTransformMatrix2D subspaceTransform;
+
+        /** Simple constructor.
+         * @param plane the transformed plane
+         * @param subspaceTransform 2D transform that can be applied to subspace points
+         */
+        public TransformedPlane(final Plane plane, final AffineTransformMatrix2D subspaceTransform) {
+            this.plane = plane;
+            this.subspaceTransform = subspaceTransform;
+        }
+
+        /** Get the transformed plane instance.
+         * @return the transformed plane instance
+         */
+        public Plane getPlane() {
+            return plane;
+        }
+
+        /** Get the 2D transform that can be applied to subspace points. This transform can be used
+         * to perform the equivalent of the 3D transform in 2D space.
+         * @return the subspace transform instance
+         */
+        public AffineTransformMatrix2D getSubspaceTransform() {
+            return subspaceTransform;
+        }
     }
 }

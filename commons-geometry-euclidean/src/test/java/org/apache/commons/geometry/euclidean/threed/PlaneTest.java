@@ -29,7 +29,9 @@ import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.Plane.TransformedPlane;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -726,6 +728,65 @@ public class PlaneTest {
     }
 
     @Test
+    public void testGetTransformedPlane() {
+        // arrange
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        // act/assert
+        checkTransformedPlane(plane.getTransformedPlane(AffineTransformMatrix3D.createScale(2, 3, 4)),
+                Vector3D.of(0, 0, 4), Vector3D.PLUS_X, Vector3D.PLUS_Y,
+                Vector3D.of(0, 0, 4), Vector3D.of(2, 0, 4), Vector3D.of(0, 3, 4));
+
+        checkTransformedPlane(plane.getTransformedPlane(AffineTransformMatrix3D.createTranslation(2, 3, 4)),
+                Vector3D.of(0, 0, 5), Vector3D.PLUS_X, Vector3D.PLUS_Y,
+                Vector3D.of(2, 3, 5), Vector3D.of(3, 3, 5), Vector3D.of(2, 4, 5));
+
+        checkTransformedPlane(plane.getTransformedPlane(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI)),
+                Vector3D.of(1, 0, 0), Vector3D.MINUS_Z, Vector3D.PLUS_Y,
+                Vector3D.of(1, 0, 0), Vector3D.of(1, 0, -1), Vector3D.of(1, 1, 0));
+    }
+
+    private void checkTransformedPlane(TransformedPlane tp,
+            Vector3D origin, Vector3D u, Vector3D v,
+            Vector3D tOrigin, Vector3D tU, Vector3D tV) {
+
+        Plane plane = tp.getPlane();
+        AffineTransformMatrix2D subspaceTransform = tp.getSubspaceTransform();
+
+        checkPlane(plane, origin, u, v);
+
+        EuclideanTestUtils.assertCoordinatesEqual(tOrigin, plane.toSpace(subspaceTransform.apply(Vector2D.ZERO)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tU, plane.toSpace(subspaceTransform.apply(Vector2D.PLUS_X)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tV, plane.toSpace(subspaceTransform.apply(Vector2D.PLUS_Y)), TEST_EPS);
+    }
+
+    @Test
+    public void testGetTransformedPlane_subspaceTransformMovesPointsCorrectly() {
+        // arrange
+        Plane plane = Plane.fromPointAndNormal(Vector3D.of(1, 2, 3), Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        EuclideanTestUtils.permuteSkipZero(-2, 2, 0.5, (a, b, c) -> {
+            // create a somewhat complicate transform to try to hit all of the edge cases
+            AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.of(a, b, c))
+                    .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(b, c, a), Geometry.PI * c))
+                    .scale(0.1, 4, 8);
+
+            // act
+            TransformedPlane tp = plane.getTransformedPlane(transform);
+
+            // assert
+            EuclideanTestUtils.permute(-5, 5, 1, (x, y) -> {
+                Vector2D subPt = Vector2D.of(x, y);
+                Vector3D expected = transform.apply(plane.toSpace(subPt));
+                Vector3D actual = tp.getPlane().toSpace(
+                        tp.getSubspaceTransform().apply(subPt));
+
+                EuclideanTestUtils.assertCoordinatesEqual(expected, actual, TEST_EPS);
+            });
+        });
+    }
+
+    @Test
     public void testRotate() {
         // arrange
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
@@ -777,7 +838,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection() {
+    public void testIntersection_withLine() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(1, 2, 3), Vector3D.of(-4, 1, -5), TEST_PRECISION);
         Line3D line = Line3D.fromPoints(Vector3D.of(0.2, -3.5, 0.7), Vector3D.of(1.2, -2.5, -0.3), TEST_PRECISION);
@@ -785,7 +846,7 @@ public class PlaneTest {
         // act
         Vector3D point = plane.intersection(line);
 
-        // act/assert
+        // assert
         Assert.assertTrue(plane.contains(point));
         Assert.assertTrue(line.contains(point));
         Assert.assertNull(plane.intersection(Line3D.fromPoints(Vector3D.of(10, 10, 10),
@@ -794,7 +855,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_line_noIntersection() {
+    public void testIntersection_withLine_noIntersection() {
         // arrange
         Vector3D pt = Vector3D.of(1, 2, 3);
         Vector3D normal = Vector3D.of(-4, 1, -5);
@@ -809,7 +870,7 @@ public class PlaneTest {
     }
 
     @Test
-    public void testIntersection_plane() {
+    public void testIntersection_withPlane() {
         // arrange
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
@@ -822,11 +883,14 @@ public class PlaneTest {
         // assert
         Assert.assertTrue(line.contains(p1));
         Assert.assertTrue(line.contains(p2));
+        EuclideanTestUtils.assertCoordinatesEqual(planeA.getNormal().cross(planeB.getNormal()).normalize(),
+                line.getDirection(), TEST_EPS);
+
         Assert.assertNull(planeA.intersection(planeA));
     }
 
     @Test
-    public void testIntersection_plane_noIntersection() {
+    public void testIntersection_withPlane_noIntersection() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.PLUS_Z, Vector3D.PLUS_Z, TEST_PRECISION);
 

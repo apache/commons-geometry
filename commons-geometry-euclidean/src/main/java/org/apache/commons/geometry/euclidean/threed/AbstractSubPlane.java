@@ -106,7 +106,7 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
 
         final Line3D intersection = thisPlane.intersection(splitterPlane);
         if (intersection == null) {
-            // the lines are parallel or coincident; check which side of
+            // the planes are parallel or coincident; check which side of
             // the splitter we lie on
             final double offset = splitterPlane.offset(thisPlane);
             final int comp = precision.compare(offset, 0.0);

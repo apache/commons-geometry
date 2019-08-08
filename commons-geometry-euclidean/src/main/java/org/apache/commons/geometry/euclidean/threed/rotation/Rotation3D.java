@@ -16,16 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Transform_Old;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Interface representing a generic rotation in 3-dimensional Euclidean
  * space.
  */
-public interface Rotation3D extends Transform_Old<Vector3D, Vector2D> {
+public interface Rotation3D extends Transform<Vector3D> {
 
     /** Apply this rotation to the given argument. Since rotations do
      * not affect vector magnitudes, this method can be applied to
@@ -61,21 +58,4 @@ public interface Rotation3D extends Transform_Old<Vector3D, Vector2D> {
      * @return the inverse rotation.
      */
     Rotation3D inverse();
-
-    /** {@inheritDoc}
-     * This operation is not supported. See GEOMETRY-24.
-     */
-    @Override
-    default Hyperplane_Old<Vector3D> apply(Hyperplane_Old<Vector3D> hyperplane) {
-        throw new UnsupportedOperationException("Transforming hyperplanes is not supported");
-    }
-
-    /** {@inheritDoc}
-     * This operation is not supported. See GEOMETRY-24.
-     */
-    @Override
-    default SubHyperplane_Old<Vector2D> apply(SubHyperplane_Old<Vector2D> sub, Hyperplane_Old<Vector3D> original,
-            Hyperplane_Old<Vector3D> transformed) {
-        throw new UnsupportedOperationException("Transforming sub-hyperplanes is not supported");
-    }
 }

@@ -186,16 +186,43 @@ public class ConvexSubPlaneTest {
     }
 
     @Test
-    public void testSplit() {
+    public void testSplit_full() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Z, TEST_PRECISION);
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
 
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        ConvexSubPlane minus = split.getMinus();
+        Assert.assertEquals(1, minus.getSubspaceRegion().getBoundarySegments().size());
+        checkPoints(minus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_Y);
+        checkPoints(minus, RegionLocation.INSIDE, Vector3D.MINUS_X);
+        checkPoints(minus, RegionLocation.OUTSIDE, Vector3D.PLUS_X);
+
+        ConvexSubPlane plus = split.getPlus();
+        Assert.assertEquals(1, plus.getSubspaceRegion().getBoundarySegments().size());
+        checkPoints(plus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_Y);
+        checkPoints(plus, RegionLocation.INSIDE, Vector3D.PLUS_X);
+        checkPoints(plus, RegionLocation.OUTSIDE, Vector3D.MINUS_X);
+    }
+
+    @Test
+    public void testSplit_both() {
+        // arrange
         ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Z, TEST_PRECISION);
+
         // act
-        Split<ConvexSubPlane> split = sp.split(plane);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
@@ -205,6 +232,166 @@ public class ConvexSubPlaneTest {
 
         ConvexSubPlane plus = split.getPlus();
         checkVertices(plus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, 0), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
+    }
+
+    @Test
+    public void testSplit_plusOnly() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, -3.1), Vector3D.PLUS_Z, TEST_PRECISION);
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+
+        ConvexSubPlane plus = split.getPlus();
+        checkVertices(plus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
+    }
+
+    @Test
+    public void testSplit_minusOnly() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1.1), Vector3D.PLUS_Z, TEST_PRECISION);
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        ConvexSubPlane minus = split.getMinus();
+        checkVertices(minus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
+
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_parallelSplitter_on() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane splitter = sp.getPlane();
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_parallelSplitter_minus() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane plane = sp.getPlane();
+        Plane splitter = plane.translate(plane.getNormal());
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(sp, split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_parallelSplitter_plus() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane plane = sp.getPlane();
+        Plane splitter = plane.translate(plane.getNormal().negate());
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertSame(sp, split.getPlus());
+    }
+
+    @Test
+    public void testSplit_antiParallelSplitter_on() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane splitter = sp.getPlane().reverse();
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_antiParallelSplitter_minus() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane plane = sp.getPlane().reverse();
+        Plane splitter = plane.translate(plane.getNormal());
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(sp, split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_antiParallelSplitter_plus() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
+                ), TEST_PRECISION);
+
+        Plane plane = sp.getPlane().reverse();
+        Plane splitter = plane.translate(plane.getNormal().negate());
+
+        // act
+        Split<ConvexSubPlane> split = sp.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertSame(sp, split.getPlus());
     }
 
     private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {
