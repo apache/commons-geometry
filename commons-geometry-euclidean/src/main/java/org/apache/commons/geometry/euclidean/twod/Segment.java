@@ -27,6 +27,7 @@ import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
 /** <p>Class representing a line segment in 2D Euclidean space. Segments
  * need not be finite, in which case the start or end point (or both)
@@ -134,29 +135,9 @@ public final class Segment extends AbstractSubLine<Interval>
     @Override
     public Segment transform(Transform<Vector2D> transform) {
         final Line line = getLine();
+        final SubspaceTransform st = line.subspaceTransform(transform);
 
-        if (!isInfinite()) {
-            // simple case; just transform the line and points directly
-            final Line tLine = line.transform(transform);
-            final Vector2D tStart = transform.apply(getStartPoint());
-            final Vector2D tEnd = transform.apply(getEndPoint());
-
-            return fromPointsOnLine(tLine, tStart, tEnd);
-        }
-        else {
-            // determine how the line has transformed
-            final Vector2D tOrigin = transform.apply(line.toSpace(0));
-            final Vector2D tOne = transform.apply(line.toSpace(1));
-            final Line tLine = Line.fromPoints(tOrigin, tOne, getPrecision());
-
-            final double translation = tLine.toSubspace(tOrigin).getX();
-            final double scale = tLine.toSubspace(tOne.subtract(tOrigin)).getX();
-
-            final double tStart = (getSubspaceStart() * scale) + translation;
-            final double tEnd = (getSubspaceEnd() * scale) + translation;
-
-            return fromInterval(tLine, tStart, tEnd);
-        }
+        return fromInterval(st.getLine(), interval.transform(st.getTransform()));
     }
 
     /** Get the unique intersection of this segment with the given line. Null is

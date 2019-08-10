@@ -23,8 +23,10 @@ import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -1086,6 +1088,62 @@ public class LineTest {
         GeometryTestUtils.assertThrows(() -> {
             line.transform(scaleCollapse);
         }, GeometryValueException.class, "Line direction cannot be zero");
+    }
+
+    @Test
+    public void testSubspaceTransform() {
+        // arrange
+        Line line = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+
+        // act/assert
+        checkSubspaceTransform(line.subspaceTransform(AffineTransformMatrix2D.createScale(2, 3)),
+                Vector2D.of(2, 0), Vector2D.PLUS_Y,
+                Vector2D.of(2, 0), Vector2D.of(2, 3));
+
+        checkSubspaceTransform(line.subspaceTransform(AffineTransformMatrix2D.createTranslation(2, 3)),
+                Vector2D.of(3, 0), Vector2D.PLUS_Y,
+                Vector2D.of(3, 3), Vector2D.of(3, 4));
+
+        checkSubspaceTransform(line.subspaceTransform(AffineTransformMatrix2D.createRotation(Geometry.HALF_PI)),
+                Vector2D.of(0, 1), Vector2D.MINUS_X,
+                Vector2D.of(0, 1), Vector2D.of(-1, 1));
+    }
+
+    private void checkSubspaceTransform(SubspaceTransform st, Vector2D origin, Vector2D dir, Vector2D tZero, Vector2D tOne) {
+
+        Line line = st.getLine();
+        AffineTransformMatrix1D transform = st.getTransform();
+
+        checkLine(line, origin, dir);
+
+        EuclideanTestUtils.assertCoordinatesEqual(tZero, line.toSpace(transform.apply(Vector1D.ZERO)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tOne, line.toSpace(transform.apply(Vector1D.ONE)), TEST_EPS);
+    }
+
+    @Test
+    public void testSubspaceTransform_transformsPointsCorrectly() {
+        // arrange
+        Line line = Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+
+        EuclideanTestUtils.permuteSkipZero(-2, 2, 0.5, (a, b) -> {
+            // create a somewhat complicate transform to try to hit all of the edge cases
+            AffineTransformMatrix2D transform = AffineTransformMatrix2D.createTranslation(Vector2D.of(a, b))
+                    .rotate(a * b)
+                    .scale(0.1, 4);
+
+            // act
+            SubspaceTransform st = line.subspaceTransform(transform);
+
+            // assert
+            for (double x=-5.0; x<=5.0; x+=1) {
+                Vector1D subPt = Vector1D.of(x);
+                Vector2D expected = transform.apply(line.toSpace(subPt));
+                Vector2D actual = st.getLine().toSpace(
+                        st.getTransform().apply(subPt));
+
+                EuclideanTestUtils.assertCoordinatesEqual(expected, actual, TEST_EPS);
+            };
+        });
     }
 
     @Test

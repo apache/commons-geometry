@@ -259,12 +259,12 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * 3D location in the original plane after the 3D transform is applied. For example, consider
      * the code below:
      * <pre>
-     *      TransformedPlane tp = plane.getTransformedPlane(transform);
+     *      SubspaceTransform st = plane.subspaceTransform(transform);
      *
      *      Vector2D subPt = Vector2D.of(1, 1);
      *
      *      Vector3D a = transform.apply(plane.toSpace(subPt)); // transform in 3D space
-     *      Vector3D b = tp.getPlane().toSpace(tp.getSubspaceTransform().apply(subPt)); // transform in 2D space
+     *      Vector3D b = st.getPlane().toSpace(st.getTransform().apply(subPt)); // transform in 2D space
      * </pre>
      * At the end of execution, the points {@code a} (which was transformed using the original
      * 3D transform) and {@code b} (which was transformed in 2D using the subspace transform)
@@ -275,7 +275,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      *      to subspace points
      * @see #transform(Transform)
      */
-    public TransformedPlane getTransformedPlane(final Transform<Vector3D> transform) {
+    public SubspaceTransform subspaceTransform(final Transform<Vector3D> transform) {
         final Vector3D origin = getOrigin();
 
         final Vector3D p1 = transform.apply(origin);
@@ -291,7 +291,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final AffineTransformMatrix2D subspaceTransform =
                 AffineTransformMatrix2D.fromColumnVectors(tSubspaceU, tSubspaceV, tSubspaceOrigin);
 
-        return new TransformedPlane(tPlane, subspaceTransform);
+        return new SubspaceTransform(tPlane, subspaceTransform);
     }
 
     /**
@@ -310,7 +310,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final Vector3D normal = rotation.apply(this.w);
         final Vector3D wTmp = normal.normalize();
 
-        double originOffsetTmp = -p.dot(wTmp);
+        final double originOffsetTmp = -p.dot(wTmp);
         final Vector3D uTmp = rotation.apply(this.u);
         final Vector3D vTmp = rotation.apply(this.v);
 
@@ -767,10 +767,10 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         return new Plane(u, v, w, originOffset, precision);
     }
 
-    /** Class containing a transformed plane instance along with a subspace transform. The subspace
+    /** Class containing a transformed plane instance along with a subspace (2D) transform. The subspace
      * transform produces the equivalent of the 3D transform in 2D.
      */
-    public static final class TransformedPlane implements Serializable {
+    public static final class SubspaceTransform implements Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190807L;
@@ -779,15 +779,15 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         private final Plane plane;
 
         /** The subspace transform instance. */
-        private final AffineTransformMatrix2D subspaceTransform;
+        private final AffineTransformMatrix2D transform;
 
         /** Simple constructor.
          * @param plane the transformed plane
-         * @param subspaceTransform 2D transform that can be applied to subspace points
+         * @param transform 2D transform that can be applied to subspace points
          */
-        public TransformedPlane(final Plane plane, final AffineTransformMatrix2D subspaceTransform) {
+        public SubspaceTransform(final Plane plane, final AffineTransformMatrix2D transform) {
             this.plane = plane;
-            this.subspaceTransform = subspaceTransform;
+            this.transform = transform;
         }
 
         /** Get the transformed plane instance.
@@ -801,8 +801,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
          * to perform the equivalent of the 3D transform in 2D space.
          * @return the subspace transform instance
          */
-        public AffineTransformMatrix2D getSubspaceTransform() {
-            return subspaceTransform;
+        public AffineTransformMatrix2D getTransform() {
+            return transform;
         }
     }
 }

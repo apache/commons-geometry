@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
@@ -25,6 +26,7 @@ import org.apache.commons.geometry.core.partition.AbstractHyperplane;
 import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -149,13 +151,54 @@ public final class Line extends AbstractHyperplane<Vector2D>
 
     /** {@inheritDoc} */
     @Override
-    public Line transform(Transform<Vector2D> transform) {
+    public Line transform(final Transform<Vector2D> transform) {
         final Vector2D origin = getOrigin();
 
-        final Vector2D transformedOrigin = transform.apply(origin);
-        final Vector2D transformedOriginPlusDir = transform.apply(origin.add(getDirection()));
+        final Vector2D tOrigin = transform.apply(origin);
+        final Vector2D tOriginPlusDir = transform.apply(origin.add(getDirection()));
 
-        return fromPoints(transformedOrigin, transformedOriginPlusDir, getPrecision());
+        return fromPoints(tOrigin, tOriginPlusDir, getPrecision());
+    }
+
+    /** Get an object containing the current line transformed by the argument along with a
+     * 1D transform that can be applied to subspace points. The subspace transform transforms
+     * subspace points such that their 2D location in the transformed line is the same as their
+     * 2D location in the original line after the 2D transform is applied. For example, consider
+     * the code below:
+     * <pre>
+     *      SubspaceTransform st = line.subspaceTransform(transform);
+     *
+     *      Vector1D subPt = Vector1D.of(1);
+     *
+     *      Vector2D a = transform.apply(line.toSpace(subPt)); // transform in 2D space
+     *      Vector2D b = st.getLine().toSpace(st.getTransform().apply(subPt)); // transform in 1D space
+     * </pre>
+     * At the end of execution, the points {@code a} (which was transformed using the original
+     * 2D transform) and {@code b} (which was transformed in 1D using the subspace transform)
+     * are equivalent.
+     *
+     * @param transform the transform to apply to this instance
+     * @return an object containing the transformed line along with a transform that can be applied
+     *      to subspace points
+     * @see #transform(Transform)
+     */
+    public SubspaceTransform subspaceTransform(final Transform<Vector2D> transform) {
+        final Vector2D origin = getOrigin();
+
+        final Vector2D p1 = transform.apply(origin);
+        final Vector2D p2 = transform.apply(origin.add(direction));
+
+        final Line tLine = Line.fromPoints(p1, p2, getPrecision());
+
+        final Vector1D tSubspaceOrigin = tLine.toSubspace(p1);
+        final Vector1D tSubspaceDirection = tSubspaceOrigin.vectorTo(tLine.toSubspace(p2));
+
+        final double translation = tSubspaceOrigin.getX();
+        final double scale = tSubspaceDirection.getX();
+
+        final AffineTransformMatrix1D subspaceTransform = AffineTransformMatrix1D.of(scale, translation);
+
+        return new SubspaceTransform(tLine, subspaceTransform);
     }
 
     /** {@inheritDoc} */
@@ -528,5 +571,44 @@ public final class Line extends AbstractHyperplane<Vector2D>
     public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
         final Vector2D dir = Vector2D.normalize(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
+    }
+
+    /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace
+     * transform produces the equivalent of the 2D transform in 1D.
+     */
+    public static final class SubspaceTransform implements Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190809L;
+
+        /** The transformed line. */
+        private final Line line;
+
+        /** The subspace transform instance. */
+        private final AffineTransformMatrix1D transform;
+
+        /** Simple constructor.
+         * @param line the transformed line
+         * @param transform 1D transform that can be applied to subspace points
+         */
+        public SubspaceTransform(final Line line, final AffineTransformMatrix1D transform) {
+            this.line = line;
+            this.transform = transform;
+        }
+
+        /** Get the transformed line instance.
+         * @return the transformed line instance
+         */
+        public Line getLine() {
+            return line;
+        }
+
+        /** Get the 1D transform that can be applied to subspace points. This transform can be used
+         * to perform the equivalent of the 2D transform in 1D space.
+         * @return the subspace transform instance
+         */
+        public AffineTransformMatrix1D getTransform() {
+            return transform;
+        }
     }
 }

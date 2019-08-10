@@ -29,7 +29,7 @@ import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.threed.Plane.TransformedPlane;
+import org.apache.commons.geometry.euclidean.threed.Plane.SubspaceTransform;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -728,40 +728,40 @@ public class PlaneTest {
     }
 
     @Test
-    public void testGetTransformedPlane() {
+    public void testSubspaceTransform() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
         // act/assert
-        checkTransformedPlane(plane.getTransformedPlane(AffineTransformMatrix3D.createScale(2, 3, 4)),
+        checkSubspaceTransform(plane.subspaceTransform(AffineTransformMatrix3D.createScale(2, 3, 4)),
                 Vector3D.of(0, 0, 4), Vector3D.PLUS_X, Vector3D.PLUS_Y,
                 Vector3D.of(0, 0, 4), Vector3D.of(2, 0, 4), Vector3D.of(0, 3, 4));
 
-        checkTransformedPlane(plane.getTransformedPlane(AffineTransformMatrix3D.createTranslation(2, 3, 4)),
+        checkSubspaceTransform(plane.subspaceTransform(AffineTransformMatrix3D.createTranslation(2, 3, 4)),
                 Vector3D.of(0, 0, 5), Vector3D.PLUS_X, Vector3D.PLUS_Y,
                 Vector3D.of(2, 3, 5), Vector3D.of(3, 3, 5), Vector3D.of(2, 4, 5));
 
-        checkTransformedPlane(plane.getTransformedPlane(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI)),
+        checkSubspaceTransform(plane.subspaceTransform(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI)),
                 Vector3D.of(1, 0, 0), Vector3D.MINUS_Z, Vector3D.PLUS_Y,
                 Vector3D.of(1, 0, 0), Vector3D.of(1, 0, -1), Vector3D.of(1, 1, 0));
     }
 
-    private void checkTransformedPlane(TransformedPlane tp,
+    private void checkSubspaceTransform(SubspaceTransform st,
             Vector3D origin, Vector3D u, Vector3D v,
             Vector3D tOrigin, Vector3D tU, Vector3D tV) {
 
-        Plane plane = tp.getPlane();
-        AffineTransformMatrix2D subspaceTransform = tp.getSubspaceTransform();
+        Plane plane = st.getPlane();
+        AffineTransformMatrix2D transform = st.getTransform();
 
         checkPlane(plane, origin, u, v);
 
-        EuclideanTestUtils.assertCoordinatesEqual(tOrigin, plane.toSpace(subspaceTransform.apply(Vector2D.ZERO)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(tU, plane.toSpace(subspaceTransform.apply(Vector2D.PLUS_X)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(tV, plane.toSpace(subspaceTransform.apply(Vector2D.PLUS_Y)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tOrigin, plane.toSpace(transform.apply(Vector2D.ZERO)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tU, plane.toSpace(transform.apply(Vector2D.PLUS_X)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(tV, plane.toSpace(transform.apply(Vector2D.PLUS_Y)), TEST_EPS);
     }
 
     @Test
-    public void testGetTransformedPlane_subspaceTransformMovesPointsCorrectly() {
+    public void testSubspaceTransform_transformsPointsCorrectly() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.of(1, 2, 3), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
@@ -772,14 +772,14 @@ public class PlaneTest {
                     .scale(0.1, 4, 8);
 
             // act
-            TransformedPlane tp = plane.getTransformedPlane(transform);
+            SubspaceTransform st = plane.subspaceTransform(transform);
 
             // assert
             EuclideanTestUtils.permute(-5, 5, 1, (x, y) -> {
                 Vector2D subPt = Vector2D.of(x, y);
                 Vector3D expected = transform.apply(plane.toSpace(subPt));
-                Vector3D actual = tp.getPlane().toSpace(
-                        tp.getSubspaceTransform().apply(subPt));
+                Vector3D actual = st.getPlane().toSpace(
+                        st.getTransform().apply(subPt));
 
                 EuclideanTestUtils.assertCoordinatesEqual(expected, actual, TEST_EPS);
             });

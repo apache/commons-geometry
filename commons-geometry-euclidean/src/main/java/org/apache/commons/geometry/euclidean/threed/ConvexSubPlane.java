@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.threed.Plane.TransformedPlane;
+import org.apache.commons.geometry.euclidean.threed.Plane.SubspaceTransform;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -60,10 +60,10 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     /** {@inheritDoc} */
     @Override
     public ConvexSubPlane transform(final Transform<Vector3D> transform) {
-        final TransformedPlane tp = getPlane().getTransformedPlane(transform);
-        final ConvexArea tArea = area.transform(tp.getSubspaceTransform());
+        final SubspaceTransform st = getPlane().subspaceTransform(transform);
+        final ConvexArea tArea = area.transform(st.getTransform());
 
-        return fromConvexArea(tp.getPlane(), tArea);
+        return fromConvexArea(st.getPlane(), tArea);
     }
 
     /** {@inheritDoc} */

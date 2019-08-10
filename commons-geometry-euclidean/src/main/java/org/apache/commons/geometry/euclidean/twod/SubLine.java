@@ -26,11 +26,11 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
 /** Class representing an arbitrary region of a line. This class can represent
  * both convex and non-convex regions of its underlying line.
@@ -76,24 +76,13 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements S
     /** {@inheritDoc} */
     @Override
     public SubLine transform(Transform<Vector2D> transform) {
-        final Line origLine = getLine();
-
-        final Vector2D tOrigin = transform.apply(origLine.toSpace(0));
-        final Vector2D tOne = transform.apply(origLine.toSpace(1));
-        final Line tLine = Line.fromPoints(tOrigin, tOne, getPrecision());
-
-        final double scale = tLine.toSubspace(tOne.subtract(tOrigin)).getX();
-        final double translation = tLine.toSubspace(tOrigin).getX();
-
-        final AffineTransformMatrix1D subTransform = AffineTransformMatrix1D.identity()
-                .scale(scale)
-                .translate(translation);
+        final SubspaceTransform st = getLine().subspaceTransform(transform);
 
         final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
         tRegion.copy(region);
-        tRegion.transform(subTransform);
+        tRegion.transform(st.getTransform());
 
-        return new SubLine(tLine, tRegion);
+        return new SubLine(st.getLine(), tRegion);
     }
 
     /** {@inheritDoc} */
