@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;

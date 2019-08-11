@@ -19,13 +19,17 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -183,6 +187,109 @@ public class ConvexSubPlaneTest {
                 Vector3D.of(2, 1, 1), Vector3D.of(2, 1, 0), Vector3D.of(2, 1, -1),
                 Vector3D.of(2, 0, 1), Vector3D.of(2, 0, 0), Vector3D.of(2, 0, -1),
                 Vector3D.of(2, -1, 1), Vector3D.of(2, -1, 0), Vector3D.of(2, -1, -1));
+    }
+
+    @Test
+    public void testToConvex() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.PLUS_X,  Vector3D.PLUS_Y, Vector3D.PLUS_Z), TEST_PRECISION);
+
+        // act
+        List<ConvexSubPlane> convex = sp.toConvex();
+
+        // assert
+        Assert.assertEquals(1, convex.size());
+        Assert.assertSame(sp, convex.get(0));
+    }
+
+    @Test
+    public void testTransform_full() {
+        // arrange
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
+
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI))
+                .translate(Vector3D.PLUS_Y);
+
+        // act
+        ConvexSubPlane transformed = sp.transform(transform);
+
+        // assert
+        Assert.assertTrue(transformed.isFull());
+        Assert.assertFalse(transformed.isEmpty());
+
+        checkPlane(transformed.getPlane(), Vector3D.ZERO, Vector3D.PLUS_X, Vector3D.PLUS_Z);
+    }
+
+    @Test
+    public void testTransform_halfSpace() {
+        // arrange
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane,
+                ConvexArea.fromBounds(Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)));
+
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(Vector3D.PLUS_Z,
+                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+
+        // act
+        ConvexSubPlane transformed = sp.transform(transform);
+
+        // assert
+        Assert.assertFalse(transformed.isFull());
+        Assert.assertFalse(transformed.isEmpty());
+
+        checkPlane(transformed.getPlane(), Vector3D.ZERO, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+    }
+
+    @Test
+    public void testTransform_finite() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
+
+        Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(2)
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+
+        // act
+        ConvexSubPlane transformed = sp.transform(transform);
+
+        // assert
+        Vector3D midpt = Vector3D.of(2, 2, -2).multiply(1 / 3.0);
+        Vector3D normal = midpt.normalize();
+        Vector3D u = Vector3D.of(0, 2, 2).normalize();
+
+        checkPlane(transformed.getPlane(), midpt, u, normal.cross(u));
+
+        checkVertices(transformed, Vector3D.of(0, 0, -2), Vector3D.of(0, 2, 0),
+                Vector3D.of(2, 0, 0), Vector3D.of(0, 0, -2));
+
+        checkPoints(transformed, RegionLocation.INSIDE, midpt);
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
+
+        Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(-1, 1, 1);
+
+        // act
+        ConvexSubPlane transformed = sp.transform(transform);
+
+        // assert
+        Vector3D midpt = Vector3D.of(-1, 1, 1).multiply(1 / 3.0);
+        Vector3D normal = midpt.negate().normalize();
+        Vector3D u = Vector3D.of(1, 1, 0).normalize();
+
+        checkPlane(transformed.getPlane(), midpt, u, normal.cross(u));
+
+        checkVertices(transformed, Vector3D.of(-1, 0, 0), Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, 1), Vector3D.of(-1, 0, 0));
+
+        checkPoints(transformed, RegionLocation.INSIDE, Vector3D.of(-1, 1, 1).multiply(1 / 3.0));
     }
 
     @Test
