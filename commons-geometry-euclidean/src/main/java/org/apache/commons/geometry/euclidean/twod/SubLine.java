@@ -25,11 +25,8 @@ import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
 /** Class representing an arbitrary region of a line. This class can represent
@@ -106,45 +103,19 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements S
         return region;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>In all cases, the current instance is not modified. However, In order to avoid
+     * unnecessary copying, this method will use the current instance as the split value when
+     * the instance lies entirely on the plus or minus side of the splitter. For example, if
+     * this instance lies entirely on the minus side of the splitter, the subplane
+     * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
+     * will return the current instance if it lies entirely on the plus side. Callers need to make
+     * special note of this, since this class is mutable.</p>
+     */
     @Override
     public Split<SubLine> split(final Hyperplane<Vector2D> splitter) {
-        final Line thisLine = getLine();
-        final Line splitterLine = (Line) splitter;
-        final DoublePrecisionContext precision = getPrecision();
-
-        final Vector2D intersection = splitterLine.intersection(thisLine);
-        if (intersection == null) {
-            // the lines are parallel or coincident; check which side of
-            // the splitter we lie on
-            final double offset = splitterLine.offset(thisLine);
-            final int comp = precision.compare(offset, 0.0);
-
-            if (comp < 0) {
-                return new Split<>(this, null);
-            }
-            else if (comp > 0) {
-                return new Split<>(null, this);
-            }
-            else {
-                return new Split<>(null, null);
-            }
-        }
-        else {
-            // the lines intersect; split the subregion
-            final Vector1D splitPt = thisLine.toSubspace(intersection);
-            final boolean positiveFacing = thisLine.angle(splitterLine) > 0.0;
-
-            final OrientedPoint subspaceSplitter = OrientedPoint.fromPointAndDirection(splitPt,
-                    positiveFacing, getPrecision());
-
-            Split<RegionBSPTree1D> split = region.split(subspaceSplitter);
-
-            final SubLine minus = (split.getMinus() != null) ? new SubLine(thisLine, split.getMinus()) : null;
-            final SubLine plus = (split.getPlus() != null) ? new SubLine(thisLine, split.getPlus()) : null;
-
-            return new Split<>(minus, plus);
-        }
+        return splitInternal(splitter, this, (line, region) -> new SubLine(line, (RegionBSPTree1D) region));
     }
 
     /** Add a line segment to this instance..

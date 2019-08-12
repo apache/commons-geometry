@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.SubPlane.SubPlaneBuilder;
 import org.apache.commons.geometry.euclidean.twod.Line;
@@ -129,7 +130,15 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
 
             final Line subspaceSplitter = Line.fromPoints(subspaceP1, subspaceP2, getPrecision());
 
-            Split<? extends HyperplaneBoundedRegion<Vector2D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final Split<? extends HyperplaneBoundedRegion<Vector2D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final SplitLocation subspaceSplitLoc = split.getLocation();
+
+            if (SplitLocation.MINUS == subspaceSplitLoc) {
+                return new Split<>(thisInstance, null);
+            }
+            else if (SplitLocation.PLUS == subspaceSplitLoc) {
+                return new Split<>(null, thisInstance);
+            }
 
             final T minus = (split.getMinus() != null) ? factory.apply(getPlane(), split.getMinus()) : null;
             final T plus = (split.getPlus() != null) ? factory.apply(getPlane(), split.getPlus()) : null;

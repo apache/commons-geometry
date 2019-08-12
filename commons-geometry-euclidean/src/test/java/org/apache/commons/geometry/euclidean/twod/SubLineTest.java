@@ -304,11 +304,7 @@ public class SubLineTest {
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
         Assert.assertNull(split.getMinus());
-
-        List<Segment> plusSegments = split.getPlus().toConvex();
-        Assert.assertEquals(2, plusSegments.size());
-        checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
-        checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+        Assert.assertSame(subline, split.getPlus());
     }
 
     @Test
@@ -329,11 +325,7 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<Segment> minusSegments = split.getMinus().toConvex();
-        Assert.assertEquals(2, minusSegments.size());
-        checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
-        checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
-
+        Assert.assertSame(subline, split.getMinus());
         Assert.assertNull(split.getPlus());
     }
 
@@ -356,11 +348,7 @@ public class SubLineTest {
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
         Assert.assertNull(split.getMinus());
-
-        List<Segment> plusSegments = split.getPlus().toConvex();
-        Assert.assertEquals(2, plusSegments.size());
-        checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
-        checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
+        Assert.assertSame(subline, split.getPlus());
     }
 
     @Test
@@ -381,11 +369,7 @@ public class SubLineTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<Segment> minusSegments = split.getMinus().toConvex();
-        Assert.assertEquals(2, minusSegments.size());
-        checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(2, 0));
-        checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
-
+        Assert.assertSame(subline, split.getMinus());
         Assert.assertNull(split.getPlus());
     }
 

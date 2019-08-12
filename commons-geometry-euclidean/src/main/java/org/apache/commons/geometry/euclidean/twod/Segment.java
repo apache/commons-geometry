@@ -122,13 +122,8 @@ public final class Segment extends AbstractSubLine<Interval>
 
     /** {@inheritDoc} */
     @Override
-    public Split<Segment> split(Hyperplane<Vector2D> splitter) {
-        final Line splitterLine = (Line) splitter;
-
-        if (isInfinite()) {
-            return splitInfinite(splitterLine);
-        }
-        return splitFinite(splitterLine);
+    public Split<Segment> split(final Hyperplane<Vector2D> splitter) {
+        return splitInternal(splitter, this, (line, region) -> new Segment(line, (Interval) region));
     }
 
     /** {@inheritDoc} */
@@ -213,122 +208,6 @@ public final class Segment extends AbstractSubLine<Interval>
             .append(']');
 
         return sb.toString();
-    }
-
-    /** Method used to split the instance with the given line when the instance has
-     * infinite size.
-     * @param splitter the splitter line
-     * @return the split convex subhyperplane
-     */
-    private Split<Segment> splitInfinite(Line splitter) {
-        final Line line = getLine();
-        final Vector2D intersection = splitter.intersection(line);
-
-        if (intersection == null) {
-            // the lines are parallel
-            final double originOffset = splitter.offset(line.getOrigin());
-
-            final int sign = getPrecision().sign(originOffset);
-            if (sign < 0) {
-                return new Split<>(this, null);
-            }
-            else if (sign > 0) {
-                return new Split<>(null, this);
-            }
-            return new Split<>(null, null);
-        }
-        else {
-            // the lines intersect
-            final double intersectionAbscissa = line.toSubspace(intersection).getX();
-
-            final double startAbscissa = getSubspaceStart();
-            final double endAbscissa = getSubspaceEnd();
-
-            Segment startSegment = null;
-            Segment endSegment = null;
-
-            if (endAbscissa <= intersectionAbscissa) {
-                // the entire segment is before the intersection
-                startSegment = this;
-                endSegment = null;
-            }
-            else if (startAbscissa >= intersectionAbscissa) {
-                // the entire segment is after the intersection
-                startSegment = null;
-                endSegment = this;
-            }
-            else {
-                // the intersection is in the middle
-                startSegment = fromInterval(line, Interval.of(startAbscissa, intersectionAbscissa, getPrecision()));
-                endSegment = fromInterval(line, Interval.of(intersectionAbscissa, endAbscissa, getPrecision()));
-            }
-
-            final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
-            final double startCmp = getPrecision().sign(startOffset);
-
-            final Segment minus = (startCmp > 0) ? endSegment: startSegment;
-            final Segment plus = (startCmp > 0) ? startSegment : endSegment;
-
-            return new Split<>(minus, plus);
-        }
-    }
-
-    /** Method used to split the instance with the given line when the instance has
-     * finite size.
-     * @param splitter the splitter line
-     * @return the split convex subhyperplane
-     */
-    private Split<Segment> splitFinite(Line splitter) {
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        final Vector2D start = getStartPoint();
-        final Vector2D end = getEndPoint();
-
-        final double startOffset = splitter.offset(start);
-        final double endOffset = splitter.offset(end);
-
-        final int startCmp = precision.sign(startOffset);
-        final int endCmp = precision.sign(endOffset);
-
-        // startCmp |   endCmp  |   result
-        // --------------------------------
-        // 0        |   0       |   hyper
-        // 0        |   < 0     |   minus
-        // 0        |   > 0     |   plus
-        // < 0      |   0       |   minus
-        // < 0      |   < 0     |   minus
-        // < 0      |   > 0     |   SPLIT
-        // > 0      |   0       |   plus
-        // > 0      |   < 0     |   SPLIT
-        // > 0      |   > 0     |   plus
-
-        if (startCmp == 0 && endCmp == 0) {
-            // the entire line segment is directly on the splitter line
-            return new Split<>(null, null);
-        }
-        else if (startCmp <= 0 && endCmp <= 0) {
-            // the entire line segment is on the minus side
-            return new Split<>(this, null);
-        }
-        else if (startCmp >= 0 && endCmp >= 0) {
-            // the entire line segment is on the plus side
-            return new Split<>(null, this);
-        }
-
-        // we need to split the line
-        final Line line = getLine();
-
-        final Vector2D intersection = splitter.intersection(line);
-        final double intersectionAbscissa = line.toSubspace(intersection).getX();
-
-        final Segment startSegment = fromInterval(line, getSubspaceStart(), intersectionAbscissa);
-        final Segment endSegment = fromInterval(line, intersectionAbscissa, getSubspaceEnd());
-
-        final Segment minus = (startCmp > 0) ? endSegment: startSegment;
-        final Segment plus = (startCmp > 0) ? startSegment : endSegment;
-
-        return new Split<>(minus, plus);
     }
 
     /** Create a line segment between two points. The underlying line points in the direction from {@code start}

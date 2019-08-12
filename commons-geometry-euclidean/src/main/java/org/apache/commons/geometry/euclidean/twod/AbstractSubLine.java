@@ -16,9 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.function.BiFunction;
+
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
 
@@ -64,5 +71,62 @@ abstract class AbstractSubLine<R extends Region<Vector1D>>
      */
     public DoublePrecisionContext getPrecision() {
         return line.getPrecision();
+    }
+
+    /** Generic, internal split method. Subclasses should call this from their
+     * {@link #split(Hyperplane)} methods.
+     * @param splitter splitting hyperplane
+     * @param thisInstance a reference to the current instance; this is passed as
+     *      an argument in order to allow it to be a generic type
+     * @param factory function used to create new subhyperplane instances
+     * @return the result of the split operation
+     */
+    protected <T extends AbstractSubLine<R>> Split<T> splitInternal(final Hyperplane<Vector2D> splitter,
+            final T thisInstance, final BiFunction<Line, HyperplaneBoundedRegion<Vector1D>, T> factory) {
+
+        final Line thisLine = getLine();
+        final Line splitterLine = (Line) splitter;
+        final DoublePrecisionContext precision = getPrecision();
+
+        final Vector2D intersection = splitterLine.intersection(thisLine);
+        if (intersection == null) {
+            // the lines are parallel or coincident; check which side of
+            // the splitter we lie on
+            final double offset = splitterLine.offset(thisLine);
+            final int comp = precision.compare(offset, 0.0);
+
+            if (comp < 0) {
+                return new Split<>(thisInstance, null);
+            }
+            else if (comp > 0) {
+                return new Split<>(null, thisInstance);
+            }
+            else {
+                return new Split<>(null, null);
+            }
+        }
+        else {
+            // the lines intersect; split the subregion
+            final Vector1D splitPt = thisLine.toSubspace(intersection);
+            final boolean positiveFacing = thisLine.angle(splitterLine) > 0.0;
+
+            final OrientedPoint subspaceSplitter = OrientedPoint.fromPointAndDirection(splitPt,
+                    positiveFacing, getPrecision());
+
+            final Split<? extends HyperplaneBoundedRegion<Vector1D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final SplitLocation subspaceSplitLoc = split.getLocation();
+
+            if (SplitLocation.MINUS == subspaceSplitLoc) {
+                return new Split<>(thisInstance, null);
+            }
+            else if (SplitLocation.PLUS == subspaceSplitLoc) {
+                return new Split<>(null, thisInstance);
+            }
+
+            final T minus = (split.getMinus() != null) ? factory.apply(thisLine, split.getMinus()) : null;
+            final T plus = (split.getPlus() != null) ? factory.apply(thisLine, split.getPlus()) : null;
+
+            return new Split<>(minus, plus);
+        }
     }
 }
