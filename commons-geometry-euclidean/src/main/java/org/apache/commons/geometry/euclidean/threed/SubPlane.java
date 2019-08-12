@@ -25,10 +25,8 @@ import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Class representing an arbitrary region of a plane. This class can represent
  * both convex and non-convex regions of its underlying plane.
@@ -110,24 +108,13 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
     /** {@inheritDoc} */
     @Override
     public SubPlane transform(final Transform<Vector3D> transform) {
-        final Plane origPlane = getPlane();
-
-        final Vector3D tOrigin = transform.apply(origPlane.getOrigin());
-        final Vector3D tU = transform.apply(origPlane.toSpace(Vector2D.PLUS_X)).subtract(tOrigin);
-        final Vector3D tV = transform.apply(origPlane.toSpace(Vector2D.PLUS_Y)).subtract(tOrigin);
-
-        final Plane tPlane = Plane.fromPointAndPlaneVectors(tOrigin, tU, tV, getPrecision());
-
-        final AffineTransformMatrix2D subTransform = AffineTransformMatrix2D.fromColumnVectors(
-                    tPlane.toSubspace(tU),
-                    tPlane.toSubspace(tV))
-                .translate(tPlane.toSubspace(tOrigin));
+        final Plane.SubspaceTransform subTransform = getPlane().subspaceTransform(transform);
 
         final RegionBSPTree2D tRegion = RegionBSPTree2D.empty();
         tRegion.copy(region);
-        tRegion.transform(subTransform);
+        tRegion.transform(subTransform.getTransform());
 
-        return new SubPlane(tPlane, tRegion);
+        return new SubPlane(subTransform.getPlane(), tRegion);
     }
 
     /** Add a convex subplane to this instance.

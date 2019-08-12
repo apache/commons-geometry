@@ -22,17 +22,23 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.junit.Test;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 public class SubPlaneTest {
 
@@ -299,6 +305,10 @@ public class SubPlaneTest {
         // assert
         Assert.assertNotSame(sp, result);
 
+        Plane resultPlane = result.getPlane();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
+
         Assert.assertFalse(result.isFull());
         Assert.assertTrue(result.isEmpty());
     }
@@ -316,13 +326,170 @@ public class SubPlaneTest {
         // assert
         Assert.assertNotSame(sp, result);
 
+        Plane resultPlane = result.getPlane();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
+
         Assert.assertTrue(result.isFull());
         Assert.assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        ConvexArea area = ConvexArea.fromVertexLoop(
+                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        SubPlane sp = new SubPlane(plane, RegionBSPTree2D.fromConvexArea(area));
+
+        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI))
+                .translate(Vector3D.of(1, 0, 0));
+
+        // act
+        SubPlane result = sp.transform(transform);
+
+        // assert
+        Assert.assertNotSame(sp, result);
+
+        Plane resultPlane = result.getPlane();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 0, 0), resultPlane.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, resultPlane.getNormal(), TEST_EPS);
+
+        checkPoints(result, RegionLocation.INSIDE, Vector3D.of(2, 0.25, -0.25));
+        checkPoints(result, RegionLocation.OUTSIDE, Vector3D.of(1, 0.25, -0.25), Vector3D.of(3, 0.25, -0.25));
+
+        checkPoints(result, RegionLocation.BOUNDARY,
+                Vector3D.of(2, 0, 0), Vector3D.of(2, 0, -1), Vector3D.of(2, 1, 0));
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        ConvexArea area = ConvexArea.fromVertexLoop(
+                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+
+        SubPlane sp = new SubPlane(plane, RegionBSPTree2D.fromConvexArea(area));
+
+        Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(-1, 1, 1);
+
+        // act
+        SubPlane result = sp.transform(transform);
+
+        // assert
+        Assert.assertNotSame(sp, result);
+
+        Plane resultPlane = result.getPlane();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_Z, resultPlane.getNormal(), TEST_EPS);
+
+        checkPoints(result, RegionLocation.INSIDE, Vector3D.of(-0.25, 0.25, 1));
+        checkPoints(result, RegionLocation.OUTSIDE, Vector3D.of(0.25, 0.25, 0), Vector3D.of(0.25, 0.25, 2));
+
+        checkPoints(result, RegionLocation.BOUNDARY,
+                Vector3D.of(-1, 0, 1), Vector3D.of(0, 1, 1), Vector3D.of(0, 0, 1));
+    }
+
+    @Test
+    public void testBuilder() {
+        // arrange
+        Plane mainPlane = Plane.fromPointAndPlaneVectors(
+                Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+        SubPlane.SubPlaneBuilder builder = new SubPlane.SubPlaneBuilder(mainPlane);
+
+        ConvexArea a = ConvexArea.fromVertexLoop(
+                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
+        ConvexArea b = ConvexArea.fromVertexLoop(
+                Arrays.asList(Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.PLUS_Y), TEST_PRECISION);
+
+        Plane closePlane = Plane.fromPointAndPlaneVectors(
+                Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.PLUS_Y, TEST_PRECISION);
+
+        // act
+        builder.add(ConvexSubPlane.fromConvexArea(closePlane, a));
+        builder.add(new SubPlane(closePlane, RegionBSPTree2D.fromConvexArea(b)));
+
+        SubPlane result = builder.build();
+
+        // assert
+        Assert.assertFalse(result.isFull());
+        Assert.assertFalse(result.isEmpty());
+        Assert.assertTrue(result.isFinite());
+        Assert.assertFalse(result.isInfinite());
+
+        checkPoints(result, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 1));
+        checkPoints(result, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0.5, 1), Vector3D.of(2, 0.5, 1),
+                Vector3D.of(0.5, -1, 1), Vector3D.of(0.5, 2, 1));
+        checkPoints(result, RegionLocation.BOUNDARY,
+                Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1),
+                Vector3D.of(1, 1, 1), Vector3D.of(0, 1, 1));
+    }
+
+    @Test
+    public void testSubPlaneAddMethods_validatesPlane() {
+        // arrange
+        SubPlane sp = new SubPlane(XY_PLANE, false);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            sp.add(ConvexSubPlane.fromConvexArea(
+                    Plane.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_X, TEST_PRECISION),
+                    ConvexArea.full()));
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            sp.add(new SubPlane(
+                    Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION),
+                    false));
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testBuilder_addUnknownType() {
+        // arrange
+        SubPlane.SubPlaneBuilder sp = new SubPlane.SubPlaneBuilder(XY_PLANE);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            sp.add(new StubSubPlane(XY_PLANE));
+        }, IllegalArgumentException.class);
     }
 
     private static void checkPoints(SubPlane sp, RegionLocation loc, Vector3D ... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected subplane location for point " + pt, loc, sp.classify(pt));
+        }
+    }
+
+    private static class StubSubPlane extends AbstractSubPlane<RegionBSPTree2D> implements SubHyperplane<Vector3D> {
+
+        private static final long serialVersionUID = 1L;
+
+        StubSubPlane(Plane plane) {
+            super(plane);
+        }
+
+        @Override
+        public Split<? extends SubHyperplane<Vector3D>> split(Hyperplane<Vector3D> splitter) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public SubHyperplane<Vector3D> transform(Transform<Vector3D> transform) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<? extends ConvexSubHyperplane<Vector3D>> toConvex() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public HyperplaneBoundedRegion<Vector2D> getSubspaceRegion() {
+            throw new UnsupportedOperationException();
         }
     }
 }
