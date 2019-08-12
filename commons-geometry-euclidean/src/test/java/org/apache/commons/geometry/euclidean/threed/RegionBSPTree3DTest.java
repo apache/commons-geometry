@@ -16,10 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,6 +31,121 @@ public class RegionBSPTree3DTest {
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testCtor_default() {
+        // act
+        RegionBSPTree3D tree = new RegionBSPTree3D();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+    }
+
+    @Test
+    public void testCtor_boolean() {
+        // act
+        RegionBSPTree3D a = new RegionBSPTree3D(true);
+        RegionBSPTree3D b = new RegionBSPTree3D(false);
+
+        // assert
+        Assert.assertTrue(a.isFull());
+        Assert.assertFalse(a.isEmpty());
+
+        Assert.assertFalse(b.isFull());
+        Assert.assertTrue(b.isEmpty());
+    }
+
+    @Test
+    public void testEmpty() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+
+        Assert.assertNull(tree.getBarycenter());
+        Assert.assertEquals(0.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+    }
+
+    @Test
+    public void testFull() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertNull(tree.getBarycenter());
+        GeometryTestUtils.assertPositiveInfinity(tree.getSize());
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+    }
+
+    @Test
+    public void testRect_deltaValues_positive() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
+                Vector3D.of(0.5, -1, 0.5), Vector3D.of(0.5, 2, 0.5),
+                Vector3D.of(0.5, 0.5, -1), Vector3D.of(0.5, 0.5, 2));
+    }
+
+    @Test
+    public void testRect_deltaValues_negative() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, -1, -1, -1, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, -0.5), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(-0.5, -0.5, -0.5));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-2, -0.5, -0.5), Vector3D.of(1, -0.5, -0.5),
+                Vector3D.of(-0.5, -2, -0.5), Vector3D.of(-0.5, 1, -0.5),
+                Vector3D.of(-0.5, -0.5, -2), Vector3D.of(-0.5, -0.5, 1));
+    }
+
+    @Test
+    public void testRect_givenPoints() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(1, 0, 0), Vector3D.of(2, 2, 1), TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 1, 0.5), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(1.5, 1, 0.5));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(0.5, 1, 0.5), Vector3D.of(2.5, 1, 0.5),
+                Vector3D.of(1.5, -1, 0.5), Vector3D.of(1.5, 3, 0.5),
+                Vector3D.of(1.5, 1, -0.5), Vector3D.of(1.5, 1, 1.5));
+    }
 
     // GEOMETRY-59
     @Test

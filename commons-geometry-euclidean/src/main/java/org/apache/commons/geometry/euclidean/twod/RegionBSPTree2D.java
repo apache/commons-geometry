@@ -277,7 +277,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return tree;
     }
 
-    /** Construct a bsp tree representing an axis-oriented rectangular region. The region
+    /** Construct a BSP tree representing an axis-oriented rectangular region. The region
      * is constructed by taking {@code pt} as one corner of the region and adding {@code xDelta}
      * and {@code yDelta} to its components to create the opposite corner. If {@code xDelta}
      * and {@code yDelta} are both positive, then the constructed rectangle will have {@code pt}
@@ -292,7 +292,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @param xDelta distance to move along the x axis to place the other points in the
      *      rectangle; this value may be negative, in which case {@code pt} will lie
      *      on the right side of the constructed rectangle
-     * @param yDelta distance to move laong the y axis to place the other points in the
+     * @param yDelta distance to move along the y axis to place the other points in the
      *      rectangle; this value may be negative, in which case {@code pt} will lie
      *      on the top of the rectangle
      * @param precision precision context to use for floating point comparisons
@@ -306,7 +306,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return rect(pt, Vector2D.of(pt.getX() + xDelta, pt.getY() + yDelta), precision);
     }
 
-    /** Construct a bsp tree representing an axis-oriented rectangular region. The points {@code a} and {@code b}
+    /** Construct a BSP tree representing an axis-oriented rectangular region. The points {@code a} and {@code b}
      * are taken to represent opposite corner points in the rectangle and may be specified in any order.
      *
      * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
@@ -346,8 +346,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         final RegionBSPTree2D tree = empty();
         RegionNode2D node = tree.getRoot();
 
-        // construct the tree by directly setting the node cut subhyperplanes so that
-        // we can represent areas with zero size
+        // construct the tree by directly setting the node cut subhyperplanes
         tree.cutNode(node, bottomLine.span());
         node = node.getMinus();
 
