@@ -204,6 +204,31 @@ public class ConvexSubPlaneTest {
     }
 
     @Test
+    public void testReverse() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 0, 1);
+        Vector3D p2 = Vector3D.of(2, 0, 1);
+        Vector3D p3 = Vector3D.of(1, 1, 1);
+
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
+
+        // act
+        ConvexSubPlane reversed = sp.reverse();
+
+        // assert
+        Assert.assertEquals(sp.getPlane().reverse(), reversed.getPlane());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_Z, reversed.getPlane().getNormal(), TEST_EPS);
+
+        Assert.assertEquals(0.5, reversed.getSize(), TEST_EPS);
+
+        checkVertices(reversed, p1, p3, p2, p1);
+
+        checkPoints(reversed, RegionLocation.INSIDE, Vector3D.of(1.25, 0.25, 1));
+
+        checkPoints(reversed, RegionLocation.BOUNDARY, p1, p2, p3);
+    }
+
+    @Test
     public void testTransform_full() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
@@ -307,13 +332,13 @@ public class ConvexSubPlaneTest {
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
         ConvexSubPlane minus = split.getMinus();
-        Assert.assertEquals(1, minus.getSubspaceRegion().getBoundarySegments().size());
+        Assert.assertEquals(1, minus.getSubspaceRegion().getBoundaries().size());
         checkPoints(minus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_Y);
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.MINUS_X);
         checkPoints(minus, RegionLocation.OUTSIDE, Vector3D.PLUS_X);
 
         ConvexSubPlane plus = split.getPlus();
-        Assert.assertEquals(1, plus.getSubspaceRegion().getBoundarySegments().size());
+        Assert.assertEquals(1, plus.getSubspaceRegion().getBoundaries().size());
         checkPoints(plus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_Y);
         checkPoints(plus, RegionLocation.INSIDE, Vector3D.PLUS_X);
         checkPoints(plus, RegionLocation.OUTSIDE, Vector3D.MINUS_X);

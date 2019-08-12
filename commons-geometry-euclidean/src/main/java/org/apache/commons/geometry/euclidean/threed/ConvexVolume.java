@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 
@@ -84,6 +86,20 @@ public class ConvexVolume implements ConvexHyperplaneBoundedRegion<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Split<ConvexVolume> split(final Hyperplane<Vector3D> splitter) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ConvexSubHyperplane<Vector3D> trim(ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ConvexHyperplaneBoundedRegion<Vector3D> transform(Transform<Vector3D> transform) {
         // TODO Auto-generated method stub
         return null;
     }

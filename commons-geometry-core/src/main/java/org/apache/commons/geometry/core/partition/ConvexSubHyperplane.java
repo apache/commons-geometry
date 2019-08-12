@@ -25,6 +25,13 @@ import org.apache.commons.geometry.core.Transform;
  */
 public interface ConvexSubHyperplane<P extends Point<P>> extends SubHyperplane<P> {
 
+    /** Reverse the orientation of the hyperplane for this instance. The subhyperplane
+     * occupies the same locations in space but with a reversed orientation.
+     * @return a convex subhyperplane representing the same region but with the
+     *      opposite orientation.
+     */
+    ConvexSubHyperplane<P> reverse();
+
     /** {@inheritDoc}
      *
      * <p>The parts resulting from a split operation with a convex subhyperplane

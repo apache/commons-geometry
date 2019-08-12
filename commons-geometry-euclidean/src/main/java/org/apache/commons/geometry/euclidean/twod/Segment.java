@@ -162,11 +162,8 @@ public final class Segment extends AbstractSubLine<Interval>
         return (pt != null && segment.contains(pt)) ? pt : null;
     }
 
-    /** Return a line segment containing the same 2D points as this instance but
-     * with a line pointing in the opposite direction.
-     * @return a line segment containing the same points but with a line pointing
-     *      in the opposite direction.
-     */
+    /** {@inheritDoc} */
+    @Override
     public Segment reverse() {
         final Interval reversedInterval = interval.transform(Vector1D::negate);
         return fromInterval(getLine().reverse(), reversedInterval);

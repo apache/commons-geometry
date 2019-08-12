@@ -19,9 +19,11 @@ package org.apache.commons.geometry.euclidean.threed;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -68,6 +70,13 @@ public class RegionBSPTree3DTest {
         Assert.assertNull(tree.getBarycenter());
         Assert.assertEquals(0.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
 
     @Test
@@ -82,6 +91,252 @@ public class RegionBSPTree3DTest {
         Assert.assertNull(tree.getBarycenter());
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+    }
+
+    @Test
+    public void testHalfSpace() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.insert(ConvexSubPlane.fromConvexArea(
+                Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION), ConvexArea.full()));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
+        EuclideanTestUtils.assertPositiveInfinity(tree.getBoundarySize());
+        Assert.assertNull(tree.getBarycenter());
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100));
+        checkClassify(tree, RegionLocation.BOUNDARY, Vector3D.of(0, 0, 0));
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+    }
+
+    @Test
+    public void testInvertedRegion() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION);
+
+        // act
+        tree.complement();
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
+        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertNull(tree.getBarycenter());
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
+                Vector3D.of(-100, -100, -100),
+                Vector3D.of(100, 100, 100),
+                Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(0, 0, 0));
+    }
+
+    @Test
+    public void testUnitBox() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, -1, 0),
+                Vector3D.of(0, 1, 0),
+                Vector3D.of(0, 0, -1),
+                Vector3D.of(0, 0, 1),
+
+                Vector3D.of(1, 1, 1),
+                Vector3D.of(1, 1, -1),
+                Vector3D.of(1, -1, 1),
+                Vector3D.of(1, -1, -1),
+                Vector3D.of(-1, 1, 1),
+                Vector3D.of(-1, 1, -1),
+                Vector3D.of(-1, -1, 1),
+                Vector3D.of(-1, -1, -1));
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(0.5, 0, 0),
+                Vector3D.of(-0.5, 0, 0),
+                Vector3D.of(0, 0.5, 0),
+                Vector3D.of(0, -0.5, 0),
+                Vector3D.of(0, 0, 0.5),
+                Vector3D.of(0, 0, -0.5),
+
+                Vector3D.of(0.5, 0.5, 0.5),
+                Vector3D.of(0.5, 0.5, -0.5),
+                Vector3D.of(0.5, -0.5, 0.5),
+                Vector3D.of(0.5, -0.5, -0.5),
+                Vector3D.of(-0.5, 0.5, 0.5),
+                Vector3D.of(-0.5, 0.5, -0.5),
+                Vector3D.of(-0.5, -0.5, 0.5),
+                Vector3D.of(-0.5, -0.5, -0.5));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+
+                Vector3D.of(0.4, 0.4, 0.4),
+                Vector3D.of(0.4, 0.4, -0.4),
+                Vector3D.of(0.4, -0.4, 0.4),
+                Vector3D.of(0.4, -0.4, -0.4),
+                Vector3D.of(-0.4, 0.4, 0.4),
+                Vector3D.of(-0.4, 0.4, -0.4),
+                Vector3D.of(-0.4, -0.4, 0.4),
+                Vector3D.of(-0.4, -0.4, -0.4));
+    }
+
+    @Test
+    public void testTwoBoxes_disjoint() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(1.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(3, 0, 0));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(2, 0, 0));
+    }
+
+    @Test
+    public void testTwoBoxes_sharedSide() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(2, 0, 0));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 0, 0));
+    }
+
+    @Test
+    public void testTwoBoxes_separationLessThanTolerance() {
+        // arrange
+        double eps = 1e-6;
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, precision));
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5 + 1e-7, -0.5, -0.5), 1, 1, 1, precision));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(2.0, tree.getSize(), eps);
+        Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.41e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(2, 0, 0));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 0, 0));
+    }
+
+    @Test
+    public void testTwoBoxes_sharedEdge() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, 0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), tree.getBarycenter(), TEST_EPS);
+
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 0),
+                Vector3D.of(2, 1, 0));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 1, 0));
+    }
+
+    @Test
+    public void testTwoBoxes_sharedPoint() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, 0.5, 0.5), 1, 1, 1, TEST_PRECISION));
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0, 0),
+                Vector3D.of(1, 0, 0),
+                Vector3D.of(0, 1, 1),
+                Vector3D.of(2, 1, 1));
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(0, 0, 0),
+                Vector3D.of(1, 1, 1));
     }
 
     @Test
@@ -145,6 +400,26 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 1, 0.5), Vector3D.of(2.5, 1, 0.5),
                 Vector3D.of(1.5, -1, 0.5), Vector3D.of(1.5, 3, 0.5),
                 Vector3D.of(1.5, 1, -0.5), Vector3D.of(1.5, 1, 1.5));
+    }
+
+    @Test
+    public void testRect_invalidDimensions() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.rect(Vector3D.ZERO, 1e-20, 1, 1, TEST_PRECISION);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1e-20, 1, TEST_PRECISION);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1e-20, TEST_PRECISION);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.rect(Vector3D.ZERO, 0, 0, 0, TEST_PRECISION);
+        }, GeometryValueException.class);
     }
 
     // GEOMETRY-59

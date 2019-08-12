@@ -272,7 +272,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      */
     public static RegionBSPTree2D fromConvexArea(final ConvexArea area) {
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.insert(area.getBoundarySegments());
+        tree.insert(area.getBoundaries());
 
         return tree;
     }

@@ -211,7 +211,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D>, 
     @Override
     public TestLine reverse() {
         TestPoint2D pt = getOrigin();
-        return new TestLine(pt.getX(), pt.getY(), -directionX, -directionY);
+        return new TestLine(pt.getX(), pt.getY(), pt.getX() - directionX, pt.getY() - directionY);
     }
 
     /** {@inheritDoc} */

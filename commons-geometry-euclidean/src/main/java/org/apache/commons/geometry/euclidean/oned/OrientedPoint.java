@@ -489,6 +489,12 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
+        public SubOrientedPoint reverse() {
+            return new SubOrientedPoint(hyperplane.reverse());
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public int hashCode() {
             return Objects.hashCode(hyperplane);
         }

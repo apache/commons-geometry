@@ -545,6 +545,22 @@ public class OrientedPointTest {
     }
 
     @Test
+    public void testSubHyperplane_reverse() {
+        // arrange
+        OrientedPoint pt = OrientedPoint.createPositiveFacing(2.0, TEST_PRECISION);
+        SubOrientedPoint sub = pt.span();
+
+        // act
+        SubOrientedPoint result = sub.reverse();
+
+        // assert
+        Assert.assertEquals(2.0, result.getHyperplane().getLocation(), TEST_EPS);
+        Assert.assertFalse(result.getHyperplane().isPositiveFacing());
+
+        Assert.assertEquals(sub.getHyperplane(), result.reverse().getHyperplane());
+    }
+
+    @Test
     public void testSuHyperplane_hashCode() {
         // arrange
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);

@@ -181,6 +181,13 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serial
 
     /** {@inheritDoc} */
     @Override
+    public TestLineSegment reverse() {
+        TestLine rLine = line.reverse();
+        return new TestLineSegment(-end, -start, rLine);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Split<TestLineSegment> split(Hyperplane<TestPoint2D> splitter) {
         final TestLine splitterLine = (TestLine) splitter;
 

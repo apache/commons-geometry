@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Transform;
 
 /** Interface representing a convex, possibly infinite, region of space with
  * boundaries defined by hyperplanes.
@@ -24,6 +25,21 @@ import org.apache.commons.geometry.core.Point;
  * @see HyperplaneBoundedRegion
  */
 public interface ConvexHyperplaneBoundedRegion<P extends Point<P>> extends HyperplaneBoundedRegion<P> {
+
+    /** Transform this instance with the argument.
+     * @param transform transform to apply to this instance
+     * @return a new region representing the transformation of the current instance by
+     *      the argument
+     */
+    ConvexHyperplaneBoundedRegion<P> transform(Transform<P> transform);
+
+    /** Trim the given convex subhyperplane to the portion contained inside this instance.
+     * @param convexSubHyperplane convex subhyperplane to trim. Null is returned if the subhyperplane
+     * does not intersect the instance.
+     * @return portion of the argument that lies entirely inside the region represented by
+     *      this instance, or null if it does not intersect.
+     */
+    ConvexSubHyperplane<P> trim(ConvexSubHyperplane<P> convexSubHyperplane);
 
     /** {@inheritDoc}
     *

@@ -307,7 +307,9 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
             double size = Double.POSITIVE_INFINITY;
             Vector3D barycenter = null;
 
-            if (Double.isFinite(volumeSum)) {
+            // we only have a finite size if the volume sum is finite and positive
+            // (negative indicates a finite outside surrounded by an infinite inside)
+            if (Double.isFinite(volumeSum) && volumeSum > 0.0) {
                 // apply the 1/3 pyramid volume scaling factor
                 size = volumeSum / 3.0;
 
