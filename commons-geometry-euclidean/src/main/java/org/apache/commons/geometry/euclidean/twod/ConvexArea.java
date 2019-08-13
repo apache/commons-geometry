@@ -28,7 +28,6 @@ import org.apache.commons.geometry.core.partition.AbstractConvexHyperplaneBounde
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
@@ -71,7 +70,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     /** {@inheritDoc} */
     @Override
     public ConvexArea transform(final Transform<Vector2D> transform) {
-        return transformInteral(transform, this, ConvexArea::createNew);
+        return transformInternal(transform, this, Segment.class, ConvexArea::new);
     }
 
     /** {@inheritDoc} */
@@ -146,7 +145,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     /** {@inheritDoc} */
     @Override
     public Split<ConvexArea> split(final Hyperplane<Vector2D> splitter) {
-        return splitInternal(splitter, this, ConvexArea::createNew);
+        return splitInternal(splitter, this, Segment.class, ConvexArea::new);
     }
 
     /** Return an instance representing the full 2D area.
@@ -266,78 +265,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      *      lines.
      */
     public static ConvexArea fromBounds(final Iterable<Line> boundingLines) {
-        final List<Segment> segments = new ArrayList<>();
-
-        // cut each line by every other line in order to get the line segment boundaries
-        boolean notConvex = false;
-        int outerIdx = 0;
-        for (Line line : boundingLines) {
-            ++outerIdx;
-            Segment segment = line.span();
-
-            int innerIdx = 0;
-            for (Line splitter : boundingLines) {
-                ++innerIdx;
-
-                if (line != splitter) {
-                    Split<Segment> split = segment.split(splitter);
-
-                    if (split.getLocation() == SplitLocation.NEITHER) {
-                        if (line.similarOrientation(splitter)) {
-                            // two or more splitters are the equivalent; only
-                            // use the segment from the first one
-                            if (outerIdx > innerIdx) {
-                                segment = null;
-                            }
-                        }
-                        else {
-                            // two or more splitters are coincident and have opposite
-                            // orientations, meaning that no area is on the minus side
-                            // of both
-                            notConvex = true;
-                            break;
-                        }
-                    }
-                    else {
-                        segment = segment.split(splitter).getMinus();
-                    }
-
-                    if (segment == null) {
-                        break;
-                    }
-                }
-            }
-
-            if (notConvex) {
-                break;
-            }
-
-            if (segment != null) {
-                segments.add(segment);
-            }
-        }
-
-        if (outerIdx < 1) {
-            // no lines were given
-            return full();
-        }
-
-        if (segments.isEmpty() || notConvex) {
-            throw new GeometryException("Bounding lines do not produce a convex region: " + boundingLines);
-        }
-
-        return new ConvexArea(segments);
-    }
-
-    /** Create a new instance from the given list of boundaries. Each boundary is assumed to be of
-     * type {@link Segment}.
-     * @param boundaries boundaries to use when creating the new instance
-     * @return a new instance created from the given boundaries
-     */
-    private static ConvexArea createNew(List<? extends ConvexSubHyperplane<Vector2D>> boundaries) {
-        @SuppressWarnings("unchecked")
-        List<Segment> segments = (List<Segment>) boundaries;
-
-        return new ConvexArea(segments);
+        final List<Segment> segments = new ConvexRegionBoundaryBuilder<>(Segment.class).build(boundingLines);
+        return segments.isEmpty() ? full() : new ConvexArea(segments);
     }
 }

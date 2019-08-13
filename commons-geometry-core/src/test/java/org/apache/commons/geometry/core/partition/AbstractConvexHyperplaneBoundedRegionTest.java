@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
@@ -32,6 +34,17 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class AbstractConvexHyperplaneBoundedRegionTest {
+
+    @Test
+    public void testBoundaries_areUnmodifiable() {
+        // arrange
+        StubRegion region = new StubRegion(new ArrayList<>());
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            region.getBoundaries().add(TestLine.X_AXIS.span());
+        }, UnsupportedOperationException.class);
+    }
 
     @Test
     public void testFull() {
@@ -396,6 +409,82 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
     }
 
     @Test
+    public void testConvexRegionBoundaryBuilder_full() {
+        // act
+        StubRegion region = StubRegion.fromBounds(Collections.emptyList());
+
+        // assert
+        Assert.assertSame(StubRegion.FULL, region);
+    }
+
+    @Test
+    public void testConvexRegionBoundaryBuilder_singleLine() {
+        // act
+        StubRegion region = StubRegion.fromBounds(Arrays.asList(TestLine.Y_AXIS));
+
+        // assert
+        Assert.assertEquals(1, region.getBoundaries().size());
+
+        checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(-1, 0));
+        checkClassify(region, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
+        checkClassify(region, RegionLocation.OUTSIDE, new TestPoint2D(1, 0));
+    }
+
+    @Test
+    public void testConvexRegionBoundaryBuilder_multipleLines() {
+        // act
+        StubRegion region = StubRegion.fromBounds(Arrays.asList(
+                    TestLine.X_AXIS,
+                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, 1)),
+                    TestLine.Y_AXIS.reverse()
+                ));
+
+        // assert
+        Assert.assertEquals(3, region.getBoundaries().size());
+
+        checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(0.25, 0.25));
+
+        checkClassify(region, RegionLocation.BOUNDARY,
+                TestPoint2D.ZERO, new TestPoint2D(1, 0), new TestPoint2D(1, 0), new TestPoint2D(0.5, 0.5));
+
+        checkClassify(region, RegionLocation.OUTSIDE,
+                new TestPoint2D(-1, 0.5), new TestPoint2D(1, 0.5),
+                new TestPoint2D(0.5, 1), new TestPoint2D(0.5, -1));
+    }
+
+    @Test
+    public void testConvexRegionBoundaryBuilder_duplicateLines() {
+        // act
+        StubRegion region = StubRegion.fromBounds(Arrays.asList(
+                TestLine.Y_AXIS,
+                TestLine.Y_AXIS,
+                new TestLine(new TestPoint2D(0, 0), new TestPoint2D(0, 1)),
+                TestLine.Y_AXIS));
+
+        // assert
+        Assert.assertEquals(1, region.getBoundaries().size());
+
+        checkClassify(region, RegionLocation.INSIDE, new TestPoint2D(-1, 0));
+        checkClassify(region, RegionLocation.BOUNDARY, new TestPoint2D(0, 0));
+        checkClassify(region, RegionLocation.OUTSIDE, new TestPoint2D(1, 0));
+    }
+
+    @Test
+    public void testConvexRegionBoundaryBuilder() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            StubRegion.fromBounds(Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse()));
+        }, GeometryException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            StubRegion.fromBounds(Arrays.asList(
+                    TestLine.X_AXIS,
+                    TestLine.Y_AXIS,
+                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1))));
+        }, GeometryException.class);
+    }
+
+    @Test
     public void testToString() {
         // arrange
         StubRegion region = new StubRegion(Collections.emptyList());
@@ -418,18 +507,20 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
 
         private static final long serialVersionUID = 1L;
 
+        private static final StubRegion FULL = new StubRegion(Collections.emptyList());
+
         StubRegion(List<TestLineSegment> boundaries) {
             super(boundaries);
         }
 
         @Override
         public StubRegion transform(Transform<TestPoint2D> transform) {
-            return transformInteral(transform, this, StubRegion::createNew);
+            return transformInternal(transform, this, TestLineSegment.class, StubRegion::new);
         }
 
         @Override
         public Split<StubRegion> split(Hyperplane<TestPoint2D> splitter) {
-            return splitInternal(splitter, this, StubRegion::createNew);
+            return splitInternal(splitter, this, TestLineSegment.class, StubRegion::new);
         }
 
         @Override
@@ -452,9 +543,9 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
             throw new UnsupportedOperationException();
         }
 
-        @SuppressWarnings("unchecked")
-        private static StubRegion createNew(List<? extends ConvexSubHyperplane<TestPoint2D>> boundaries) {
-            return new StubRegion((List<TestLineSegment>) boundaries);
+        public static StubRegion fromBounds(Iterable<TestLine> boundingLines) {
+            final List<TestLineSegment> segments = new ConvexRegionBoundaryBuilder<>(TestLineSegment.class).build(boundingLines);
+            return segments.isEmpty() ? FULL : new StubRegion(segments);
         }
     }
 }

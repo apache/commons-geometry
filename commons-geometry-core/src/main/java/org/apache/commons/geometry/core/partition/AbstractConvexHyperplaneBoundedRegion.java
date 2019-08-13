@@ -26,8 +26,10 @@ import java.util.function.Function;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 
-/** Base class for convex hyperplane-bounded regions.
+/** Base class for convex hyperplane-bounded regions. This class provides generic implementations of many
+ * algorithms related to convex regions.
  * @param <P> Point implementation type
  * @param <S> Convex subhyperplane implementation type
  */
@@ -144,11 +146,12 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      * @param transform the transform to apply to the instance
      * @param thisInstance a reference to the current instance; this is passed as
      *      an argument in order to allow it to be a generic type
+     * @param subhpType the type used for the boundary subhyperplanes
      * @param factory function used to create new convex region instances
      * @return the result of the transform operation
      */
-    protected <T extends AbstractConvexHyperplaneBoundedRegion<P, S>> T transformInteral(final Transform<P> transform,
-            final T thisInstance, final Function<List<? extends ConvexSubHyperplane<P>>, T> factory) {
+    protected <T extends AbstractConvexHyperplaneBoundedRegion<P, S>> T transformInternal(final Transform<P> transform,
+            final T thisInstance, final Class<S> subhpType, final Function<List<S>, T> factory) {
 
         if (isFull()) {
             return thisInstance;
@@ -157,7 +160,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         final List<S> boundaries = getBoundaries();
 
         final int size = boundaries.size();
-        final List<ConvexSubHyperplane<P>> tBoundaries = new ArrayList<>(size);
+        final List<S> tBoundaries = new ArrayList<>(size);
 
         // determine if the hyperplanes should be reversed
         final S boundary = boundaries.get(0);
@@ -170,7 +173,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         if (reverseDirection) {
             tBoundary = tBoundary.reverse();
         }
-        tBoundaries.add(tBoundary);
+        tBoundaries.add(subhpType.cast(tBoundary));
 
         for (int i=1; i<boundaries.size(); ++i) {
             tBoundary = boundaries.get(i).transform(transform);
@@ -179,7 +182,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                 tBoundary = tBoundary.reverse();
             }
 
-            tBoundaries.add(tBoundary);
+            tBoundaries.add(subhpType.cast(tBoundary));
         }
 
         return factory.apply(tBoundaries);
@@ -189,15 +192,16 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      * @param splitter splitting hyperplane
      * @param thisInstance a reference to the current instance; this is passed as
      *      an argument in order to allow it to be a generic type
+     * @param subhpType the type used for the boundary subhyperplanes
      * @param factory function used to create new convex region instances
      * @return the result of the split operation
      */
     protected <T extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<T> splitInternal(final Hyperplane<P> splitter,
-            final T thisInstance, final Function<List<? extends ConvexSubHyperplane<P>>, T> factory) {
+            final T thisInstance, final Class<S> subhpType, final Function<List<S>, T> factory) {
 
         if (isFull() ) {
-            final T minus = factory.apply(Arrays.asList(splitter.span()));
-            final T plus = factory.apply(Arrays.asList(splitter.reverse().span()));
+            final T minus = factory.apply(Arrays.asList(subhpType.cast(splitter.span())));
+            final T plus = factory.apply(Arrays.asList(subhpType.cast(splitter.reverse().span())));
 
             return new Split<>(minus, plus);
         }
@@ -222,8 +226,8 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                 return new Split<>(null, thisInstance);
             }
 
-            final List<ConvexSubHyperplane<P>> minusBoundaries = new ArrayList<>();
-            final List<ConvexSubHyperplane<P>> plusBoundaries = new ArrayList<>();
+            final List<S> minusBoundaries = new ArrayList<>();
+            final List<S> plusBoundaries = new ArrayList<>();
 
             Split<? extends ConvexSubHyperplane<P>> split;
             ConvexSubHyperplane<P> minusBoundary;
@@ -236,16 +240,16 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                 plusBoundary = split.getPlus();
 
                 if (minusBoundary != null) {
-                    minusBoundaries.add(minusBoundary);
+                    minusBoundaries.add(subhpType.cast(minusBoundary));
                 }
 
                 if (plusBoundary != null) {
-                    plusBoundaries.add(plusBoundary);
+                    plusBoundaries.add(subhpType.cast(plusBoundary));
                 }
             }
 
-            minusBoundaries.add(trimmedSplitter);
-            plusBoundaries.add(trimmedSplitter.reverse());
+            minusBoundaries.add(subhpType.cast(trimmedSplitter));
+            plusBoundaries.add(subhpType.cast(trimmedSplitter.reverse()));
 
             return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
         }
@@ -260,5 +264,98 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             .append(boundaries);
 
         return sb.toString();
+    }
+
+    /** Internal class encapsulating the logic for building convex region boundaries from collections of
+     * hyperplanes.
+     * @param <P> Point implementation type
+     * @param <S> ConvexSubHyperplane implementation type
+     */
+    protected static class ConvexRegionBoundaryBuilder<P extends Point<P>, S extends ConvexSubHyperplane<P>> {
+
+        /** Convex subhyperplane implementation type. */
+        private final Class<S> subhyperplaneType;
+
+        /** Construct a new instance for building convex region boundaries with the given convex subhyperplane
+         * implementation type.
+         * @param subhyperplaneType Convex subhyperplane implementation type
+         */
+        public ConvexRegionBoundaryBuilder(final Class<S> subhyperplaneType) {
+            this.subhyperplaneType = subhyperplaneType;
+        }
+
+        /** Compute a list of convex subhyperplanes representing the boundaries of the convex region
+         * bounded by the given collection of hyperplanes.
+         * @param bounds hyperplanes defining the convex region
+         * @return a list of convex subhyperplanes representing the boundaries of the convex region
+         * @throws GeometryException if the given hyperplanes do not form a convex region
+         */
+        public List<S> build(final Iterable<? extends Hyperplane<P>> bounds) {
+
+            final List<S> boundaries = new ArrayList<>();
+
+            // cut each hyperplane by every other hyperplane in order to get the subplane boundaries
+            boolean notConvex = false;
+            int outerIdx = 0;
+            ConvexSubHyperplane<P> subhp;
+
+            for (Hyperplane<P> hp : bounds) {
+                ++outerIdx;
+                subhp = hp.span();
+
+                int innerIdx = 0;
+                for (Hyperplane<P> splitter : bounds) {
+                    ++innerIdx;
+
+                    if (hp != splitter) {
+                        Split<? extends ConvexSubHyperplane<P>> split = subhp.split(splitter);
+
+                        if (split.getLocation() == SplitLocation.NEITHER) {
+                            if (hp.similarOrientation(splitter)) {
+                                // two or more splitters are the equivalent; only
+                                // use the segment from the first one
+                                if (outerIdx > innerIdx) {
+                                    subhp = null;
+                                }
+                            }
+                            else {
+                                // two or more splitters are coincident and have opposite
+                                // orientations, meaning that no area is on the minus side
+                                // of both
+                                notConvex = true;
+                                break;
+                            }
+                        }
+                        else {
+                            subhp = subhp.split(splitter).getMinus();
+                        }
+
+                        if (subhp == null) {
+                            break;
+                        }
+                    }
+                    else if (outerIdx > innerIdx) {
+                        // this hyperplane is duplicated in the list; skip all but the
+                        // first insertion of its subhyperplane
+                        subhp = null;
+                        break;
+                    }
+                }
+
+                if (notConvex) {
+                    break;
+                }
+
+                if (subhp != null) {
+                    boundaries.add(subhyperplaneType.cast(subhp));
+                }
+            }
+
+            if (notConvex || (outerIdx > 0 && boundaries.isEmpty())) {
+                throw new GeometryException("Bounding hyperplanes do not produce a convex region: " + bounds);
+            }
+
+            return boundaries;
+        }
     }
 }

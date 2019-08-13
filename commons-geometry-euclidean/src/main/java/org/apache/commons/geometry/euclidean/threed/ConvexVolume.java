@@ -17,16 +17,35 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexHyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.exception.GeometryException;
+import org.apache.commons.geometry.core.partition.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
-public class ConvexVolume implements ConvexHyperplaneBoundedRegion<Vector3D> {
+/** Class representing a finite or infinite convex volume in Euclidean 3D space.
+ * The boundaries of this area, if any, are composed of convex subplanes.
+ */
+public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane> {
+
+    /** Serializable UID */
+    private static final long serialVersionUID = 20190811L;
+
+    /** Instance representing the full 3D volume. */
+    private static ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
+
+    /** Simple constructor. Callers are responsible for ensuring that the given path
+     * represents the boundary of a convex area. No validation is performed.
+     * @param boundaries the boundaries of the convex area
+     */
+    private ConvexVolume(final List<ConvexSubPlane> boundaries) {
+        super(boundaries);
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -36,71 +55,131 @@ public class ConvexVolume implements ConvexHyperplaneBoundedRegion<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getSize() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+        if (isFull()) {
+            return Double.POSITIVE_INFINITY;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public double getBoundarySize() {
-        // TODO Auto-generated method stub
-        return 0;
+        double volumeSum = 0.0;
+
+        for (ConvexSubPlane subplane : getBoundaries()) {
+            if (subplane.isInfinite()) {
+                return Double.POSITIVE_INFINITY;
+            }
+
+            final Plane plane = subplane.getPlane();
+            final ConvexArea subarea = subplane.getSubspaceRegion();
+
+            final Vector3D facetBarycenter = subplane.getHyperplane().toSpace(
+                    subarea.getBarycenter());
+
+
+            volumeSum += subarea.getSize() * facetBarycenter.dot(plane.getNormal());
+        }
+
+        return volumeSum / 3.0;
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector3D getBarycenter() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        if (isFull()) {
+            return null;
+        }
 
-    /** {@inheritDoc} */
-    @Override
-    public RegionLocation classify(Vector3D pt) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        double volumeSum = 0.0;
 
-    /** {@inheritDoc} */
-    @Override
-    public Vector3D project(Vector3D pt) {
-        // TODO Auto-generated method stub
-        return null;
+        double sumX = 0.0;
+        double sumY = 0.0;
+        double sumZ = 0.0;
+
+        for (ConvexSubPlane subplane : getBoundaries()) {
+            if (subplane.isInfinite()) {
+                return null;
+            }
+
+            final Plane plane = subplane.getPlane();
+            final ConvexArea subarea = subplane.getSubspaceRegion();
+
+            final Vector3D facetBarycenter = subplane.getHyperplane().toSpace(
+                    subarea.getBarycenter());
+
+            double scaledVolume = subarea.getSize() * facetBarycenter.dot(plane.getNormal());
+
+            volumeSum += scaledVolume;
+
+            sumX += scaledVolume * facetBarycenter.getX();
+            sumY += scaledVolume * facetBarycenter.getY();
+            sumZ += scaledVolume * facetBarycenter.getZ();
+        }
+
+        double size = volumeSum / 3.0;
+
+        // Since the volume we used when adding together the facet contributions
+        // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
+        // of 3/4 to adjust for the actual barycenter position in each pyramid.
+        final double barycenterScale = 1.0 / (4 * size);
+        return Vector3D.of(
+                sumX * barycenterScale,
+                sumY * barycenterScale,
+                sumZ * barycenterScale);
     }
 
     /** {@inheritDoc} */
     @Override
     public Split<ConvexVolume> split(final Hyperplane<Vector3D> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+        return splitInternal(splitter, this, ConvexSubPlane.class, ConvexVolume::new);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<Vector3D> trim(ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
-        // TODO Auto-generated method stub
-        return null;
+    public ConvexSubPlane trim(final ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
+        return (ConvexSubPlane) super.trim(convexSubHyperplane);
     }
 
     /** {@inheritDoc} */
     @Override
-    public ConvexHyperplaneBoundedRegion<Vector3D> transform(Transform<Vector3D> transform) {
-        // TODO Auto-generated method stub
-        return null;
+    public ConvexVolume transform(final Transform<Vector3D> transform) {
+        return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
+    }
+
+    /** Return an instance representing the full 3D volume.
+     * @return an instance representing the full 3D volume.
+     */
+    public static ConvexVolume full() {
+        return FULL;
+    }
+
+    /** Create a convex volume formed by the intersection of the negative half-spaces of the
+     * given bounding planes. The returned instance represents the volume that is on the
+     * minus side of all of the given plane. Note that this method does not support volumes
+     * of zero size (ie, infinitely thin volumes or points.)
+     * @param boundingPlanes planes used to define the convex area
+     * @return a new convex volume instance representing the volume on the minus side of all
+     *      of the bounding plane or an instance representing the full space if the collection
+     *      is empty
+     * @throws GeometryException if the given set of bounding planes do not form a convex vplume,
+     *      meaning that there is no region that is on the minus side of all of the bounding
+     *      planes.
+     */
+    public static ConvexVolume fromBounds(final Plane ... planes) {
+        return fromBounds(Arrays.asList(planes));
+    }
+
+    /** Create a convex volume formed by the intersection of the negative half-spaces of the
+     * given bounding planes. The returned instance represents the volume that is on the
+     * minus side of all of the given plane. Note that this method does not support volumes
+     * of zero size (ie, infinitely thin volumes or points.)
+     * @param boundingPlanes planes used to define the convex area
+     * @return a new convex volume instance representing the volume on the minus side of all
+     *      of the bounding plane or an instance representing the full space if the collection
+     *      is empty
+     * @throws GeometryException if the given set of bounding planes do not form a convex vplume,
+     *      meaning that there is no region that is on the minus side of all of the bounding
+     *      planes.
+     */
+    public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
+        final List<ConvexSubPlane> subplanes = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class).build(boundingPlanes);
+        return subplanes.isEmpty() ? full() : new ConvexVolume(subplanes);
     }
 }
