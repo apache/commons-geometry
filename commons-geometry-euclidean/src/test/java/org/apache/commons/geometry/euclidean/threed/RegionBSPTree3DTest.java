@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -337,6 +339,74 @@ public class RegionBSPTree3DTest {
         checkClassify(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 1, 1));
+    }
+
+    @Test
+    public void testToConvex_empty() {
+        // act
+        List<ConvexVolume> result = RegionBSPTree3D.empty().toConvex();
+
+        // assert
+        Assert.assertEquals(0, result.size());
+    }
+
+    @Test
+    public void testToConvex_singleBox() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(1, 2, 3), 1, 1, 1, TEST_PRECISION);
+
+        // act
+        List<ConvexVolume> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(1, result.size());
+
+        ConvexVolume vol = result.get(0);
+        Assert.assertEquals(1, vol.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), vol.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testToConvex_multipleBoxes() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(4, 5, 6), 1, 1, 1, TEST_PRECISION);
+        tree.union(RegionBSPTree3D.rect(Vector3D.ZERO, 2, 1, 1, TEST_PRECISION));
+
+        // act
+        List<ConvexVolume> result = tree.toConvex();
+
+        // assert
+        Assert.assertEquals(2, result.size());
+
+        boolean smallFirst = result.get(0).getSize() < result.get(1).getSize();
+
+        ConvexVolume small = smallFirst ? result.get(0) : result.get(1);
+        ConvexVolume large = smallFirst ? result.get(1) : result.get(0);
+
+        Assert.assertEquals(1, small.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4.5, 5.5, 6.5), small.getBarycenter(), TEST_EPS);
+
+        Assert.assertEquals(2, large.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0.5, 0.5), large.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetNodeRegion() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        // act/assert
+        ConvexVolume rootVol = tree.getRoot().getNodeRegion();
+        GeometryTestUtils.assertPositiveInfinity(rootVol.getSize());
+        Assert.assertNull(rootVol.getBarycenter());
+
+        ConvexVolume plusVol = tree.getRoot().getPlus().getNodeRegion();
+        GeometryTestUtils.assertPositiveInfinity(plusVol.getSize());
+        Assert.assertNull(plusVol.getBarycenter());
+
+        ConvexVolume centerVol = tree.findNode(Vector3D.of(0.5, 0.5, 0.5)).getNodeRegion();
+        Assert.assertEquals(1, centerVol.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), centerVol.getBarycenter(), TEST_EPS);
     }
 
     @Test

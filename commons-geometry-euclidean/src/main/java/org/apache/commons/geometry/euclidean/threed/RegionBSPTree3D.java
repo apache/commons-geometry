@@ -57,8 +57,34 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
     /** {@inheritDoc} */
     @Override
     public List<ConvexVolume> toConvex() {
-        // TODO Auto-generated method stub
-        return null;
+        final List<ConvexVolume> result = new ArrayList<>();
+
+        toConvexRecursive(getRoot(), ConvexVolume.full(), result);
+
+        return result;
+    }
+
+    /** Recursive method to compute the convex volumes of all inside leaf nodes in the subtree rooted at the given
+     * node. The computed convex volumes are added to the given list.
+     * @param node root of the subtree to compute the convex volumes for
+     * @param nodeArea the convex volume for the current node; this will be split by the node's cut hyperplane to
+     *      form the convex volumes for any child nodes
+     * @param result list containing the results of the computation
+     */
+    private void toConvexRecursive(final RegionNode3D node, final ConvexVolume nodeVolume, final List<ConvexVolume> result) {
+        if (node.isLeaf()) {
+            // base case; only add to the result list if the node is inside
+            if (node.isInside()) {
+                result.add(nodeVolume);
+            }
+        }
+        else {
+            // recurse
+            Split<ConvexVolume> split = nodeVolume.split(node.getCutHyperplane());
+
+            toConvexRecursive(node.getMinus(), split.getMinus(), result);
+            toConvexRecursive(node.getPlus(), split.getPlus(), result);
+        }
     }
 
     /** {@inheritDoc} */
@@ -82,6 +108,27 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         accept(visitor);
 
         return visitor.getRegionSizeProperties();
+    }
+
+    /** Compute the region represented by the given node.
+     * @param node the node to compute the region for
+     * @return the region represented by the given node
+     */
+    private ConvexVolume computeNodeRegion(final RegionNode3D node) {
+        ConvexVolume volume = ConvexVolume.full();
+
+        RegionNode3D child = node;
+        RegionNode3D parent;
+
+        while ((parent = child.getParent()) != null) {
+            Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
+
+            volume = child.isMinus() ? split.getMinus() : split.getPlus();
+
+            child = parent;
+        }
+
+        return volume;
     }
 
     /** {@inheritDoc} */
@@ -251,8 +298,7 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
          * @return the region represented by this node
          */
         public ConvexVolume getNodeRegion() {
-            // TODO
-            return null;
+            return ((RegionBSPTree3D) getTree()).computeNodeRegion(this);
         }
 
         /** {@inheritDoc} */
