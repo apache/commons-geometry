@@ -84,6 +84,20 @@ public class SegmentTest {
     }
 
     @Test
+    public void testFromPointAndDirection() {
+        // act
+        Segment seg = Segment.fromPointAndDirection(Vector2D.of(1, 3), Vector2D.PLUS_Y, TEST_PRECISION);
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), seg.getStartPoint(), TEST_EPS);
+        Assert.assertNull(seg.getEndPoint());
+
+        Line line = seg.getLine();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), line.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y, line.getDirection(), TEST_EPS);
+    }
+
+    @Test
     public void testFromInterval_intervalArg_finite() {
         // arrange
         DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);

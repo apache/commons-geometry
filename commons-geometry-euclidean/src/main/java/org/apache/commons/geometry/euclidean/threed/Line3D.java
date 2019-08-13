@@ -23,6 +23,8 @@ import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** Class representing a line in 3D space.
@@ -96,6 +98,45 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
         return fromPoints(p1, p2, precision);
     }
 
+    /** Get an object containing the current line transformed by the argument along with a
+     * 1D transform that can be applied to subspace points. The subspace transform transforms
+     * subspace points such that their 3D location in the transformed line is the same as their
+     * 3D location in the original line after the 3D transform is applied. For example, consider
+     * the code below:
+     * <pre>
+     *      SubspaceTransform st = line.subspaceTransform(transform);
+     *
+     *      Vector1D subPt = Vector1D.of(1);
+     *
+     *      Vector3D a = transform.apply(line.toSpace(subPt)); // transform in 3D space
+     *      Vector3D b = st.getLine().toSpace(st.getTransform().apply(subPt)); // transform in 1D space
+     * </pre>
+     * At the end of execution, the points {@code a} (which was transformed using the original
+     * 3D transform) and {@code b} (which was transformed in 1D using the subspace transform)
+     * are equivalent.
+     *
+     * @param transform the transform to apply to this instance
+     * @return an object containing the transformed line along with a transform that can be applied
+     *      to subspace points
+     * @see #transform(Transform)
+     */
+    public SubspaceTransform subspaceTransform(final Transform<Vector3D> transform) {
+        final Vector3D p1 = transform.apply(origin);
+        final Vector3D p2 = transform.apply(origin.add(direction));
+
+        final Line3D tLine = fromPoints(p1, p2, precision);
+
+        final Vector1D tSubspaceOrigin = tLine.toSubspace(p1);
+        final Vector1D tSubspaceDirection = tSubspaceOrigin.vectorTo(tLine.toSubspace(p2));
+
+        final double translation = tSubspaceOrigin.getX();
+        final double scale = tSubspaceDirection.getX();
+
+        final AffineTransformMatrix1D subspaceTransform = AffineTransformMatrix1D.of(scale, translation);
+
+        return new SubspaceTransform(tLine, subspaceTransform);
+    }
+
     /** Get the abscissa of the given point on the line. The abscissa represents
      * the distance the projection of the point on the line is from the line's
      * origin point (the point on the line closest to the origin of the
@@ -127,7 +168,17 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
     /** {@inheritDoc} */
     @Override
     public Vector3D toSpace(Vector1D pt) {
-        return pointAt(pt.getX());
+        return toSpace(pt.getX());
+    }
+
+    /** Get the 3 dimensional point at the given abscissa position
+     * on the line.
+     * @param abscissa location on the line
+     * @return the 3 dimensional point at the given abscissa position
+     *      on the line
+     */
+    public Vector3D toSpace(final double abscissa) {
+        return pointAt(abscissa);
     }
 
     /** Check if the instance is similar to another line.
@@ -217,8 +268,61 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
      * @return a new infinite segment representing the entire line
      */
     public Segment3D span() {
-        // TODO
-        return null;
+        return Segment3D.fromInterval(this, Interval.full());
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param interval interval representing the 1D region for the line segment
+     * @return a new line segment on this line
+     */
+    public Segment3D segment(final Interval interval) {
+        return Segment3D.fromInterval(this, interval);
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param a first 1D location for the interval
+     * @param b second 1D location for the interval
+     * @return a new line segment on this line
+     */
+    public Segment3D segment(final double a, final double b) {
+        return Segment3D.fromInterval(this, a, b);
+    }
+
+    /** Create a new line segment between the projections of the two
+     * given points onto this line.
+     * @param a first point
+     * @param b second point
+     * @return a new line segment on this line
+     */
+    public Segment3D segment(final Vector3D a, final Vector3D b) {
+        return Segment3D.fromInterval(this, toSubspace(a), toSubspace(b));
+    }
+
+    /** Create a new line segment that starts at infinity and continues along
+     * the line up to the projection of the given point.
+     * @param pt point defining the end point of the line segment; the end point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public Segment3D segmentTo(final Vector3D pt) {
+        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    }
+
+    /** Create a new line segment that starts at the projection of the given point
+     * and continues in the direction of the line to infinity, similar to a ray.
+     * @param pt point defining the start point of the line segment; the start point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public Segment3D segmentFrom(final Vector3D pt) {
+        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
+    }
+
+    /** Create a new, empty subline based on this line.
+     * @return a new, empty subline based on this line
+     */
+    public SubLine3D subline() {
+        return new SubLine3D(this);
     }
 
     /** {@inheritDoc} */
@@ -286,5 +390,44 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
         final Vector3D origin = pt.reject(normDirection);
 
         return new Line3D(origin, normDirection, precision);
+    }
+
+    /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace
+     * transform produces the equivalent of the 3D transform in 1D.
+     */
+    public static final class SubspaceTransform implements Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190809L;
+
+        /** The transformed line. */
+        private final Line3D line;
+
+        /** The subspace transform instance. */
+        private final AffineTransformMatrix1D transform;
+
+        /** Simple constructor.
+         * @param line the transformed line
+         * @param transform 1D transform that can be applied to subspace points
+         */
+        public SubspaceTransform(final Line3D line, final AffineTransformMatrix1D transform) {
+            this.line = line;
+            this.transform = transform;
+        }
+
+        /** Get the transformed line instance.
+         * @return the transformed line instance
+         */
+        public Line3D getLine() {
+            return line;
+        }
+
+        /** Get the 1D transform that can be applied to subspace points. This transform can be used
+         * to perform the equivalent of the 3D transform in 1D space.
+         * @return the subspace transform instance
+         */
+        public AffineTransformMatrix1D getTransform() {
+            return transform;
+        }
     }
 }

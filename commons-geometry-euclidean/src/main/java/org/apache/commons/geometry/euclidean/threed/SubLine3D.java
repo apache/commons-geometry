@@ -16,12 +16,68 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-public class SubLine3D extends AbstractSubLine3D {
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
+import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
+
+/** Class representing an arbitrary region of a 3 dimensional line. This class can represent
+ * both convex and non-convex regions of its underlying line.
+ *
+ * <p>This class is mutable and <em>not</em> thread safe.</p>
+ */
+public final class SubLine3D extends AbstractSubLine3D<RegionBSPTree1D> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190702L;
 
-    private SubLine3D(Line3D line) {
+    /** The 1D region representing the area on the line */
+    private final RegionBSPTree1D region;
+
+    /** Construct a new, empty subline for the given line.
+     * @param line line defining the subline
+     */
+    public SubLine3D(final Line3D line) {
+        this(line, false);
+    }
+
+    /** Construct a new subline for the given line. If {@code full}
+     * is true, then the subline will cover the entire line; otherwise,
+     * it will be empty.
+     * @param line line defining the subline
+     * @param full if true, the subline will cover the entire space;
+     *      otherwise it will be empty
+     */
+    public SubLine3D(final Line3D line, boolean full) {
+        this(line, new RegionBSPTree1D(full));
+    }
+
+    /** Construct a new instance from its defining line and subspace region.
+     * @param line line defining the subline
+     * @param region subspace region for the subline
+     */
+    public SubLine3D(final Line3D line, final RegionBSPTree1D region) {
         super(line);
+
+        this.region = region;
+    }
+
+    /** Transform this instance.
+     * @param transform the transform to apply
+     * @return a new, transformed instance
+     */
+    public SubLine3D transform(final Transform<Vector3D> transform) {
+        final SubspaceTransform st = getLine().subspaceTransform(transform);
+
+        final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
+        tRegion.copy(region);
+        tRegion.transform(st.getTransform());
+
+        return new SubLine3D(st.getLine(), tRegion);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionBSPTree1D getSubspaceRegion() {
+        return region;
     }
 }

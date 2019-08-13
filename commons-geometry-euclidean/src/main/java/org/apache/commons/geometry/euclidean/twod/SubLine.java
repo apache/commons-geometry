@@ -72,7 +72,7 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements S
 
     /** {@inheritDoc} */
     @Override
-    public SubLine transform(Transform<Vector2D> transform) {
+    public SubLine transform(final Transform<Vector2D> transform) {
         final SubspaceTransform st = getLine().subspaceTransform(transform);
 
         final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();

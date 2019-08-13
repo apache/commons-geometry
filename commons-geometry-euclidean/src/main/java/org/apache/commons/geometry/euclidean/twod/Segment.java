@@ -219,6 +219,20 @@ public final class Segment extends AbstractSubLine<Interval>
         return fromPointsOnLine(line, start, end);
     }
 
+    /** Construct a line segment from a starting point and a direction that the line should extend to
+     * infinity from. This is equivalent to constructing a ray.
+     * @param start start point for the segment
+     * @param direction direction that the line should extend from the segment
+     * @param precision precision context used to determine floating point equality
+     * @return a new line segment starting from the given point and extending to infinity in the
+     *      specified direction
+     */
+    public static Segment fromPointAndDirection(final Vector2D start, final Vector2D direction,
+            final DoublePrecisionContext precision) {
+        final Line line = Line.fromPointAndDirection(start, direction, precision);
+        return line.segmentFrom(start);
+    }
+
     /** Create a line segment from an underlying line and a 1D interval on the line.
      * @param line the line that the line segment will belong to
      * @param interval 1D interval on the line
