@@ -56,6 +56,24 @@ public class ConvexAreaTest {
     }
 
     @Test
+    public void testToTree() {
+        // arrange
+        ConvexArea area = ConvexArea.fromBounds(
+                    Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(1, 1), Geometry.PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.MINUS_HALF_PI, TEST_PRECISION)
+                );
+
+        // act
+        RegionBSPTree2D tree = area.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
     public void testTransform_full() {
         // arrange
         Transform<Vector2D> transform = v -> v.multiply(3);

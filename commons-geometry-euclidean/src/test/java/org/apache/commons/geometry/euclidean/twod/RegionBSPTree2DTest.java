@@ -107,12 +107,6 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFromConvexArea() {
-        // arrange
-        // TODO
-    }
-
-    @Test
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -479,7 +473,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_full() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act/assert
@@ -494,7 +488,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_empty() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act/assert
@@ -509,7 +503,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_halfSpace() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
 
@@ -537,7 +531,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_complementedHalfSpace() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.getRoot().cut(X_AXIS);
 
@@ -567,7 +561,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_quadrant() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
             .getMinus().cut(Y_AXIS);
@@ -604,7 +598,7 @@ public class RegionBSPTree2DTest {
 
     @Test
     public void testGeometricProperties_complementedQuadrant() {
-        // arrrange
+        // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
         tree.getRoot().cut(X_AXIS)
             .getMinus().cut(Y_AXIS);

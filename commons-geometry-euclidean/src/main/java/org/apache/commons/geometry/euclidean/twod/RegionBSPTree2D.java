@@ -396,7 +396,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
 
         /** Serializable UID */
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 20190811L;
 
         /** Simple constructor.
          * @param point the point to project onto the region's boundary

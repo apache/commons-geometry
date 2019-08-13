@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.Split;
@@ -65,6 +66,35 @@ public class ConvexVolumeTest {
         // assert
         Assert.assertEquals(1, result.size());
         Assert.assertSame(vol, result.get(0));
+    }
+
+    @Test
+    public void testTOTree() {
+        // arrange
+        ConvexVolume volume = ConvexVolume.fromBounds(
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Z, TEST_PRECISION),
+
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Z, TEST_PRECISION)
+                );
+
+        // act
+        RegionBSPTree3D tree = volume.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
+                Vector3D.of(0.5, -1, 0.5), Vector3D.of(0.5, 2, 0.5),
+                Vector3D.of(0.5, 0.5, -1), Vector3D.of(0.5, 0.5, 2));
+        checkClassify(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
+        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
     }
 
     @Test
@@ -203,9 +233,9 @@ public class ConvexVolumeTest {
         return ConvexVolume.fromBounds(planes);
     }
 
-    private static void checkClassify(ConvexVolume vol, RegionLocation loc, Vector3D ... pts) {
+    private static void checkClassify(Region<Vector3D> region, RegionLocation loc, Vector3D ... pts) {
         for (Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, vol.classify(pt));
+            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }
     }
 }

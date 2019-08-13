@@ -17,8 +17,10 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -95,6 +97,17 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
 
     /** {@inheritDoc} */
     @Override
+    public Vector3D project(Vector3D pt) {
+        // use our custom projector so that we can disambiguate points that are
+        // actually equidistant from the target point
+        final BoundaryProjector3D projector = new BoundaryProjector3D(pt);
+        accept(projector);
+
+        return projector.getProjected();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected RegionSizeProperties<Vector3D> computeRegionSizeProperties() {
         // handle simple cases
         if (isFull()) {
@@ -149,6 +162,17 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
      */
     public static RegionBSPTree3D empty() {
         return new RegionBSPTree3D(false);
+    }
+
+    /** Create a new BSP tree instance representing the same region as the argument.
+     * @param volume convex volume instance
+     * @return a new BSP tree instance representing the same region as the argument
+     */
+    public static RegionBSPTree3D fromConvexVolume(final ConvexVolume volume) {
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
+        tree.insert(volume.getBoundaries());
+
+        return tree;
     }
 
     /** Create a tree instance from an array of vertices and two dimensional array of facet indices. Each facet is defined by
@@ -267,10 +291,79 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
                 Plane.fromPointAndNormal(Vector3D.of(minX, minY, maxZ), Vector3D.PLUS_Z, precision)
         };
 
-        final RegionBSPTree3D tree = empty();
+        return createFromConvexPlanes(Arrays.asList(planes));
+    }
+
+    /** Construct a BSP tree containing an approximation of a sphere.
+     * @param center the center of the region
+     * @param radius the radius of the sphere approximation
+     * @param stacks the number of stacks to use when building the sphere approximation; this determines
+     *      the number of planes used between the poles to approximate the sphere.
+     * @param slices the number of slices to use when building the sphere approximation; this determines
+     *      the number of planes used around the equator to approximate the sphere.
+     * @param precision precision context to use for floating point comparisons
+     * @return a BSP tree instance approximating a sphere
+     */
+    public static RegionBSPTree3D sphere(final Vector3D center, final double radius, final int stacks, final int slices,
+            final DoublePrecisionContext precision) {
+
+        final List<Plane> planes = new ArrayList<>();
+
+        // add top and bottom planes (+/- z)
+        final Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
+        final Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
+
+        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.PLUS_Z, precision));
+        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.MINUS_Z, precision));
+
+        // add the side planes
+        final double vDelta = Geometry.PI / stacks;
+        final double hDelta = Geometry.PI * 2 / slices;
+
+        final double adjustedRadius = (radius + (radius * Math.cos(vDelta * 0.5))) / 2.0;
+
+        double vAngle;
+        double hAngle;
+        double stackRadius;
+        double stackHeight;
+        double x;
+        double y;
+        Vector3D pt;
+        Vector3D norm;
+
+        vAngle = -0.5 * vDelta;
+        for (int v=0; v<stacks; ++v) {
+            vAngle += vDelta;
+
+            stackRadius = Math.sin(vAngle) * adjustedRadius;
+            stackHeight = Math.cos(vAngle) * adjustedRadius;
+
+            hAngle = -0.5 * hDelta;
+            for (int h=0; h<slices; ++h) {
+                hAngle += hDelta;
+
+                x = Math.cos(hAngle) * stackRadius;
+                y = Math.sin(hAngle) * stackRadius;
+
+                norm = Vector3D.of(x, y, stackHeight).normalize();
+                pt = center.add(norm.multiply(adjustedRadius));
+
+                planes.add(Plane.fromPointAndNormal(pt, norm, precision));
+            }
+        }
+
+        return createFromConvexPlanes(planes);
+    }
+
+    /** Create a BSP tree instance from the given list of convex planes. The planes must represent
+     * a convex region. Not validation is performed.
+     * @param planes planes defining the convex region
+     * @return a new BSP tree instance created from the given planes
+     */
+    private static RegionBSPTree3D createFromConvexPlanes(final List<Plane> planes) {
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
         RegionNode3D node = tree.getRoot();
 
-        // construct the tree by directly cutting each node
         for (Plane plane : planes) {
             node = node.cut(plane).getMinus();
         }
@@ -305,6 +398,29 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         @Override
         protected RegionNode3D getSelf() {
             return this;
+        }
+    }
+
+    /** Class used to project points onto the 3D region boundary.
+     */
+    private static final class BoundaryProjector3D extends BoundaryProjector<Vector3D, RegionNode3D> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190811L;
+
+        /** Simple constructor.
+         * @param point the point to project onto the region's boundary
+         */
+        public BoundaryProjector3D(Vector3D point) {
+            super(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Vector3D disambiguateClosestPoint(final Vector3D target, final Vector3D a, final Vector3D b) {
+            // return the point with the smallest coordinate values
+            final int cmp = Vector3D.COORDINATE_ASCENDING_ORDER.compare(a, b);
+            return cmp < 0 ? a : b;
         }
     }
 

@@ -143,6 +143,13 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
     }
 
+    /** Return a BSP tree instance representing the same region as the current instance.
+     * @return a BSP tree instance representing the same region as the current instance
+     */
+    public RegionBSPTree3D toTree() {
+        return RegionBSPTree3D.fromConvexVolume(this);
+    }
+
     /** Return an instance representing the full 3D volume.
      * @return an instance representing the full 3D volume.
      */

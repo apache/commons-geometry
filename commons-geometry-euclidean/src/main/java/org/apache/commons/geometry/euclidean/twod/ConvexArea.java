@@ -148,6 +148,13 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         return splitInternal(splitter, this, Segment.class, ConvexArea::new);
     }
 
+    /** Return a BSP tree instance representing the same region as the current instance.
+     * @return a BSP tree instance representing the same region as the current instance
+     */
+    public RegionBSPTree2D toTree() {
+        return RegionBSPTree2D.fromConvexArea(this);
+    }
+
     /** Return an instance representing the full 2D area.
      * @return an instance representing the full 2D area.
      */
