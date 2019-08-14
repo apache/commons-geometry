@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +26,7 @@ import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor;
-import org.apache.commons.geometry.core.partition.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
  * Euclidean space.
@@ -152,15 +147,15 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return projector.getProjected();
     }
 
-    /** Compute the line segment paths comprising the region boundary, ensuring that
-     * the minus side of the line segments points to the region interior.
+    /** Compute the line segment paths comprising the region boundary.
      * @return the line segment paths comprising the region boundary
      */
     private List<SegmentPath> computeBoundaryPaths() {
-        final BoundaryPathVisitor2D connector = new BoundaryPathVisitor2D();
-        accept(connector);
+        final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
+        connector.connect(boundaries());
 
-        return connector.getBoundaryPaths();
+        return connector.getPaths().stream()
+                .map(SegmentPath::simplify).collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
@@ -419,77 +414,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             // return the point with the smallest coordinate values
             final int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
             return cmp < 0 ? a : b;
-        }
-    }
-
-    /** Class used to compute the 2D boundary paths.
-     */
-    private static final class BoundaryPathVisitor2D implements BSPTreeVisitor<Vector2D, RegionNode2D>, Serializable {
-
-        /** Serializable UID */
-        private static final long serialVersionUID = 20190610L;
-
-        /** List of line segments comprising the region boundary for the current node. */
-        private final List<Segment> nodeSegments = new ArrayList<>();
-
-        /** Connector instance used to connect the line segments from the nodes into connected paths. */
-        private final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
-
-        /** {@inheritDoc} */
-        @Override
-        public Order visitOrder(final RegionNode2D internalNode) {
-            // give each node a chance to connect its boundary segments to those of
-            // its descendants
-            return Order.MINUS_PLUS_NODE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void visit(RegionNode2D node) {
-            if (node.isInternal()) {
-                nodeSegments.clear();
-
-                RegionCutBoundary<Vector2D> boundary = node.getCutBoundary();
-
-                SubLine insideFacing = (SubLine) boundary.getInsideFacing();
-                SubLine outsideFacing = (SubLine) boundary.getOutsideFacing();
-
-                if (insideFacing != null && !insideFacing.isEmpty()) {
-                    // reverse inside-facing boundary segments to point toward the outside
-                    Line reversedLine = insideFacing.getLine().reverse();
-
-                    for (Interval interval : insideFacing.getSubspaceRegion().toIntervals()) {
-                        nodeSegments.add(Segment.fromInterval(reversedLine,
-                                interval.transform(Vector1D::negate)));
-                    }
-                }
-
-                if (outsideFacing != null && !outsideFacing.isEmpty()) {
-                    nodeSegments.addAll(outsideFacing.toConvex());
-                }
-
-                if (!nodeSegments.isEmpty()) {
-                    connectNodeSegments();
-                }
-            }
-        }
-
-        /** Add the boundary segments for the current node to the connector, connecting
-         * them with any existing segments.
-         */
-        private void connectNodeSegments() {
-            if (!nodeSegments.isEmpty()) {
-                connector.connect(nodeSegments);
-            }
-        }
-
-        /** Get the computed boundary paths for the tree. The paths are simplified
-         * to combine adjacent segments on the same line before being returned.
-         * @return the boundary paths for the tree
-         */
-        public List<SegmentPath> getBoundaryPaths() {
-            return connector.getPaths().stream()
-                    .map(SegmentPath::simplify).collect(Collectors.toList());
         }
     }
 }
