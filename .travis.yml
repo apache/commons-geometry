@@ -17,10 +17,12 @@ language: java
 sudo: false
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
+  - openjdk8
   - openjdk10
   - openjdk11
+  - openjdk12
+  - openjdk13
+  - openjdk-ea
 
 after_success:
   - mvn clean test pmd:pmd spotbugs:spotbugs checkstyle:checkstyle jacoco:report coveralls:report
