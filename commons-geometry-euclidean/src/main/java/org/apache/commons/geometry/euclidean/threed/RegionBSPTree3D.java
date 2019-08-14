@@ -56,6 +56,17 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         super(full);
     }
 
+    /** Return a deep copy of this instance.
+     * @return a deep copy of this instance.
+     * @see {@link #copy(org.apache.commons.geometry.core.partition.bsp.BSPTree)}
+     */
+    public RegionBSPTree3D copy() {
+        RegionBSPTree3D result = RegionBSPTree3D.empty();
+        result.copy(this);
+
+        return result;
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<ConvexVolume> toConvex() {

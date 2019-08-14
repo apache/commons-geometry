@@ -57,6 +57,17 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         super(full);
     }
 
+    /** Return a deep copy of this instance.
+     * @return a deep copy of this instance.
+     * @see {@link #copy(org.apache.commons.geometry.core.partition.bsp.BSPTree)}
+     */
+    public RegionBSPTree1D copy() {
+        RegionBSPTree1D result = RegionBSPTree1D.empty();
+        result.copy(this);
+
+        return result;
+    }
+
     /** Add an interval to this region. The resulting region will be the
      * union of the interval and the region represented by this instance.
      * @param interval the interval to add

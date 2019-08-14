@@ -107,6 +107,20 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
+    public void testCopy() {
+        // arrange
+        RegionBSPTree2D tree = new RegionBSPTree2D(true);
+        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+
+        // act
+        RegionBSPTree2D copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+        Assert.assertEquals(3, copy.count());
+    }
+
+    @Test
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();

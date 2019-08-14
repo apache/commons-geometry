@@ -59,6 +59,17 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         super(full);
     }
 
+    /** Return a deep copy of this instance.
+     * @return a deep copy of this instance.
+     * @see {@link #copy(org.apache.commons.geometry.core.partition.bsp.BSPTree)}
+     */
+    public RegionBSPTree2D copy() {
+        RegionBSPTree2D result = RegionBSPTree2D.empty();
+        result.copy(this);
+
+        return result;
+    }
+
     /** Get the boundary of the region as a list of unconnected line segments. The
      * line segments are oriented such that their minus (left) side lies on the
      * interior of the region.

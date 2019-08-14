@@ -107,6 +107,20 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
+    public void testCopy() {
+        // arrange
+        RegionBSPTree3D tree = new RegionBSPTree3D(true);
+        tree.getRoot().cut(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION));
+
+        // act
+        RegionBSPTree3D copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+        Assert.assertEquals(3, copy.count());
+    }
+
+    @Test
     public void testHalfSpace() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();

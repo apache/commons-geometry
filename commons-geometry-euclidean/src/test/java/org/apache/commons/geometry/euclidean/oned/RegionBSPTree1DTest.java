@@ -38,6 +38,20 @@ public class RegionBSPTree1DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testCopy() {
+        // arrange
+        RegionBSPTree1D tree = new RegionBSPTree1D(true);
+        tree.getRoot().cut(OrientedPoint.createPositiveFacing(1.0, TEST_PRECISION));
+
+        // act
+        RegionBSPTree1D copy = tree.copy();
+
+        // assert
+        Assert.assertNotSame(tree, copy);
+        Assert.assertEquals(3, copy.count());
+    }
+
+    @Test
     public void testClassify_fullRegion() {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D(true);
