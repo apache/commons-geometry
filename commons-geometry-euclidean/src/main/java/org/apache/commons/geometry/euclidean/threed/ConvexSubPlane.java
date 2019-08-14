@@ -95,6 +95,14 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
         return splitInternal(splitter, this, (p, r) -> new ConvexSubPlane(p, (ConvexArea) r));
     }
 
+    /** Get the vertices for the subplane. The vertices lie at the intersections of the
+     * 2D area bounding lines.
+     * @return the vertices for the subplane
+     */
+    public List<Vector3D> getVertices() {
+        return getPlane().toSpace(area.getVertices());
+    }
+
     /** Create a new instance from a plane and an embedded convex subspace area.
      * @param plane embedding plane for the area
      * @param area area embedded in the plane

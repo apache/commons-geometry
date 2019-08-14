@@ -67,6 +67,22 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         return InteriorAngleSegmentConnector.connectMinimized(getBoundaries());
     }
 
+    /** Get the vertices for the area. The vertices lie at the intersections of the
+     * area bounding lines.
+     * @return the vertices for the area
+     */
+    public List<Vector2D> getVertices() {
+        final List<SegmentPath> path = getBoundaryPaths();
+
+        // we will only have vertices if we have a single path; otherwise, we have a full
+        // area or two non-intersecting infinite segments
+        if (path.size() == 1) {
+            return path.get(0).getVertices();
+        }
+
+        return Collections.emptyList();
+    }
+
     /** {@inheritDoc} */
     @Override
     public ConvexArea transform(final Transform<Vector2D> transform) {

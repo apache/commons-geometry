@@ -218,6 +218,67 @@ public class ConvexAreaTest {
     }
 
     @Test
+    public void testGetVertices_full() {
+        // arrange
+        ConvexArea area = ConvexArea.full();
+
+        // act/assert
+        Assert.assertEquals(0, area.getVertices().size());
+    }
+
+    @Test
+    public void testGetVertices_twoParallelLines() {
+        // arrange
+        ConvexArea area = ConvexArea.fromBounds(
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION)
+                );
+
+        // act/assert
+        Assert.assertEquals(0, area.getVertices().size());
+    }
+
+    @Test
+    public void testGetVertices_infiniteWithVertices() {
+        // arrange
+        ConvexArea area = ConvexArea.fromBounds(
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION)
+                );
+
+        // act
+        List<Vector2D> vertices = area.getVertices();
+
+        // assert
+        Assert.assertEquals(2, vertices.size());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -1), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(1), TEST_EPS);
+    }
+
+    @Test
+    public void testGetVertices_finite() {
+        // arrange
+        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+                    Vector2D.ZERO,
+                    Vector2D.PLUS_X,
+                    Vector2D.PLUS_Y
+                ), TEST_PRECISION);
+
+        // act
+        List<Vector2D> vertices = area.getVertices();
+
+        // assert
+        Assert.assertEquals(4, vertices.size());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_X, vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y, vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(3), TEST_EPS);
+    }
+
+    @Test
     public void testProject_full() {
         // arrange
         ConvexArea area = ConvexArea.full();
