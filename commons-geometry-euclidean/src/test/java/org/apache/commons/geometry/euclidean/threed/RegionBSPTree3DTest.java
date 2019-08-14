@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -118,6 +119,31 @@ public class RegionBSPTree3DTest {
         // assert
         Assert.assertNotSame(tree, copy);
         Assert.assertEquals(3, copy.count());
+    }
+
+    @Test
+    public void testBoundaries() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        // act
+        List<ConvexSubPlane> subplanes = new ArrayList<>();
+        tree.boundaries().forEach(subplanes::add);
+
+        // assert
+        Assert.assertEquals(6, subplanes.size());
+    }
+
+    @Test
+    public void testGetBoundaries() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+
+        // act
+        List<ConvexSubPlane> subplanes = tree.getBoundaries();
+
+        // assert
+        Assert.assertEquals(6, subplanes.size());
     }
 
     @Test

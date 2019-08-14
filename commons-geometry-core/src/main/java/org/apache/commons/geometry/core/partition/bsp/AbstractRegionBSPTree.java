@@ -17,15 +17,19 @@
 package org.apache.commons.geometry.core.partition.bsp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Spatial;
+import org.apache.commons.geometry.core.internal.IteratorTransform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partition.HyperplaneLocation;
 import org.apache.commons.geometry.core.partition.Split;
 import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.partition.SubHyperplane;
@@ -134,6 +138,60 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         }
 
         return boundarySize;
+    }
+
+    /** Return an {@link Iterable} for iterating over the boundaries of the region.
+     * Each boundary is oriented such that its plus side points to the outside of the
+     * region. The exact ordering of the boundaries is determined by the internal structure
+     * of the tree.
+     * @return an {@link Iterable} for iterating over the boundaries of the region
+     * @see #getBoundary()
+     */
+    public Iterable<? extends ConvexSubHyperplane<P>> boundaries() {
+        return createBoundaryIterable(Function.identity());
+    }
+
+    /** Internal method for creating the iterable instances used to iterate the region boundaries.
+     * @param typeConverter function to convert the generic convex subhyperplane type into
+     *      the type specific for this tree
+     * @return an iterable to iterating the region boundaries
+     */
+    protected <C extends ConvexSubHyperplane<P>> Iterable<C> createBoundaryIterable(
+            final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+
+        return new Iterable<C>() {
+
+            @Override
+            public Iterator<C> iterator() {
+                final NodeIterator<P, N> nodeIterator = new NodeIterator<>(getRoot());
+                return new RegionBoundaryIterator<>(nodeIterator, typeConverter);
+            }
+        };
+    }
+
+    /** Return a list containing the boundaries of the region. Each boundary is oriented such
+     * that its plus side points to the outside of the region. The exact ordering of
+     * the boundaries is determined by the internal structure of the tree.
+     * @return a list of the boundaries of the region
+     */
+    public List<? extends ConvexSubHyperplane<P>> getBoundaries() {
+        return createBoundaryList(Function.identity());
+    }
+
+    /** Iternal method for creating a list of the region boundaries.
+     * @param typeConverter function to convert the generic convex subhyperplane type into
+     *      the type specific for this tree
+     * @return a list of the region boundaries
+     */
+    protected <C extends ConvexSubHyperplane<P>> List<C> createBoundaryList(
+            final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+
+        final List<C> result = new ArrayList<>();
+
+        final RegionBoundaryIterator<P, C, N> it = new RegionBoundaryIterator<>(iterator(), typeConverter);
+        it.forEachRemaining(result::add);
+
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -830,6 +888,52 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
          */
         public P getBarycenter() {
             return barycenter;
+        }
+    }
+
+    /** Class that iterates over the boundary convex subhyperplanes from a set of region nodes.
+     * @param <P> Point implementation type
+     * @parma <C> Boundary convex subhyperplane implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    protected static class RegionBoundaryIterator<P extends Point<P>, C extends ConvexSubHyperplane<P>, N extends AbstractRegionNode<P, N>>
+        extends IteratorTransform<N, C> {
+
+        /** Function that converts from the convex subhyperplane type to the output type. */
+        private final Function<ConvexSubHyperplane<P>, C> typeConverter;
+
+        /** Simple constructor.
+         * @param inputIterator iterator that will provide all nodes in the tree
+         */
+        private RegionBoundaryIterator(final Iterator<N> inputIterator, final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+            super(inputIterator);
+
+            this.typeConverter = typeConverter;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void acceptInput(final N input) {
+            if (input.isInternal()) {
+                final RegionCutBoundary<P> cutBoundary = input.getCutBoundary();
+
+                final SubHyperplane<P> outsideFacing = cutBoundary.getOutsideFacing();
+                final SubHyperplane<P> insideFacing = cutBoundary.getInsideFacing();
+
+                if (outsideFacing != null && !outsideFacing.isEmpty()) {
+                    for (ConvexSubHyperplane<P> boundary : outsideFacing.toConvex()) {
+
+                        addOutput(typeConverter.apply(boundary));
+                    }
+                }
+                if (insideFacing != null && !insideFacing.isEmpty()) {
+                    for (ConvexSubHyperplane<P> boundary : insideFacing.toConvex()) {
+                        ConvexSubHyperplane<P> reversed = boundary.reverse();
+
+                        addOutput(typeConverter.apply(reversed));
+                    }
+                }
+            }
         }
     }
 }

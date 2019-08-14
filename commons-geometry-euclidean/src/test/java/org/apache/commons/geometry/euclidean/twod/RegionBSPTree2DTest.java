@@ -121,6 +121,31 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
+    public void testBoundaries() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+
+        // act
+        List<Segment> segments = new ArrayList<>();
+        tree.boundaries().forEach(segments::add);
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+    }
+
+    @Test
+    public void testGetBoundaries() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+
+        // act
+        List<Segment> segments = tree.getBoundaries();
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+    }
+
+    @Test
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -496,7 +521,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
-        Assert.assertEquals(0, tree.getBoundarySegments().size());
+        Assert.assertEquals(0, tree.getBoundaries().size());
         Assert.assertEquals(0, tree.getBoundaryPaths().size());
     }
 
@@ -511,7 +536,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
-        Assert.assertEquals(0, tree.getBoundarySegments().size());
+        Assert.assertEquals(0, tree.getBoundaries().size());
         Assert.assertEquals(0, tree.getBoundaryPaths().size());
     }
 
@@ -527,7 +552,7 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = tree.getBoundarySegments();
+        List<Segment> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
         Segment segment = segments.get(0);
@@ -557,7 +582,7 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = tree.getBoundarySegments();
+        List<Segment> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
         Segment segment = segments.get(0);
@@ -586,7 +611,7 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
@@ -625,7 +650,7 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
@@ -663,7 +688,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -694,7 +719,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -723,7 +748,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(8, segments.size());
@@ -762,7 +787,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundarySegments());
+        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(8, segments.size());

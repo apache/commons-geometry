@@ -69,6 +69,18 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
 
     /** {@inheritDoc} */
     @Override
+    public Iterable<ConvexSubPlane> boundaries() {
+        return createBoundaryIterable(b -> (ConvexSubPlane) b);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<ConvexSubPlane> getBoundaries() {
+        return createBoundaryList(b -> (ConvexSubPlane) b);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<ConvexVolume> toConvex() {
         final List<ConvexVolume> result = new ArrayList<>();
 
@@ -503,7 +515,7 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        public BoundaryProjector3D(Vector3D point) {
+        private BoundaryProjector3D(Vector3D point) {
             super(point);
         }
 

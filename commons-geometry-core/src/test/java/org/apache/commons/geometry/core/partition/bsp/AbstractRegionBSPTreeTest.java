@@ -190,6 +190,108 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
+    public void testBoundaries_fullAndEmpty() {
+        // act/assert
+        tree.setFull();
+        Assert.assertFalse(tree.boundaries().iterator().hasNext());
+
+        tree.setEmpty();
+        Assert.assertFalse(tree.boundaries().iterator().hasNext());
+    }
+
+    @Test
+    public void testBoundaries_finite() {
+        // arrange
+        insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
+
+        // act
+        List<TestLineSegment> segments = new ArrayList<>();
+        for (ConvexSubHyperplane<TestPoint2D> sub : tree.boundaries()) {
+            segments.add((TestLineSegment) sub);
+        }
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+
+        assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+        assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(1, 1));
+        assertContainsSegment(segments, new TestPoint2D(1, 1), new TestPoint2D(0, 1));
+        assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(0, 0));
+    }
+
+    @Test
+    public void testBoundaries_finite_inverted() {
+        // arrange
+        insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
+        tree.complement();
+
+        // act
+        List<TestLineSegment> segments = new ArrayList<>();
+        for (ConvexSubHyperplane<TestPoint2D> sub : tree.boundaries()) {
+            segments.add((TestLineSegment) sub);
+        }
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+
+        assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(0, 1));
+        assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(1, 1));
+        assertContainsSegment(segments, new TestPoint2D(1, 1), new TestPoint2D(1, 0));
+        assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(0, 0));
+    }
+
+    @Test
+    public void testGetBoundaries_fullAndEmpty() {
+        // act/assert
+        tree.setFull();
+        Assert.assertEquals(0, tree.getBoundaries().size());
+
+        tree.setEmpty();
+        Assert.assertEquals(0, tree.getBoundaries().size());
+    }
+
+    @Test
+    public void testGetBoundaries_finite() {
+        // arrange
+        insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
+
+        // act
+        List<TestLineSegment> segments = new ArrayList<>();
+        for (ConvexSubHyperplane<TestPoint2D> sub : tree.getBoundaries()) {
+            segments.add((TestLineSegment) sub);
+        }
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+
+        assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+        assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(1, 1));
+        assertContainsSegment(segments, new TestPoint2D(1, 1), new TestPoint2D(0, 1));
+        assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(0, 0));
+    }
+
+    @Test
+    public void testGetBoundaries_finite_inverted() {
+        // arrange
+        insertBox(tree, new TestPoint2D(0, 1), new TestPoint2D(1, 0));
+        tree.complement();
+
+        // act
+        List<TestLineSegment> segments = new ArrayList<>();
+        for (ConvexSubHyperplane<TestPoint2D> sub : tree.getBoundaries()) {
+            segments.add((TestLineSegment) sub);
+        }
+
+        // assert
+        Assert.assertEquals(4, segments.size());
+
+        assertContainsSegment(segments, new TestPoint2D(0, 0), new TestPoint2D(0, 1));
+        assertContainsSegment(segments, new TestPoint2D(0, 1), new TestPoint2D(1, 1));
+        assertContainsSegment(segments, new TestPoint2D(1, 1), new TestPoint2D(1, 0));
+        assertContainsSegment(segments, new TestPoint2D(1, 0), new TestPoint2D(0, 0));
+    }
+
+    @Test
     public void testClassify() {
         // arrange
         insertSkewedBowtie(tree);
@@ -1837,6 +1939,24 @@ public class AbstractRegionBSPTreeTest {
         PartitionTestUtils.assertPointsEqual(end, segment.getEndPoint());
     }
 
+    private static void assertContainsSegment(final List<TestLineSegment> boundaries, final TestPoint2D start, final TestPoint2D end) {
+        boolean found = false;
+        for (TestLineSegment seg : boundaries) {
+            TestPoint2D startPt = seg.getStartPoint();
+            TestPoint2D endPt = seg.getEndPoint();
+
+            if (PartitionTestUtils.PRECISION.eq(start.getX(), startPt.getX()) &&
+                    PartitionTestUtils.PRECISION.eq(start.getY(), startPt.getY()) &&
+                    PartitionTestUtils.PRECISION.eq(end.getX(), endPt.getX()) &&
+                    PartitionTestUtils.PRECISION.eq(end.getY(), endPt.getY())) {
+                found = true;
+                break;
+            }
+        }
+
+        Assert.assertTrue("Expected to find segment start= " + start + ", end= " + end , found);
+    }
+
     private static TestRegionBSPTree emptyTree() {
         return new TestRegionBSPTree(false);
     }
@@ -2095,8 +2215,7 @@ public class AbstractRegionBSPTreeTest {
          * Expose the direct node cut method for easier creation of test tree structures.
          */
         @Override
-        public void cutNode(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut)
-        {
+        public void cutNode(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut) {
             super.cutNode(node, cut);
         }
 

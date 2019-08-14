@@ -70,17 +70,16 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return result;
     }
 
-    /** Get the boundary of the region as a list of unconnected line segments. The
-     * line segments are oriented such that their minus (left) side lies on the
-     * interior of the region.
-     * @return the boundary of the region as list of unconnected line segments
-     */
-    public List<Segment> getBoundarySegments() {
-        List<Segment> segments = new ArrayList<>();
-        for (SegmentPath path : getBoundaryPaths()) {
-            segments.addAll(path.getSegments());
-        }
-        return segments;
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<Segment> boundaries() {
+        return createBoundaryIterable(b -> (Segment) b);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Segment> getBoundaries() {
+        return createBoundaryList(b -> (Segment) b);
     }
 
     /** Get the boundary of the region as a list of connected line segment paths. The
@@ -185,9 +184,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         Vector2D endPoint;
         double signedArea;
 
-        final List<Segment> boundary = getBoundarySegments();
-
-        for (Segment segment : boundary) {
+        for (Segment segment : boundaries()) {
 
             if (segment.isInfinite()) {
                 // at least on boundary is infinite, meaning that
