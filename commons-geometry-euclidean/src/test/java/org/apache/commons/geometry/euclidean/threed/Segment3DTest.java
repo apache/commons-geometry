@@ -324,6 +324,24 @@ public class Segment3DTest {
     }
 
     @Test
+    public void testContains() {
+        // arrange
+        Vector3D p1 = Vector3D.of(1, 0, 0);
+        Vector3D p2 = Vector3D.of(3, 0, 2);
+        Segment3D segment = Segment3D.fromPoints(p1, p2, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertTrue(segment.contains(p1));
+        Assert.assertTrue(segment.contains(p2));
+        Assert.assertTrue(segment.contains(p1.lerp(p2, 0.5)));
+
+        Assert.assertFalse(segment.contains(p1.lerp(p2, -1)));
+        Assert.assertFalse(segment.contains(p1.lerp(p2, 2)));
+
+        Assert.assertFalse(segment.contains(Vector3D.ZERO));
+    }
+
+    @Test
     public void testToString() {
         // arrange
         Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);

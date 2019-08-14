@@ -110,6 +110,15 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
         return getInterval();
     }
 
+    /** Return true if the given point lies in the segment.
+     * @param pt point to check
+     * @return true if the point lies in the segment
+     */
+    public boolean contains(final Vector3D pt) {
+        final Line3D line = getLine();
+        return line.contains(pt) && interval.contains(line.toSubspace(pt));
+    }
+
     /** Transform this instance.
      * @param transform the transform to apply
      * @return a new, transformed instance

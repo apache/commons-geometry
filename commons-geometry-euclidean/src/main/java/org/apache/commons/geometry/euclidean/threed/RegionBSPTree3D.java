@@ -106,6 +106,87 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         return projector.getProjected();
     }
 
+    /** Find the first intersection of the given ray/line segment with the boundary of
+     * the region. The return value is the cut subhyperplane of the node containing the
+     * intersection. Null is returned if no intersection exists.
+     * @param ray ray to intersect with the region
+     * @return the node cut subhyperplane containing the intersection or null if no
+     *      intersection exists
+     */
+    public ConvexSubPlane raycastFirst(final Segment3D ray) {
+        return raycastFirstRecursive(getRoot(), ray);
+    }
+
+    /** Recursive method used to find the first intersection of the given ray/line segment
+     * with the boundary of the region.
+     * @param node current BSP tree node
+     * @param ray the ray used for the raycast operation
+     * @return the node cut subhyperplane containing the intersection or null if no
+     *      intersection exists
+     */
+    private ConvexSubPlane raycastFirstRecursive(final RegionNode3D node, final Segment3D ray) {
+        if (node.isLeaf()) {
+            // no boundary to intersect with on leaf nodes
+            return null;
+        }
+
+        // establish search order
+        final Plane cut = (Plane) node.getCutHyperplane();
+        final Line3D line = ray.getLine();
+
+        final boolean plusIsNear = line.getDirection().dot(cut.getNormal()) < 0;
+
+        final RegionNode3D nearNode = plusIsNear ? node.getPlus() : node.getMinus();
+        final RegionNode3D farNode = plusIsNear ? node.getMinus() : node.getPlus();
+
+        // check the near node
+        final ConvexSubPlane nearResult = raycastFirstRecursive(nearNode, ray);
+        if (nearResult != null) {
+            return nearResult;
+        }
+
+        // check ourselves
+        final Vector3D intersection = computeRegionCutBoundaryIntersection(node, ray);
+        if (intersection != null) {
+            // we intersect, so our cut is the answer
+            return (ConvexSubPlane) node.getCut();
+        }
+
+        // check the far node
+        final ConvexSubPlane farResult = raycastFirstRecursive(farNode, ray);
+        if (farResult != null) {
+            return farResult;
+        }
+
+        return null;
+    }
+
+    /** Compute the intersection point between the region cut boundary and the given line segment.
+     * @param node BSP tree node to compute the region cut boundary intersection for
+     * @param segment line segment to compute the intersection for
+     * @return the intersection point between the region cut boundary and the given line segment or
+     *      null if one does not exist.
+     */
+    private Vector3D computeRegionCutBoundaryIntersection(final RegionNode3D node, final Segment3D segment) {
+        if (node.isInternal()) {
+            final Line3D line = segment.getLine();
+            final Vector3D intersection = ((Plane) node.getCutHyperplane()).intersection(line);
+
+            if (intersection != null && segment.contains(intersection)) {
+
+                final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
+
+                if ((boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(intersection)) ||
+                        boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(intersection)) {
+
+                    return intersection;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<Vector3D> computeRegionSizeProperties() {
