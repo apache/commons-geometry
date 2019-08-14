@@ -314,6 +314,20 @@ public class Line3DTest {
     }
 
     @Test
+    public void testSpan() {
+        // arrange
+        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+
+        // act
+        Segment3D segment = line.span();
+
+        // assert
+        Assert.assertTrue(segment.isInfinite());
+        Assert.assertSame(line, segment.getLine());
+        Assert.assertTrue(segment.getInterval().isFull());
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Line3D a = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);

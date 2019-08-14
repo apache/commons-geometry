@@ -141,6 +141,25 @@ public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements S
         region.union(subLine.getSubspaceRegion());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final Line line = getLine();
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[')
+            .append("lineOrigin= ")
+            .append(line.getOrigin())
+            .append(", lineDirection= ")
+            .append(line.getDirection())
+            .append(", region= ")
+            .append(region)
+            .append(']');
+
+        return sb.toString();
+    }
+
     /** Validate that the given line is equivalent to the line
      * defining this subline.
      * @param inputLine the line to validate

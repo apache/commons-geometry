@@ -47,14 +47,6 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
         this.interval = interval;
     }
 
-    /** Get the precision object used to perform floating point
-     * comparisons for this instance.
-     * @return the precision object for this instance
-     */
-    public DoublePrecisionContext getPrecision() {
-        return getLine().getPrecision();
-    }
-
     /** Get the start value in the 1D subspace of the line.
      * @return the start value in the 1D subspace of the line.
      */
@@ -209,7 +201,7 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
     public static Segment3D fromPointAndDirection(final Vector3D start, final Vector3D direction,
             final DoublePrecisionContext precision) {
         final Line3D line = Line3D.fromPointAndDirection(start, direction, precision);
-        return line.segmentFrom(start);
+        return fromInterval(line, Interval.min(line.toSubspace(start).getX(), precision));
     }
 
     /** Create a line segment from an underlying line and a 1D interval on the line.

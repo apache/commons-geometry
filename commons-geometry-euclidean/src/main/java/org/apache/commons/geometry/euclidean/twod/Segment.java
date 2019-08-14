@@ -191,21 +191,63 @@ public final class Segment extends AbstractSubLine<Interval>
                 Objects.equals(interval, other.interval);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append("[startPoint= ")
-            .append(getStartPoint())
-            .append(", endPoint= ")
-            .append(getEndPoint())
-            .append(", line= ")
-            .append(getLine())
-            .append(']');
+    /** Return a string representation of the segment.
+    *
+    * <p>In order to keep the representation short but informative, the exact format used
+    * depends on the properties of the instance, as demonstrated in the examples
+    * below.
+    * <ul>
+    *      <li>Infinite segment -
+    *          {@code "Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]"}</li>
+    *      <li>Start point but no end point -
+    *          {@code "Segment[start= (0.0, 0.0), direction= (1.0, 0.0)]"}</li>
+    *      <li>End point but no start point -
+    *          {@code "Segment[direction= (1.0, 0.0), end= (0.0, 0.0)]"}</li>
+    *      <li>Start point and end point -
+    *          {@code "Segment[start= (0.0, 0.0), end= (1.0, 0.0)]"}</li>
+    * </ul>
+    * </p>
+    */
+   @Override
+   public String toString() {
+       final Vector2D startPoint = getStartPoint();
+       final Vector2D endPoint = getEndPoint();
 
-        return sb.toString();
-    }
+       final StringBuilder sb = new StringBuilder();
+       sb.append(this.getClass().getSimpleName())
+           .append('[');
+
+       if (startPoint != null && endPoint != null) {
+           sb.append("start= ")
+               .append(startPoint)
+               .append(", end= ")
+               .append(endPoint);
+       }
+       else if (startPoint != null) {
+           sb.append("start= ")
+               .append(startPoint)
+               .append(", direction= ")
+               .append(getLine().getDirection());
+       }
+       else if (endPoint != null) {
+           sb.append("direction= ")
+               .append(getLine().getDirection())
+               .append(", end= ")
+               .append(endPoint);
+       }
+       else {
+           final Line line = getLine();
+
+           sb.append("lineOrigin= ")
+               .append(line.getOrigin())
+               .append(", lineDirection= ")
+               .append(line.getDirection());
+       }
+
+       sb.append(']');
+
+       return sb.toString();
+   }
 
     /** Create a line segment between two points. The underlying line points in the direction from {@code start}
      * to {@code end}.
@@ -230,7 +272,7 @@ public final class Segment extends AbstractSubLine<Interval>
     public static Segment fromPointAndDirection(final Vector2D start, final Vector2D direction,
             final DoublePrecisionContext precision) {
         final Line line = Line.fromPointAndDirection(start, direction, precision);
-        return line.segmentFrom(start);
+        return fromInterval(line, Interval.min(line.toSubspace(start).getX(), precision));
     }
 
     /** Create a line segment from an underlying line and a 1D interval on the line.

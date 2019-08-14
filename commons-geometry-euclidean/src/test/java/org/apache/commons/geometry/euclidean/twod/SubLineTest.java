@@ -648,6 +648,20 @@ public class SubLineTest {
         }, IllegalArgumentException.class);
     }
 
+    @Test
+    public void testToString() {
+        // arrange
+        SubLine sub = new SubLine(line);
+
+        // act
+        String str = sub.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("SubLine[lineOrigin= "));
+        Assert.assertTrue(str.contains(", lineDirection= "));
+        Assert.assertTrue(str.contains(", region= "));
+    }
+
     private static void checkFiniteSegment(Segment segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
 

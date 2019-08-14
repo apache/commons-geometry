@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** Internal base class for 3 dimensional subline implementations.
@@ -41,6 +42,14 @@ abstract class AbstractSubLine3D<R extends Region<Vector1D>> implements Serializ
      */
     public Line3D getLine() {
         return line;
+    }
+
+    /** Get the precision object used to perform floating point
+     * comparisons for this instance.
+     * @return the precision object for this instance
+     */
+    public DoublePrecisionContext getPrecision() {
+        return line.getPrecision();
     }
 
     /** Get the subspace region for the subline.

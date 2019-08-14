@@ -855,15 +855,25 @@ public class SegmentTest {
     @Test
     public void testToString() {
         // arrange
-        Segment segment = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
 
-        // act
-        String str = segment.toString();
+        Segment full = Segment.fromInterval(line, Interval.full());
+        Segment startOnly = Segment.fromInterval(line, 0, Double.POSITIVE_INFINITY);
+        Segment endOnly = Segment.fromInterval(line, Double.NEGATIVE_INFINITY, 0);
+        Segment finite = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
 
-        // assert
-        Assert.assertTrue(str.contains("Segment"));
-        Assert.assertTrue(str.contains("startPoint= (0.0, 0.0)"));
-        Assert.assertTrue(str.contains("endPoint= (1.0, 0.0)"));
+        // act/assert
+        String fullStr = full.toString();
+        Assert.assertTrue(fullStr.contains("lineOrigin=") && fullStr.contains("lineDirection="));
+
+        String startOnlyStr = startOnly.toString();
+        Assert.assertTrue(startOnlyStr.contains("start=") && startOnlyStr.contains("direction="));
+
+        String endOnlyStr = endOnly.toString();
+        Assert.assertTrue(endOnlyStr.contains("direction=") && endOnlyStr.contains("end="));
+
+        String finiteStr = finite.toString();
+        Assert.assertTrue(finiteStr.contains("start=") && finiteStr.contains("end="));
     }
 
     @Test

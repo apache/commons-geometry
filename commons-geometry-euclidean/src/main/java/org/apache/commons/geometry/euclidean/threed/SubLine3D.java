@@ -16,7 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
 
@@ -75,9 +79,46 @@ public final class SubLine3D extends AbstractSubLine3D<RegionBSPTree1D> {
         return new SubLine3D(st.getLine(), tRegion);
     }
 
+    /** Return a list of {@link Segment3D} instances representing the same region
+     * as this subline.
+     * @return a list of {@link Segment3D} instances representing the same region
+     *      as this instance.
+     */
+    public List<Segment3D> toConvex() {
+        final List<Interval> intervals = region.toIntervals();
+
+        final Line3D line = getLine();
+        final List<Segment3D> segments = new ArrayList<>(intervals.size());
+
+        for (Interval interval : intervals) {
+            segments.add(Segment3D.fromInterval(line, interval));
+        }
+
+        return segments;
+    }
+
     /** {@inheritDoc} */
     @Override
     public RegionBSPTree1D getSubspaceRegion() {
         return region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final Line3D line = getLine();
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[')
+            .append("lineOrigin= ")
+            .append(line.getOrigin())
+            .append(", lineDirection= ")
+            .append(line.getDirection())
+            .append(", region= ")
+            .append(region)
+            .append(']');
+
+        return sb.toString();
     }
 }
