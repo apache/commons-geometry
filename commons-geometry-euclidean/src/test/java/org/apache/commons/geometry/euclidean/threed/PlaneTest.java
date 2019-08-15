@@ -25,7 +25,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
-import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;

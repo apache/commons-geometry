@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
@@ -56,7 +56,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partition.bsp.BSPTree)}
+     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
      */
     public RegionBSPTree2D copy() {
         RegionBSPTree2D result = RegionBSPTree2D.empty();

@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
-import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partition.bsp.BSPTreeVisitor;
-import org.apache.commons.geometry.core.partition.bsp.RegionCutBoundary;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.SegmentPath;
@@ -58,7 +58,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partition.bsp.BSPTree)}
+     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
      */
     public RegionBSPTree3D copy() {
         RegionBSPTree3D result = RegionBSPTree3D.empty();

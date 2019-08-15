@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;

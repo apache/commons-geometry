@@ -16,8 +16,8 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.bsp.AbstractBSPTree;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
  */

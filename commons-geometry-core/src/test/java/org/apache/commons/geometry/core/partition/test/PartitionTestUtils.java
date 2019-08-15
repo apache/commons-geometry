@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partition.bsp.BSPTree;
-import org.apache.commons.geometry.core.partition.bsp.BSPTree.Node;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;

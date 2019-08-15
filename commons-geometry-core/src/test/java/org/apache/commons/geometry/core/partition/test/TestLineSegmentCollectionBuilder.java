@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
 public class TestLineSegmentCollectionBuilder implements SubHyperplane.Builder<TestPoint2D> {
 

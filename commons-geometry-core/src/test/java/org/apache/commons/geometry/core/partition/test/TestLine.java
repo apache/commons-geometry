@@ -19,9 +19,9 @@ package org.apache.commons.geometry.core.partition.test;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.EmbeddingHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.

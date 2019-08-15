@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partition.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;

@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
 /** Class containing a collection line segments. This class should only be used for
  * testing purposes.

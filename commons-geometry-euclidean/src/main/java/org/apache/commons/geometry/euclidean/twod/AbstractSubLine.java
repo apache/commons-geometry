@@ -19,11 +19,11 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.Region;
-import org.apache.commons.geometry.core.partition.AbstractEmbeddingSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SplitLocation;
+import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;

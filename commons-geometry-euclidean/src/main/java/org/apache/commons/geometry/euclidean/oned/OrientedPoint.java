@@ -25,12 +25,12 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.Equivalency;
-import org.apache.commons.geometry.core.partition.AbstractHyperplane;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.HyperplaneLocation;
-import org.apache.commons.geometry.core.partition.Split;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.

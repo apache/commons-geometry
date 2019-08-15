@@ -24,10 +24,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.partition.AbstractConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partition.Hyperplane;
-import org.apache.commons.geometry.core.partition.Split;
+import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;

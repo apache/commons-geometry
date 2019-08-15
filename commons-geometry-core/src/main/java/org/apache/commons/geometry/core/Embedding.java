@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partition.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
 
 /** This interface defines mappers between a space and one of its subspaces.
 
