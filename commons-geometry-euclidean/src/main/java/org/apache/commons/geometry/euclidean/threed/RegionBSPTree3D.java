@@ -19,8 +19,8 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partition.Hyperplane;
 import org.apache.commons.geometry.core.partition.Split;
@@ -37,7 +37,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /** Binary space partitioning (BSP) tree representing a region in three dimensional
  * Euclidean space.
  */
-public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D> {
+public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190702L;
@@ -279,205 +279,18 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         return tree;
     }
 
-    /** Create a tree instance from an array of vertices and two dimensional array of facet indices. Each facet is defined by
-     * referencing vertices in the vertex array by index.
-     * @param vertices array of vertices for the shape
-     * @param facetIndices array defining the facets for the shape; each facet is defined as an array of indices into the vertex
-     *      array
-     * @param precision precision context used to compare floating point values
-     * @return a new tree instance created from the defined facets
+    /** Create a new {@link RegionBSPTree3D.Builder} instance for creating BSP
+     * trees from boundary representations.
+     * @param precision precision context to use for floating point comparisons.
+     * @return a new builder instance
      */
-    public static RegionBSPTree3D fromFacets(final Vector3D[] vertices, final int[][] facetIndices, final DoublePrecisionContext precision) {
-        final RegionBSPTree3D tree = empty();
-
-        List<Vector3D> facetVertices = new ArrayList<>();
-
-        for (int[] facet : facetIndices) {
-            for (int i=0; i<facet.length; ++i) {
-                facetVertices.add(vertices[facet[i]]);
-            }
-
-            insertFacet(tree, facetVertices, precision);
-
-            facetVertices.clear();
-        }
-
-        return tree;
-    }
-
-    /** Insert a single facet, defined by a sequence of vertices, into the given tree.
-     * @param tree the tree to insert the facets into
-     * @param vertices vertices defining the facet to insert
-     * @param precision precision context used to compare floating point values
-     */
-    private static void insertFacet(final RegionBSPTree3D tree, final List<Vector3D> vertices,
-            final DoublePrecisionContext precision) {
-
-        final Plane plane = Plane.fromPoints(vertices, precision);
-        final List<Vector2D> subspaceVertices = plane.toSubspace(vertices);
-
-        // if there are only 3 vertices, then we know for certain that the area is convex
-        final SubHyperplane<Vector3D> facet;
-        if (subspaceVertices.size() < 4) {
-            facet = ConvexSubPlane.fromVertexLoop(vertices, precision);
-        }
-        else {
-            final SegmentPath path = SegmentPath.fromVertexLoop(subspaceVertices, precision);
-            facet = new SubPlane(plane, path.toTree());
-        }
-
-        tree.insert(facet);
-    }
-
-    /** Construct a BSP tree representing an axis-oriented rectangular prism. The prism
-     * is constructed by taking {@code pt} as one corner of the region and adding {@code xDelta},
-     * {@code yDelta}, and {@code zDelta} to its components to create the opposite corner.
-     *
-     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
-     * The length and width of the created region must be non-zero as evaluated by the given precision
-     * content.</p>
-     *
-     * @param pt point lying in a corner of the region
-     * @param xDelta distance to move along the x axis to place the other points in the
-     *      prism; this value may be negative.
-     * @param yDelta distance to move along the y axis to place the other points in the
-     *      prism; this value may be negative.
-     * @param zDelta distance to move along the z axis to place the other points in the
-     *      prism; this value may be negative.
-     * @param precision precision context to use for floating point comparisons
-     * @return a new BSP tree instance representing a rectangular prism
-     * @throws GeometryValueException if the width, height, or depth of the defined region is zero
-     *      as evaluated by the given precision context.
-     */
-    public static RegionBSPTree3D rect(final Vector3D pt, final double xDelta, final double yDelta, final double zDelta,
-            final DoublePrecisionContext precision) {
-
-        return rect(pt, Vector3D.of(pt.getX() + xDelta, pt.getY() + yDelta, pt.getZ() + zDelta), precision);
-    }
-
-    /** Construct a BSP tree representing an axis-oriented rectangular prism. The points {@code a} and {@code b}
-     * are taken to represent opposite corner points in the prism and may be specified in any order.
-     *
-     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
-     * The length and width of the created region must be non-zero as evaluated by the given precision
-     * content.</p>
-     *
-     * @param a first corner point in the rectangular prism (opposite of {@code b})
-     * @param b second corner point in the rectangular prism (opposite of {@code a})
-     * @param precision precision context to use for floating point comparisons
-     * @return a new bsp tree instance representing a rectangular prism
-     * @throws GeometryValueException if the width, height, or depth of the defined region is zero
-     *      as evaluated by the given precision context.
-     */
-    public static RegionBSPTree3D rect(final Vector3D a, final Vector3D b, final DoublePrecisionContext precision) {
-
-        final double minX = Math.min(a.getX(), b.getX());
-        final double maxX = Math.max(a.getX(), b.getX());
-
-        final double minY = Math.min(a.getY(), b.getY());
-        final double maxY = Math.max(a.getY(), b.getY());
-
-        final double minZ = Math.min(a.getZ(), b.getZ());
-        final double maxZ = Math.max(a.getZ(), b.getZ());
-
-        if (precision.eq(minX, maxX) || precision.eq(minY, maxY) || precision.eq(minZ, maxZ)) {
-            throw new GeometryValueException("Rectangular prism has zero size: " + a + ", " + b + ".");
-        }
-
-        final Plane[] planes = {
-                Plane.fromPointAndNormal(Vector3D.of(minX, minY, minZ), Vector3D.MINUS_X, precision),
-                Plane.fromPointAndNormal(Vector3D.of(maxX, minY, minZ), Vector3D.PLUS_X, precision),
-
-                Plane.fromPointAndNormal(Vector3D.of(minX, minY, minZ), Vector3D.MINUS_Y, precision),
-                Plane.fromPointAndNormal(Vector3D.of(minX, maxY, minZ), Vector3D.PLUS_Y, precision),
-
-                Plane.fromPointAndNormal(Vector3D.of(minX, minY, minZ), Vector3D.MINUS_Z, precision),
-                Plane.fromPointAndNormal(Vector3D.of(minX, minY, maxZ), Vector3D.PLUS_Z, precision)
-        };
-
-        return createFromConvexPlanes(Arrays.asList(planes));
-    }
-
-    /** Construct a BSP tree containing an approximation of a sphere.
-     * @param center the center of the region
-     * @param radius the radius of the sphere approximation
-     * @param stacks the number of stacks to use when building the sphere approximation; this determines
-     *      the number of planes used between the poles to approximate the sphere.
-     * @param slices the number of slices to use when building the sphere approximation; this determines
-     *      the number of planes used around the equator to approximate the sphere.
-     * @param precision precision context to use for floating point comparisons
-     * @return a BSP tree instance approximating a sphere
-     */
-    public static RegionBSPTree3D sphere(final Vector3D center, final double radius, final int stacks, final int slices,
-            final DoublePrecisionContext precision) {
-
-        final List<Plane> planes = new ArrayList<>();
-
-        // add top and bottom planes (+/- z)
-        final Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
-        final Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
-
-        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.PLUS_Z, precision));
-        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.MINUS_Z, precision));
-
-        // add the side planes
-        final double vDelta = Geometry.PI / stacks;
-        final double hDelta = Geometry.PI * 2 / slices;
-
-        final double adjustedRadius = (radius + (radius * Math.cos(vDelta * 0.5))) / 2.0;
-
-        double vAngle;
-        double hAngle;
-        double stackRadius;
-        double stackHeight;
-        double x;
-        double y;
-        Vector3D pt;
-        Vector3D norm;
-
-        vAngle = -0.5 * vDelta;
-        for (int v=0; v<stacks; ++v) {
-            vAngle += vDelta;
-
-            stackRadius = Math.sin(vAngle) * adjustedRadius;
-            stackHeight = Math.cos(vAngle) * adjustedRadius;
-
-            hAngle = -0.5 * hDelta;
-            for (int h=0; h<slices; ++h) {
-                hAngle += hDelta;
-
-                x = Math.cos(hAngle) * stackRadius;
-                y = Math.sin(hAngle) * stackRadius;
-
-                norm = Vector3D.of(x, y, stackHeight).normalize();
-                pt = center.add(norm.multiply(adjustedRadius));
-
-                planes.add(Plane.fromPointAndNormal(pt, norm, precision));
-            }
-        }
-
-        return createFromConvexPlanes(planes);
-    }
-
-    /** Create a BSP tree instance from the given list of convex planes. The planes must represent
-     * a convex region. Not validation is performed.
-     * @param planes planes defining the convex region
-     * @return a new BSP tree instance created from the given planes
-     */
-    private static RegionBSPTree3D createFromConvexPlanes(final List<Plane> planes) {
-        RegionBSPTree3D tree = RegionBSPTree3D.full();
-        RegionNode3D node = tree.getRoot();
-
-        for (Plane plane : planes) {
-            node = node.cut(plane).getMinus();
-        }
-
-        return tree;
+    public static Builder builder(final DoublePrecisionContext precision) {
+        return new Builder(precision);
     }
 
     /** BSP tree node for three dimensional Euclidean space.
      */
-    public static class RegionNode3D extends AbstractRegionBSPTree.AbstractRegionNode<Vector3D, RegionNode3D> {
+    public static final class RegionNode3D extends AbstractRegionBSPTree.AbstractRegionNode<Vector3D, RegionNode3D> {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190702L;
@@ -502,6 +315,257 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
         @Override
         protected RegionNode3D getSelf() {
             return this;
+        }
+    }
+
+    /** Class used to construct {@link RegionBSPTree3D} instances from boundary representations.
+     */
+    public static final class Builder {
+
+        /** Precision object used to perform floating point comparisons. This object is
+         * used when constructing geometric types.
+         */
+        private final DoublePrecisionContext precision;
+
+        /** The BSP tree being constructed. */
+        private final RegionBSPTree3D tree = RegionBSPTree3D.empty();
+
+        /** List of vertices to use for indexed facet operations. */
+        private List<Vector3D> vertexList;
+
+        /** Create a new builder instance. The given precision context will be used when
+         * constructing geometric types.
+         * @param precision precision object used to perform floating point comparisons
+         */
+        public Builder(final DoublePrecisionContext precision) {
+            this.precision = precision;
+        }
+
+        /** Set the list of vertices to use for indexed facet operations.
+         * @param vertices array of vertices
+         * @return this builder instance
+         * @see #addIndexedFacet(int...)
+         * @see #addIndexedFacet(List)
+         * @see #addIndexedFacets(int[][])
+         */
+        public Builder withVertexList(final Vector3D ... vertices) {
+            return withVertexList(Arrays.asList(vertices));
+        }
+
+        /** Set the list of vertices to use for indexed facet operations.
+         * @param vertices list of vertices
+         * @return this builder instance
+         * @see #addIndexedFacet(int...)
+         * @see #addIndexedFacet(List)
+         * @see #addIndexedFacets(int[][])
+         */
+        public Builder withVertexList(final List<Vector3D> vertices) {
+            this.vertexList = vertices;
+            return this;
+        }
+
+        /** Add a subplane to the tree.
+         * @param subplane subplane to add
+         * @return this builder instance
+         */
+        public Builder add(final SubPlane subplane) {
+            tree.insert(subplane);
+            return this;
+        }
+
+        /** Add a convex subplane to the tree.
+         * @param convex convex subplane to add
+         * @return this builder instance
+         */
+        public Builder add(final ConvexSubPlane convex) {
+            tree.insert(convex);
+            return this;
+        }
+
+        /** Add a facet defined by the given array of vertices. The vertices
+         * are considered to form a loop, even if the first vertex is not included
+         * again at the end of the array.
+         * @param vertices array of vertices defining the facet
+         * @return this builder instance
+         */
+        public Builder addFacet(final Vector3D ... vertices) {
+            return addFacet(Arrays.asList(vertices));
+        }
+
+        /** Add a facet defined by the given list of vertices. The vertices
+         * are considered to form a loop, even if the first vertex is not included
+         * again at the end of the list.
+         * @param vertices list of vertices defining the facet
+         * @return this builder instance
+         */
+        public Builder addFacet(final List<Vector3D> vertices) {
+            final Plane plane = Plane.fromPoints(vertices, precision);
+            final List<Vector2D> subspaceVertices = plane.toSubspace(vertices);
+
+            // if there are only 3 vertices, then we know for certain that the area is convex
+            if (subspaceVertices.size() < 4) {
+                return add(ConvexSubPlane.fromVertexLoop(vertices, precision));
+            }
+
+            final SegmentPath path = SegmentPath.fromVertexLoop(subspaceVertices, precision);
+            return add(new SubPlane(plane, path.toTree()));
+        }
+
+        /** Add multiple facets, each one defined by an array of indices into the current
+         * vertex list.
+         * @param facets array of facet definitions, where each definition consists of an
+         *      array of indices into the current vertex list
+         * @return this builder instance
+         * @see #withVertexList(List)
+         */
+        public Builder addIndexedFacets(int[][] facets) {
+            for (int[] facet : facets) {
+                addIndexedFacet(facet);
+            }
+
+            return this;
+        }
+
+        /** Add a facet defined by an array of indices into the current vertex list.
+         * @param vertexIndices indices into the current vertex list, defining the vertices
+         *      for the facet
+         * @return this builder instance
+         * @see #withVertexList(List)
+         */
+        public Builder addIndexedFacet(int ... vertexIndices) {
+            final Vector3D[] vertices = new Vector3D[vertexIndices.length];
+            for (int i=0; i<vertexIndices.length; ++i) {
+                vertices[i] = vertexList.get(vertexIndices[i]);
+            }
+
+            return addFacet(vertices);
+        }
+
+        /** Add a facet defined by a list of indices into the current vertex list.
+         * @param vertexIndices indices into the current vertex list, defining the vertices
+         *      for the facet
+         * @return this builder instance
+         * @see #withVertexList(List)
+         */
+        public Builder addIndexedFacet(final List<Integer> vertexIndices) {
+            final List<Vector3D> vertices = vertexIndices.stream()
+                    .map(idx -> vertexList.get(idx)).collect(Collectors.toList());
+
+            return addFacet(vertices);
+        }
+
+        /** Add an axis-oriented cube with the given dimensions to this instance.
+        * @param center the cube center point
+        * @param size the size of the cube
+        * @return this builder instance
+        * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+        *      as evaluated by the precision context.
+        */
+        public Builder addCenteredCube(final Vector3D center, final double size) {
+            return addCenteredRect(center, size, size, size);
+        }
+
+        /** Add an axis-oriented cube with the given dimensions to this instance.
+         * @param corner a corner of the cube
+         * @param size the size of the cube
+         * @return this builder instance
+         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addCube(final Vector3D corner, final double size) {
+            return addRect(corner, size, size, size);
+        }
+
+        /** Add an axis-oriented rectangular prism to this instance. The prism is centered at the given point and
+         * has the specified dimensions.
+         * @param center center point for the rectangular prism
+         * @param xSize size of the prism along the x-axis
+         * @param ySize size of the prism along the y-axis
+         * @param zSize size of the prism along the z-axis
+         * @return this builder instance
+         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addCenteredRect(final Vector3D center, final double xSize, final double ySize, final double zSize) {
+            return addRect(Vector3D.of(
+                        center.getX() - (xSize * 0.5),
+                        center.getY() - (ySize * 0.5),
+                        center.getZ() - (zSize * 0.5)
+                    ), xSize, ySize, zSize);
+        }
+
+        /** Add an axis-oriented rectangular prism to this instance. The prism
+         * is constructed by taking {@code pt} as one corner of the region and adding {@code xDelta},
+         * {@code yDelta}, and {@code zDelta} to its components to create the opposite corner.
+         * @param pt point lying in a corner of the region
+         * @param xDelta distance to move along the x axis to place the other points in the
+         *      prism; this value may be negative.
+         * @param yDelta distance to move along the y axis to place the other points in the
+         *      prism; this value may be negative.
+         * @param zDelta distance to move along the z axis to place the other points in the
+         *      prism; this value may be negative.
+         * @return this builder instance
+         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addRect(final Vector3D pt, final double xDelta, final double yDelta, final double zDelta) {
+            return addRect(pt, Vector3D.of(
+                    pt.getX() + xDelta,
+                    pt.getY() + yDelta,
+                    pt.getZ() + zDelta));
+        }
+
+        /** Add an axis-oriented rectangular prism to this instance. The points {@code a} and {@code b}
+         * are taken to represent opposite corner points in the prism and may be specified in any order.
+         * @param a first corner point in the rectangular prism (opposite of {@code b})
+         * @param b second corner point in the rectangular prism (opposite of {@code a})
+         * @return this builder instance
+         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addRect(final Vector3D a, final Vector3D b) {
+            final double minX = Math.min(a.getX(), b.getX());
+            final double maxX = Math.max(a.getX(), b.getX());
+
+            final double minY = Math.min(a.getY(), b.getY());
+            final double maxY = Math.max(a.getY(), b.getY());
+
+            final double minZ = Math.min(a.getZ(), b.getZ());
+            final double maxZ = Math.max(a.getZ(), b.getZ());
+
+            if (precision.eq(minX, maxX) || precision.eq(minY, maxY) || precision.eq(minZ, maxZ)) {
+                throw new GeometryValueException("Rectangular prism has zero size: " + a + ", " + b + ".");
+            }
+
+            final Vector3D[] vertices = {
+                Vector3D.of(minX, minY, minZ),
+                Vector3D.of(maxX, minY, minZ),
+                Vector3D.of(maxX, maxY, minZ),
+                Vector3D.of(minX, maxY, minZ),
+
+                Vector3D.of(minX, minY, maxZ),
+                Vector3D.of(maxX, minY, maxZ),
+                Vector3D.of(maxX, maxY, maxZ),
+                Vector3D.of(minX, maxY, maxZ)
+            };
+
+            addFacet(vertices[0], vertices[3], vertices[2], vertices[1]);
+            addFacet(vertices[4], vertices[5], vertices[6], vertices[7]);
+
+            addFacet(vertices[5], vertices[1], vertices[2], vertices[6]);
+            addFacet(vertices[0], vertices[4], vertices[7], vertices[3]);
+
+            addFacet(vertices[0], vertices[1], vertices[5], vertices[4]);
+            addFacet(vertices[3], vertices[7], vertices[6], vertices[2]);
+
+            return this;
+        }
+
+        /** Get the created BSP tree.
+         * @return the created BSP tree
+         */
+        public RegionBSPTree3D build() {
+            return tree;
         }
     }
 
@@ -542,7 +606,7 @@ public class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTr
      *  average of these pyramid centers.
      *  @see https://en.wikipedia.org/wiki/Polyhedron#Volume
      */
-    private static class RegionSizePropertiesVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
+    private static final class RegionSizePropertiesVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
 
         /** Accumulator for facet volume contributions. */
         private double volumeSum;

@@ -19,8 +19,10 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -30,7 +32,7 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.RegionNode3D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -124,7 +126,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testBoundaries() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(Vector3D.ZERO, Vector3D.of(1, 1, 1))
+                .build();
 
         // act
         List<ConvexSubPlane> subplanes = new ArrayList<>();
@@ -137,7 +141,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testGetBoundaries() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(Vector3D.ZERO, Vector3D.of(1, 1, 1))
+                .build();
 
         // act
         List<ConvexSubPlane> subplanes = tree.getBoundaries();
@@ -150,8 +156,7 @@ public class RegionBSPTree3DTest {
     public void testHalfSpace() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.insert(ConvexSubPlane.fromConvexArea(
-                Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION), ConvexArea.full()));
+        tree.insert(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION).span());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -233,7 +238,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testRaycastFirstFace() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-1, -1, -1), 2, 2, 2, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 2)
+                .build();
 
         Line3D xPlus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
         Line3D xMinus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_PRECISION);
@@ -284,7 +291,9 @@ public class RegionBSPTree3DTest {
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
         Vector3D center = lowerCorner.lerp(upperCorner, 0.5);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(lowerCorner, upperCorner, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(lowerCorner, upperCorner)
+                .build();
 
         Line3D upDiagonal = Line3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
         Line3D downDiagonal = upDiagonal.reverse();
@@ -314,7 +323,9 @@ public class RegionBSPTree3DTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(lowerCorner, upperCorner, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(lowerCorner, upperCorner)
+                .build();
 
         Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
         Vector3D secondPointOnLine = Vector3D.of(0.5, 2.0, 0);
@@ -341,7 +352,9 @@ public class RegionBSPTree3DTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(lowerCorner, upperCorner, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(lowerCorner, upperCorner)
+                .build();
 
         Vector3D pt = Vector3D.of(0.5, 0.5, 0);
         Line3D intoBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.PLUS_Z), TEST_PRECISION);
@@ -363,7 +376,9 @@ public class RegionBSPTree3DTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(lowerCorner, upperCorner, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(lowerCorner, upperCorner)
+                .build();
 
         Line3D intoBoxLine = Line3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
         Line3D outOfBoxLine = intoBoxLine.reverse();
@@ -384,7 +399,9 @@ public class RegionBSPTree3DTest {
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(lowerCorner, upperCorner, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(lowerCorner, upperCorner)
+                .build();
 
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.PLUS_X, TEST_PRECISION);
 
@@ -406,7 +423,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testInvertedRegion() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build();
 
         // act
         tree.complement();
@@ -431,7 +450,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testUnitBox() {
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build();
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -492,8 +513,12 @@ public class RegionBSPTree3DTest {
     public void testTwoBoxes_disjoint() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(1.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build());
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.of(2, 0, 0), 1)
+                .build());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -517,8 +542,12 @@ public class RegionBSPTree3DTest {
     public void testTwoBoxes_sharedSide() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build());
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.of(1, 0, 0), 1)
+                .build());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -545,8 +574,12 @@ public class RegionBSPTree3DTest {
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, precision));
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5 + 1e-7, -0.5, -0.5), 1, 1, 1, precision));
+        tree.union(RegionBSPTree3D.builder(precision)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build());
+        tree.union(RegionBSPTree3D.builder(precision)
+                .addCenteredCube(Vector3D.of(1 + 1e-7, 0, 0), 1)
+                .build());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -554,7 +587,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), eps);
         Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.41e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.208e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
 
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -569,8 +602,12 @@ public class RegionBSPTree3DTest {
     public void testTwoBoxes_sharedEdge() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, 0.5, -0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build());
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.of(1, 1, 0), 1)
+                .build());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -596,8 +633,12 @@ public class RegionBSPTree3DTest {
     public void testTwoBoxes_sharedPoint() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION));
-        tree.union(RegionBSPTree3D.rect(Vector3D.of(0.5, 0.5, 0.5), 1, 1, 1, TEST_PRECISION));
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.ZERO, 1)
+                .build());
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCenteredCube(Vector3D.of(1, 1, 1), 1)
+                .build());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -627,12 +668,12 @@ public class RegionBSPTree3DTest {
         Vector3D vertex4 = Vector3D.of(1, 3, 4);
 
         // act
-        RegionBSPTree3D tree = ConvexVolume.fromBounds(
-                    Plane.fromPoints(vertex3, vertex2, vertex1, TEST_PRECISION),
-                    Plane.fromPoints(vertex2, vertex3, vertex4, TEST_PRECISION),
-                    Plane.fromPoints(vertex4, vertex3, vertex1, TEST_PRECISION),
-                    Plane.fromPoints(vertex1, vertex2, vertex4, TEST_PRECISION)
-                ).toTree();
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addFacet(vertex3, vertex2, vertex1)
+                .addFacet(vertex2, vertex3, vertex4)
+                .addFacet(vertex4, vertex3, vertex1)
+                .addFacet(vertex1, vertex2, vertex4)
+                .build();
 
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
@@ -663,7 +704,7 @@ public class RegionBSPTree3DTest {
         double radius = 1.0;
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.sphere(Vector3D.of(1, 2, 3), radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D tree = createSphere(Vector3D.of(1, 2, 3), radius, 8, 16);
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -696,7 +737,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testProjectToBoundary() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, 1)
+                .build();
 
         // act/assert
         checkProject(tree, Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(0, 0.5, 0.5));
@@ -708,7 +751,10 @@ public class RegionBSPTree3DTest {
     @Test
     public void testProjectToBoundary_invertedRegion() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, 1)
+                .build();
+
         tree.complement();
 
         // act/assert
@@ -729,9 +775,10 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        RegionBSPTree3D box = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, size * 0.5, size),
-                radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D box = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -769,7 +816,8 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.2;
         double radius = 1.0;
 
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.ZERO, radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
+
         RegionBSPTree3D copy = RegionBSPTree3D.empty();
         copy.copy(sphere);
 
@@ -809,8 +857,10 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        RegionBSPTree3D box = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D box = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -847,7 +897,7 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.2;
         double radius = 1.0;
 
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.ZERO, radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
         RegionBSPTree3D copy = RegionBSPTree3D.empty();
         copy.copy(sphere);
 
@@ -885,8 +935,12 @@ public class RegionBSPTree3DTest {
     public void testBoolean_xor_twoCubes() throws IOException {
         // arrange
         double size = 1.0;
-        RegionBSPTree3D box1 = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D box2 = RegionBSPTree3D.rect(Vector3D.of(0.5, 0.5, 0.5), size, size, size, TEST_PRECISION);
+        RegionBSPTree3D box1 = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D box2 = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.of(0.5, 0.5, 0.5), size)
+                .build();
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -923,9 +977,10 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        RegionBSPTree3D box = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, size * 0.5, size),
-                radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D box = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -962,7 +1017,7 @@ public class RegionBSPTree3DTest {
         // arrange
         double radius = 1.0;
 
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.ZERO, radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
         RegionBSPTree3D copy = RegionBSPTree3D.empty();
         copy.copy(sphere);
 
@@ -1000,9 +1055,10 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        RegionBSPTree3D box = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, size * 0.5, size),
-                radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D box = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D sphere = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -1038,9 +1094,8 @@ public class RegionBSPTree3DTest {
         // arrange
         double radius = 1.0;
 
-        RegionBSPTree3D sphere = RegionBSPTree3D.sphere(Vector3D.ZERO, radius, 8, 16, TEST_PRECISION);
-        RegionBSPTree3D copy = RegionBSPTree3D.empty();
-        copy.copy(sphere);
+        RegionBSPTree3D sphere = createSphere(Vector3D.ZERO, radius, 8, 16);
+        RegionBSPTree3D copy = sphere.copy();
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -1076,13 +1131,12 @@ public class RegionBSPTree3DTest {
         double tolerance = 0.05;
         double size = 1.0;
         double radius = size * 0.5;
-        RegionBSPTree3D box = RegionBSPTree3D.rect(Vector3D.ZERO, size, size, size, TEST_PRECISION);
-        RegionBSPTree3D sphereToAdd = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, size * 0.5, size),
-                radius, 8, 16, TEST_PRECISION);
-        RegionBSPTree3D sphereToRemove1 = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, 0, size * 0.5),
-                radius, 8, 16, TEST_PRECISION);
-        RegionBSPTree3D sphereToRemove2 = RegionBSPTree3D.sphere(Vector3D.of(size * 0.5, 1, size * 0.5),
-                radius, 8, 16, TEST_PRECISION);
+        RegionBSPTree3D box = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.ZERO, size)
+                .build();
+        RegionBSPTree3D sphereToAdd = createSphere(Vector3D.of(size * 0.5, size * 0.5, size), radius, 8, 16);
+        RegionBSPTree3D sphereToRemove1 = createSphere(Vector3D.of(size * 0.5, 0, size * 0.5), radius, 8, 16);
+        RegionBSPTree3D sphereToRemove2 = createSphere(Vector3D.of(size * 0.5, 1, size * 0.5), radius, 8, 16);
 
         // act
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -1128,7 +1182,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testToConvex_singleBox() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(1, 2, 3), 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.of(1, 2, 3), 1)
+                .build();
 
         // act
         List<ConvexVolume> result = tree.toConvex();
@@ -1144,8 +1200,12 @@ public class RegionBSPTree3DTest {
     @Test
     public void testToConvex_multipleBoxes() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(4, 5, 6), 1, 1, 1, TEST_PRECISION);
-        tree.union(RegionBSPTree3D.rect(Vector3D.ZERO, 2, 1, 1, TEST_PRECISION));
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.of(4, 5, 6), 1)
+                .build();
+        tree.union(RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(Vector3D.ZERO, 2, 1, 1)
+                .build());
 
         // act
         List<ConvexVolume> result = tree.toConvex();
@@ -1168,7 +1228,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testSplit() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(-0.5, -0.5, -0.5), 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.of(-0.5, -0.5, -0.5), 1)
+                .build();
 
         Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
 
@@ -1190,7 +1252,9 @@ public class RegionBSPTree3DTest {
     @Test
     public void testGetNodeRegion() {
         // arrange
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addRect(Vector3D.ZERO, Vector3D.of(1, 1, 1))
+                .build();
 
         // act/assert
         ConvexVolume rootVol = tree.getRoot().getNodeRegion();
@@ -1207,90 +1271,117 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testRect_deltaValues_positive() {
+    public void testBuilder_nothingAdded() {
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION).build();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
-        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
-                Vector3D.of(0.5, -1, 0.5), Vector3D.of(0.5, 2, 0.5),
-                Vector3D.of(0.5, 0.5, -1), Vector3D.of(0.5, 0.5, 2));
+        Assert.assertTrue(tree.isEmpty());
     }
 
     @Test
-    public void testRect_deltaValues_negative() {
+    public void testBuilder_rectMethods() {
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.ZERO, -1, -1, -1, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
 
-        // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+                .addRect(Vector3D.ZERO, Vector3D.of(2, 1, 1))
+                .addRect(Vector3D.of(0, 0, -1), Vector3D.of(-1, -2, -2))
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, -0.5), tree.getBarycenter(), TEST_EPS);
-        Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+                .addRect(Vector3D.of(0, 0, 5), 1, 2, 3)
+                .addRect(Vector3D.of(0, 0, 10), -3, -2, -1)
 
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(-0.5, -0.5, -0.5));
+                .addCenteredRect(Vector3D.of(0, 0, 15), 2, 3, 4)
+                .addCenteredRect(Vector3D.of(0, 0, 20), 4, 3, 2)
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector3D.of(-2, -0.5, -0.5), Vector3D.of(1, -0.5, -0.5),
-                Vector3D.of(-0.5, -2, -0.5), Vector3D.of(-0.5, 1, -0.5),
-                Vector3D.of(-0.5, -0.5, -2), Vector3D.of(-0.5, -0.5, 1));
+                .build();
+
+        // act
+        Assert.assertEquals(2 + 2 + 6 + 6 + 24 + 24, tree.getSize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(1, 0.5, 0.5),
+                Vector3D.of(-0.5, -1, -1.5),
+
+                Vector3D.of(0.5, 1, 6.5),
+                Vector3D.of(-1.5, -1, 9.5),
+
+                Vector3D.of(0, 0, 15),
+                Vector3D.of(0, 0, 20));
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-1, -1.5, 13),
+                Vector3D.of(1, 1.5, 17),
+
+                Vector3D.of(-2, -1.5, 19),
+                Vector3D.of(2, 1.5, 21));
     }
 
     @Test
-    public void testRect_givenPoints() {
-        // act
-        RegionBSPTree3D tree = RegionBSPTree3D.rect(Vector3D.of(1, 0, 0), Vector3D.of(2, 2, 1), TEST_PRECISION);
-
-        // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 1, 0.5), tree.getBarycenter(), TEST_EPS);
-        Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(1.5, 1, 0.5));
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector3D.of(0.5, 1, 0.5), Vector3D.of(2.5, 1, 0.5),
-                Vector3D.of(1.5, -1, 0.5), Vector3D.of(1.5, 3, 0.5),
-                Vector3D.of(1.5, 1, -0.5), Vector3D.of(1.5, 1, 1.5));
-    }
-
-    @Test
-    public void testRect_invalidDimensions() {
+    public void testBuilder_rectMethods_invalidDimensions() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree3D.rect(Vector3D.ZERO, 1e-20, 1, 1, TEST_PRECISION);
+            RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1e-20, 1, 1);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1e-20, 1, TEST_PRECISION);
+            RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1, 1e-20, 1);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree3D.rect(Vector3D.ZERO, 1, 1, 1e-20, TEST_PRECISION);
+            RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1, 1, 1e-20);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree3D.rect(Vector3D.ZERO, 0, 0, 0, TEST_PRECISION);
+            RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 0, 0, 0);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3));
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.builder(TEST_PRECISION).addCenteredRect(Vector3D.of(1, 2, 3), 0, 0, 0);
         }, GeometryValueException.class);
     }
 
     @Test
-    public void testFromFacets_triangles() {
+    public void testBuilder_cubeMethods() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .addCube(Vector3D.of(1, 0, 0), 2)
+                .addCenteredCube(Vector3D.of(-2, -3, -4), 3)
+                .build();
+
+        // assert
+        Assert.assertEquals(8 + 27, tree.getSize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector3D.of(2, 1, 1),
+                Vector3D.of(-2, -3, -4));
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Vector3D.of(-3.5, -4.5, -5.5),
+                Vector3D.of(-0.5, -1.5, -2.5));
+    }
+
+    @Test
+    public void testBuilder_cubeMethods_invalidDimensions() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.builder(TEST_PRECISION).addCube(Vector3D.ZERO, 1e-20);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.builder(TEST_PRECISION).addCube(Vector3D.of(1, 2, 3), 1e-20);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            RegionBSPTree3D.builder(TEST_PRECISION).addCenteredCube(Vector3D.of(1, 2, 3), 0);
+        }, GeometryValueException.class);
+    }
+
+    @Test
+    public void testBuilder_addIndexedFacets_triangles() {
         // arrange
         Vector3D vertices[] = {
                 Vector3D.ZERO,
@@ -1325,7 +1416,10 @@ public class RegionBSPTree3DTest {
         };
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromFacets(vertices, facets, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .withVertexList(vertices)
+                .addIndexedFacets(facets)
+                .build();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -1337,7 +1431,7 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testFromFacets_concaveFacets() {
+    public void testBuilder_addIndexedFacets_concaveFacets() {
         // arrange
         Vector3D[] vertices = {
                 Vector3D.of(-1, 0, 1),
@@ -1363,7 +1457,10 @@ public class RegionBSPTree3DTest {
         };
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromFacets(vertices, facets, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .withVertexList(vertices)
+                .addIndexedFacets(facets)
+                .build();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -1375,6 +1472,33 @@ public class RegionBSPTree3DTest {
 
         checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0, 1.5, 0.5));
         checkClassify(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0.5, 0.5));
+    }
+
+    @Test
+    public void testBuilder_addIndexedFacets_multipleVertexLists() {
+        // arrange
+        Vector3D p0 = Vector3D.ZERO;
+        Vector3D p1 = Vector3D.PLUS_X;
+        Vector3D p2 = Vector3D.PLUS_Y;
+        Vector3D p3 = Vector3D.PLUS_Z;
+
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .withVertexList(p1, p2, p3)
+                .addIndexedFacet(Arrays.asList(2, 0, 1))
+
+                .withVertexList(p0, p1, p2, p3)
+                .addIndexedFacet(0, 2, 1)
+                .addIndexedFacets(new int[][] {
+                        { 0, 1, 3 },
+                        { 0, 3, 2 }
+                })
+                .build();
+
+        // assert
+        Assert.assertEquals(0.5 / 3.0, tree.getSize(), TEST_EPS);
+
+        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.25, 0.25, 0.25));
     }
 
     // GEOMETRY-59
@@ -1402,7 +1526,10 @@ public class RegionBSPTree3DTest {
         };
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromFacets(vertices, facets, TEST_PRECISION);
+        RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
+                .withVertexList(vertices)
+                .addIndexedFacets(facets)
+                .build();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -1413,6 +1540,63 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(2, 1, 3), Vector3D.of(2, 1, -3),
                 Vector3D.of(2, -1, 1), Vector3D.of(2, 3, 1),
                 Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
+    }
+
+    private static RegionBSPTree3D createSphere(final Vector3D center, final double radius, final int stacks, final int slices) {
+
+        final List<Plane> planes = new ArrayList<>();
+
+        // add top and bottom planes (+/- z)
+        final Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
+        final Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
+
+        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.PLUS_Z, TEST_PRECISION));
+        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.MINUS_Z, TEST_PRECISION));
+
+        // add the side planes
+        final double vDelta = Geometry.PI / stacks;
+        final double hDelta = Geometry.PI * 2 / slices;
+
+        final double adjustedRadius = (radius + (radius * Math.cos(vDelta * 0.5))) / 2.0;
+
+        double vAngle;
+        double hAngle;
+        double stackRadius;
+        double stackHeight;
+        double x;
+        double y;
+        Vector3D pt;
+        Vector3D norm;
+
+        vAngle = -0.5 * vDelta;
+        for (int v=0; v<stacks; ++v) {
+            vAngle += vDelta;
+
+            stackRadius = Math.sin(vAngle) * adjustedRadius;
+            stackHeight = Math.cos(vAngle) * adjustedRadius;
+
+            hAngle = -0.5 * hDelta;
+            for (int h=0; h<slices; ++h) {
+                hAngle += hDelta;
+
+                x = Math.cos(hAngle) * stackRadius;
+                y = Math.sin(hAngle) * stackRadius;
+
+                norm = Vector3D.of(x, y, stackHeight).normalize();
+                pt = center.add(norm.multiply(adjustedRadius));
+
+                planes.add(Plane.fromPointAndNormal(pt, norm, TEST_PRECISION));
+            }
+        }
+
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
+        RegionNode3D node = tree.getRoot();
+
+        for (Plane plane : planes) {
+            node = node.cut(plane).getMinus();
+        }
+
+        return tree;
     }
 
     private static void assertSubPlaneNormal(Vector3D expectedNormal, ConvexSubPlane sub) {

@@ -33,6 +33,7 @@ import org.apache.commons.geometry.core.partition.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -123,7 +124,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaries() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, Vector2D.of(1, 1))
+                .build();
 
         // act
         List<Segment> segments = new ArrayList<>();
@@ -136,7 +139,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaries() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, Vector2D.of(1, 1))
+                .build();
 
         // act
         List<Segment> segments = tree.getBoundaries();
@@ -286,7 +291,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_square() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 1, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addSquare(Vector2D.ZERO, 1)
+                .build();
 
         // act
         List<ConvexArea> result = tree.toConvex();
@@ -446,7 +453,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_bothSides() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, 2, 1)
+                .build();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * Geometry.PI, TEST_PRECISION);
 
@@ -470,7 +479,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_plusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, 2, 1)
+                .build();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION);
 
@@ -491,7 +502,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_minusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 2, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, 2, 1)
+                .build();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION)
                 .reverse();
@@ -737,8 +750,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_regionWithHole() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION);
-        RegionBSPTree2D inner = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, Vector2D.of(3, 3))
+                .build();
+        RegionBSPTree2D inner = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.of(1, 1), Vector2D.of(2, 2))
+                .build();
 
         tree.difference(inner);
 
@@ -774,8 +791,12 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedRegionWithHole() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION);
-        RegionBSPTree2D inner = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.ZERO, Vector2D.of(3, 3))
+                .build();
+        RegionBSPTree2D inner = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.of(1, 1), Vector2D.of(2, 2))
+                .build();
 
         tree.difference(inner);
 
@@ -866,99 +887,100 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testRect_pointArguments_lowerLeftAndUpperRight() {
+    public void testBuilder_rectMethods() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addCenteredRect(Vector2D.ZERO, 1, 2)
+                .addCenteredSquare(Vector2D.of(5, 0), -2)
+
+                .addRect(Vector2D.of(10, 5), -2, -3)
+                .addRect(Vector2D.of(15, 5), Vector2D.of(16, 4))
+
+                .addSquare(Vector2D.of(20, 1), 3)
+
+                .build();
 
         // assert
-        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(2 + 4 + 6 + 1 + 9, tree.getSize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0.5, 1.5), Vector2D.of(3.5, 0.5),
-                Vector2D.of(2, 0.5), Vector2D.of(2, 2.5));
+        checkClassify(tree, RegionLocation.INSIDE,
+                Vector2D.ZERO,
+                Vector2D.of(5, 0),
+                Vector2D.of(9, 3.5),
+                Vector2D.of(15.5, 4.5),
+                Vector2D.of(21.5, 2.5));
 
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(2, 1.5));
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Vector2D.of(-0.5, -1), Vector2D.of(0.5, 1),
+                Vector2D.of(4, -1), Vector2D.of(6, 1));
     }
 
     @Test
-    public void testRect_pointArguments_upperLeftAndLowerRight() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(3, 1), Vector2D.of(1, 2), TEST_PRECISION);
+    public void testBuilder_rectMethods_zeroSize() {
+        // arrange
+        final RegionBSPTree2D.Builder builder = RegionBSPTree2D.builder(TEST_PRECISION);
 
-        // assert
-        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.getBarycenter(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0.5, 1.5), Vector2D.of(3.5, 0.5),
-                Vector2D.of(2, 0.5), Vector2D.of(2, 2.5));
-
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(2, 1.5));
-    }
-
-    @Test
-    public void testRect_zeroSize() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(1, 1), 0, 2, TEST_PRECISION);
+            builder.addRect(Vector2D.of(1, 1), 0, 2);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(1, 1), 2, 0, TEST_PRECISION);
+            builder.addRect(Vector2D.of(1, 1), 2, 0);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(2, 3), 0, 0, TEST_PRECISION);
+            builder.addRect(Vector2D.of(2, 3), 0, 0);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
+            builder.addRect(Vector2D.of(1, 1), Vector2D.of(1, 3));
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+            builder.addRect(Vector2D.of(1, 1), Vector2D.of(3, 1));
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            RegionBSPTree2D.rect(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
+            builder.addRect(Vector2D.of(2, 3), Vector2D.of(2, 3));
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.addCenteredRect(Vector2D.of(2, 3), 0, 1e-20);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.addSquare(Vector2D.of(2, 3), 1e-20);
+        }, GeometryValueException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.addCenteredSquare(Vector2D.of(2, 3), 0);
         }, GeometryValueException.class);
     }
 
     @Test
-    public void testRect_pointAndDeltas_positiveDeltas() {
+    public void testBuilder_mixedArguments() {
+        // arrange
+        Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION);
+
+        SegmentPath path = SegmentPath.builder(TEST_PRECISION)
+            .append(Vector2D.PLUS_X)
+            .append(Vector2D.of(1, 1))
+            .build();
+
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 2, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .add(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION))
+                .add(path)
+                .addSegment(Vector2D.of(1, 1), Vector2D.PLUS_Y)
+                .add(new SubLine(minusYAxis, Interval.of(-1, 0, TEST_PRECISION).toTree()))
+                .build();
 
         // assert
-        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.getBarycenter(), TEST_EPS);
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0.5, 1.5), Vector2D.of(3.5, 0.5),
-                Vector2D.of(2, 0.5), Vector2D.of(2, 2.5));
-
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(2, 1.5));
-    }
-
-    @Test
-    public void testRect_pointAndDeltas_negativeDeltas() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(3, 2), -2, -1, TEST_PRECISION);
-
-        // assert
-        Assert.assertEquals(2, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), tree.getBarycenter(), TEST_EPS);
-
-        checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(0.5, 1.5), Vector2D.of(3.5, 0.5),
-                Vector2D.of(2, 0.5), Vector2D.of(2, 2.5));
-
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(2, 1.5));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
     }
 
     @Test
@@ -986,7 +1008,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testProject_rect() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addSquare(Vector2D.of(1, 1), 1)
+                .build();
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), tree.project(Vector2D.ZERO), TEST_EPS);
@@ -1009,7 +1033,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 2, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addRect(Vector2D.of(1, 1), 2, 1)
+                .build();
 
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
                 .rotate(Geometry.HALF_PI)
@@ -1077,7 +1103,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addSquare(Vector2D.of(1, 1), 1)
+                .build();
 
         Transform<Vector2D> transform = v -> Vector2D.of(-v.getX(), v.getY());
 
@@ -1099,7 +1127,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_doubleReflection() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addSquare(Vector2D.of(1, 1), 1)
+                .build();
 
         Transform<Vector2D> transform = Vector2D::negate;
 
@@ -1121,18 +1151,20 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBooleanOperations() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.rect(Vector2D.ZERO, 3, 3, TEST_PRECISION);
+        RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
+                .addSquare(Vector2D.ZERO, 3)
+                .build();
         RegionBSPTree2D temp;
 
         // act
-        temp = RegionBSPTree2D.rect(Vector2D.of(1, 1), 1, 1, TEST_PRECISION);
+        temp = RegionBSPTree2D.builder(TEST_PRECISION).addSquare(Vector2D.of(1, 1), 1).build();
         temp.complement();
         tree.intersection(temp);
 
-        temp = RegionBSPTree2D.rect(Vector2D.of(3, 0), 3, 3, TEST_PRECISION);
+        temp = RegionBSPTree2D.builder(TEST_PRECISION).addSquare(Vector2D.of(3, 0), 3).build();
         tree.union(temp);
 
-        temp = RegionBSPTree2D.rect(Vector2D.of(2, 1), 3, 1, TEST_PRECISION);
+        temp = RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(2, 1), 3, 1).build();
         tree.difference(temp);
 
         temp.setFull();

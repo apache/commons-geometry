@@ -280,88 +280,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return tree;
     }
 
-    /** Construct a BSP tree representing an axis-oriented rectangular region. The region
-     * is constructed by taking {@code pt} as one corner of the region and adding {@code xDelta}
-     * and {@code yDelta} to its components to create the opposite corner. If {@code xDelta}
-     * and {@code yDelta} are both positive, then the constructed rectangle will have {@code pt}
-     * as its lower-left corner and will have a width and height of {@code xDelta} and {@code yDelta}
-     * respectively.
-     *
-     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
-     * The length and width of the created region must be non-zero as evaluated by the given precision
-     * content.</p>
-     *
-     * @param pt point lying in a corner of the region
-     * @param xDelta distance to move along the x axis to place the other points in the
-     *      rectangle; this value may be negative, in which case {@code pt} will lie
-     *      on the right side of the constructed rectangle
-     * @param yDelta distance to move along the y axis to place the other points in the
-     *      rectangle; this value may be negative, in which case {@code pt} will lie
-     *      on the top of the rectangle
-     * @param precision precision context to use for floating point comparisons
-     * @return a new bsp tree instance representing a rectangular region
-     * @throws GeometryValueException if the width or height of the defined rectangle is zero
-     *      as evaluated by the given precision context.
+    /** Create a new {@link RegionBSPTree2D.Builder} instance for creating BSP
+     * trees from boundary representations.
+     * @param precision precision context to use for floating point comparisons.
+     * @return a new builder instance
      */
-    public static RegionBSPTree2D rect(final Vector2D pt, final double xDelta, final double yDelta,
-            final DoublePrecisionContext precision) {
-
-        return rect(pt, Vector2D.of(pt.getX() + xDelta, pt.getY() + yDelta), precision);
-    }
-
-    /** Construct a BSP tree representing an axis-oriented rectangular region. The points {@code a} and {@code b}
-     * are taken to represent opposite corner points in the rectangle and may be specified in any order.
-     *
-     * <p>This method does <em>not</em> support construction of infinitely thin or point-like regions.
-     * The length and width of the created region must be non-zero as evaluated by the given precision
-     * content.</p>
-     *
-     * @param a first corner point in the rectangle (opposite of {@code b})
-     * @param b second corner point in the rectangle (opposite of {@code a})
-     * @param precision precision context to use for floating point comparisons
-     * @return a new bsp tree instance representing a rectangular region
-     * @throws GeometryValueException if the width or height of the defined rectangle is zero
-     *      as evaluated by the given precision context.
-     */
-    public static RegionBSPTree2D rect(final Vector2D a, final Vector2D b, final DoublePrecisionContext precision) {
-
-        final double minX = Math.min(a.getX(), b.getX());
-        final double maxX = Math.max(a.getX(), b.getX());
-
-        final double minY = Math.min(a.getY(), b.getY());
-        final double maxY = Math.max(a.getY(), b.getY());
-
-        if (precision.eq(minX, maxX) || precision.eq(minY, maxY)) {
-            throw new GeometryValueException("Rectangle has zero size: " + a + ", " + b + ".");
-        }
-
-        final Vector2D lowerLeft = Vector2D.of(minX, minY);
-        final Vector2D upperLeft = Vector2D.of(minX, maxY);
-
-        final Vector2D upperRight = Vector2D.of(maxX, maxY);
-        final Vector2D lowerRight = Vector2D.of(maxX, minY);
-
-        final Line bottomLine = Line.fromPointAndDirection(lowerLeft, Vector2D.PLUS_X, precision);
-        final Line rightLine = Line.fromPointAndDirection(lowerRight, Vector2D.PLUS_Y, precision);
-        final Line topLine = Line.fromPointAndDirection(upperRight, Vector2D.MINUS_X, precision);
-        final Line leftLine = Line.fromPointAndDirection(upperLeft, Vector2D.MINUS_Y, precision);
-
-        final RegionBSPTree2D tree = empty();
-        RegionNode2D node = tree.getRoot();
-
-        // construct the tree by directly setting the node cut subhyperplanes
-        tree.cutNode(node, bottomLine.span());
-        node = node.getMinus();
-
-        tree.cutNode(node, topLine.span());
-        node = node.getMinus();
-
-        tree.cutNode(node, rightLine.segment(minY, maxY));
-        node = node.getMinus();
-
-        tree.cutNode(node, leftLine.segment(-maxY, -minY));
-
-        return tree;
+    public static Builder builder(final DoublePrecisionContext precision) {
+        return new Builder(precision);
     }
 
     /** BSP tree node for two dimensional Euclidean space.
@@ -391,6 +316,165 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         @Override
         protected RegionNode2D getSelf() {
             return this;
+        }
+    }
+
+    /** Class used to construct {@link RegionBSPTree2D} instances from boundary representations.
+     */
+    public static final class Builder {
+
+        /** Precision object used to perform floating point comparisons. This object is
+         * used when constructing geometric types.
+         */
+        private final DoublePrecisionContext precision;
+
+        /** The BSP tree being constructed. */
+        private final RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        /** Create a new builder instance. The given precision context will be used when
+         * constructing geometric types.
+         * @param precision precision object used to perform floating point comparisons
+         */
+        public Builder(final DoublePrecisionContext precision) {
+            this.precision = precision;
+        }
+
+        /** Add a subline to the tree.
+         * @param subline subline to add
+         * @return this builder instance
+         */
+        public Builder add(final SubLine subline) {
+            tree.insert(subline);
+            return this;
+        }
+
+        /** Add a segment to the tree.
+         * @param segment segment to add
+         * @return this builder instance
+         */
+        public Builder add(final Segment segment) {
+            tree.insert(segment);
+            return this;
+        }
+
+        /** Add the line segments defined in the given segment path.
+         * @param path path containing line segments to add
+         * @return this builder instance
+         */
+        public Builder add(final SegmentPath path) {
+            for (Segment segment : path) {
+                add(segment);
+            }
+
+            return this;
+        }
+
+        /** Add a segment defined by the given points.
+         * @param vertices array of vertices defining the facet
+         * @return this builder instance
+         */
+        public Builder addSegment(final Vector2D start, final Vector2D end) {
+            return add(Segment.fromPoints(start, end, precision));
+        }
+
+        /** Add segments defining an axis-oriented square with the given corner point and size.
+         * @param center center point of the square
+         * @param size the size of the square
+         * @return this builder instance
+         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addCenteredSquare(final Vector2D center, final double size) {
+            return addCenteredRect(center, size, size);
+        }
+
+        /** Add segments defining an axis-oriented square with the given corner point and size.
+         * @param corner point in the corner of the square
+         * @param size the size of the square
+         * @return this builder instance
+         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addSquare(final Vector2D corner, final double size) {
+            return addRect(corner, size, size);
+        }
+
+        /** Add segments defining an axis-oriented rectangular region with the given center point and size.
+         * @param center center point for the region
+         * @param xSize size along the x-axis
+         * @param ySize size along the y-axis
+         * @return this builder instance
+         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addCenteredRect(final Vector2D center, final double xSize, final double ySize) {
+            return addRect(Vector2D.of(
+                        center.getX() - (0.5 * xSize),
+                        center.getY() - (0.5 * ySize)
+                    ), xSize, ySize);
+        }
+
+        /** Add segments defining an axis-oriented rectangular region. The region
+         * is constructed by taking {@code pt} as one corner of the region and adding {@code xDelta}
+         * and {@code yDelta} to its components to create the opposite corner. If {@code xDelta}
+         * and {@code yDelta} are both positive, then the constructed rectangle will have {@code pt}
+         * as its lower-left corner and will have a width and height of {@code xDelta} and {@code yDelta}
+         * respectively.
+         * @param pt point lying in a corner of the region
+         * @param xDelta distance to move along the x axis to place the other points in the
+         *      rectangle; this value may be negative, in which case {@code pt} will lie
+         *      on the right side of the constructed rectangle
+         * @param yDelta distance to move along the y axis to place the other points in the
+         *      rectangle; this value may be negative, in which case {@code pt} will lie
+         *      on the top of the rectangle
+         * @return this builder instance
+         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addRect(final Vector2D pt, final double xDelta, final double yDelta) {
+            return addRect(pt, Vector2D.of(
+                    pt.getX() + xDelta,
+                    pt.getY() + yDelta));
+        }
+
+        /** Add segments defining an axis-oriented rectangular region. The points {@code a} and {@code b}
+         * are taken to represent opposite corner points in the rectangle and may be specified in any order.
+         * @param a first corner point in the rectangle (opposite of {@code b})
+         * @param b second corner point in the rectangle (opposite of {@code a})
+         * @return this builder instance
+         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         *      as evaluated by the precision context.
+         */
+        public Builder addRect(final Vector2D a, final Vector2D b) {
+            final double minX = Math.min(a.getX(), b.getX());
+            final double maxX = Math.max(a.getX(), b.getX());
+
+            final double minY = Math.min(a.getY(), b.getY());
+            final double maxY = Math.max(a.getY(), b.getY());
+
+            if (precision.eq(minX, maxX) || precision.eq(minY, maxY)) {
+                throw new GeometryValueException("Rectangle has zero size: " + a + ", " + b + ".");
+            }
+
+            final Vector2D lowerLeft = Vector2D.of(minX, minY);
+            final Vector2D upperLeft = Vector2D.of(minX, maxY);
+
+            final Vector2D upperRight = Vector2D.of(maxX, maxY);
+            final Vector2D lowerRight = Vector2D.of(maxX, minY);
+
+            addSegment(lowerLeft, lowerRight);
+            addSegment(upperRight, upperLeft);
+            addSegment(lowerRight, upperRight);
+            addSegment(upperLeft, lowerLeft);
+
+            return this;
+        }
+
+        /** Get the created BSP tree.
+         * @return the created BSP tree
+         */
+        public RegionBSPTree2D build() {
+            return tree;
         }
     }
 
