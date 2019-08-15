@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
@@ -141,6 +142,30 @@ public class Line3DTest {
         // assert
         Assert.assertTrue(result.contains(Vector3D.of(-1, 0, 0)));
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, -1, -1).normalize(), result.getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testSubspaceTransform() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 0), TEST_PRECISION);
+
+        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
+                .scale(2, 1, 1)
+                .translate(0.5, 1, 0)
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+
+        // act
+        Line3D.SubspaceTransform result = line.subspaceTransform(transform);
+
+        // assert
+        Line3D tLine = result.getLine();
+        Transform<Vector1D> tSub = result.getTransform();
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), tLine.getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), tLine.getDirection(), TEST_EPS);
+
+        Assert.assertEquals(0.5, tSub.apply(Vector1D.ZERO).getX(), TEST_EPS);
+        Assert.assertEquals(4.5, tSub.apply(Vector1D.of(2)).getX(), TEST_EPS);
     }
 
     @Test
@@ -325,6 +350,51 @@ public class Line3DTest {
         Assert.assertTrue(segment.isInfinite());
         Assert.assertSame(line, segment.getLine());
         Assert.assertTrue(segment.getInterval().isFull());
+    }
+
+    @Test
+    public void testSegment() {
+        // arrange
+        Line3D line = Line3D.fromPoints(Vector3D.of(0, 3, 0), Vector3D.of(1, 3, 0), TEST_PRECISION);
+        Interval interval = Interval.of(1, 2, TEST_PRECISION);
+
+        // act/assert
+        Segment3D intervalArgResult = line.segment(interval);
+        Assert.assertSame(line, intervalArgResult.getLine());
+        Assert.assertSame(interval, intervalArgResult.getInterval());
+
+        Segment3D doubleArgResult = line.segment(3, 4);
+        Assert.assertSame(line, doubleArgResult.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 3, 0), doubleArgResult.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4, 3, 0), doubleArgResult.getEndPoint(), TEST_EPS);
+
+        Segment3D ptArgResult = line.segment(Vector3D.of(0, 4, 0), Vector3D.of(2, 5, 1));
+        Assert.assertSame(line, ptArgResult.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 3, 0), ptArgResult.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 3, 0), ptArgResult.getEndPoint(), TEST_EPS);
+
+        Segment3D fromResult = line.segmentFrom(Vector3D.of(1, 4, 0));
+        Assert.assertSame(line, fromResult.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), fromResult.getStartPoint(), TEST_EPS);
+        Assert.assertNull(fromResult.getEndPoint());
+
+        Segment3D toResult = line.segmentTo(Vector3D.of(1, 4, 0));
+        Assert.assertSame(line, toResult.getLine());
+        Assert.assertNull(toResult.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), toResult.getEndPoint(), TEST_EPS);
+    }
+
+    @Test
+    public void testSubLine() {
+        // arrange
+        Line3D line = Line3D.fromPoints(Vector3D.of(0, 3, 0), Vector3D.of(1, 3, 0), TEST_PRECISION);
+
+        // act
+        SubLine3D sub = line.subline();
+
+        // assert
+        Assert.assertSame(line, sub.getLine());
+        Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
     }
 
     @Test
