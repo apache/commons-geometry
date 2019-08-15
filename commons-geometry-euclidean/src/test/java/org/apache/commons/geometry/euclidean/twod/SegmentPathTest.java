@@ -729,15 +729,57 @@ public class SegmentPathTest {
     @Test
     public void testToString() {
         // arrange
-        SegmentPath path = SegmentPath.builder(TEST_PRECISION)
-                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X).build();
+        Line yAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION);
+        Line xAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
 
-        // act
-        String str = path.toString();
+        SegmentPath empty = SegmentPath.empty();
 
-        // assert
-        Assert.assertTrue(str.contains("SegmentPath"));
-        Assert.assertTrue(str.contains("vertices= "));
+        SegmentPath singleFullSegment = SegmentPath.fromSegments(xAxis.span());
+        SegmentPath singleFiniteSegment = SegmentPath.fromSegments(
+                Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
+
+        SegmentPath startOpenPath = SegmentPath.builder(TEST_PRECISION)
+                .append(xAxis.segmentTo(Vector2D.PLUS_X))
+                .append(Vector2D.of(1, 1))
+                .build();
+
+        SegmentPath endOpenPath = SegmentPath.builder(TEST_PRECISION)
+                .append(Vector2D.of(0, 1))
+                .append(Vector2D.ZERO)
+                .append(xAxis.segmentFrom(Vector2D.ZERO))
+                .build();
+
+        SegmentPath doubleOpenPath = SegmentPath.fromSegments(yAxis.segmentTo(Vector2D.ZERO),
+                xAxis.segmentFrom(Vector2D.ZERO));
+
+        SegmentPath nonOpenPath = SegmentPath.builder(TEST_PRECISION)
+                .append(Vector2D.ZERO)
+                .append(Vector2D.PLUS_X)
+                .append(Vector2D.of(1, 1))
+                .build();
+
+        // act/assert
+        String emptyStr = empty.toString();
+        Assert.assertTrue(emptyStr.contains("empty= true"));
+
+        String singleFullStr = singleFullSegment.toString();
+        Assert.assertTrue(singleFullStr.contains("segment= Segment["));
+
+        String singleFiniteStr = singleFiniteSegment.toString();
+        Assert.assertTrue(singleFiniteStr.contains("segment= Segment["));
+
+        String startOpenStr = startOpenPath.toString();
+        Assert.assertTrue(startOpenStr.contains("startDirection= ") && startOpenStr.contains("vertices= "));
+
+        String endOpenStr = endOpenPath.toString();
+        Assert.assertTrue(endOpenStr.contains("vertices= ") && endOpenStr.contains("endDirection= "));
+
+        String doubleOpenStr = doubleOpenPath.toString();
+        Assert.assertTrue(doubleOpenStr.contains("startDirection= ") && doubleOpenStr.contains("vertices= ") &&
+                doubleOpenStr.contains("endDirection= "));
+
+        String nonOpenStr = nonOpenPath.toString();
+        Assert.assertTrue(nonOpenStr.contains("vertices= "));
     }
 
     @Test

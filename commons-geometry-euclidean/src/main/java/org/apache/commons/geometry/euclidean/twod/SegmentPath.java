@@ -232,20 +232,78 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return segments.iterator();
     }
 
-    /** {@inheritDoc} */
+    /** Return a string representation of the segment path.
+     *
+     * <p>In order to keep the string representation short but useful, the exact format of the return
+     * value depends on the properties of the path. See below for examples.
+     *
+     * <ul>
+     *      <li>Empty path
+     *          <ul>
+     *              <li>{@code SegmentPath[empty= true]}</li>
+     *          </ul>
+ *          </li>
+ *          <li>Single segment
+ *              <ul>
+ *                  <li>{@code SegmentPath[segment= Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]]}</li>
+ *                  <li>{@code SegmentPath[segment= Segment[start= (0.0, 0.0), end= (1.0, 0.0)]]}</li>
+ *              </ul>
+ *          </li>
+ *          <li>Path with infinite start segment
+ *              <ul>
+ *                  <li>{@code SegmentPath[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
+ *              </ul>
+ *          </li>
+ *          <li>Path with infinite end segment
+ *              <ul>
+ *                  <li>{@code SegmentPath[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+ *              </ul>
+ *          </li>
+ *          <li>Path with infinite start and end segments
+ *              <ul>
+ *                  <li>{@code SegmentPath[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+ *              </ul>
+ *          </li>
+ *          <li>Path with no infinite segments
+ *              <ul>
+ *                  <li>{@code SegmentPath[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
+ *              </ul>
+ *          </li>
+     * </ul>
+     * </p>
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
-            .append("[vertices= ")
-            .append(getVertices())
-            .append(", isInfinite= ")
-            .append(isInfinite())
-            .append(", startSegment= ")
-            .append(getStartSegment())
-            .append(", endSegment= ")
-            .append(getEndSegment())
-            .append("]");
+            .append('[');
+
+        if (segments.isEmpty()) {
+            sb.append("empty= true");
+        }
+        else if (segments.size() == 1) {
+            sb.append("segment= ")
+                .append(segments.get(0));
+        }
+        else {
+            final Segment startSegment = getStartSegment();
+            if (startSegment.getStartPoint() == null) {
+                sb.append("startDirection= ")
+                    .append(startSegment.getLine().getDirection())
+                    .append(", ");
+            }
+
+            sb.append("vertices= ")
+                .append(getVertices());
+
+            final Segment endSegment = getEndSegment();
+            if (endSegment.getEndPoint() == null) {
+                sb.append(", endDirection= ")
+                    .append(endSegment.getLine().getDirection());
+            }
+        }
+
+       sb.append("]");
 
         return sb.toString();
     }
