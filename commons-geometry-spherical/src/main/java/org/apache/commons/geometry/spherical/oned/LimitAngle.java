@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane on the circle.

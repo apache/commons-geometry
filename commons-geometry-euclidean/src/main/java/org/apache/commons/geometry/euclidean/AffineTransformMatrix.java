@@ -19,9 +19,6 @@ package org.apache.commons.geometry.euclidean;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Transform_Old;
 
 /** Interface representing an affine transform matrix in Euclidean space.
  * Rotation, scaling, and translation are examples of affine transformations.
@@ -30,7 +27,7 @@ import org.apache.commons.geometry.core.partitioning.Transform_Old;
  * @param <S> Point type defining the embedded sub-space.
  * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine transformation</a>
  */
-public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends Point<S>> extends Transform<V>, Transform_Old<V, S> {
+public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends Point<S>> extends Transform<V> {
 
     /** Apply this transform to the given vector, ignoring translations.
     *
@@ -56,21 +53,4 @@ public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends P
      * @see #applyVector(EuclideanVector)
      */
     V applyDirection(V vec);
-
-    /** {@inheritDoc}
-     * This operation is not supported. See GEOMETRY-24.
-     */
-    @Override
-    default Hyperplane_Old<V> apply(Hyperplane_Old<V> hyperplane) {
-        throw new UnsupportedOperationException("Transforming hyperplanes is not supported");
-    }
-
-    /** {@inheritDoc}
-     * This operation is not supported. See GEOMETRY-24.
-     */
-    @Override
-    default SubHyperplane_Old<S> apply(SubHyperplane_Old<S> sub, Hyperplane_Old<V> original,
-            Hyperplane_Old<V> transformed) {
-        throw new UnsupportedOperationException("Transforming sub-hyperplanes is not supported");
-    }
 }

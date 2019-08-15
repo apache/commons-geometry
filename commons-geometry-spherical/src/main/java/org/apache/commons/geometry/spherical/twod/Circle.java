@@ -16,10 +16,10 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.partitioning.Embedding_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Transform_Old;
+import org.apache.commons.geometry.spherical.partitioning.Embedding_Old;
+import org.apache.commons.geometry.spherical.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;

@@ -16,13 +16,13 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Region_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.partitioning.AbstractSubHyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Region_Old;
 
 /** This class represents a sub-Hyperplane_Old for {@link Circle}.
  */

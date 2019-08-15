@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Hyperplane_Old;
-import org.apache.commons.geometry.core.partitioning.Region_Old;
+import org.apache.commons.geometry.spherical.partitioning.AbstractSubHyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Hyperplane_Old;
+import org.apache.commons.geometry.spherical.partitioning.Region_Old;
 
 /** This class represents sub-hyperplane for {@link LimitAngle}.
  * <p>Instances of this class are guaranteed to be immutable.</p>

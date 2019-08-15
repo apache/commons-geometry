@@ -17,12 +17,14 @@
 package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partitioning.Region_Old;
-import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.Line_Old;
-import org.apache.commons.geometry.euclidean.twod.Segment_Old;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.hull.ConvexHull;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -45,7 +47,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
      * Line segments of the hull.
      * The array is not serialized and will be created from the vertices on first access.
      */
-    private transient Segment_Old[] lineSegments;
+    private transient Segment[] lineSegments;
 
     /**
      * Simple constructor.
@@ -108,7 +110,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
      * Get the line segments of the convex hull, ordered.
      * @return the line segments of the convex hull
      */
-    public Segment_Old[] getLineSegments() {
+    public Segment[] getLineSegments() {
         return retrieveLineSegments().clone();
     }
 
@@ -117,19 +119,19 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
      *
      * @return the array of line segments
      */
-    private Segment_Old[] retrieveLineSegments() {
+    private Segment[] retrieveLineSegments() {
         if (lineSegments == null) {
             // construct the line segments - handle special cases of 1 or 2 points
             final int size = vertices.length;
             if (size <= 1) {
-                this.lineSegments = new Segment_Old[0];
+                this.lineSegments = new Segment[0];
             } else if (size == 2) {
-                this.lineSegments = new Segment_Old[1];
+                this.lineSegments = new Segment[1];
                 final Vector2D p1 = vertices[0];
                 final Vector2D p2 = vertices[1];
-                this.lineSegments[0] = new Segment_Old(p1, p2, Line_Old.fromPoints(p1, p2, precision));
+                this.lineSegments[0] = Segment.fromPoints(p1, p2, precision);
             } else {
-                this.lineSegments = new Segment_Old[size];
+                this.lineSegments = new Segment[size];
                 Vector2D firstPoint = null;
                 Vector2D lastPoint = null;
                 int index = 0;
@@ -138,13 +140,11 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                         firstPoint = point;
                         lastPoint = point;
                     } else {
-                        this.lineSegments[index++] =
-                                new Segment_Old(lastPoint, point, Line_Old.fromPoints(lastPoint, point, precision));
+                        this.lineSegments[index++] = Segment.fromPoints(lastPoint, point, precision);
                         lastPoint = point;
                     }
                 }
-                this.lineSegments[index] =
-                        new Segment_Old(lastPoint, firstPoint, Line_Old.fromPoints(lastPoint, firstPoint, precision));
+                this.lineSegments[index] = Segment.fromPoints(lastPoint, firstPoint, precision);
             }
         }
         return lineSegments;
@@ -152,16 +152,14 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Region_Old<Vector2D> createRegion() {
+    public ConvexArea createRegion() {
         if (vertices.length < 3) {
             throw new IllegalStateException("Region generation requires at least 3 vertices but found only " + vertices.length);
         }
-        final RegionFactory_Old<Vector2D> factory = new RegionFactory_Old<>();
-        final Segment_Old[] segments = retrieveLineSegments();
-        final Line_Old[] lineArray = new Line_Old[segments.length];
-        for (int i = 0; i < segments.length; i++) {
-            lineArray[i] = segments[i].getLine();
-        }
-        return factory.buildConvex(lineArray);
+
+        List<Line> bounds = Arrays.asList(retrieveLineSegments()).stream()
+            .map(Segment::getLine).collect(Collectors.toList());
+
+        return ConvexArea.fromBounds(bounds);
     }
 }

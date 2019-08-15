@@ -23,11 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.AbstractRegion_Old;
-import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryProjection_Old;
-import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old;
+import org.apache.commons.geometry.core.partition.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.WelzlEncloser;
@@ -35,6 +31,11 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.enclosing.SphereGenerator;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.partitioning.AbstractRegion_Old;
+import org.apache.commons.geometry.spherical.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.spherical.partitioning.BoundaryProjection_Old;
+import org.apache.commons.geometry.spherical.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old;
 
 /** This class represents a region on the 2-sphere: a set of spherical polygons.
  */

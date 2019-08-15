@@ -21,14 +21,14 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
-import org.apache.commons.geometry.core.partitioning.BoundaryAttribute_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.partitioning.BSPTreeVisitor_Old;
+import org.apache.commons.geometry.spherical.partitioning.BSPTree_Old;
+import org.apache.commons.geometry.spherical.partitioning.BoundaryAttribute_Old;
 
 /** Visitor building edges.
  */

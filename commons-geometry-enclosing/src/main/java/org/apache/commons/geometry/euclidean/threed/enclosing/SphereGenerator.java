@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
-import org.apache.commons.geometry.euclidean.threed.Plane_Old;
+import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
@@ -58,11 +58,11 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
                         // delegate to 2D disk generator
                         final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
-                        final Plane_Old p = Plane_Old.fromPoints(vA, vB, vC, precision);
+                        final Plane p = Plane.fromPoints(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
-                                new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubSpace(vA),
-                                                                                p.toSubSpace(vB),
-                                                                                p.toSubSpace(vC)));
+                                new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubspace(vA),
+                                                                                p.toSubspace(vB),
+                                                                                p.toSubspace(vC)));
 
                         // convert back to 3D
                         return new EnclosingBall<>(p.toSpace(disk.getCenter()),

@@ -17,15 +17,15 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.partitioning.RegionFactory_Old;
-import org.apache.commons.geometry.core.partitioning.Side_Old;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane_Old.SplitSubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.partitioning.RegionFactory_Old;
+import org.apache.commons.geometry.spherical.partitioning.Side_Old;
+import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old.SplitSubHyperplane;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
-import org.apache.commons.geometry.core.partitioning.BSPTree_Old;
-import org.apache.commons.geometry.core.partitioning.BSPTreeVisitor_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.partitioning.BSPTreeVisitor_Old;
+import org.apache.commons.geometry.spherical.partitioning.BSPTree_Old;
 
 /** Visitor computing geometrical properties.
  */
