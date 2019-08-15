@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
@@ -252,6 +251,7 @@ public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serial
     /** Transform this instance using the given {@link Transform}.
      * @return a new transformed interval
      */
+    @Override
     public Interval transform(final Transform<Vector1D> transform) {
         final OrientedPoint transformedMin = (minBoundary != null) ?
                 minBoundary.transform(transform) :
@@ -367,28 +367,6 @@ public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serial
      */
     public RegionBSPTree1D toTree() {
         return RegionBSPTree1D.fromInterval(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(minBoundary, maxBoundary);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        else if (!(obj instanceof Interval)) {
-            return false;
-        }
-
-        Interval other = (Interval) obj;
-
-        return Objects.equals(minBoundary, other.minBoundary) &&
-                Objects.equals(maxBoundary, other.maxBoundary);
     }
 
     /** {@inheritDoc} */

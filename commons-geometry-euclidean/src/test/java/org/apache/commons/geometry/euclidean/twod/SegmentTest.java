@@ -802,57 +802,6 @@ public class SegmentTest {
     }
 
     @Test
-    public void testHashCode() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
-
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
-
-        Segment b = Segment.fromPoints(Vector2D.of(-1, 0), Vector2D.PLUS_X, TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 0), TEST_PRECISION);
-        Segment d = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, precision);
-
-        Segment e = Segment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
-                Interval.of(0, 1, TEST_PRECISION));
-
-        // act/assert
-        Assert.assertEquals(a.hashCode(), a.hashCode());
-
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(a.hashCode(), c.hashCode());
-        Assert.assertNotEquals(a.hashCode(), d.hashCode());
-
-        Assert.assertEquals(a.hashCode(), e.hashCode());
-    }
-
-    @Test
-    public void testEquals() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
-
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
-
-        Segment b = Segment.fromPoints(Vector2D.of(-1, 0), Vector2D.PLUS_X, TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 0), TEST_PRECISION);
-        Segment d = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, precision);
-
-        Segment e = Segment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
-                Interval.of(0, 1, TEST_PRECISION));
-
-        // act/assert
-        Assert.assertTrue(a.equals(a));
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
-
-        Assert.assertTrue(a.equals(e));
-        Assert.assertTrue(e.equals(a));
-    }
-
-    @Test
     public void testToString() {
         // arrange
         Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);

@@ -578,7 +578,7 @@ public class RegionBSPTree2DTest {
 
         SegmentPath path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertEquals(segment, path.getSegments().get(0));
+        assertSegmentsEqual(segment, path.getStartSegment());
     }
 
     @Test
@@ -608,7 +608,7 @@ public class RegionBSPTree2DTest {
 
         SegmentPath path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertEquals(segment, path.getSegments().get(0));
+        assertSegmentsEqual(segment, path.getSegments().get(0));
     }
 
     @Test
@@ -644,8 +644,8 @@ public class RegionBSPTree2DTest {
 
         SegmentPath path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
-        Assert.assertEquals(secondSegment, path.getSegments().get(0));
-        Assert.assertEquals(firstSegment, path.getSegments().get(1));
+        assertSegmentsEqual(secondSegment, path.getSegments().get(0));
+        assertSegmentsEqual(firstSegment, path.getSegments().get(1));
     }
 
     @Test
@@ -683,8 +683,8 @@ public class RegionBSPTree2DTest {
 
         SegmentPath path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
-        Assert.assertEquals(secondSegment, path.getSegments().get(0));
-        Assert.assertEquals(firstSegment, path.getSegments().get(1));
+        assertSegmentsEqual(secondSegment, path.getSegments().get(0));
+        assertSegmentsEqual(firstSegment, path.getSegments().get(1));
     }
 
     @Test
@@ -1179,6 +1179,27 @@ public class RegionBSPTree2DTest {
 
         checkVertices(paths.get(1), Vector2D.of(1, 1), Vector2D.of(5, 1), Vector2D.of(5, 2),
                 Vector2D.of(1, 2), Vector2D.of(1, 1));
+    }
+
+    private static void assertSegmentsEqual(Segment expected, Segment actual) {
+        Assert.assertEquals(expected.getLine(), actual.getLine());
+
+        Vector2D expectedStart = expected.getStartPoint();
+        Vector2D expectedEnd = expected.getEndPoint();
+
+        if (expectedStart != null) {
+            EuclideanTestUtils.assertCoordinatesEqual(expectedStart, actual.getStartPoint(), TEST_EPS);
+        }
+        else {
+            Assert.assertNull(actual.getStartPoint());
+        }
+
+        if (expectedEnd != null) {
+            EuclideanTestUtils.assertCoordinatesEqual(expectedEnd, actual.getEndPoint(), TEST_EPS);
+        }
+        else {
+            Assert.assertNull(actual.getEndPoint());
+        }
     }
 
     private static void checkFiniteSegment(Segment segment, Vector2D start, Vector2D end) {

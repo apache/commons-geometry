@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.ConvexSubHyperplane;
@@ -167,28 +166,6 @@ public final class Segment extends AbstractSubLine<Interval>
     public Segment reverse() {
         final Interval reversedInterval = interval.transform(Vector1D::negate);
         return fromInterval(getLine().reverse(), reversedInterval);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(getLine(), interval);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        else if (!(obj instanceof Segment)) {
-            return false;
-        }
-
-        Segment other = (Segment) obj;
-
-        return Objects.equals(getLine(), other.getLine()) &&
-                Objects.equals(interval, other.interval);
     }
 
     /** Return a string representation of the segment.

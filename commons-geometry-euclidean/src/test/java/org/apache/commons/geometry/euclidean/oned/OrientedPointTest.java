@@ -561,60 +561,6 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testSuHyperplane_hashCode() {
-        // arrange
-        DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
-
-        SubOrientedPoint a = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA).span();
-        SubOrientedPoint b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span();;
-        SubOrientedPoint c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span();;
-
-        SubOrientedPoint d = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA).span();;
-        SubOrientedPoint e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span();;
-        SubOrientedPoint f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span();;
-
-        // act/assert
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(b.hashCode(), c.hashCode());
-        Assert.assertNotEquals(c.hashCode(), a.hashCode());
-
-        Assert.assertEquals(a.hashCode(), d.hashCode());
-        Assert.assertEquals(b.hashCode(), e.hashCode());
-        Assert.assertEquals(c.hashCode(), f.hashCode());
-    }
-
-    @Test
-    public void testSubHyperplane_equals() {
-        // arrange
-        DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
-
-        SubOrientedPoint a = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA).span();
-        SubOrientedPoint b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span();
-
-        SubOrientedPoint c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span();
-        SubOrientedPoint d = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span();
-
-        SubOrientedPoint e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span();
-        SubOrientedPoint f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span();
-
-        SubOrientedPoint g = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA).span();
-
-        // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(c.equals(d));
-        Assert.assertFalse(e.equals(f));
-
-        Assert.assertTrue(a.equals(a));
-        Assert.assertTrue(a.equals(g));
-        Assert.assertTrue(g.equals(a));
-    }
-
-    @Test
     public void testSubHyperplane_toString() {
         // arrange
         OrientedPoint pt = OrientedPoint.createPositiveFacing(2, TEST_PRECISION);
@@ -671,60 +617,6 @@ public class OrientedPointTest {
         GeometryTestUtils.assertThrows(
                 () -> builder.add((SubHyperplane<Vector1D>) OrientedPoint.createPositiveFacing(2e-3, precision).span()),
                 IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testBuilder_hashCode() {
-        // arrange
-        DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
-
-        SubOrientedPointBuilder a = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA).span().builder();
-        SubOrientedPointBuilder b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span().builder();
-        SubOrientedPointBuilder c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span().builder();
-
-        SubOrientedPointBuilder d = OrientedPoint.fromPointAndDirection(Vector1D.of(3.0), true, precisionA).span().builder();
-        SubOrientedPointBuilder e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span().builder();
-        SubOrientedPointBuilder f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span().builder();
-
-        // act/assert
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
-        Assert.assertNotEquals(b.hashCode(), c.hashCode());
-        Assert.assertNotEquals(c.hashCode(), a.hashCode());
-
-        Assert.assertEquals(a.hashCode(), d.hashCode());
-        Assert.assertEquals(b.hashCode(), e.hashCode());
-        Assert.assertEquals(c.hashCode(), f.hashCode());
-    }
-
-    @Test
-    public void testBuilder_equals() {
-        // arrange
-        DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-10);
-        DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-15);
-
-        SubOrientedPointBuilder a = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA).span().builder();
-        SubOrientedPointBuilder b = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span().builder();
-
-        SubOrientedPointBuilder c = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span().builder();
-        SubOrientedPointBuilder d = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, precisionA).span().builder();
-
-        SubOrientedPointBuilder e = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionA).span().builder();
-        SubOrientedPointBuilder f = OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, precisionB).span().builder();
-
-        SubOrientedPointBuilder g = OrientedPoint.fromPointAndDirection(Vector1D.of(1.0), true, precisionA).span().builder();
-
-        // act/assert
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(c.equals(d));
-        Assert.assertFalse(e.equals(f));
-
-        Assert.assertTrue(a.equals(a));
-        Assert.assertTrue(a.equals(g));
-        Assert.assertTrue(g.equals(a));
     }
 
     @Test

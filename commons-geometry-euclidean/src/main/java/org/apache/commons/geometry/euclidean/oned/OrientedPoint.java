@@ -495,27 +495,6 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public int hashCode() {
-            return Objects.hashCode(hyperplane);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            else if (!(obj instanceof SubOrientedPoint)) {
-                return false;
-            }
-
-            SubOrientedPoint other = (SubOrientedPoint) obj;
-
-            return Objects.equals(this.hyperplane, other.hyperplane);
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public String toString() {
             final StringBuilder sb = new StringBuilder();
             sb.append(this.getClass().getSimpleName())
@@ -560,27 +539,6 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         @Override
         public SubOrientedPoint build() {
             return base;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(base);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            else if (!(obj instanceof SubOrientedPointBuilder)) {
-                return false;
-            }
-
-            SubOrientedPointBuilder other = (SubOrientedPointBuilder) obj;
-
-            return Objects.equals(this.base, other.base);
         }
 
         /** {@inheritDoc} */

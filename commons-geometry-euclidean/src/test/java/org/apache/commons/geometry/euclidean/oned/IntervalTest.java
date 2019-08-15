@@ -866,59 +866,6 @@ public class IntervalTest {
     }
 
     @Test
-    public void testHashCode() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
-
-        Interval a = Interval.of(1, 2, TEST_PRECISION);
-
-        Interval b = Interval.of(1, 2, precision);
-        Interval c = Interval.of(1, 3, TEST_PRECISION);
-        Interval d = Interval.of(0, 2, TEST_PRECISION);
-
-        Interval e = Interval.of(1, 2, TEST_PRECISION);
-
-        // act
-        int hash = a.hashCode();
-
-        // assert
-        Assert.assertEquals(hash, a.hashCode());
-
-        Assert.assertNotEquals(hash, b.hashCode());
-        Assert.assertNotEquals(hash, c.hashCode());
-        Assert.assertNotEquals(hash, d.hashCode());
-
-        Assert.assertEquals(hash, e.hashCode());
-    }
-
-    @Test
-    public void testEquals() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
-
-        Interval a = Interval.of(1, 2, TEST_PRECISION);
-
-        Interval b = Interval.of(1, 2, precision);
-        Interval c = Interval.of(1, 3, TEST_PRECISION);
-        Interval d = Interval.of(0, 2, TEST_PRECISION);
-
-        Interval e = Interval.of(1, 2, TEST_PRECISION);
-
-        // act/assert
-        Assert.assertTrue(a.equals(a));
-
-        Assert.assertFalse(a.equals(null));
-        Assert.assertFalse(a.equals(new Object()));
-
-        Assert.assertFalse(a.equals(b));
-        Assert.assertFalse(a.equals(c));
-        Assert.assertFalse(a.equals(d));
-
-        Assert.assertTrue(a.equals(e));
-        Assert.assertTrue(e.equals(a));
-    }
-
-    @Test
     public void testToString() {
         // arrange
         Interval interval = Interval.of(2, 1, TEST_PRECISION);
