@@ -19,28 +19,28 @@ package org.apache.commons.geometry.spherical.twod;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
-import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.partitioning.AbstractSubHyperplane_Old;
 import org.apache.commons.geometry.spherical.partitioning.Hyperplane_Old;
 import org.apache.commons.geometry.spherical.partitioning.Region_Old;
 
 /** This class represents a sub-Hyperplane_Old for {@link Circle}.
  */
-public class SubCircle extends AbstractSubHyperplane_Old<S2Point, S1Point> {
+public class SubCircle extends AbstractSubHyperplane_Old<S2Point, Point1S> {
 
     /** Simple constructor.
      * @param Hyperplane_Old underlying Hyperplane_Old
      * @param remainingRegion remaining region of the Hyperplane_Old
      */
     public SubCircle(final Hyperplane_Old<S2Point> Hyperplane_Old,
-                     final Region_Old<S1Point> remainingRegion) {
+                     final Region_Old<Point1S> remainingRegion) {
         super(Hyperplane_Old, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane_Old<S2Point, S1Point> buildNew(final Hyperplane_Old<S2Point> Hyperplane_Old,
-                                                                 final Region_Old<S1Point> remainingRegion) {
+    protected AbstractSubHyperplane_Old<S2Point, Point1S> buildNew(final Hyperplane_Old<S2Point> Hyperplane_Old,
+                                                                 final Region_Old<Point1S> remainingRegion) {
         return new SubCircle(Hyperplane_Old, remainingRegion);
     }
 

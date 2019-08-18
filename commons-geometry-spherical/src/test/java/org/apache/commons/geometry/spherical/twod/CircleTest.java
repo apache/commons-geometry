@@ -24,7 +24,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.LimitAngle;
-import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.oned.SubLimitAngle;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.UnitSphereSampler;
@@ -115,7 +115,7 @@ public class CircleTest {
         for (double alpha = 0; alpha < Geometry.TWO_PI; alpha += 0.1) {
             Vector3D p = Vector3D.linearCombination(Math.cos(alpha), circle.getXAxis(),
                                       Math.sin(alpha), circle.getYAxis());
-            Vector3D q = circle.toSpace(S1Point.of(alpha)).getVector();
+            Vector3D q = circle.toSpace(Point1S.of(alpha)).getVector();
             Assert.assertEquals(0.0, p.distance(q), TEST_EPS);
             Assert.assertEquals(0.5 * Math.PI, circle.getPole().angle(q), TEST_EPS);
         }
@@ -165,7 +165,7 @@ public class CircleTest {
 
             QuaternionRotation r = QuaternionRotation.fromAxisAngle(Vector3D.of(sphRandom.nextVector()),
                                       Math.PI * random.nextDouble());
-            Transform_Old<S2Point, S1Point> t = Circle.getTransform(r);
+            Transform_Old<S2Point, Point1S> t = Circle.getTransform(r);
 
             S2Point  p = S2Point.ofVector(Vector3D.of(sphRandom.nextVector()));
             S2Point tp = t.apply(p);
@@ -178,7 +178,7 @@ public class CircleTest {
             Assert.assertEquals(0.0, r.apply(c.getYAxis()).distance(tc.getYAxis()), TEST_EPS);
             Assert.assertSame(c.getPrecision(), ((Circle) t.apply(c)).getPrecision());
 
-            SubLimitAngle  sub = new LimitAngle(S1Point.of(Geometry.TWO_PI * random.nextDouble()),
+            SubLimitAngle  sub = new LimitAngle(Point1S.of(Geometry.TWO_PI * random.nextDouble()),
                                                 random.nextBoolean(), TEST_PRECISION).wholeHyperplane();
             Vector3D psub = c.getPointAt(((LimitAngle) sub.getHyperplane()).getLocation().getAzimuth());
             SubLimitAngle tsub = (SubLimitAngle) t.apply(sub, c, tc);

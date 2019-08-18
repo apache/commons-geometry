@@ -29,7 +29,7 @@ import org.apache.commons.geometry.enclosing.WelzlEncloser;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.enclosing.SphereGenerator;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.partitioning.AbstractRegion_Old;
 import org.apache.commons.geometry.spherical.partitioning.BSPTree_Old;
 import org.apache.commons.geometry.spherical.partitioning.BoundaryProjection_Old;
@@ -38,7 +38,7 @@ import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old;
 
 /** This class represents a region on the 2-sphere: a set of spherical polygons.
  */
-public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, S1Point> {
+public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
 
     /** Boundary defined as an array of closed loops start vertices. */
     private List<Vertex> loops;

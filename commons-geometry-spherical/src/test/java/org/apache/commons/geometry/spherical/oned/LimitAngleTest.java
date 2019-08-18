@@ -32,7 +32,7 @@ public class LimitAngleTest {
     @Test
     public void testReversedLimit() {
         for (int k = -2; k < 3; ++k) {
-            LimitAngle l  = new LimitAngle(S1Point.of(1.0 + k * Geometry.TWO_PI), false, TEST_PRECISION);
+            LimitAngle l  = new LimitAngle(Point1S.of(1.0 + k * Geometry.TWO_PI), false, TEST_PRECISION);
             Assert.assertEquals(l.getLocation().getAzimuth(), l.getReverse().getLocation().getAzimuth(), TEST_EPS);
             Assert.assertSame(l.getPrecision(), l.getReverse().getPrecision());
             Assert.assertTrue(l.sameOrientationAs(l));

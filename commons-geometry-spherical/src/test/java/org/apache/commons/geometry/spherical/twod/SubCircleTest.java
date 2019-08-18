@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
-import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.partitioning.RegionFactory_Old;
 import org.apache.commons.geometry.spherical.partitioning.Side_Old;
 import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old.SplitSubHyperplane;
@@ -132,7 +132,7 @@ public class SubCircleTest {
 
     private SubCircle create(Vector3D pole, Vector3D x, Vector3D y,
                              DoublePrecisionContext precision, double ... limits) {
-        RegionFactory_Old<S1Point> factory = new RegionFactory_Old<>();
+        RegionFactory_Old<Point1S> factory = new RegionFactory_Old<>();
         Circle circle = new Circle(pole, precision);
         Circle phased =
                 (Circle) Circle.getTransform(QuaternionRotation.createBasisRotation(circle.getXAxis(), circle.getYAxis(), x, y)).apply(circle);

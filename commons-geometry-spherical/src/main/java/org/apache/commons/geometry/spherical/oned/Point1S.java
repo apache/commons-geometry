@@ -18,19 +18,33 @@ package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** This class represents a point on the 1-sphere.
+ *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class S1Point implements Point<S1Point>, Serializable {
+public final class Point1S implements Point<Point1S>, Serializable {
+
+    /** A point with coordinates set to {@code 0*pi}. */
+    public static final Point1S ZERO_PI = new Point1S(Geometry.ZERO_PI);
+
+    /** A point with coordinates set to {@code pi/2}. */
+    public static final Point1S HALF_PI = new Point1S(Geometry.HALF_PI);
+
+    /** A point with coordinates set to {@code pi}. */
+    public static final Point1S PI = new Point1S(Geometry.PI);
+
+    /** A point with coordinates set to {@code 3*pi/2}. */
+    public static final Point1S THREE_HALVES_PI = new Point1S(Geometry.MINUS_HALF_PI);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final S1Point NaN = new S1Point(Double.NaN);
+    public static final Point1S NaN = new Point1S(Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -45,14 +59,14 @@ public final class S1Point implements Point<S1Point>, Serializable {
     /** Build a point from its internal components.
      * @param azimuth azimuthal angle
      */
-    private S1Point(final double azimuth) {
+    private Point1S(final double azimuth) {
         this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);
         this.vector = Double.isFinite(azimuth) ? PolarCoordinates.toCartesian(1.0, azimuth) : Vector2D.NaN;
     }
 
     /** Get the azimuthal angle in radians.
      * @return azimuthal angle
-     * @see S1Point#of(double)
+     * @see Point1S#of(double)
      */
     public double getAzimuth() {
         return azimuth;
@@ -89,19 +103,14 @@ public final class S1Point implements Point<S1Point>, Serializable {
         return Double.isFinite(azimuth);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public double distance(final S1Point point) {
-        return distance(this, point);
-    }
-
-    /** Compute the distance (angular separation) between two points.
-     * @param p1 first vector
-     * @param p2 second vector
-     * @return the angular separation between p1 and p2
+    /** {@inheritDoc}
+     *
+     * <p>The returned value is the shortest angular distance between
+     * the two points, in the range {@code [0, pi]}.</p>
      */
-    public static double distance(S1Point p1, S1Point p2) {
-        return p1.vector.angle(p2.vector);
+    @Override
+    public double distance(final Point1S point) {
+        return distance(this, point);
     }
 
     /**
@@ -124,13 +133,13 @@ public final class S1Point implements Point<S1Point>, Serializable {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
 
-        if (other instanceof S1Point) {
-            final S1Point rhs = (S1Point) other;
+        if (other instanceof Point1S) {
+            final Point1S rhs = (Point1S) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
@@ -167,8 +176,8 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @return point instance with the given azimuth coordinate value
      * @see #getAzimuth()
      */
-    public static S1Point of(double azimuth) {
-        return new S1Point(azimuth);
+    public static Point1S of(final double azimuth) {
+        return new Point1S(azimuth);
     }
 
     /** Parses the given string and returns a new point instance. The expected string
@@ -177,7 +186,17 @@ public final class S1Point implements Point<S1Point>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static S1Point parse(String str) {
-        return SimpleTupleFormat.getDefault().parse(str, S1Point::new);
+    public static Point1S parse(final String str) {
+        return SimpleTupleFormat.getDefault().parse(str, Point1S::new);
+    }
+
+    /** Compute the shortest distance (angular separation) between two points. The returned
+     * value is in the range {@code [0, pi]}
+     * @param p1 first point
+     * @param p2 second point
+     * @return the angular separation between p1 and p2, in the range {@code [0, pi]}.
+     */
+    public static double distance(final Point1S p1, final Point1S p2) {
+        return p1.vector.angle(p2.vector);
     }
 }

@@ -23,10 +23,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>An hyperplane on the 1-sphere is an angle with an orientation.</p>
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class LimitAngle implements Hyperplane_Old<S1Point> {
+public class LimitAngle implements Hyperplane_Old<Point1S> {
 
     /** Angle location. */
-    private final S1Point location;
+    private final Point1S location;
 
     /** Orientation. */
     private final boolean direct;
@@ -40,7 +40,7 @@ public class LimitAngle implements Hyperplane_Old<S1Point> {
      * angles greater than {@code location}
      * @param precision precision context used to compare floating point values
      */
-    public LimitAngle(final S1Point location, final boolean direct, final DoublePrecisionContext precision) {
+    public LimitAngle(final Point1S location, final boolean direct, final DoublePrecisionContext precision) {
         this.location  = location;
         this.direct    = direct;
         this.precision = precision;
@@ -58,7 +58,7 @@ public class LimitAngle implements Hyperplane_Old<S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    public double getOffset(final S1Point point) {
+    public double getOffset(final Point1S point) {
         final double delta = point.getAzimuth() - location.getAzimuth();
         return direct ? delta : -delta;
     }
@@ -107,20 +107,20 @@ public class LimitAngle implements Hyperplane_Old<S1Point> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane_Old<S1Point> other) {
+    public boolean sameOrientationAs(final Hyperplane_Old<Point1S> other) {
         return !(direct ^ ((LimitAngle) other).direct);
     }
 
     /** Get the hyperplane location on the circle.
      * @return the hyperplane location
      */
-    public S1Point getLocation() {
+    public Point1S getLocation() {
         return location;
     }
 
     /** {@inheritDoc} */
     @Override
-    public S1Point project(S1Point point) {
+    public Point1S project(Point1S point) {
         return location;
     }
 

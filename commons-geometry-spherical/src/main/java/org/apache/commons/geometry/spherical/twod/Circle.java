@@ -25,7 +25,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.spherical.oned.Arc;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
-import org.apache.commons.geometry.spherical.oned.S1Point;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 
 /** This class represents an oriented great circle on the 2-sphere.
 
@@ -38,7 +38,7 @@ import org.apache.commons.geometry.spherical.oned.S1Point;
  * local properties only when part of a line is used to define part of
  * a spherical polygon boundary.</p>
  */
-public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, S1Point> {
+public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, Point1S> {
 
     /** Pole or circle center. */
     private Vector3D pole;
@@ -148,8 +148,8 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, S
      * @see #getPhase(Vector3D)
      */
     @Override
-    public S1Point toSubSpace(final S2Point point) {
-        return S1Point.of(getPhase(point.getVector()));
+    public Point1S toSubSpace(final S2Point point) {
+        return Point1S.of(getPhase(point.getVector()));
     }
 
     /** Get the phase angle of a direction.
@@ -170,7 +170,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, S
      * @see #getPointAt(double)
      */
     @Override
-    public S2Point toSpace(final S1Point point) {
+    public S2Point toSpace(final Point1S point) {
         return S2Point.ofVector(getPointAt(point.getAzimuth()));
     }
 
@@ -289,12 +289,12 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, S
      * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      */
-    public static Transform_Old<S2Point, S1Point> getTransform(final QuaternionRotation rotation) {
+    public static Transform_Old<S2Point, Point1S> getTransform(final QuaternionRotation rotation) {
         return new CircleTransform(rotation);
     }
 
     /** Class embedding a 3D rotation. */
-    private static class CircleTransform implements Transform_Old<S2Point, S1Point> {
+    private static class CircleTransform implements Transform_Old<S2Point, Point1S> {
 
         /** Underlying rotation. */
         private final QuaternionRotation rotation;
@@ -324,7 +324,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, S
 
         /** {@inheritDoc} */
         @Override
-        public SubHyperplane_Old<S1Point> apply(final SubHyperplane_Old<S1Point> sub,
+        public SubHyperplane_Old<Point1S> apply(final SubHyperplane_Old<Point1S> sub,
                                              final Hyperplane_Old<S2Point> original,
                                              final Hyperplane_Old<S2Point> transformed) {
             // as the circle is rotated, the limit angles are rotated too
