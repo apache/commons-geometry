@@ -17,34 +17,40 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngle;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** This class represents a point on the 1-sphere.
+/** This class represents a point on the 1-sphere, or in other words, an
+ * azimuth angle on a circle. The value of the azimuth angle is not normalized
+ * by default, meaning that instances can be constructed representing negative
+ * values or values greater than {@code 2pi}. However, instances separated by a
+ * multiple of {@code 2pi} are considered equivalent for most methods, with the
+ * exceptions being {@link #equals(Object)} and {@link #hashCode()}, where the
+ * azimuth values must match exactly in order for instances to be considered
+ * equal.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Point1S implements Point<Point1S>, Serializable {
+public class Point1S implements Point<Point1S>, Serializable {
 
     /** A point with coordinates set to {@code 0*pi}. */
-    public static final Point1S ZERO_PI = new Point1S(Geometry.ZERO_PI);
-
-    /** A point with coordinates set to {@code pi/2}. */
-    public static final Point1S HALF_PI = new Point1S(Geometry.HALF_PI);
+    public static final Point1S ZERO_PI = Point1S.of(Geometry.ZERO_PI);
 
     /** A point with coordinates set to {@code pi}. */
-    public static final Point1S PI = new Point1S(Geometry.PI);
-
-    /** A point with coordinates set to {@code 3*pi/2}. */
-    public static final Point1S THREE_HALVES_PI = new Point1S(Geometry.MINUS_HALF_PI);
+    public static final Point1S PI = Point1S.of(Geometry.PI);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final Point1S NaN = new Point1S(Double.NaN);
+    public static final Point1S NaN = Point1S.of(Double.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -53,30 +59,38 @@ public final class Point1S implements Point<Point1S>, Serializable {
     /** Azimuthal angle in radians. */
     private final double azimuth;
 
-    /** Corresponding 2D normalized vector. */
-    private final Vector2D vector;
+    /** Normalized azimuth value in the range {@code [0, 2pi)}. */
+    private final double normalizedAzimuth;
 
     /** Build a point from its internal components.
      * @param azimuth azimuthal angle
      */
-    private Point1S(final double azimuth) {
-        this.azimuth  = PolarCoordinates.normalizeAzimuth(azimuth);
-        this.vector = Double.isFinite(azimuth) ? PolarCoordinates.toCartesian(1.0, azimuth) : Vector2D.NaN;
+    private Point1S(final double azimuth, final double normalizedAzimuth) {
+        this.azimuth  = azimuth;
+        this.normalizedAzimuth = normalizedAzimuth;
     }
 
-    /** Get the azimuthal angle in radians.
-     * @return azimuthal angle
+    /** Get the azimuth angle in radians. This value is not normalized and
+     * can be any floating point number.
+     * @return azimuth angle
      * @see Point1S#of(double)
      */
     public double getAzimuth() {
         return azimuth;
     }
 
-    /** Get the corresponding normalized vector in the 2D Euclidean space.
+    /** Get the azimuth angle normalized to the range {@code [0, 2pi)}.
+     * @return the azimuth angle normalized to the range {@code [0, 2pi)}.
+     */
+    public double getNormalizedAzimuth() {
+        return normalizedAzimuth;
+    }
+
+    /** Get the normalized vector corresponding to this azimuth angle in 2D Euclidean space.
      * @return normalized vector
      */
     public Vector2D getVector() {
-        return vector;
+        return PolarCoordinates.toCartesian(1, normalizedAzimuth);
     }
 
     /** {@inheritDoc} */
@@ -113,23 +127,98 @@ public final class Point1S implements Point<Point1S>, Serializable {
         return distance(this, point);
     }
 
-    /**
-     * Test for the equality of two points on the 2-sphere.
-     * <p>
-     * If all coordinates of two points are exactly the same, and none are
-     * <code>Double.NaN</code>, the two points are considered to be equal.
-     * </p>
-     * <p>
-     * <code>NaN</code> coordinates are considered to affect globally the vector
+    /** Return the signed distance (angular separation) between this instance and the
+     * given point in the range {@code [-pi, pi)}. If {@code p1} is the current instance,
+     * {@code p2} the given point, and {@code d} the signed distance, then
+     * {@code p1.getAzimuth() + d} is an angle equivalent to {@code p2.getAzimuth()}.
+     * @param point point to compute the signed distance to
+     * @return the signed distance between this instance and the given point in the range
+     *      {@code [-pi, pi)}
+     */
+    public double signedDistance(final Point1S point) {
+        return signedDistance(this, point);
+    }
+
+    /** Return an equivalent point with an azimuth value at or above the given base.
+     * The returned point has an azimuth value in the range {@code [base, base + 2pi)}.
+     * @param base point to place this instance's azimuth value above
+     * @return a point equivalent to the current instance but with an azimuth
+     *      value in the range {@code [base, base + 2pi)}
+     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     *      cannot be normalized
+     */
+    public Point1S above(final Point1S base) {
+        return normalize(base.getAzimuth() + Geometry.PI);
+    }
+
+    /** Return an equivalent point with an azimuth value strictly below the given base.
+     * The returned point has an azimuth value in the range {@code [base - 2pi, base)}.
+     * @param base point to place this instance's azimuth value below
+     * @return a point equivalent to the current instance but with an azimuth
+     *      value in the range {@code [base - 2pi, base)}
+     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     *      cannot be normalized
+     */
+    public Point1S below(final Point1S base) {
+        return normalize(base.getAzimuth() - Geometry.PI);
+    }
+
+    /** Normalize this point around the given center point. The azimuth value of
+     * the returned point is in the range {@code [center - pi, center + pi)}.
+     * @param center point to center this instance around
+     * @return a point equivalent to this instance but with an azimuth value
+     *      in the range {@code [center - pi, center + pi)}.
+     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     *      cannot be normalized
+     */
+    public Point1S normalize(final Point1S center) {
+        return normalize(center.getAzimuth());
+    }
+
+    /** Return an equivalent point with an azimuth value normalized around the given center
+     * angle. The azimuth value of the returned point is in the range
+     * {@code [center - pi, center + pi)}.
+     * @param center angle to center this instance around
+     * @return a point equivalent to this instance but with an azimuth value
+     *      in the range {@code [center - pi, center + pi)}.
+     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     *      cannot be normalized
+     */
+    public Point1S normalize(final double center) {
+        if (isFinite()) {
+            final double az = PlaneAngleRadians.normalize(azimuth, center);
+            return new Point1S(az, normalizedAzimuth);
+        }
+        throw new GeometryValueException("Cannot normalize azimuth value: " + azimuth);
+    }
+
+    /** Return true if this instance is equivalent to the argument. The points are
+     * considered equivalent if their normalized azimuth values are equal as evaluated
+     * by the given precision context. Instance separated by multiples of {@code 2pi}
+     * are considered equivalent.
+     * @param other point to compare with
+     * @return true if this instance is equivalent to the argument
+     */
+    public boolean eq(final Point1S other, final DoublePrecisionContext precision) {
+        return precision.eq(normalizedAzimuth, other.normalizedAzimuth);
+    }
+
+    /** Test for the exact equality of two points on the 1-sphere.
+     *
+     * <p>If all coordinates of the given points are exactly the same, and none are
+     * <code>Double.NaN</code>, the points are considered to be equal. Points with
+     * azimuth values separated by multiples of {@code 2pi} are <em>not</em> considered
+     * equal.</p>
+     *
+     * <p><code>NaN</code> coordinates are considered to affect globally the vector
      * and be equals to each other - i.e, if either (or all) coordinates of the
-     * 2D vector are equal to <code>Double.NaN</code>, the 2D vector is equal to
-     * {@link #NaN}.
-     * </p>
+     * point are equal to <code>Double.NaN</code>, the point is equal to
+     * {@link #NaN}.</p>
      *
      * @param other Object to test for equality to this
-     * @return true if two points on the 2-sphere objects are equal, false if
-     *         object is null, not an instance of S2Point, or
-     *         not equal to this S2Point instance
+     * @return true if two points on the 1-sphere objects are exactly equal, false if
+     *         object is null, not an instance of Point1S, or
+     *         not equal to this Point1S instance
      *
      */
     @Override
@@ -140,20 +229,25 @@ public final class Point1S implements Point<Point1S>, Serializable {
 
         if (other instanceof Point1S) {
             final Point1S rhs = (Point1S) other;
+
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
 
-            return azimuth == rhs.azimuth;
+            return Double.compare(azimuth, rhs.azimuth) == 0 &&
+                    Double.compare(normalizedAzimuth, rhs.normalizedAzimuth) == 0;
         }
 
         return false;
     }
 
     /**
-     * Get a hashCode for the 2D vector.
-     * <p>
-     * All NaN values have the same hash code.</p>
+     * Get a hashCode for the point. Points normally must have exactly the
+     * same azimuth angles in order to have the same hash code. Points
+     * will angles that differ by multiples of {@code 2pi} will not
+     * necessarily have the same hash code.
+     *
+     * <p>All NaN values have the same hash code.</p>
      *
      * @return a hash code value for this object
      */
@@ -162,7 +256,7 @@ public final class Point1S implements Point<Point1S>, Serializable {
         if (isNaN()) {
             return 542;
         }
-        return 1759 * Double.hashCode(azimuth);
+        return 1759 * Objects.hash(azimuth, normalizedAzimuth);
     }
 
     /** {@inheritDoc} */
@@ -171,32 +265,62 @@ public final class Point1S implements Point<Point1S>, Serializable {
         return SimpleTupleFormat.getDefault().format(getAzimuth());
     }
 
-    /** Creates a new point instance from the given azimuthal coordinate value.
-     * @param azimuth azimuthal angle in radians
-     * @return point instance with the given azimuth coordinate value
+    /** Create a new point instance from the given azimuth angle.
+     * @param azimuth azimuth angle in radians
+     * @return point instance with the given azimuth angle
      * @see #getAzimuth()
      */
     public static Point1S of(final double azimuth) {
-        return new Point1S(azimuth);
+        final double normalizedAzimuth = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
+        return new Point1S(azimuth, normalizedAzimuth);
     }
 
-    /** Parses the given string and returns a new point instance. The expected string
+    /** Create a new poitn instance from the given azimuth angle.
+     * @param azimuth azimuth azimuth angle in radians
+     * @return point instance with the given azimuth angle
+     * @see #getAzimuth()
+     */
+    public static Point1S of(final PlaneAngle azimuth) {
+        return of(azimuth.toRadians());
+    }
+
+    /** Parse the given string and returns a new point instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1S parse(final String str) {
-        return SimpleTupleFormat.getDefault().parse(str, Point1S::new);
+        return SimpleTupleFormat.getDefault().parse(str, az -> Point1S.of(az));
+    }
+
+    /** Compute the signed shortest distance (angular separation) between two points. The return
+     * value is in the range {@code [-pi, pi)} and is such that {@code p1.getAzimuth() + d}
+     * (where {@code d} is the signed distance) is an angle equivalent to {@code p2.getAzimuth()}.
+     * @param p1 first point
+     * @param p2 second point
+     * @return the signed angular separation between p1 and p2, in the range {@code [-pi, pi)}.
+     */
+    public static double signedDistance(final Point1S p1, final Point1S p2) {
+        double dist = p2.normalizedAzimuth - p1.normalizedAzimuth;
+        if (dist < -Geometry.PI) {
+            dist += Geometry.TWO_PI;
+        }
+        if (dist >= Geometry.PI) {
+            dist -= Geometry.TWO_PI;
+        }
+        return dist;
     }
 
     /** Compute the shortest distance (angular separation) between two points. The returned
-     * value is in the range {@code [0, pi]}
+     * value is in the range {@code [0, pi]}. This method is equal to the absolute value of
+     * the {@link #signedDistance(Point1S, Point1S) signed distance}.
      * @param p1 first point
      * @param p2 second point
      * @return the angular separation between p1 and p2, in the range {@code [0, pi]}.
+     * @see #signedDistance(Point1S, Point1S)
      */
     public static double distance(final Point1S p1, final Point1S p2) {
-        return p1.vector.angle(p2.vector);
+        return Math.abs(signedDistance(p1, p2));
     }
 }

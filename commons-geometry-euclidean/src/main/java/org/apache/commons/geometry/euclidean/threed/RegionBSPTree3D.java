@@ -399,13 +399,13 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @return this builder instance
          */
         public Builder addFacet(final List<Vector3D> vertices) {
-            final Plane plane = Plane.fromPoints(vertices, precision);
-            final List<Vector2D> subspaceVertices = plane.toSubspace(vertices);
-
             // if there are only 3 vertices, then we know for certain that the area is convex
-            if (subspaceVertices.size() < 4) {
+            if (vertices.size() < 4) {
                 return add(ConvexSubPlane.fromVertexLoop(vertices, precision));
             }
+
+            final Plane plane = Plane.fromPoints(vertices, precision);
+            final List<Vector2D> subspaceVertices = plane.toSubspace(vertices);
 
             final SegmentPath path = SegmentPath.fromVertexLoop(subspaceVertices, precision);
             return add(new SubPlane(plane, path.toTree()));

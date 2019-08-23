@@ -32,8 +32,10 @@ import org.apache.commons.geometry.spherical.partitioning.Side_Old;
 import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old;
 import org.apache.commons.numbers.core.Precision;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ArcsSetTest {
 
     private static final double TEST_EPS = 1e-10;
