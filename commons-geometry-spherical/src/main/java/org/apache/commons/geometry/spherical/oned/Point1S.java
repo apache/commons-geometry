@@ -193,14 +193,15 @@ public class Point1S implements Point<Point1S>, Serializable {
     }
 
     /** Return true if this instance is equivalent to the argument. The points are
-     * considered equivalent if their normalized azimuth values are equal as evaluated
-     * by the given precision context. Instance separated by multiples of {@code 2pi}
-     * are considered equivalent.
+     * considered equivalent if the shortest angular distance between them is equal to
+     * zero as evaluated by the given precision context. This means that points that differ
+     * in azimuth by multiples of {@code 2pi} are considered equivalent.
      * @param other point to compare with
      * @return true if this instance is equivalent to the argument
      */
     public boolean eq(final Point1S other, final DoublePrecisionContext precision) {
-        return precision.eq(normalizedAzimuth, other.normalizedAzimuth);
+        final double dist = signedDistance(other);
+        return precision.eqZero(dist);
     }
 
     /** Test for the exact equality of two points on the 1-sphere.

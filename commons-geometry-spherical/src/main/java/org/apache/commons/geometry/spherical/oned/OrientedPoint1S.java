@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Transform;
@@ -109,10 +110,11 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * <ol>
      *    <li>have equal precision contexts,</li>
      *    <li>have equivalent point locations as evaluated by the precision
-     *          context, and
+     *          context (points separated by multiples of 2pi are considered equivalent), and
      *    <li>point in the same direction.</li>
      * </ol>
      * </p>
+     * @see Point1S#eq(Point1S, DoublePrecisionContext)
      */
     @Override
     public boolean eq(final OrientedPoint1S other) {
@@ -161,9 +163,9 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
         final Point1S tPoint = transform.apply(point);
         final Point1S tPlus = transform.apply(plusPoint());
 
-        // TODO: determine if the transform flipped the orientation of the point
+        boolean positiveFacing = tPoint.getAzimuth() < tPlus.getAzimuth();
 
-        return null;
+        return OrientedPoint1S.fromPointAndDirection(tPoint, positiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -177,6 +179,28 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
     public ConvexSubHyperplane<Point1S> span() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return Objects.hash(point, positiveFacing, getPrecision());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        else if (!(obj instanceof OrientedPoint1S)) {
+            return false;
+        }
+
+        final OrientedPoint1S other = (OrientedPoint1S) obj;
+        return Objects.equals(getPrecision(), other.getPrecision()) &&
+                Objects.equals(point, other.point) &&
+                positiveFacing == other.positiveFacing;
     }
 
     /** {@inheritDoc} */

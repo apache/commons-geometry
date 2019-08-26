@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -227,6 +228,133 @@ public class OrientedPoint1STest {
         Assert.assertTrue(a.similarOrientation(a));
         Assert.assertFalse(a.similarOrientation(b));
         Assert.assertTrue(a.similarOrientation(c));
+    }
+
+    @Test
+    public void testTransform_translate() {
+        // arrange
+        Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
+
+        // act
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION).transform(transform),
+                Geometry.HALF_PI, true);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, TEST_PRECISION).transform(transform),
+                Geometry.HALF_PI, false);
+
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+                Geometry.TWO_PI, true);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+                Geometry.ZERO_PI, false);
+    }
+
+    @Test
+    public void testTransform_scale() {
+        // arrange
+        Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() * 2);
+
+        // act
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION).transform(transform),
+                Geometry.ZERO_PI, true);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, TEST_PRECISION).transform(transform),
+                Geometry.ZERO_PI, false);
+
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+                3 * Geometry.PI, true);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+                -Geometry.PI, false);
+    }
+
+    @Test
+    public void testTransform_negate() {
+        // arrange
+        Transform<Point1S> transform = p -> Point1S.of(-p.getAzimuth());
+
+        // act
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION).transform(transform),
+                Geometry.ZERO_PI, false);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, TEST_PRECISION).transform(transform),
+                Geometry.ZERO_PI, true);
+
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+                -1.5 * Geometry.PI, false);
+        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+                Geometry.HALF_PI, true);
+    }
+
+    @Test
+    public void testEq() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, precision);
+
+        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, precision);
+        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, precision);
+        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION);
+
+        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, precision);
+        OrientedPoint1S f = OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.TWO_PI), true, precision);
+        OrientedPoint1S g = OrientedPoint1S.fromPointAndDirection(Point1S.of(1e-4), true, precision);
+        OrientedPoint1S h = OrientedPoint1S.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a));
+
+        Assert.assertFalse(a.eq(b));
+        Assert.assertFalse(a.eq(c));
+        Assert.assertFalse(a.eq(d));
+
+        Assert.assertTrue(a.eq(e));
+        Assert.assertTrue(a.eq(f));
+        Assert.assertTrue(a.eq(g));
+        Assert.assertTrue(a.eq(h));
+    }
+
+    @Test
+    public void testHashCode() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION);
+        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
+        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, TEST_PRECISION);
+        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, precision);
+        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION);
+
+        int hash = a.hashCode();
+
+        // act/assert
+        Assert.assertEquals(hash, a.hashCode());
+
+        Assert.assertNotEquals(hash, b.hashCode());
+        Assert.assertNotEquals(hash, c.hashCode());
+        Assert.assertNotEquals(hash, d.hashCode());
+
+        Assert.assertEquals(hash, e.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION);
+        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
+        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, false, TEST_PRECISION);
+        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, precision);
+        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO_PI, true, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertFalse(a.equals(null));
+        Assert.assertFalse(a.equals(new Object()));
+
+        Assert.assertTrue(a.equals(a));
+
+        Assert.assertFalse(a.equals(b));
+        Assert.assertFalse(a.equals(c));
+        Assert.assertFalse(a.equals(d));
+
+        Assert.assertTrue(a.equals(e));
     }
 
     @Test

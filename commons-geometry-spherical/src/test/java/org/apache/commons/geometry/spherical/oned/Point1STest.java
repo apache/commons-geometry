@@ -176,6 +176,25 @@ public class Point1STest {
     }
 
     @Test
+    public void testEq_wrapAround() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
+
+        Point1S a = Point1S.ZERO_PI;
+        Point1S b = Point1S.of(1e-3);
+        Point1S c = Point1S.of(-1e-3);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a, precision));
+
+        Assert.assertTrue(a.eq(b, precision));
+        Assert.assertTrue(b.eq(a, precision));
+
+        Assert.assertTrue(a.eq(c, precision));
+        Assert.assertTrue(c.eq(a, precision));
+    }
+
+    @Test
     public void testDistance() {
         // arrange
         Point1S a = Point1S.of(0.0);
