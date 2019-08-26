@@ -17,14 +17,20 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing an oriented point on the 1-sphere, meaning an azimuth angle and
@@ -176,9 +182,8 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<Point1S> span() {
-        // TODO Auto-generated method stub
-        return null;
+    public SubOrientedPoint1S span() {
+        return new SubOrientedPoint1S(this);
     }
 
     /** {@inheritDoc} */
@@ -290,5 +295,217 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      */
     public static OrientedPoint1S createNegativeFacing(final Point1S pt, final DoublePrecisionContext precision) {
         return fromPointAndDirection(pt, false, precision);
+    }
+
+    /** {@link ConvexSubHyperplane} implementation for spherical 1D space. Since there are no subspaces in 1D,
+     * this is effectively a stub implementation, its main use being to allow for the correct functioning of
+     * partitioning code.
+     */
+    public static class SubOrientedPoint1S implements ConvexSubHyperplane<Point1S>, Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190825L;
+
+        /** The underlying hyperplane for this instance. */
+        private final OrientedPoint1S hyperplane;
+
+        /** Simple constructor.
+         * @param hyperplane underlying hyperplane instance
+         */
+        public SubOrientedPoint1S(final OrientedPoint1S hyperplane) {
+            this.hyperplane = hyperplane;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OrientedPoint1S getHyperplane() {
+            return hyperplane;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method simply returns false.</p>
+        */
+        @Override
+        public boolean isFull() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method simply returns false.</p>
+        */
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method simply returns false.</p>
+         */
+        @Override
+        public boolean isInfinite() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method simply returns true.</p>
+        */
+       @Override
+       public boolean isFinite() {
+           return true;
+       }
+
+        /** {@inheritDoc}
+         *
+         *  <p>This method simply returns {@code 0}.</p>
+         */
+        @Override
+        public double getSize() {
+            return 0;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method returns {@link RegionLocation#BOUNDARY} if the
+         * point is on the hyperplane and {@link RegionLocation#OUTSIDE}
+         * otherwise.</p>
+         */
+        @Override
+        public RegionLocation classify(Point1S point) {
+            if (hyperplane.contains(point)) {
+                return RegionLocation.BOUNDARY;
+            }
+
+            return RegionLocation.OUTSIDE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Point1S closest(Point1S point) {
+            return hyperplane.project(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Split<SubOrientedPoint1S> split(final Hyperplane<Point1S> splitter) {
+            final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
+
+            SubOrientedPoint1S minus = null;
+            SubOrientedPoint1S plus = null;
+
+            if (side == HyperplaneLocation.MINUS) {
+                minus = this;
+            }
+            else if (side == HyperplaneLocation.PLUS) {
+                plus = this;
+            }
+
+            return new Split<>(minus, plus);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<SubOrientedPoint1S> toConvex() {
+            return Arrays.asList(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubOrientedPoint1S transform(final Transform<Point1S> transform) {
+            return getHyperplane().transform(transform).span();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubOrientedPointBuilder1S builder() {
+            return new SubOrientedPointBuilder1S(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubOrientedPoint1S reverse() {
+            return new SubOrientedPoint1S(hyperplane.reverse());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName())
+                .append("[point= ")
+                .append(hyperplane.getPoint())
+                .append(", positiveFacing= ")
+                .append(hyperplane.positiveFacing)
+                .append(']');
+
+            return sb.toString();
+        }
+    }
+
+    /** {@link SubHyperplane.Builder} implementation for spherical 1D space. Similar to {@link SubOrientedPoint1S},
+     * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
+     * for the correct functioning of partitioning code.
+     */
+    public static class SubOrientedPointBuilder1S implements SubHyperplane.Builder<Point1S>, Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190825L;
+
+        /** Base subhyperplane for the builder. */
+        private final SubOrientedPoint1S base;
+
+        /** Construct a new instance using the given base subhyperplane.
+         * @param base base subhyperplane for the instance
+         */
+        private SubOrientedPointBuilder1S(final SubOrientedPoint1S base) {
+            this.base = base;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void add(final SubHyperplane<Point1S> sub) {
+            validateHyperplane(sub);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void add(final ConvexSubHyperplane<Point1S> sub) {
+            validateHyperplane(sub);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubOrientedPoint1S build() {
+            return base;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName())
+                .append("[base= ")
+                .append(base)
+                .append(']');
+
+            return sb.toString();
+        }
+
+        /** Validate the given subhyperplane lies on the same hyperplane
+         * @param sub
+         */
+        private void validateHyperplane(final SubHyperplane<Point1S> sub) {
+            final OrientedPoint1S baseHyper = base.getHyperplane();
+            final OrientedPoint1S inputHyper = (OrientedPoint1S) sub.getHyperplane();
+
+            if (!baseHyper.eq(inputHyper)) {
+                throw new IllegalArgumentException("Argument is not on the same " +
+                        "hyperplane. Expected " + baseHyper + " but was " +
+                        inputHyper);
+            }
+        }
     }
 }

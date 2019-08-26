@@ -367,7 +367,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D>, Serializable {
 
         /** Serializable UID */
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 20190405L;
 
         /** The underlying hyperplane for this instance. */
         private final OrientedPoint hyperplane;
@@ -432,12 +432,12 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
          *
-         * <p>This method return {@link RegionLocation#BOUNDARY} if the
+         * <p>This method returns {@link RegionLocation#BOUNDARY} if the
          * point is on the hyperplane and {@link RegionLocation#OUTSIDE}
          * otherwise.</p>
          */
         @Override
-        public RegionLocation classify(Vector1D point) {
+        public RegionLocation classify(final Vector1D point) {
             if (hyperplane.contains(point)) {
                 return RegionLocation.BOUNDARY;
             }
@@ -453,7 +453,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public Split<SubOrientedPoint> split(Hyperplane<Vector1D> splitter) {
+        public Split<SubOrientedPoint> split(final Hyperplane<Vector1D> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
             SubOrientedPoint minus = null;
@@ -477,7 +477,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint transform(Transform<Vector1D> transform) {
+        public SubOrientedPoint transform(final Transform<Vector1D> transform) {
             return getHyperplane().transform(transform).span();
         }
 
@@ -517,21 +517,25 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         /** Serializable UID */
         private static final long serialVersionUID = 20190405L;
 
+        /** Base subhyperplane for the builder. */
         private final SubOrientedPoint base;
 
+        /** Construct a new instance using the given base subhyperplane.
+         * @param base base subhyperplane for the instance
+         */
         private SubOrientedPointBuilder(final SubOrientedPoint base) {
             this.base = base;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(SubHyperplane<Vector1D> sub) {
+        public void add(final SubHyperplane<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(ConvexSubHyperplane<Vector1D> sub) {
+        public void add(final ConvexSubHyperplane<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
