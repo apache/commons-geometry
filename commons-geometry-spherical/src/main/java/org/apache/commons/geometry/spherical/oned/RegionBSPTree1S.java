@@ -19,18 +19,41 @@ package org.apache.commons.geometry.spherical.oned;
 import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 
+/** BSP tree representing regions in 1D spherical space.
+ */
 public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTree1S.RegionNode1S> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190817L;
 
+    /** Create a new, empty instance.
+     */
+    public RegionBSPTree1S() {
+        this(false);
+    }
+
+    /** Create a new region. If {@code full} is true, then the region will
+     * represent the entire circle. Otherwise, it will be empty.
+     * @param full whether or not the region should contain the entire
+     *      circle or be empty
+     */
     public RegionBSPTree1S(boolean full) {
         super(full);
+    }
+
+    /** Return a deep copy of this instance.
+     * @return a deep copy of this instance.
+     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
+     */
+    public RegionBSPTree1S copy() {
+        RegionBSPTree1S result = RegionBSPTree1S.empty();
+        result.copy(this);
+
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -42,9 +65,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
     /** {@inheritDoc} */
     @Override
-    public Split<? extends HyperplaneBoundedRegion<Point1S>> split(Hyperplane<Point1S> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+    public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
+        return split(splitter, RegionBSPTree1S.empty(), RegionBSPTree1S.empty());
     }
 
     /** {@inheritDoc} */
@@ -57,8 +79,22 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     /** {@inheritDoc} */
     @Override
     protected RegionNode1S createNode() {
-        // TODO Auto-generated method stub
-        return null;
+        return new RegionNode1S(this);
+    }
+
+    /** Return a new, empty BSP tree.
+     * @return a new, empty BSP tree.
+     */
+    public static RegionBSPTree1S empty() {
+        return new RegionBSPTree1S(false);
+    }
+
+    /** Return a new, full BSP tree. The returned tree represents the
+     * full space.
+     * @return a new, full BSP tree.
+     */
+    public static RegionBSPTree1S full() {
+        return new RegionBSPTree1S(true);
     }
 
     /** BSP tree node for one dimensional spherical space.
@@ -68,6 +104,9 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         /** Serializable UID */
         private static final long serialVersionUID = 20190817L;
 
+        /** Simple constructor.
+         * @param tree the owning tree instance
+         */
         protected RegionNode1S(final AbstractBSPTree<Point1S, RegionNode1S> tree) {
             super(tree);
         }
@@ -75,8 +114,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         /** {@inheritDoc} */
         @Override
         protected RegionNode1S getSelf() {
-            // TODO Auto-generated method stub
-            return null;
+            return this;
         }
     }
 }

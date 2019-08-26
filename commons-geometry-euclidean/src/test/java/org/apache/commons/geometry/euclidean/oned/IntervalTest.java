@@ -26,7 +26,6 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint.SubOrientedPoint;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -369,19 +368,6 @@ public class IntervalTest {
                 1.1, 2, Double.POSITIVE_INFINITY);
 
         checkContains(interval, false, Double.NaN);
-    }
-
-    @Test
-    public void testTrim() {
-        // arrange
-        SubOrientedPoint sub = OrientedPoint.createPositiveFacing(2.0, TEST_PRECISION).span();
-
-        // act/assert
-        Assert.assertSame(sub, Interval.of(0, 4, TEST_PRECISION).trim(sub));
-        Assert.assertSame(sub, Interval.of(0, 2, TEST_PRECISION).trim(sub));
-        Assert.assertSame(sub, Interval.of(2, 4, TEST_PRECISION).trim(sub));
-
-        Assert.assertNull(Interval.of(-1,  0, TEST_PRECISION).trim(sub));
     }
 
     @Test

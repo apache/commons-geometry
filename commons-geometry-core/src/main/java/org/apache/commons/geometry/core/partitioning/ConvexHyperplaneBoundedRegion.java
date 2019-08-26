@@ -33,14 +33,6 @@ public interface ConvexHyperplaneBoundedRegion<P extends Point<P>> extends Hyper
      */
     ConvexHyperplaneBoundedRegion<P> transform(Transform<P> transform);
 
-    /** Trim the given convex subhyperplane to the portion contained inside this instance.
-     * @param convexSubHyperplane convex subhyperplane to trim. Null is returned if the subhyperplane
-     * does not intersect the instance.
-     * @return portion of the argument that lies entirely inside the region represented by
-     *      this instance, or null if it does not intersect.
-     */
-    ConvexSubHyperplane<P> trim(ConvexSubHyperplane<P> convexSubHyperplane);
-
     /** {@inheritDoc}
     *
     * <p>The parts resulting from a split operation with a convex region

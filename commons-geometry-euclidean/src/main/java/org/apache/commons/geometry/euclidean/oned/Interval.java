@@ -23,12 +23,10 @@ import java.util.List;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint.SubOrientedPoint;
 
 /** Class representing an interval in one dimension. The interval is defined
  * by minimum and maximum values. One or both of these values may be infinite
@@ -185,13 +183,6 @@ public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serial
             }
             return RegionLocation.INSIDE;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SubOrientedPoint trim(final ConvexSubHyperplane<Vector1D> convexSubHyperplane) {
-        final SubOrientedPoint sub = (SubOrientedPoint) convexSubHyperplane;
-        return contains(sub.getHyperplane().getLocation()) ? sub : null;
     }
 
     /** Return true if the given point location is on the inside or boundary
