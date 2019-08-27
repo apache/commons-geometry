@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
@@ -39,7 +40,7 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     private static final long serialVersionUID = 20190817L;
 
     /** Interval instance representing the full space. */
-    private static final AngularInterval FULL = new AngularInterval(null, null);
+    private static final AngularInterval FULL = new AngularInterval(null, null, null);
 
     /** The minimum boundary of the interval. */
     private final OrientedPoint1S minBoundary;
@@ -47,15 +48,24 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** The maximum boundary of the interval. */
     private final OrientedPoint1S maxBoundary;
 
+    /** Point halfway between the min and max boundaries. */
+    private final Point1S midpoint;
+
     /** Construct a new instance representing the angular region between the given
-     * min and max azimuth boundaries. Both boundaries must either be finite or null
-     * (to indicate the full space). No validation is performed.
+     * min and max azimuth boundaries. The arguments must be either all finite or all
+     * null (to indicate the full space). If the boundaries are finite, then the min
+     * boundary azimuth value must be numerically less than the max boundary. Callers are
+     * responsible for enforcing these constraints. No validation is performed.
      * @param minBoundary minimum boundary for the interval
      * @param maxBoundary maximum boundary for the interval
+     * @param midpoint the midpoint between the boundaries
      */
-    private AngularInterval(final OrientedPoint1S minBoundary, final OrientedPoint1S maxBoundary) {
+    private AngularInterval(final OrientedPoint1S minBoundary, final OrientedPoint1S maxBoundary,
+            final Point1S midpoint) {
+
         this.minBoundary = minBoundary;
         this.maxBoundary = maxBoundary;
+        this.midpoint = midpoint;
     }
 
     /** Get the minimum azimuth angle for the interval. This value will
@@ -100,6 +110,16 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return maxBoundary;
     }
 
+    /** Get the midpoint of the interval or null if the interval represents
+     *  the full space.
+     * @return the midpoint of the interval or null if the interval represents
+     *      the full space
+     * @see #getBarycenter()
+     */
+    public Point1S getMidpoint() {
+        return midpoint;
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<AngularInterval> toConvex() {
@@ -137,20 +157,40 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return 0;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method is an alias for {@link #getMidpoint()}.</p>
+     * @see #getMidpoint()
+     */
     @Override
     public Point1S getBarycenter() {
-        if (!isFull()) {
-            return Point1S.of(maxBoundary.getAzimuth() - minBoundary.getAzimuth());
-        }
-        return null;
+        return getMidpoint();
     }
 
     /** {@inheritDoc} */
     @Override
     public RegionLocation classify(final Point1S pt) {
         if (!isFull()) {
-            // TODO
+            // Classify using the closest boundary. We need to do this since the
+            // boundary hyperplanes split the space into plus and minus sections
+            // around the hyperplane location but also implicitly at the point
+            // pi distance away. Since we know that the boundaries are not at the
+            // same location (since otherwise, the interval would be full), we
+            // are guaranteed that the midpoint of the interval is less than pi
+            // from each boundary. Therefore, we can classify the pt by classifying
+            // it against the single boundary that it is closest to.
+            OrientedPoint1S testBoundary = midpoint.signedDistance(pt) < 0 ?
+                    minBoundary :
+                    maxBoundary;
+
+            final HyperplaneLocation loc = testBoundary.classify(pt);
+            if (HyperplaneLocation.ON == loc) {
+                return RegionLocation.BOUNDARY;
+            }
+            else if (HyperplaneLocation.PLUS == loc) {
+                return RegionLocation.OUTSIDE;
+            }
+
         }
         return RegionLocation.INSIDE;
     }
@@ -158,7 +198,14 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** {@inheritDoc} */
     @Override
     public Point1S project(final Point1S pt) {
-        // TODO Auto-generated method stub
+        if (!isFull()) {
+            final double minOffset = minBoundary.offset(pt);
+            final double maxOffset = maxBoundary.offset(pt);
+
+            return (minOffset <= maxOffset) ?
+                    minBoundary.getPoint() :
+                    maxBoundary.getPoint();
+        }
         return null;
     }
 
@@ -176,6 +223,20 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return null;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[min= ")
+            .append(getMin())
+            .append(", max= ")
+            .append(getMax())
+            .append(']');
+
+        return sb.toString();
+    }
+
     /** Return an instance representing the full space. The returned instance contains all
      * possible azimuth angles.
      * @return an interval representing the full space
@@ -184,7 +245,51 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return FULL;
     }
 
+    /** Return an instance representing the angular interval between the given min and max azimuth
+     * values. The max value is adjusted to be numerically above the min value, even if the resulting
+     * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
+     * is returned if min and max are equivalent, as evaluated by the given precision context.
+     * @param min min azimuth value
+     * @param max max azimuth value
+     * @param precision precision precision context used to compare floating point values
+     * @return a new instance resulting the angular region between the given min and max azimuths
+     * @throws IllegalArgumentException if either azimuth is NaN or infinite
+     */
     public static AngularInterval of(final double min, final double max, final DoublePrecisionContext precision) {
-        return null;
+        return of(Point1S.of(min), Point1S.of(max), precision);
+    }
+
+    /** Return an instance representing the angular interval between the given min and max azimuth
+     * points. The max point is adjusted to be numerically above the min point, even if the resulting
+     * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
+     * is returned if min and max are equivalent, as evaluated by the given precision context.
+     * @param min min azimuth value
+     * @param max max azimuth value
+     * @param precision precision precision context used to compare floating point values
+     * @return a new instance resulting the angular region between the given min and max points
+     * @throws IllegalArgumentException if either azimuth is NaN or infinite
+     */
+    public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
+
+        // validate input values
+        if (!min.isFinite() || !max.isFinite()) {
+
+            throw new IllegalArgumentException("Invalid interval values: [" + min.getAzimuth() +
+                    ", " + max.getAzimuth() + "]");
+        }
+
+        // return the full space if the points are equivalent
+        if (min.eq(max, precision)) {
+            return full();
+        }
+
+        final Point1S adjustedMax = max.above(min);
+        final double midAz = 0.5 * (adjustedMax.getAzimuth() + min.getAzimuth());
+
+        return new AngularInterval(
+                    OrientedPoint1S.createNegativeFacing(min, precision),
+                    OrientedPoint1S.createPositiveFacing(adjustedMax, precision),
+                    Point1S.of(midAz)
+                );
     }
 }
