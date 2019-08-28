@@ -35,7 +35,7 @@ public class Point1STest {
     @Test
     public void testConstants() {
         // act/assert
-        Assert.assertEquals(0.0, Point1S.ZERO_PI.getAzimuth(), TEST_EPS);
+        Assert.assertEquals(0.0, Point1S.ZERO.getAzimuth(), TEST_EPS);
         Assert.assertEquals(Math.PI, Point1S.PI.getAzimuth(), TEST_EPS);
     }
 
@@ -180,7 +180,7 @@ public class Point1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Point1S a = Point1S.ZERO_PI;
+        Point1S a = Point1S.ZERO;
         Point1S b = Point1S.of(1e-3);
         Point1S c = Point1S.of(-1e-3);
 
@@ -294,14 +294,14 @@ public class Point1STest {
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).normalize(Point1S.ZERO_PI);
+            Point1S.of(Double.NaN).normalize(Point1S.ZERO);
         }, GeometryValueException.class);
     }
 
     @Test
     public void testAbove() {
         // arrange
-        Point1S p1 = Point1S.ZERO_PI;
+        Point1S p1 = Point1S.ZERO;
         Point1S p2 = Point1S.of(PlaneAngle.ofDegrees(90));
         Point1S p3 = Point1S.PI;
         Point1S p4 = Point1S.of(PlaneAngle.ofDegrees(-90));
@@ -325,22 +325,22 @@ public class Point1STest {
     public void testAbove_nonFinite() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO_PI);
+            Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO_PI);
+            Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).above(Point1S.ZERO_PI);
+            Point1S.of(Double.NaN).above(Point1S.ZERO);
         }, GeometryValueException.class);
     }
 
     @Test
     public void testBelow() {
         // arrange
-        Point1S p1 = Point1S.ZERO_PI;
+        Point1S p1 = Point1S.ZERO;
         Point1S p2 = Point1S.of(PlaneAngle.ofDegrees(90));
         Point1S p3 = Point1S.PI;
         Point1S p4 = Point1S.of(PlaneAngle.ofDegrees(-90));
@@ -364,15 +364,15 @@ public class Point1STest {
     public void testBelow_nonFinite() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO_PI);
+            Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO_PI);
+            Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NaN).below(Point1S.ZERO_PI);
+            Point1S.of(Double.NaN).below(Point1S.ZERO);
         }, GeometryValueException.class);
     }
 

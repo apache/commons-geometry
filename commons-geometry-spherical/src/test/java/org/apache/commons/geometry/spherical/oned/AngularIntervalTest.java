@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
@@ -44,23 +45,15 @@ public class AngularIntervalTest {
         checkFull(AngularInterval.of(1, 1, TEST_PRECISION));
         checkFull(AngularInterval.of(0, 1e-11, TEST_PRECISION));
         checkFull(AngularInterval.of(0, -1e-11, TEST_PRECISION));
+
+        checkFull(AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION));
+        checkFull(AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION));
+        checkFull(AngularInterval.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION));
     }
 
     @Test
     public void testOf_doubles_invalidArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.NaN, 0, TEST_PRECISION);
         }, IllegalArgumentException.class);
@@ -85,33 +78,71 @@ public class AngularIntervalTest {
         checkFull(AngularInterval.of(Point1S.of(1), Point1S.of(1), TEST_PRECISION));
         checkFull(AngularInterval.of(Point1S.of(0), Point1S.of(1e-11), TEST_PRECISION));
         checkFull(AngularInterval.of(Point1S.of(0), Point1S.of(-1e-11), TEST_PRECISION));
+
+        checkFull(AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO, TEST_PRECISION));
+        checkFull(AngularInterval.of(Point1S.ZERO, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
+        checkFull(AngularInterval.of(Point1S.of(Double.POSITIVE_INFINITY), Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
     }
 
     @Test
     public void testOf_points_invalidArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO_PI, TEST_PRECISION);
+            AngularInterval.of(Point1S.NaN, Point1S.ZERO, TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Point1S.ZERO_PI, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Point1S.NaN, Point1S.ZERO_PI, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.of(Point1S.ZERO_PI, Point1S.NaN, TEST_PRECISION);
+            AngularInterval.of(Point1S.ZERO, Point1S.NaN, TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.NaN, Point1S.NaN, TEST_PRECISION);
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testOf_orientedPoints() {
+        // arrange
+        DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-3);
+        DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-2);
+
+        OrientedPoint1S zeroPos = OrientedPoint1S.createPositiveFacing(Point1S.ZERO, precisionA);
+        OrientedPoint1S zeroNeg = OrientedPoint1S.createNegativeFacing(Point1S.ZERO, precisionA);
+
+        OrientedPoint1S piPos = OrientedPoint1S.createPositiveFacing(Point1S.PI, precisionA);
+        OrientedPoint1S piNeg = OrientedPoint1S.createNegativeFacing(Point1S.PI, precisionA);
+
+        OrientedPoint1S almostPiPos = OrientedPoint1S.createPositiveFacing(Point1S.of(Geometry.PI + 5e-3), precisionB);
+
+        // act/assert
+        checkInterval(AngularInterval.of(zeroNeg, piPos), 0, Geometry.PI);
+        checkInterval(AngularInterval.of(zeroPos, piNeg), Geometry.PI, Geometry.TWO_PI);
+
+        checkFull(AngularInterval.of(zeroPos, zeroNeg));
+        checkFull(AngularInterval.of(zeroPos, piPos));
+        checkFull(AngularInterval.of(piNeg, zeroNeg));
+
+        checkFull(AngularInterval.of(almostPiPos, piNeg));
+        checkFull(AngularInterval.of(piNeg, almostPiPos));
+    }
+
+    @Test
+    public void testOf_orientedPoints_invalidArgs() {
+        // arrange
+        OrientedPoint1S pt = OrientedPoint1S.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        OrientedPoint1S nan = OrientedPoint1S.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(pt, nan);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(nan, pt);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(nan, nan);
         }, IllegalArgumentException.class);
     }
 
@@ -122,6 +153,131 @@ public class AngularIntervalTest {
 
         // assert
         checkFull(interval);
+    }
+
+    @Test
+    public void testClassify_full() {
+        // arrange
+        AngularInterval interval = AngularInterval.full();
+
+        // act/assert
+        for (double a = -2 * Geometry.PI; a >= 4 * Geometry.PI; a += 0.5) {
+            checkClassify(interval, RegionLocation.INSIDE, Point1S.of(a));
+        }
+    }
+
+    @Test
+    public void testClassify_almostFull() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(1 + 2e-10, 1, TEST_PRECISION);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                Point1S.of(1 + 2e-10), Point1S.of(1 + 6e-11), Point1S.of(1));
+
+        checkClassify(interval, RegionLocation.INSIDE, Point1S.of(1 + 6e-11 + Geometry.PI));
+
+        for (double a = 1 + 1e-9; a >= 1 - 1e-9 + Geometry.TWO_PI; a += 0.5) {
+            checkClassify(interval, RegionLocation.INSIDE, Point1S.of(a));
+        }
+    }
+
+    @Test
+    public void testClassify_sizeableGap() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(0.25, -0.25, TEST_PRECISION);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(-0.2), Point1S.of(0.2));
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                Point1S.of(-0.25), Point1S.of(0.2499999999999));
+        checkClassify(interval, RegionLocation.INSIDE,
+                Point1S.of(1), Point1S.PI, Point1S.of(-1));
+    }
+
+    @Test
+    public void testClassify_halfPi() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.MINUS_HALF_PI, TEST_PRECISION);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(Geometry.HALF_PI - 0.1), Point1S.of(Geometry.MINUS_HALF_PI + 0.1));
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                Point1S.of(Geometry.HALF_PI), Point1S.of(1.5 * Geometry.PI));
+        checkClassify(interval, RegionLocation.INSIDE,
+                Point1S.PI, Point1S.of(Geometry.HALF_PI + 0.1), Point1S.of(Geometry.MINUS_HALF_PI - 0.1));
+    }
+
+    @Test
+    public void testClassify_almostempty() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(1, 1 + 2e-10, TEST_PRECISION);
+
+        // act/assert
+        checkClassify(interval, RegionLocation.BOUNDARY,
+                Point1S.of(1 + 2e-10), Point1S.of(1 + 6e-11), Point1S.of(1));
+
+        checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(1 + 6e-11 + Geometry.PI));
+
+        for (double a = 1 + 1e-9; a >= 1 - 1e-9 + Geometry.TWO_PI; a += 0.5) {
+            checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(a));
+        }
+    }
+
+    @Test
+    public void testProject_full() {
+        // arrange
+        AngularInterval interval = AngularInterval.full();
+
+        // act/assert
+        Assert.assertNull(interval.project(Point1S.ZERO));
+        Assert.assertNull(interval.project(Point1S.PI));
+    }
+
+    @Test
+    public void testProject() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(1, 2, TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(1, interval.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(1, interval.project(Point1S.of(1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(1, interval.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
+
+        Assert.assertEquals(2, interval.project(Point1S.of(2)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(2, interval.project(Point1S.PI).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(2, interval.project(Point1S.of(1.4 + Geometry.PI)).getAzimuth(), TEST_EPS);
+
+        Assert.assertEquals(1, interval.project(Point1S.of(1.5 + Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(1, interval.project(Point1S.of(1.6 + Geometry.PI)).getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_full() {
+        // arrange
+        AngularInterval interval = AngularInterval.full();
+
+        Transform<Point1S> translate = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
+        Transform<Point1S> invert = p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth());
+
+        // act/assert
+        checkFull(interval.transform(translate));
+        checkFull(interval.transform(invert));
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
+
+        Transform<Point1S> translate = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
+        Transform<Point1S> invert = p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth());
+
+        // act/assert
+        checkInterval(interval.transform(translate), Geometry.PI, 1.5 * Geometry.PI);
+        checkInterval(interval.transform(invert), Geometry.MINUS_HALF_PI, Geometry.ZERO_PI);
     }
 
     @Test
@@ -150,10 +306,10 @@ public class AngularIntervalTest {
         Assert.assertNull(interval.getBarycenter());
         Assert.assertNull(interval.getMidpoint());
 
-        GeometryTestUtils.assertPositiveInfinity(interval.getSize());
+        Assert.assertEquals(Geometry.TWO_PI, interval.getSize(), TEST_EPS);
         Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
 
-        checkPoints(interval, RegionLocation.INSIDE, Point1S.ZERO_PI, Point1S.of(Geometry.PI));
+        checkClassify(interval, RegionLocation.INSIDE, Point1S.ZERO, Point1S.of(Geometry.PI));
     }
 
     private static void checkInterval(AngularInterval interval, double min, double max) {
@@ -182,13 +338,13 @@ public class AngularIntervalTest {
         Assert.assertEquals(1, convex.size());
         Assert.assertSame(interval, convex.get(0));
 
-        checkPoints(interval, RegionLocation.INSIDE, interval.getMidpoint());
-        checkPoints(interval, RegionLocation.BOUNDARY,
+        checkClassify(interval, RegionLocation.INSIDE, interval.getMidpoint());
+        checkClassify(interval, RegionLocation.BOUNDARY,
                 interval.getMinBoundary().getPoint(), interval.getMaxBoundary().getPoint());
-        checkPoints(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidpoint().getAzimuth() + Geometry.PI));
+        checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidpoint().getAzimuth() + Geometry.PI));
     }
 
-    private static void checkPoints(AngularInterval interval, RegionLocation loc, Point1S ... pts) {
+    private static void checkClassify(AngularInterval interval, RegionLocation loc, Point1S ... pts) {
         for (Point1S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, interval.classify(pt));
         }

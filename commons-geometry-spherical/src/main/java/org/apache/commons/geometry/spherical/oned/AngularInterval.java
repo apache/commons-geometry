@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
@@ -144,7 +145,7 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        return getMax() - getMin();
+        return isFull() ? Geometry.TWO_PI : getMax() - getMin();
     }
 
     /** {@inheritDoc}
@@ -199,10 +200,10 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     @Override
     public Point1S project(final Point1S pt) {
         if (!isFull()) {
-            final double minOffset = minBoundary.offset(pt);
-            final double maxOffset = maxBoundary.offset(pt);
+            final double minDist = minBoundary.getPoint().distance(pt);
+            final double maxDist = maxBoundary.getPoint().distance(pt);
 
-            return (minOffset <= maxOffset) ?
+            return (minDist <= maxDist) ?
                     minBoundary.getPoint() :
                     maxBoundary.getPoint();
         }
@@ -212,8 +213,14 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** {@inheritDoc} */
     @Override
     public AngularInterval transform(final Transform<Point1S> transform) {
-        // TODO Auto-generated method stub
-        return null;
+        if (!isFull()) {
+            final OrientedPoint1S tMin = minBoundary.transform(transform);
+            final OrientedPoint1S tMax = maxBoundary.transform(transform);
+
+            return of(tMin, tMax);
+        }
+
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -248,12 +255,13 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** Return an instance representing the angular interval between the given min and max azimuth
      * values. The max value is adjusted to be numerically above the min value, even if the resulting
      * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
-     * is returned if min and max are equivalent, as evaluated by the given precision context.
+     * is returned if either point is infinite or min and max are equivalent as evaluated by the
+     * given precision context.
      * @param min min azimuth value
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max azimuths
-     * @throws IllegalArgumentException if either azimuth is NaN or infinite
+     * @throws IllegalArgumentException if either azimuth is NaN
      */
     public static AngularInterval of(final double min, final double max, final DoublePrecisionContext precision) {
         return of(Point1S.of(min), Point1S.of(max), precision);
@@ -262,24 +270,19 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
     /** Return an instance representing the angular interval between the given min and max azimuth
      * points. The max point is adjusted to be numerically above the min point, even if the resulting
      * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
-     * is returned if min and max are equivalent, as evaluated by the given precision context.
+     * is returned if either point is infinite or min and max are equivalent as evaluated by the
+     * given precision context.
      * @param min min azimuth value
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max points
-     * @throws IllegalArgumentException if either azimuth is NaN or infinite
+     * @throws IllegalArgumentException if either azimuth is NaN
      */
     public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
+        validateIntervalValues(min, max);
 
-        // validate input values
-        if (!min.isFinite() || !max.isFinite()) {
-
-            throw new IllegalArgumentException("Invalid interval values: [" + min.getAzimuth() +
-                    ", " + max.getAzimuth() + "]");
-        }
-
-        // return the full space if the points are equivalent
-        if (min.eq(max, precision)) {
+        // return the full space if either point is infinite or the points are equivalent
+        if (min.isInfinite() || max.isInfinite() || min.eq(max, precision)) {
             return full();
         }
 
@@ -291,5 +294,50 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
                     OrientedPoint1S.createPositiveFacing(adjustedMax, precision),
                     Point1S.of(midAz)
                 );
+    }
+
+    /** Return an instance representing the angular interval between the given oriented points.
+     * The negative-facing point is used as the minimum boundary and the positive-facing point is
+     * adjusted to be above the minimum. The arguments can be given in any order. The full space
+     * is returned if the points are equivalent or are oriented in the same direction.
+     * @param a first oriented point
+     * @param b second oriented point
+     * @return an instance representing the angular interval between the given oriented points
+     * @throws IllegalArgumentException if either argument is NaN
+     */
+    public static AngularInterval of(final OrientedPoint1S a, final OrientedPoint1S b) {
+        final Point1S aPoint = a.getPoint();
+        final Point1S bPoint = b.getPoint();
+
+        validateIntervalValues(aPoint, bPoint);
+
+        if (a.isPositiveFacing() == b.isPositiveFacing() ||
+                aPoint.eq(bPoint, a.getPrecision()) ||
+                bPoint.eq(aPoint, b.getPrecision())) {
+            // points are equivalent or facing in the same direction
+            return full();
+        }
+
+        final OrientedPoint1S min = a.isPositiveFacing() ? b : a;
+        final OrientedPoint1S max = a.isPositiveFacing() ? a : b;
+        final OrientedPoint1S adjustedMax = OrientedPoint1S.createPositiveFacing(
+                max.getPoint().above(min.getPoint()),
+                max.getPrecision());
+
+        final Point1S mid = Point1S.of(0.5 * (adjustedMax.getAzimuth() + min.getAzimuth()));
+
+        return new AngularInterval(min, adjustedMax, mid);
+    }
+
+    /** Validate that the given points can be used to specify an angular interval.
+     * @param a first point
+     * @param b second point
+     * @throws IllegalArgumentException if either point is NaN
+     */
+    private static void validateIntervalValues(final Point1S a, final Point1S b) {
+        if (a.isNaN() || b.isNaN()) {
+            throw new IllegalArgumentException("Invalid angular interval: [" + a.getAzimuth() +
+                    ", " + b.getAzimuth() + "]");
+        }
     }
 }
