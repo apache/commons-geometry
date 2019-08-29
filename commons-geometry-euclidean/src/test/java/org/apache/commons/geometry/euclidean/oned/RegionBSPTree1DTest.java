@@ -586,7 +586,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testToConvex() {
+    public void testToIntervals() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
@@ -594,7 +594,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(-1, 6, precision));
 
         // act
-        List<Interval> intervals = tree.toConvex();
+        List<Interval> intervals = tree.toIntervals();
 
         // assert
         Assert.assertEquals(1, intervals.size());
@@ -634,11 +634,11 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<Interval> minusIntervals = split.getMinus().toConvex();
+        List<Interval> minusIntervals = split.getMinus().toIntervals();
         Assert.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), Double.NEGATIVE_INFINITY, 2);
 
-        List<Interval> plusIntervals = split.getPlus().toConvex();
+        List<Interval> plusIntervals = split.getPlus().toIntervals();
         Assert.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 2, Double.POSITIVE_INFINITY);
     }
@@ -674,11 +674,11 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<Interval> minusIntervals = split.getMinus().toConvex();
+        List<Interval> minusIntervals = split.getMinus().toIntervals();
         Assert.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 2, 4);
 
-        List<Interval> plusIntervals = split.getPlus().toConvex();
+        List<Interval> plusIntervals = split.getPlus().toIntervals();
         Assert.assertEquals(2, plusIntervals.size());
         checkInterval(plusIntervals.get(0), Double.NEGATIVE_INFINITY, -2);
         checkInterval(plusIntervals.get(1), 1, 2);
@@ -698,7 +698,7 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<Interval> minusIntervals = split.getMinus().toConvex();
+        List<Interval> minusIntervals = split.getMinus().toIntervals();
         Assert.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 1, 4);
 
@@ -721,7 +721,7 @@ public class RegionBSPTree1DTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<Interval> plusIntervals = split.getPlus().toConvex();
+        List<Interval> plusIntervals = split.getPlus().toIntervals();
         Assert.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 4);
     }
@@ -741,7 +741,7 @@ public class RegionBSPTree1DTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<Interval> plusIntervals = split.getPlus().toConvex();
+        List<Interval> plusIntervals = split.getPlus().toIntervals();
         Assert.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 1);
     }
@@ -761,7 +761,7 @@ public class RegionBSPTree1DTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<Interval> plusIntervals = split.getPlus().toConvex();
+        List<Interval> plusIntervals = split.getPlus().toIntervals();
         Assert.assertEquals(1, plusIntervals.size());
         checkInterval(plusIntervals.get(0), 1, 1);
     }
@@ -779,7 +779,7 @@ public class RegionBSPTree1DTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<Interval> minusIntervals = split.getMinus().toConvex();
+        List<Interval> minusIntervals = split.getMinus().toIntervals();
         Assert.assertEquals(1, minusIntervals.size());
         checkInterval(minusIntervals.get(0), 1, 1);
 

@@ -79,8 +79,12 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return createBoundaryList(b -> (ConvexSubPlane) b);
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return a list of {@link ConvexVolume}s representing the same region
+     * as this instance. One convex volume is returned for each interior leaf
+     * node in the tree.
+     * @return a list of convex volumes representing the same region as this
+     *      instance
+     */
     public List<ConvexVolume> toConvex() {
         final List<ConvexVolume> result = new ArrayList<>();
 

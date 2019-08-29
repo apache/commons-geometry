@@ -34,7 +34,7 @@ import org.apache.commons.geometry.core.exception.GeometryException;
  * @param <S> Convex subhyperplane implementation type
  */
 public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, S extends ConvexSubHyperplane<P>>
-    implements ConvexHyperplaneBoundedRegion<P>, Serializable {
+    implements HyperplaneBoundedRegion<P>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190812L;
@@ -145,8 +145,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         return remaining;
     }
 
-    /** Generic, internal transform method. Subclasses should call this from their {@link #transform(Transform)}
-     * method.
+    /** Generic, internal transform method. Subclasses should use this to implement their own transform methods.
      * @param transform the transform to apply to the instance
      * @param thisInstance a reference to the current instance; this is passed as
      *      an argument in order to allow it to be a generic type

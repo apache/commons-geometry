@@ -30,11 +30,6 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -518,7 +513,6 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
             super(boundaries);
         }
 
-        @Override
         public StubRegion transform(Transform<TestPoint2D> transform) {
             return transformInternal(transform, this, TestLineSegment.class, StubRegion::new);
         }
@@ -531,11 +525,6 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         @Override
         public TestLineSegment trim(ConvexSubHyperplane<TestPoint2D> convexSubHyperplane) {
             return (TestLineSegment) super.trim(convexSubHyperplane);
-        }
-
-        @Override
-        public List<StubRegion> toConvex() {
-            return Arrays.asList(this);
         }
 
         @Override

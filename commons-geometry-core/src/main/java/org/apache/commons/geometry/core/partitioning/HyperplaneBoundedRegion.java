@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import java.util.List;
-
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 
@@ -29,10 +27,4 @@ import org.apache.commons.geometry.core.Region;
  */
 public interface HyperplaneBoundedRegion<P extends Point<P>>
     extends Region<P>, Splittable<P, HyperplaneBoundedRegion<P>> {
-
-    /** Convert this instance into a list of convex regions.
-     * @return a list of convex region covering the same space as this
-     *      instance
-     */
-    List<? extends ConvexHyperplaneBoundedRegion<P>> toConvex();
 }

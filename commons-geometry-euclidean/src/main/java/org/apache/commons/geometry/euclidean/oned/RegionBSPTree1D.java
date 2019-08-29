@@ -120,16 +120,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
    /** {@inheritDoc}
     *
-    * <p>This method is an alias for {@link #toIntervals()}.</p>
-    * @see #toIntervals()
-    */
-   @Override
-   public List<Interval> toConvex() {
-       return toIntervals();
-   }
-
-   /** {@inheritDoc}
-    *
     * <p>When splitting trees representing single points with a splitter lying directly
     * on the point, the result point is placed on one side of the splitter based on its
     * orientation: if the splitter is positive-facing, the point is placed on the plus
@@ -183,7 +173,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         return node.isInside() ? Double.POSITIVE_INFINITY : max;
     }
 
-    /** Convert the the region represented by this tree into a list of separate
+    /** Convert the region represented by this tree into a list of separate
      * {@link Interval}s, arranged in order of ascending min value.
      * @return list of {@link Interval}s representing this region in order of
      *      ascending min value

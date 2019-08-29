@@ -29,15 +29,11 @@ import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
-import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
-import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree.AbstractRegionNode;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree.RegionSizeProperties;
 import org.junit.Assert;
@@ -2236,11 +2232,6 @@ public class AbstractRegionBSPTreeTest {
         @Override
         public boolean contains(TestPoint2D pt) {
             return classify(pt) != RegionLocation.OUTSIDE;
-        }
-
-        @Override
-        public List<? extends ConvexHyperplaneBoundedRegion<TestPoint2D>> toConvex() {
-            return null;
         }
 
         @Override

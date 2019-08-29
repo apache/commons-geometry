@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.util.List;
-
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
@@ -652,19 +650,6 @@ public class IntervalTest {
 
         checkInterval(Interval.of(-1, Double.POSITIVE_INFINITY, TEST_PRECISION).transform(transform),
                 Double.NEGATIVE_INFINITY, 1);
-    }
-
-    @Test
-    public void testToConvex() {
-        // arrange
-        Interval interval = Interval.of(1, 2, TEST_PRECISION);
-
-        // act
-        List<Interval> result = interval.toConvex();
-
-        // assert
-        Assert.assertEquals(1, result.size());
-        Assert.assertSame(interval, result.get(0));
     }
 
     @Test

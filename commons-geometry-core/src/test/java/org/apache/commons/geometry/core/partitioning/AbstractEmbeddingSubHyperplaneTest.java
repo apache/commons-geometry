@@ -24,13 +24,6 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint1D;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -188,11 +181,6 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         @Override
         public Split<? extends HyperplaneBoundedRegion<TestPoint1D>> split(Hyperplane<TestPoint1D> splitter) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<? extends ConvexHyperplaneBoundedRegion<TestPoint1D>> toConvex() {
             throw new UnsupportedOperationException();
         }
     }

@@ -56,19 +56,6 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testToConvex() {
-        // arrange
-        ConvexVolume vol = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION));
-
-        // act
-        List<ConvexVolume> result = vol.toConvex();
-
-        // assert
-        Assert.assertEquals(1, result.size());
-        Assert.assertSame(vol, result.get(0));
-    }
-
-    @Test
     public void testTOTree() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(

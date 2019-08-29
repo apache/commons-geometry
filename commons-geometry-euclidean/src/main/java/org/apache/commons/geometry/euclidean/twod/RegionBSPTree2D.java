@@ -97,8 +97,12 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         union(fromConvexArea(area));
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return a list of {@link ConvexArea}s representing the same region
+     * as this instance. One convex area is returned for each interior leaf
+     * node in the tree.
+     * @return a list of convex areas representing the same region as this
+     *      instance
+     */
     public List<ConvexArea> toConvex() {
         final List<ConvexArea> result = new ArrayList<>();
 

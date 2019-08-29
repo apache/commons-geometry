@@ -49,12 +49,6 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
 
     /** {@inheritDoc} */
     @Override
-    public List<ConvexVolume> toConvex() {
-        return Arrays.asList(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public double getSize() {
         if (isFull()) {
             return Double.POSITIVE_INFINITY;
@@ -137,8 +131,10 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         return (ConvexSubPlane) super.trim(convexSubHyperplane);
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return a new instance transformed by the argument.
+     * @param transform transform to apply
+     * @return a new instance transformed by the argument
+     */
     public ConvexVolume transform(final Transform<Vector3D> transform) {
         return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
     }

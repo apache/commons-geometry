@@ -139,7 +139,7 @@ public class SubLine3DTest {
 
         Assert.assertFalse(result.getSubspaceRegion().isFull());
 
-        List<Interval> intervals = result.getSubspaceRegion().toConvex();
+        List<Interval> intervals = result.getSubspaceRegion().toIntervals();
         Assert.assertEquals(1, intervals.size());
 
         Interval resultInterval = intervals.get(0);

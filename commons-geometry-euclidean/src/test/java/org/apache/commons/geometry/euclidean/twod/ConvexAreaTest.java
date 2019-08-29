@@ -205,19 +205,6 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testToConvex() {
-        // arrange
-        ConvexArea area = ConvexArea.full();
-
-        // act
-        List<ConvexArea> list = area.toConvex();
-
-        // assert
-        Assert.assertEquals(1, list.size());
-        Assert.assertSame(area, list.get(0));
-    }
-
-    @Test
     public void testGetVertices_full() {
         // arrange
         ConvexArea area = ConvexArea.full();

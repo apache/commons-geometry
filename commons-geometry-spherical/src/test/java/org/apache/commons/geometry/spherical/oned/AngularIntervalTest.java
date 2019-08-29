@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.util.List;
-
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -280,6 +278,23 @@ public class AngularIntervalTest {
         checkInterval(interval.transform(invert), Geometry.MINUS_HALF_PI, Geometry.ZERO_PI);
     }
 
+//    @Test
+//    public void testSplit_full() {
+//        // arrange
+//        AngularInterval interval = AngularInterval.full();
+//
+//        OrientedPoint1S splitter = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+//
+//        // act
+//        Split<AngularInterval> split = interval.split(splitter);
+//
+//        // assert
+//        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+//
+//        checkInterval(split.getMinus(), Geometry.HALF_PI, 1.5 * Geometry.PI);
+//        checkInterval(split.getPlus(), 1.5 * Geometry.PI, 2.5 * Geometry.PI);
+//    }
+
     @Test
     public void testToString() {
         // arrange
@@ -333,10 +348,6 @@ public class AngularIntervalTest {
 
         Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(max - min, interval.getSize(), TEST_EPS);
-
-        List<AngularInterval> convex = interval.toConvex();
-        Assert.assertEquals(1, convex.size());
-        Assert.assertSame(interval, convex.get(0));
 
         checkClassify(interval, RegionLocation.INSIDE, interval.getMidpoint());
         checkClassify(interval, RegionLocation.BOUNDARY,

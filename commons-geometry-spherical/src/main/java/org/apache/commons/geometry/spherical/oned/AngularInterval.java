@@ -17,14 +17,12 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -35,7 +33,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>This class is guaranteed to be immutable.</p>
  */
-public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, Serializable {
+public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190817L;
@@ -123,12 +121,6 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
 
     /** {@inheritDoc} */
     @Override
-    public List<AngularInterval> toConvex() {
-        return Arrays.asList(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public boolean isFull() {
         return minBoundary == null;
     }
@@ -210,8 +202,10 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return null;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return a new instance transformed by the argument.
+     * @param transform transform to apply
+     * @return a new instance transformed by the argument
+     */
     public AngularInterval transform(final Transform<Point1S> transform) {
         if (!isFull()) {
             final OrientedPoint1S tMin = minBoundary.transform(transform);
@@ -223,11 +217,25 @@ public class AngularInterval implements ConvexHyperplaneBoundedRegion<Point1S>, 
         return this;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method returns instances of {@link RegionBSPTree1S} instead of
+     * {@link AngularInterval} since it is possible for a convex angular interval
+     * to be split into disjoint regions by a single hyperplane. These disjoint
+     * regions cannot be represented by this class and require the use of a BSP
+     * tree.</p>
+     */
     @Override
-    public Split<AngularInterval> split(final Hyperplane<Point1S> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+    public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
+        return toTree().split(splitter);
+    }
+
+    /** Return a {@link RegionBSPTree1S} instance representing the same region
+     * as this instance.
+     * @return a BSP tree representing the same region as this instance
+     */
+    public RegionBSPTree1S toTree() {
+        return RegionBSPTree1S.fromInterval(this);
     }
 
     /** {@inheritDoc} */

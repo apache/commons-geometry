@@ -83,8 +83,10 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         return Collections.emptyList();
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return a new instance transformed by the argument.
+     * @param transform transform to apply
+     * @return a new instance transformed by the argument
+     */
     public ConvexArea transform(final Transform<Vector2D> transform) {
         return transformInternal(transform, this, Segment.class, ConvexArea::new);
     }
@@ -93,12 +95,6 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     @Override
     public Segment trim(final ConvexSubHyperplane<Vector2D> convexSubHyperplane) {
         return (Segment) super.trim(convexSubHyperplane);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ConvexArea> toConvex() {
-        return Arrays.asList(this);
     }
 
     /** {@inheritDoc} */

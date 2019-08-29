@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.util.List;
-
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -58,13 +56,6 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
     /** {@inheritDoc} */
     @Override
-    public List<AngularInterval> toConvex() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
         return split(splitter, RegionBSPTree1S.empty(), RegionBSPTree1S.empty());
     }
@@ -95,6 +86,31 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     public static RegionBSPTree1S full() {
         return new RegionBSPTree1S(true);
+    }
+
+    /** Return a new BSP tree representing the same region as the given angular interval.
+     * @param interval the input interval
+     * @return a new BSP tree representing the same region as the given angular interval
+     */
+    public static RegionBSPTree1S fromInterval(final AngularInterval interval) {
+        final OrientedPoint1S minBoundary = interval.getMinBoundary();
+        final OrientedPoint1S maxBoundary = interval.getMaxBoundary();
+
+        final RegionBSPTree1S tree = full();
+
+        RegionNode1S node = tree.getRoot();
+
+        if (minBoundary != null) {
+            tree.cutNode(node, minBoundary.span());
+
+            node = node.getMinus();
+        }
+
+        if (maxBoundary != null) {
+            tree.cutNode(node, maxBoundary.span());
+        }
+
+        return tree;
     }
 
     /** BSP tree node for one dimensional spherical space.

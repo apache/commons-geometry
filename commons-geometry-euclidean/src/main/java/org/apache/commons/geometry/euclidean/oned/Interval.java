@@ -17,13 +17,11 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -34,7 +32,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serializable {
+public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -239,10 +237,10 @@ public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serial
         return (boundary != null) ? boundary.project(pt) : null;
     }
 
-    /** Transform this instance using the given {@link Transform}.
-     * @return a new transformed interval
+    /** Return a new instance transformed by the argument.
+     * @param transform transform to apply
+     * @return a new instance transformed by the argument
      */
-    @Override
     public Interval transform(final Transform<Vector1D> transform) {
         final OrientedPoint transformedMin = (minBoundary != null) ?
                 minBoundary.transform(transform) :
@@ -302,15 +300,6 @@ public class Interval implements ConvexHyperplaneBoundedRegion<Vector1D>, Serial
         final double max = getMax();
 
         return Vector1D.of((0.5 * (max - min)) + min);
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>This method simply returns a list containing this instance.</p>
-     */
-    @Override
-    public List<Interval> toConvex() {
-        return Arrays.asList(this);
     }
 
     /** {@inheritDoc} */
