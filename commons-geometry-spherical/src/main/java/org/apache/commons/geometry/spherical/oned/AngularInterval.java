@@ -42,10 +42,10 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     private static final AngularInterval FULL = new AngularInterval(null, null, null);
 
     /** The minimum boundary of the interval. */
-    private final OrientedPoint1S minBoundary;
+    private final CutAngle minBoundary;
 
     /** The maximum boundary of the interval. */
-    private final OrientedPoint1S maxBoundary;
+    private final CutAngle maxBoundary;
 
     /** Point halfway between the min and max boundaries. */
     private final Point1S midpoint;
@@ -59,7 +59,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param maxBoundary maximum boundary for the interval
      * @param midpoint the midpoint between the boundaries
      */
-    private AngularInterval(final OrientedPoint1S minBoundary, final OrientedPoint1S maxBoundary,
+    private AngularInterval(final CutAngle minBoundary, final CutAngle maxBoundary,
             final Point1S midpoint) {
 
         this.minBoundary = minBoundary;
@@ -67,37 +67,35 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         this.midpoint = midpoint;
     }
 
-    /** Get the minimum azimuth angle for the interval. This value will
-     * be {@link Double#NEGATIVE_INFINITY} if the interval represents the
-     * full space.
-     * @return the minimum azimuth angle for the interval or {@link Double#NEGATIVE_INFINITY}
+    /** Get the minimum azimuth angle for the interval, or {@code 0}
+     * if the interval is full.
+     * @return the minimum azimuth angle for the interval or {@code 0}
      *      if the interval represents the full space.
      */
     public double getMin() {
-        return minBoundary != null ?
+        return (minBoundary != null) ?
                 minBoundary.getAzimuth() :
-                Double.NEGATIVE_INFINITY;
+                Geometry.ZERO_PI;
     }
 
-    /** Get the minimum boundary for the interval. This will be null if the
+    /** Get the minimum boundary for the interval, or null if the
      * interval represents the full space.
      * @return the minimum point for the interval or null if
      *      the interval represents the full space
      */
-    public OrientedPoint1S getMinBoundary() {
+    public CutAngle getMinBoundary() {
         return minBoundary;
     }
 
-    /** Get the maximum azimuth angle for the interval. This value will
-     * be {@link Double#POSITIVE_INFINITY} if the interval represents the
-     * full space.
-     * @return the maximum azimuth angle for the interval or {@link Double#POSITIVE_INFINITY}
-     *      if the interval represents the full space.
+    /** Get the maximum azimuth angle for the interval, or {@code 2pi} if
+     * the interval represents the full space.
+     * @return the maximum azimuth angle for the interval or {@code 2pi} if
+     *      the interval represents the full space.
      */
     public double getMax() {
-        return maxBoundary != null ?
+        return (maxBoundary != null) ?
                 maxBoundary.getAzimuth() :
-                Double.POSITIVE_INFINITY;
+                Geometry.TWO_PI;
     }
 
     /** Get the maximum point for the interval. This will be null if the
@@ -105,7 +103,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @return the maximum point for the interval or null if
      *      the interval represents the full space
      */
-    public OrientedPoint1S getMaxBoundary() {
+    public CutAngle getMaxBoundary() {
         return maxBoundary;
     }
 
@@ -122,7 +120,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     /** {@inheritDoc} */
     @Override
     public boolean isFull() {
-        return minBoundary == null;
+        return minBoundary == null && maxBoundary == null;
     }
 
     /** {@inheritDoc}
@@ -137,7 +135,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        return isFull() ? Geometry.TWO_PI : getMax() - getMin();
+        return getMax() - getMin();
     }
 
     /** {@inheritDoc}
@@ -164,26 +162,18 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     @Override
     public RegionLocation classify(final Point1S pt) {
         if (!isFull()) {
-            // Classify using the closest boundary. We need to do this since the
-            // boundary hyperplanes split the space into plus and minus sections
-            // around the hyperplane location but also implicitly at the point
-            // pi distance away. Since we know that the boundaries are not at the
-            // same location (since otherwise, the interval would be full), we
-            // are guaranteed that the midpoint of the interval is less than pi
-            // from each boundary. Therefore, we can classify the pt by classifying
-            // it against the single boundary that it is closest to.
-            OrientedPoint1S testBoundary = midpoint.signedDistance(pt) < 0 ?
-                    minBoundary :
-                    maxBoundary;
+            final HyperplaneLocation minLoc = minBoundary.classify(pt);
+            final HyperplaneLocation maxLoc = maxBoundary.classify(pt);
 
-            final HyperplaneLocation loc = testBoundary.classify(pt);
-            if (HyperplaneLocation.ON == loc) {
-                return RegionLocation.BOUNDARY;
-            }
-            else if (HyperplaneLocation.PLUS == loc) {
+            final boolean wraps = wrapsZero();
+
+            if ((!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS)) ||
+                    (wraps && minLoc == HyperplaneLocation.PLUS && maxLoc == HyperplaneLocation.PLUS)) {
                 return RegionLocation.OUTSIDE;
             }
-
+            else if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
+                return RegionLocation.BOUNDARY;
+            }
         }
         return RegionLocation.INSIDE;
     }
@@ -202,14 +192,29 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         return null;
     }
 
+    /** Return true if the interval wraps around the zero/{@code 2pi} point. This
+     * is only the case if the max boundary azimuth if strictly greater than
+     * {@code 2pi}.
+     * @return true if the interval wraps around the zero/{@code 2pi} point
+     */
+    public boolean wrapsZero() {
+        if (!isFull()) {
+            final double minNormAz = minBoundary.getPoint().getNormalizedAzimuth();
+            final double maxNormAz = maxBoundary.getPoint().getNormalizedAzimuth();
+
+            return maxNormAz < minNormAz;
+        }
+        return false;
+    }
+
     /** Return a new instance transformed by the argument.
      * @param transform transform to apply
      * @return a new instance transformed by the argument
      */
     public AngularInterval transform(final Transform<Point1S> transform) {
         if (!isFull()) {
-            final OrientedPoint1S tMin = minBoundary.transform(transform);
-            final OrientedPoint1S tMax = maxBoundary.transform(transform);
+            final CutAngle tMin = minBoundary.transform(transform);
+            final CutAngle tMax = maxBoundary.transform(transform);
 
             return of(tMin, tMax);
         }
@@ -269,7 +274,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max azimuths
-     * @throws IllegalArgumentException if either azimuth is NaN
+     * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
     public static AngularInterval of(final double min, final double max, final DoublePrecisionContext precision) {
         return of(Point1S.of(min), Point1S.of(max), precision);
@@ -284,13 +289,13 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max points
-     * @throws IllegalArgumentException if either azimuth is NaN
+     * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
     public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
         validateIntervalValues(min, max);
 
         // return the full space if either point is infinite or the points are equivalent
-        if (min.isInfinite() || max.isInfinite() || min.eq(max, precision)) {
+        if (min.eq(max, precision)) {
             return full();
         }
 
@@ -298,8 +303,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         final double midAz = 0.5 * (adjustedMax.getAzimuth() + min.getAzimuth());
 
         return new AngularInterval(
-                    OrientedPoint1S.createNegativeFacing(min, precision),
-                    OrientedPoint1S.createPositiveFacing(adjustedMax, precision),
+                    CutAngle.createNegativeFacing(min, precision),
+                    CutAngle.createPositiveFacing(adjustedMax, precision),
                     Point1S.of(midAz)
                 );
     }
@@ -311,9 +316,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param a first oriented point
      * @param b second oriented point
      * @return an instance representing the angular interval between the given oriented points
-     * @throws IllegalArgumentException if either argument is NaN
+     * @throws IllegalArgumentException if either argument is infinite or NaN
      */
-    public static AngularInterval of(final OrientedPoint1S a, final OrientedPoint1S b) {
+    public static AngularInterval of(final CutAngle a, final CutAngle b) {
         final Point1S aPoint = a.getPoint();
         final Point1S bPoint = b.getPoint();
 
@@ -326,9 +331,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
             return full();
         }
 
-        final OrientedPoint1S min = a.isPositiveFacing() ? b : a;
-        final OrientedPoint1S max = a.isPositiveFacing() ? a : b;
-        final OrientedPoint1S adjustedMax = OrientedPoint1S.createPositiveFacing(
+        final CutAngle min = a.isPositiveFacing() ? b : a;
+        final CutAngle max = a.isPositiveFacing() ? a : b;
+        final CutAngle adjustedMax = CutAngle.createPositiveFacing(
                 max.getPoint().above(min.getPoint()),
                 max.getPrecision());
 
@@ -340,10 +345,10 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     /** Validate that the given points can be used to specify an angular interval.
      * @param a first point
      * @param b second point
-     * @throws IllegalArgumentException if either point is NaN
+     * @throws IllegalArgumentException if either point is infinite NaN
      */
     private static void validateIntervalValues(final Point1S a, final Point1S b) {
-        if (a.isNaN() || b.isNaN()) {
+        if (!a.isFinite() || !b.isFinite()) {
             throw new IllegalArgumentException("Invalid angular interval: [" + a.getAzimuth() +
                     ", " + b.getAzimuth() + "]");
         }

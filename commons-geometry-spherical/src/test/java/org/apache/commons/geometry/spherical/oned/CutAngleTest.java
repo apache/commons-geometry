@@ -28,12 +28,12 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane.Builder;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.apache.commons.geometry.spherical.oned.OrientedPoint1S.SubOrientedPoint1S;
-import org.apache.commons.geometry.spherical.oned.OrientedPoint1S.SubOrientedPointBuilder1S;
+import org.apache.commons.geometry.spherical.oned.CutAngle.SubCutAngle;
+import org.apache.commons.geometry.spherical.oned.CutAngle.SubCutAngleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class OrientedPoint1STest {
+public class CutAngleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,18 +43,18 @@ public class OrientedPoint1STest {
     @Test
     public void testFromAzimuthAndDirection() {
         // act/assert
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.ZERO_PI, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, true, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.ZERO_PI, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, false, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(OrientedPoint1S.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
@@ -64,65 +64,65 @@ public class OrientedPoint1STest {
         Point1S pt = Point1S.of(Geometry.MINUS_HALF_PI);
 
         // act/assert
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(pt, true, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(pt, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(pt, false, TEST_PRECISION),
+        checkPoint(CutAngle.fromPointAndDirection(pt, false, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
     @Test
     public void testCreatePositiveFacing() {
         // act/assert
-        checkPoint(OrientedPoint1S.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
+        checkPoint(CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(OrientedPoint1S.createPositiveFacing(Point1S.PI, TEST_PRECISION),
+        checkPoint(CutAngle.createPositiveFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(OrientedPoint1S.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
+        checkPoint(CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
     }
 
     @Test
     public void testCreateNegativeFacing() {
         // act/assert
-        checkPoint(OrientedPoint1S.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
+        checkPoint(CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(OrientedPoint1S.createNegativeFacing(Point1S.PI, TEST_PRECISION),
+        checkPoint(CutAngle.createNegativeFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(OrientedPoint1S.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
+        checkPoint(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
     @Test
     public void testOffset() {
         // arrange
-        OrientedPoint1S zeroPos = OrientedPoint1S.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S zeroNeg = OrientedPoint1S.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S negPiPos = OrientedPoint1S.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
+        CutAngle zeroPos = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle zeroNeg = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
 
-        OrientedPoint1S piNeg = OrientedPoint1S.createNegativeFacing(Geometry.PI, TEST_PRECISION);
-        OrientedPoint1S twoAndAHalfPiPos = OrientedPoint1S.createPositiveFacing(2.5 * Geometry.PI, TEST_PRECISION);
+        CutAngle piNeg = CutAngle.createNegativeFacing(Geometry.PI, TEST_PRECISION);
+        CutAngle twoAndAHalfPiPos = CutAngle.createPositiveFacing(2.5 * Geometry.PI, TEST_PRECISION);
 
         // act/assert
         checkOffset(zeroPos, 0, 0);
         checkOffset(zeroPos, Geometry.TWO_PI, 0);
         checkOffset(zeroPos, 2.5 * Geometry.PI, Geometry.HALF_PI);
-        checkOffset(zeroPos, Geometry.PI, -Geometry.PI);
-        checkOffset(zeroPos, 3.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
+        checkOffset(zeroPos, Geometry.PI, Geometry.PI);
+        checkOffset(zeroPos, 3.5 * Geometry.PI, 1.5 * Geometry.PI);
 
         checkOffset(zeroNeg, 0, 0);
         checkOffset(zeroNeg, Geometry.TWO_PI, 0);
         checkOffset(zeroNeg, 2.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
         checkOffset(zeroNeg, Geometry.PI, -Geometry.PI);
-        checkOffset(zeroNeg, 3.5 * Geometry.PI, Geometry.HALF_PI);
+        checkOffset(zeroNeg, 3.5 * Geometry.PI, -1.5 * Geometry.PI);
 
         checkOffset(negPiPos, 0, -Geometry.PI);
         checkOffset(negPiPos, Geometry.TWO_PI, -Geometry.PI);
@@ -130,8 +130,8 @@ public class OrientedPoint1STest {
         checkOffset(negPiPos, Geometry.PI, 0);
         checkOffset(negPiPos, 3.5 * Geometry.PI, Geometry.HALF_PI);
 
-        checkOffset(piNeg, 0, -Geometry.PI);
-        checkOffset(piNeg, Geometry.TWO_PI, -Geometry.PI);
+        checkOffset(piNeg, 0, Geometry.PI);
+        checkOffset(piNeg, Geometry.TWO_PI, Geometry.PI);
         checkOffset(piNeg, 2.5 * Geometry.PI, Geometry.HALF_PI);
         checkOffset(piNeg, Geometry.PI, 0);
         checkOffset(piNeg, 3.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
@@ -140,38 +140,45 @@ public class OrientedPoint1STest {
         checkOffset(twoAndAHalfPiPos, Geometry.TWO_PI, Geometry.MINUS_HALF_PI);
         checkOffset(twoAndAHalfPiPos, 2.5 * Geometry.PI, 0);
         checkOffset(twoAndAHalfPiPos, Geometry.PI, Geometry.HALF_PI);
-        checkOffset(twoAndAHalfPiPos, 3.5 * Geometry.PI, -Geometry.PI);
+        checkOffset(twoAndAHalfPiPos, 3.5 * Geometry.PI, Geometry.PI);
     }
 
     @Test
     public void testClassify() {
         // arrange
-        OrientedPoint1S zeroPos = OrientedPoint1S.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S zeroNeg = OrientedPoint1S.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S negPiPos = OrientedPoint1S.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
+        CutAngle zeroPos = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle zeroNeg = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
 
         // act/assert
-        checkClassify(zeroPos, HyperplaneLocation.ON, 0, 1e-16, -1e-16);
-        checkClassify(zeroPos, HyperplaneLocation.MINUS, -0.5, Geometry.MINUS_HALF_PI, Geometry.PI);
-        checkClassify(zeroPos, HyperplaneLocation.PLUS, 0.5, 2.5 * Geometry.PI);
+        checkClassify(zeroPos, HyperplaneLocation.ON,
+                0, 1e-16, -1e-16,
+                Geometry.TWO_PI - 1e-11, Geometry.TWO_PI + 1e-11);
+        checkClassify(zeroPos, HyperplaneLocation.PLUS,
+                0.5, 2.5 * Geometry.PI,
+                -0.5, Geometry.MINUS_HALF_PI);
 
-        checkClassify(zeroNeg, HyperplaneLocation.ON, 0, 1e-16, -1e-16);
-        checkClassify(zeroNeg, HyperplaneLocation.PLUS, -0.5, Geometry.MINUS_HALF_PI);
-        checkClassify(zeroNeg, HyperplaneLocation.MINUS, 0.5, 2.5 * Geometry.PI, Geometry.PI);
+        checkClassify(zeroNeg, HyperplaneLocation.ON,
+                0, 1e-16, -1e-16,
+                Geometry.TWO_PI - 1e-11, Geometry.TWO_PI + 1e-11);
+        checkClassify(zeroNeg, HyperplaneLocation.MINUS,
+                0.5, 2.5 * Geometry.PI,
+                -0.5, Geometry.MINUS_HALF_PI);
 
         checkClassify(negPiPos, HyperplaneLocation.ON, Geometry.PI, Geometry.PI + 1e-11);
-        checkClassify(negPiPos, HyperplaneLocation.MINUS, 0.5, 0, 2.5 * Geometry.PI);
+        checkClassify(negPiPos, HyperplaneLocation.MINUS, 0.5, 2.5 * Geometry.PI,
+                0, 1e-11, Geometry.TWO_PI, Geometry.TWO_PI - 1e-11);
         checkClassify(negPiPos, HyperplaneLocation.PLUS, -0.5, Geometry.MINUS_HALF_PI);
     }
 
     @Test
     public void testPlusMinuOnPoint() {
         // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(1.1);
+        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(0.5);
         DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
 
-        OrientedPoint1S a = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, low);
-        OrientedPoint1S b = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, high);
+        CutAngle a = CutAngle.createNegativeFacing(Geometry.HALF_PI, low);
+        CutAngle b = CutAngle.createNegativeFacing(Geometry.HALF_PI, high);
 
         // act/assert
         checkClassify(a, HyperplaneLocation.ON, a.onPoint());
@@ -187,12 +194,15 @@ public class OrientedPoint1STest {
     @Test
     public void testContains() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(pt.contains(Point1S.ZERO));
-        Assert.assertFalse(pt.contains(Point1S.of(Geometry.PI)));
         Assert.assertFalse(pt.contains(Point1S.of(Geometry.TWO_PI)));
+
+        Assert.assertFalse(pt.contains(Point1S.of(Geometry.PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(0.25 * Geometry.PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(-0.25 * Geometry.PI)));
 
         Assert.assertTrue(pt.contains(Point1S.of(Geometry.HALF_PI)));
         Assert.assertTrue(pt.contains(Point1S.of(Geometry.HALF_PI + 1e-11)));
@@ -203,10 +213,10 @@ public class OrientedPoint1STest {
     @Test
     public void testReverse() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
 
         // act
-        OrientedPoint1S result = pt.reverse();
+        CutAngle result = pt.reverse();
 
         // assert
         checkPoint(result, Geometry.HALF_PI, true);
@@ -218,7 +228,7 @@ public class OrientedPoint1STest {
     @Test
     public void testProject() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
 
         // act/assert
         for (double az = -Geometry.TWO_PI; az <= Geometry.TWO_PI; az += 0.2) {
@@ -229,9 +239,9 @@ public class OrientedPoint1STest {
     @Test
     public void testSimilarOrientation() {
         // arrange
-        OrientedPoint1S a = OrientedPoint1S.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S b = OrientedPoint1S.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        OrientedPoint1S c = OrientedPoint1S.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION);
+        CutAngle a = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle b = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle c = CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.similarOrientation(a));
@@ -245,14 +255,14 @@ public class OrientedPoint1STest {
         Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
 
         // act
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, false);
 
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 Geometry.TWO_PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
     }
 
@@ -262,14 +272,14 @@ public class OrientedPoint1STest {
         Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() * 2);
 
         // act
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
 
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 3 * Geometry.PI, true);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 -Geometry.PI, false);
     }
 
@@ -279,24 +289,24 @@ public class OrientedPoint1STest {
         Transform<Point1S> transform = p -> Point1S.of(-p.getAzimuth());
 
         // act
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, true);
 
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 -1.5 * Geometry.PI, false);
-        checkPoint(OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, true);
     }
 
     @Test
     public void testSpan() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.fromPointAndDirection(Point1S.of(1.0), false, TEST_PRECISION);
+        CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(1.0), false, TEST_PRECISION);
 
         // act
-        SubOrientedPoint1S result = pt.span();
+        SubCutAngle result = pt.span();
 
         // assert
         Assert.assertSame(pt, result.getHyperplane());
@@ -307,16 +317,16 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, precision);
+        CutAngle a = CutAngle.fromPointAndDirection(Point1S.ZERO, true, precision);
 
-        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, precision);
-        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, precision);
-        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
+        CutAngle b = CutAngle.fromPointAndDirection(Point1S.PI, true, precision);
+        CutAngle c = CutAngle.fromPointAndDirection(Point1S.ZERO, false, precision);
+        CutAngle d = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
 
-        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, precision);
-        OrientedPoint1S f = OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.TWO_PI), true, precision);
-        OrientedPoint1S g = OrientedPoint1S.fromPointAndDirection(Point1S.of(1e-4), true, precision);
-        OrientedPoint1S h = OrientedPoint1S.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
+        CutAngle e = CutAngle.fromPointAndDirection(Point1S.ZERO, true, precision);
+        CutAngle f = CutAngle.fromPointAndDirection(Point1S.of(Geometry.TWO_PI), true, precision);
+        CutAngle g = CutAngle.fromPointAndDirection(Point1S.of(1e-4), true, precision);
+        CutAngle h = CutAngle.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
 
         // act/assert
         Assert.assertTrue(a.eq(a));
@@ -336,11 +346,11 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
-        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
-        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION);
-        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, precision);
-        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
+        CutAngle a = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
+        CutAngle b = CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
+        CutAngle c = CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION);
+        CutAngle d = CutAngle.fromPointAndDirection(Point1S.ZERO, true, precision);
+        CutAngle e = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
 
         int hash = a.hashCode();
 
@@ -359,11 +369,11 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S a = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
-        OrientedPoint1S b = OrientedPoint1S.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
-        OrientedPoint1S c = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION);
-        OrientedPoint1S d = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, precision);
-        OrientedPoint1S e = OrientedPoint1S.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
+        CutAngle a = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
+        CutAngle b = CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION);
+        CutAngle c = CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION);
+        CutAngle d = CutAngle.fromPointAndDirection(Point1S.ZERO, true, precision);
+        CutAngle e = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(a.equals(null));
@@ -381,13 +391,13 @@ public class OrientedPoint1STest {
     @Test
     public void testToString() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
 
         // act
         String str = pt.toString();
 
         // assert
-        Assert.assertTrue(str.startsWith("OrientedPoint1S["));
+        Assert.assertTrue(str.startsWith("CutAngle["));
         Assert.assertTrue(str.contains("point= ") && str.contains("positiveFacing= "));
     }
 
@@ -396,23 +406,23 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(-1.5, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(-1.5, precision);
+        SubCutAngle sub = pt.span();
 
         // act/assert
-        checkSplit(sub, OrientedPoint1S.createPositiveFacing(1.0, precision), true, false);
-        checkSplit(sub, OrientedPoint1S.createPositiveFacing(-1.5 + 1e-2, precision), true, false);
+        checkSplit(sub, CutAngle.createPositiveFacing(1.0, precision), false, true);
+        checkSplit(sub, CutAngle.createPositiveFacing(-1.5 + 1e-2, precision), true, false);
 
-        checkSplit(sub, OrientedPoint1S.createNegativeFacing(1.0, precision), false, true);
-        checkSplit(sub, OrientedPoint1S.createNegativeFacing(-1.5 + 1e-2, precision), false, true);
+        checkSplit(sub, CutAngle.createNegativeFacing(1.0, precision), true, false);
+        checkSplit(sub, CutAngle.createNegativeFacing(-1.5 + 1e-2, precision), false, true);
 
-        checkSplit(sub, OrientedPoint1S.createNegativeFacing(-1.5, precision), false, false);
-        checkSplit(sub, OrientedPoint1S.createNegativeFacing(-1.5 + 1e-4, precision), false, false);
-        checkSplit(sub, OrientedPoint1S.createNegativeFacing(-1.5 - 1e-4, precision), false, false);
+        checkSplit(sub, CutAngle.createNegativeFacing(-1.5, precision), false, false);
+        checkSplit(sub, CutAngle.createNegativeFacing(-1.5 + 1e-4, precision), false, false);
+        checkSplit(sub, CutAngle.createNegativeFacing(-1.5 - 1e-4, precision), false, false);
     }
 
-    private void checkSplit(SubOrientedPoint1S sub, OrientedPoint1S splitter, boolean minus, boolean plus) {
-        Split<SubOrientedPoint1S> split = sub.split(splitter);
+    private void checkSplit(SubCutAngle sub, CutAngle splitter, boolean minus, boolean plus) {
+        Split<SubCutAngle> split = sub.split(splitter);
 
         Assert.assertSame(minus ? sub : null, split.getMinus());
         Assert.assertSame(plus ? sub : null, split.getPlus());
@@ -421,8 +431,8 @@ public class OrientedPoint1STest {
     @Test
     public void testSubHyperplane_simpleMethods() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(0, TEST_PRECISION);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(0, TEST_PRECISION);
+        SubCutAngle sub = pt.span();
 
         // act/assert
         Assert.assertSame(pt, sub.getHyperplane());
@@ -432,7 +442,7 @@ public class OrientedPoint1STest {
         Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
 
-        List<SubOrientedPoint1S> list = sub.toConvex();
+        List<SubCutAngle> list = sub.toConvex();
         Assert.assertEquals(1, list.size());
         Assert.assertSame(sub, list.get(0));
     }
@@ -441,8 +451,8 @@ public class OrientedPoint1STest {
     public void testSubHyperplane_classify() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(1, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(1, precision);
+        SubCutAngle sub = pt.span();
 
         // act/assert
         Assert.assertEquals(RegionLocation.BOUNDARY, sub.classify(Point1S.of(0.95)));
@@ -460,8 +470,8 @@ public class OrientedPoint1STest {
     public void testSubHyperplane_contains() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(1, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(1, precision);
+        SubCutAngle sub = pt.span();
 
         // act/assert
         Assert.assertTrue(sub.contains(Point1S.of(0.95)));
@@ -479,8 +489,8 @@ public class OrientedPoint1STest {
     public void testSubHyperplane_closestContained() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(1, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(1, precision);
+        SubCutAngle sub = pt.span();
 
         Point1S expected = Point1S.of(1);
 
@@ -495,12 +505,12 @@ public class OrientedPoint1STest {
     @Test
     public void testSubHyperplane_transform() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
+        CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
 
         Transform<Point1S> transform = p -> Point1S.of(Geometry.PI - p.getAzimuth());
 
         // act
-        SubOrientedPoint1S result = pt.span().transform(transform);
+        SubCutAngle result = pt.span().transform(transform);
 
         // assert
         checkPoint(result.getHyperplane(), Geometry.HALF_PI, false);
@@ -509,11 +519,11 @@ public class OrientedPoint1STest {
     @Test
     public void testSubHyperplane_reverse() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(2.0, TEST_PRECISION);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(2.0, TEST_PRECISION);
+        SubCutAngle sub = pt.span();
 
         // act
-        SubOrientedPoint1S result = sub.reverse();
+        SubCutAngle result = sub.reverse();
 
         // assert
         Assert.assertEquals(2.0, result.getHyperplane().getAzimuth(), TEST_EPS);
@@ -525,14 +535,14 @@ public class OrientedPoint1STest {
     @Test
     public void testSubHyperplane_toString() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(2, TEST_PRECISION);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(2, TEST_PRECISION);
+        SubCutAngle sub = pt.span();
 
         // act
         String str = sub.toString();
 
         //assert
-        Assert.assertTrue(str.contains("SubOrientedPoint1S["));
+        Assert.assertTrue(str.contains("SubCutAngle["));
         Assert.assertTrue(str.contains("point= "));
         Assert.assertTrue(str.contains("positiveFacing= "));
     }
@@ -542,14 +552,14 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(0, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(0, precision);
+        SubCutAngle sub = pt.span();
 
         // act
         Builder<Point1S> builder = sub.builder();
 
         builder.add(sub);
-        builder.add(OrientedPoint1S.createPositiveFacing(1e-4, precision).span());
+        builder.add(CutAngle.createPositiveFacing(1e-4, precision).span());
         builder.add((SubHyperplane<Point1S>) sub);
 
         SubHyperplane<Point1S> result = builder.build();
@@ -563,45 +573,45 @@ public class OrientedPoint1STest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(0, precision);
-        SubOrientedPoint1S sub = pt.span();
+        CutAngle pt = CutAngle.createPositiveFacing(0, precision);
+        SubCutAngle sub = pt.span();
 
         Builder<Point1S> builder = sub.builder();
 
         // act/assert
         GeometryTestUtils.assertThrows(
-                () -> builder.add(OrientedPoint1S.createPositiveFacing(2e-3, precision).span()),
+                () -> builder.add(CutAngle.createPositiveFacing(2e-3, precision).span()),
                 IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(
-                () -> builder.add(OrientedPoint1S.createNegativeFacing(2e-3, precision).span()),
+                () -> builder.add(CutAngle.createNegativeFacing(2e-3, precision).span()),
                 IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(
-                () -> builder.add((SubHyperplane<Point1S>) OrientedPoint1S.createPositiveFacing(2e-3, precision).span()),
+                () -> builder.add((SubHyperplane<Point1S>) CutAngle.createPositiveFacing(2e-3, precision).span()),
                 IllegalArgumentException.class);
     }
 
     @Test
     public void testBuilder_toString() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createPositiveFacing(2, TEST_PRECISION);
-        SubOrientedPointBuilder1S builder = pt.span().builder();
+        CutAngle pt = CutAngle.createPositiveFacing(2, TEST_PRECISION);
+        SubCutAngleBuilder builder = pt.span().builder();
 
         // act
         String str = builder.toString();
 
         //assert
-        Assert.assertTrue(str.contains("SubOrientedPointBuilder1S["));
-        Assert.assertTrue(str.contains("base= SubOrientedPoint1S["));
+        Assert.assertTrue(str.contains("SubCutAngleBuilder["));
+        Assert.assertTrue(str.contains("base= SubCutAngle["));
         Assert.assertTrue(str.contains("point= "));
         Assert.assertTrue(str.contains("positiveFacing= "));
     }
 
-    private static void checkPoint(OrientedPoint1S pt, double az, boolean positiveFacing) {
+    private static void checkPoint(CutAngle pt, double az, boolean positiveFacing) {
         checkPoint(pt, az, positiveFacing, TEST_PRECISION);
     }
 
-    private static void checkPoint(OrientedPoint1S pt, double az, boolean positiveFacing, DoublePrecisionContext precision) {
+    private static void checkPoint(CutAngle pt, double az, boolean positiveFacing, DoublePrecisionContext precision) {
         Assert.assertEquals(az, pt.getAzimuth(), TEST_EPS);
         Assert.assertEquals(az, pt.getPoint().getAzimuth(), TEST_EPS);
         Assert.assertEquals(positiveFacing, pt.isPositiveFacing());
@@ -609,17 +619,17 @@ public class OrientedPoint1STest {
         Assert.assertSame(precision, pt.getPrecision());
     }
 
-    private static void checkOffset(OrientedPoint1S pt, double az, double offset) {
+    private static void checkOffset(CutAngle pt, double az, double offset) {
         Assert.assertEquals(offset, pt.offset(Point1S.of(az)), TEST_EPS);
     }
 
-    private static void checkClassify(OrientedPoint1S pt, HyperplaneLocation loc, double ... azimuths) {
+    private static void checkClassify(CutAngle pt, HyperplaneLocation loc, double ... azimuths) {
         for (double az : azimuths) {
             Assert.assertEquals("Unexpected location for azimuth " + az, loc, pt.classify(Point1S.of(az)));
         }
     }
 
-    private static void checkClassify(OrientedPoint1S orientedPt, HyperplaneLocation loc, Point1S ... pts) {
+    private static void checkClassify(CutAngle orientedPt, HyperplaneLocation loc, Point1S ... pts) {
         for (Point1S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, orientedPt.classify(pt));
         }

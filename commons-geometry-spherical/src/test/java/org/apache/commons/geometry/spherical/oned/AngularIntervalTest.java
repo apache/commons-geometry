@@ -18,8 +18,11 @@ package org.apache.commons.geometry.spherical.oned;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
@@ -43,15 +46,24 @@ public class AngularIntervalTest {
         checkFull(AngularInterval.of(1, 1, TEST_PRECISION));
         checkFull(AngularInterval.of(0, 1e-11, TEST_PRECISION));
         checkFull(AngularInterval.of(0, -1e-11, TEST_PRECISION));
-
-        checkFull(AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION));
-        checkFull(AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION));
-        checkFull(AngularInterval.of(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION));
+        checkFull(AngularInterval.of(0, Geometry.TWO_PI, TEST_PRECISION));
     }
 
     @Test
     public void testOf_doubles_invalidArgs() {
         // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.NaN, 0, TEST_PRECISION);
         }, IllegalArgumentException.class);
@@ -76,15 +88,23 @@ public class AngularIntervalTest {
         checkFull(AngularInterval.of(Point1S.of(1), Point1S.of(1), TEST_PRECISION));
         checkFull(AngularInterval.of(Point1S.of(0), Point1S.of(1e-11), TEST_PRECISION));
         checkFull(AngularInterval.of(Point1S.of(0), Point1S.of(-1e-11), TEST_PRECISION));
-
-        checkFull(AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO, TEST_PRECISION));
-        checkFull(AngularInterval.of(Point1S.ZERO, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
-        checkFull(AngularInterval.of(Point1S.of(Double.POSITIVE_INFINITY), Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION));
     }
 
     @Test
     public void testOf_points_invalidArgs() {
         // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO, TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(Point1S.ZERO, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            AngularInterval.of(Point1S.of(Double.POSITIVE_INFINITY), Point1S.of(Double.NEGATIVE_INFINITY), TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.NaN, Point1S.ZERO, TEST_PRECISION);
         }, IllegalArgumentException.class);
@@ -104,13 +124,13 @@ public class AngularIntervalTest {
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-3);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-2);
 
-        OrientedPoint1S zeroPos = OrientedPoint1S.createPositiveFacing(Point1S.ZERO, precisionA);
-        OrientedPoint1S zeroNeg = OrientedPoint1S.createNegativeFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroPos = CutAngle.createPositiveFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroNeg = CutAngle.createNegativeFacing(Point1S.ZERO, precisionA);
 
-        OrientedPoint1S piPos = OrientedPoint1S.createPositiveFacing(Point1S.PI, precisionA);
-        OrientedPoint1S piNeg = OrientedPoint1S.createNegativeFacing(Point1S.PI, precisionA);
+        CutAngle piPos = CutAngle.createPositiveFacing(Point1S.PI, precisionA);
+        CutAngle piNeg = CutAngle.createNegativeFacing(Point1S.PI, precisionA);
 
-        OrientedPoint1S almostPiPos = OrientedPoint1S.createPositiveFacing(Point1S.of(Geometry.PI + 5e-3), precisionB);
+        CutAngle almostPiPos = CutAngle.createPositiveFacing(Point1S.of(Geometry.PI + 5e-3), precisionB);
 
         // act/assert
         checkInterval(AngularInterval.of(zeroNeg, piPos), 0, Geometry.PI);
@@ -127,8 +147,8 @@ public class AngularIntervalTest {
     @Test
     public void testOf_orientedPoints_invalidArgs() {
         // arrange
-        OrientedPoint1S pt = OrientedPoint1S.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
-        OrientedPoint1S nan = OrientedPoint1S.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle nan = CutAngle.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -209,7 +229,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testClassify_almostempty() {
+    public void testClassify_almostEmpty() {
         // arrange
         AngularInterval interval = AngularInterval.of(1, 1 + 2e-10, TEST_PRECISION);
 
@@ -278,22 +298,148 @@ public class AngularIntervalTest {
         checkInterval(interval.transform(invert), Geometry.MINUS_HALF_PI, Geometry.ZERO_PI);
     }
 
-//    @Test
-//    public void testSplit_full() {
-//        // arrange
-//        AngularInterval interval = AngularInterval.full();
-//
-//        OrientedPoint1S splitter = OrientedPoint1S.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
-//
-//        // act
-//        Split<AngularInterval> split = interval.split(splitter);
-//
-//        // assert
-//        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
-//
-//        checkInterval(split.getMinus(), Geometry.HALF_PI, 1.5 * Geometry.PI);
-//        checkInterval(split.getPlus(), 1.5 * Geometry.PI, 2.5 * Geometry.PI);
-//    }
+    @Test
+    public void testToTree_full() {
+        // arrange
+        AngularInterval interval = AngularInterval.full();
+
+        // act
+        RegionBSPTree1S tree = interval.toTree();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Point1S.ZERO, Point1S.of(Geometry.HALF_PI),
+                Point1S.PI, Point1S.of(Geometry.MINUS_HALF_PI));
+    }
+
+    @Test
+    public void testToTree_intervalEqualToPi() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.ZERO_PI, Geometry.PI, TEST_PRECISION);
+
+        // act
+        RegionBSPTree1S tree = interval.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Point1S.ZERO, Point1S.PI);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Point1S.of(1e-4), Point1S.of(0.25 * Geometry.PI),
+                Point1S.of(-1.25 * Geometry.PI), Point1S.of(Geometry.PI - 1e-4));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Point1S.of(-1e-4), Point1S.of(-0.25 * Geometry.PI),
+                Point1S.of(1.25 * Geometry.PI), Point1S.of(-Geometry.PI + 1e-4));
+    }
+
+    @Test
+    public void testToTree_intervalLessThanPi() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
+
+        // act
+        RegionBSPTree1S tree = interval.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Point1S.of(Geometry.HALF_PI), Point1S.PI);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Point1S.of(0.51 * Geometry.PI), Point1S.of(0.75 * Geometry.PI),
+                Point1S.of(0.99 * Geometry.PI));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(0.25 * Geometry.PI),
+                Point1S.of(1.25 * Geometry.PI), Point1S.of(1.75 * Geometry.PI));
+    }
+
+    @Test
+    public void testToTree_intervalGreaterThanPi() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.PI, Geometry.HALF_PI, TEST_PRECISION);
+
+        // act
+        RegionBSPTree1S tree = interval.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.BOUNDARY,
+                Point1S.of(Geometry.HALF_PI), Point1S.PI);
+
+        checkClassify(tree, RegionLocation.INSIDE,
+                Point1S.ZERO, Point1S.of(0.25 * Geometry.PI),
+                Point1S.of(1.25 * Geometry.PI), Point1S.of(1.75 * Geometry.PI));
+
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Point1S.of(0.51 * Geometry.PI), Point1S.of(0.75 * Geometry.PI),
+                Point1S.of(0.99 * Geometry.PI));
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        AngularInterval interval = AngularInterval.full();
+        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = interval.split(pt);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(Geometry.HALF_PI));
+        checkClassify(minus, RegionLocation.INSIDE,
+                Point1S.PI, Point1S.of(Geometry.MINUS_HALF_PI), Point1S.of(-0.25 * Geometry.PI));
+        checkClassify(minus, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(0.25 * Geometry.PI));
+
+        RegionBSPTree1S plus = split.getPlus();
+        checkClassify(plus, RegionLocation.BOUNDARY, Point1S.of(Geometry.HALF_PI));
+        checkClassify(plus, RegionLocation.INSIDE,
+                Point1S.ZERO, Point1S.of(0.25 * Geometry.PI));
+        checkClassify(plus, RegionLocation.OUTSIDE,
+                Point1S.PI, Point1S.of(Geometry.MINUS_HALF_PI), Point1S.of(-0.25 * Geometry.PI));
+    }
+
+    @Test
+    public void testSplit_interval_both() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
+        CutAngle cut = CutAngle.createNegativeFacing(0.75 * Geometry.PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = interval.split(cut);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(Geometry.PI), cut.getPoint());
+        checkClassify(minus, RegionLocation.INSIDE, Point1S.of(0.8 * Geometry.PI));
+        checkClassify(minus, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(Geometry.TWO_PI), Point1S.of(Geometry.MINUS_HALF_PI),
+                Point1S.of(0.7 * Geometry.PI));
+
+        RegionBSPTree1S plus = split.getPlus();
+        checkClassify(plus, RegionLocation.BOUNDARY, Point1S.of(Geometry.HALF_PI), cut.getPoint());
+        checkClassify(plus, RegionLocation.INSIDE, Point1S.of(0.6 * Geometry.PI));
+        checkClassify(plus, RegionLocation.OUTSIDE,
+                Point1S.ZERO, Point1S.of(Geometry.TWO_PI), Point1S.of(Geometry.MINUS_HALF_PI),
+                Point1S.of(0.8 * Geometry.PI));
+    }
 
     @Test
     public void testToString() {
@@ -314,9 +460,9 @@ public class AngularIntervalTest {
         Assert.assertFalse(interval.isEmpty());
 
         Assert.assertNull(interval.getMinBoundary());
-        GeometryTestUtils.assertNegativeInfinity(interval.getMin());
+        Assert.assertEquals(0, interval.getMin(), TEST_EPS);
         Assert.assertNull(interval.getMaxBoundary());
-        GeometryTestUtils.assertPositiveInfinity(interval.getMax());
+        Assert.assertEquals(Geometry.TWO_PI, interval.getMax(), TEST_EPS);
 
         Assert.assertNull(interval.getBarycenter());
         Assert.assertNull(interval.getMidpoint());
@@ -332,11 +478,11 @@ public class AngularIntervalTest {
         Assert.assertFalse(interval.isFull());
         Assert.assertFalse(interval.isEmpty());
 
-        OrientedPoint1S minBoundary = interval.getMinBoundary();
+        CutAngle minBoundary = interval.getMinBoundary();
         Assert.assertEquals(min, minBoundary.getAzimuth(), TEST_EPS);
         Assert.assertFalse(minBoundary.isPositiveFacing());
 
-        OrientedPoint1S maxBoundary = interval.getMaxBoundary();
+        CutAngle maxBoundary = interval.getMaxBoundary();
         Assert.assertEquals(max, maxBoundary.getAzimuth(), TEST_EPS);
         Assert.assertTrue(maxBoundary.isPositiveFacing());
 
@@ -355,9 +501,9 @@ public class AngularIntervalTest {
         checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidpoint().getAzimuth() + Geometry.PI));
     }
 
-    private static void checkClassify(AngularInterval interval, RegionLocation loc, Point1S ... pts) {
+    private static void checkClassify(Region<Point1S> region, RegionLocation loc, Point1S ... pts) {
         for (Point1S pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, interval.classify(pt));
+            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }
     }
 }

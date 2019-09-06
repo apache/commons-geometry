@@ -93,21 +93,17 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * @return a new BSP tree representing the same region as the given angular interval
      */
     public static RegionBSPTree1S fromInterval(final AngularInterval interval) {
-        final OrientedPoint1S minBoundary = interval.getMinBoundary();
-        final OrientedPoint1S maxBoundary = interval.getMaxBoundary();
+        final CutAngle minBoundary = interval.getMinBoundary();
+        final CutAngle maxBoundary = interval.getMaxBoundary();
 
         final RegionBSPTree1S tree = full();
 
-        RegionNode1S node = tree.getRoot();
-
         if (minBoundary != null) {
-            tree.cutNode(node, minBoundary.span());
-
-            node = node.getMinus();
+            tree.insert(minBoundary.span());
         }
 
         if (maxBoundary != null) {
-            tree.cutNode(node, maxBoundary.span());
+            tree.insert(maxBoundary.span());
         }
 
         return tree;

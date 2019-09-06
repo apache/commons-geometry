@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.internal.Equivalency;
@@ -38,8 +37,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>This class is guaranteed to be immutable</p>
  */
-public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
-    implements Equivalency<OrientedPoint1S>, Serializable {
+public final class CutAngle extends AbstractHyperplane<Point1S>
+    implements Equivalency<CutAngle>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190817L;
@@ -56,7 +55,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      *      direction; otherwise, it will point in a negative direction
      * @param precision precision context used to compare floating point values
      */
-    private OrientedPoint1S(final Point1S point, final boolean positiveFacing,
+    private CutAngle(final Point1S point, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
         super(precision);
 
@@ -123,7 +122,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @see Point1S#eq(Point1S, DoublePrecisionContext)
      */
     @Override
-    public boolean eq(final OrientedPoint1S other) {
+    public boolean eq(final CutAngle other) {
         if (this == other) {
             return true;
         }
@@ -138,17 +137,31 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
     /** {@inheritDoc} */
     @Override
     public double offset(final Point1S pt) {
-        final double dist = this.point.signedDistance(pt);
+        final double dist = pt.getNormalizedAzimuth() - this.point.getNormalizedAzimuth();
+        return positiveFacing ? +dist : -dist;
+    }
 
-        // Standardize the behavior around the antipode angles:
-        // only switch the sign based on the orientation when we're
-        // not dealing with a point exactly pi distance away. This will
-        // make the antipodes always have an offset of -pi, regardless
-        // of the orientation of the point.
-        if (Math.abs(dist) < Geometry.PI) {
-            return positiveFacing ? +dist : -dist;
+    /** {@inheritDoc}
+     */
+    @Override
+    public HyperplaneLocation classify(final Point1S point) {
+        final DoublePrecisionContext precision = getPrecision();
+
+        final Point1S compPt = Point1S.ZERO.eq(point, precision) ?
+                Point1S.ZERO :
+                point;
+
+        final double offsetValue = offset(compPt);
+        final int cmp = precision.sign(offsetValue);
+
+        if (cmp > 0) {
+            return HyperplaneLocation.PLUS;
         }
-        return dist;
+        else if (cmp < 0) {
+            return HyperplaneLocation.MINUS;
+        }
+
+        return HyperplaneLocation.ON;
     }
 
     /** {@inheritDoc} */
@@ -159,31 +172,31 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
 
     /** {@inheritDoc} */
     @Override
-    public OrientedPoint1S reverse() {
-        return new OrientedPoint1S(point, !positiveFacing, getPrecision());
+    public CutAngle reverse() {
+        return new CutAngle(point, !positiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
     @Override
-    public OrientedPoint1S transform(final Transform<Point1S> transform) {
+    public CutAngle transform(final Transform<Point1S> transform) {
         final Point1S tPoint = transform.apply(point);
         final Point1S tPlus = transform.apply(plusPoint());
 
         boolean positiveFacing = tPoint.getAzimuth() < tPlus.getAzimuth();
 
-        return OrientedPoint1S.fromPointAndDirection(tPoint, positiveFacing, getPrecision());
+        return CutAngle.fromPointAndDirection(tPoint, positiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean similarOrientation(final Hyperplane<Point1S> other) {
-        return positiveFacing == ((OrientedPoint1S) other).positiveFacing;
+        return positiveFacing == ((CutAngle) other).positiveFacing;
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubOrientedPoint1S span() {
-        return new SubOrientedPoint1S(this);
+    public SubCutAngle span() {
+        return new SubCutAngle(this);
     }
 
     /** {@inheritDoc} */
@@ -198,11 +211,11 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
         if (this == obj) {
             return true;
         }
-        else if (!(obj instanceof OrientedPoint1S)) {
+        else if (!(obj instanceof CutAngle)) {
             return false;
         }
 
-        final OrientedPoint1S other = (OrientedPoint1S) obj;
+        final CutAngle other = (CutAngle) obj;
         return Objects.equals(getPrecision(), other.getPrecision()) &&
                 Objects.equals(point, other.point) &&
                 positiveFacing == other.positiveFacing;
@@ -229,8 +242,10 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      */
     private Point1S offsetPoint(final boolean plusSide) {
         final double offset = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        final double scale = positiveFacing == plusSide ? +1 : -1;
-        return Point1S.of((scale * offset) + getAzimuth());
+        final double scale = (positiveFacing == plusSide) ? +1 : -1;
+        final double azimuth = (scale * offset) + getAzimuth();
+
+        return Point1S.of(azimuth);
     }
 
     /** Create a new instance from the given azimuth and direction.
@@ -240,7 +255,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S fromAzimuthAndDirection(final double azimuth, final boolean positiveFacing,
+    public static CutAngle fromAzimuthAndDirection(final double azimuth, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
         return fromPointAndDirection(Point1S.of(azimuth), positiveFacing, precision);
     }
@@ -252,9 +267,9 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S fromPointAndDirection(final Point1S pt, final boolean positiveFacing,
+    public static CutAngle fromPointAndDirection(final Point1S pt, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
-        return new OrientedPoint1S(pt, positiveFacing, precision);
+        return new CutAngle(pt, positiveFacing, precision);
     }
 
     /** Create a new instance at the given azimuth, oriented so that the plus side of the hyperplane points
@@ -263,7 +278,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S createPositiveFacing(final double azimuth, final DoublePrecisionContext precision) {
+    public static CutAngle createPositiveFacing(final double azimuth, final DoublePrecisionContext precision) {
         return createPositiveFacing(Point1S.of(azimuth), precision);
     }
 
@@ -273,7 +288,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S createPositiveFacing(final Point1S pt, final DoublePrecisionContext precision) {
+    public static CutAngle createPositiveFacing(final Point1S pt, final DoublePrecisionContext precision) {
         return fromPointAndDirection(pt, true, precision);
     }
 
@@ -283,7 +298,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S createNegativeFacing(final double azimuth, final DoublePrecisionContext precision) {
+    public static CutAngle createNegativeFacing(final double azimuth, final DoublePrecisionContext precision) {
         return createNegativeFacing(Point1S.of(azimuth), precision);
     }
 
@@ -293,7 +308,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static OrientedPoint1S createNegativeFacing(final Point1S pt, final DoublePrecisionContext precision) {
+    public static CutAngle createNegativeFacing(final Point1S pt, final DoublePrecisionContext precision) {
         return fromPointAndDirection(pt, false, precision);
     }
 
@@ -301,24 +316,24 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class SubOrientedPoint1S implements ConvexSubHyperplane<Point1S>, Serializable {
+    public static class SubCutAngle implements ConvexSubHyperplane<Point1S>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190825L;
 
         /** The underlying hyperplane for this instance. */
-        private final OrientedPoint1S hyperplane;
+        private final CutAngle hyperplane;
 
         /** Simple constructor.
          * @param hyperplane underlying hyperplane instance
          */
-        public SubOrientedPoint1S(final OrientedPoint1S hyperplane) {
+        public SubCutAngle(final CutAngle hyperplane) {
             this.hyperplane = hyperplane;
         }
 
         /** {@inheritDoc} */
         @Override
-        public OrientedPoint1S getHyperplane() {
+        public CutAngle getHyperplane() {
             return hyperplane;
         }
 
@@ -390,11 +405,11 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
 
         /** {@inheritDoc} */
         @Override
-        public Split<SubOrientedPoint1S> split(final Hyperplane<Point1S> splitter) {
+        public Split<SubCutAngle> split(final Hyperplane<Point1S> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
-            SubOrientedPoint1S minus = null;
-            SubOrientedPoint1S plus = null;
+            SubCutAngle minus = null;
+            SubCutAngle plus = null;
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
@@ -408,26 +423,26 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
 
         /** {@inheritDoc} */
         @Override
-        public List<SubOrientedPoint1S> toConvex() {
+        public List<SubCutAngle> toConvex() {
             return Arrays.asList(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint1S transform(final Transform<Point1S> transform) {
+        public SubCutAngle transform(final Transform<Point1S> transform) {
             return getHyperplane().transform(transform).span();
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPointBuilder1S builder() {
-            return new SubOrientedPointBuilder1S(this);
+        public SubCutAngleBuilder builder() {
+            return new SubCutAngleBuilder(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint1S reverse() {
-            return new SubOrientedPoint1S(hyperplane.reverse());
+        public SubCutAngle reverse() {
+            return new SubCutAngle(hyperplane.reverse());
         }
 
         /** {@inheritDoc} */
@@ -445,22 +460,22 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
         }
     }
 
-    /** {@link SubHyperplane.Builder} implementation for spherical 1D space. Similar to {@link SubOrientedPoint1S},
-     * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
+    /** {@link SubHyperplane.Builder} implementation for spherical 1D space. This is effectively
+     * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static class SubOrientedPointBuilder1S implements SubHyperplane.Builder<Point1S>, Serializable {
+    public static class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S>, Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190825L;
 
         /** Base subhyperplane for the builder. */
-        private final SubOrientedPoint1S base;
+        private final SubCutAngle base;
 
         /** Construct a new instance using the given base subhyperplane.
          * @param base base subhyperplane for the instance
          */
-        private SubOrientedPointBuilder1S(final SubOrientedPoint1S base) {
+        private SubCutAngleBuilder(final SubCutAngle base) {
             this.base = base;
         }
 
@@ -478,7 +493,7 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint1S build() {
+        public SubCutAngle build() {
             return base;
         }
 
@@ -498,8 +513,8 @@ public final class OrientedPoint1S extends AbstractHyperplane<Point1S>
          * @param sub
          */
         private void validateHyperplane(final SubHyperplane<Point1S> sub) {
-            final OrientedPoint1S baseHyper = base.getHyperplane();
-            final OrientedPoint1S inputHyper = (OrientedPoint1S) sub.getHyperplane();
+            final CutAngle baseHyper = base.getHyperplane();
+            final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
                 throw new IllegalArgumentException("Argument is not on the same " +
