@@ -72,28 +72,6 @@ public class OrientedPointTest {
     }
 
     @Test
-    public void testHyperplanePoints() {
-        // arrange
-        OrientedPoint orientedPoint = OrientedPoint.createNegativeFacing(2.5, TEST_PRECISION);
-
-        // act/assert
-        Assert.assertEquals(HyperplaneLocation.MINUS, orientedPoint.classify(orientedPoint.minusPoint()));
-        Assert.assertEquals(HyperplaneLocation.PLUS, orientedPoint.classify(orientedPoint.plusPoint()));
-        Assert.assertEquals(HyperplaneLocation.ON, orientedPoint.classify(orientedPoint.onPoint()));
-    }
-
-    @Test
-    public void testHyperplanePoints_largeEpsilon() {
-        // arrange
-        OrientedPoint orientedPoint = OrientedPoint.createNegativeFacing(2.5, new EpsilonDoublePrecisionContext(2.0));
-
-        // act/assert
-        Assert.assertEquals(HyperplaneLocation.MINUS, orientedPoint.classify(orientedPoint.minusPoint()));
-        Assert.assertEquals(HyperplaneLocation.PLUS, orientedPoint.classify(orientedPoint.plusPoint()));
-        Assert.assertEquals(HyperplaneLocation.ON, orientedPoint.classify(orientedPoint.onPoint()));
-    }
-
-    @Test
     public void testTransform() {
         // arrange
         AffineTransformMatrix1D scaleAndTranslate = AffineTransformMatrix1D
@@ -120,7 +98,7 @@ public class OrientedPointTest {
         OrientedPoint neg = OrientedPoint.createPositiveFacing(Double.NEGATIVE_INFINITY, TEST_PRECISION);
 
         Transform<Vector1D> scaleAndTranslate = AffineTransformMatrix1D.identity().scale(10.0).translate(5.0);
-        Transform<Vector1D> negate = Vector1D::negate;
+        Transform<Vector1D> negate = Transform1D.from(Vector1D::negate);
 
         // act/assert
         assertOrientedPoint(pos.transform(scaleAndTranslate), Double.POSITIVE_INFINITY, false, TEST_PRECISION);

@@ -25,7 +25,6 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
-import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -614,34 +613,6 @@ public class PlaneTest {
     }
 
     @Test
-    public void testHyperplanePoints() {
-        EuclideanTestUtils.permuteSkipZero(-10, 10, 0.5, (x, y, z) -> {
-            // arrange
-            Vector3D pt = Vector3D.of(x, y, z);
-            Plane plane = Plane.fromPointAndNormal(pt, pt, TEST_PRECISION);
-
-            // act/assert
-            Assert.assertEquals(HyperplaneLocation.MINUS, plane.classify(plane.minusPoint()));
-            Assert.assertEquals(HyperplaneLocation.PLUS, plane.classify(plane.plusPoint()));
-            Assert.assertEquals(HyperplaneLocation.ON, plane.classify(plane.onPoint()));
-        });
-    }
-
-    @Test
-    public void testHyperplanePoints_largeEpsilon() {
-        EuclideanTestUtils.permuteSkipZero(-10, 10, 0.5, (x, y, z) -> {
-            // arrange
-            Vector3D pt = Vector3D.of(x, y, z);
-            Plane plane = Plane.fromPointAndNormal(pt, pt, new EpsilonDoublePrecisionContext(1.0));
-
-            // act/assert
-            Assert.assertEquals(HyperplaneLocation.MINUS, plane.classify(plane.minusPoint()));
-            Assert.assertEquals(HyperplaneLocation.PLUS, plane.classify(plane.plusPoint()));
-            Assert.assertEquals(HyperplaneLocation.ON, plane.classify(plane.onPoint()));
-        });
-    }
-
-    @Test
     public void testTransform_rotationAroundPoint() {
         // arrange
         Vector3D pt = Vector3D.of(0, 0, 1);
@@ -688,7 +659,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = v -> Vector3D.of(-v.getX(), v.getY(), v.getZ());
+        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -703,7 +674,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ());
+        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -718,7 +689,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = Vector3D::negate;
+        Transform<Vector3D> transform = Transform3D.from(Vector3D::negate);
 
         // act
         Plane result = plane.transform(transform);

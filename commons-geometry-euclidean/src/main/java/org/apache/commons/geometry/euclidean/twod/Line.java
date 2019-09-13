@@ -127,24 +127,6 @@ public final class Line extends AbstractHyperplane<Vector2D>
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D plusPoint() {
-        return pointAt(0, +(Math.floor(getPrecision().getMaxZero()) + 1.0));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D minusPoint() {
-         return pointAt(0, -(Math.floor(getPrecision().getMaxZero()) + 1.0));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D onPoint() {
-        return getOrigin();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Line reverse() {
         return new Line(direction.negate(), -originOffset, getPrecision());
     }

@@ -623,6 +623,85 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
+    public void testTransform_full() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.full();
+
+        Transform1D transform = AffineTransformMatrix1D.createScale(2);
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+    }
+
+    @Test
+    public void testTransform_noReflection() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.min(3, TEST_PRECISION)
+                );
+
+        Transform1D transform = AffineTransformMatrix1D.createScale(2)
+                .translate(3);
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<Interval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), 5, 7);
+        checkInterval(intervals.get(1), 9, Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testTransform_withReflection() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.min(3, TEST_PRECISION)
+                );
+
+        Transform1D transform = AffineTransformMatrix1D.createScale(-2)
+                .translate(3);
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<Interval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -3);
+        checkInterval(intervals.get(1), -1, 1);
+    }
+
+    @Test
+    public void testTransform_withReflection_functionBasedTransform() {
+        // arrange
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+                    Interval.of(1, 2, TEST_PRECISION),
+                    Interval.min(3, TEST_PRECISION)
+                );
+
+        Transform1D transform = Transform1D.from(Vector1D::negate);
+
+        // act
+        tree.transform(transform);
+
+        // assert
+        List<Interval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Double.NEGATIVE_INFINITY, -3);
+        checkInterval(intervals.get(1), -2, -1);
+    }
+
+    @Test
     public void testSplit_full() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.full();

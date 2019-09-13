@@ -91,21 +91,6 @@ public class AbstractHyperplaneTest {
         }
 
         @Override
-        public TestPoint2D plusPoint() {
-            return null;
-        }
-
-        @Override
-        public TestPoint2D minusPoint() {
-            return null;
-        }
-
-        @Override
-        public TestPoint2D onPoint() {
-            return null;
-        }
-
-        @Override
         public Hyperplane<TestPoint2D> reverse() {
             return null;
         }

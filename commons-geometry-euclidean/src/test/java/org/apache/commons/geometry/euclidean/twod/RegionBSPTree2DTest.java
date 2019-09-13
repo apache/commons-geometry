@@ -1107,7 +1107,7 @@ public class RegionBSPTree2DTest {
                 .addSquare(Vector2D.of(1, 1), 1)
                 .build();
 
-        Transform<Vector2D> transform = v -> Vector2D.of(-v.getX(), v.getY());
+        Transform<Vector2D> transform = Transform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
         // act
         tree.transform(transform);
@@ -1131,7 +1131,7 @@ public class RegionBSPTree2DTest {
                 .addSquare(Vector2D.of(1, 1), 1)
                 .build();
 
-        Transform<Vector2D> transform = Vector2D::negate;
+        Transform<Vector2D> transform = Transform2D.from(Vector2D::negate);
 
         // act
         tree.transform(transform);

@@ -102,26 +102,6 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D plusPoint() {
-        final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        return Vector1D.linearCombination(1.0, point, scale, getDirection());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D minusPoint() {
-        final double scale = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        return Vector1D.linearCombination(1.0, point, -scale, getDirection());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D onPoint() {
-        return point;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public OrientedPoint reverse() {
         return new OrientedPoint(point, !positiveFacing, getPrecision());
     }

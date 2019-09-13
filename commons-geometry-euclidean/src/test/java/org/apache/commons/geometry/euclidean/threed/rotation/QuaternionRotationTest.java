@@ -1571,6 +1571,8 @@ public class QuaternionRotationTest {
         Assert.assertEquals(msg, x, q.getX(), EPS);
         Assert.assertEquals(msg, y, q.getY(), EPS);
         Assert.assertEquals(msg, z, q.getZ(), EPS);
+
+        Assert.assertTrue(qrot.preservesOrientation());
     }
 
     private static void checkVector(Vector3D v, double x, double y, double z) {

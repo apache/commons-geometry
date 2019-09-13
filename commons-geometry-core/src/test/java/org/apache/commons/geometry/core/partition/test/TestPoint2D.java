@@ -28,6 +28,12 @@ public class TestPoint2D implements Point<TestPoint2D>, Serializable {
     /** Instance representing the coordinates {@code (0, 0)} */
     public static final TestPoint2D ZERO = new TestPoint2D(0, 0);
 
+    /** Instance representing the coordinates {@code (1, 0)} */
+    public static final TestPoint2D PLUS_X = new TestPoint2D(1, 0);
+
+    /** Instance representing the coordinates {@code (0, 1)} */
+    public static final TestPoint2D PLUS_Y = new TestPoint2D(0, 1);
+
     /** Serializable UID */
     private static final long serialVersionUID = 20190224L;
 

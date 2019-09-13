@@ -150,7 +150,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void transform(final Transform<P> transform) {
-        final boolean swapChildren = shouldTransformSwapChildren(transform);
+        final boolean swapChildren = swapsInteriorExterior(transform);
         transformRecursive(getRoot(), transform, swapChildren);
 
         invalidate();
@@ -555,6 +555,21 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         invalidate();
     }
 
+    /** Return true if the given transform swaps the interior and exterior of
+     * the region.
+     *
+     * <p>The default behavior of this method is to return true if the transform
+     * does not preserve spatial orientation (ie, {@link Transform#preservesOrientation()}
+     * is false). Subclasses may need to override this method to implement the correct
+     * behavior for their space and dimension.</p>
+     * @param transform transform to check
+     * @return true if the given transform swaps the interior and exterior of
+     *      the region
+     */
+    protected boolean swapsInteriorExterior(final Transform<P> transform) {
+        return !transform.preservesOrientation();
+    }
+
     /** Recursively insert a subhyperplane into the tree at the given node.
      * @param node the node to begin insertion with
      * @param insert the subhyperplane to insert
@@ -606,28 +621,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             // set our new state
             node.setSubtree(transformedCut, transformedMinus, transformedPlus);
         }
-    }
-
-    /** Return true if the given transform should swap the plus and minus child nodes when
-     * applied to the tree. This will be the case for transforms that represent reflections.
-     * @param transform the transform to test
-     * @return true if the transform should swap the plus and minus child nodes in the tree
-     */
-    protected boolean shouldTransformSwapChildren(final Transform<P> transform) {
-        final Hyperplane<P> hyperplane = getRoot().getCutHyperplane();
-
-        if (hyperplane != null) {
-            final P plusPt = hyperplane.plusPoint();
-
-            // we should swap if a point on the plus side of the hyperplane is on the minus
-            // side after the transformation
-            final P transformedPlusPt = transform.apply(plusPt);
-            final Hyperplane<P> transformedHyperplane = hyperplane.transform(transform);
-
-            return transformedHyperplane.classify(transformedPlusPt) == HyperplaneLocation.MINUS;
-        }
-
-        return false;
     }
 
     /** Split this tree with the given hyperplane, placing the split contents into the given

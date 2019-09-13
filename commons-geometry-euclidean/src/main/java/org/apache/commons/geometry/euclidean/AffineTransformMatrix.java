@@ -53,4 +53,16 @@ public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends P
      * @see #applyVector(EuclideanVector)
      */
     V applyDirection(V vec);
+
+    /** Get the determinant of the matrix.
+     * @return the determinant of the matrix
+     */
+    double determinant();
+
+    /** {@inheritDoc} */
+    @Override
+    default public boolean preservesOrientation() {
+        // orientation is preserved only with non-negative determinants
+        return determinant() > 0.0;
+    }
 }

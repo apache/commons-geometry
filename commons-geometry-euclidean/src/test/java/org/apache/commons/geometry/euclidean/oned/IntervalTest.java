@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -622,7 +621,7 @@ public class IntervalTest {
     @Test
     public void testTransform() {
         // arrange
-        Transform<Vector1D> transform = (p) -> Vector1D.of(2.0 * p.getX());
+        Transform1D transform = Transform1D.from((p) -> Vector1D.of(2.0 * p.getX()));
 
         // act/assert
         checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 4);
@@ -640,7 +639,7 @@ public class IntervalTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        Transform<Vector1D> transform = Vector1D::negate;
+        Transform1D transform = Transform1D.from(Vector1D::negate);
 
         // act/assert
         checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 1);

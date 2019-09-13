@@ -172,26 +172,6 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testPlusMinuOnPoint() {
-        // arrange
-        DoublePrecisionContext low = new EpsilonDoublePrecisionContext(0.5);
-        DoublePrecisionContext high = new EpsilonDoublePrecisionContext(1e-10);
-
-        CutAngle a = CutAngle.createNegativeFacing(Geometry.HALF_PI, low);
-        CutAngle b = CutAngle.createNegativeFacing(Geometry.HALF_PI, high);
-
-        // act/assert
-        checkClassify(a, HyperplaneLocation.ON, a.onPoint());
-        checkClassify(b, HyperplaneLocation.ON, b.onPoint());
-
-        checkClassify(a, HyperplaneLocation.PLUS, a.plusPoint());
-        checkClassify(b, HyperplaneLocation.PLUS, b.plusPoint());
-
-        checkClassify(a, HyperplaneLocation.MINUS, a.minusPoint());
-        checkClassify(b, HyperplaneLocation.MINUS, b.minusPoint());
-    }
-
-    @Test
     public void testContains() {
         // arrange
         CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
@@ -252,7 +232,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_translate() {
         // arrange
-        Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
+        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
 
         // act
         checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -269,7 +249,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_scale() {
         // arrange
-        Transform<Point1S> transform = p -> Point1S.of(p.getAzimuth() * 2);
+        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() * 2));
 
         // act
         checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -286,7 +266,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_negate() {
         // arrange
-        Transform<Point1S> transform = p -> Point1S.of(-p.getAzimuth());
+        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(-p.getAzimuth()));
 
         // act
         checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -507,7 +487,7 @@ public class CutAngleTest {
         // arrange
         CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
 
-        Transform<Point1S> transform = p -> Point1S.of(Geometry.PI - p.getAzimuth());
+        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
 
         // act
         SubCutAngle result = pt.span().transform(transform);
@@ -626,12 +606,6 @@ public class CutAngleTest {
     private static void checkClassify(CutAngle pt, HyperplaneLocation loc, double ... azimuths) {
         for (double az : azimuths) {
             Assert.assertEquals("Unexpected location for azimuth " + az, loc, pt.classify(Point1S.of(az)));
-        }
-    }
-
-    private static void checkClassify(CutAngle orientedPt, HyperplaneLocation loc, Point1S ... pts) {
-        for (Point1S pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, orientedPt.classify(pt));
         }
     }
 }

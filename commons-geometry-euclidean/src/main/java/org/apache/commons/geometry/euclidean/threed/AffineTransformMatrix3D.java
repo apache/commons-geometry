@@ -36,7 +36,7 @@ import org.apache.commons.numbers.core.Precision;
  * use arrays containing 12 elements, instead of 16.
  * </p>
  */
-public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vector3D, Vector2D>, Serializable {
+public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vector3D, Vector2D>, Transform3D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180923L;
@@ -202,6 +202,16 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
         return applyVector(vec, Vector3D::normalize);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public double determinant() {
+        return Matrices.determinant(
+                m00, m01, m02,
+                m10, m11, m12,
+                m20, m21, m22
+            );
+    }
+
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -321,12 +331,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
         // Our full matrix is 4x4 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 0 1].
 
-        // compute the determinant of the matrix
-        final double det = Matrices.determinant(
-                    m00, m01, m02,
-                    m10, m11, m12,
-                    m20, m21, m22
-                );
+        final double det = determinant();
 
         if (!Vectors.isRealNonZero(det)) {
             throw new NonInvertibleTransformException("Transform is not invertible; matrix determinant is " + det);

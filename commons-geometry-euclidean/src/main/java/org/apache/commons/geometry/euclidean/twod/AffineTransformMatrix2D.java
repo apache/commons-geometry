@@ -35,7 +35,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 6 elements, instead of 9.
 * </p>
 */
-public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vector2D, Vector1D>, Serializable {
+public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vector2D, Vector1D>, Transform2D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181005L;
@@ -167,6 +167,15 @@ public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vect
         return applyVector(vec, Vector2D::normalize);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public double determinant() {
+        return Matrices.determinant(
+                m00, m01,
+                m10, m11
+            );
+    }
+
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -281,11 +290,7 @@ public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vect
         // Our full matrix is 3x3 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 1].
 
-        // compute the determinant of the matrix
-        final double det = Matrices.determinant(
-                    m00, m01,
-                    m10, m11
-                );
+        final double det = determinant();
 
         if (!Vectors.isRealNonZero(det)) {
             throw new NonInvertibleTransformException("Transform is not invertible; matrix determinant is " + det);

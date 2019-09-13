@@ -53,27 +53,6 @@ public interface Hyperplane<P extends Point<P>> {
      */
     P project(P point);
 
-    /** Get a representative point on the plus side of the hyperplane. The only
-     * requirement for this point is that {@code hyperplane.classify(pt)}
-     * returns {@link HyperplaneLocation#PLUS}.
-     * @return a point on the plus side of the hyperplane
-     */
-    P plusPoint();
-
-    /** Get a representative point on the minus side of the hyperplane. The only
-     * requirement for this point is that {@code hyperplane.classify(pt)}
-     * returns {@link HyperplaneLocation#MINUS}.
-     * @return a point on the minus side of the hyperplane
-     */
-    P minusPoint();
-
-    /** Get a representative point on the hyperplane. The only
-     * requirement for this point is that {@code hyperplane.classify(pt)}
-     * returns {@link HyperplaneLocation#ON}.
-     * @return a point on the hyperplane
-     */
-    P onPoint();
-
     /** Return a hyperplane that has the opposite orientation as this instance.
      * That is, the plus side of this instance is the minus side of the returned
      * instance and vice versa.

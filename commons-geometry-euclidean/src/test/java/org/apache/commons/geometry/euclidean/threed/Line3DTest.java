@@ -104,7 +104,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform<Vector3D> transform = v -> Vector3D.of(v.getX(), v.getY(), -v.getZ());
+        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(v.getX(), v.getY(), -v.getZ()));
 
         // act
         Line3D result = line.transform(transform);
@@ -119,7 +119,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform<Vector3D> transform = v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ());
+        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ()));
 
         // act
         Line3D result = line.transform(transform);
@@ -134,7 +134,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform<Vector3D> transform = Vector3D::negate;
+        Transform<Vector3D> transform = Transform3D.from(Vector3D::negate);
 
         // act
         Line3D result = line.transform(transform);

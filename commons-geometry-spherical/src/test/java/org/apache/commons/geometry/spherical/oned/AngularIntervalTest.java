@@ -277,8 +277,8 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.full();
 
-        Transform<Point1S> translate = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
-        Transform<Point1S> invert = p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth());
+        Transform<Point1S> translate = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform<Point1S> invert = Transform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
 
         // act/assert
         checkFull(interval.transform(translate));
@@ -290,12 +290,26 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
 
-        Transform<Point1S> translate = p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI);
-        Transform<Point1S> invert = p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth());
+        Transform<Point1S> translate = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform<Point1S> invert = Transform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
 
         // act/assert
         checkInterval(interval.transform(translate), Geometry.PI, 1.5 * Geometry.PI);
         checkInterval(interval.transform(invert), Geometry.MINUS_HALF_PI, Geometry.ZERO_PI);
+    }
+
+    @Test
+    public void testWrapsZero() {
+        // act/assert
+        Assert.assertFalse(AngularInterval.full().wrapsZero());
+        Assert.assertFalse(AngularInterval.of(0, Geometry.HALF_PI, TEST_PRECISION).wrapsZero());
+        Assert.assertFalse(AngularInterval.of(Geometry.HALF_PI, Geometry.PI , TEST_PRECISION).wrapsZero());
+        Assert.assertFalse(AngularInterval.of(Geometry.PI, 1.5 * Geometry.PI , TEST_PRECISION).wrapsZero());
+        Assert.assertFalse(AngularInterval.of(1.5 * Geometry.PI, Geometry.TWO_PI - 1e-5, TEST_PRECISION).wrapsZero());
+
+        Assert.assertTrue(AngularInterval.of(1.5 * Geometry.PI, Geometry.TWO_PI, TEST_PRECISION).wrapsZero());
+        Assert.assertTrue(AngularInterval.of(1.5 * Geometry.PI, 2.5 * Geometry.PI, TEST_PRECISION).wrapsZero());
+        Assert.assertTrue(AngularInterval.of(-2.5 * Geometry.PI, -1.5 * Geometry.PI, TEST_PRECISION).wrapsZero());
     }
 
     @Test

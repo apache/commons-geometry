@@ -414,7 +414,7 @@ public class SegmentTest {
         Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
         Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+        Transform<Vector2D> reflect = Transform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(1, 4));
@@ -432,7 +432,7 @@ public class SegmentTest {
         Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
         Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+        Transform<Vector2D> reflect = Transform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(-1, 2));
@@ -450,7 +450,7 @@ public class SegmentTest {
         Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
         Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+        Transform<Vector2D> reflect = Transform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -491,7 +491,7 @@ public class SegmentTest {
         Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
         Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+        Transform<Vector2D> reflect = Transform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -532,7 +532,7 @@ public class SegmentTest {
         Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
         Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform<Vector2D> reflect = (pt) -> Vector2D.of(pt.getX(), -pt.getY());
+        Transform<Vector2D> reflect = Transform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);

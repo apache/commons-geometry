@@ -24,4 +24,12 @@ import java.util.function.Function;
  * @param <P> Point implementation type
  */
 public interface Transform<P extends Point<P>> extends Function<P, P> {
+
+    /** Return true if the transform preserves the orientation of the space.
+     * For example, in Euclidean 2D space, this will be true for translations,
+     * rotations, and scalings but will be false for reflections.
+     * @return true if the transform preserves the orientation of the space
+     * @see https://en.wikipedia.org/wiki/Orientation_(vector_space)
+     */
+    boolean preservesOrientation();
 }

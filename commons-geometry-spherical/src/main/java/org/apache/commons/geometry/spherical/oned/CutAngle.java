@@ -91,24 +91,6 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         return positiveFacing;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Point1S plusPoint() {
-        return offsetPoint(true);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Point1S minusPoint() {
-        return offsetPoint(false);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Point1S onPoint() {
-        return point;
-    }
-
     /** {@inheritDoc}
      *
      * <p>The instances are considered equivalent if they
@@ -180,11 +162,9 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
     @Override
     public CutAngle transform(final Transform<Point1S> transform) {
         final Point1S tPoint = transform.apply(point);
-        final Point1S tPlus = transform.apply(plusPoint());
+        final boolean tPositiveFacing = transform.preservesOrientation() == positiveFacing;
 
-        boolean positiveFacing = tPoint.getAzimuth() < tPlus.getAzimuth();
-
-        return CutAngle.fromPointAndDirection(tPoint, positiveFacing, getPrecision());
+        return CutAngle.fromPointAndDirection(tPoint, tPositiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -233,19 +213,6 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
             .append(']');
 
         return sb.toString();
-    }
-
-    /** Get a point on the plus side or minus side or the hyperplane.
-     * @param plusSide if true, a point on the plus side is returned;
-     *      otherwise a point on the minus side is returned
-     * @return a point on the plus or minus side of the hyperplane
-     */
-    private Point1S offsetPoint(final boolean plusSide) {
-        final double offset = Math.floor(getPrecision().getMaxZero()) + 1.0;
-        final double scale = (positiveFacing == plusSide) ? +1 : -1;
-        final double azimuth = (scale * offset) + getAzimuth();
-
-        return Point1S.of(azimuth);
     }
 
     /** Create a new instance from the given azimuth and direction.

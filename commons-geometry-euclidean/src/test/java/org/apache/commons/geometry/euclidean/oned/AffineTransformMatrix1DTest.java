@@ -34,6 +34,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.of(1, 2);
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] result = transform.toArray();
         Assert.assertArrayEquals(new double[] { 1, 2 }, result, 0.0);
     }
@@ -52,6 +54,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] expected = { 1, 0 };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -62,6 +66,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.createTranslation(2);
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] expected = { 1, 2 };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -72,6 +78,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.createTranslation(Vector1D.of(5));
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] expected = { 1, 5 };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -85,6 +93,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D result = a.translate(4);
 
         // assert
+        Assert.assertTrue(result.preservesOrientation());
+
         double[] expected = { 2, 14 };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -98,6 +108,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D result = a.translate(Vector1D.of(7));
 
         // assert
+        Assert.assertTrue(result.preservesOrientation());
+
         double[] expected = { 2, 17 };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -108,6 +120,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(Vector1D.of(4));
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] expected = { 4, 0 };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -118,6 +132,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(7);
 
         // assert
+        Assert.assertTrue(transform.preservesOrientation());
+
         double[] expected = { 7, 0 };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -131,6 +147,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D result = a.scale(4);
 
         // assert
+        Assert.assertTrue(result.preservesOrientation());
+
         double[] expected = { 8, 40 };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -144,6 +162,8 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D result = a.scale(Vector1D.of(7));
 
         // assert
+        Assert.assertTrue(result.preservesOrientation());
+
         double[] expected = { 14, 70 };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -390,6 +410,22 @@ public class AffineTransformMatrix1DTest {
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix1D.createScale(2).applyDirection(Vector1D.ZERO),
                 IllegalNormException.class);
+    }
+
+    @Test
+    public void testDeterminant() {
+        // act/assert
+        Assert.assertEquals(0.0, AffineTransformMatrix1D.of(0, 1).determinant(), EPS);
+        Assert.assertEquals(1.0, AffineTransformMatrix1D.of(1, 0).determinant(), EPS);
+        Assert.assertEquals(-1.0, AffineTransformMatrix1D.of(-1, 2).determinant(), EPS);
+    }
+
+    @Test
+    public void testPreservesOrientation() {
+        // act/assert
+        Assert.assertFalse(AffineTransformMatrix1D.of(0, 1).preservesOrientation());
+        Assert.assertTrue(AffineTransformMatrix1D.of(1, 0).preservesOrientation());
+        Assert.assertFalse(AffineTransformMatrix1D.of(-1, 2).preservesOrientation());
     }
 
     @Test

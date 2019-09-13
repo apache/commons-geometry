@@ -76,7 +76,7 @@ public class ConvexAreaTest {
     @Test
     public void testTransform_full() {
         // arrange
-        Transform<Vector2D> transform = v -> v.multiply(3);
+        Transform<Vector2D> transform = Transform2D.from(v -> v.multiply(3));
         ConvexArea area = ConvexArea.full();
 
         // act

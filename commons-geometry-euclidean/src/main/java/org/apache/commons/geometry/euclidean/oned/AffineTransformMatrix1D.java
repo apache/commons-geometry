@@ -32,7 +32,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vector1D, Vector1D>, Serializable {
+public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vector1D, Vector1D>, Transform1D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181006L;
@@ -109,6 +109,12 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
     @Override
     public Vector1D applyDirection(final Vector1D vec) {
         return applyVector(vec, Vector1D::normalize);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double determinant() {
+        return m00;
     }
 
     /** Get a new transform containing the result of applying a translation logically after

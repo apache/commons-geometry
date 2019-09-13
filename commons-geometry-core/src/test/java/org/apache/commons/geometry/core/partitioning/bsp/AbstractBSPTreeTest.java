@@ -27,14 +27,13 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTree;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.NodeCutRule;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partition.test.TestTransform2D;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.NodeCutRule;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1343,7 +1342,7 @@ public class AbstractBSPTreeTest {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1359,7 +1358,7 @@ public class AbstractBSPTreeTest {
         TestBSPTree tree = new TestBSPTree();
         tree.getRoot().insertCut(TestLine.X_AXIS);
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1386,7 +1385,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2))
                 ));
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(0.5 * p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(0.5 * p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1424,7 +1423,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-p.getX(), p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(-p.getX(), p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 
@@ -1448,7 +1447,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(p.getX(), -p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), -p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 
@@ -1472,7 +1471,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = (p) -> new TestPoint2D(-p.getX(), -p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(-p.getX(), -p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 

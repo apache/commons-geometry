@@ -223,26 +223,6 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D plusPoint() {
-        return pointAt(Vector2D.ZERO, +(Math.floor(getPrecision().getMaxZero()) + 1.0));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector3D minusPoint() {
-         return pointAt(Vector2D.ZERO, -(Math.floor(getPrecision().getMaxZero()) + 1.0));
-    }
-
-    /** {@inheritDoc}
-     * <p>This method simply returns the plane origin point, as provided by {@link #getOrigin()}.</p>
-     */
-    @Override
-    public Vector3D onPoint() {
-        return getOrigin();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Plane transform(final Transform<Vector3D> transform) {
         final Vector3D origin = getOrigin();
 

@@ -29,6 +29,7 @@ import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partition.test.TestTransform2D;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -592,7 +593,7 @@ public class AbstractRegionBSPTreeTest {
     @Test
     public void testTransform_noCuts() {
         // arrange
-        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -609,7 +610,7 @@ public class AbstractRegionBSPTreeTest {
         // arrange
         tree.getRoot().insertCut(TestLine.X_AXIS);
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), p.getY() + 2);
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -632,7 +633,7 @@ public class AbstractRegionBSPTreeTest {
         // arrange
         insertSkewedBowtie(tree);
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5);
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5));
 
         // act
         tree.transform(t);
@@ -656,7 +657,7 @@ public class AbstractRegionBSPTreeTest {
         // arrange
         insertSkewedBowtie(tree);
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(-p.getX(), p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(-p.getX(), p.getY()));
 
         // act
         tree.transform(t);
@@ -681,7 +682,7 @@ public class AbstractRegionBSPTreeTest {
         // arrange
         insertSkewedBowtie(tree);
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(p.getX(), -p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), -p.getY()));
 
         // act
         tree.transform(t);
@@ -706,7 +707,7 @@ public class AbstractRegionBSPTreeTest {
         // arrange
         insertSkewedBowtie(tree);
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(-p.getX(), -p.getY());
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(-p.getX(), -p.getY()));
 
         // act
         tree.transform(t);
@@ -734,7 +735,7 @@ public class AbstractRegionBSPTreeTest {
         TestRegionNode node = tree.findNode(new TestPoint2D(1, 1)).getParent();
 
 
-        Transform<TestPoint2D> t = p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5);
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 5));
 
         // act
         RegionCutBoundary<TestPoint2D> origBoundary = node.getCutBoundary();

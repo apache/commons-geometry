@@ -145,6 +145,17 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         return remaining;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[boundaries= ")
+            .append(boundaries);
+
+        return sb.toString();
+    }
+
     /** Generic, internal transform method. Subclasses should use this to implement their own transform methods.
      * @param transform the transform to apply to the instance
      * @param thisInstance a reference to the current instance; this is passed as
@@ -169,8 +180,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         final S boundary = boundaries.get(0);
         ConvexSubHyperplane<P> tBoundary = boundary.transform(transform);
 
-        final P plusPt = boundary.getHyperplane().plusPoint();
-        final boolean reverseDirection = tBoundary.getHyperplane().classify(transform.apply(plusPt)) == HyperplaneLocation.MINUS;
+        final boolean reverseDirection = swapsInteriorExterior(transform);
 
         // transform all of the segments
         if (reverseDirection) {
@@ -189,6 +199,21 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         }
 
         return factory.apply(tBoundaries);
+    }
+
+    /** Return true if the given transform swaps the interior and exterior of
+     * the region.
+     *
+     * <p>The default behavior of this method is to return true if the transform
+     * does not preserve spatial orientation (ie, {@link Transform#preservesOrientation()}
+     * is false). Subclasses may need to override this method to implement the correct
+     * behavior for their space and dimension.</p>
+     * @param transform transform to check
+     * @return true if the given transform swaps the interior and exterior of
+     *      the region
+     */
+    protected boolean swapsInteriorExterior(final Transform<P> transform) {
+        return !transform.preservesOrientation();
     }
 
     /** Generic, internal split method. Subclasses should call this from their {@link #split(Hyperplane)} methods.
@@ -256,17 +281,6 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
             return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append("[boundaries= ")
-            .append(boundaries);
-
-        return sb.toString();
     }
 
     /** Internal class encapsulating the logic for building convex region boundaries from collections of

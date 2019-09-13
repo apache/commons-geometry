@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -321,6 +322,17 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         visitInsideIntervals(visitor);
 
         return visitor.getRegionSizeProperties();
+    }
+
+    /** Returns true if the given transform would result in a swapping of the interior
+     * and exterior of the region if applied.
+     *
+     * <p>This method always returns false since no swapping of this kind occurs in
+     * 1D.</p>
+     */
+    @Override
+    protected boolean swapsInteriorExterior(final Transform<Vector1D> transform) {
+        return false;
     }
 
     /** Return a new {@link RegionBSPTree1D} instance containing the entire space.

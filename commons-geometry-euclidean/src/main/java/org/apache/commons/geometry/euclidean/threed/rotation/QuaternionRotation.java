@@ -155,6 +155,16 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
                 );
     }
 
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns true since rotations always preserve the orientation
+     * of the space.</p>
+     */
+    @Override
+    public boolean preservesOrientation() {
+        return true;
+    }
+
     /**
      * Multiply this instance by the given argument, returning the result as
      * a new instance. This is equivalent to the expression {@code t * q} where

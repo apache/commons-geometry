@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -253,32 +252,6 @@ public class LineTest {
 
         checkLine(doubleReversed, pt, dir);
         Assert.assertEquals(1, doubleReversed.getOriginOffset(), TEST_EPS);
-    }
-
-    @Test
-    public void testHyperplanePoints() {
-        for (double angle = Geometry.ZERO_PI; angle <= Geometry.TWO_PI; angle += 0.25) {
-            // arrange
-            Line line = Line.fromPointAndAngle(Vector2D.of(1, 2), angle, TEST_PRECISION);
-
-            // act/assert
-            Assert.assertEquals(HyperplaneLocation.MINUS, line.classify(line.minusPoint()));
-            Assert.assertEquals(HyperplaneLocation.PLUS, line.classify(line.plusPoint()));
-            Assert.assertEquals(HyperplaneLocation.ON, line.classify(line.onPoint()));
-        }
-    }
-
-    @Test
-    public void testHyperplanePoints_largeEpsilon() {
-        for (double angle = Geometry.ZERO_PI; angle <= Geometry.TWO_PI; angle += 0.25) {
-            // arrange
-            Line line = Line.fromPointAndAngle(Vector2D.of(1, 2), angle, new EpsilonDoublePrecisionContext(0.5));
-
-            // act/assert
-            Assert.assertEquals(HyperplaneLocation.MINUS, line.classify(line.minusPoint()));
-            Assert.assertEquals(HyperplaneLocation.PLUS, line.classify(line.plusPoint()));
-            Assert.assertEquals(HyperplaneLocation.ON, line.classify(line.onPoint()));
-        }
     }
 
     @Test

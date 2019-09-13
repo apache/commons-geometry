@@ -30,6 +30,7 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partition.test.TestTransform2D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -297,7 +298,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         // arrange
         StubRegion region = new StubRegion(Collections.emptyList());
 
-        Transform<TestPoint2D> transform = p -> new TestPoint2D(p.getX() + 1, p.getY() + 2);
+        Transform<TestPoint2D> transform = new TestTransform2D(p -> new TestPoint2D(p.getX() + 1, p.getY() + 2));
 
         // act
         StubRegion transformed = region.transform(transform);
@@ -316,7 +317,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 line.span()
             ));
 
-        Transform<TestPoint2D> transform = p -> new TestPoint2D(p.getX() + 1, p.getY() + 2);
+        Transform<TestPoint2D> transform = new TestTransform2D(p -> new TestPoint2D(p.getX() + 1, p.getY() + 2));
 
         // act
         StubRegion transformed = region.transform(transform);
@@ -349,7 +350,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 new TestLineSegment(p3, p1)
             ));
 
-        Transform<TestPoint2D> transform = p -> new TestPoint2D(p.getX() + 1, p.getY() + 2);
+        Transform<TestPoint2D> transform = new TestTransform2D(p -> new TestPoint2D(p.getX() + 1, p.getY() + 2));
 
         // act
         StubRegion transformed = region.transform(transform);
@@ -385,7 +386,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
                 new TestLineSegment(p3, p1)
             ));
 
-        Transform<TestPoint2D> transform = p -> new TestPoint2D(-p.getX(), p.getY());
+        Transform<TestPoint2D> transform = new TestTransform2D(p -> new TestPoint2D(-p.getX(), p.getY()));
 
         // act
         StubRegion transformed = region.transform(transform);

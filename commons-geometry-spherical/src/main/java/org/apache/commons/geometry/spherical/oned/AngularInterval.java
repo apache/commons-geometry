@@ -192,9 +192,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         return null;
     }
 
-    /** Return true if the interval wraps around the zero/{@code 2pi} point. This
-     * is only the case if the max boundary azimuth if strictly greater than
-     * {@code 2pi}.
+    /** Return true if the interval wraps around the zero/{@code 2pi} point. In this
+     * case, the max boundary azimuth is less than that of the min boundary when both
+     * values are normalized to the range {@code {0, 2pi)}.
      * @return true if the interval wraps around the zero/{@code 2pi} point
      */
     public boolean wrapsZero() {
