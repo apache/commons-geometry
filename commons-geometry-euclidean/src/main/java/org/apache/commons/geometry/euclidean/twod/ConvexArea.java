@@ -63,7 +63,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * </ul>
      * @return the line segment paths comprising the boundary of the area.
      */
-    public List<SegmentPath> getBoundaryPaths() {
+    public List<Polyline> getBoundaryPaths() {
         return InteriorAngleSegmentConnector.connectMinimized(getBoundaries());
     }
 
@@ -72,7 +72,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @return the vertices for the area
      */
     public List<Vector2D> getVertices() {
-        final List<SegmentPath> path = getBoundaryPaths();
+        final List<Polyline> path = getBoundaryPaths();
 
         // we will only have vertices if we have a single path; otherwise, we have a full
         // area or two non-intersecting infinite segments
@@ -246,7 +246,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @param path path to construct the area from
      * @return a convex area constructed from the lines in the given path
      */
-    public static ConvexArea fromPath(final SegmentPath path) {
+    public static ConvexArea fromPath(final Polyline path) {
         final List<Line> lines = new ArrayList<>();
         for (Segment segment : path) {
             lines.add(segment.getLine());

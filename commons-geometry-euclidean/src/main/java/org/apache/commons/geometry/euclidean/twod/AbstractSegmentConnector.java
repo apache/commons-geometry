@@ -23,7 +23,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.SegmentPath.Builder;
+import org.apache.commons.geometry.euclidean.twod.Polyline.Builder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Abstract class for joining collections of line segments into connected
@@ -50,10 +50,10 @@ public abstract class AbstractSegmentConnector implements Serializable {
 
     /** Add a collection of line segments to the connector, leaving them unconnected
      * until a later call to {@link #connect(Iterable)} or
-     * {@link #getPaths()}.
+     * {@link #getConnected()}.
      * @param segments line segments to add
      * @see #connect(Iterable)
-     * @see #getPaths()
+     * @see #getConnected()
      * @see #add(Segment)
      */
     public void add(final Iterable<Segment> segments) {
@@ -63,10 +63,10 @@ public abstract class AbstractSegmentConnector implements Serializable {
     }
 
     /** Add a line segment to the connector, leaving it unconnected until a later call to
-     * to {@link #connect(Iterable)} or {@link #getPaths()}.
+     * to {@link #connect(Iterable)} or {@link #getConnected()}.
      * @param segment line segment to add
      * @see #connect(Iterable)
-     * @see #getPaths()
+     * @see #getConnected()
      */
     public void add(final Segment segment) {
         entries.add(new ConnectorEntry(segment));
@@ -90,37 +90,38 @@ public abstract class AbstractSegmentConnector implements Serializable {
         }
     }
 
-    /** Add the given line segments to this instance and get the connected line segment
-     * paths. This call is equivalent to
+    /** Add the given line segments to this instance and get the connected polylines
+     * (ie, line segment paths). This call is equivalent to
      * <pre>
      *      connector.add(segments);
-     *      List&lt;LineSegmentPath&gt; result = connector.getPaths();
+     *      List&lt;Polyline&gt; result = connector.getConnected();
      * </pre>
      * @param segments line segments to add
      * @return the connected line segment paths
      * @see #add(Iterable)
-     * @see #getPaths()
+     * @see #getConnected()
      */
-    public List<SegmentPath> getPaths(final Iterable<Segment> segments) {
+    public List<Polyline> getConnected(final Iterable<Segment> segments) {
         add(segments);
-        return getPaths();
+        return getConnected();
     }
 
-    /** Get the connected line segment paths. The connector is reset after this call.
-     * Further calls to add line segments will result in new paths being generated.
+    /** Get the current list of connected polylines (ie, line segment paths). The connector
+     * is reset after this call. Further calls to add line segments will result in new paths
+     * being generated.
      * @return the connected line segments paths
      */
-    public List<SegmentPath> getPaths() {
+    public List<Polyline> getConnected() {
         for (ConnectorEntry entry : entries) {
             followForwardConnections(entry);
         }
 
-        List<SegmentPath> paths = new ArrayList<>();
-        SegmentPath path;
+        List<Polyline> result = new ArrayList<>();
+        Polyline path;
         for (ConnectorEntry entry : entries) {
             path = entry.exportPath();
             if (path != null) {
-                paths.add(path);
+                result.add(path);
             }
         }
 
@@ -128,7 +129,7 @@ public abstract class AbstractSegmentConnector implements Serializable {
         possibleConnections.clear();
         possiblePointConnections.clear();
 
-        return paths;
+        return result;
     }
 
     /** Find and follow line segment forward connections from the given start entry.
@@ -408,15 +409,14 @@ public abstract class AbstractSegmentConnector implements Serializable {
             this.next.previous = this;
         }
 
-        /**
-         *  Export the path that this entry belongs to. Returns null if the
+        /** Export the path that this entry belongs to. Returns null if the
          *  path has already been exported.
          *  @return the path that this entry belong to or null if the path has
          *      already been exported
          */
-        public SegmentPath exportPath() {
+        public Polyline exportPath() {
             if (!exported) {
-                Builder builder = SegmentPath.builder(null);
+                Builder builder = Polyline.builder(null);
 
                 // add ourselves
                 exportPathInternal(builder, true);

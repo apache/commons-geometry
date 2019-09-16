@@ -46,7 +46,7 @@ public class InteriorAngleSegmentConnectorTest {
             List<Segment> segments = new ArrayList<>();
 
             // act
-            List<SegmentPath> paths = connector.getPaths(segments);
+            List<Polyline> paths = connector.getConnected(segments);
 
             // assert
             Assert.assertEquals(0, paths.size());
@@ -62,7 +62,7 @@ public class InteriorAngleSegmentConnectorTest {
                     );
 
             // act
-            List<SegmentPath> paths = connector.getPaths(segments);
+            List<Polyline> paths = connector.getConnected(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -81,7 +81,7 @@ public class InteriorAngleSegmentConnectorTest {
                     );
 
             // act
-            List<SegmentPath> paths = connector.getPaths(segments);
+            List<Polyline> paths = connector.getConnected(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -98,7 +98,7 @@ public class InteriorAngleSegmentConnectorTest {
             List<Segment> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
 
             // act
-            List<SegmentPath> paths = connector.getPaths(segments);
+            List<Polyline> paths = connector.getConnected(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -126,7 +126,7 @@ public class InteriorAngleSegmentConnectorTest {
             shuffle(segments);
 
             // act
-            List<SegmentPath> paths = connector.getPaths(segments);
+            List<Polyline> paths = connector.getConnected(segments);
 
             // assert
             Assert.assertEquals(2, paths.size());
@@ -151,7 +151,7 @@ public class InteriorAngleSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<SegmentPath> paths = connector.getPaths(segments);
+        List<Polyline> paths = connector.getConnected(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -175,7 +175,7 @@ public class InteriorAngleSegmentConnectorTest {
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<SegmentPath> paths = connector.getPaths(segments);
+        List<Polyline> paths = connector.getConnected(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -198,7 +198,7 @@ public class InteriorAngleSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<SegmentPath> paths = connector.getPaths(segments);
+        List<Polyline> paths = connector.getConnected(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -224,7 +224,7 @@ public class InteriorAngleSegmentConnectorTest {
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<SegmentPath> paths = connector.getPaths(segments);
+        List<Polyline> paths = connector.getConnected(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -245,7 +245,7 @@ public class InteriorAngleSegmentConnectorTest {
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<SegmentPath> paths = InteriorAngleSegmentConnector.connectMaximized(segments);
+        List<Polyline> paths = InteriorAngleSegmentConnector.connectMaximized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -266,7 +266,7 @@ public class InteriorAngleSegmentConnectorTest {
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<SegmentPath> paths = InteriorAngleSegmentConnector.connectMinimized(segments);
+        List<Polyline> paths = InteriorAngleSegmentConnector.connectMinimized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -309,7 +309,7 @@ public class InteriorAngleSegmentConnectorTest {
         return segments;
     }
 
-    private static void assertInfinitePath(SegmentPath path, Segment start, Segment end,
+    private static void assertInfinitePath(Polyline path, Segment start, Segment end,
             Vector2D ... vertices) {
         Assert.assertTrue(path.isInfinite());
         Assert.assertFalse(path.isFinite());
@@ -320,7 +320,7 @@ public class InteriorAngleSegmentConnectorTest {
         assertPathVertices(path, vertices);
     }
 
-    private static void assertFinitePath(SegmentPath path, Vector2D ... vertices)
+    private static void assertFinitePath(Polyline path, Vector2D ... vertices)
     {
         Assert.assertFalse(path.isInfinite());
         Assert.assertTrue(path.isFinite());
@@ -328,7 +328,7 @@ public class InteriorAngleSegmentConnectorTest {
         assertPathVertices(path, vertices);
     }
 
-    private static void assertPathVertices(SegmentPath path, Vector2D ... vertices) {
+    private static void assertPathVertices(Polyline path, Vector2D ... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
         List<Vector2D> actualVertices = path.getVertices();
 

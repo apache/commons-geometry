@@ -157,8 +157,8 @@ public class RegionBSPTree2DTest {
         tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
         // act
-        List<SegmentPath> a = tree.getBoundaryPaths();
-        List<SegmentPath> b = tree.getBoundaryPaths();
+        List<Polyline> a = tree.getBoundaryPaths();
+        List<Polyline> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertSame(a, b);
@@ -171,9 +171,9 @@ public class RegionBSPTree2DTest {
         tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
         // act
-        List<SegmentPath> a = tree.getBoundaryPaths();
+        List<Polyline> a = tree.getBoundaryPaths();
         tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION));
-        List<SegmentPath> b = tree.getBoundaryPaths();
+        List<Polyline> b = tree.getBoundaryPaths();
 
         // assert
         Assert.assertNotSame(a, b);
@@ -187,7 +187,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            tree.getBoundaryPaths().add(SegmentPath.builder(null).build());
+            tree.getBoundaryPaths().add(Polyline.builder(null).build());
         }, UnsupportedOperationException.class);
     }
 
@@ -413,10 +413,10 @@ public class RegionBSPTree2DTest {
         checkClassify(split.getMinus(), RegionLocation.INSIDE, Vector2D.of(0, 1));
         checkClassify(split.getMinus(), RegionLocation.OUTSIDE, Vector2D.of(1, -1));
 
-        List<SegmentPath> minusBoundaryList = split.getMinus().getBoundaryPaths();
+        List<Polyline> minusBoundaryList = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusBoundaryList.size());
 
-        SegmentPath minusBoundary = minusBoundaryList.get(0);
+        Polyline minusBoundary = minusBoundaryList.get(0);
         Assert.assertEquals(1, minusBoundary.getSegments().size());
         Assert.assertTrue(minusBoundary.isInfinite());
         Assert.assertSame(splitter, minusBoundary.getStartSegment().getLine());
@@ -424,10 +424,10 @@ public class RegionBSPTree2DTest {
         checkClassify(split.getPlus(), RegionLocation.OUTSIDE, Vector2D.of(0, 1));
         checkClassify(split.getPlus(), RegionLocation.INSIDE, Vector2D.of(1, -1));
 
-        List<SegmentPath> plusBoundaryList = split.getPlus().getBoundaryPaths();
+        List<Polyline> plusBoundaryList = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusBoundaryList.size());
 
-        SegmentPath plusBoundary = minusBoundaryList.get(0);
+        Polyline plusBoundary = minusBoundaryList.get(0);
         Assert.assertEquals(1, plusBoundary.getSegments().size());
         Assert.assertTrue(plusBoundary.isInfinite());
         Assert.assertSame(splitter, plusBoundary.getStartSegment().getLine());
@@ -465,12 +465,12 @@ public class RegionBSPTree2DTest {
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<SegmentPath> minusPath = split.getMinus().getBoundaryPaths();
+        List<Polyline> minusPath = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusPath.size());
         checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
 
-        List<SegmentPath> plusPath = split.getPlus().getBoundaryPaths();
+        List<Polyline> plusPath = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusPath.size());
         checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(1, 1), Vector2D.ZERO);
@@ -493,7 +493,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertNull(split.getMinus());
 
-        List<SegmentPath> plusPath = split.getPlus().getBoundaryPaths();
+        List<Polyline> plusPath = split.getPlus().getBoundaryPaths();
         Assert.assertEquals(1, plusPath.size());
         checkVertices(plusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
@@ -515,7 +515,7 @@ public class RegionBSPTree2DTest {
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        List<SegmentPath> minusPath = split.getMinus().getBoundaryPaths();
+        List<Polyline> minusPath = split.getMinus().getBoundaryPaths();
         Assert.assertEquals(1, minusPath.size());
         checkVertices(minusPath.get(0), Vector2D.ZERO, Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(0, 1), Vector2D.ZERO);
@@ -573,10 +573,10 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
         assertSegmentsEqual(segment, path.getStartSegment());
     }
@@ -603,10 +603,10 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
         assertSegmentsEqual(segment, path.getSegments().get(0));
     }
@@ -639,10 +639,10 @@ public class RegionBSPTree2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertSame(X_AXIS, secondSegment.getLine());
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
         assertSegmentsEqual(secondSegment, path.getSegments().get(0));
         assertSegmentsEqual(firstSegment, path.getSegments().get(1));
@@ -678,10 +678,10 @@ public class RegionBSPTree2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertEquals(Y_AXIS.reverse(), secondSegment.getLine());
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(2, path.getSegments().size());
         assertSegmentsEqual(secondSegment, path.getSegments().get(0));
         assertSegmentsEqual(firstSegment, path.getSegments().get(1));
@@ -691,7 +691,7 @@ public class RegionBSPTree2DTest {
     public void testGeometricProperties_closedRegion() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(SegmentPath.builder(TEST_PRECISION)
+        tree.insert(Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1))
                 .close());
 
@@ -710,7 +710,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
         checkFiniteSegment(segments.get(2), Vector2D.of(2, 1), Vector2D.ZERO);
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1), Vector2D.ZERO);
@@ -720,7 +720,7 @@ public class RegionBSPTree2DTest {
     public void testGeometricProperties_complementedClosedRegion() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(SegmentPath.builder(TEST_PRECISION)
+        tree.insert(Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1))
                 .close());
 
@@ -741,7 +741,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.ZERO);
         checkFiniteSegment(segments.get(2), Vector2D.of(2, 1), Vector2D.of(1, 0));
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(2, 1), Vector2D.of(1, 0), Vector2D.ZERO);
@@ -779,7 +779,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(6), Vector2D.of(3, 0), Vector2D.of(3, 3));
         checkFiniteSegment(segments.get(7), Vector2D.of(3, 3), Vector2D.of(0, 3));
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(3, 0), Vector2D.of(3, 3),
@@ -822,7 +822,7 @@ public class RegionBSPTree2DTest {
         checkFiniteSegment(segments.get(6), Vector2D.of(3, 0), Vector2D.ZERO);
         checkFiniteSegment(segments.get(7), Vector2D.of(3, 3), Vector2D.of(3, 0));
 
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(0, 3), Vector2D.of(3, 3),
@@ -963,7 +963,7 @@ public class RegionBSPTree2DTest {
         // arrange
         Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION);
 
-        SegmentPath path = SegmentPath.builder(TEST_PRECISION)
+        Polyline path = Polyline.builder(TEST_PRECISION)
             .append(Vector2D.PLUS_X)
             .append(Vector2D.of(1, 1))
             .build();
@@ -1045,10 +1045,10 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(4, path.getSegments().size());
         checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-4, -0.5), Vector2D.of(-2, -0.5));
         checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-2, -0.5), Vector2D.of(-2, 0.5));
@@ -1070,10 +1070,10 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(1, path.getSegments().size());
         Segment segment = path.getStartSegment();
         Assert.assertNull(segment.getStartPoint());
@@ -1113,10 +1113,10 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(4, path.getSegments().size());
         checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, 1), Vector2D.of(-1, 1));
         checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, 1), Vector2D.of(-1, 2));
@@ -1137,10 +1137,10 @@ public class RegionBSPTree2DTest {
         tree.transform(transform);
 
         // assert
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        SegmentPath path = paths.get(0);
+        Polyline path = paths.get(0);
         Assert.assertEquals(4, path.getSegments().size());
         checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, -2), Vector2D.of(-1, -2));
         checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, -2), Vector2D.of(-1, -1));
@@ -1171,7 +1171,7 @@ public class RegionBSPTree2DTest {
         tree.xor(temp);
 
         // assert
-        List<SegmentPath> paths = tree.getBoundaryPaths();
+        List<Polyline> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
 
         checkVertices(paths.get(0), Vector2D.ZERO, Vector2D.of(0, 3), Vector2D.of(6, 3),
@@ -1224,7 +1224,7 @@ public class RegionBSPTree2DTest {
      * @param path
      * @param vertices
      */
-    private static void checkVertices(SegmentPath path, Vector2D ... vertices) {
+    private static void checkVertices(Polyline path, Vector2D ... vertices) {
         Assert.assertTrue("Line segment path is not finite", path.isFinite());
 
         List<Vector2D> actual = path.getVertices();

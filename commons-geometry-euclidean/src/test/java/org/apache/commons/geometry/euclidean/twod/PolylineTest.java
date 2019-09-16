@@ -27,11 +27,11 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.SegmentPath.Builder;
+import org.apache.commons.geometry.euclidean.twod.Polyline.Builder;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SegmentPathTest {
+public class PolylineTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class SegmentPathTest {
     @Test
     public void testFromSegments_empty() {
         // act
-        SegmentPath path = SegmentPath.fromSegments(new ArrayList<>());
+        Polyline path = Polyline.fromSegments(new ArrayList<>());
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -66,7 +66,7 @@ public class SegmentPathTest {
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(a);
+        Polyline path = Polyline.fromSegments(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -93,7 +93,7 @@ public class SegmentPathTest {
         Segment a = Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(a);
+        Polyline path = Polyline.fromSegments(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -125,7 +125,7 @@ public class SegmentPathTest {
         Segment b = Segment.fromPoints(p2, p3, TEST_PRECISION);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(a, b);
+        Polyline path = Polyline.fromSegments(a, b);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -159,7 +159,7 @@ public class SegmentPathTest {
         Segment c = Segment.fromPoints(p3, p1, TEST_PRECISION);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(Arrays.asList(a, b, c));
+        Polyline path = Polyline.fromSegments(Arrays.asList(a, b, c));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -189,7 +189,7 @@ public class SegmentPathTest {
         Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(Arrays.asList(a, b));
+        Polyline path = Polyline.fromSegments(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -218,7 +218,7 @@ public class SegmentPathTest {
         Segment b = Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(Arrays.asList(a, b));
+        Polyline path = Polyline.fromSegments(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -247,7 +247,7 @@ public class SegmentPathTest {
         Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(Arrays.asList(a, b));
+        Polyline path = Polyline.fromSegments(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -280,22 +280,22 @@ public class SegmentPathTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            SegmentPath.fromSegments(a, b);
+            Polyline.fromSegments(a, b);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            SegmentPath.fromSegments(c, b);
+            Polyline.fromSegments(c, b);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            SegmentPath.fromSegments(a, d);
+            Polyline.fromSegments(a, d);
         }, IllegalStateException.class);
     }
 
     @Test
     public void testFromVertices_empty() {
         // act
-        SegmentPath path = SegmentPath.fromVertices(new ArrayList<>(), TEST_PRECISION);
+        Polyline path = Polyline.fromVertices(new ArrayList<>(), TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -318,7 +318,7 @@ public class SegmentPathTest {
     public void testFromVertices_singleVertex_failsToCreatePath() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            SegmentPath.fromVertices(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
+            Polyline.fromVertices(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
         }, IllegalStateException.class);
     }
 
@@ -329,7 +329,7 @@ public class SegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
 
         // act
-        SegmentPath path = SegmentPath.fromVertices(Arrays.asList(p1, p2), TEST_PRECISION);
+        Polyline path = Polyline.fromVertices(Arrays.asList(p1, p2), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -359,7 +359,7 @@ public class SegmentPathTest {
         Vector2D p4 = Vector2D.of(0, 1);
 
         // act
-        SegmentPath path = SegmentPath.fromVertices(Arrays.asList(p1, p2, p3, p4), TEST_PRECISION);
+        Polyline path = Polyline.fromVertices(Arrays.asList(p1, p2, p3, p4), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -391,7 +391,7 @@ public class SegmentPathTest {
         Vector2D p4 = Vector2D.of(0, 1);
 
         // act
-        SegmentPath path = SegmentPath.fromVertices(Arrays.asList(p1, p2, p3, p4, p1), TEST_PRECISION);
+        Polyline path = Polyline.fromVertices(Arrays.asList(p1, p2, p3, p4, p1), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -418,7 +418,7 @@ public class SegmentPathTest {
     @Test
     public void testFromVertexLoop_empty() {
         // act
-        SegmentPath path = SegmentPath.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
+        Polyline path = Polyline.fromVertexLoop(new ArrayList<>(), TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -441,7 +441,7 @@ public class SegmentPathTest {
     public void testFromVertexLoop_singleVertex_failsToCreatePath() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            SegmentPath.fromVertexLoop(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
+            Polyline.fromVertexLoop(Arrays.asList(Vector2D.ZERO), TEST_PRECISION);
         }, IllegalStateException.class);
     }
 
@@ -453,7 +453,7 @@ public class SegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
 
         // act
-        SegmentPath path = SegmentPath.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
+        Polyline path = Polyline.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -478,7 +478,7 @@ public class SegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
 
         // act
-        SegmentPath path = SegmentPath.fromVertexLoop(Arrays.asList(p1, p2, p3, Vector2D.of(0, 0)), TEST_PRECISION);
+        Polyline path = Polyline.fromVertexLoop(Arrays.asList(p1, p2, p3, Vector2D.of(0, 0)), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -502,7 +502,7 @@ public class SegmentPathTest {
         List<Segment> inputSegments = new ArrayList<>(Arrays.asList(a));
 
         // act
-        SegmentPath path = SegmentPath.fromSegments(inputSegments);
+        Polyline path = Polyline.fromSegments(inputSegments);
 
         inputSegments.clear();
 
@@ -518,7 +518,7 @@ public class SegmentPathTest {
     @Test
     public void testIterable() {
         // arrange
-        SegmentPath path = SegmentPath.builder(TEST_PRECISION)
+        Polyline path = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1)).build();
 
         // act
@@ -536,7 +536,7 @@ public class SegmentPathTest {
     @Test
     public void testToTree() {
         // arrange
-        SegmentPath path = SegmentPath.builder(TEST_PRECISION)
+        Polyline path = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
                 .close();
 
@@ -558,9 +558,9 @@ public class SegmentPathTest {
     @Test
     public void testSimplify() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
-        SegmentPath path = builder.appendVertices(
+        Polyline path = builder.appendVertices(
                 Vector2D.of(-1, 0),
                 Vector2D.ZERO,
                 Vector2D.of(1, 0),
@@ -569,7 +569,7 @@ public class SegmentPathTest {
             .build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         List<Segment> segments = result.getSegments();
@@ -581,9 +581,9 @@ public class SegmentPathTest {
     @Test
     public void testSimplify_startAndEndCombined() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
-        SegmentPath path = builder.appendVertices(
+        Polyline path = builder.appendVertices(
                 Vector2D.ZERO,
                 Vector2D.of(1, 0),
                 Vector2D.of(0, 1),
@@ -591,7 +591,7 @@ public class SegmentPathTest {
             .close();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -608,12 +608,12 @@ public class SegmentPathTest {
     @Test
     public void testSimplify_empty() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -629,13 +629,13 @@ public class SegmentPathTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
-        SegmentPath path = builder
+        Builder builder = Polyline.builder(TEST_PRECISION);
+        Polyline path = builder
                 .append(line.span())
                 .build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -656,14 +656,14 @@ public class SegmentPathTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
         Split<Segment> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
-        SegmentPath path = builder
+        Builder builder = Polyline.builder(TEST_PRECISION);
+        Polyline path = builder
                 .append(split.getMinus())
                 .append(split.getPlus())
                 .build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -682,9 +682,9 @@ public class SegmentPathTest {
     public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
         // arrange
         Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
-        SegmentPath path = builder
+        Polyline path = builder
                 .append(xAxis.segment(0, 1))
                 .appendVertices(
                         Vector2D.of(2, 1),
@@ -693,7 +693,7 @@ public class SegmentPathTest {
             .build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -711,15 +711,15 @@ public class SegmentPathTest {
     @Test
     public void testSimplify_subsequentCallsToReturnedObjectReturnSameObject() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
-        SegmentPath path = builder.appendVertices(
+        Builder builder = Polyline.builder(TEST_PRECISION);
+        Polyline path = builder.appendVertices(
                     Vector2D.ZERO,
                     Vector2D.of(1, 0),
                     Vector2D.of(2, 0))
                 .build();
 
         // act
-        SegmentPath result = path.simplify();
+        Polyline result = path.simplify();
 
         // assert
         Assert.assertNotSame(path, result);
@@ -732,27 +732,27 @@ public class SegmentPathTest {
         Line yAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION);
         Line xAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
 
-        SegmentPath empty = SegmentPath.empty();
+        Polyline empty = Polyline.empty();
 
-        SegmentPath singleFullSegment = SegmentPath.fromSegments(xAxis.span());
-        SegmentPath singleFiniteSegment = SegmentPath.fromSegments(
+        Polyline singleFullSegment = Polyline.fromSegments(xAxis.span());
+        Polyline singleFiniteSegment = Polyline.fromSegments(
                 Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
 
-        SegmentPath startOpenPath = SegmentPath.builder(TEST_PRECISION)
+        Polyline startOpenPath = Polyline.builder(TEST_PRECISION)
                 .append(xAxis.segmentTo(Vector2D.PLUS_X))
                 .append(Vector2D.of(1, 1))
                 .build();
 
-        SegmentPath endOpenPath = SegmentPath.builder(TEST_PRECISION)
+        Polyline endOpenPath = Polyline.builder(TEST_PRECISION)
                 .append(Vector2D.of(0, 1))
                 .append(Vector2D.ZERO)
                 .append(xAxis.segmentFrom(Vector2D.ZERO))
                 .build();
 
-        SegmentPath doubleOpenPath = SegmentPath.fromSegments(yAxis.segmentTo(Vector2D.ZERO),
+        Polyline doubleOpenPath = Polyline.fromSegments(yAxis.segmentTo(Vector2D.ZERO),
                 xAxis.segmentFrom(Vector2D.ZERO));
 
-        SegmentPath nonOpenPath = SegmentPath.builder(TEST_PRECISION)
+        Polyline nonOpenPath = Polyline.builder(TEST_PRECISION)
                 .append(Vector2D.ZERO)
                 .append(Vector2D.PLUS_X)
                 .append(Vector2D.of(1, 1))
@@ -795,7 +795,7 @@ public class SegmentPathTest {
         Segment c = Segment.fromPoints(p3, p4, TEST_PRECISION);
         Segment d = Segment.fromPoints(p4, p1, TEST_PRECISION);
 
-        Builder builder = SegmentPath.builder(null);
+        Builder builder = Polyline.builder(null);
 
         // act
         builder.prepend(b)
@@ -803,7 +803,7 @@ public class SegmentPathTest {
             .prepend(a)
             .append(d);
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -819,7 +819,7 @@ public class SegmentPathTest {
         // arrange
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
-        Builder builder = SegmentPath.builder(null);
+        Builder builder = Polyline.builder(null);
         builder.append(a);
 
         // act
@@ -840,7 +840,7 @@ public class SegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(1, 0);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -849,7 +849,7 @@ public class SegmentPathTest {
             .append(p4)
             .append(p1);
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -864,7 +864,7 @@ public class SegmentPathTest {
     public void testBuilder_prependAndAppend_noPrecisionSpecified() {
         // arrange
         Vector2D p = Vector2D.ZERO;
-        Builder builder = SegmentPath.builder(null);
+        Builder builder = Polyline.builder(null);
 
         String msg = "Unable to create line segment: no vertex precision specified";
 
@@ -882,7 +882,7 @@ public class SegmentPathTest {
     public void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
         Vector2D p = Vector2D.PLUS_X;
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
 
@@ -901,7 +901,7 @@ public class SegmentPathTest {
         // arrange
         Vector2D p = Vector2D.ZERO;
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
         builder.append(p);
 
         // act
@@ -913,7 +913,7 @@ public class SegmentPathTest {
         builder.append(Vector2D.PLUS_X);
 
         // assert
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         List<Segment> segments = path.getSegments();
         Assert.assertEquals(1, segments.size());
@@ -931,7 +931,7 @@ public class SegmentPathTest {
         Segment a = Segment.fromPoints(p1, p2, TEST_PRECISION);
         Segment c = Segment.fromPoints(p3, p4, TEST_PRECISION);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.prepend(p2)
@@ -940,7 +940,7 @@ public class SegmentPathTest {
             .prepend(a)
             .append(p1);
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -959,13 +959,13 @@ public class SegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.appendVertices(p1, p2)
             .appendVertices(Arrays.asList(p3, p4, p1));
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -984,13 +984,13 @@ public class SegmentPathTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.prependVertices(p3, p4, p1)
             .prependVertices(Arrays.asList(p1, p2));
 
-        SegmentPath path = builder.build();
+        Polyline path = builder.build();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -1008,14 +1008,14 @@ public class SegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
             .append(p2)
             .append(p3);
 
-        SegmentPath path = builder.close();
+        Polyline path = builder.close();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -1032,7 +1032,7 @@ public class SegmentPathTest {
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
         builder.append(p1)
@@ -1040,7 +1040,7 @@ public class SegmentPathTest {
             .append(p3)
             .append(p1);
 
-        SegmentPath path = builder.close();
+        Polyline path = builder.close();
 
         // assert
         List<Segment> segments = path.getSegments();
@@ -1053,7 +1053,7 @@ public class SegmentPathTest {
     @Test
     public void testBuilder_close_infiniteSegmentAtStart() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION)
                 .segment(Double.NEGATIVE_INFINITY, 1))
@@ -1062,13 +1062,13 @@ public class SegmentPathTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.close();
-        }, IllegalStateException.class, "Unable to close line segment path: path is infinite");
+        }, IllegalStateException.class, "Unable to close polyline: polyline is infinite");
     }
 
     @Test
     public void testBuilder_close_infiniteSegmentAtEnd() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         builder
             .append(Vector2D.ZERO)
@@ -1079,16 +1079,16 @@ public class SegmentPathTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.close();
-        }, IllegalStateException.class, "Unable to close line segment path: path is infinite");
+        }, IllegalStateException.class, "Unable to close polyline: polyline is infinite");
     }
 
     @Test
     public void testBuilder_close_emptyPath() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
 
         // act
-        SegmentPath path = builder.close();
+        Polyline path = builder.close();
 
         // assert
         Assert.assertEquals(0, path.getSegments().size());
@@ -1097,11 +1097,11 @@ public class SegmentPathTest {
     @Test
     public void testBuilder_close_obtuseTriangle() {
         // arrange
-        Builder builder = SegmentPath.builder(TEST_PRECISION);
+        Builder builder = Polyline.builder(TEST_PRECISION);
         builder.appendVertices(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 1));
 
         // act
-        SegmentPath path = builder.close();
+        Polyline path = builder.close();
 
         // assert
         Assert.assertEquals(3, path.getSegments().size());

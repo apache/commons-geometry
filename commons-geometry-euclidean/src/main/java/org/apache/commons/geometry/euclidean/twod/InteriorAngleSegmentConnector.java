@@ -73,8 +73,8 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * @return a list of connected line segment paths
      * @see Maximize
      */
-    public static List<SegmentPath> connectMaximized(final Collection<Segment> segments) {
-        return new Maximize().getPaths(segments);
+    public static List<Polyline> connectMaximized(final Collection<Segment> segments) {
+        return new Maximize().getConnected(segments);
     }
 
     /** Convenience method for connecting a set of line segments with interior angles minimized
@@ -83,8 +83,8 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * @return a list of connected line segment paths
      * @see Minimize
      */
-    public static List<SegmentPath> connectMinimized(final Collection<Segment> segments) {
-        return new Minimize().getPaths(segments);
+    public static List<Polyline> connectMinimized(final Collection<Segment> segments) {
+        return new Minimize().getConnected(segments);
     }
 
     /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment

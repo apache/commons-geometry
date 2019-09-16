@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
-import org.apache.commons.geometry.euclidean.twod.SegmentPath;
+import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Binary space partitioning (BSP) tree representing a region in three dimensional
@@ -411,7 +411,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             final Plane plane = Plane.fromPoints(vertices, precision);
             final List<Vector2D> subspaceVertices = plane.toSubspace(vertices);
 
-            final SegmentPath path = SegmentPath.fromVertexLoop(subspaceVertices, precision);
+            final Polyline path = Polyline.fromVertexLoop(subspaceVertices, precision);
             return add(new SubPlane(plane, path.toTree()));
         }
 

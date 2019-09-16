@@ -828,7 +828,7 @@ public class SegmentTest {
     @Test
     public void testEmpty() {
         // act
-        SegmentPath path = SegmentPath.empty();
+        Polyline path = Polyline.empty();
 
         // assert
         Assert.assertTrue(path.isEmpty());

@@ -26,37 +26,41 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class representing a sequence of zero or more line segments connected end
- * to end.
+/** Class representing a polyline, ie, a connected series of line segments. The line
+ * segments in the polyline are connected end to end, with the end vertex of the previous
+ * line segment equivalent to the start vertex of the next line segment. The first segment,
+ * the last segment, or both may be infinite.
  *
  * <p>This class is guaranteed to be immutable.</p>
+ * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class SegmentPath implements Iterable<Segment>, Serializable {
+public class Polyline implements Iterable<Segment>, Serializable {
 
+    /** Serializable UID */
     private static final long serialVersionUID = 20190522L;
 
-    /** Line semgent path instance containing no segments. */
-    private static final SegmentPath EMPTY = new SegmentPath(Collections.emptyList());
+    /** Polyline instance containing no segments. */
+    private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
-    /** List of line segments comprising the path. */
+    /** List of line segments comprising the instance. */
     private List<Segment> segments;
 
     /** Simple constructor. No validation is performed on the input segments.
-     * @param segments line segments comprising the path
+     * @param segments line segments comprising the instance
      */
-    private SegmentPath(final List<Segment> segments) {
+    private Polyline(final List<Segment> segments) {
         this.segments = Collections.unmodifiableList(segments);
     }
 
-    /** Get the line segments comprising the path.
-     * @return the line segments comprising the path
+    /** Get the line segments comprising the polyline.
+     * @return the line segments comprising the polyline
      */
     public List<Segment> getSegments() {
         return segments;
     }
 
-    /** Get the start segment for the path or null if the path is empty.
-     * @return the start segment for the path or null if the path is empty
+    /** Get the start segment for the polyline or null if the polyline is empty.
+     * @return the start segment for the polyline or null if the polyline is empty
      */
     public Segment getStartSegment() {
         if (!isEmpty()) {
@@ -65,8 +69,8 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return null;
     }
 
-    /** Get the end segment for the path or null if the path is empty.
-     * @return the end segment for the path or null if the path is empty
+    /** Get the end segment for the polyline or null if the polyline is empty.
+     * @return the end segment for the polyline or null if the polyline is empty
      */
     public Segment getEndSegment() {
         if (!isEmpty()) {
@@ -75,28 +79,28 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return null;
     }
 
-    /** Get the start vertex for the path or null if the path is empty
+    /** Get the start vertex for the polyline or null if the polyline is empty
      * or has an infinite start segment.
-     * @return the start vertex for the path
+     * @return the start vertex for the polyline
      */
     public Vector2D getStartVertex() {
         final Segment seg = getStartSegment();
         return (seg != null) ? seg.getStartPoint() : null;
     }
 
-    /** Get the end vertex for the path or null if the path is empty
+    /** Get the end vertex for the polyline or null if the polyline is empty
      * or has an infinite end segment.
-     * @return the end vertex for the path
+     * @return the end vertex for the polyline
      */
     public Vector2D getEndVertex() {
         final Segment seg = getEndSegment();
         return (seg != null) ? seg.getEndPoint() : null;
     }
 
-    /** Get the vertices contained in the path in the order they appear.
-     * Closed paths contain the start point at the beginning of the list
+    /** Get the vertices contained in the polyline in the order they appear.
+     * Closed polyline contain the start point at the beginning of the list
      * as well as the end.
-     * @return the vertices contained in the path in order they appear
+     * @return the vertices contained in the polyline in order they appear
      */
     public List<Vector2D> getVertices() {
         final List<Vector2D> vertices = new ArrayList<>();
@@ -120,34 +124,34 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return vertices;
     }
 
-    /** Return true if the path has a start of end line segment that
+    /** Return true if the polyline has a start of end line segment that
      * extends to infinity.
-     * @return true if the path is infinite
+     * @return true if the polyline is infinite
      */
     public boolean isInfinite() {
         return !isEmpty() && (getStartVertex() == null || getEndVertex() == null);
     }
 
-    /** Return true if the path has a finite length. This will be true if there are
-     * no segments in the path or if all segments have a finite length.
-     * @return true if the path is finite
+    /** Return true if the polyline has a finite length. This will be true if there are
+     * no segments in the polyline or if all segments have a finite length.
+     * @return true if the polyline is finite
      */
     public boolean isFinite() {
         return !isInfinite();
     }
 
-    /** Return true if the path does not contain any line segments.
-     * @return true if the path does not contain any line segments
+    /** Return true if the polyline does not contain any line segments.
+     * @return true if the polyline does not contain any line segments
      */
     public boolean isEmpty() {
         return segments.isEmpty();
     }
 
-    /** Return true if the path is closed, meaning that the end
+    /** Return true if the polyline is closed, meaning that the end
      * point for the last line segment is equal to the start point
-     * for the path.
+     * for the polyline.
      * @return true if the end point for the last line segment is
-     *      equal to the start point for the path.
+     *      equal to the start point for the polyline.
      */
     public boolean isClosed() {
         final Segment endSegment = getEndSegment();
@@ -172,11 +176,11 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return tree;
     }
 
-    /** Simplify this path, if possible, by combining adjacent segments that lie on the
+    /** Simplify this polyline, if possible, by combining adjacent segments that lie on the
      * same line (as determined by {@link Line#equals(Object)}).
-     * @return a simplified path instance
+     * @return a simplified instance
      */
-    public SegmentPath simplify() {
+    public Polyline simplify() {
         final List<Segment> simplified = new ArrayList<>();
 
         final int size = segments.size();
@@ -223,7 +227,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             simplified.set(0, combined);
         }
 
-        return new SimplifiedLineSegmentPath(simplified);
+        return new SimplifiedPolyline(simplified);
     }
 
     /** {@inheritDoc} */
@@ -232,41 +236,41 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return segments.iterator();
     }
 
-    /** Return a string representation of the segment path.
+    /** Return a string representation of the segment polyline.
      *
      * <p>In order to keep the string representation short but useful, the exact format of the return
-     * value depends on the properties of the path. See below for examples.
+     * value depends on the properties of the polyline. See below for examples.
      *
      * <ul>
      *      <li>Empty path
      *          <ul>
-     *              <li>{@code SegmentPath[empty= true]}</li>
+     *              <li>{@code Polyline[empty= true]}</li>
      *          </ul>
  *          </li>
  *          <li>Single segment
  *              <ul>
- *                  <li>{@code SegmentPath[segment= Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]]}</li>
- *                  <li>{@code SegmentPath[segment= Segment[start= (0.0, 0.0), end= (1.0, 0.0)]]}</li>
+ *                  <li>{@code Polyline[segment= Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]]}</li>
+ *                  <li>{@code Polyline[segment= Segment[start= (0.0, 0.0), end= (1.0, 0.0)]]}</li>
  *              </ul>
  *          </li>
  *          <li>Path with infinite start segment
  *              <ul>
- *                  <li>{@code SegmentPath[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
+ *                  <li>{@code Polyline[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
  *              </ul>
  *          </li>
  *          <li>Path with infinite end segment
  *              <ul>
- *                  <li>{@code SegmentPath[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+ *                  <li>{@code Polyline[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
  *              </ul>
  *          </li>
  *          <li>Path with infinite start and end segments
  *              <ul>
- *                  <li>{@code SegmentPath[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+ *                  <li>{@code Polyline[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
  *              </ul>
  *          </li>
  *          <li>Path with no infinite segments
  *              <ul>
- *                  <li>{@code SegmentPath[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
+ *                  <li>{@code Polyline[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
  *              </ul>
  *          </li>
      * </ul>
@@ -319,21 +323,21 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return new Builder(precision);
     }
 
-    /** Build a new line segment path from the given segments.
-     * @param segments the segment to comprise the path
-     * @return new line segment path containing the given line segment in order
-     * @throws IllegalStateException if the segments to not form a connected path
+    /** Build a new polyline from the given segments.
+     * @param segments the segment to comprise the polyline
+     * @return new polyline containing the given line segment in order
+     * @throws IllegalStateException if the segments do not form a connected polyline
      */
-    public static SegmentPath fromSegments(final Segment ... segments) {
+    public static Polyline fromSegments(final Segment ... segments) {
         return fromSegments(Arrays.asList(segments));
     }
 
-    /** Build a new line segment path from the given segments.
+    /** Build a new polyline from the given segments.
      * @param segments the segment to comprise the path
-     * @return new line segment path containing the given line segment in order
-     * @throws IllegalStateException if the segments to not form a connected path
+     * @return new polyline containing the given line segments in order
+     * @throws IllegalStateException if the segments do not form a connected polyline
      */
-    public static SegmentPath fromSegments(final Collection<Segment> segments) {
+    public static Polyline fromSegments(final Collection<Segment> segments) {
         Builder builder = builder(null);
 
         for (Segment segment : segments) {
@@ -343,27 +347,27 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         return builder.build();
     }
 
-    /** Build a new line segment path from the given vertices.
+    /** Build a new polyline from the given vertices.
      * @param vertices the vertices to construct the path from
      * @param precision precision context used to construct the line segment
      *      instances for the path
-     * @return new line segment path constructed from the given vertices
+     * @return new polyline constructed from the given vertices
      */
-    public static SegmentPath fromVertices(final Collection<Vector2D> vertices,
+    public static Polyline fromVertices(final Collection<Vector2D> vertices,
             final DoublePrecisionContext precision) {
 
         return builder(precision).appendVertices(vertices).build();
     }
 
-    /** Build a new line segment path from the given vertices. A line segment is created
+    /** Build a new polyline from the given vertices. A line segment is created
      * from the last vertex given to the first one, if the two vertices are not considered
      * equal using the given precision context.
      * @param vertices the vertices to construct the closed path from
      * @param precision precision context used to construct the line segment
      *      instances for the path
-     * @return new closed line segment path constructed from the given vertices
+     * @return new closed polyline constructed from the given vertices
      */
-    public static SegmentPath fromVertexLoop(final Collection<Vector2D> vertices,
+    public static Polyline fromVertexLoop(final Collection<Vector2D> vertices,
             final DoublePrecisionContext precision) {
 
         return builder(precision).appendVertices(vertices).close();
@@ -372,30 +376,30 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
     /** Return a line segment path containing no segments.
      * @return a line segment path containing no segments.
      */
-    public static SegmentPath empty() {
+    public static Polyline empty() {
         return EMPTY;
     }
 
-    /** Class used to build line segment paths.
+    /** Class used to build polylines.
      */
     public static final class Builder implements Serializable {
 
         /** Serializable UID */
         private static final long serialVersionUID = 20190522L;
 
-        /** Line segments appended to the path. */
+        /** Line segments appended to the polyline. */
         private List<Segment> appendedSegments = null;
 
-        /** Line segments prepended to the path. */
+        /** Line segments prepended to the polyline. */
         private List<Segment> prependedSegments = null;
 
         /** Precision context used when creating line segments directly from vertices. */
         private DoublePrecisionContext precision;
 
-        /** The current vertex at the start of the path. */
+        /** The current vertex at the start of the polyline. */
         private Vector2D startVertex;
 
-        /** The current vertex at the end of the path. */
+        /** The current vertex at the end of the polyline. */
         private Vector2D endVertex;
 
         /** The precision context used when performing comparisons involving the current
@@ -426,9 +430,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Get the line segment at the start of the path or null if
+        /** Get the line segment at the start of the polyline or null if
          * it does not exist.
-         * @return the line segment at the start of the path
+         * @return the line segment at the start of the polyline
          */
         public Segment getStartSegment() {
             Segment start = getLast(prependedSegments);
@@ -438,9 +442,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return start;
         }
 
-        /** Get the line segment at the end of the path or null if
+        /** Get the line segment at the end of the polyline or null if
          * it does not exist.
-         * @return the line segment at the end of the path
+         * @return the line segment at the end of the polyline
          */
         public Segment getEndSegment() {
             Segment end = getLast(appendedSegments);
@@ -450,9 +454,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return end;
         }
 
-        /** Append a line segment to the end of the path.
+        /** Append a line segment to the end of the polyline.
          * @return the current builder instance
-         * @throws IllegalStateException if the path contains a previous segment
+         * @throws IllegalStateException if the polyline contains a previous segment
          *      and the end vertex of the previous segment is not equivalent to the
          *      start vertex of the given segment.
          */
@@ -463,7 +467,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Add a vertex to the end of this path. If the path already has an end vertex,
+        /** Add a vertex to the end of this polyline. If the polyline already has an end vertex,
          * then a line segment is added between the previous end vertex and this vertex,
          * using the configured precision context.
          * @param vertex the vertex to add
@@ -494,7 +498,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Convenience method for appending a collection of vertices to the path in a single method call.
+        /** Convenience method for appending a collection of vertices to the polyline in a single method call.
          * @param vertices the vertices to append
          * @return this instance
          * @see #append(Vector2D)
@@ -507,7 +511,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Convenience method for appending multiple vertices to the path at once.
+        /** Convenience method for appending multiple vertices to the polyline at once.
          * @param vertices the vertices to append
          * @return this instance
          * @see #append(Vector2D)
@@ -516,9 +520,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return appendVertices(Arrays.asList(vertices));
         }
 
-        /** Prepend a line segment to the beginning of the path.
+        /** Prepend a line segment to the beginning of the polyline.
          * @return the current builder instance
-         * @throws IllegalStateException if the path contains a start segment
+         * @throws IllegalStateException if the polyline contains a start segment
          *      and the end vertex of the given segment is not equivalent to the
          *      start vertex of the start segment.
          */
@@ -529,7 +533,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Add a vertex to the front of this path. If the path already has a start vertex,
+        /** Add a vertex to the front of this polyline. If the polyline already has a start vertex,
          * then a line segment is added between this vertex and the previous start vertex,
          * using the configured precision context.
          * @param vertex the vertex to add
@@ -560,9 +564,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Convenience method for prepending a collection of vertices to the path in a single method call.
+        /** Convenience method for prepending a collection of vertices to the polyline in a single method call.
          * The vertices are logically prepended as a single group, meaning that the first vertex
-         * in the given collection appears as the first vertex in the path after this method call.
+         * in the given collection appears as the first vertex in the polyline after this method call.
          * Internally, this means that the vertices are actually passed to the {@link #prepend(Vector2D)}
          * method in reverse order.
          * @param vertices the vertices to prepend
@@ -573,9 +577,9 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return prependVertices(vertices.toArray(new Vector2D[0]));
         }
 
-        /** Convenience method for prepending multiple vertices to the path in a single method call.
+        /** Convenience method for prepending multiple vertices to the polyline in a single method call.
          * The vertices are logically prepended as a single group, meaning that the first vertex
-         * in the given collection appears as the first vertex in the path after this method call.
+         * in the given collection appears as the first vertex in the polyline after this method call.
          * Internally, this means that the vertices are actually passed to the {@link #prepend(Vector2D)}
          * method in reverse order.
          * @param vertices the vertices to prepend
@@ -590,10 +594,10 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Close the current path and build a new {@link SegmentPath} instance.
-         * @return line segment path
+        /** Close the current polyline and build a new {@link Polyline} instance.
+         * @return new closed polyline instance
          */
-        public SegmentPath close() {
+        public Polyline close() {
             final Segment end = getEndSegment();
 
             if (end != null) {
@@ -603,17 +607,17 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
                     }
                 }
                 else {
-                    throw new IllegalStateException("Unable to close line segment path: path is infinite");
+                    throw new IllegalStateException("Unable to close polyline: polyline is infinite");
                 }
             }
 
             return build();
         }
 
-        /** Build a {@link SegmentPath} instance from the configured path.
-         * @return line segment path
+        /** Build a {@link Polyline} instance from the configured polyline.
+         * @return new polyline instance
          */
-        public SegmentPath build() {
+        public Polyline build() {
             // combine all of the segments
             List<Segment> result = null;
 
@@ -636,16 +640,16 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             }
 
             if (result.isEmpty() && startVertex != null) {
-                throw new IllegalStateException("Unable to create line segment path; only a single vertex provided: " + startVertex);
+                throw new IllegalStateException("Unable to create polyline; only a single vertex provided: " + startVertex);
             }
 
             // clear internal state
             appendedSegments = null;
             prependedSegments = null;
 
-            // build the final path instance, using the shared empty instance if
+            // build the final polyline instance, using the shared empty instance if
             // no segments are present
-            return result.isEmpty() ? empty() : new SegmentPath(result);
+            return result.isEmpty() ? empty() : new Polyline(result);
         }
 
         /** Validate that the given segments are connected, meaning that the end vertex of {@code previous}
@@ -663,13 +667,13 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
                 if (nextStartVertex == null || previousEndVertex == null ||
                         !(nextStartVertex.eq(previousEndVertex, precision))) {
 
-                    throw new IllegalStateException("Path line segments are not connected: " +
+                    throw new IllegalStateException("Polyline segments are not connected: " +
                         "previous= " + previous + ", next= " + next);
                 }
             }
         }
 
-        /** Get the precision context used when adding raw vertices to the path. An exception is thrown
+        /** Get the precision context used when adding raw vertices to the polyline. An exception is thrown
          * if no precision has been specified.
          * @return the precision context used when creating working with raw vertices
          * @throws IllegalStateException if no precision context is configured
@@ -682,7 +686,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             return precision;
         }
 
-        /** Append the given, validated segment to the path.
+        /** Append the given, validated segment to the polyline.
          * @param segment validated segment to append
          */
         private void appendInternal(final Segment segment) {
@@ -701,7 +705,7 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
             appendedSegments.add(segment);
         }
 
-        /** Prepend the given, validated segment to the path.
+        /** Prepend the given, validated segment to the polyline.
          * @param segment validated segment to prepend
          */
         private void prependInternal(final Segment segment) {
@@ -745,11 +749,11 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
         }
     }
 
-    /** Internal class returned when a line segment path is simplified to remove
+    /** Internal class returned when a polyline is simplified to remove
      * unecessary line segments divisions. The {@link #simplify()} method on this
      * class simply returns the same instance.
      */
-    private static class SimplifiedLineSegmentPath extends SegmentPath
+    private static class SimplifiedPolyline extends Polyline
     {
         /** Serializable UID */
         private static final long serialVersionUID = 20190619;
@@ -759,13 +763,13 @@ public class SegmentPath implements Iterable<Segment>, Serializable {
          * a valid, simplified path.
          * @param segments line segments comprising the path
          */
-        private SimplifiedLineSegmentPath(final List<Segment> segments) {
+        private SimplifiedPolyline(final List<Segment> segments) {
             super(segments);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SegmentPath simplify() {
+        public Polyline simplify() {
             // already simplified
             return this;
         }

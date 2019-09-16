@@ -103,7 +103,7 @@ public class ConvexAreaTest {
         // assert
         Assert.assertNotSame(area, transformed);
 
-        List<SegmentPath> paths = transformed.getBoundaryPaths();
+        List<Polyline> paths = transformed.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
         List<Segment> segments = paths.get(0).getSegments();
@@ -901,7 +901,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_empty() {
         // act
-        ConvexArea area = ConvexArea.fromPath(SegmentPath.empty());
+        ConvexArea area = ConvexArea.fromPath(Polyline.empty());
 
         // assert
         Assert.assertTrue(area.isFull());
@@ -910,7 +910,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_infinite() {
         // act
-        ConvexArea area = ConvexArea.fromPath(SegmentPath.fromVertices(
+        ConvexArea area = ConvexArea.fromPath(Polyline.fromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X),TEST_PRECISION));
 
         // assert
@@ -929,7 +929,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_finite() {
         // act
-        ConvexArea area = ConvexArea.fromPath(SegmentPath.fromVertexLoop(
+        ConvexArea area = ConvexArea.fromPath(Polyline.fromVertexLoop(
                 Arrays.asList(
                         Vector2D.ZERO,
                         Vector2D.PLUS_X,
@@ -950,7 +950,7 @@ public class ConvexAreaTest {
     public void testFromPath_clockwiseWinding() {
         // act
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromPath(SegmentPath.fromVertexLoop(
+            ConvexArea.fromPath(Polyline.fromVertexLoop(
                     Arrays.asList(
                             Vector2D.ZERO,
                             Vector2D.PLUS_Y,

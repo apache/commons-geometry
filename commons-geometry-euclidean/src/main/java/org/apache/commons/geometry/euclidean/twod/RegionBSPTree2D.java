@@ -37,7 +37,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     private static final long serialVersionUID = 20190519L;
 
     /** List of line segment paths comprising the region boundary. */
-    private List<SegmentPath> boundaryPaths;
+    private List<Polyline> boundaryPaths;
 
     /** Create a new, empty region.
      */
@@ -82,7 +82,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * interior of the region.
      * @return line segment paths representing the region boundary
      */
-    public List<SegmentPath> getBoundaryPaths() {
+    public List<Polyline> getBoundaryPaths() {
         if (boundaryPaths == null) {
             boundaryPaths = Collections.unmodifiableList(computeBoundaryPaths());
         }
@@ -154,12 +154,12 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** Compute the line segment paths comprising the region boundary.
      * @return the line segment paths comprising the region boundary
      */
-    private List<SegmentPath> computeBoundaryPaths() {
+    private List<Polyline> computeBoundaryPaths() {
         final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
         connector.connect(boundaries());
 
-        return connector.getPaths().stream()
-                .map(SegmentPath::simplify).collect(Collectors.toList());
+        return connector.getConnected().stream()
+                .map(Polyline::simplify).collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
@@ -365,7 +365,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param path path containing line segments to add
          * @return this builder instance
          */
-        public Builder add(final SegmentPath path) {
+        public Builder add(final Polyline path) {
             for (Segment segment : path) {
                 add(segment);
             }
