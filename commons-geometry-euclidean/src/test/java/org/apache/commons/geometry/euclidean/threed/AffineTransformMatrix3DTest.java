@@ -57,6 +57,43 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
+    public void testFromColumnVectors_threeVectors() {
+        // arrange
+        Vector3D u = Vector3D.of(1, 2, 3);
+        Vector3D v = Vector3D.of(4, 5, 6);
+        Vector3D w = Vector3D.of(7, 8, 9);
+
+        // act
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.fromColumnVectors(u, v, w);
+
+        // assert
+        Assert.assertArrayEquals(new double[] {
+                1, 4, 7, 0,
+                2, 5, 8, 0,
+                3, 6, 9, 0
+        }, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testFromColumnVectors_fourVectors() {
+        // arrange
+        Vector3D u = Vector3D.of(1, 2, 3);
+        Vector3D v = Vector3D.of(4, 5, 6);
+        Vector3D w = Vector3D.of(7, 8, 9);
+        Vector3D t = Vector3D.of(10, 11, 12);
+
+        // act
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.fromColumnVectors(u, v, w, t);
+
+        // assert
+        Assert.assertArrayEquals(new double[] {
+                1, 4, 7, 10,
+                2, 5, 8, 11,
+                3, 6, 9, 12
+        }, transform.toArray(), 0.0);
+    }
+
+    @Test
     public void testIdentity() {
         // act
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity();
@@ -618,6 +655,90 @@ public class AffineTransformMatrix3DTest {
                 314, 332, 350, 376,
                 518, 548, 578, 620
         }, arr, EPS);
+    }
+
+    @Test
+    public void testDeterminant() {
+        // act/assert
+        Assert.assertEquals(1.0, AffineTransformMatrix3D.identity().determinant(), EPS);
+        Assert.assertEquals(1.0, AffineTransformMatrix3D.of(
+                1, 0, 0, 10,
+                0, 1, 0, 11,
+                0, 0, 1, 12
+            ).determinant(), EPS);
+        Assert.assertEquals(-1.0, AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, 1, 0, 11,
+                0, 0, 1, 12
+            ).determinant(), EPS);
+        Assert.assertEquals(1.0, AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, -1, 0, 11,
+                0, 0, 1, 12
+            ).determinant(), EPS);
+        Assert.assertEquals(-1.0, AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, -1, 0, 11,
+                0, 0, -1, 12
+            ).determinant(), EPS);
+        Assert.assertEquals(49.0, AffineTransformMatrix3D.of(
+                2, -3, 1, 10,
+                2, 0, -1, 11,
+                1, 4, 5, -12
+            ).determinant(), EPS);
+        Assert.assertEquals(0.0, AffineTransformMatrix3D.of(
+                1, 2, 3, 0,
+                4, 5, 6, 0,
+                7, 8, 9, 0
+            ).determinant(), EPS);
+    }
+
+    @Test
+    public void testPreservesOrientation() {
+        // act/assert
+        Assert.assertTrue(AffineTransformMatrix3D.identity().preservesOrientation());
+        Assert.assertTrue(AffineTransformMatrix3D.of(
+                1, 0, 0, 10,
+                0, 1, 0, 11,
+                0, 0, 1, 12
+            ).preservesOrientation());
+        Assert.assertTrue(AffineTransformMatrix3D.of(
+                2, -3, 1, 10,
+                2, 0, -1, 11,
+                1, 4, 5, -12
+            ).preservesOrientation());
+
+        Assert.assertFalse(AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, 1, 0, 11,
+                0, 0, 1, 12
+            ).preservesOrientation());
+
+        Assert.assertTrue(AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, -1, 0, 11,
+                0, 0, 1, 12
+            ).preservesOrientation());
+
+        Assert.assertFalse(AffineTransformMatrix3D.of(
+                -1, 0, 0, 10,
+                0, -1, 0, 11,
+                0, 0, -1, 12
+            ).preservesOrientation());
+        Assert.assertFalse(AffineTransformMatrix3D.of(
+                1, 2, 3, 0,
+                4, 5, 6, 0,
+                7, 8, 9, 0
+            ).preservesOrientation());
+    }
+
+    @Test
+    public void testToMatrix() {
+        // arrange
+        AffineTransformMatrix3D m = AffineTransformMatrix3D.createScale(3);
+
+        // act/assert
+        Assert.assertSame(m, m.toMatrix());
     }
 
     @Test

@@ -19,11 +19,10 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
-import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
+import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -35,7 +34,8 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 6 elements, instead of 9.
 * </p>
 */
-public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vector2D, Vector1D>, Transform2D, Serializable {
+public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D>
+    implements Transform2D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181005L;
@@ -175,6 +175,15 @@ public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vect
                 m10, m11
             );
     }
+
+    /** {@inheritDoc}
+    *
+    * <p>This simply returns the current instance.</p>
+    */
+   @Override
+   public AffineTransformMatrix2D toMatrix() {
+       return this;
+   }
 
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis

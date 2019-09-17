@@ -16,53 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.util.function.Function;
+import org.apache.commons.geometry.euclidean.EuclideanTransform;
 
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.euclidean.internal.Transforms;
-
-/** Extension of the {@link Transform} interface for Euclidean 1D points.
+/** Extension of the {@link EuclideanTransform} interface for 1D space.
  */
-public interface Transform1D extends Transform<Vector1D> {
+public interface Transform1D extends EuclideanTransform<Vector1D> {
 
-    /** Return an instance representing the identity transform.
-     * @return an instance representing the identity transform.
+    /** Return an affine transform matrix representing the same transform
+     * as this instance.
+     * @return an affine tranform matrix representing the same transform
+     *      as this instance
      */
-    static Transform1D identity() {
-
-        return new Transform1D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return true;
-            }
-
-            @Override
-            public Vector1D apply(final Vector1D pt) {
-                return pt;
-            }
-        };
-    }
-
-    /** Create a new {@link Transform1D} instance from the given function.
-     * @param fn function used to transform points
-     * @return a new transform instance
-     */
-    static Transform1D from(final Function<Vector1D, Vector1D> fn) {
-
-        final boolean preservesOrientation = Transforms.preservesOrientation1D(fn);
-
-        return new Transform1D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return preservesOrientation;
-            }
-
-            @Override
-            public Vector1D apply(final Vector1D pt) {
-                return fn.apply(pt);
-            }
-        };
-    }
+    AffineTransformMatrix1D toMatrix();
 }

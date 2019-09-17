@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -76,7 +75,7 @@ public class ConvexAreaTest {
     @Test
     public void testTransform_full() {
         // arrange
-        Transform<Vector2D> transform = Transform2D.from(v -> v.multiply(3));
+        Transform2D transform = FunctionTransform2D.from(v -> v.multiply(3));
         ConvexArea area = ConvexArea.full();
 
         // act

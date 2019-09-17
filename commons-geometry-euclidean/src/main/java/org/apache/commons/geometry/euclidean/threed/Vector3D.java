@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Comparator;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -398,9 +399,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * new vector instance.
      * @param transform the transform to apply
      * @return a new, transformed vector
-     * @see AffineTransformMatrix3D#apply(Vector3D)
+     * @see Transform#apply(Object)
      */
-    public Vector3D transform(AffineTransformMatrix3D transform) {
+    public Vector3D transform(final Transform<Vector3D> transform) {
         return transform.apply(this);
     }
 

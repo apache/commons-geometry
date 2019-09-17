@@ -16,32 +16,14 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 
-/** Interface representing an affine transform matrix in Euclidean space.
- * Rotation, scaling, and translation are examples of affine transformations.
+/** Base class for affine transform matrices in Euclidean space.
  *
  * @param <V> Vector/point implementation type defining the space.
- * @param <S> Point type defining the embedded sub-space.
- * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine transformation</a>
  */
-public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends Point<S>> extends Transform<V> {
-
-    /** Apply this transform to the given vector, ignoring translations.
-    *
-    * <p>This method can be used to transform vector instances representing displacements between points.
-    * For example, if {@code v} represents the difference between points {@code p1} and {@code p2},
-    * then {@code transform.applyVector(v)} will represent the difference between {@code p1} and {@code p2}
-    * after {@code transform} is applied.
-    * </p>
-    *
-    * @param vec the vector to transform
-    * @return the new, transformed vector
-    * @see #applyDirection(EuclideanVector)
-    */
-    V applyVector(V vec);
+public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>>
+    implements EuclideanTransform<V> {
 
     /** Apply this transform to the given vector, ignoring translations and normalizing the
      * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without
@@ -52,17 +34,19 @@ public interface AffineTransformMatrix<V extends EuclideanVector<V>, S extends P
      * @throws IllegalNormException if the transformed vector coordinates cannot be normalized
      * @see #applyVector(EuclideanVector)
      */
-    V applyDirection(V vec);
+    public abstract V applyDirection(V vec);
 
     /** Get the determinant of the matrix.
      * @return the determinant of the matrix
      */
-    double determinant();
+    public abstract double determinant();
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method returns true if the determinant of the matrix is positive.</p>
+     */
     @Override
-    default public boolean preservesOrientation() {
-        // orientation is preserved only with non-negative determinants
+    public boolean preservesOrientation() {
         return determinant() > 0.0;
     }
 }

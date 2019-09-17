@@ -429,6 +429,15 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
+    public void testToMatrix() {
+        // arrange
+        AffineTransformMatrix1D t = AffineTransformMatrix1D.of(1, 1);
+
+        // act/assert
+        Assert.assertSame(t, t.toMatrix());
+    }
+
+    @Test
     public void testMultiply() {
         // arrange
         AffineTransformMatrix1D a = AffineTransformMatrix1D.of(2, 3);

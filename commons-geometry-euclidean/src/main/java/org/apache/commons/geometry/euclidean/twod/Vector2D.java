@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Comparator;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -337,9 +338,9 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * new vector instance.
      * @param transform the transform to apply
      * @return a new, transformed vector
-     * @see AffineTransformMatrix2D#apply(Vector2D)
+     * @see Transform#apply(Object)
      */
-    public Vector2D transform(AffineTransformMatrix2D transform) {
+    public Vector2D transform(final Transform<Vector2D> transform) {
         return transform.apply(this);
     }
 

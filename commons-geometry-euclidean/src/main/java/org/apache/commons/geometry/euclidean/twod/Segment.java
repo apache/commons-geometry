@@ -24,8 +24,8 @@ import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.FunctionTransform1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.Transform1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
@@ -165,7 +165,7 @@ public final class Segment extends AbstractSubLine<Interval>
     /** {@inheritDoc} */
     @Override
     public Segment reverse() {
-        final Interval reversedInterval = interval.transform(Transform1D.from(Vector1D::negate));
+        final Interval reversedInterval = interval.transform(FunctionTransform1D.from(Vector1D::negate));
         return fromInterval(getLine().reverse(), reversedInterval);
     }
 

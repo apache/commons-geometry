@@ -16,53 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.function.Function;
+import org.apache.commons.geometry.euclidean.EuclideanTransform;
 
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.euclidean.internal.Transforms;
-
-/** Extension of the {@link Transform} interface for Euclidean 3D points.
+/** Extension of the {@link EuclideanTransform} interface for 3D points.
  */
-public interface Transform3D extends Transform<Vector3D> {
+public interface Transform3D extends EuclideanTransform<Vector3D> {
 
-    /** Return an instance representing the identity transform.
-     * @return an instance representing the identity transform.
+    /** Return an affine transform matrix representing the same transform
+     * as this instance.
+     * @return an affine tranform matrix representing the same transform
+     *      as this instance
      */
-    static Transform3D identity() {
-
-        return new Transform3D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return true;
-            }
-
-            @Override
-            public Vector3D apply(final Vector3D pt) {
-                return pt;
-            };
-        };
-    }
-
-    /** Create a new {@link Transform3D} instance from the given function.
-     * @param fn function used to transform points
-     * @return a new transform instance
-     */
-    static Transform3D from(final Function<Vector3D, Vector3D> fn) {
-
-        final boolean preservesOrientation = Transforms.preservesOrientation3D(fn);
-
-        return new Transform3D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return preservesOrientation;
-            }
-
-            @Override
-            public Vector3D apply(final Vector3D pt) {
-                return fn.apply(pt);
-            }
-        };
-    }
+    AffineTransformMatrix3D toMatrix();
 }

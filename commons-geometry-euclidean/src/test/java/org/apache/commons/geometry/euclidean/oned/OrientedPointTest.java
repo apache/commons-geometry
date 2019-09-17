@@ -98,7 +98,7 @@ public class OrientedPointTest {
         OrientedPoint neg = OrientedPoint.createPositiveFacing(Double.NEGATIVE_INFINITY, TEST_PRECISION);
 
         Transform<Vector1D> scaleAndTranslate = AffineTransformMatrix1D.identity().scale(10.0).translate(5.0);
-        Transform<Vector1D> negate = Transform1D.from(Vector1D::negate);
+        Transform<Vector1D> negate = FunctionTransform1D.from(Vector1D::negate);
 
         // act/assert
         assertOrientedPoint(pos.transform(scaleAndTranslate), Double.POSITIVE_INFINITY, false, TEST_PRECISION);

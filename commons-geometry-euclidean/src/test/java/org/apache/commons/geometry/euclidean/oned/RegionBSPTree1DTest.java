@@ -688,7 +688,7 @@ public class RegionBSPTree1DTest {
                     Interval.min(3, TEST_PRECISION)
                 );
 
-        Transform1D transform = Transform1D.from(Vector1D::negate);
+        Transform1D transform = FunctionTransform1D.from(Vector1D::negate);
 
         // act
         tree.transform(transform);

@@ -19,12 +19,12 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
-import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
+import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.core.Precision;
 
-/** Class using a matrix to represent a affine transformations in 1 dimensional Euclidean space.
+/** Class using a matrix to represent affine transformations in 1 dimensional Euclidean space.
 *
 * <p>Instances of this class use a 2x2 matrix for all transform operations.
 * The last row of this matrix is always set to the values <code>[0 1]</code> and so
@@ -32,7 +32,8 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vector1D, Vector1D>, Transform1D, Serializable {
+public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D>
+    implements Transform1D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20181006L;
@@ -115,6 +116,15 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
     @Override
     public double determinant() {
         return m00;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This simply returns the current instance.</p>
+     */
+    @Override
+    public AffineTransformMatrix1D toMatrix() {
+        return this;
     }
 
     /** Get a new transform containing the result of applying a translation logically after

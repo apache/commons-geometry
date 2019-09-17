@@ -16,53 +16,16 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.function.Function;
+import org.apache.commons.geometry.euclidean.EuclideanTransform;
 
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.euclidean.internal.Transforms;
-
-/** Extension of the {@link Transform} interface for Euclidean 2D points.
+/** Extension of the {@link EuclideanTransform} interface for 2D space.
  */
-public interface Transform2D extends Transform<Vector2D> {
+public interface Transform2D extends EuclideanTransform<Vector2D> {
 
-    /** Return an instance representing the identity transform.
-     * @return an instance representing the identity transform.
+    /** Return an affine transform matrix representing the same transform
+     * as this instance.
+     * @return an affine tranform matrix representing the same transform
+     *      as this instance
      */
-    static Transform2D identity() {
-
-        return new Transform2D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return true;
-            }
-
-            @Override
-            public Vector2D apply(final Vector2D pt) {
-                return pt;
-            }
-        };
-    }
-
-    /** Create a new {@link Transform2D} instance from the given function.
-     * @param fn function used to transform points
-     * @return a new transform instance
-     */
-    static Transform2D from(final Function<Vector2D, Vector2D> fn) {
-
-        final boolean preservesOrientation = Transforms.preservesOrientation2D(fn);
-
-        return new Transform2D() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return preservesOrientation;
-            }
-
-            @Override
-            public Vector2D apply(final Vector2D pt) {
-                return fn.apply(pt);
-            }
-        };
-    }
+    AffineTransformMatrix2D toMatrix();
 }

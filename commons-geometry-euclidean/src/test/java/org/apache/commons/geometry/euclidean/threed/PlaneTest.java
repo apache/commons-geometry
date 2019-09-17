@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -659,7 +658,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
+        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -674,7 +673,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = Transform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
+        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -689,7 +688,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
 
-        Transform<Vector3D> transform = Transform3D.from(Vector3D::negate);
+        Transform3D transform = FunctionTransform3D.from(Vector3D::negate);
 
         // act
         Plane result = plane.transform(transform);

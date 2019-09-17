@@ -19,12 +19,11 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
-import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
+import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -36,7 +35,8 @@ import org.apache.commons.numbers.core.Precision;
  * use arrays containing 12 elements, instead of 16.
  * </p>
  */
-public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vector3D, Vector2D>, Transform3D, Serializable {
+public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D>
+    implements Transform3D, Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = 20180923L;
@@ -212,6 +212,15 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
             );
     }
 
+    /** {@inheritDoc}
+    *
+    * <p>This simply returns the current instance.</p>
+    */
+   @Override
+   public AffineTransformMatrix3D toMatrix() {
+       return this;
+   }
+
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -276,7 +285,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      * @see QuaternionRotation#toTransformMatrix()
      */
     public AffineTransformMatrix3D rotate(final QuaternionRotation rotation) {
-        return multiply(rotation.toTransformMatrix(), this);
+        return multiply(rotation.toMatrix(), this);
     }
 
     /** Apply a rotation around the given center point to the current instance, returning the result
@@ -502,6 +511,38 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
                     arr[0], arr[1], arr[2], arr[3],
                     arr[4], arr[5], arr[6], arr[7],
                     arr[8], arr[9], arr[10], arr[11]
+                );
+    }
+
+    /** Get a new transform create from the given column vectors. The returned transform
+     * does not include any translation component.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @param w third column vector; this corresponds to the third basis vector
+     *      in the coordinate frame
+     * @return a new transform with the given column vectors
+     */
+    public static AffineTransformMatrix3D fromColumnVectors(final Vector3D u, final Vector3D v, final Vector3D w) {
+        return fromColumnVectors(u, v, w, Vector3D.ZERO);
+    }
+
+    /** Get a new transform created from the given column vectors.
+     * @param u first column vector; this corresponds to the first basis vector
+     *      in the coordinate frame
+     * @param v second column vector; this corresponds to the second basis vector
+     *      in the coordinate frame
+     * @param w third column vector; this corresponds to the third basis vector
+     *      in the coordinate frame
+     * @param t fourth column vector; this corresponds to the translation of the transform
+     * @return a new transform with the given column vectors
+     */
+    public static AffineTransformMatrix3D fromColumnVectors(final Vector3D u, final Vector3D v, final Vector3D w, final Vector3D t) {
+        return new AffineTransformMatrix3D(
+                    u.getX(), v.getX(), w.getX(), t.getX(),
+                    u.getY(), v.getY(), w.getY(), t.getY(),
+                    u.getZ(), v.getZ(), w.getZ(), t.getZ()
                 );
     }
 

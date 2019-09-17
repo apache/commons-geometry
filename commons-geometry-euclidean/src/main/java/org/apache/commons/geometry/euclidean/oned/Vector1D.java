@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -242,9 +243,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * new vector instance.
      * @param transform the transform to apply
      * @return a new, transformed vector
-     * @see AffineTransformMatrix1D#apply(Vector1D)
+     * @see Transform#apply(Object)
      */
-    public Vector1D transform(AffineTransformMatrix1D transform) {
+    public Vector1D transform(final Transform<Vector1D> transform) {
         return transform.apply(this);
     }
 

@@ -157,12 +157,66 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
 
     /** {@inheritDoc}
      *
+     * <p>This method simply calls {@code apply(vec)} since rotations treat
+     * points and vectors similarly.</p>
+     */
+    @Override
+    public Vector3D applyVector(final Vector3D vec) {
+        return apply(vec);
+    }
+
+    /** {@inheritDoc}
+     *
      * <p>This method simply returns true since rotations always preserve the orientation
      * of the space.</p>
      */
     @Override
     public boolean preservesOrientation() {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AffineTransformMatrix3D toMatrix() {
+
+        final double qw = quat.getW();
+        final double qx = quat.getX();
+        final double qy = quat.getY();
+        final double qz = quat.getZ();
+
+        // pre-calculate products that we'll need
+        final double xx = qx * qx;
+        final double xy = qx * qy;
+        final double xz = qx * qz;
+        final double xw = qx * qw;
+
+        final double yy = qy * qy;
+        final double yz = qy * qz;
+        final double yw = qy * qw;
+
+        final double zz = qz * qz;
+        final double zw = qz * qw;
+
+        final double m00 = 1.0 - (2.0 * (yy + zz));
+        final double m01 = 2.0 * (xy - zw);
+        final double m02 = 2.0 * (xz + yw);
+        final double m03 = 0.0;
+
+        final double m10 = 2.0 * (xy + zw);
+        final double m11 = 1.0 - (2.0 * (xx + zz));
+        final double m12 = 2.0 * (yz - xw);
+        final double m13 = 0.0;
+
+        final double m20 = 2.0 * (xz - yw);
+        final double m21 = 2.0 * (yz + xw);
+        final double m22 = 1.0 - (2.0 * (xx + yy));
+        final double m23 = 0.0;
+
+        return AffineTransformMatrix3D.of(
+                    m00, m01, m02, m03,
+                    m10, m11, m12, m13,
+                    m20, m21, m22, m23
+                );
     }
 
     /**
@@ -217,55 +271,6 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
      */
     public Slerp slerp(QuaternionRotation end) {
         return new Slerp(quat, end.quat);
-    }
-
-    /**
-     * Return a {@link AffineTransformMatrix3D} that performs the rotation
-     * represented by this instance.
-     *
-     * @return an {@link AffineTransformMatrix3D} instance that performs the rotation
-     *         represented by this instance
-     */
-    public AffineTransformMatrix3D toTransformMatrix() {
-
-        final double qw = quat.getW();
-        final double qx = quat.getX();
-        final double qy = quat.getY();
-        final double qz = quat.getZ();
-
-        // pre-calculate products that we'll need
-        final double xx = qx * qx;
-        final double xy = qx * qy;
-        final double xz = qx * qz;
-        final double xw = qx * qw;
-
-        final double yy = qy * qy;
-        final double yz = qy * qz;
-        final double yw = qy * qw;
-
-        final double zz = qz * qz;
-        final double zw = qz * qw;
-
-        final double m00 = 1.0 - (2.0 * (yy + zz));
-        final double m01 = 2.0 * (xy - zw);
-        final double m02 = 2.0 * (xz + yw);
-        final double m03 = 0.0;
-
-        final double m10 = 2.0 * (xy + zw);
-        final double m11 = 1.0 - (2.0 * (xx + zz));
-        final double m12 = 2.0 * (yz - xw);
-        final double m13 = 0.0;
-
-        final double m20 = 2.0 * (xz - yw);
-        final double m21 = 2.0 * (yz + xw);
-        final double m22 = 1.0 - (2.0 * (xx + yy));
-        final double m23 = 0.0;
-
-        return AffineTransformMatrix3D.of(
-                    m00, m01, m02, m03,
-                    m10, m11, m12, m13,
-                    m20, m21, m22, m23
-                );
     }
 
     /** Get a sequence of axis-angle rotations that produce an overall rotation equivalent to this instance.

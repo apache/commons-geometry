@@ -26,7 +26,6 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -1107,7 +1106,7 @@ public class RegionBSPTree2DTest {
                 .addSquare(Vector2D.of(1, 1), 1)
                 .build();
 
-        Transform<Vector2D> transform = Transform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
+        Transform2D transform = FunctionTransform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
         // act
         tree.transform(transform);
@@ -1131,7 +1130,7 @@ public class RegionBSPTree2DTest {
                 .addSquare(Vector2D.of(1, 1), 1)
                 .build();
 
-        Transform<Vector2D> transform = Transform2D.from(Vector2D::negate);
+        Transform2D transform = FunctionTransform2D.from(Vector2D::negate);
 
         // act
         tree.transform(transform);
