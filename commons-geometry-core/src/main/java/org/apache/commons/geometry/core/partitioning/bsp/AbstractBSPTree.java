@@ -150,7 +150,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void transform(final Transform<P> transform) {
-        final boolean swapChildren = swapsInteriorExterior(transform);
+        final boolean swapChildren = swapsInsideOutside(transform);
         transformRecursive(getRoot(), transform, swapChildren);
 
         invalidate();
@@ -555,7 +555,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         invalidate();
     }
 
-    /** Return true if the given transform swaps the interior and exterior of
+    /** Return true if the given transform swaps the inside and outside of
      * the region.
      *
      * <p>The default behavior of this method is to return true if the transform
@@ -566,7 +566,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @return true if the given transform swaps the interior and exterior of
      *      the region
      */
-    protected boolean swapsInteriorExterior(final Transform<P> transform) {
+    protected boolean swapsInsideOutside(final Transform<P> transform) {
         return !transform.preservesOrientation();
     }
 

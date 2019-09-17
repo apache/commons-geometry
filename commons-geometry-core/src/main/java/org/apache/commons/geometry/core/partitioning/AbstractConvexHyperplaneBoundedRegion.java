@@ -180,7 +180,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         final S boundary = boundaries.get(0);
         ConvexSubHyperplane<P> tBoundary = boundary.transform(transform);
 
-        final boolean reverseDirection = swapsInteriorExterior(transform);
+        final boolean reverseDirection = swapsInsideOutside(transform);
 
         // transform all of the segments
         if (reverseDirection) {
@@ -201,7 +201,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         return factory.apply(tBoundaries);
     }
 
-    /** Return true if the given transform swaps the interior and exterior of
+    /** Return true if the given transform swaps the inside and outside of
      * the region.
      *
      * <p>The default behavior of this method is to return true if the transform
@@ -212,7 +212,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      * @return true if the given transform swaps the interior and exterior of
      *      the region
      */
-    protected boolean swapsInteriorExterior(final Transform<P> transform) {
+    protected boolean swapsInsideOutside(final Transform<P> transform) {
         return !transform.preservesOrientation();
     }
 

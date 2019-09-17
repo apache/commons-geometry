@@ -331,7 +331,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * 1D.</p>
      */
     @Override
-    protected boolean swapsInteriorExterior(final Transform<Vector1D> transform) {
+    protected boolean swapsInsideOutside(final Transform<Vector1D> transform) {
         return false;
     }
 
