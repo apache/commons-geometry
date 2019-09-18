@@ -17,9 +17,9 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -239,14 +239,13 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
 
-    /** Apply the given transform to this vector, returning the result as a
-     * new vector instance.
-     * @param transform the transform to apply
-     * @return a new, transformed vector
-     * @see Transform#apply(Object)
+    /** Convenience method to apply a function to this vector. This
+     * can be used to transform the vector inline with other methods.
+     * @param fn the function to apply
+     * @return the transformed vector
      */
-    public Vector1D transform(final Transform<Vector1D> transform) {
-        return transform.apply(this);
+    public Vector1D transform(final Function<Vector1D, Vector1D> fn) {
+        return fn.apply(this);
     }
 
     /** {@inheritDoc} */

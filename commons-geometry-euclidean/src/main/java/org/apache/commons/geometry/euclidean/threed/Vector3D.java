@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -395,14 +395,13 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                             LinearCombination.value(x, v.y, -y, v.x));
     }
 
-    /** Apply the given transform to this vector, returning the result as a
-     * new vector instance.
-     * @param transform the transform to apply
-     * @return a new, transformed vector
-     * @see Transform#apply(Object)
+    /** Convenience method to apply a function to this vector. This
+     * can be used to transform the vector inline with other methods.
+     * @param fn the function to apply
+     * @return the transformed vector
      */
-    public Vector3D transform(final Transform<Vector3D> transform) {
-        return transform.apply(this);
+    public Vector3D transform(final Function<Vector3D, Vector3D> fn) {
+        return fn.apply(this);
     }
 
     /** {@inheritDoc} */
