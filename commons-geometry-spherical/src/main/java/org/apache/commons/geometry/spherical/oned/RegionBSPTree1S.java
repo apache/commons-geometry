@@ -239,8 +239,27 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<Point1S> computeRegionSizeProperties() {
-        // TODO Auto-generated method stub
-        return null;
+        if (isFull()) {
+            return new RegionSizeProperties<>(Geometry.TWO_PI, null);
+        }
+
+        double size = 0;
+        double scaledBarycenterSum = 0;
+
+        double intervalSize;
+
+        for (AngularInterval interval : toIntervals()) {
+            intervalSize = interval.getSize();
+
+            size += intervalSize;
+            scaledBarycenterSum += intervalSize * interval.getBarycenter().getNormalizedAzimuth();
+        }
+
+        final Point1S barycenter = size > 0 ?
+                Point1S.of(scaledBarycenterSum / size) :
+                null;
+
+        return new RegionSizeProperties<>(size, barycenter);
     }
 
     /** {@inheritDoc} */
@@ -344,7 +363,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
          *      if no minimum value exists.
          */
         public double getMinValue() {
-            return (min != null) ? min.getPoint().getNormalizedAzimuth() : 0;
+            return (min != null) ? min.getNormalizedAzimuth() : 0;
         }
     }
 }

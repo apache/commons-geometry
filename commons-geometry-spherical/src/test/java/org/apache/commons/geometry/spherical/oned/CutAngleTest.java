@@ -30,6 +30,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.CutAngle.SubCutAngle;
 import org.apache.commons.geometry.spherical.oned.CutAngle.SubCutAngleBuilder;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,18 +44,18 @@ public class CutAngleTest {
     @Test
     public void testFromAzimuthAndDirection() {
         // act/assert
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, true, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, false, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
@@ -64,40 +65,40 @@ public class CutAngleTest {
         Point1S pt = Point1S.of(Geometry.MINUS_HALF_PI);
 
         // act/assert
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(pt, true, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(pt, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(CutAngle.fromPointAndDirection(pt, false, TEST_PRECISION),
+        checkCutAngle(CutAngle.fromPointAndDirection(pt, false, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
     @Test
     public void testCreatePositiveFacing() {
         // act/assert
-        checkPoint(CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
+        checkCutAngle(CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
                 Geometry.ZERO_PI, true);
-        checkPoint(CutAngle.createPositiveFacing(Point1S.PI, TEST_PRECISION),
+        checkCutAngle(CutAngle.createPositiveFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, true);
-        checkPoint(CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
+        checkCutAngle(CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
     }
 
     @Test
     public void testCreateNegativeFacing() {
         // act/assert
-        checkPoint(CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
+        checkCutAngle(CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
                 Geometry.ZERO_PI, false);
-        checkPoint(CutAngle.createNegativeFacing(Point1S.PI, TEST_PRECISION),
+        checkCutAngle(CutAngle.createNegativeFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, false);
-        checkPoint(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
+        checkCutAngle(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, false);
     }
 
@@ -199,10 +200,10 @@ public class CutAngleTest {
         CutAngle result = pt.reverse();
 
         // assert
-        checkPoint(result, Geometry.HALF_PI, true);
+        checkCutAngle(result, Geometry.HALF_PI, true);
         Assert.assertSame(TEST_PRECISION, result.getPrecision());
 
-        checkPoint(result.reverse(), Geometry.HALF_PI, false);
+        checkCutAngle(result.reverse(), Geometry.HALF_PI, false);
     }
 
     @Test
@@ -235,14 +236,14 @@ public class CutAngleTest {
         Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
 
         // act
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, false);
 
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 Geometry.TWO_PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
     }
 
@@ -252,14 +253,14 @@ public class CutAngleTest {
         Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() * 2));
 
         // act
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
 
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 3 * Geometry.PI, true);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 -Geometry.PI, false);
     }
 
@@ -269,14 +270,14 @@ public class CutAngleTest {
         Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(-p.getAzimuth()));
 
         // act
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, false);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 Geometry.ZERO_PI, true);
 
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 -1.5 * Geometry.PI, false);
-        checkPoint(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
                 Geometry.HALF_PI, true);
     }
 
@@ -493,7 +494,7 @@ public class CutAngleTest {
         SubCutAngle result = pt.span().transform(transform);
 
         // assert
-        checkPoint(result.getHyperplane(), Geometry.HALF_PI, false);
+        checkCutAngle(result.getHyperplane(), Geometry.HALF_PI, false);
     }
 
     @Test
@@ -587,16 +588,17 @@ public class CutAngleTest {
         Assert.assertTrue(str.contains("positiveFacing= "));
     }
 
-    private static void checkPoint(CutAngle pt, double az, boolean positiveFacing) {
-        checkPoint(pt, az, positiveFacing, TEST_PRECISION);
+    private static void checkCutAngle(CutAngle angle, double az, boolean positiveFacing) {
+        checkCutAngle(angle, az, positiveFacing, TEST_PRECISION);
     }
 
-    private static void checkPoint(CutAngle pt, double az, boolean positiveFacing, DoublePrecisionContext precision) {
-        Assert.assertEquals(az, pt.getAzimuth(), TEST_EPS);
-        Assert.assertEquals(az, pt.getPoint().getAzimuth(), TEST_EPS);
-        Assert.assertEquals(positiveFacing, pt.isPositiveFacing());
+    private static void checkCutAngle(CutAngle angle, double az, boolean positiveFacing, DoublePrecisionContext precision) {
+        Assert.assertEquals(az, angle.getAzimuth(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(az), angle.getNormalizedAzimuth(), TEST_EPS);
+        Assert.assertEquals(az, angle.getPoint().getAzimuth(), TEST_EPS);
+        Assert.assertEquals(positiveFacing, angle.isPositiveFacing());
 
-        Assert.assertSame(precision, pt.getPrecision());
+        Assert.assertSame(precision, angle.getPrecision());
     }
 
     private static void checkOffset(CutAngle pt, double az, double offset) {

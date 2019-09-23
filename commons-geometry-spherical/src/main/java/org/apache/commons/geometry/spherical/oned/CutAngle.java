@@ -71,18 +71,29 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         return point;
     }
 
-    /**
-     * Get the location of the hyperplane as a single value. This is
-     * equivalent to {@code pt.getPoint().getAzimuth()}.
+    /** Get the location of the hyperplane as a single value. This is
+     * equivalent to {@code cutAngle.getPoint().getAzimuth()}.
      * @return the location of the hyperplane as a single value.
      * @see #getPoint()
+     * @see Point1S#getAzimuth()
      */
     public double getAzimuth() {
         return point.getAzimuth();
     }
 
-    /**
-     * Return true if the hyperplane is oriented with its plus
+    /** Get the location of the hyperplane as a single value, normalized
+     * to the range {@code [0, 2pi)}. This is equivalent to
+     * {@code cutAngle.getPoint().getNormalizedAzimuth()}.
+     * @return the location of the hyperplane, normalized to the range
+     *      {@code [0, 2pi)}
+     * @see #getPoint()
+     * @see Point1S#getNormalizedAzimuth()
+     */
+    public double getNormalizedAzimuth() {
+        return point.getNormalizedAzimuth();
+    }
+
+    /** Return true if the hyperplane is oriented with its plus
      * side pointing toward increasing angles.
      * @return true if the hyperplane is facing in the direction
      *      of increasing angles
