@@ -409,6 +409,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
+        public double normSq() {
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector1D normalize() {
             return this;
         }
@@ -417,6 +423,12 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         @Override
         public Vector1D withNorm(final double mag) {
             return multiply(mag);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public UnitVector negate() {
+            return new UnitVector(-super.x);
         }
     }
 }
