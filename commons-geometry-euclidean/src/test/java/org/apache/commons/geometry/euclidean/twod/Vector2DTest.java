@@ -144,6 +144,15 @@ public class Vector2DTest {
     }
 
     @Test
+    public void testNorm_unitVectors() {
+        // arrange
+        Vector2D v = Vector2D.of(2.0, 3.0).normalize();
+
+        // act/assert
+        Assert.assertEquals(1.0, v.norm(), EPS);
+    }
+
+    @Test
     public void testNormSq() {
         // act/assert
         Assert.assertEquals(0.0, Vector2D.of(0, 0).normSq(), EPS);
@@ -154,6 +163,15 @@ public class Vector2DTest {
         Assert.assertEquals(25.0, Vector2D.of(-3, -4).normSq(), EPS);
 
         Assert.assertEquals(5.0, Vector2D.of(-1, -2).normSq(), EPS);
+    }
+
+    @Test
+    public void testNormSq_unitVectors() {
+        // arrange
+        Vector2D v = Vector2D.of(2.0, 3.0).normalize();
+
+        // act/assert
+        Assert.assertEquals(1.0, v.normSq(), EPS);
     }
 
     @Test
@@ -306,6 +324,19 @@ public class Vector2DTest {
         checkVector(Vector2D.of(1, 2).negate(), -1, -2);
         checkVector(Vector2D.of(-3, -4).negate(), 3, 4);
         checkVector(Vector2D.of(5, -6).negate().negate(), 5, -6);
+    }
+
+    @Test
+    public void testNegate_unitVectors() {
+        // arrange
+        Vector2D v1 = Vector2D.of(1.0, 1.0).normalize();
+        Vector2D v2 = Vector2D.of(-1.0, -2.0).normalize();
+        Vector2D v3 = Vector2D.of(2.0, -3.0).normalize();
+ 
+        // act/assert
+        checkVector(v1.negate(), -1.0 / Math.sqrt(2.0), -1.0 / Math.sqrt(2.0));
+        checkVector(v2.negate(), 1.0 / Math.sqrt(5.0), 2.0 / Math.sqrt(5.0));
+        checkVector(v3.negate(), -2.0 / Math.sqrt(13.0), 3.0 / Math.sqrt(13.0));
     }
 
     @Test
