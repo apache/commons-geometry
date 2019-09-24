@@ -113,11 +113,31 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testNorm_unitVectors()
+    {
+        // arrange
+        Vector1D v = Vector1D.of(2.0).normalize();
+        
+        // act/assert
+        Assert.assertEquals(1.0, v.norm(), TEST_TOLERANCE);
+    }
+
+    @Test
     public void testNormSq() {
         // act/assert
         Assert.assertEquals(0.0, Vector1D.of(0).normSq(), TEST_TOLERANCE);
         Assert.assertEquals(9.0, Vector1D.of(3).normSq(), TEST_TOLERANCE);
         Assert.assertEquals(9.0, Vector1D.of(-3).normSq(), TEST_TOLERANCE);
+    }
+
+    @Test
+    public void testNormSq_unitVectors()
+    {
+        // arrange
+        Vector1D v = Vector1D.of(2.0).normalize();
+        
+        // act/assert
+        Assert.assertEquals(1.0, v.normSq(), TEST_TOLERANCE);
     }
 
     @Test
@@ -259,6 +279,17 @@ public class Vector1DTest {
         // act/assert
         checkVector(Vector1D.of(0.1).negate(), -0.1);
         checkVector(Vector1D.of(-0.1).negate(), 0.1);
+    }
+
+    @Test
+    public void testNegate_unitVectors() {
+        // arrange
+        Vector1D v1 = Vector1D.of(0.1).normalize();
+        Vector1D v2 = Vector1D.of(-0.1).normalize();
+
+        // act/assert
+        checkVector(v1.negate(), -1);
+        checkVector(v2.negate(), 1);
     }
 
     @Test
