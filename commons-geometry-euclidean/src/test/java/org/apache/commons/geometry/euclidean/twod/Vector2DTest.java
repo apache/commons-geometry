@@ -149,7 +149,7 @@ public class Vector2DTest {
         Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.norm(), EPS);
+        Assert.assertEquals(1.0, v.norm(), 0.0);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class Vector2DTest {
         Vector2D v = Vector2D.of(2.0, 3.0).normalize();
 
         // act/assert
-        Assert.assertEquals(1.0, v.normSq(), EPS);
+        Assert.assertEquals(1.0, v.normSq(), 0.0);
     }
 
     @Test
@@ -332,7 +332,7 @@ public class Vector2DTest {
         Vector2D v1 = Vector2D.of(1.0, 1.0).normalize();
         Vector2D v2 = Vector2D.of(-1.0, -2.0).normalize();
         Vector2D v3 = Vector2D.of(2.0, -3.0).normalize();
- 
+
         // act/assert
         checkVector(v1.negate(), -1.0 / Math.sqrt(2.0), -1.0 / Math.sqrt(2.0));
         checkVector(v2.negate(), 1.0 / Math.sqrt(5.0), 2.0 / Math.sqrt(5.0));

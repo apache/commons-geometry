@@ -116,9 +116,9 @@ public class Vector1DTest {
     public void testNorm_unitVectors() {
         // arrange
         Vector1D v = Vector1D.of(2.0).normalize();
-        
+
         // act/assert
-        Assert.assertEquals(1.0, v.norm(), TEST_TOLERANCE);
+        Assert.assertEquals(1.0, v.norm(), 0.0);
     }
 
     @Test
@@ -133,9 +133,9 @@ public class Vector1DTest {
     public void testNormSq_unitVectors() {
         // arrange
         Vector1D v = Vector1D.of(2.0).normalize();
-        
+
         // act/assert
-        Assert.assertEquals(1.0, v.normSq(), TEST_TOLERANCE);
+        Assert.assertEquals(1.0, v.normSq(), 0.0);
     }
 
     @Test
