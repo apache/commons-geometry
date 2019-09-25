@@ -641,7 +641,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         /** {@inheritDoc} */
         @Override
         public UnitVector negate() {
-            return new UnitVector(-super.x, -super.y, -super.z);
+            return new UnitVector(-getX(), -getY(), -getZ());
         }
     }
 }
