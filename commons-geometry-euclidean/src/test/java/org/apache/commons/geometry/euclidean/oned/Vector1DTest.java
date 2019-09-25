@@ -622,19 +622,19 @@ public class Vector1DTest {
     @Test
     public void testNormalize_static() {
         // act/assert
-        checkVector(Vector1D.normalize(2.0), 1);
-        checkVector(Vector1D.normalize(-4.0), -1);
+        checkVector(Vector1D.Unit.from(2.0), 1);
+        checkVector(Vector1D.Unit.from(-4.0), -1);
     }
 
     @Test
     public void testNormalize_static_illegalNorm() {
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(0.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(0.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NaN),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.NaN),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NEGATIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.NEGATIVE_INFINITY),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.POSITIVE_INFINITY),
                 IllegalNormException.class);
     }
 

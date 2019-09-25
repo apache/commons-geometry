@@ -108,7 +108,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      */
     @Override
     public Vector1D applyDirection(final Vector1D vec) {
-        return applyVector(vec, Vector1D::normalize);
+        return applyVector(vec, Vector1D.Unit::from);
     }
 
     /** Get a new transform containing the result of applying a translation logically after
