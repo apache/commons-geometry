@@ -428,7 +428,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /** {@inheritDoc} */
         @Override
         public UnitVector negate() {
-            return new UnitVector(-super.x);
+            return new UnitVector(-getX());
         }
     }
 }

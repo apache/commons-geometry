@@ -575,7 +575,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         /** {@inheritDoc} */
         @Override
         public UnitVector negate() {
-            return new UnitVector(-super.x, -super.y);
+            return new UnitVector(-getX(), -getY());
         }
     }
 }
