@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -273,10 +275,200 @@ public class RegionBSPTree1STest {
         checkInterval(intervals.get(1), Geometry.PI + 0.5, Geometry.MINUS_HALF_PI);
     }
 
+    @Test
+    public void testSplit_empty() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+
+        // act/assert
+        Assert.assertEquals(SplitLocation.NEITHER,
+                tree.split(CutAngle.createPositiveFacing(0, TEST_PRECISION)).getLocation());
+        Assert.assertEquals(SplitLocation.NEITHER,
+                tree.split(CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION)).getLocation());
+        Assert.assertEquals(SplitLocation.NEITHER,
+                tree.split(CutAngle.createPositiveFacing(Geometry.PI, TEST_PRECISION)).getLocation());
+        Assert.assertEquals(SplitLocation.NEITHER,
+                tree.split(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION)).getLocation());
+        Assert.assertEquals(SplitLocation.NEITHER,
+                tree.split(CutAngle.createPositiveFacing(Geometry.TWO_PI, TEST_PRECISION)).getLocation());
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.full();
+
+        // act/assert
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(1e-6, TEST_PRECISION)),
+                AngularInterval.of(0, 1e-6, TEST_PRECISION),
+                AngularInterval.of(1e-6, Geometry.TWO_PI, TEST_PRECISION)
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION)),
+                AngularInterval.of(Geometry.HALF_PI, Geometry.TWO_PI, TEST_PRECISION),
+                AngularInterval.of(0, Geometry.HALF_PI, TEST_PRECISION)
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(Geometry.PI, TEST_PRECISION)),
+                AngularInterval.of(0, Geometry.PI, TEST_PRECISION),
+                AngularInterval.of(Geometry.PI, Geometry.TWO_PI, TEST_PRECISION)
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION)),
+                AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.TWO_PI, TEST_PRECISION),
+                AngularInterval.of(0, Geometry.MINUS_HALF_PI, TEST_PRECISION)
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(Geometry.TWO_PI - 1e-6, TEST_PRECISION)),
+                AngularInterval.of(0, Geometry.TWO_PI - 1e-6, TEST_PRECISION),
+                AngularInterval.of(Geometry.TWO_PI - 1e-6, Geometry.TWO_PI, TEST_PRECISION)
+            );
+    }
+
+    @Test
+    public void testSplit_full_cutEquivalentToZero() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.full();
+
+        AngularInterval twoPi = AngularInterval.of(0, Geometry.TWO_PI, TEST_PRECISION);
+
+        // act/assert
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(0, TEST_PRECISION)),
+                null,
+                twoPi
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(0, TEST_PRECISION)),
+                twoPi,
+                null
+            );
+
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(Geometry.TWO_PI - 1e-18, TEST_PRECISION)),
+                null,
+                twoPi
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(Geometry.TWO_PI - 1e-18, TEST_PRECISION)),
+                twoPi,
+                null
+            );
+    }
+
+    @Test
+    public void testSplit_singleInterval() {
+        // arrange
+        AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.MINUS_HALF_PI, TEST_PRECISION);
+        RegionBSPTree1S tree = interval.toTree();
+
+        // act
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(0, TEST_PRECISION)),
+                interval,
+                null
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(-Geometry.TWO_PI, TEST_PRECISION)),
+                interval,
+                null
+            );
+
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(Geometry.TWO_PI + Geometry.HALF_PI, TEST_PRECISION)),
+                null,
+                interval
+            );
+        checkSimpleSplit(
+                tree.split(CutAngle.createPositiveFacing(1.5 * Geometry.PI, TEST_PRECISION)),
+                interval,
+                null
+            );
+
+        checkSimpleSplit(
+                tree.split(CutAngle.createNegativeFacing(Geometry.PI, TEST_PRECISION)),
+                AngularInterval.of(Geometry.PI, Geometry.MINUS_HALF_PI, TEST_PRECISION),
+                AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION)
+            );
+    }
+
+    @Test
+    public void testSplit_singleIntervalSplitIntoTwoIntervalsOnSameSide() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.HALF_PI, TEST_PRECISION).toTree();
+
+        CutAngle cut = CutAngle.createPositiveFacing(0, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = tree.split(cut);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        Assert.assertNull(minus);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
+    }
+
+    @Test
+    public void testSplit_multipleRegions() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(Geometry.TWO_PI - 1, Geometry.HALF_PI, TEST_PRECISION));
+        tree.add(AngularInterval.of(Geometry.PI, Geometry.MINUS_HALF_PI, TEST_PRECISION));
+
+        CutAngle cut = CutAngle.createNegativeFacing(1, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = tree.split(cut);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> minusIntervals = minus.toIntervals();
+        Assert.assertEquals(3, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 1, Geometry.HALF_PI);
+        checkInterval(minusIntervals.get(1), Geometry.PI, Geometry.MINUS_HALF_PI);
+        checkInterval(minusIntervals.get(2), Geometry.TWO_PI - 1, 0);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 0, 1);
+    }
+
+    private static void checkSimpleSplit(Split<RegionBSPTree1S> split, AngularInterval minusInterval,
+            AngularInterval plusInterval) {
+
+        RegionBSPTree1S minus = split.getMinus();
+        if (minusInterval != null) {
+            Assert.assertNotNull("Expected minus region to not be null", minus);
+            checkSingleInterval(minus, minusInterval.getMin(), minusInterval.getMax());
+        }
+        else {
+            Assert.assertNull("Expected minus region to be null", minus);
+        }
+
+        RegionBSPTree1S plus = split.getPlus();
+        if (plusInterval != null) {
+            Assert.assertNotNull("Expected plus region to not be null", plus);
+            checkSingleInterval(plus, plusInterval.getMin(), plusInterval.getMax());
+        }
+        else {
+            Assert.assertNull("Expected plus region to be null", plus);
+        }
+    }
+
     private static void checkSingleInterval(RegionBSPTree1S tree, double min, double max) {
         List<AngularInterval> intervals = tree.toIntervals();
 
-        Assert.assertEquals(1, intervals.size());
+        Assert.assertEquals("Expected a single interval in the tree", 1, intervals.size());
 
         checkInterval(intervals.get(0), min, max);
     }

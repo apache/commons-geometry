@@ -32,8 +32,28 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class representing an oriented point on the 1-sphere, meaning an azimuth angle and
- * a direction along the circle (increasing or decreasing angles).
+/** Class representing an oriented point in 1-dimensional spherical space,
+ * meaning an azimuth angle and a direction (increasing or decreasing angles)
+ * along the circle.
+ *
+ * <p>Hyperplanes split the spaces they are embedded in into two distinct parts:
+ * a plus side and a minus side. However, since spherical space wraps around, a
+ * single oriented point is not sufficient to partition the space; any point could
+ * be classified as being on the plus or minus side of a hyperplane depending on the
+ * direction that the circle is traversed. The approach taken in this class to address
+ * this issue is to (1) define a second, implicit cut point at {@code 0pi} and
+ * (2) define the domain of hyperplane points (for partitioning purposes) to be the
+ * range {@code [0, 2pi)}. Each hyperplane then splits the space into the intervals
+ * {@code [0, x]} and {@code [x, 2pi)}, where {@code x} is the location of the hyperplane.
+ * One way to visualize this is to picture the circle as a cake that has already been
+ * cut at {@code 0pi}. Each hyperplane then specifies that location of the second
+ * cut of the cake, with the plus and minus sides being the pieces thus cut.
+ * </p>
+ *
+ * <p>Note that with the hyperplane partitioning rules described above, the hyperplane
+ * at {@code 0pi} is unique in that it has the entire space on one side and no points
+ * whatsoever on the other. This is very different from hyperplanes in Euclidean space,
+ * which always have infinitely many points on both sides.</p>
  *
  * <p>This class is guaranteed to be immutable</p>
  */

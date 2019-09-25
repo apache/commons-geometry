@@ -25,6 +25,7 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
@@ -76,9 +77,38 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         union(fromInterval(interval));
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>It is important to note that split operations occur according to the rules of the
+     * {@link CutAngle} hyperplane class. In this class, the continuous circle is viewed
+     * as a non-circular segment of the number line in the range {@code [0, 2pi)}. Hyperplanes
+     * are placed along this line and partition it into the segments {@code [0, x]}
+     * and {@code [x, 2pi)}, where {@code x} is the location of the hyperplane. For example,
+     * a positive-facing {@link CutAngle} instance with an azimuth of {@code 0.5pi} has
+     * a minus side consisting of the angles {@code [0, 0.5pi]} and a plus side consisting of
+     * the angles {@code [0.5pi, 2pi)}. Similarly, a positive-facing {@link CutAngle} with
+     * an azimuth of {@code 0pi} has a plus side of {@code [0, 2pi)} (the full space) and
+     * a minus side that is completely empty (since no points exist in our domain that are
+     * less than zero). These rules can result in somewhat non-intuitive behavior at times.
+     * For example, splitting a non-empty region with a hyperplane at {@code 0pi} is
+     * essentially a no-op, since the region will either lie entirely on the plus or minus
+     * side of the hyperplane (depending on the hyperplane's orientation) regardless of the actual
+     * content of the region.</p>
+     */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
+        // Handle the special case where the cut is on the azimuth equivalent to zero;
+        // In this case, it is not possible for any points to lie between it and zero.
+        if (!isEmpty() && splitter.classify(Point1S.ZERO) == HyperplaneLocation.ON) {
+            CutAngle cut = (CutAngle) splitter;
+            if (cut.isPositiveFacing()) {
+                return new Split<>(null, copy());
+            }
+            else {
+                return new Split<>(copy(), null);
+            }
+        }
+
         return split(splitter, RegionBSPTree1S.empty(), RegionBSPTree1S.empty());
     }
 
