@@ -113,8 +113,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNorm_unitVectors()
-    {
+    public void testNorm_unitVectors() {
         // arrange
         Vector1D v = Vector1D.of(2.0).normalize();
         
@@ -131,8 +130,7 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormSq_unitVectors()
-    {
+    public void testNormSq_unitVectors() {
         // arrange
         Vector1D v = Vector1D.of(2.0).normalize();
         
