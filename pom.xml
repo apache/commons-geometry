@@ -16,55 +16,21 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-parent</artifactId>
     <version>47</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-parent</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Apache Commons Geometry</name>
-
-  <inceptionYear>2016</inceptionYear>
   <description>The Apache Commons Geometry project provides geometric types and utilities.</description>
   <url>https://commons.apache.org/proper/commons-geometry/</url>
-
-  <issueManagement>
-    <system>jira</system>
-    <url>https://issues.apache.org/jira/browse/Geometry</url>
-  </issueManagement>
-
-  <scm>
-    <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</developerConnection>
-    <url>https://gitbox.apache.org/repos/asf/commons-geometry.git</url>
-  </scm>
-
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <name>Apache Commons Site</name>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry/</url>
-    </site>
-  </distributionManagement>
-
-  <developers>
-    <developer>
-      <name>Gilles Sadowski</name>
-      <id>erans</id>
-      <email>erans at apache dot org</email>
-    </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-        <name>Matt Juntunen</name>
-    </contributor>
-  </contributors>
+  <inceptionYear>2016</inceptionYear>
 
   <properties>
     <!-- Do not change: "geometry" is the name of the component even if the
@@ -135,14 +101,32 @@
     <junit.version>4.12</junit.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>commons-geometry-core</module>
+    <module>commons-geometry-euclidean</module>
+    <module>commons-geometry-spherical</module>
+    <module>commons-geometry-hull</module>
+    <module>commons-geometry-enclosing</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf/commons-geometry.git</url>
+  </scm>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>https://issues.apache.org/jira/browse/Geometry</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <name>Apache Commons Site</name>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry/</url>
+    </site>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>
@@ -189,6 +173,15 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -295,7 +288,6 @@
         <configuration>
           <!-- Enable MathJax -->
           <additionalparam>${doclint.javadoc.qualifier} ${allowscript.javadoc.qualifier} -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalparam>
-          <!-- <aggregate>true</aggregate> -->
         </configuration>
       </plugin>
     </plugins>
@@ -420,7 +412,6 @@
         <configuration>
           <!-- Enable MathJax -->
           <additionalparam>${doclint.javadoc.qualifier} ${allowscript.javadoc.qualifier} -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalparam>
-          <!-- <aggregate>true</aggregate> -->
         </configuration>
       </plugin>
     </plugins>
@@ -610,12 +601,18 @@
 
   </profiles>
 
-  <modules>
-    <module>commons-geometry-core</module>
-    <module>commons-geometry-euclidean</module>
-    <module>commons-geometry-spherical</module>
-    <module>commons-geometry-hull</module>
-    <module>commons-geometry-enclosing</module>
-  </modules>
+  <developers>
+    <developer>
+      <name>Gilles Sadowski</name>
+      <id>erans</id>
+      <email>erans at apache dot org</email>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+        <name>Matt Juntunen</name>
+    </contributor>
+  </contributors>
 
 </project>
