@@ -16,55 +16,9 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.util.function.Function;
-
 import org.apache.commons.geometry.core.Transform;
 
 /** Extension of the {@link Transform} interface for spherical 1D points.
  */
 public interface Transform1S extends Transform<Point1S> {
-
-    /** Return an instance representing the identity transform.
-     * @return an instance representing the identity transform.
-     */
-    static Transform1S identity() {
-
-        return new Transform1S() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return true;
-            }
-
-            @Override
-            public Point1S apply(final Point1S pt) {
-                return pt;
-            }
-        };
-    }
-
-    /** Create a new {@link Transform1S} instance from the given function.
-     * @param fn function used to transform points
-     * @return a new transform instance
-     */
-    static Transform1S from(final Function<Point1S, Point1S> fn) {
-
-        final Point1S tPi = fn.apply(Point1S.PI);
-        final Point1S tZero = fn.apply(Point1S.ZERO);
-
-        final boolean preservesOrientation = (tPi.getAzimuth() - tZero.getAzimuth()) > 0.0;
-
-        return new Transform1S() {
-
-            @Override
-            public boolean preservesOrientation() {
-                return preservesOrientation;
-            }
-
-            @Override
-            public Point1S apply(final Point1S pt) {
-                return fn.apply(pt);
-            }
-        };
-    }
 }

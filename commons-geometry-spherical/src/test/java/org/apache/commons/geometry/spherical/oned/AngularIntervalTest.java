@@ -20,7 +20,6 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -277,8 +276,8 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.full();
 
-        Transform<Point1S> translate = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
-        Transform<Point1S> invert = Transform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
+        Transform1S translate = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform1S invert = FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
 
         // act/assert
         checkFull(interval.transform(translate));
@@ -290,8 +289,8 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
 
-        Transform<Point1S> translate = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
-        Transform<Point1S> invert = Transform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
+        Transform1S translate = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform1S invert = FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
 
         // act/assert
         checkInterval(interval.transform(translate), Geometry.PI, 1.5 * Geometry.PI);

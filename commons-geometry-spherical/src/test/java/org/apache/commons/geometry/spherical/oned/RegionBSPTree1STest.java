@@ -443,6 +443,56 @@ public class RegionBSPTree1STest {
         checkInterval(plusIntervals.get(0), 0, 1);
     }
 
+    @Test
+    public void testRegionProperties_singleInterval_wrapsZero() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.PI,
+                TEST_PRECISION).toTree();
+
+        // act/assert
+        Assert.assertEquals(1.5 * Geometry.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testRegionProperties_singleInterval_doesNotWrap() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(Geometry.HALF_PI, Geometry.TWO_PI,
+                TEST_PRECISION).toTree();
+
+        // act/assert
+        Assert.assertEquals(1.5 * Geometry.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(1.25 * Geometry.PI, tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testRegionProperties_multipleIntervals_sameSize() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(0, 0.1, TEST_PRECISION));
+        tree.add(AngularInterval.of(0.2, 0.3, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(0.2, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0.15, tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testRegionProperties_multipleIntervals_differentSizes() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(0, 0.2, TEST_PRECISION));
+        tree.add(AngularInterval.of(0.3, 0.7, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(0.6, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(2.2 / 6, tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
     private static void checkSimpleSplit(Split<RegionBSPTree1S> split, AngularInterval minusInterval,
             AngularInterval plusInterval) {
 

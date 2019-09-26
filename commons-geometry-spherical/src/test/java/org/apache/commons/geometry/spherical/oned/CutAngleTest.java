@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -233,7 +232,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_translate() {
         // arrange
-        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -250,7 +249,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_scale() {
         // arrange
-        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(p.getAzimuth() * 2));
+        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() * 2));
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -267,7 +266,7 @@ public class CutAngleTest {
     @Test
     public void testTransform_negate() {
         // arrange
-        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(-p.getAzimuth()));
+        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(-p.getAzimuth()));
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -488,7 +487,7 @@ public class CutAngleTest {
         // arrange
         CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
 
-        Transform<Point1S> transform = Transform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
+        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
 
         // act
         SubCutAngle result = pt.span().transform(transform);

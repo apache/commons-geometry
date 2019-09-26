@@ -93,7 +93,10 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * For example, splitting a non-empty region with a hyperplane at {@code 0pi} is
      * essentially a no-op, since the region will either lie entirely on the plus or minus
      * side of the hyperplane (depending on the hyperplane's orientation) regardless of the actual
-     * content of the region.</p>
+     * content of the region. In these situations, a copy of the tree is returned on the
+     * appropriate side of the split.</p>
+     *
+     * @see CutAngle
      */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {

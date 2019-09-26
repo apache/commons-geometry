@@ -229,6 +229,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * to be split into disjoint regions by a single hyperplane. These disjoint
      * regions cannot be represented by this class and require the use of a BSP
      * tree.</p>
+     *
+     * @see RegionBSPTree1S#split(Hyperplane)
      */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
