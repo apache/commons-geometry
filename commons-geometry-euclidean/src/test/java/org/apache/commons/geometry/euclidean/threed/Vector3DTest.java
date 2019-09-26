@@ -161,11 +161,29 @@ public class Vector3DTest {
     }
 
     @Test
+    public void testNorm_unitVectors() {
+        // arrange
+        Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
+
+        // act/assert
+        Assert.assertEquals(1.0, v.norm(), 0.0);
+    }
+
+    @Test
     public void testNormSq() {
         // act/assert
         Assert.assertEquals(0.0, Vector3D.ZERO.normSq(), 0);
         Assert.assertEquals(29, Vector3D.of(2, 3, 4).normSq(), EPS);
         Assert.assertEquals(29, Vector3D.of(-2, -3, -4).normSq(), EPS);
+    }
+
+    @Test
+    public void testNormSq_unitVectors() {
+        // arrange
+        Vector3D v = Vector3D.of(1.0, 2.0, 3.0).normalize();
+
+        // act/assert
+        Assert.assertEquals(1.0, v.normSq(), 0.0);
     }
 
     @Test
@@ -311,6 +329,17 @@ public class Vector3DTest {
         // act/assert
         checkVector(Vector3D.of(0.1, 2.5, 1.3).negate(), -0.1, -2.5, -1.3);
         checkVector(Vector3D.of(-0.1, -2.5, -1.3).negate(), 0.1, 2.5, 1.3);
+    }
+
+    @Test
+    public void testNegate_unitVectors() {
+        // arrange
+        Vector3D v1 = Vector3D.of(1.0, 2.0, 3.0).normalize();
+        Vector3D v2 = Vector3D.of(-2.0, -4.0, -3.0).normalize();
+
+        // act/assert
+        checkVector(v1.negate(), -1.0 / Math.sqrt(14.0), -Math.sqrt(2.0 / 7.0), -3.0 / Math.sqrt(14.0));
+        checkVector(v2.negate(), 2.0 / Math.sqrt(29.0), 4.0 / Math.sqrt(29.0), 3.0 / Math.sqrt(29.0));
     }
 
     @Test

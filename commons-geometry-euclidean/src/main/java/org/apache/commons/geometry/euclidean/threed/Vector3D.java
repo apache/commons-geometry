@@ -622,6 +622,12 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
+        public double normSq() {
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector3D normalize() {
             return this;
         }
@@ -630,6 +636,12 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         @Override
         public Vector3D withNorm(final double mag) {
             return multiply(mag);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public UnitVector negate() {
+            return new UnitVector(-getX(), -getY(), -getZ());
         }
     }
 }

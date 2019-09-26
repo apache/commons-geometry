@@ -556,6 +556,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
+        public double normSq() {
+            return 1;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Vector2D normalize() {
             return this;
         }
@@ -564,6 +570,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         @Override
         public Vector2D withNorm(final double mag) {
             return multiply(mag);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public UnitVector negate() {
+            return new UnitVector(-getX(), -getY());
         }
     }
 }
