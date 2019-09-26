@@ -239,7 +239,39 @@
           <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
         </configuration>
       </plugin>
-      <!-- maven-checkstyle-plugin runs in JDK 8+ profile so not included here -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${geometry.checkstyle.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${geometry.checkstyle.dep.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <enableRulesSummary>false</enableRulesSummary>
+          <logViolationsToConsole>false</logViolationsToConsole>
+          <failOnViolation>true</failOnViolation>
+          <resourceExcludes>NOTICE.txt,LICENSE.txt,**/maven-archiver/pom.properties,**/resolver-status.properties</resourceExcludes>
+          <excludes>**/generated/**.java</excludes>
+        </configuration>
+        <!-- Uncommenting the lines below currently results in a failed build (see report). -->
+        <!-- <executions> -->
+        <!--   <execution> -->
+        <!--     <id>validate</id> -->
+        <!--     <phase>validate</phase> -->
+        <!--     <goals> -->
+        <!--       <goal>check</goal> -->
+        <!--     </goals> -->
+        <!--   </execution> -->
+        <!-- </executions> -->
+      </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${geometry.pmd.version}</version>
@@ -370,7 +402,26 @@
           <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
         </configuration>
       </plugin>
-      <!-- maven-checkstyle-plugin runs in JDK 8+ profile so not included here -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${geometry.checkstyle.version}</version>
+        <configuration>
+          <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <enableRulesSummary>false</enableRulesSummary>
+          <includeResources>false</includeResources>
+          <excludes>**/generated/**.java</excludes>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>checkstyle</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${geometry.pmd.version}</version>
