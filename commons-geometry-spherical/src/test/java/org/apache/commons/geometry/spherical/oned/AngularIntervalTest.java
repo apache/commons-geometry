@@ -298,6 +298,27 @@ public class AngularIntervalTest {
     }
 
     @Test
+    public void testTransform_scalesToFullInterval() {
+        // arrange
+        AngularInterval posInterval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
+        AngularInterval negInterval = AngularInterval.of(-Geometry.PI, -1.5 * Geometry.PI, TEST_PRECISION);
+        AngularInterval mixedInterval = AngularInterval.of(-0.5 * Geometry.PI, 0.5 * Geometry.PI, TEST_PRECISION);
+
+        FunctionTransform1S scale4 = FunctionTransform1S.from(p -> Point1S.of(4 * p.getAzimuth()));
+        FunctionTransform1S scale5 = FunctionTransform1S.from(p -> Point1S.of(5 * p.getAzimuth()));
+
+        // act/assert
+        Assert.assertTrue(posInterval.transform(scale4).isFull());
+        Assert.assertTrue(posInterval.transform(scale5).isFull());
+
+        Assert.assertTrue(negInterval.transform(scale4).isFull());
+        Assert.assertTrue(negInterval.transform(scale5).isFull());
+
+        Assert.assertTrue(mixedInterval.transform(scale4).isFull());
+        Assert.assertTrue(mixedInterval.transform(scale5).isFull());
+    }
+
+    @Test
     public void testWrapsZero() {
         // act/assert
         Assert.assertFalse(AngularInterval.full().wrapsZero());
