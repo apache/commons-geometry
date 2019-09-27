@@ -398,7 +398,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /**
          * Creates a normalized vector.
          *
-         * @param v Vector coordinate.
+         * @param x Vector coordinate.
          * @return a vector whose norm is 1.
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
