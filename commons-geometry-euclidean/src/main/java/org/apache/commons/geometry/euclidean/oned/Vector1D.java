@@ -374,8 +374,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x));
     }
 
-    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
-     * operations.
+    /**
+     * Represent unit vectors.
+     * This allows optimizations to be performed for certain operations.
      */
     public static final class Unit extends Vector1D {
         /** Unit vector (coordinates: 1). */
@@ -397,7 +398,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /**
          * Creates a normalized vector.
          *
-         * @param v Vector.
+         * @param v Vector coordinate.
          * @return a vector whose norm is 1.
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
