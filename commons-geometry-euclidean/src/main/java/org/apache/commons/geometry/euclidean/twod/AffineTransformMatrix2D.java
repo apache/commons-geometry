@@ -164,7 +164,7 @@ public final class AffineTransformMatrix2D implements AffineTransformMatrix<Vect
      */
     @Override
     public Vector2D applyDirection(final Vector2D vec) {
-        return applyVector(vec, Vector2D::normalize);
+        return applyVector(vec, Vector2D.Unit::from);
     }
 
     /** Apply a translation to the current instance, returning the result as a new transform.

@@ -956,19 +956,19 @@ public class Vector2DTest {
         double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
-        checkVector(Vector2D.normalize(2.0, -2.0), invSqrt2, -invSqrt2);
-        checkVector(Vector2D.normalize(-4.0, 4.0), -invSqrt2, invSqrt2);
+        checkVector(Vector2D.Unit.from(2.0, -2.0), invSqrt2, -invSqrt2);
+        checkVector(Vector2D.Unit.from(-4.0, 4.0), -invSqrt2, invSqrt2);
     }
 
     @Test
     public void testNormalize_static_illegalNorm() {
-        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(0.0, 0.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.Unit.from(0.0, 0.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(Double.NaN, 1.0),
+        GeometryTestUtils.assertThrows(() -> Vector2D.Unit.from(Double.NaN, 1.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(1.0, Double.NEGATIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector2D.Unit.from(1.0, Double.NEGATIVE_INFINITY),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector2D.normalize(1.0, Double.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector2D.Unit.from(1.0, Double.POSITIVE_INFINITY),
                 IllegalNormException.class);
     }
 
