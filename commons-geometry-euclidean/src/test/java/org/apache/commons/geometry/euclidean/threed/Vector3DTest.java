@@ -1140,19 +1140,19 @@ public class Vector3DTest {
         double invSqrt3 = 1.0 / Math.sqrt(3.0);
 
         // act/assert
-        checkVector(Vector3D.normalize(2.0, -2.0, 2.0), invSqrt3, -invSqrt3, invSqrt3);
-        checkVector(Vector3D.normalize(-4.0, 4.0, -4.0), -invSqrt3, invSqrt3, -invSqrt3);
+        checkVector(Vector3D.Unit.from(2.0, -2.0, 2.0), invSqrt3, -invSqrt3, invSqrt3);
+        checkVector(Vector3D.Unit.from(-4.0, 4.0, -4.0), -invSqrt3, invSqrt3, -invSqrt3);
     }
 
     @Test
     public void testNormalize_static_illegalNorm() {
-        GeometryTestUtils.assertThrows(() -> Vector3D.normalize(0.0, 0.0, 0.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(0.0, 0.0, 0.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.normalize(Double.NaN, 1.0, 1.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(Double.NaN, 1.0, 1.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.normalize(1.0, Double.NEGATIVE_INFINITY, 1.0),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(1.0, Double.NEGATIVE_INFINITY, 1.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.normalize(1.0, 1.0, Double.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(1.0, 1.0, Double.POSITIVE_INFINITY),
                 IllegalNormException.class);
     }
 

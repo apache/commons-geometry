@@ -199,7 +199,7 @@ public final class AffineTransformMatrix3D implements AffineTransformMatrix<Vect
      */
     @Override
     public Vector3D applyDirection(final Vector3D vec) {
-        return applyVector(vec, Vector3D::normalize);
+        return applyVector(vec, Vector3D.Unit::from);
     }
 
     /** Apply a translation to the current instance, returning the result as a new transform.

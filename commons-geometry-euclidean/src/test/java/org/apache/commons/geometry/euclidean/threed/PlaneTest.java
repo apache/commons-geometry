@@ -280,22 +280,22 @@ public class PlaneTest {
                 origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
 
         checkPlane(Plane.fromPoints(rotate(pts, 2), TEST_PRECISION),
-                origin, Vector3D.normalize(0, 1, -1), Vector3D.normalize(0, 1, 1));
+                origin, Vector3D.Unit.from(0, 1, -1), Vector3D.Unit.from(0, 1, 1));
 
         checkPlane(Plane.fromPoints(rotate(pts, 3), TEST_PRECISION),
-                origin, Vector3D.normalize(0, 1, 1), Vector3D.normalize(0, -1, 1));
+                origin, Vector3D.Unit.from(0, 1, 1), Vector3D.Unit.from(0, -1, 1));
 
         checkPlane(Plane.fromPoints(rotate(pts, 4), TEST_PRECISION),
-                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+                origin, Vector3D.Unit.from(0, -1, -0.5), Vector3D.Unit.from(0, 0.5, -1));
         checkPlane(Plane.fromPoints(rotate(pts, 5), TEST_PRECISION),
-                origin, Vector3D.normalize(0, -1, -0.5), Vector3D.normalize(0, 0.5, -1));
+                origin, Vector3D.Unit.from(0, -1, -0.5), Vector3D.Unit.from(0, 0.5, -1));
 
         checkPlane(Plane.fromPoints(rotate(pts, 6), TEST_PRECISION),
-                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+                origin, Vector3D.Unit.from(0, -1, 0.5), Vector3D.Unit.from(0, -0.5, -1));
         checkPlane(Plane.fromPoints(rotate(pts, 7), TEST_PRECISION),
-                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+                origin, Vector3D.Unit.from(0, -1, 0.5), Vector3D.Unit.from(0, -0.5, -1));
         checkPlane(Plane.fromPoints(rotate(pts, 8), TEST_PRECISION),
-                origin, Vector3D.normalize(0, -1, 0.5), Vector3D.normalize(0, -0.5, -1));
+                origin, Vector3D.Unit.from(0, -1, 0.5), Vector3D.Unit.from(0, -0.5, -1));
 
         checkPlane(Plane.fromPoints(rotate(pts, 9), TEST_PRECISION),
                 origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);

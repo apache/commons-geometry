@@ -34,22 +34,22 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
 
     /** First canonical vector (coordinates: 1, 0, 0). */
-    public static final Vector3D PLUS_X = new UnitVector(1, 0, 0);
+    public static final Vector3D PLUS_X = Unit.PLUS_X;
 
     /** Opposite of the first canonical vector (coordinates: -1, 0, 0). */
-    public static final Vector3D MINUS_X = new UnitVector(-1, 0, 0);
+    public static final Vector3D MINUS_X = Unit.MINUS_X;
 
     /** Second canonical vector (coordinates: 0, 1, 0). */
-    public static final Vector3D PLUS_Y = new UnitVector(0, 1, 0);
+    public static final Vector3D PLUS_Y = Unit.PLUS_Y;
 
     /** Opposite of the second canonical vector (coordinates: 0, -1, 0). */
-    public static final Vector3D MINUS_Y = new UnitVector(0, -1, 0);
+    public static final Vector3D MINUS_Y = Unit.MINUS_Y;
 
     /** Third canonical vector (coordinates: 0, 0, 1). */
-    public static final Vector3D PLUS_Z = new UnitVector(0, 0, 1);
+    public static final Vector3D PLUS_Z = Unit.PLUS_Z;
 
     /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
-    public static final Vector3D MINUS_Z = new UnitVector(0, 0, -1);
+    public static final Vector3D MINUS_Z = Unit.MINUS_Z;
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -149,10 +149,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Vector3D directionTo(Vector3D v) {
-        return normalize(
-                v.x - x,
-                v.y - y,
-                v.z - z);
+        return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
@@ -234,7 +231,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Vector3D normalize() {
-        return normalize(x, y, z);
+        return Unit.from(x, y, z);
     }
 
     /** {@inheritDoc} */
@@ -348,7 +345,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     /** {@inheritDoc} */
     @Override
     public Vector3D orthogonal(Vector3D dir) {
-        return dir.getComponent(this, true, Vector3D::normalize);
+        return dir.getComponent(this, true, Vector3D.Unit::from);
     }
 
     /** Compute the cross-product of the instance with another vector.
@@ -493,20 +490,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return new Vector3D(v[0], v[1], v[2]);
     }
 
-    /** Returns a normalized vector derived from the given values.
-     * @param x abscissa (first coordinate value)
-     * @param y ordinate (second coordinate value)
-     * @param z height (third coordinate value)
-     * @return normalized vector instance
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
-     */
-    public static Vector3D normalize(final double x, final double y, final double z) {
-        final double norm = Vectors.checkedNorm(Vectors.norm(x, y, z));
-        final double invNorm = 1.0 / norm;
-
-        return new UnitVector(x * invNorm, y * invNorm, z * invNorm);
-    }
-
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -596,10 +579,23 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                 LinearCombination.value(a1, v1.z, a2, v2.z, a3, v3.z, a4, v4.z));
     }
 
-    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
-     * operations.
+    /**
+     * Represents unit vectors.
+     * This allows optimizations to be performed for certain operations.
      */
-    private static final class UnitVector extends Vector3D {
+    public static final class Unit extends Vector3D {
+        /** Unit vector (coordinates: 1, 0, 0). */
+        static final Unit PLUS_X  = new Unit(1d, 0d, 0d);
+        /** Negation of unit vector (coordinates: -1, 0, 0). */
+        static final Unit MINUS_X = new Unit(-1d, 0d, 0d);
+        /** Unit vector (coordinates: 0, 1, 0). */
+        static final Unit PLUS_Y  = new Unit(0d, 1d, 0d);
+        /** Negation of unit vector (coordinates: 0, -1, 0). */
+        static final Unit MINUS_Y = new Unit(0d, -1d, 0d);
+        /** Unit vector (coordinates: 0, 0, 1). */
+        static final Unit PLUS_Z  = new Unit(0d, 0d, 1d);
+        /** Negation of unit vector (coordinates: 0, 0, -1). */
+        static final Unit MINUS_Z = new Unit(0d, 0d, -1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;
@@ -610,8 +606,33 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @param y ordinate (second coordinate value)
          * @param z height (third coordinate value)
          */
-        private UnitVector(final double x, final double y, final double z) {
+        private Unit(final double x, final double y, final double z) {
             super(x, y, z);
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param x Vector coordinate.
+         * @param y Vector coordinate.
+         * @param z Vector coordinate.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(double x, double y, double z) {
+            final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y, z));
+            return new Unit(x * invNorm, y * invNorm, z * invNorm);
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param v Vector.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(Vector3D v) {
+            return from(v.getX(), v.getY(), v.getZ());
         }
 
         /** {@inheritDoc} */
@@ -640,8 +661,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
-        public UnitVector negate() {
-            return new UnitVector(-getX(), -getY(), -getZ());
+        public Unit negate() {
+            return new Unit(-getX(), -getY(), -getZ());
         }
     }
 }
