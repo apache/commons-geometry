@@ -38,7 +38,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
  * local properties only when part of a line is used to define part of
  * a spherical polygon boundary.</p>
  */
-public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, Point1S> {
+public class Circle implements Hyperplane_Old<Point2S>, Embedding_Old<Point2S, Point1S> {
 
     /** Pole or circle center. */
     private Vector3D pole;
@@ -68,7 +68,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
      * @param second second point contained in the great circle
      * @param precision precision context used to compare floating point values
      */
-    public Circle(final S2Point first, final S2Point second, final DoublePrecisionContext precision) {
+    public Circle(final Point2S first, final Point2S second, final DoublePrecisionContext precision) {
         reset(first.getVector().cross(second.getVector()));
         this.precision = precision;
     }
@@ -132,7 +132,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
 
     /** {@inheritDoc} */
     @Override
-    public S2Point project(S2Point point) {
+    public Point2S project(Point2S point) {
         return toSpace(toSubSpace(point));
     }
 
@@ -148,7 +148,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
      * @see #getPhase(Vector3D)
      */
     @Override
-    public Point1S toSubSpace(final S2Point point) {
+    public Point1S toSubSpace(final Point2S point) {
         return Point1S.of(getPhase(point.getVector()));
     }
 
@@ -170,8 +170,8 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
      * @see #getPointAt(double)
      */
     @Override
-    public S2Point toSpace(final Point1S point) {
-        return S2Point.ofVector(getPointAt(point.getAzimuth()));
+    public Point2S toSpace(final Point1S point) {
+        return Point2S.ofVector(getPointAt(point.getAzimuth()));
     }
 
     /** Get a circle point from its phase around the circle.
@@ -257,7 +257,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
      * @see #getOffset(Vector3D)
      */
     @Override
-    public double getOffset(final S2Point point) {
+    public double getOffset(final Point2S point) {
         return getOffset(point.getVector());
     }
 
@@ -276,7 +276,7 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane_Old<S2Point> other) {
+    public boolean sameOrientationAs(final Hyperplane_Old<Point2S> other) {
         final Circle otherC = (Circle) other;
         return pole.dot(otherC.pole) >= 0.0;
     }
@@ -285,16 +285,16 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
      * Transform} embedding a 3D rotation.
      * @param rotation rotation to use
      * @return a new transform that can be applied to either {@link
-     * S2Point Point}, {@link Circle Line} or {@link
+     * Point2S Point}, {@link Circle Line} or {@link
      * org.apache.commons.geometry.core.partitioning.SubHyperplane
      * SubHyperplane} instances
      */
-    public static Transform_Old<S2Point, Point1S> getTransform(final QuaternionRotation rotation) {
+    public static Transform_Old<Point2S, Point1S> getTransform(final QuaternionRotation rotation) {
         return new CircleTransform(rotation);
     }
 
     /** Class embedding a 3D rotation. */
-    private static class CircleTransform implements Transform_Old<S2Point, Point1S> {
+    private static class CircleTransform implements Transform_Old<Point2S, Point1S> {
 
         /** Underlying rotation. */
         private final QuaternionRotation rotation;
@@ -308,13 +308,13 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
 
         /** {@inheritDoc} */
         @Override
-        public S2Point apply(final S2Point point) {
-            return S2Point.ofVector(rotation.apply(point.getVector()));
+        public Point2S apply(final Point2S point) {
+            return Point2S.ofVector(rotation.apply(point.getVector()));
         }
 
         /** {@inheritDoc} */
         @Override
-        public Circle apply(final Hyperplane_Old<S2Point> hyper) {
+        public Circle apply(final Hyperplane_Old<Point2S> hyper) {
             final Circle circle = (Circle) hyper;
             return new Circle(rotation.apply(circle.pole),
                               rotation.apply(circle.x),
@@ -325,8 +325,8 @@ public class Circle implements Hyperplane_Old<S2Point>, Embedding_Old<S2Point, P
         /** {@inheritDoc} */
         @Override
         public SubHyperplane_Old<Point1S> apply(final SubHyperplane_Old<Point1S> sub,
-                                             final Hyperplane_Old<S2Point> original,
-                                             final Hyperplane_Old<S2Point> transformed) {
+                                             final Hyperplane_Old<Point2S> original,
+                                             final Hyperplane_Old<Point2S> transformed) {
             // as the circle is rotated, the limit angles are rotated too
             return sub;
         }

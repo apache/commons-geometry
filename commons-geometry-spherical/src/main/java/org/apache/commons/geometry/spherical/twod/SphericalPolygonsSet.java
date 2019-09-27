@@ -38,7 +38,7 @@ import org.apache.commons.geometry.spherical.partitioning.SubHyperplane_Old;
 
 /** This class represents a region on the 2-sphere: a set of spherical polygons.
  */
-public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
+public class SphericalPolygonsSet extends AbstractRegion_Old<Point2S, Point1S> {
 
     /** Boundary defined as an array of closed loops start vertices. */
     private List<Vertex> loops;
@@ -56,8 +56,8 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      */
     public SphericalPolygonsSet(final Vector3D pole, final DoublePrecisionContext precision) {
         super(new BSPTree_Old<>(new Circle(pole, precision).wholeHyperplane(),
-                                    new BSPTree_Old<S2Point>(Boolean.FALSE),
-                                    new BSPTree_Old<S2Point>(Boolean.TRUE),
+                                    new BSPTree_Old<Point2S>(Boolean.FALSE),
+                                    new BSPTree_Old<Point2S>(Boolean.TRUE),
                                     null),
               precision);
     }
@@ -85,7 +85,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * @param tree inside/outside BSP tree representing the region
      * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final BSPTree_Old<S2Point> tree, final DoublePrecisionContext precision) {
+    public SphericalPolygonsSet(final BSPTree_Old<Point2S> tree, final DoublePrecisionContext precision) {
         super(tree, precision);
     }
 
@@ -110,7 +110,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * collection of {@link SubHyperplane SubHyperplane} objects
      * @param precision precision context used to compare floating point values
      */
-    public SphericalPolygonsSet(final Collection<SubHyperplane_Old<S2Point>> boundary, final DoublePrecisionContext precision) {
+    public SphericalPolygonsSet(final Collection<SubHyperplane_Old<Point2S>> boundary, final DoublePrecisionContext precision) {
         super(boundary, precision);
     }
 
@@ -143,7 +143,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * @param precision precision context used to compare floating point values
      * @param vertices vertices of the simple loop boundary
      */
-    public SphericalPolygonsSet(final DoublePrecisionContext precision, final S2Point ... vertices) {
+    public SphericalPolygonsSet(final DoublePrecisionContext precision, final Point2S ... vertices) {
         super(verticesToTree(precision, vertices), precision);
     }
 
@@ -154,16 +154,16 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * @param n number of sides of the polygon
      * @return vertices array
      */
-    private static S2Point[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
+    private static Point2S[] createRegularPolygonVertices(final Vector3D center, final Vector3D meridian,
                                                           final double outsideRadius, final int n) {
-        final S2Point[] array = new S2Point[n];
+        final Point2S[] array = new Point2S[n];
         final QuaternionRotation r0 = QuaternionRotation.fromAxisAngle(center.cross(meridian),
                                          outsideRadius);
-        array[0] = S2Point.ofVector(r0.apply(center));
+        array[0] = Point2S.ofVector(r0.apply(center));
 
         final QuaternionRotation r = QuaternionRotation.fromAxisAngle(center, Geometry.TWO_PI / n);
         for (int i = 1; i < n; ++i) {
-            array[i] = S2Point.ofVector(r.apply(array[i - 1].getVector()));
+            array[i] = Point2S.ofVector(r.apply(array[i - 1].getVector()));
         }
 
         return array;
@@ -186,8 +186,8 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * @param vertices vertices of the simple loop boundary
      * @return the BSP tree of the input vertices
      */
-    private static BSPTree_Old<S2Point> verticesToTree(final DoublePrecisionContext precision,
-                                                    final S2Point ... vertices) {
+    private static BSPTree_Old<Point2S> verticesToTree(final DoublePrecisionContext precision,
+                                                    final Point2S ... vertices) {
 
         final int n = vertices.length;
         if (n == 0) {
@@ -235,7 +235,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
         }
 
         // build the tree top-down
-        final BSPTree_Old<S2Point> tree = new BSPTree_Old<>();
+        final BSPTree_Old<Point2S> tree = new BSPTree_Old<>();
         insertEdges(precision, tree, edges);
 
         return tree;
@@ -250,7 +250,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * (excluding edges not belonging to the cell defined by this node)
      */
     private static void insertEdges(final DoublePrecisionContext precision,
-                                    final BSPTree_Old<S2Point> node,
+                                    final BSPTree_Old<Point2S> node,
                                     final List<Edge> edges) {
 
         // find an edge with an hyperplane that can be inserted in the node
@@ -266,7 +266,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
         if (inserted == null) {
             // no suitable edge was found, the node remains a leaf node
             // we need to set its inside/outside boolean indicator
-            final BSPTree_Old<S2Point> parent = node.getParent();
+            final BSPTree_Old<Point2S> parent = node.getParent();
             if (parent == null || node == parent.getMinus()) {
                 node.setAttribute(Boolean.TRUE);
             } else {
@@ -301,7 +301,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
 
     /** {@inheritDoc} */
     @Override
-    public SphericalPolygonsSet buildNew(final BSPTree_Old<S2Point> tree) {
+    public SphericalPolygonsSet buildNew(final BSPTree_Old<Point2S> tree) {
         return new SphericalPolygonsSet(tree, getPrecision());
     }
 
@@ -312,7 +312,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
     @Override
     protected void computeGeometricalProperties() {
 
-        final BSPTree_Old<S2Point> tree = getTree(true);
+        final BSPTree_Old<Point2S> tree = getTree(true);
 
         if (tree.getCut() == null) {
 
@@ -321,10 +321,10 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
             if (tree.getCut() == null && (Boolean) tree.getAttribute()) {
                 // the instance covers the whole space
                 setSize(4 * Math.PI);
-                setBarycenter(S2Point.of(0, 0));
+                setBarycenter(Point2S.of(0, 0));
             } else {
                 setSize(0);
-                setBarycenter(S2Point.NaN);
+                setBarycenter(Point2S.NaN);
             }
 
         } else {
@@ -370,7 +370,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
             } else {
 
                 // sort the arcs according to their start point
-                final BSPTree_Old<S2Point> root = getTree(true);
+                final BSPTree_Old<Point2S> root = getTree(true);
                 final EdgesBuilder visitor = new EdgesBuilder(root, getPrecision());
                 root.visit(visitor);
                 final List<Edge> edges = visitor.getEdges();
@@ -457,28 +457,28 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      * </p>
      * @return a spherical cap enclosing the polygon
      */
-    public EnclosingBall<S2Point> getEnclosingCap() {
+    public EnclosingBall<Point2S> getEnclosingCap() {
 
         // handle special cases first
         if (isEmpty()) {
-            return new EnclosingBall<>(S2Point.PLUS_K, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Point2S.PLUS_K, Double.NEGATIVE_INFINITY);
         }
         if (isFull()) {
-            return new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
+            return new EnclosingBall<>(Point2S.PLUS_K, Double.POSITIVE_INFINITY);
         }
 
         // as the polygons is neither empty nor full, it has some boundaries and cut hyperplanes
-        final BSPTree_Old<S2Point> root = getTree(false);
+        final BSPTree_Old<Point2S> root = getTree(false);
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(S2Point.ofVector(circle.getPole()).negate(),
+            return new EnclosingBall<>(Point2S.ofVector(circle.getPole()).negate(),
                                                         0.5 * Math.PI);
         }
         if (isFull(root.getMinus()) && isEmpty(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(S2Point.ofVector(circle.getPole()),
+            return new EnclosingBall<>(Point2S.ofVector(circle.getPole()),
                                                         0.5 * Math.PI);
         }
 
@@ -508,11 +508,11 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
         if (getPrecision().eqZero(h)) {
             // the 3D sphere is centered on the unit sphere and covers it
             // fall back to a crude approximation, based only on outside convex cells
-            EnclosingBall<S2Point> enclosingS2 =
-                    new EnclosingBall<>(S2Point.PLUS_K, Double.POSITIVE_INFINITY);
+            EnclosingBall<Point2S> enclosingS2 =
+                    new EnclosingBall<>(Point2S.PLUS_K, Double.POSITIVE_INFINITY);
             for (Vector3D outsidePoint : getOutsidePoints()) {
-                final S2Point outsideS2 = S2Point.ofVector(outsidePoint);
-                final BoundaryProjection_Old<S2Point> projection = projectToBoundary(outsideS2);
+                final Point2S outsideS2 = Point2S.ofVector(outsidePoint);
+                final BoundaryProjection_Old<Point2S> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
                     enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
                                                                        Math.PI - projection.getOffset(),
@@ -521,13 +521,13 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
             }
             return enclosingS2;
         }
-        final S2Point[] support = new S2Point[support3D.length];
+        final Point2S[] support = new Point2S[support3D.length];
         for (int i = 0; i < support3D.length; ++i) {
-            support[i] = S2Point.ofVector(support3D[i]);
+            support[i] = Point2S.ofVector(support3D[i]);
         }
 
-        final EnclosingBall<S2Point> enclosingS2 =
-                new EnclosingBall<>(S2Point.ofVector(enclosing3D.getCenter()),
+        final EnclosingBall<Point2S> enclosingS2 =
+                new EnclosingBall<>(Point2S.ofVector(enclosing3D.getCenter()),
                                                      Math.acos((1 + h * h - r * r) / (2 * h)),
                                                      support);
 
@@ -549,7 +549,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<S2Point, Point1S> {
      */
     private List<Vector3D> getOutsidePoints() {
         final SphericalPolygonsSet complement =
-                (SphericalPolygonsSet) new RegionFactory_Old<S2Point>().getComplement(this);
+                (SphericalPolygonsSet) new RegionFactory_Old<Point2S>().getComplement(this);
         final PropertiesComputer pc = new PropertiesComputer(getPrecision());
         complement.getTree(true).visit(pc);
         return pc.getConvexCellsInsidePoints();

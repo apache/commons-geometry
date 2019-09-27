@@ -26,27 +26,27 @@ import org.apache.commons.geometry.spherical.partitioning.Region_Old;
 
 /** This class represents a sub-Hyperplane_Old for {@link Circle}.
  */
-public class SubCircle extends AbstractSubHyperplane_Old<S2Point, Point1S> {
+public class SubCircle extends AbstractSubHyperplane_Old<Point2S, Point1S> {
 
     /** Simple constructor.
      * @param Hyperplane_Old underlying Hyperplane_Old
      * @param remainingRegion remaining region of the Hyperplane_Old
      */
-    public SubCircle(final Hyperplane_Old<S2Point> Hyperplane_Old,
+    public SubCircle(final Hyperplane_Old<Point2S> Hyperplane_Old,
                      final Region_Old<Point1S> remainingRegion) {
         super(Hyperplane_Old, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane_Old<S2Point, Point1S> buildNew(final Hyperplane_Old<S2Point> Hyperplane_Old,
+    protected AbstractSubHyperplane_Old<Point2S, Point1S> buildNew(final Hyperplane_Old<Point2S> Hyperplane_Old,
                                                                  final Region_Old<Point1S> remainingRegion) {
         return new SubCircle(Hyperplane_Old, remainingRegion);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<S2Point> split(final Hyperplane_Old<S2Point> Hyperplane_Old) {
+    public SplitSubHyperplane<Point2S> split(final Hyperplane_Old<Point2S> Hyperplane_Old) {
 
         final Circle thisCircle   = (Circle) getHyperplane();
         final Circle otherCircle  = (Circle) Hyperplane_Old;

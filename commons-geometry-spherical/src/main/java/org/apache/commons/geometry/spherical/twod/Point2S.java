@@ -26,29 +26,29 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 /** This class represents a point on the 2-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class S2Point implements Point<S2Point>, Serializable {
+public final class Point2S implements Point<Point2S>, Serializable {
 
     /** +I (coordinates: ( azimuth = 0, polar = pi/2 )). */
-    public static final S2Point PLUS_I = new S2Point(0, 0.5 * Math.PI, Vector3D.PLUS_X);
+    public static final Point2S PLUS_I = new Point2S(0, 0.5 * Math.PI, Vector3D.PLUS_X);
 
     /** +J (coordinates: ( azimuth = pi/2, polar = pi/2 ))). */
-    public static final S2Point PLUS_J = new S2Point(0.5 * Math.PI, 0.5 * Math.PI, Vector3D.PLUS_Y);
+    public static final Point2S PLUS_J = new Point2S(0.5 * Math.PI, 0.5 * Math.PI, Vector3D.PLUS_Y);
 
     /** +K (coordinates: ( azimuth = any angle, polar = 0 )). */
-    public static final S2Point PLUS_K = new S2Point(0, 0, Vector3D.PLUS_Z);
+    public static final Point2S PLUS_K = new Point2S(0, 0, Vector3D.PLUS_Z);
 
     /** -I (coordinates: ( azimuth = pi, polar = pi/2 )). */
-    public static final S2Point MINUS_I = new S2Point(Math.PI, 0.5 * Math.PI, Vector3D.MINUS_X);
+    public static final Point2S MINUS_I = new Point2S(Math.PI, 0.5 * Math.PI, Vector3D.MINUS_X);
 
     /** -J (coordinates: ( azimuth = 3pi/2, polar = pi/2 )). */
-    public static final S2Point MINUS_J = new S2Point(1.5 * Math.PI, 0.5 * Math.PI, Vector3D.MINUS_Y);
+    public static final Point2S MINUS_J = new Point2S(1.5 * Math.PI, 0.5 * Math.PI, Vector3D.MINUS_Y);
 
     /** -K (coordinates: ( azimuth = any angle, polar = pi )). */
-    public static final S2Point MINUS_K = new S2Point(0, Math.PI, Vector3D.MINUS_Z);
+    public static final Point2S MINUS_K = new Point2S(0, Math.PI, Vector3D.MINUS_Z);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final S2Point NaN = new S2Point(Double.NaN, Double.NaN, Vector3D.NaN);
+    public static final Point2S NaN = new Point2S(Double.NaN, Double.NaN, Vector3D.NaN);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -68,7 +68,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @param polar polar angle
      * @param vector corresponding vector; if null, the vector is computed
      */
-    private S2Point(final double azimuth, final double polar, final Vector3D vector) {
+    private Point2S(final double azimuth, final double polar, final Vector3D vector) {
         this.azimuth = SphericalCoordinates.normalizeAzimuth(azimuth);
         this.polar = SphericalCoordinates.normalizePolar(polar);
         this.vector = (vector != null) ? vector : SphericalCoordinates.toCartesian(1.0, azimuth, polar);
@@ -76,7 +76,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
 
     /** Get the azimuthal angle in the x-y plane in radians.
      * @return azimuthal angle in the x-y plane
-     * @see S2Point#of(double, double)
+     * @see Point2S#of(double, double)
      */
     public double getAzimuth() {
         return azimuth;
@@ -84,7 +84,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
 
     /** Get the polar angle in radians.
      * @return polar angle
-     * @see S2Point#of(double, double)
+     * @see Point2S#of(double, double)
      */
     public double getPolar() {
         return polar;
@@ -124,13 +124,13 @@ public final class S2Point implements Point<S2Point>, Serializable {
     /** Get the opposite of the instance.
      * @return a new vector which is opposite to the instance
      */
-    public S2Point negate() {
-        return new S2Point(-azimuth, Math.PI - polar, vector.negate());
+    public Point2S negate() {
+        return new Point2S(-azimuth, Math.PI - polar, vector.negate());
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distance(final S2Point point) {
+    public double distance(final Point2S point) {
         return distance(this, point);
     }
 
@@ -139,7 +139,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @param p2 second vector
      * @return the angular separation between p1 and p2
      */
-    public static double distance(S2Point p1, S2Point p2) {
+    public static double distance(Point2S p1, Point2S p2) {
         return p1.vector.angle(p2.vector);
     }
 
@@ -168,8 +168,8 @@ public final class S2Point implements Point<S2Point>, Serializable {
             return true;
         }
 
-        if (other instanceof S2Point) {
-            final S2Point rhs = (S2Point) other;
+        if (other instanceof Point2S) {
+            final Point2S rhs = (Point2S) other;
             if (rhs.isNaN()) {
                 return this.isNaN();
             }
@@ -207,8 +207,8 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @see #getAzimuth()
      * @see #getPolar()
      */
-    public static S2Point of(final double azimuth, final double polar) {
-        return new S2Point(azimuth, polar, null);
+    public static Point2S of(final double azimuth, final double polar) {
+        return new Point2S(azimuth, polar, null);
     }
 
     /** Build a point from its underlying 3D vector
@@ -216,10 +216,10 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance with the coordinates determined by the given 3D vector
      * @exception IllegalStateException if vector norm is zero
      */
-    public static S2Point ofVector(final Vector3D vector) {
-        SphericalCoordinates coords = SphericalCoordinates.fromCartesian(vector);
+    public static Point2S ofVector(final Vector3D vector) {
+        final SphericalCoordinates coords = SphericalCoordinates.fromCartesian(vector);
 
-        return new S2Point(coords.getAzimuth(), coords.getPolar(), vector.normalize());
+        return new Point2S(coords.getAzimuth(), coords.getPolar(), vector.normalize());
     }
 
     /** Parses the given string and returns a new point instance. The expected string
@@ -228,7 +228,7 @@ public final class S2Point implements Point<S2Point>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static S2Point parse(String str) {
-        return SimpleTupleFormat.getDefault().parse(str, S2Point::of);
+    public static Point2S parse(String str) {
+        return SimpleTupleFormat.getDefault().parse(str, Point2S::of);
     }
 }

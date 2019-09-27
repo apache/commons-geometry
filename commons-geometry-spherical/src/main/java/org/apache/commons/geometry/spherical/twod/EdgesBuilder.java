@@ -32,25 +32,25 @@ import org.apache.commons.geometry.spherical.partitioning.BoundaryAttribute_Old;
 
 /** Visitor building edges.
  */
-class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
+class EdgesBuilder implements BSPTreeVisitor_Old<Point2S> {
 
     /** Root of the tree. */
-    private final BSPTree_Old<S2Point> root;
+    private final BSPTree_Old<Point2S> root;
 
     /** Precision context used to determine floating point equality. */
     private final DoublePrecisionContext precision;
 
     /** Built edges and their associated nodes. */
-    private final Map<Edge, BSPTree_Old<S2Point>> edgeToNode;
+    private final Map<Edge, BSPTree_Old<Point2S>> edgeToNode;
 
     /** Reversed map. */
-    private final Map<BSPTree_Old<S2Point>, List<Edge>> nodeToEdgesList;
+    private final Map<BSPTree_Old<Point2S>, List<Edge>> nodeToEdgesList;
 
     /** Simple constructor.
      * @param root tree root
      * @param precision precision context used to compare floating point values
      */
-    EdgesBuilder(final BSPTree_Old<S2Point> root, final DoublePrecisionContext precision) {
+    EdgesBuilder(final BSPTree_Old<Point2S> root, final DoublePrecisionContext precision) {
         this.root            = root;
         this.precision       = precision;
         this.edgeToNode      = new IdentityHashMap<>();
@@ -59,16 +59,16 @@ class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree_Old<S2Point> node) {
+    public Order visitOrder(final BSPTree_Old<Point2S> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree_Old<S2Point> node) {
+    public void visitInternalNode(final BSPTree_Old<Point2S> node) {
         nodeToEdgesList.put(node, new ArrayList<Edge>());
         @SuppressWarnings("unchecked")
-        final BoundaryAttribute_Old<S2Point> attribute = (BoundaryAttribute_Old<S2Point>) node.getAttribute();
+        final BoundaryAttribute_Old<Point2S> attribute = (BoundaryAttribute_Old<Point2S>) node.getAttribute();
         if (attribute.getPlusOutside() != null) {
             addContribution((SubCircle) attribute.getPlusOutside(), false, node);
         }
@@ -79,7 +79,7 @@ class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree_Old<S2Point> node) {
+    public void visitLeafNode(final BSPTree_Old<Point2S> node) {
     }
 
     /** Add the contribution of a boundary edge.
@@ -88,7 +88,7 @@ class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
      * @param node node to which the edge belongs
      */
     private void addContribution(final SubCircle sub, final boolean reversed,
-                                 final BSPTree_Old<S2Point> node) {
+                                 final BSPTree_Old<Point2S> node) {
         final Circle circle  = (Circle) sub.getHyperplane();
         final List<Arc> arcs = ((ArcsSet) sub.getRemainingRegion()).asList();
         for (final Arc a : arcs) {
@@ -117,13 +117,13 @@ class EdgesBuilder implements BSPTreeVisitor_Old<S2Point> {
         throws IllegalStateException {
 
         // get the candidate nodes
-        final S2Point point = previous.getEnd().getLocation();
-        final List<BSPTree_Old<S2Point>> candidates = root.getCloseCuts(point, precision.getMaxZero());
+        final Point2S point = previous.getEnd().getLocation();
+        final List<BSPTree_Old<Point2S>> candidates = root.getCloseCuts(point, precision.getMaxZero());
 
         // the following edge we are looking for must start from one of the candidates nodes
         double closest = precision.getMaxZero();
         Edge following = null;
-        for (final BSPTree_Old<S2Point> node : candidates) {
+        for (final BSPTree_Old<Point2S> node : candidates) {
             for (final Edge edge : nodeToEdgesList.get(node)) {
                 if (edge != previous && edge.getStart().getIncoming() == null) {
                     final Vector3D edgeStart = edge.getStart().getLocation().getVector();

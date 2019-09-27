@@ -28,7 +28,7 @@ import org.apache.commons.geometry.spherical.partitioning.BSPTree_Old;
 
 /** Visitor computing geometrical properties.
  */
-class PropertiesComputer implements BSPTreeVisitor_Old<S2Point> {
+class PropertiesComputer implements BSPTreeVisitor_Old<Point2S> {
 
     /** Precision context used to determine floating point equality. */
     private final DoublePrecisionContext precision;
@@ -54,19 +54,19 @@ class PropertiesComputer implements BSPTreeVisitor_Old<S2Point> {
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final BSPTree_Old<S2Point> node) {
+    public Order visitOrder(final BSPTree_Old<Point2S> node) {
         return Order.MINUS_SUB_PLUS;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitInternalNode(final BSPTree_Old<S2Point> node) {
+    public void visitInternalNode(final BSPTree_Old<Point2S> node) {
         // nothing to do here
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visitLeafNode(final BSPTree_Old<S2Point> node) {
+    public void visitLeafNode(final BSPTree_Old<Point2S> node) {
         if ((Boolean) node.getAttribute()) {
 
             // transform this inside leaf cell into a simple convex polygon
@@ -157,11 +157,11 @@ class PropertiesComputer implements BSPTreeVisitor_Old<S2Point> {
     /** Get the barycenter.
      * @return barycenter
      */
-    public S2Point getBarycenter() {
+    public Point2S getBarycenter() {
         if (summedBarycenter.normSq() == 0) {
-            return S2Point.NaN;
+            return Point2S.NaN;
         } else {
-            return S2Point.ofVector(summedBarycenter);
+            return Point2S.ofVector(summedBarycenter);
         }
     }
 

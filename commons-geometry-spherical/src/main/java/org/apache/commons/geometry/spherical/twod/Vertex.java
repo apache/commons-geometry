@@ -26,7 +26,7 @@ import java.util.List;
 public class Vertex {
 
     /** Vertex location. */
-    private final S2Point location;
+    private final Point2S location;
 
     /** Incoming edge. */
     private Edge incoming;
@@ -40,7 +40,7 @@ public class Vertex {
     /** Build a non-processed vertex not owned by any node yet.
      * @param location vertex location
      */
-    Vertex(final S2Point location) {
+    Vertex(final Point2S location) {
         this.location = location;
         this.incoming = null;
         this.outgoing = null;
@@ -50,7 +50,7 @@ public class Vertex {
     /** Get Vertex location.
      * @return vertex location
      */
-    public S2Point getLocation() {
+    public Point2S getLocation() {
         return location;
     }
 
