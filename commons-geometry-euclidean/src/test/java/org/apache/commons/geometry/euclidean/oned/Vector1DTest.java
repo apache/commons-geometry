@@ -688,7 +688,7 @@ public class Vector1DTest {
     public void testUnitFactoryOptimization() {
         // An already normalized vector will avoid unnecessary creation.
         final Vector1D v = Vector1D.of(3).normalize();
-        Assert.assertTrue(v.normalize() == v);
+        Assert.assertSame(v, v.normalize());
     }
 
     private void checkVector(Vector1D v, double x) {
