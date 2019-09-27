@@ -16,55 +16,21 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-parent</artifactId>
-    <version>47</version>
+    <version>49</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.commons</groupId>
   <artifactId>commons-geometry-parent</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Apache Commons Geometry</name>
-
-  <inceptionYear>2016</inceptionYear>
   <description>The Apache Commons Geometry project provides geometric types and utilities.</description>
   <url>https://commons.apache.org/proper/commons-geometry/</url>
-
-  <issueManagement>
-    <system>jira</system>
-    <url>https://issues.apache.org/jira/browse/Geometry</url>
-  </issueManagement>
-
-  <scm>
-    <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</developerConnection>
-    <url>https://gitbox.apache.org/repos/asf/commons-geometry.git</url>
-  </scm>
-
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <name>Apache Commons Site</name>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry/</url>
-    </site>
-  </distributionManagement>
-
-  <developers>
-    <developer>
-      <name>Gilles Sadowski</name>
-      <id>erans</id>
-      <email>erans at apache dot org</email>
-    </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-        <name>Matt Juntunen</name>
-    </contributor>
-  </contributors>
+  <inceptionYear>2016</inceptionYear>
 
   <properties>
     <!-- Do not change: "geometry" is the name of the component even if the
@@ -88,23 +54,21 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <geometry.pmd.version>3.9.0</geometry.pmd.version>
+    <geometry.pmd.dep.version>6.14.0</geometry.pmd.dep.version>
     <geometry.checkstyle.version>3.0.0</geometry.checkstyle.version>
+    <geometry.checkstyle.dep.version>8.20</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
 
-    <!-- Temporary fix to support Java 8 -->
-    <commons.jacoco.version>0.8.2</commons.jacoco.version>
-    <commons.jacoco.classRatio>0.96</commons.jacoco.classRatio>
-    <commons.jacoco.instructionRatio>0.8</commons.jacoco.instructionRatio>
-    <commons.jacoco.methodRatio>0.8</commons.jacoco.methodRatio>
-    <commons.jacoco.branchRatio>0.8</commons.jacoco.branchRatio>
-    <commons.jacoco.complexityRatio>0.8</commons.jacoco.complexityRatio>
-    <commons.jacoco.lineRatio>0.85</commons.jacoco.lineRatio>
-    <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
+    <!-- Version fix to support Java 11 site generation using parent-48 -->
+    <commons.spotbugs.version>3.1.11</commons.spotbugs.version>
+    <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
+       jxr:aggregate. If compile is forked it fails when building the Java 9 modules that
+       depend on other packages. -->
+    <commons.jxr.version>2.5</commons.jxr.version>
 
-    <!-- Override CP 47 -->
-    <commons.spotbugs.version>3.1.8</commons.spotbugs.version>
+    <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
 
     <commons.site.path>geometry</commons.site.path>
     <commons.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry</commons.scmPubUrl>
@@ -124,8 +88,6 @@
         Temporary workaround?
     -->
     <commons.release.name>commons-geometry-${project.version}</commons.release.name>
-    <!-- Java8+ requires additional Javadoc qualifier for MathJax (default to empty). -->
-    <allowscript.javadoc.qualifier></allowscript.javadoc.qualifier>
     <!-- Invalid flag for old javadoc versions (default to empty). -->
     <doclint.javadoc.qualifier></doclint.javadoc.qualifier>
 
@@ -135,14 +97,32 @@
     <junit.version>4.12</junit.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>commons-geometry-core</module>
+    <module>commons-geometry-euclidean</module>
+    <module>commons-geometry-spherical</module>
+    <module>commons-geometry-hull</module>
+    <module>commons-geometry-enclosing</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:http://gitbox.apache.org/repos/asf/commons-geometry.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/commons-geometry.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf/commons-geometry.git</url>
+  </scm>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>https://issues.apache.org/jira/browse/Geometry</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <name>Apache Commons Site</name>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/commons/content/proper/commons-geometry/</url>
+    </site>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>
@@ -190,7 +170,17 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
+    <defaultGoal>clean verify apache-rat:check clirr:check checkstyle:check pmd:check spotbugs:check javadoc:javadoc</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -210,7 +200,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <compilerArgs>
-            <!-- <arg>-verbose</arg> -->
             <arg>-Xlint:all,-options,-path</arg>
           </compilerArgs>
         </configuration>
@@ -232,17 +221,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/assembly/src.xml</descriptor>
-            <descriptor>src/assembly/bin.xml</descriptor>
-          </descriptors>
-          <!-- There are a lot of long file names. Suppress the warnings. -->
-          <tarLongFileMode>gnu</tarLongFileMode>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-publish-plugin</artifactId>
         <configuration>
@@ -251,24 +229,72 @@
           </ignorePathsToDelete>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${commons.spotbugs.version}</version>
+        <configuration>
+          <threshold>Normal</threshold>
+          <effort>Default</effort>
+          <excludeFilterFile>${geometry.parent.dir}/src/main/resources/spotbugs/spotbugs-exclude-filter.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${geometry.checkstyle.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${geometry.checkstyle.dep.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
+          <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <enableRulesSummary>false</enableRulesSummary>
+          <logViolationsToConsole>false</logViolationsToConsole>
+          <failOnViolation>true</failOnViolation>
+          <resourceExcludes>NOTICE.txt,LICENSE.txt,**/maven-archiver/pom.properties,**/resolver-status.properties</resourceExcludes>
+          <excludes>**/generated/**.java</excludes>
+        </configuration>
+        <!-- Uncommenting the lines below currently results in a failed build (see report). -->
+        <!-- <executions> -->
+        <!--   <execution> -->
+        <!--     <id>validate</id> -->
+        <!--     <phase>validate</phase> -->
+        <!--     <goals> -->
+        <!--       <goal>check</goal> -->
+        <!--     </goals> -->
+        <!--   </execution> -->
+        <!-- </executions> -->
+      </plugin>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${geometry.pmd.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>${geometry.pmd.dep.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>${geometry.pmd.dep.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <targetJdk>${maven.compiler.target}</targetJdk>
+          <skipEmptyReport>false</skipEmptyReport>
+          <analysisCache>true</analysisCache>
+          <rulesets>
+            <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -283,6 +309,14 @@
             <!-- version 0.8 of apache-rat-plugin does not exclude properly
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
+            <exclude>**/site-content/**</exclude>
+            <exclude>**/.classpath</exclude>
+            <exclude>**/.project</exclude>
+            <exclude>**/.settings/**</exclude>
+            <exclude>**/.checkstyle</exclude>
+            <exclude>**/target/**</exclude>
+            <exclude>src/site/resources/release-notes/RELEASE-NOTES-*.txt</exclude>
+            <exclude>src/site/resources/txt/userguide/stress/**</exclude>
             <exclude>dist-archive/**</exclude>
           </excludes>
         </configuration>
@@ -294,30 +328,17 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Enable MathJax -->
-          <additionalparam>${doclint.javadoc.qualifier} ${allowscript.javadoc.qualifier} -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalparam>
-          <!-- <aggregate>true</aggregate> -->
+          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
         </configuration>
       </plugin>
-    </plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <skipAssembly>true</skipAssembly>
+        </configuration>
+      </plugin>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${geometry.checkstyle.version}</version>
-          <configuration>
-            <includeTestSourceDirectory>false</includeTestSourceDirectory>
-            <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
-            <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
-            <logViolationsToConsole>false</logViolationsToConsole>
-            <failOnViolation>false</failOnViolation>
-            <resourceExcludes>NOTICE.txt,LICENSE.txt</resourceExcludes>
-            <excludes>**/module-info.java</excludes>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    </plugins>
   </build>
 
   <reporting>
@@ -325,13 +346,20 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>${commons.rat.version}</version>
         <configuration>
-         <!--  Should agree with apache-rat-plugin config under <build> -->
+          <!--  Should agree with apache-rat-plugin config under <build> -->
           <excludes combine.children="append">
             <!-- version 0.8 of apache-rat-plugin does not exclude properly
                  some default development tools files (see RAT-126) -->
             <exclude>.ekstazi/**</exclude>
+            <exclude>**/site-content/**</exclude>
+            <exclude>**/.classpath</exclude>
+            <exclude>**/.project</exclude>
+            <exclude>**/.settings/**</exclude>
+            <exclude>**/.checkstyle</exclude>
+            <exclude>**/target/**</exclude>
+            <exclude>src/site/resources/release-notes/RELEASE-NOTES-*.txt</exclude>
+            <exclude>src/site/resources/txt/userguide/stress/**</exclude>
             <exclude>dist-archive/**</exclude>
           </excludes>
         </configuration>
@@ -381,9 +409,10 @@
         <configuration>
           <configLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle.xml</configLocation>
           <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
+          <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
           <includeResources>false</includeResources>
-          <excludes>**/module-info.java</excludes>
+          <excludes>**/generated/**.java</excludes>
         </configuration>
         <reportSets>
           <reportSet>
@@ -419,10 +448,10 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Enable MathJax -->
-          <additionalparam>${doclint.javadoc.qualifier} ${allowscript.javadoc.qualifier} -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalparam>
-          <!-- <aggregate>true</aggregate> -->
+          <additionalOptions>${doclint.javadoc.qualifier} --allow-script-in-comments -header '&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/${geometry.mathjax.version}/MathJax.js?config=TeX-AMS-MML_HTMLorMML"&gt;&lt;/script&gt;'</additionalOptions>
         </configuration>
       </plugin>
+
     </plugins>
   </reporting>
 
@@ -550,59 +579,13 @@
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>${commons.jacoco.version}</version>
-            <executions>
-              <execution>
-                <id>default-prepare-agent</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-prepare-agent-integration</id>
-                <goals>
-                  <goal>prepare-agent-integration</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-report</id>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-report-integration</id>
-                <goals>
-                  <goal>report-integration</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-check</id>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <!--  implementation is needed only for Maven 2  -->
-                    <rule implementation="org.jacoco.maven.RuleConfiguration">
-                      <element>BUNDLE</element>
-                      <limits>
-                        <!--  implementation is needed only for Maven 2  -->
-                        <limit implementation="org.jacoco.report.check.Limit">
-                          <counter>COMPLEXITY</counter>
-                          <value>COVEREDRATIO</value>
-                          <minimum>0.60</minimum>
-                        </limit>
-                      </limits>
-                    </rule>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
           <plugin>
             <groupId>org.eluder.coveralls</groupId>
             <artifactId>coveralls-maven-plugin</artifactId>
-            <version>3.1.0</version>
+            <configuration>
+              <timestampFormat>${commons.coveralls.timestampFormat}</timestampFormat>
+            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -610,12 +593,18 @@
 
   </profiles>
 
-  <modules>
-    <module>commons-geometry-core</module>
-    <module>commons-geometry-euclidean</module>
-    <module>commons-geometry-spherical</module>
-    <module>commons-geometry-hull</module>
-    <module>commons-geometry-enclosing</module>
-  </modules>
+  <developers>
+    <developer>
+      <name>Gilles Sadowski</name>
+      <id>erans</id>
+      <email>erans at apache dot org</email>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+        <name>Matt Juntunen</name>
+    </contributor>
+  </contributors>
 
 </project>
