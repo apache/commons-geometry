@@ -148,7 +148,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D directionTo(Vector3D v) {
+    public Unit directionTo(Vector3D v) {
         return vectorTo(v).normalize();
     }
 
@@ -230,7 +230,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D normalize() {
+    public Unit normalize() {
         return Unit.from(x, y, z);
     }
 
@@ -649,7 +649,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector3D normalize() {
+        public Unit normalize() {
             return this;
         }
 

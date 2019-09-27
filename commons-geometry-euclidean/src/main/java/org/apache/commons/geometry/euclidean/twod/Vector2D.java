@@ -122,7 +122,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D directionTo(Vector2D v) {
+    public Unit directionTo(Vector2D v) {
         return vectorTo(v).normalize();
     }
 
@@ -193,7 +193,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D normalize() {
+    public Unit normalize() {
         return Unit.from(x, y);
     }
 
@@ -579,7 +579,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector2D normalize() {
+        public Unit normalize() {
             return this;
         }
 

@@ -98,7 +98,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D directionTo(Vector1D v) {
+    public Unit directionTo(Vector1D v) {
         return vectorTo(v).normalize();
     }
 
@@ -165,7 +165,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() {
+    public Unit normalize() {
         return Unit.from(x);
     }
 
@@ -432,7 +432,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D normalize() {
+        public Unit normalize() {
             return this;
         }
 
