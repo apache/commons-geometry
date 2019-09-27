@@ -1023,6 +1023,13 @@ public class Vector2DTest {
         checkVector(Vector2D.linearCombination(-3, p1, 2, p2, -4, p3, 5, p4), -64, -78);
     }
 
+    @Test
+    public void testUnitFactoryOptimization() {
+        // An already normalized vector will avoid unnecessary creation.
+        final Vector2D v = Vector2D.of(4, 5).normalize();
+        Assert.assertTrue(v.normalize() == v);
+    }
+
     private void checkVector(Vector2D v, double x, double y) {
         checkVector(v, x, y, EPS);
     }

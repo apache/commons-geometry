@@ -684,6 +684,13 @@ public class Vector1DTest {
                 -17, Vector1D.of(19)), -139);
     }
 
+    @Test
+    public void testUnitFactoryOptimization() {
+        // An already normalized vector will avoid unnecessary creation.
+        final Vector1D v = Vector1D.of(3).normalize();
+        Assert.assertTrue(v.normalize() == v);
+    }
+
     private void checkVector(Vector1D v, double x) {
         Assert.assertEquals(x, v.getX(), TEST_TOLERANCE);
     }
