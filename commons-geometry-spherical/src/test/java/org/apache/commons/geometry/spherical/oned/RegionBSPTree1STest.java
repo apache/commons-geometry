@@ -36,6 +36,12 @@ public class RegionBSPTree1STest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
+    private static final Transform1S HALF_PI_PLUS_AZ =
+            FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI + p.getAzimuth()));
+
+    private static final Transform1S PI_MINUS_AZ =
+            FunctionTransform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
+
     @Test
     public void testConstructor_default() {
         // act
@@ -491,6 +497,149 @@ public class RegionBSPTree1STest {
         Assert.assertEquals(0.6, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(2.2 / 6, tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_fullAndEmpty() {
+        // arrange
+        RegionBSPTree1S full = RegionBSPTree1S.full();
+        RegionBSPTree1S empty = RegionBSPTree1S.empty();
+
+        // act
+        full.transform(PI_MINUS_AZ);
+        empty.transform(HALF_PI_PLUS_AZ);
+
+        // assert
+        Assert.assertTrue(full.isFull());
+        Assert.assertFalse(full.isEmpty());
+
+        Assert.assertFalse(empty.isFull());
+        Assert.assertTrue(empty.isEmpty());
+    }
+
+    @Test
+    public void testTransform_scale_resultNotFull() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(-0.5, 0.5, TEST_PRECISION));
+        tree.add(AngularInterval.of(1, 2, TEST_PRECISION));
+
+        // act
+        tree.transform(FunctionTransform1S.from(p -> Point1S.of(2 * p.getAzimuth())));
+
+        // assert
+        Assert.assertEquals(4, tree.getSize(), TEST_EPS);
+
+        List<AngularInterval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), 2, 4);
+        checkInterval(intervals.get(1), -1, 1);
+    }
+
+    @Test
+    public void testTransform_scale_resultFull() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(-0.5, 0.5, TEST_PRECISION));
+        tree.add(AngularInterval.of(1, 2, TEST_PRECISION));
+
+        // act
+        tree.transform(FunctionTransform1S.from(p -> Point1S.of(8 * p.getAzimuth())));
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+    }
+
+    @Test
+    public void testTransform_halfPiPlusAz() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
+
+        // act
+        tree.transform(HALF_PI_PLUS_AZ);
+
+        // assert
+        Assert.assertEquals(3, tree.getSize(), TEST_EPS);
+
+        List<AngularInterval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Geometry.HALF_PI - 1, Geometry.HALF_PI + 1);
+        checkInterval(intervals.get(1), Geometry.HALF_PI + 2, Geometry.HALF_PI + 3);
+    }
+
+    @Test
+    public void testTransform_piMinusAz() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
+
+        // act
+        tree.transform(PI_MINUS_AZ);
+
+        // assert
+        Assert.assertEquals(3, tree.getSize(), TEST_EPS);
+
+        List<AngularInterval> intervals = tree.toIntervals();
+
+        Assert.assertEquals(2, intervals.size());
+        checkInterval(intervals.get(0), Geometry.PI - 3, Geometry.PI - 2);
+        checkInterval(intervals.get(1), Geometry.PI - 1, Geometry.PI + 1);
+    }
+
+    @Test
+    public void testProject_fullAndEmpty() {
+        // arrange
+        RegionBSPTree1S full = RegionBSPTree1S.full();
+        RegionBSPTree1S empty = RegionBSPTree1S.empty();
+
+        // act/assert
+        Assert.assertNull(full.project(Point1S.ZERO));
+        Assert.assertNull(full.project(Point1S.PI));
+
+        Assert.assertNull(empty.project(Point1S.ZERO));
+        Assert.assertNull(empty.project(Point1S.PI));
+    }
+
+    @Test
+    public void testProject_withIntervals() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.HALF_PI, TEST_PRECISION));
+        tree.add(AngularInterval.of(Geometry.PI - 1, Geometry.PI + 1, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(Geometry.MINUS_HALF_PI,
+                tree.project(Point1S.of(Geometry.MINUS_HALF_PI - 0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Geometry.MINUS_HALF_PI,
+                tree.project(Point1S.of(Geometry.MINUS_HALF_PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Geometry.MINUS_HALF_PI,
+                tree.project(Point1S.of(Geometry.MINUS_HALF_PI + 0.1)).getAzimuth(), TEST_EPS);
+
+        Assert.assertEquals(Geometry.MINUS_HALF_PI, tree.project(Point1S.of(-0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, tree.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, tree.project(Point1S.of(0.1)).getAzimuth(), TEST_EPS);
+
+        Assert.assertEquals(Geometry.PI - 1,
+                tree.project(Point1S.of(Geometry.PI - 0.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Geometry.PI + 1,
+                tree.project(Point1S.of(Geometry.PI + 0.5)).getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testProject_equidistant() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(1, 2, TEST_PRECISION).toTree();
+        RegionBSPTree1S treeComplement = tree.copy();
+        treeComplement.complement();
+
+        // act/assert
+        Assert.assertEquals(1, tree.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(1, treeComplement.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
     }
 
     private static void checkSimpleSplit(Split<RegionBSPTree1S> split, AngularInterval minusInterval,

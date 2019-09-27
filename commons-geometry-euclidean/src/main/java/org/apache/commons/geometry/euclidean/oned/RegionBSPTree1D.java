@@ -110,7 +110,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
    /** {@inheritDoc} */
    @Override
-   public Vector1D project(Vector1D pt) {
+   public Vector1D project(final Vector1D pt) {
        // use our custom projector so that we can disambiguate points that are
        // actually equidistant from the target point
        final BoundaryProjector1D projector = new BoundaryProjector1D(pt);
@@ -507,7 +507,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
         /** {@inheritDoc} */
         @Override
-        public void accept(OrientedPoint min, OrientedPoint max) {
+        public void accept(final OrientedPoint min, final OrientedPoint max) {
             // reverse the oriented point directions if needed
             this.min = (min != null && min.isPositiveFacing()) ? min.reverse() : min;
             this.max = (max != null && !max.isPositiveFacing()) ? max.reverse() : max;

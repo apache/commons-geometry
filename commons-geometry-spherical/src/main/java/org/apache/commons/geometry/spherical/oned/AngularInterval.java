@@ -208,7 +208,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         return false;
     }
 
-    /** Return a new instance transformed by the argument.
+    /** Return a new instance transformed by the argument. If the transformed size
+     * of the interval is greater than or equal to 2pi, then an interval representing
+     * the full space is returned.
      * @param transform transform to apply
      * @return a new instance transformed by the argument
      */

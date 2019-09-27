@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -75,6 +76,37 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     public void add(final AngularInterval interval) {
         union(fromInterval(interval));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point1S project(final Point1S pt) {
+        // use our custom projector so that we can disambiguate points that are
+        // actually equidistant from the target point
+        final BoundaryProjector1S projector = new BoundaryProjector1S(pt);
+        accept(projector);
+
+        return projector.getProjected();
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>Each interval of the region is transformed individually and the
+     * results are unioned. If the size of any transformed interval is greater
+     * than or equal to 2pi, then the region is set to the full space.</p>
+     */
+    @Override
+    public void transform(final Transform<Point1S> transform) {
+        if (!isFull() && !isEmpty()) {
+            // transform each interval individually to handle wrap-around
+            final List<AngularInterval> intervals = toIntervals();
+
+            setEmpty();
+
+            for (AngularInterval interval : intervals) {
+                union(interval.transform(transform).toTree());
+            }
+        }
     }
 
     /** {@inheritDoc}
@@ -268,7 +300,6 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         visitor.accept(min, max);
     }
 
-
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<Point1S> computeRegionSizeProperties() {
@@ -342,7 +373,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     public static final class RegionNode1S extends AbstractRegionBSPTree.AbstractRegionNode<Point1S, RegionNode1S> {
 
         /** Serializable UID */
-        private static final long serialVersionUID = 20190817L;
+        private static final long serialVersionUID = 20190922L;
 
         /** Simple constructor.
          * @param tree the owning tree instance
@@ -397,6 +428,27 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
          */
         public double getMinValue() {
             return (min != null) ? min.getNormalizedAzimuth() : 0;
+        }
+    }
+
+    /** Class used to project points onto the region boundary.
+     */
+    private static final class BoundaryProjector1S extends BoundaryProjector<Point1S, RegionNode1S> {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20190926L;
+
+        /** Simple constructor.
+         * @param point the point to project onto the region's boundary
+         */
+        public BoundaryProjector1S(final Point1S point) {
+            super(point);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected Point1S disambiguateClosestPoint(final Point1S target, final Point1S a, final Point1S b) {
+            return target.signedDistance(a) < 0 ? a : b;
         }
     }
 }
