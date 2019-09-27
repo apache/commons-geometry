@@ -632,7 +632,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
         public static Unit from(Vector3D v) {
-            return from(v.getX(), v.getY(), v.getZ());
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX(), v.getY(), v.getZ());
         }
 
         /** {@inheritDoc} */

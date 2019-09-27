@@ -562,7 +562,9 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
         public static Unit from(Vector2D v) {
-            return from(v.getX(), v.getY());
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX(), v.getY());
         }
 
         /** {@inheritDoc} */

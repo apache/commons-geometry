@@ -415,7 +415,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
         public static Unit from(Vector1D v) {
-            return from(v.getX());
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX());
         }
 
         /** {@inheritDoc} */
