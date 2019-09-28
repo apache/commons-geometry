@@ -87,7 +87,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * @return the hyperplane direction
      */
     public Vector1D getDirection() {
-        return positiveFacing ? Vector1D.ONE : Vector1D.MINUS_ONE;
+        return positiveFacing ? Vector1D.Unit.PLUS : Vector1D.Unit.MINUS;
     }
 
     /**

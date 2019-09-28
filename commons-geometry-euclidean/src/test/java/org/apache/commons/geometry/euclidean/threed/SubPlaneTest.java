@@ -48,7 +48,7 @@ public class SubPlaneTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     private static final Plane XY_PLANE = Plane.fromPointAndPlaneVectors(Vector3D.ZERO,
-            Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+            Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
     public void testCtor_plane() {
@@ -141,7 +141,7 @@ public class SubPlaneTest {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
 
-        Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
+        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<SubPlane> split = sp.split(splitter);
@@ -160,7 +160,7 @@ public class SubPlaneTest {
         sp.getSubspaceRegion().getRoot().cut(
                 Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
 
-        Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
+        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<SubPlane> split = sp.split(splitter);
@@ -183,7 +183,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
 
-        Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
+        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<SubPlane> split = sp.split(splitter);
@@ -246,7 +246,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
 
-        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.PLUS_Z, TEST_PRECISION);
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
         Split<SubPlane> split = sp.split(splitter);
@@ -264,7 +264,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
 
-        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.MINUS_Z, TEST_PRECISION);
+        Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act
         Split<SubPlane> split = sp.split(splitter);
@@ -297,7 +297,7 @@ public class SubPlaneTest {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
 
-        AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.PLUS_Z);
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.Unit.PLUS_Z);
 
         // act
         SubPlane result = sp.transform(transform);
@@ -307,7 +307,7 @@ public class SubPlaneTest {
 
         Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
 
         Assert.assertFalse(result.isFull());
         Assert.assertTrue(result.isEmpty());
@@ -318,7 +318,7 @@ public class SubPlaneTest {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, true);
 
-        AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.PLUS_Z);
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.Unit.PLUS_Z);
 
         // act
         SubPlane result = sp.transform(transform);
@@ -328,7 +328,7 @@ public class SubPlaneTest {
 
         Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, resultPlane.getNormal(), TEST_EPS);
 
         Assert.assertTrue(result.isFull());
         Assert.assertFalse(result.isEmpty());
@@ -338,13 +338,13 @@ public class SubPlaneTest {
     public void testTransform() {
         // arrange
         ConvexArea area = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
-        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         SubPlane sp = new SubPlane(plane, RegionBSPTree2D.fromConvexArea(area));
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI))
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI))
                 .translate(Vector3D.of(1, 0, 0));
 
         // act
@@ -355,7 +355,7 @@ public class SubPlaneTest {
 
         Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 0, 0), resultPlane.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, resultPlane.getNormal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, resultPlane.getNormal(), TEST_EPS);
 
         checkPoints(result, RegionLocation.INSIDE, Vector3D.of(2, 0.25, -0.25));
         checkPoints(result, RegionLocation.OUTSIDE, Vector3D.of(1, 0.25, -0.25), Vector3D.of(3, 0.25, -0.25));
@@ -368,8 +368,8 @@ public class SubPlaneTest {
     public void testTransform_reflection() {
         // arrange
         ConvexArea area = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
-        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
+        Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         SubPlane sp = new SubPlane(plane, RegionBSPTree2D.fromConvexArea(area));
 
@@ -383,7 +383,7 @@ public class SubPlaneTest {
 
         Plane resultPlane = result.getPlane();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), resultPlane.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_Z, resultPlane.getNormal(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, resultPlane.getNormal(), TEST_EPS);
 
         checkPoints(result, RegionLocation.INSIDE, Vector3D.of(-0.25, 0.25, 1));
         checkPoints(result, RegionLocation.OUTSIDE, Vector3D.of(0.25, 0.25, 0), Vector3D.of(0.25, 0.25, 2));
@@ -396,16 +396,16 @@ public class SubPlaneTest {
     public void testBuilder() {
         // arrange
         Plane mainPlane = Plane.fromPointAndPlaneVectors(
-                Vector3D.of(0, 0, 1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION);
+                Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         SubPlane.SubPlaneBuilder builder = new SubPlane.SubPlaneBuilder(mainPlane);
 
         ConvexArea a = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.PLUS_Y), TEST_PRECISION);
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
         ConvexArea b = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.PLUS_Y), TEST_PRECISION);
+                Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
         Plane closePlane = Plane.fromPointAndPlaneVectors(
-                Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.PLUS_Y, TEST_PRECISION);
+                Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
         builder.add(ConvexSubPlane.fromConvexArea(closePlane, a));
@@ -436,13 +436,13 @@ public class SubPlaneTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             sp.add(ConvexSubPlane.fromConvexArea(
-                    Plane.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.MINUS_X, TEST_PRECISION),
+                    Plane.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     ConvexArea.full()));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             sp.add(new SubPlane(
-                    Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION),
                     false));
         }, IllegalArgumentException.class);
     }

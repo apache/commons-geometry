@@ -29,22 +29,22 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 public final class Point2S implements Point<Point2S>, Serializable {
 
     /** +I (coordinates: ( azimuth = 0, polar = pi/2 )). */
-    public static final Point2S PLUS_I = new Point2S(0, 0.5 * Math.PI, Vector3D.PLUS_X);
+    public static final Point2S PLUS_I = new Point2S(0, 0.5 * Math.PI, Vector3D.Unit.PLUS_X);
 
     /** +J (coordinates: ( azimuth = pi/2, polar = pi/2 ))). */
-    public static final Point2S PLUS_J = new Point2S(0.5 * Math.PI, 0.5 * Math.PI, Vector3D.PLUS_Y);
+    public static final Point2S PLUS_J = new Point2S(0.5 * Math.PI, 0.5 * Math.PI, Vector3D.Unit.PLUS_Y);
 
     /** +K (coordinates: ( azimuth = any angle, polar = 0 )). */
-    public static final Point2S PLUS_K = new Point2S(0, 0, Vector3D.PLUS_Z);
+    public static final Point2S PLUS_K = new Point2S(0, 0, Vector3D.Unit.PLUS_Z);
 
     /** -I (coordinates: ( azimuth = pi, polar = pi/2 )). */
-    public static final Point2S MINUS_I = new Point2S(Math.PI, 0.5 * Math.PI, Vector3D.MINUS_X);
+    public static final Point2S MINUS_I = new Point2S(Math.PI, 0.5 * Math.PI, Vector3D.Unit.MINUS_X);
 
     /** -J (coordinates: ( azimuth = 3pi/2, polar = pi/2 )). */
-    public static final Point2S MINUS_J = new Point2S(1.5 * Math.PI, 0.5 * Math.PI, Vector3D.MINUS_Y);
+    public static final Point2S MINUS_J = new Point2S(1.5 * Math.PI, 0.5 * Math.PI, Vector3D.Unit.MINUS_Y);
 
     /** -K (coordinates: ( azimuth = any angle, polar = pi )). */
-    public static final Point2S MINUS_K = new Point2S(0, Math.PI, Vector3D.MINUS_Z);
+    public static final Point2S MINUS_K = new Point2S(0, Math.PI, Vector3D.Unit.MINUS_Z);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */

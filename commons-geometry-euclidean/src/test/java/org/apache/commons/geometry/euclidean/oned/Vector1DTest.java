@@ -36,8 +36,8 @@ public class Vector1DTest {
     public void testConstants() {
         // act/assert
         checkVector(Vector1D.ZERO, 0.0);
-        checkVector(Vector1D.ONE, 1.0);
-        checkVector(Vector1D.MINUS_ONE, -1.0);
+        checkVector(Vector1D.Unit.PLUS, 1.0);
+        checkVector(Vector1D.Unit.MINUS, -1.0);
         checkVector(Vector1D.NaN, Double.NaN);
         checkVector(Vector1D.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         checkVector(Vector1D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -55,8 +55,8 @@ public class Vector1DTest {
         GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
 
-        Assert.assertSame(Vector1D.ONE.normalize(), Vector1D.ONE);
-        Assert.assertSame(Vector1D.MINUS_ONE.normalize(), Vector1D.MINUS_ONE);
+        Assert.assertSame(Vector1D.Unit.PLUS.normalize(), Vector1D.Unit.PLUS);
+        Assert.assertSame(Vector1D.Unit.MINUS.normalize(), Vector1D.Unit.MINUS);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class Vector1DTest {
 
         // assert
         checkVector(zero, 0.0);
-        checkVector(Vector1D.ONE.add(zero), 1.0);
+        checkVector(Vector1D.Unit.PLUS.add(zero), 1.0);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class Vector1DTest {
     @Test
     public void testWithNorm() {
         // act/assert
-        checkVector(Vector1D.ONE.withNorm(0.0), 0.0);
+        checkVector(Vector1D.Unit.PLUS.withNorm(0.0), 0.0);
 
         checkVector(Vector1D.of(0.5).withNorm(2.0), 2.0);
         checkVector(Vector1D.of(5).withNorm(3.0), 3.0);
@@ -201,8 +201,8 @@ public class Vector1DTest {
         Vector1D v = Vector1D.of(2.0).normalize();
 
         // act/assert
-        checkVector(Vector1D.ONE.withNorm(2.5), 2.5);
-        checkVector(Vector1D.MINUS_ONE.withNorm(3.14), -3.14);
+        checkVector(Vector1D.Unit.PLUS.withNorm(2.5), 2.5);
+        checkVector(Vector1D.Unit.MINUS.withNorm(3.14), -3.14);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
@@ -630,7 +630,7 @@ public class Vector1DTest {
         checkVector(Vector1D.parse("(NaN)"), Double.NaN);
 
         checkVector(Vector1D.parse(Vector1D.ZERO.toString()), 0);
-        checkVector(Vector1D.parse(Vector1D.ONE.toString()), 1);
+        checkVector(Vector1D.parse(Vector1D.Unit.PLUS.toString()), 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -654,19 +654,19 @@ public class Vector1DTest {
     @Test
     public void testNormalize_static() {
         // act/assert
-        checkVector(Vector1D.normalize(2.0), 1);
-        checkVector(Vector1D.normalize(-4.0), -1);
+        checkVector(Vector1D.Unit.from(2.0), 1);
+        checkVector(Vector1D.Unit.from(-4.0), -1);
     }
 
     @Test
     public void testNormalize_static_illegalNorm() {
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(0.0),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(0.0),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NaN),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.NaN),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.NEGATIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.NEGATIVE_INFINITY),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector1D.normalize(Double.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.POSITIVE_INFINITY),
                 IllegalNormException.class);
     }
 
@@ -714,6 +714,13 @@ public class Vector1DTest {
                 5, Vector1D.of(7),
                 11, Vector1D.of(13),
                 -17, Vector1D.of(19)), -139);
+    }
+
+    @Test
+    public void testUnitFactoryOptimization() {
+        // An already normalized vector will avoid unnecessary creation.
+        final Vector1D v = Vector1D.of(3).normalize();
+        Assert.assertSame(v, v.normalize());
     }
 
     private void checkVector(Vector1D v, double x) {

@@ -113,7 +113,7 @@ public class RegionBSPTree3DTest {
     public void testCopy() {
         // arrange
         RegionBSPTree3D tree = new RegionBSPTree3D(true);
-        tree.getRoot().cut(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION));
+        tree.getRoot().cut(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         RegionBSPTree3D copy = tree.copy();
@@ -156,7 +156,7 @@ public class RegionBSPTree3DTest {
     public void testHalfSpace() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.insert(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.PLUS_Y, TEST_PRECISION).span());
+        tree.insert(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -191,7 +191,7 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFromConvexVolume_infinite() {
         // arrange
-        ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION));
+        ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.fromConvexVolume(volume);
@@ -210,13 +210,13 @@ public class RegionBSPTree3DTest {
     public void testFromConvexVolume_finite() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Z, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
 
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Z, TEST_PRECISION)
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 );
 
         // act
@@ -357,8 +357,8 @@ public class RegionBSPTree3DTest {
                 .build();
 
         Vector3D pt = Vector3D.of(0.5, 0.5, 0);
-        Line3D intoBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.PLUS_Z), TEST_PRECISION);
-        Line3D outOfBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.MINUS_Z), TEST_PRECISION);
+        Line3D intoBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.Unit.PLUS_Z), TEST_PRECISION);
+        Line3D outOfBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         // act/assert
         ConvexSubPlane intoBoxResult = tree.raycastFirst(intoBoxLine.segmentFrom(pt));
@@ -403,17 +403,17 @@ public class RegionBSPTree3DTest {
                 .addRect(lowerCorner, upperCorner)
                 .build();
 
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.PLUS_X, TEST_PRECISION);
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        assertSubPlaneNormal(Vector3D.MINUS_X, tree.raycastFirst(line.span()));
-        assertSubPlaneNormal(Vector3D.PLUS_X, tree.raycastFirst(line.reverse().span()));
+        assertSubPlaneNormal(Vector3D.Unit.MINUS_X, tree.raycastFirst(line.span()));
+        assertSubPlaneNormal(Vector3D.Unit.PLUS_X, tree.raycastFirst(line.reverse().span()));
 
-        assertSubPlaneNormal(Vector3D.MINUS_X, tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(0.5, 0.5, 0.5))));
-        assertSubPlaneNormal(Vector3D.MINUS_X, tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(0, 0.5, 0.5))));
+        assertSubPlaneNormal(Vector3D.Unit.MINUS_X, tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(0.5, 0.5, 0.5))));
+        assertSubPlaneNormal(Vector3D.Unit.MINUS_X, tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(0, 0.5, 0.5))));
 
-        assertSubPlaneNormal(Vector3D.PLUS_X, tree.raycastFirst(line.segment(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5))));
-        assertSubPlaneNormal(Vector3D.PLUS_X, tree.raycastFirst(line.segment(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1, 0.5, 0.5))));
+        assertSubPlaneNormal(Vector3D.Unit.PLUS_X, tree.raycastFirst(line.segment(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5))));
+        assertSubPlaneNormal(Vector3D.Unit.PLUS_X, tree.raycastFirst(line.segment(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1, 0.5, 0.5))));
 
         Assert.assertNull(tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
         Assert.assertNull(tree.raycastFirst(line.segment(Vector3D.of(-2, 0.5, 0.5), Vector3D.of(-1, 0.5, 0.5))));
@@ -1232,7 +1232,7 @@ public class RegionBSPTree3DTest {
                 .addCube(Vector3D.of(-0.5, -0.5, -0.5), 1)
                 .build();
 
-        Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
+        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree3D> split = tree.split(splitter);
@@ -1478,9 +1478,9 @@ public class RegionBSPTree3DTest {
     public void testBuilder_addIndexedFacets_multipleVertexLists() {
         // arrange
         Vector3D p0 = Vector3D.ZERO;
-        Vector3D p1 = Vector3D.PLUS_X;
-        Vector3D p2 = Vector3D.PLUS_Y;
-        Vector3D p3 = Vector3D.PLUS_Z;
+        Vector3D p1 = Vector3D.Unit.PLUS_X;
+        Vector3D p2 = Vector3D.Unit.PLUS_Y;
+        Vector3D p3 = Vector3D.Unit.PLUS_Z;
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.builder(TEST_PRECISION)
@@ -1550,8 +1550,8 @@ public class RegionBSPTree3DTest {
         final Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
         final Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
 
-        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.PLUS_Z, TEST_PRECISION));
-        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.MINUS_Z, TEST_PRECISION));
+        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.Unit.MINUS_Z, TEST_PRECISION));
 
         // add the side planes
         final double vDelta = Geometry.PI / stacks;

@@ -47,9 +47,9 @@ public class RegionBSPTree2DTest {
     private static final Comparator<Segment> SEGMENT_COMPARATOR =
             (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint());
 
-    private static final Line X_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+    private static final Line X_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final Line Y_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION);
+    private static final Line Y_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
     public void testCtor_booleanArg_true() {
@@ -153,7 +153,7 @@ public class RegionBSPTree2DTest {
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
+        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act
         List<Polyline> a = tree.getBoundaryPaths();
@@ -167,11 +167,11 @@ public class RegionBSPTree2DTest {
     public void testGetBoundaryPaths_recomputesResultOnChange() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
+        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act
         List<Polyline> a = tree.getBoundaryPaths();
-        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION));
+        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION));
         List<Polyline> b = tree.getBoundaryPaths();
 
         // assert
@@ -182,7 +182,7 @@ public class RegionBSPTree2DTest {
     public void testGetBoundaryPaths_isUnmodifiable() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
+        tree.insert(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -847,7 +847,7 @@ public class RegionBSPTree2DTest {
     public void testFromConvexArea_infinite() {
         // arrange
         ConvexArea area = ConvexArea.fromVertices(
-                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_Y), TEST_PRECISION);
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
@@ -866,7 +866,7 @@ public class RegionBSPTree2DTest {
     public void testFromConvexArea_finite() {
         // arrange
         ConvexArea area = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.PLUS_Y), TEST_PRECISION);
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
@@ -963,15 +963,15 @@ public class RegionBSPTree2DTest {
         Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION);
 
         Polyline path = Polyline.builder(TEST_PRECISION)
-            .append(Vector2D.PLUS_X)
+            .append(Vector2D.Unit.PLUS_X)
             .append(Vector2D.of(1, 1))
             .build();
 
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.builder(TEST_PRECISION)
-                .add(Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION))
+                .add(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION))
                 .add(path)
-                .addSegment(Vector2D.of(1, 1), Vector2D.PLUS_Y)
+                .addSegment(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
                 .add(new SubLine(minusYAxis, Interval.of(-1, 0, TEST_PRECISION).toTree()))
                 .build();
 

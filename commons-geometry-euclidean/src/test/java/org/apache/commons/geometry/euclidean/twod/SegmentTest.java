@@ -85,7 +85,7 @@ public class SegmentTest {
     @Test
     public void testFromPointAndDirection() {
         // act
-        Segment seg = Segment.fromPointAndDirection(Vector2D.of(1, 3), Vector2D.PLUS_Y, TEST_PRECISION);
+        Segment seg = Segment.fromPointAndDirection(Vector2D.of(1, 3), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), seg.getStartPoint(), TEST_EPS);
@@ -93,7 +93,7 @@ public class SegmentTest {
 
         Line line = seg.getLine();
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), line.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.PLUS_Y, line.getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
     }
 
     @Test
@@ -605,7 +605,7 @@ public class SegmentTest {
     @Test
     public void testReverse_full() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         Segment segment = line.span();
 
         // act
@@ -618,7 +618,7 @@ public class SegmentTest {
     @Test
     public void testReverse_positiveHalfSpace() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         Segment segment = line.segment(1, Double.POSITIVE_INFINITY);
 
         // act
@@ -631,7 +631,7 @@ public class SegmentTest {
     @Test
     public void testReverse_negativeHalfSpace() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         Segment segment = line.segment(Double.NEGATIVE_INFINITY, 1);
 
         // act
@@ -644,7 +644,7 @@ public class SegmentTest {
     @Test
     public void testReverse_finiteSegment() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         Segment segment = line.segment(3, 4);
 
         // act
@@ -803,12 +803,12 @@ public class SegmentTest {
     @Test
     public void testToString() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         Segment full = Segment.fromInterval(line, Interval.full());
         Segment startOnly = Segment.fromInterval(line, 0, Double.POSITIVE_INFINITY);
         Segment endOnly = Segment.fromInterval(line, Double.NEGATIVE_INFINITY, 0);
-        Segment finite = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Segment finite = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         String fullStr = full.toString();

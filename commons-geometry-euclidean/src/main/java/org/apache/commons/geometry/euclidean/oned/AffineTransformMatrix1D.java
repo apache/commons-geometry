@@ -109,7 +109,7 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
      */
     @Override
     public Vector1D applyDirection(final Vector1D vec) {
-        return applyVector(vec, Vector1D::normalize);
+        return applyVector(vec, Vector1D.Unit::from);
     }
 
     /** {@inheritDoc} */

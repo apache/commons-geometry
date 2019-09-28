@@ -58,7 +58,7 @@ public class InteriorAngleSegmentConnectorTest {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = Arrays.asList(
-                        Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION)
+                        Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                     );
 
             // act
@@ -67,7 +67,7 @@ public class InteriorAngleSegmentConnectorTest {
             // assert
             Assert.assertEquals(1, paths.size());
 
-            assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X);
+            assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X);
         });
     }
 
@@ -76,8 +76,8 @@ public class InteriorAngleSegmentConnectorTest {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = Arrays.asList(
-                        Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION),
-                        Segment.fromPoints(Vector2D.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
+                        Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
+                        Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
                     );
 
             // act
@@ -87,7 +87,7 @@ public class InteriorAngleSegmentConnectorTest {
             Assert.assertEquals(1, paths.size());
 
             Assert.assertTrue(paths.get(0).isClosed());
-            assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.ZERO);
+            assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.ZERO);
         });
     }
 
@@ -104,7 +104,7 @@ public class InteriorAngleSegmentConnectorTest {
             Assert.assertEquals(1, paths.size());
 
             assertFinitePath(paths.get(0),
-                    Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
+                    Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
                     Vector2D.of(0, 1), Vector2D.ZERO);
         });
     }
@@ -132,7 +132,7 @@ public class InteriorAngleSegmentConnectorTest {
             Assert.assertEquals(2, paths.size());
 
             assertFinitePath(paths.get(0),
-                    Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
+                    Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
                     Vector2D.of(0, 1), Vector2D.ZERO);
 
             assertInfinitePath(paths.get(1), a, b, pt);
@@ -157,7 +157,7 @@ public class InteriorAngleSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         assertFinitePath(paths.get(0),
-                Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
+                Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
                 Vector2D.of(2, 1), Vector2D.of(2, 2),
                 Vector2D.of(1, 2), Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
@@ -204,7 +204,7 @@ public class InteriorAngleSegmentConnectorTest {
         Assert.assertEquals(2, paths.size());
 
         assertFinitePath(paths.get(0),
-                Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1),
+                Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1),
                 Vector2D.of(0, 1), Vector2D.ZERO);
 
         assertFinitePath(paths.get(1),

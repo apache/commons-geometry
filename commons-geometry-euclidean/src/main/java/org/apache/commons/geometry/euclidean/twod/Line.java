@@ -551,7 +551,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      *      abscissa (x) axis.
      */
     public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
-        final Vector2D dir = Vector2D.normalize(Math.cos(angle), Math.sin(angle));
+        final Vector2D.Unit dir = Vector2D.Unit.from(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
     }
 

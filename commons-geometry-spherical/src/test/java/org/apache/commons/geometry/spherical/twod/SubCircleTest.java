@@ -38,7 +38,7 @@ public class SubCircleTest {
 
     @Test
     public void testFullCircle() {
-        Circle circle = new Circle(Vector3D.PLUS_Z, TEST_PRECISION);
+        Circle circle = new Circle(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         SubCircle set = circle.wholeHyperplane();
         Assert.assertEquals(Geometry.TWO_PI, set.getSize(), TEST_EPS);
         Assert.assertTrue(circle == set.getHyperplane());
@@ -48,32 +48,32 @@ public class SubCircleTest {
     @Test
     public void testSide() {
 
-        Circle xzPlane = new Circle(Vector3D.PLUS_Y, TEST_PRECISION);
+        Circle xzPlane = new Circle(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        SubCircle sc1 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 1.0, 3.0, 5.0, 6.0);
+        SubCircle sc1 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 1.0, 3.0, 5.0, 6.0);
         Assert.assertEquals(Side_Old.BOTH, sc1.split(xzPlane).getSide());
 
-        SubCircle sc2 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 1.0, 3.0);
+        SubCircle sc2 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 1.0, 3.0);
         Assert.assertEquals(Side_Old.MINUS, sc2.split(xzPlane).getSide());
 
-        SubCircle sc3 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc3 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 5.0, 6.0);
         Assert.assertEquals(Side_Old.PLUS, sc3.split(xzPlane).getSide());
 
-        SubCircle sc4 = create(Vector3D.PLUS_Y, Vector3D.PLUS_Z, Vector3D.PLUS_X, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc4 = create(Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION, 5.0, 6.0);
         Assert.assertEquals(Side_Old.HYPER, sc4.split(xzPlane).getSide());
 
-        SubCircle sc5 = create(Vector3D.MINUS_Y, Vector3D.PLUS_X, Vector3D.PLUS_Z, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc5 = create(Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION, 5.0, 6.0);
         Assert.assertEquals(Side_Old.HYPER, sc5.split(xzPlane).getSide());
-
     }
 
     @Test
     public void testSPlit() {
 
-        Circle xzPlane = new Circle(Vector3D.PLUS_Y, TEST_PRECISION);
+        Circle xzPlane = new Circle(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        SubCircle sc1 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 1.0, 3.0, 5.0, 6.0);
+        SubCircle sc1 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 1.0, 3.0, 5.0, 6.0);
         SplitSubHyperplane<Point2S> split1 = sc1.split(xzPlane);
+
         ArcsSet plus1  = (ArcsSet) ((SubCircle) split1.getPlus()).getRemainingRegion();
         ArcsSet minus1 = (ArcsSet) ((SubCircle) split1.getMinus()).getRemainingRegion();
         Assert.assertEquals(1, plus1.asList().size());
@@ -83,31 +83,34 @@ public class SubCircleTest {
         Assert.assertEquals(1.0, minus1.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(3.0, minus1.asList().get(0).getSup(), TEST_EPS);
 
-        SubCircle sc2 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 1.0, 3.0);
+        SubCircle sc2 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 1.0, 3.0);
         SplitSubHyperplane<Point2S> split2 = sc2.split(xzPlane);
+
         Assert.assertNull(split2.getPlus());
         ArcsSet minus2 = (ArcsSet) ((SubCircle) split2.getMinus()).getRemainingRegion();
         Assert.assertEquals(1, minus2.asList().size());
         Assert.assertEquals(1.0, minus2.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(3.0, minus2.asList().get(0).getSup(), TEST_EPS);
 
-        SubCircle sc3 = create(Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc3 = create(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION, 5.0, 6.0);
         SplitSubHyperplane<Point2S> split3 = sc3.split(xzPlane);
+
         ArcsSet plus3  = (ArcsSet) ((SubCircle) split3.getPlus()).getRemainingRegion();
         Assert.assertEquals(1, plus3.asList().size());
         Assert.assertEquals(5.0, plus3.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(6.0, plus3.asList().get(0).getSup(), TEST_EPS);
         Assert.assertNull(split3.getMinus());
 
-        SubCircle sc4 = create(Vector3D.PLUS_Y, Vector3D.PLUS_Z, Vector3D.PLUS_X, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc4 = create(Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION, 5.0, 6.0);
         SplitSubHyperplane<Point2S> split4 = sc4.split(xzPlane);
         Assert.assertEquals(Side_Old.HYPER, sc4.split(xzPlane).getSide());
         Assert.assertNull(split4.getPlus());
         Assert.assertNull(split4.getMinus());
 
-        SubCircle sc5 = create(Vector3D.MINUS_Y, Vector3D.PLUS_X, Vector3D.PLUS_Z, TEST_PRECISION, 5.0, 6.0);
+        SubCircle sc5 = create(Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION, 5.0, 6.0);
         SplitSubHyperplane<Point2S> split5 = sc5.split(xzPlane);
         Assert.assertEquals(Side_Old.HYPER, sc5.split(xzPlane).getSide());
+
         Assert.assertNull(split5.getPlus());
         Assert.assertNull(split5.getMinus());
 

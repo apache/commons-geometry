@@ -69,8 +69,8 @@ public class FunctionTransform2D implements Transform2D {
     /** {@inheritDoc} */
     @Override
     public AffineTransformMatrix2D toMatrix() {
-        final Vector2D u = applyVector(Vector2D.PLUS_X);
-        final Vector2D v = applyVector(Vector2D.PLUS_Y);
+        final Vector2D u = applyVector(Vector2D.Unit.PLUS_X);
+        final Vector2D v = applyVector(Vector2D.Unit.PLUS_Y);
 
         return AffineTransformMatrix2D.fromColumnVectors(u, v, translation);
     }
@@ -87,8 +87,8 @@ public class FunctionTransform2D implements Transform2D {
      * @return a new transform instance using the given function
      */
     public static FunctionTransform2D from(final Function<Vector2D, Vector2D> fn) {
-        final Vector2D tPlusX = fn.apply(Vector2D.PLUS_X);
-        final Vector2D tPlusY = fn.apply(Vector2D.PLUS_Y);
+        final Vector2D tPlusX = fn.apply(Vector2D.Unit.PLUS_X);
+        final Vector2D tPlusY = fn.apply(Vector2D.Unit.PLUS_Y);
         final Vector2D tZero = fn.apply(Vector2D.ZERO);
 
         final double det = Matrices.determinant(

@@ -91,10 +91,10 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // the most straightforward way to check if we have a normalizable
         // vector is to just try to normalize it and see if we fail
         try {
-            return Vector3D.normalize(quat.getX(), quat.getY(), quat.getZ());
+            return Vector3D.Unit.from(quat.getX(), quat.getY(), quat.getZ());
         }
         catch (IllegalNormException exc) {
-            return Vector3D.PLUS_X;
+            return Vector3D.Unit.PLUS_X;
         }
     }
 

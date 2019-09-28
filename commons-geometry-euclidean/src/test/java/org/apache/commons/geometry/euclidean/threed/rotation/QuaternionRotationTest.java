@@ -123,7 +123,7 @@ public class QuaternionRotationTest {
         QuaternionRotation q = QuaternionRotation.identity();
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, q.getAxis(), EPS);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class QuaternionRotationTest {
         QuaternionRotation rot = QuaternionRotation.of(1, 0, 0, 0);
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, rot.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, rot.getAxis(), EPS);
     }
 
     @Test
@@ -266,11 +266,11 @@ public class QuaternionRotationTest {
     @Test
     public void testFromAxisAngle_invalidAngle() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Double.NaN), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NaN), IllegalArgumentException.class,
                 "Invalid angle: NaN");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Double.POSITIVE_INFINITY), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.POSITIVE_INFINITY), IllegalArgumentException.class,
                 "Invalid angle: Infinity");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Double.NEGATIVE_INFINITY), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NEGATIVE_INFINITY), IllegalArgumentException.class,
                 "Invalid angle: -Infinity");
     }
 
@@ -371,14 +371,14 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_sameAxis_simple() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, 0.4 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * Geometry.PI);
 
         // act
         QuaternionRotation result = q1.multiply(q2);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, result.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, result.getAxis(), EPS);
         Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, result);
@@ -407,8 +407,8 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_differentAxes() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI);
 
         // act
         QuaternionRotation result = q1.multiply(q2);
@@ -428,9 +428,9 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_orderOfOperations() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Z, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI);
 
         // act
         QuaternionRotation result = q3.multiply(q2).multiply(q1);
@@ -472,14 +472,14 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_sameAxis_simple() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, 0.4 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * Geometry.PI);
 
         // act
         QuaternionRotation result = q1.premultiply(q2);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, result.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, result.getAxis(), EPS);
         Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, result);
@@ -508,8 +508,8 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_differentAxes() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI);
 
         // act
         QuaternionRotation result = q2.premultiply(q1);
@@ -529,9 +529,9 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_orderOfOperations() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Z, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI);
 
         // act
         QuaternionRotation result = q1.premultiply(q2).premultiply(q3);
@@ -547,8 +547,8 @@ public class QuaternionRotationTest {
     @Test
     public void testSlerp_simple() {
         // arrange
-        QuaternionRotation q0 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.ZERO_PI);
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.PI);
+        QuaternionRotation q0 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.ZERO_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.PI);
         final Slerp transform = q0.slerp(q1);
         Vector3D v = Vector3D.of(2, 0, 1);
 
@@ -566,29 +566,29 @@ public class QuaternionRotationTest {
     public void testSlerp_multipleCombinations() {
         // arrange
         QuaternionRotation[] rotations = {
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_X, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.PI),
 
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_X, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_X, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_X, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, Geometry.PI),
 
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI),
 
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Y, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Y, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Y, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, Geometry.PI),
 
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.PI),
 
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Z, Geometry.ZERO_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Z, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.MINUS_Z, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.ZERO_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.PI),
         };
 
         // act/assert
@@ -635,8 +635,8 @@ public class QuaternionRotationTest {
     @Test
     public void testSlerp_followsShortestPath() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, -0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, -0.75 * Geometry.PI);
 
         // act
         QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
@@ -644,9 +644,9 @@ public class QuaternionRotationTest {
         // assert
         // the slerp should have followed the path around the pi coordinate of the circle rather than
         // the one through the zero coordinate
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, result.apply(Vector3D.PLUS_X), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, result.apply(Vector3D.Unit.PLUS_X), EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, result.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getAxis(), EPS);
         Assert.assertEquals(Geometry.PI, result.getAngle(), EPS);
     }
 
@@ -660,17 +660,17 @@ public class QuaternionRotationTest {
         QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Y, result.apply(Vector3D.PLUS_X), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, result.apply(Vector3D.Unit.PLUS_X), EPS);
 
         Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, result.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getAxis(), EPS);
     }
 
     @Test
     public void testSlerp_outputQuaternionIsNormalizedForAllT() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.25 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
 
         final int numSteps = 200;
         final double delta = 1d / numSteps;
@@ -688,23 +688,23 @@ public class QuaternionRotationTest {
     @Test
     public void testSlerp_tOutsideOfZeroToOne_apply() {
         // arrange
-        Vector3D vec = Vector3D.PLUS_X;
+        Vector3D vec = Vector3D.Unit.PLUS_X;
 
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.25 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, 0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Geometry.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
 
         // act/assert
         final Slerp slerp12 = q1.slerp(q2);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp12.apply(-4.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp12.apply(-0.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp12.apply(1.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp12.apply(5.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, QuaternionRotation.of(slerp12.apply(-4.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, QuaternionRotation.of(slerp12.apply(-0.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, QuaternionRotation.of(slerp12.apply(1.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, QuaternionRotation.of(slerp12.apply(5.5)).apply(vec), EPS);
 
         final Slerp slerp21 = q2.slerp(q1);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp21.apply(-4.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.MINUS_X, QuaternionRotation.of(slerp21.apply(-0.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp21.apply(1.5)).apply(vec), EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, QuaternionRotation.of(slerp21.apply(5.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, QuaternionRotation.of(slerp21.apply(-4.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, QuaternionRotation.of(slerp21.apply(-0.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, QuaternionRotation.of(slerp21.apply(1.5)).apply(vec), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, QuaternionRotation.of(slerp21.apply(5.5)).apply(vec), EPS);
     }
 
     @Test
@@ -1065,8 +1065,8 @@ public class QuaternionRotationTest {
     @Test
     public void testCreateVectorRotation_simple() {
         // arrange
-        Vector3D u1 = Vector3D.PLUS_X;
-        Vector3D u2 = Vector3D.PLUS_Y;
+        Vector3D u1 = Vector3D.Unit.PLUS_X;
+        Vector3D u2 = Vector3D.Unit.PLUS_Y;
 
         // act
         QuaternionRotation q = QuaternionRotation.createVectorRotation(u1, u2);
@@ -1076,7 +1076,7 @@ public class QuaternionRotationTest {
 
         checkQuaternion(q, val, 0, 0, val);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Z, q.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.HALF_PI, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(u2, q.apply(u1), EPS);
@@ -1095,7 +1095,7 @@ public class QuaternionRotationTest {
         // assert
         checkQuaternion(q, 1, 0, 0, 0);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.ZERO_PI, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 2, 0), q.apply(u1), EPS);
@@ -1114,7 +1114,7 @@ public class QuaternionRotationTest {
         // assert
         checkQuaternion(q, 1, 0, 0, 0);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_X, q.getAxis(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, q.getAxis(), EPS);
         Assert.assertEquals(Geometry.ZERO_PI, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 2, 0), q.apply(u1), EPS);
@@ -1163,27 +1163,27 @@ public class QuaternionRotationTest {
     @Test
     public void testCreateVectorRotation_invalidArgs() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.ZERO, Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.ZERO, Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.PLUS_X, Vector3D.ZERO),
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.ZERO),
                 IllegalNormException.class);
 
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.NaN, Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.NaN, Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.PLUS_X, Vector3D.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.POSITIVE_INFINITY),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.PLUS_X, Vector3D.NEGATIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.NEGATIVE_INFINITY),
                 IllegalNormException.class);
     }
 
     @Test
     public void testCreateBasisRotation_simple() {
         // arrange
-        Vector3D u1 = Vector3D.PLUS_X;
-        Vector3D u2 = Vector3D.PLUS_Y;
+        Vector3D u1 = Vector3D.Unit.PLUS_X;
+        Vector3D u2 = Vector3D.Unit.PLUS_Y;
 
-        Vector3D v1 = Vector3D.PLUS_Y;
-        Vector3D v2 = Vector3D.MINUS_X;
+        Vector3D v1 = Vector3D.Unit.PLUS_Y;
+        Vector3D v2 = Vector3D.Unit.MINUS_X;
 
         // act
         QuaternionRotation q = QuaternionRotation.createBasisRotation(u1, u2, v1, v2);
@@ -1203,11 +1203,11 @@ public class QuaternionRotationTest {
     @Test
     public void testCreateBasisRotation_diagonalAxis() {
         // arrange
-        Vector3D u1 = Vector3D.PLUS_X;
-        Vector3D u2 = Vector3D.PLUS_Y;
+        Vector3D u1 = Vector3D.Unit.PLUS_X;
+        Vector3D u2 = Vector3D.Unit.PLUS_Y;
 
-        Vector3D v1 = Vector3D.PLUS_Y;
-        Vector3D v2 = Vector3D.PLUS_Z;
+        Vector3D v1 = Vector3D.Unit.PLUS_Y;
+        Vector3D v2 = Vector3D.Unit.PLUS_Z;
 
         // act
         QuaternionRotation q = QuaternionRotation.createBasisRotation(u1, u2, v1, v2);
@@ -1228,8 +1228,8 @@ public class QuaternionRotationTest {
     @Test
     public void testCreateBasisRotation_identity() {
         // arrange
-        Vector3D u1 = Vector3D.PLUS_X;
-        Vector3D u2 = Vector3D.PLUS_Y;
+        Vector3D u1 = Vector3D.Unit.PLUS_X;
+        Vector3D u2 = Vector3D.Unit.PLUS_Y;
 
         Vector3D v1 = u1;
         Vector3D v2 = u2;
@@ -1328,9 +1328,9 @@ public class QuaternionRotationTest {
             Assert.assertTrue(angle >= Geometry.ZERO_PI);
             Assert.assertTrue(angle <= Geometry.PI);
 
-            Vector3D transformedX = q.apply(Vector3D.PLUS_X);
-            Vector3D transformedY = q.apply(Vector3D.PLUS_Y);
-            Vector3D transformedZ = q.apply(Vector3D.PLUS_Z);
+            Vector3D transformedX = q.apply(Vector3D.Unit.PLUS_X);
+            Vector3D transformedY = q.apply(Vector3D.Unit.PLUS_Y);
+            Vector3D transformedZ = q.apply(Vector3D.Unit.PLUS_Z);
 
             Assert.assertEquals(1.0, transformedX.norm(), EPS);
             Assert.assertEquals(1.0, transformedY.norm(), EPS);
@@ -1351,24 +1351,24 @@ public class QuaternionRotationTest {
     public void testCreateBasisRotation_invalidArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.ZERO, Vector3D.PLUS_Y, Vector3D.PLUS_Y, Vector3D.MINUS_X),
+                Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.PLUS_X, Vector3D.NaN, Vector3D.PLUS_Y, Vector3D.MINUS_X),
+                Vector3D.Unit.PLUS_X, Vector3D.NaN, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.POSITIVE_INFINITY, Vector3D.MINUS_X),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.POSITIVE_INFINITY, Vector3D.Unit.MINUS_X),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.PLUS_Y, Vector3D.NEGATIVE_INFINITY),
-                IllegalNormException.class);
-
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.PLUS_X, Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.MINUS_X),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.NEGATIVE_INFINITY),
                 IllegalNormException.class);
 
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
-                Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.PLUS_Y, Vector3D.MINUS_Y),
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
+                IllegalNormException.class);
+
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
+                Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y),
                 IllegalNormException.class);
     }
 

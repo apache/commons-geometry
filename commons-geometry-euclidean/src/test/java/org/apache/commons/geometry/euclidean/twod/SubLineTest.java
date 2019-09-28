@@ -44,7 +44,7 @@ public class SubLineTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private Line line = Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.PLUS_X, TEST_PRECISION);
+    private Line line = Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
     @Test
     public void testCtor_lineOnly() {
@@ -436,7 +436,7 @@ public class SubLineTest {
 
         List<Segment> originalSegments = subline.toConvex();
         Assert.assertEquals(2, originalSegments.size());
-        checkFiniteSegment(originalSegments.get(0), Vector2D.ZERO, Vector2D.PLUS_X);
+        checkFiniteSegment(originalSegments.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), originalSegments.get(1).getStartPoint(), TEST_EPS);
         Assert.assertNull(originalSegments.get(1).getEndPoint());
 

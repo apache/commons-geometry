@@ -519,7 +519,7 @@ public class PolylineTest {
     public void testIterable() {
         // arrange
         Polyline path = Polyline.builder(TEST_PRECISION)
-                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1)).build();
+                .appendVertices(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1)).build();
 
         // act
         List<Segment> segments = new ArrayList<>();
@@ -529,15 +529,15 @@ public class PolylineTest {
 
         // assert
         Assert.assertEquals(2, segments.size());
-        assertFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.PLUS_X);
-        assertFiniteSegment(segments.get(1), Vector2D.PLUS_X, Vector2D.of(1, 1));
+        assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_X);
+        assertFiniteSegment(segments.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
     }
 
     @Test
     public void testToTree() {
         // arrange
         Polyline path = Polyline.builder(TEST_PRECISION)
-                .appendVertices(Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
+                .appendVertices(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.of(0, 1))
                 .close();
 
         // act
@@ -729,17 +729,17 @@ public class PolylineTest {
     @Test
     public void testToString() {
         // arrange
-        Line yAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_Y, TEST_PRECISION);
-        Line xAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
+        Line yAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line xAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         Polyline empty = Polyline.empty();
 
         Polyline singleFullSegment = Polyline.fromSegments(xAxis.span());
         Polyline singleFiniteSegment = Polyline.fromSegments(
-                Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION));
+                Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         Polyline startOpenPath = Polyline.builder(TEST_PRECISION)
-                .append(xAxis.segmentTo(Vector2D.PLUS_X))
+                .append(xAxis.segmentTo(Vector2D.Unit.PLUS_X))
                 .append(Vector2D.of(1, 1))
                 .build();
 
@@ -754,7 +754,7 @@ public class PolylineTest {
 
         Polyline nonOpenPath = Polyline.builder(TEST_PRECISION)
                 .append(Vector2D.ZERO)
-                .append(Vector2D.PLUS_X)
+                .append(Vector2D.Unit.PLUS_X)
                 .append(Vector2D.of(1, 1))
                 .build();
 
@@ -881,7 +881,7 @@ public class PolylineTest {
     @Test
     public void testBuilder_prependAndAppend_addingToInfinitePath() {
         // arrange
-        Vector2D p = Vector2D.PLUS_X;
+        Vector2D p = Vector2D.Unit.PLUS_X;
         Builder builder = Polyline.builder(TEST_PRECISION);
 
         builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
@@ -910,14 +910,14 @@ public class PolylineTest {
             .append(Vector2D.of(0, 1e-20))
             .prepend(Vector2D.of(1e-20, 0));
 
-        builder.append(Vector2D.PLUS_X);
+        builder.append(Vector2D.Unit.PLUS_X);
 
         // assert
         Polyline path = builder.build();
 
         List<Segment> segments = path.getSegments();
         Assert.assertEquals(1, segments.size());
-        assertFiniteSegment(segments.get(0), p, Vector2D.PLUS_X);
+        assertFiniteSegment(segments.get(0), p, Vector2D.Unit.PLUS_X);
     }
 
     @Test
@@ -1072,8 +1072,8 @@ public class PolylineTest {
 
         builder
             .append(Vector2D.ZERO)
-            .append(Vector2D.PLUS_X)
-            .append(Line.fromPointAndAngle(Vector2D.PLUS_X, Geometry.HALF_PI, TEST_PRECISION)
+            .append(Vector2D.Unit.PLUS_X)
+            .append(Line.fromPointAndAngle(Vector2D.Unit.PLUS_X, Geometry.HALF_PI, TEST_PRECISION)
                 .segment(0, Double.POSITIVE_INFINITY));
 
         // act/assert

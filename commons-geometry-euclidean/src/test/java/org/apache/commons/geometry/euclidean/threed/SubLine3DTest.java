@@ -93,7 +93,7 @@ public class SubLine3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         SubLine3D result = sub.transform(transform);
@@ -123,7 +123,7 @@ public class SubLine3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         SubLine3D result = sub.transform(transform);

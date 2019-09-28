@@ -38,11 +38,11 @@ public class Line3DTest {
     @Test
     public void testFromPointAndDirection() {
         // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 1, 0), Vector3D.PLUS_Y, TEST_PRECISION);
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 1, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0), line.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Y, line.getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
         Assert.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
@@ -72,7 +72,7 @@ public class Line3DTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0), line.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Y, line.getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
         Assert.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
@@ -89,7 +89,7 @@ public class Line3DTest {
         Line3D line = Line3D.fromPointAndDirection(pt, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(pt,
-                QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         Line3D result = line.transform(mat);
@@ -152,7 +152,7 @@ public class Line3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
                 .translate(0.5, 1, 0)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         Line3D.SubspaceTransform result = line.subspaceTransform(transform);
@@ -341,7 +341,7 @@ public class Line3DTest {
     @Test
     public void testSpan() {
         // arrange
-        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Segment3D segment = line.span();
@@ -446,7 +446,7 @@ public class Line3DTest {
     @Test
     public void testToString() {
         // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         String str = line.toString();

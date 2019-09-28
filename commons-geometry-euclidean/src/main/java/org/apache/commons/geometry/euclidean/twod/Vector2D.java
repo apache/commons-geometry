@@ -33,19 +33,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
-    public static final Vector2D ZERO   = new Vector2D(0, 0);
-
-    /** Unit vector pointing in the direction of the positive x-axis. */
-    public static final Vector2D PLUS_X = new UnitVector(1, 0);
-
-    /** Unit vector pointing in the direction of the negative x-axis. */
-    public static final Vector2D MINUS_X = new UnitVector(-1, 0);
-
-    /** Unit vector pointing in the direction of the positive y-axis. */
-    public static final Vector2D PLUS_Y = new UnitVector(0, 1);
-
-    /** Unit vector pointing in the direction of the negative y-axis. */
-    public static final Vector2D MINUS_Y = new UnitVector(0, -1);
+    public static final Vector2D ZERO = new Vector2D(0, 0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -154,11 +142,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D directionTo(Vector2D v) {
-        return normalize(
-                    v.x - x,
-                    v.y - y
-                );
+    public Unit directionTo(Vector2D v) {
+        return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
@@ -228,8 +213,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D normalize() {
-        return normalize(x, y);
+    public Unit normalize() {
+        return Unit.from(x, y);
     }
 
     /** {@inheritDoc} */
@@ -305,13 +290,13 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      */
     @Override
     public Vector2D orthogonal() {
-        return normalize(-y, x);
+        return Unit.from(-y, x);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D orthogonal(Vector2D dir) {
-        return dir.getComponent(this, true, Vector2D::normalize);
+        return dir.getComponent(this, true, Vector2D.Unit::from);
     }
 
     /** Compute the signed area of the parallelogram with sides formed by this instance
@@ -463,19 +448,6 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         return new Vector2D(v[0], v[1]);
     }
 
-    /** Returns a normalized vector derived from the given values.
-     * @param x abscissa (first coordinate value)
-     * @param y ordinate (second coordinate value)
-     * @return normalized vector instance
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite
-     */
-    public static Vector2D normalize(final double x, final double y) {
-        final double norm = Vectors.checkedNorm(Vectors.norm(x, y));
-        final double invNorm = 1.0 / norm;
-
-        return new UnitVector(x * invNorm, y * invNorm);
-    }
-
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -562,10 +534,19 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y));
     }
 
-    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
-     * operations.
+    /**
+     * Represents unit vectors.
+     * This allows optimizations for certain operations.
      */
-    private static final class UnitVector extends Vector2D {
+    public static final class Unit extends Vector2D {
+        /** Unit vector (coordinates: 1, 0). */
+        public static final Unit PLUS_X  = new Unit(1d, 0d);
+        /** Negation of unit vector (coordinates: -1, 0). */
+        public static final Unit MINUS_X = new Unit(-1d, 0d);
+        /** Unit vector (coordinates: 0, 1). */
+        public static final Unit PLUS_Y  = new Unit(0d, 1d);
+        /** Negation of unit vector (coordinates: 0, -1). */
+        public static final Unit MINUS_Y = new Unit(0d, -1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;
@@ -575,8 +556,34 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @param x abscissa (first coordinate value)
          * @param y abscissa (second coordinate value)
          */
-        private UnitVector(final double x, final double y) {
+        private Unit(final double x, final double y) {
             super(x, y);
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param x Vector coordinate.
+         * @param y Vector coordinate.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(double x, double y) {
+            final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y));
+            return new Unit(x * invNorm, y * invNorm);
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param v Vector.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(Vector2D v) {
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX(), v.getY());
         }
 
         /** {@inheritDoc} */
@@ -593,7 +600,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector2D normalize() {
+        public Unit normalize() {
             return this;
         }
 
@@ -605,8 +612,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
         /** {@inheritDoc} */
         @Override
-        public UnitVector negate() {
-            return new UnitVector(-getX(), -getY());
+        public Unit negate() {
+            return new Unit(-getX(), -getY());
         }
     }
 }

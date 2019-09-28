@@ -65,8 +65,8 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
         final Plane plane = getPlane();
         final Plane rPlane = plane.reverse();
 
-        final Vector2D rU = rPlane.toSubspace(plane.toSpace(Vector2D.PLUS_X));
-        final Vector2D rV = rPlane.toSubspace(plane.toSpace(Vector2D.PLUS_Y));
+        final Vector2D rU = rPlane.toSubspace(plane.toSpace(Vector2D.Unit.PLUS_X));
+        final Vector2D rV = rPlane.toSubspace(plane.toSpace(Vector2D.Unit.PLUS_Y));
 
         final AffineTransformMatrix2D transform =
                 AffineTransformMatrix2D.fromColumnVectors(rU, rV);

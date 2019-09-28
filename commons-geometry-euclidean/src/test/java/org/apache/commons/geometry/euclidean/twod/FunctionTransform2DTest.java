@@ -125,7 +125,7 @@ public class FunctionTransform2DTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, t.applyVector(Vector2D.ZERO), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, 0), t.applyVector(Vector2D.PLUS_X), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, 0), t.applyVector(Vector2D.Unit.PLUS_X), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, -4), t.applyVector(Vector2D.of(2, 2)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 0), t.applyVector(Vector2D.of(-1, 0)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 6), t.applyVector(Vector2D.of(-2, -3)), TEST_EPS);

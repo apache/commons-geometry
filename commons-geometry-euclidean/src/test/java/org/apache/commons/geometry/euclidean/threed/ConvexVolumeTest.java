@@ -59,13 +59,13 @@ public class ConvexVolumeTest {
     public void testTOTree() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.MINUS_Z, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
 
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.PLUS_Z, TEST_PRECISION)
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 );
 
         // act
@@ -96,7 +96,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_halfspace() {
         // act
-        ConvexVolume vol = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.PLUS_Z, TEST_PRECISION));
+        ConvexVolume vol = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // assert
         Assert.assertFalse(vol.isFull());
@@ -145,7 +145,7 @@ public class ConvexVolumeTest {
         ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
         ConvexSubPlane subplane = ConvexSubPlane.fromConvexArea(
-                Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION), ConvexArea.full());
+                Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION), ConvexArea.full());
 
         // act
         ConvexSubPlane trimmed = vol.trim(subplane);
@@ -169,7 +169,7 @@ public class ConvexVolumeTest {
         // arrange
         ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
-        Plane splitter = Plane.fromNormal(Vector3D.PLUS_X, TEST_PRECISION);
+        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<ConvexVolume> split = vol.split(splitter);
@@ -207,14 +207,14 @@ public class ConvexVolumeTest {
 
     private static ConvexVolume rect(Vector3D center, double xDelta, double yDelta, double zDelta) {
         List<Plane> planes = Arrays.asList(
-                    Plane.fromPointAndNormal(center.add(Vector3D.of(xDelta, 0, 0)), Vector3D.PLUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(center.add(Vector3D.of(-xDelta, 0, 0)), Vector3D.MINUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(center.add(Vector3D.of(xDelta, 0, 0)), Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Plane.fromPointAndNormal(center.add(Vector3D.of(-xDelta, 0, 0)), Vector3D.Unit.MINUS_X, TEST_PRECISION),
 
-                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, yDelta, 0)), Vector3D.PLUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, -yDelta, 0)), Vector3D.MINUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, yDelta, 0)), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, -yDelta, 0)), Vector3D.Unit.MINUS_Y, TEST_PRECISION),
 
-                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, 0, zDelta)), Vector3D.PLUS_Z, TEST_PRECISION),
-                    Plane.fromPointAndNormal(center.add(Vector3D.of( 0, 0, -zDelta)), Vector3D.MINUS_Z, TEST_PRECISION)
+                    Plane.fromPointAndNormal(center.add(Vector3D.of(0, 0, zDelta)), Vector3D.Unit.PLUS_Z, TEST_PRECISION),
+                    Plane.fromPointAndNormal(center.add(Vector3D.of( 0, 0, -zDelta)), Vector3D.Unit.MINUS_Z, TEST_PRECISION)
                 );
 
         return ConvexVolume.fromBounds(planes);

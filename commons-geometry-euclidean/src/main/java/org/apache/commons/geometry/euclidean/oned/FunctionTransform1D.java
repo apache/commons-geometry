@@ -67,7 +67,7 @@ public final class FunctionTransform1D implements Transform1D {
     /** {@inheritDoc} */
     @Override
     public AffineTransformMatrix1D toMatrix() {
-        final Vector1D tOne = applyVector(Vector1D.ONE);
+        final Vector1D tOne = applyVector(Vector1D.Unit.PLUS);
 
         return AffineTransformMatrix1D.of(tOne.getX(), translation.getX());
     }
@@ -84,7 +84,7 @@ public final class FunctionTransform1D implements Transform1D {
      * @return a new transform instance using the given function
      */
     public static FunctionTransform1D from(final Function<Vector1D, Vector1D> fn) {
-        final Vector1D tOne = fn.apply(Vector1D.ONE);
+        final Vector1D tOne = fn.apply(Vector1D.Unit.PLUS);
         final Vector1D tZero = fn.apply(Vector1D.ZERO);
 
         final boolean preservesOrientation = tOne.getX() > 0.0;

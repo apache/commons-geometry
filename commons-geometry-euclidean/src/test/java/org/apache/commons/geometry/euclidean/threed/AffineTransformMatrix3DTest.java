@@ -286,7 +286,7 @@ public class AffineTransformMatrix3DTest {
     public void testCreateRotation() {
         // arrange
         Vector3D center = Vector3D.of(1, 2, 3);
-        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
+        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI);
 
         // act
         AffineTransformMatrix3D result = AffineTransformMatrix3D.createRotation(center, rotation);
@@ -309,7 +309,7 @@ public class AffineTransformMatrix3DTest {
                     9, 10, 11, 12
                 );
 
-        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
+        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI);
 
         // act
         AffineTransformMatrix3D result = a.rotate(rotation);
@@ -333,7 +333,7 @@ public class AffineTransformMatrix3DTest {
                 );
 
         Vector3D center = Vector3D.of(1, 2, 3);
-        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
+        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI);
 
         // act
         AffineTransformMatrix3D result = a.rotate(center, rotation);
@@ -468,7 +468,7 @@ public class AffineTransformMatrix3DTest {
         // arrange
         double scaleFactor = 2;
         Vector3D center = Vector3D.of(3, -4, 5);
-        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
+        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI);
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(scaleFactor)
@@ -541,7 +541,7 @@ public class AffineTransformMatrix3DTest {
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(1.5)
                 .translate(4, 6, 5)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI));
 
         // act/assert
         runWithCoordinates((x, y, z) -> {
@@ -609,7 +609,7 @@ public class AffineTransformMatrix3DTest {
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .scale(1.5)
                 .translate(4, 6, 5)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI));
 
         // act/assert
         runWithCoordinates((x, y, z) -> {
@@ -625,7 +625,7 @@ public class AffineTransformMatrix3DTest {
     @Test
     public void testApplyDirection_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.PLUS_Y),
+        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.Unit.PLUS_Y),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(2).applyDirection(Vector3D.ZERO),
                 IllegalNormException.class);
@@ -898,7 +898,7 @@ public class AffineTransformMatrix3DTest {
     public void testInverse_rotate() {
         // arrange
         Vector3D center = Vector3D.of(1, 2, 3);
-        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Z, Geometry.HALF_PI);
+        QuaternionRotation rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI);
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(center, rotation);
 
@@ -918,7 +918,7 @@ public class AffineTransformMatrix3DTest {
     public void testInverse_undoesOriginalTransform() {
         // arrange
         Vector3D v1 = Vector3D.ZERO;
-        Vector3D v2 = Vector3D.PLUS_X;
+        Vector3D v2 = Vector3D.Unit.PLUS_X;
         Vector3D v3 = Vector3D.of(1, 1, 1);
         Vector3D v4 = Vector3D.of(-2, 3, 4);
 

@@ -35,12 +35,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** Zero vector (coordinates: 0). */
     public static final Vector1D ZERO = new Vector1D(0.0);
 
-    /** Unit vector (coordinates: 1). */
-    public static final Vector1D ONE  = new UnitVector(1.0);
-
-    /** Negation of unit vector (coordinates: -1). */
-    public static final Vector1D MINUS_ONE = new UnitVector(-1.0);
-
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector1D NaN = new Vector1D(Double.NaN);
@@ -127,8 +121,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D directionTo(Vector1D v) {
-        return normalize(v.x - x);
+    public Unit directionTo(Vector1D v) {
+        return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
@@ -194,8 +188,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D normalize() {
-        return normalize(x);
+    public Unit normalize() {
+        return Unit.from(x);
     }
 
     /** {@inheritDoc} */
@@ -319,17 +313,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return new Vector1D(x);
     }
 
-    /** Returns a normalized vector derived from the given value.
-     * @param x abscissa (first coordinate value)
-     * @return normalized vector instance
-     * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
-     */
-    public static Vector1D normalize(final double x) {
-        Vectors.checkedNorm(Vectors.norm(x));
-
-        return (x > 0.0) ? ONE : MINUS_ONE;
-    }
-
     /** Parses the given string and returns a new vector instance. The expected string
      * format is the same as that returned by {@link #toString()}.
      * @param str the string to parse
@@ -413,10 +396,15 @@ public class Vector1D extends EuclideanVector<Vector1D> {
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x));
     }
 
-    /** Private class used to represent unit vectors. This allows optimizations to be performed for certain
-     * operations.
+    /**
+     * Represent unit vectors.
+     * This allows optimizations to be performed for certain operations.
      */
-    private static final class UnitVector extends Vector1D {
+    public static final class Unit extends Vector1D {
+        /** Unit vector (coordinates: 1). */
+        public static final Unit PLUS  = new Unit(1d);
+        /** Negation of unit vector (coordinates: -1). */
+        public static final Unit MINUS = new Unit(-1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;
@@ -425,8 +413,33 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          * values represent a normalized vector.
          * @param x abscissa (first coordinate value)
          */
-        private UnitVector(final double x) {
+        private Unit(final double x) {
             super(x);
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param x Vector coordinate.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(double x) {
+            Vectors.checkedNorm(Vectors.norm(x));
+            return x > 0 ? PLUS : MINUS;
+        }
+
+        /**
+         * Creates a normalized vector.
+         *
+         * @param v Vector.
+         * @return a vector whose norm is 1.
+         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         */
+        public static Unit from(Vector1D v) {
+            return v instanceof Unit ?
+                (Unit) v :
+                from(v.getX());
         }
 
         /** {@inheritDoc} */
@@ -443,7 +456,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D normalize() {
+        public Unit normalize() {
             return this;
         }
 
@@ -455,8 +468,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
         /** {@inheritDoc} */
         @Override
-        public UnitVector negate() {
-            return new UnitVector(-getX());
+        public Vector1D negate() {
+            return this == PLUS ? MINUS : PLUS;
         }
     }
 }

@@ -69,9 +69,9 @@ public class FunctionTransform3D implements Transform3D {
     /** {@inheritDoc} */
     @Override
     public AffineTransformMatrix3D toMatrix() {
-        final Vector3D u = applyVector(Vector3D.PLUS_X);
-        final Vector3D v = applyVector(Vector3D.PLUS_Y);
-        final Vector3D w = applyVector(Vector3D.PLUS_Z);
+        final Vector3D u = applyVector(Vector3D.Unit.PLUS_X);
+        final Vector3D v = applyVector(Vector3D.Unit.PLUS_Y);
+        final Vector3D w = applyVector(Vector3D.Unit.PLUS_Z);
 
         return AffineTransformMatrix3D.fromColumnVectors(u, v, w, translation);
     }
@@ -88,9 +88,9 @@ public class FunctionTransform3D implements Transform3D {
      * @return a new transform instance using the given function
      */
     public static FunctionTransform3D from(final Function<Vector3D, Vector3D> fn) {
-        final Vector3D tPlusX = fn.apply(Vector3D.PLUS_X);
-        final Vector3D tPlusY = fn.apply(Vector3D.PLUS_Y);
-        final Vector3D tPlusZ = fn.apply(Vector3D.PLUS_Z);
+        final Vector3D tPlusX = fn.apply(Vector3D.Unit.PLUS_X);
+        final Vector3D tPlusY = fn.apply(Vector3D.Unit.PLUS_Y);
+        final Vector3D tPlusZ = fn.apply(Vector3D.Unit.PLUS_Z);
 
         final Vector3D tZero = fn.apply(Vector3D.ZERO);
 

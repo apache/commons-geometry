@@ -82,7 +82,7 @@ public class Segment3DTest {
     @Test
     public void testFromPointAndDirection() {
         // act
-        Segment3D seg = Segment3D.fromPointAndDirection(Vector3D.of(1, 3, -2), Vector3D.PLUS_Y, TEST_PRECISION);
+        Segment3D seg = Segment3D.fromPointAndDirection(Vector3D.of(1, 3, -2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, -2), seg.getStartPoint(), TEST_EPS);
@@ -90,7 +90,7 @@ public class Segment3DTest {
 
         Line3D line = seg.getLine();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, -2), line.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.PLUS_Y, line.getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class Segment3DTest {
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         Segment3D transformed = segment.transform(transform);
@@ -312,7 +312,7 @@ public class Segment3DTest {
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
 
         // act
         Segment3D transformed = segment.transform(transform);
@@ -344,12 +344,12 @@ public class Segment3DTest {
     @Test
     public void testToString() {
         // arrange
-        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         Segment3D full = Segment3D.fromInterval(line, Interval.full());
         Segment3D startOnly = Segment3D.fromInterval(line, 0, Double.POSITIVE_INFINITY);
         Segment3D endOnly = Segment3D.fromInterval(line, Double.NEGATIVE_INFINITY, 0);
-        Segment3D finite = Segment3D.fromPoints(Vector3D.ZERO, Vector3D.PLUS_X, TEST_PRECISION);
+        Segment3D finite = Segment3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         String fullStr = full.toString();

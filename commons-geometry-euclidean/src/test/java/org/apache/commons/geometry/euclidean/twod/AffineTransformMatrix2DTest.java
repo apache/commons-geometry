@@ -625,7 +625,7 @@ public class AffineTransformMatrix2DTest {
     @Test
     public void testApplyDirection_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix2D.createScale(1, 0).applyDirection(Vector2D.PLUS_Y),
+        GeometryTestUtils.assertThrows(() -> AffineTransformMatrix2D.createScale(1, 0).applyDirection(Vector2D.Unit.PLUS_Y),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix2D.createScale(2).applyDirection(Vector2D.ZERO),
                 IllegalNormException.class);
@@ -890,7 +890,7 @@ public class AffineTransformMatrix2DTest {
     public void testInverse_undoesOriginalTransform() {
         // arrange
         Vector2D v1 = Vector2D.ZERO;
-        Vector2D v2 = Vector2D.PLUS_X;
+        Vector2D v2 = Vector2D.Unit.PLUS_X;
         Vector2D v3 = Vector2D.of(1, 1);
         Vector2D v4 = Vector2D.of(-2, 3);
 

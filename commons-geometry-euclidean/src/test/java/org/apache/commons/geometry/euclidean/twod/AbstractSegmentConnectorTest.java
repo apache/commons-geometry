@@ -198,7 +198,7 @@ public class AbstractSegmentConnectorTest {
     public void testGetConnected_mixOfOpenConnectedAndInfinite() {
         // arrange
         Segment inputYInf = Y_AXIS.segmentTo(Vector2D.ZERO);
-        Segment inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.MINUS_X, TEST_PRECISION)
+        Segment inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
                 .segmentFrom(Vector2D.ZERO);
 
         Polyline closedPath = Polyline.builder(TEST_PRECISION)
@@ -427,8 +427,8 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testInstancesCanBeReused() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.PLUS_X, Vector2D.PLUS_Y, TEST_PRECISION);
+        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
         List<Polyline> firstPaths = connector.getConnected(Arrays.asList(a));
@@ -445,9 +445,9 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testAdd() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        Segment c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
 
         // act
         connector.add(Arrays.asList(a, b));
@@ -458,16 +458,16 @@ public class AbstractSegmentConnectorTest {
         // assert
         Assert.assertEquals(2, paths.size());
 
-        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(2, 0));
-        assertFinitePath(paths.get(1), Vector2D.PLUS_X, Vector2D.of(1, 1));
+        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
+        assertFinitePath(paths.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
     }
 
     @Test
     public void testConnect() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        Segment c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
 
         // act
         connector.connect(Arrays.asList(a, b));
@@ -478,8 +478,8 @@ public class AbstractSegmentConnectorTest {
         // assert
         Assert.assertEquals(2, paths.size());
 
-        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.PLUS_X, Vector2D.of(1, 1));
-        assertFinitePath(paths.get(1), Vector2D.PLUS_X, Vector2D.of(2, 0));
+        assertFinitePath(paths.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
+        assertFinitePath(paths.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
     }
 
     private static List<Segment> shuffle(final List<Segment> segments) {

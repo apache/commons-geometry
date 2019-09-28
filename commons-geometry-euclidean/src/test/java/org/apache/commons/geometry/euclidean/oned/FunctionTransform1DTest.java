@@ -108,7 +108,7 @@ public class FunctionTransform1DTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), t.apply(Vector1D.ZERO), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-1), t.apply(Vector1D.ONE), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-1), t.apply(Vector1D.Unit.PLUS), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-3), t.apply(Vector1D.of(2)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), t.apply(Vector1D.of(-1)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(5), t.apply(Vector1D.of(-2)), TEST_EPS);
@@ -124,7 +124,7 @@ public class FunctionTransform1DTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ZERO, t.applyVector(Vector1D.ZERO), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-2), t.applyVector(Vector1D.ONE), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-2), t.applyVector(Vector1D.Unit.PLUS), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-4), t.applyVector(Vector1D.of(2)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), t.applyVector(Vector1D.of(-1)), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(4), t.applyVector(Vector1D.of(-2)), TEST_EPS);
