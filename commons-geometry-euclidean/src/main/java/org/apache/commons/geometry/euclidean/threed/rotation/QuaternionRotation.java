@@ -94,7 +94,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             return Vector3D.Unit.from(quat.getX(), quat.getY(), quat.getZ());
         }
         catch (IllegalNormException exc) {
-            return Vector3D.PLUS_X;
+            return Vector3D.Unit.PLUS_X;
         }
     }
 

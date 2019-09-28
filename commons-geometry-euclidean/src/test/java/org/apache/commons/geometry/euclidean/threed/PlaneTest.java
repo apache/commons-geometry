@@ -222,7 +222,7 @@ public class PlaneTest {
         Plane plane = Plane.fromPoints(pts, TEST_PRECISION);
 
         // assert
-        checkPlane(plane, Vector3D.PLUS_Y, Vector3D.MINUS_Z, Vector3D.MINUS_X);
+        checkPlane(plane, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_X);
 
         Assert.assertTrue(plane.contains(pts.get(0)));
         Assert.assertTrue(plane.contains(pts.get(1)));
@@ -243,7 +243,7 @@ public class PlaneTest {
         Plane plane = Plane.fromPoints(pts, TEST_PRECISION);
 
         // assert
-        checkPlane(plane, Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+        checkPlane(plane, Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
 
         Assert.assertTrue(plane.contains(pts.get(0)));
         Assert.assertTrue(plane.contains(pts.get(1)));
@@ -275,9 +275,9 @@ public class PlaneTest {
 
         // act
         checkPlane(Plane.fromPoints(pts, TEST_PRECISION),
-                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+                origin, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
         checkPlane(Plane.fromPoints(rotate(pts, 1), TEST_PRECISION),
-                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+                origin, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
 
         checkPlane(Plane.fromPoints(rotate(pts, 2), TEST_PRECISION),
                 origin, Vector3D.Unit.from(0, 1, -1), Vector3D.Unit.from(0, 1, 1));
@@ -298,12 +298,12 @@ public class PlaneTest {
                 origin, Vector3D.Unit.from(0, -1, 0.5), Vector3D.Unit.from(0, -0.5, -1));
 
         checkPlane(Plane.fromPoints(rotate(pts, 9), TEST_PRECISION),
-                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+                origin, Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y);
         checkPlane(Plane.fromPoints(rotate(pts, 10), TEST_PRECISION),
-                origin, Vector3D.PLUS_Z, Vector3D.MINUS_Y);
+                origin, Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y);
 
         checkPlane(Plane.fromPoints(rotate(pts, 11), TEST_PRECISION),
-                origin, Vector3D.MINUS_Z, Vector3D.PLUS_Y);
+                origin, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
     }
 
     @Test
@@ -314,14 +314,14 @@ public class PlaneTest {
                 Vector3D.of(2, 0, 2),
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(3.5, 1, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(1, 0, 2),
                 Vector3D.of(2, 0, 2),
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(3.5, -1, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(1, 0, 2),
@@ -329,7 +329,7 @@ public class PlaneTest {
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(3.5, -1, 2),
                 Vector3D.of(4, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(1, 0, 2),
@@ -337,7 +337,7 @@ public class PlaneTest {
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(3.5, 1, 2),
                 Vector3D.of(4, -1, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.MINUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.MINUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(0, 0, 2),
@@ -345,7 +345,7 @@ public class PlaneTest {
                 Vector3D.of(1, 1, 2),
                 Vector3D.of(0, 1, 2),
                 Vector3D.of(0, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(0, 0, 2),
@@ -353,7 +353,7 @@ public class PlaneTest {
                 Vector3D.of(1, 1, 2),
                 Vector3D.of(1, 0, 2),
                 Vector3D.of(0, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_Y, Vector3D.PLUS_X);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(0, 0, 2),
@@ -362,7 +362,7 @@ public class PlaneTest {
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(2, 4, 2),
                 Vector3D.of(0, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_X, Vector3D.PLUS_Y);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y);
 
         checkPlane(Plane.fromPoints(Arrays.asList(
                 Vector3D.of(0, 0, 2),
@@ -371,14 +371,14 @@ public class PlaneTest {
                 Vector3D.of(3, 0, 2),
                 Vector3D.of(2, 1, 2),
                 Vector3D.of(0, 0, 2)
-            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.PLUS_Y, Vector3D.PLUS_X);
+            ), TEST_PRECISION), Vector3D.of(0, 0, 2), Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X);
     }
 
     @Test
     public void testFromPoints_collection_illegalArguments() {
         // arrange
         Vector3D a = Vector3D.ZERO;
-        Vector3D b = Vector3D.PLUS_X;
+        Vector3D b = Vector3D.Unit.PLUS_X;
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -400,7 +400,7 @@ public class PlaneTest {
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(Arrays.asList(
                         Vector3D.ZERO,
-                        Vector3D.PLUS_X,
+                        Vector3D.Unit.PLUS_X,
                         Vector3D.of(2, 0, 0)
                     ), TEST_PRECISION);
         }, GeometryException.class);
@@ -408,7 +408,7 @@ public class PlaneTest {
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(Arrays.asList(
                         Vector3D.ZERO,
-                        Vector3D.PLUS_X,
+                        Vector3D.Unit.PLUS_X,
                         Vector3D.of(2, 0, 0),
                         Vector3D.of(3, 0, 0)
                     ), TEST_PRECISION);
@@ -423,7 +423,7 @@ public class PlaneTest {
                         Vector3D.ZERO,
                         Vector3D.ZERO,
                         Vector3D.of(1e-12, 1e-12, 0),
-                        Vector3D.PLUS_X
+                        Vector3D.Unit.PLUS_X
                     ), TEST_PRECISION);
         }, GeometryException.class);
 
@@ -442,9 +442,9 @@ public class PlaneTest {
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(Arrays.asList(
                         Vector3D.ZERO,
-                        Vector3D.PLUS_X,
-                        Vector3D.PLUS_Y,
-                        Vector3D.PLUS_Z
+                        Vector3D.Unit.PLUS_X,
+                        Vector3D.Unit.PLUS_Y,
+                        Vector3D.Unit.PLUS_Z
                     ), TEST_PRECISION);
         }, GeometryException.class);
     }

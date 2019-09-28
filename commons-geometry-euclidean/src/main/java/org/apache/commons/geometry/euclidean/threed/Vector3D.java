@@ -31,25 +31,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** Zero (null) vector (coordinates: 0, 0, 0). */
-    public static final Vector3D ZERO   = new Vector3D(0, 0, 0);
-
-    /** First canonical vector (coordinates: 1, 0, 0). */
-    public static final Vector3D PLUS_X = Unit.PLUS_X;
-
-    /** Opposite of the first canonical vector (coordinates: -1, 0, 0). */
-    public static final Vector3D MINUS_X = Unit.MINUS_X;
-
-    /** Second canonical vector (coordinates: 0, 1, 0). */
-    public static final Vector3D PLUS_Y = Unit.PLUS_Y;
-
-    /** Opposite of the second canonical vector (coordinates: 0, -1, 0). */
-    public static final Vector3D MINUS_Y = Unit.MINUS_Y;
-
-    /** Third canonical vector (coordinates: 0, 0, 1). */
-    public static final Vector3D PLUS_Z = Unit.PLUS_Z;
-
-    /** Opposite of the third canonical vector (coordinates: 0, 0, -1).  */
-    public static final Vector3D MINUS_Z = Unit.MINUS_Z;
+    public static final Vector3D ZERO = new Vector3D(0, 0, 0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -581,21 +563,21 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /**
      * Represents unit vectors.
-     * This allows optimizations to be performed for certain operations.
+     * This allows optimizations for certain operations.
      */
     public static final class Unit extends Vector3D {
         /** Unit vector (coordinates: 1, 0, 0). */
-        static final Unit PLUS_X  = new Unit(1d, 0d, 0d);
+        public static final Unit PLUS_X  = new Unit(1d, 0d, 0d);
         /** Negation of unit vector (coordinates: -1, 0, 0). */
-        static final Unit MINUS_X = new Unit(-1d, 0d, 0d);
+        public static final Unit MINUS_X = new Unit(-1d, 0d, 0d);
         /** Unit vector (coordinates: 0, 1, 0). */
-        static final Unit PLUS_Y  = new Unit(0d, 1d, 0d);
+        public static final Unit PLUS_Y  = new Unit(0d, 1d, 0d);
         /** Negation of unit vector (coordinates: 0, -1, 0). */
-        static final Unit MINUS_Y = new Unit(0d, -1d, 0d);
+        public static final Unit MINUS_Y = new Unit(0d, -1d, 0d);
         /** Unit vector (coordinates: 0, 0, 1). */
-        static final Unit PLUS_Z  = new Unit(0d, 0d, 1d);
+        public static final Unit PLUS_Z  = new Unit(0d, 0d, 1d);
         /** Negation of unit vector (coordinates: 0, 0, -1). */
-        static final Unit MINUS_Z = new Unit(0d, 0d, -1d);
+        public static final Unit MINUS_Z = new Unit(0d, 0d, -1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;

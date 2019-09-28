@@ -40,14 +40,14 @@ public class Vector3DTest {
         // act/assert
         checkVector(Vector3D.ZERO, 0, 0, 0);
 
-        checkVector(Vector3D.PLUS_X, 1, 0, 0);
-        checkVector(Vector3D.MINUS_X, -1, 0, 0);
+        checkVector(Vector3D.Unit.PLUS_X, 1, 0, 0);
+        checkVector(Vector3D.Unit.MINUS_X, -1, 0, 0);
 
-        checkVector(Vector3D.PLUS_Y, 0, 1, 0);
-        checkVector(Vector3D.MINUS_Y, 0, -1, 0);
+        checkVector(Vector3D.Unit.PLUS_Y, 0, 1, 0);
+        checkVector(Vector3D.Unit.MINUS_Y, 0, -1, 0);
 
-        checkVector(Vector3D.PLUS_Z, 0, 0, 1);
-        checkVector(Vector3D.MINUS_Z, 0, 0, -1);
+        checkVector(Vector3D.Unit.PLUS_Z, 0, 0, 1);
+        checkVector(Vector3D.Unit.MINUS_Z, 0, 0, -1);
 
         checkVector(Vector3D.NaN, Double.NaN, Double.NaN, Double.NaN);
         checkVector(Vector3D.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -66,14 +66,14 @@ public class Vector3DTest {
         GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
 
-        Assert.assertSame(Vector3D.PLUS_X.normalize(), Vector3D.PLUS_X);
-        Assert.assertSame(Vector3D.MINUS_X.normalize(), Vector3D.MINUS_X);
+        Assert.assertSame(Vector3D.Unit.PLUS_X.normalize(), Vector3D.Unit.PLUS_X);
+        Assert.assertSame(Vector3D.Unit.MINUS_X.normalize(), Vector3D.Unit.MINUS_X);
 
-        Assert.assertSame(Vector3D.PLUS_Y.normalize(), Vector3D.PLUS_Y);
-        Assert.assertSame(Vector3D.MINUS_Y.normalize(), Vector3D.MINUS_Y);
+        Assert.assertSame(Vector3D.Unit.PLUS_Y.normalize(), Vector3D.Unit.PLUS_Y);
+        Assert.assertSame(Vector3D.Unit.MINUS_Y.normalize(), Vector3D.Unit.MINUS_Y);
 
-        Assert.assertSame(Vector3D.PLUS_Z.normalize(), Vector3D.PLUS_Z);
-        Assert.assertSame(Vector3D.MINUS_Z.normalize(), Vector3D.MINUS_Z);
+        Assert.assertSame(Vector3D.Unit.PLUS_Z.normalize(), Vector3D.Unit.PLUS_Z);
+        Assert.assertSame(Vector3D.Unit.MINUS_Z.normalize(), Vector3D.Unit.MINUS_Z);
     }
 
     @Test
@@ -242,9 +242,9 @@ public class Vector3DTest {
         Vector3D v = Vector3D.of(2.0, -3.0, 4.0).normalize();
 
         // act/assert
-        checkVector(Vector3D.PLUS_X.withNorm(2.5), 2.5, 0.0, 0.0);
-        checkVector(Vector3D.MINUS_Y.withNorm(3.14), 0.0, -3.14, 0.0);
-        checkVector(Vector3D.PLUS_Z.withNorm(-1.1), 0.0, 0.0, -1.1);
+        checkVector(Vector3D.Unit.PLUS_X.withNorm(2.5), 2.5, 0.0, 0.0);
+        checkVector(Vector3D.Unit.MINUS_Y.withNorm(3.14), 0.0, -3.14, 0.0);
+        checkVector(Vector3D.Unit.PLUS_Z.withNorm(-1.1), 0.0, 0.0, -1.1);
 
         for (double mag = -10.0; mag <= 10.0; ++mag)
         {
@@ -421,9 +421,9 @@ public class Vector3DTest {
         double invSqrt2 = 1.0 / Math.sqrt(2.0);
 
         // act/assert
-        checkVector(Vector3D.PLUS_X.orthogonal(Vector3D.of(-1.0, 0.1, 0.0)), 0.0, 1.0, 0.0);
-        checkVector(Vector3D.PLUS_Y.orthogonal(Vector3D.of(2.0, 2.0, 2.0)), invSqrt2, 0.0, invSqrt2);
-        checkVector(Vector3D.PLUS_Z.orthogonal(Vector3D.of(3.0, 3.0, -3.0)), invSqrt2, invSqrt2, 0.0);
+        checkVector(Vector3D.Unit.PLUS_X.orthogonal(Vector3D.of(-1.0, 0.1, 0.0)), 0.0, 1.0, 0.0);
+        checkVector(Vector3D.Unit.PLUS_Y.orthogonal(Vector3D.of(2.0, 2.0, 2.0)), invSqrt2, 0.0, invSqrt2);
+        checkVector(Vector3D.Unit.PLUS_Z.orthogonal(Vector3D.of(3.0, 3.0, -3.0)), invSqrt2, invSqrt2, 0.0);
 
         checkVector(Vector3D.of(invSqrt2, invSqrt2, 0.0).orthogonal(Vector3D.of(1.0, 1.0, 0.2)), 0.0, 0.0, 1.0);
     }
@@ -431,31 +431,31 @@ public class Vector3DTest {
     @Test
     public void testOrthogonal_givenDirection_illegalNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.orthogonal(Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.ZERO.orthogonal(Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.orthogonal(Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.NaN.orthogonal(Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.orthogonal(Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.POSITIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.orthogonal(Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.orthogonal(Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
 
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.ZERO),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.ZERO),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.NaN),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NaN),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.POSITIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.POSITIVE_INFINITY),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.NEGATIVE_INFINITY),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.NEGATIVE_INFINITY),
                 IllegalNormException.class);
     }
 
     @Test
     public void testOrthogonal_givenDirection_directionIsCollinear() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.PLUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.PLUS_X),
                 IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> Vector3D.PLUS_X.orthogonal(Vector3D.MINUS_X),
+        GeometryTestUtils.assertThrows(() -> Vector3D.Unit.PLUS_X.orthogonal(Vector3D.Unit.MINUS_X),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> Vector3D.of(1.0, 1.0, 1.0).orthogonal(Vector3D.of(2.0, 2.0, 2.0)),
                 IllegalNormException.class);
@@ -476,13 +476,13 @@ public class Vector3DTest {
         Assert.assertEquals(7.98595620686106654517199e-8, v1.angle(Vector3D.of(2, 4, 6.000001)), tolerance);
         Assert.assertEquals(3.14159257373023116985197793156, v1.angle(Vector3D.of(-2, -4, -6.000001)), tolerance);
 
-        Assert.assertEquals(0.0, Vector3D.PLUS_X.angle(Vector3D.PLUS_X), tolerance);
-        Assert.assertEquals(Geometry.PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_X), tolerance);
+        Assert.assertEquals(0.0, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_X), tolerance);
+        Assert.assertEquals(Geometry.PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_X), tolerance);
 
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.PLUS_Y), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_Y), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.PLUS_Z), tolerance);
-        Assert.assertEquals(Geometry.HALF_PI, Vector3D.PLUS_X.angle(Vector3D.MINUS_Z), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Y), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.PLUS_Z), tolerance);
+        Assert.assertEquals(Geometry.HALF_PI, Vector3D.Unit.PLUS_X.angle(Vector3D.Unit.MINUS_Z), tolerance);
     }
 
     @Test
@@ -526,11 +526,11 @@ public class Vector3DTest {
     @Test
     public void testCrossProduct() {
         // act/assert
-        checkVector(Vector3D.PLUS_X.cross(Vector3D.PLUS_Y), 0, 0, 1);
-        checkVector(Vector3D.PLUS_X.cross(Vector3D.MINUS_Y), 0, 0, -1);
+        checkVector(Vector3D.Unit.PLUS_X.cross(Vector3D.Unit.PLUS_Y), 0, 0, 1);
+        checkVector(Vector3D.Unit.PLUS_X.cross(Vector3D.Unit.MINUS_Y), 0, 0, -1);
 
-        checkVector(Vector3D.MINUS_X.cross(Vector3D.MINUS_Y), 0, 0, 1);
-        checkVector(Vector3D.MINUS_X.cross(Vector3D.PLUS_Y), 0, 0, -1);
+        checkVector(Vector3D.Unit.MINUS_X.cross(Vector3D.Unit.MINUS_Y), 0, 0, 1);
+        checkVector(Vector3D.Unit.MINUS_X.cross(Vector3D.Unit.PLUS_Y), 0, 0, -1);
 
         checkVector(Vector3D.of(2, 1, -4).cross(Vector3D.of(3, 1, -1)), 3, -10, -1);
 
@@ -734,21 +734,21 @@ public class Vector3DTest {
         Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
-        checkVector(Vector3D.ZERO.project(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+        checkVector(Vector3D.ZERO.project(Vector3D.Unit.PLUS_X), 0.0, 0.0, 0.0);
 
-        checkVector(v1.project(Vector3D.PLUS_X), 2.0, 0.0, 0.0);
-        checkVector(v1.project(Vector3D.MINUS_X), 2.0, 0.0, 0.0);
-        checkVector(v1.project(Vector3D.PLUS_Y), 0.0, 3.0, 0.0);
-        checkVector(v1.project(Vector3D.MINUS_Y), 0.0, 3.0, 0.0);
-        checkVector(v1.project(Vector3D.PLUS_Z), 0.0, 0.0, 4.0);
-        checkVector(v1.project(Vector3D.MINUS_Z), 0.0, 0.0, 4.0);
+        checkVector(v1.project(Vector3D.Unit.PLUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.Unit.MINUS_X), 2.0, 0.0, 0.0);
+        checkVector(v1.project(Vector3D.Unit.PLUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.Unit.MINUS_Y), 0.0, 3.0, 0.0);
+        checkVector(v1.project(Vector3D.Unit.PLUS_Z), 0.0, 0.0, 4.0);
+        checkVector(v1.project(Vector3D.Unit.MINUS_Z), 0.0, 0.0, 4.0);
 
-        checkVector(v2.project(Vector3D.PLUS_X), -5.0, 0.0, 0.0);
-        checkVector(v2.project(Vector3D.MINUS_X), -5.0, 0.0, 0.0);
-        checkVector(v2.project(Vector3D.PLUS_Y), 0.0, -6.0, 0.0);
-        checkVector(v2.project(Vector3D.MINUS_Y), 0.0, -6.0, 0.0);
-        checkVector(v2.project(Vector3D.PLUS_Z), 0.0, 0.0, -7.0);
-        checkVector(v2.project(Vector3D.MINUS_Z), 0.0, 0.0, -7.0);
+        checkVector(v2.project(Vector3D.Unit.PLUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.Unit.MINUS_X), -5.0, 0.0, 0.0);
+        checkVector(v2.project(Vector3D.Unit.PLUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.Unit.MINUS_Y), 0.0, -6.0, 0.0);
+        checkVector(v2.project(Vector3D.Unit.PLUS_Z), 0.0, 0.0, -7.0);
+        checkVector(v2.project(Vector3D.Unit.MINUS_Z), 0.0, 0.0, -7.0);
 
         checkVector(v1.project(Vector3D.of(1.0, 1.0, 1.0)), 3.0, 3.0, 3.0);
         checkVector(v1.project(Vector3D.of(-1.0, -1.0, -1.0)), 3.0, 3.0, 3.0);
@@ -780,21 +780,21 @@ public class Vector3DTest {
         Vector3D v2 = Vector3D.of(-5.0, -6.0, -7.0);
 
         // act/assert
-        checkVector(Vector3D.ZERO.reject(Vector3D.PLUS_X), 0.0, 0.0, 0.0);
+        checkVector(Vector3D.ZERO.reject(Vector3D.Unit.PLUS_X), 0.0, 0.0, 0.0);
 
-        checkVector(v1.reject(Vector3D.PLUS_X), 0.0, 3.0, 4.0);
-        checkVector(v1.reject(Vector3D.MINUS_X), 0.0, 3.0, 4.0);
-        checkVector(v1.reject(Vector3D.PLUS_Y), 2.0, 0.0, 4.0);
-        checkVector(v1.reject(Vector3D.MINUS_Y), 2.0, 0.0, 4.0);
-        checkVector(v1.reject(Vector3D.PLUS_Z), 2.0, 3.0, 0.0);
-        checkVector(v1.reject(Vector3D.MINUS_Z), 2.0, 3.0, 0.0);
+        checkVector(v1.reject(Vector3D.Unit.PLUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.Unit.MINUS_X), 0.0, 3.0, 4.0);
+        checkVector(v1.reject(Vector3D.Unit.PLUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.Unit.MINUS_Y), 2.0, 0.0, 4.0);
+        checkVector(v1.reject(Vector3D.Unit.PLUS_Z), 2.0, 3.0, 0.0);
+        checkVector(v1.reject(Vector3D.Unit.MINUS_Z), 2.0, 3.0, 0.0);
 
-        checkVector(v2.reject(Vector3D.PLUS_X), 0.0, -6.0, -7.0);
-        checkVector(v2.reject(Vector3D.MINUS_X), 0.0, -6.0, -7.0);
-        checkVector(v2.reject(Vector3D.PLUS_Y), -5.0, 0.0, -7.0);
-        checkVector(v2.reject(Vector3D.MINUS_Y), -5.0, 0.0, -7.0);
-        checkVector(v2.reject(Vector3D.PLUS_Z), -5.0, -6.0, 0.0);
-        checkVector(v2.reject(Vector3D.MINUS_Z), -5.0, -6.0, 0.0);
+        checkVector(v2.reject(Vector3D.Unit.PLUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.Unit.MINUS_X), 0.0, -6.0, -7.0);
+        checkVector(v2.reject(Vector3D.Unit.PLUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.Unit.MINUS_Y), -5.0, 0.0, -7.0);
+        checkVector(v2.reject(Vector3D.Unit.PLUS_Z), -5.0, -6.0, 0.0);
+        checkVector(v2.reject(Vector3D.Unit.MINUS_Z), -5.0, -6.0, 0.0);
 
         checkVector(v1.reject(Vector3D.of(1.0, 1.0, 1.0)), -1.0, 0.0, 1.0);
         checkVector(v1.reject(Vector3D.of(-1.0, -1.0, -1.0)), -1.0, 0.0, 1.0);
@@ -1097,7 +1097,7 @@ public class Vector3DTest {
         checkVector(Vector3D.parse("(NaN, -Infinity, Infinity)"), Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         checkVector(Vector3D.parse(Vector3D.ZERO.toString()), 0, 0, 0);
-        checkVector(Vector3D.parse(Vector3D.MINUS_X.toString()), -1, 0, 0);
+        checkVector(Vector3D.parse(Vector3D.Unit.MINUS_X.toString()), -1, 0, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)

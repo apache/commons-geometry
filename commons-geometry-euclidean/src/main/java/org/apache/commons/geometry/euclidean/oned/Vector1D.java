@@ -32,12 +32,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** Zero vector (coordinates: 0). */
     public static final Vector1D ZERO = new Vector1D(0.0);
 
-    /** Unit vector (coordinates: 1). */
-    public static final Vector1D ONE  = Unit.ONE;
-
-    /** Negation of unit vector (coordinates: -1). */
-    public static final Vector1D MINUS_ONE = Unit.MINUS_ONE;
-
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
     public static final Vector1D NaN = new Vector1D(Double.NaN);
@@ -380,9 +374,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      */
     public static final class Unit extends Vector1D {
         /** Unit vector (coordinates: 1). */
-        static final Unit ONE  = new Unit(1d);
+        public static final Unit PLUS  = new Unit(1d);
         /** Negation of unit vector (coordinates: -1). */
-        static final Unit MINUS_ONE = new Unit(-1d);
+        public static final Unit MINUS = new Unit(-1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;
@@ -404,7 +398,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          */
         public static Unit from(double x) {
             Vectors.checkedNorm(Vectors.norm(x));
-            return x > 0 ? ONE : MINUS_ONE;
+            return x > 0 ? PLUS : MINUS;
         }
 
         /**
@@ -447,7 +441,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /** {@inheritDoc} */
         @Override
         public Vector1D negate() {
-            return this == ONE ? MINUS_ONE : ONE;
+            return this == PLUS ? MINUS : PLUS;
         }
     }
 }

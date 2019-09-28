@@ -1619,10 +1619,10 @@ public class PolygonsSetTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1.0 / 16);
 
         Hyperplane<Vector2D>[] h2 = new Line[] {
-                Line.fromPointAndDirection(pA, Vector2D.MINUS_Y, precision),
-                Line.fromPointAndDirection(pB, Vector2D.PLUS_X, precision),
-                Line.fromPointAndDirection(pC, Vector2D.PLUS_Y, precision),
-                Line.fromPointAndDirection(pD, Vector2D.MINUS_X, precision)
+                Line.fromPointAndDirection(pA, Vector2D.Unit.MINUS_Y, precision),
+                Line.fromPointAndDirection(pB, Vector2D.Unit.PLUS_X, precision),
+                Line.fromPointAndDirection(pC, Vector2D.Unit.PLUS_Y, precision),
+                Line.fromPointAndDirection(pD, Vector2D.Unit.MINUS_X, precision)
             };
 
         // act

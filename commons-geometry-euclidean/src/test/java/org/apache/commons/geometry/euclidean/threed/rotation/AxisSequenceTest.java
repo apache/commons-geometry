@@ -49,13 +49,13 @@ public class AxisSequenceTest {
 
     private Vector3D getAxisForName(String name) {
         if ("X".equals(name)) {
-            return Vector3D.PLUS_X;
+            return Vector3D.Unit.PLUS_X;
         }
         if ("Y".equals(name)) {
-            return Vector3D.PLUS_Y;
+            return Vector3D.Unit.PLUS_Y;
         }
         if ("Z".equals(name)) {
-            return Vector3D.PLUS_Z;
+            return Vector3D.Unit.PLUS_Z;
         }
         throw new IllegalArgumentException("Unknown axis: " + name);
     }

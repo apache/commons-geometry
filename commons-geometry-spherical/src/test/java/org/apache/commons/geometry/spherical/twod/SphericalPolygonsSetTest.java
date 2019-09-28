@@ -81,7 +81,7 @@ public class SphericalPolygonsSetTest {
     public void testSouthHemisphere() {
         double tol = 0.01;
         double sinTol = Math.sin(tol);
-        SphericalPolygonsSet south = new SphericalPolygonsSet(Vector3D.MINUS_Z, createPrecision(tol));
+        SphericalPolygonsSet south = new SphericalPolygonsSet(Vector3D.Unit.MINUS_Z, createPrecision(tol));
         UnitSphereSampler random =
                 new UnitSphereSampler(3, RandomSource.create(RandomSource.WELL_1024_A,
                                                              0x6b9d4a6ad90d7b0bl));
@@ -114,9 +114,9 @@ public class SphericalPolygonsSetTest {
         double sinTol = Math.sin(tol);
         DoublePrecisionContext precision = createPrecision(tol);
         RegionFactory<S2Point> factory = new RegionFactory<>();
-        SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.PLUS_X, precision);
-        SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.PLUS_Y, precision);
-        SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.PLUS_Z, precision);
+        SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.Unit.PLUS_X, precision);
+        SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.Unit.PLUS_Y, precision);
+        SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.Unit.PLUS_Z, precision);
         SphericalPolygonsSet octant =
                 (SphericalPolygonsSet) factory.intersection(factory.intersection(plusX, plusY), plusZ);
         UnitSphereSampler random =
@@ -147,13 +147,13 @@ public class SphericalPolygonsSetTest {
             ++count;
             Edge e = v.getIncoming();
             Assert.assertTrue(v == e.getStart().getOutgoing().getEnd());
-            xPFound = xPFound || e.getCircle().getPole().distance(Vector3D.PLUS_X) < TEST_EPS;
-            yPFound = yPFound || e.getCircle().getPole().distance(Vector3D.PLUS_Y) < TEST_EPS;
-            zPFound = zPFound || e.getCircle().getPole().distance(Vector3D.PLUS_Z) < TEST_EPS;
+            xPFound = xPFound || e.getCircle().getPole().distance(Vector3D.Unit.PLUS_X) < TEST_EPS;
+            yPFound = yPFound || e.getCircle().getPole().distance(Vector3D.Unit.PLUS_Y) < TEST_EPS;
+            zPFound = zPFound || e.getCircle().getPole().distance(Vector3D.Unit.PLUS_Z) < TEST_EPS;
             Assert.assertEquals(0.5 * Math.PI, e.getLength(), TEST_EPS);
-            xVFound = xVFound || v.getLocation().getVector().distance(Vector3D.PLUS_X) < TEST_EPS;
-            yVFound = yVFound || v.getLocation().getVector().distance(Vector3D.PLUS_Y) < TEST_EPS;
-            zVFound = zVFound || v.getLocation().getVector().distance(Vector3D.PLUS_Z) < TEST_EPS;
+            xVFound = xVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_X) < TEST_EPS;
+            yVFound = yVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Y) < TEST_EPS;
+            zVFound = zVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Z) < TEST_EPS;
         }
         Assert.assertTrue(xPFound);
         Assert.assertTrue(yPFound);
@@ -205,9 +205,9 @@ public class SphericalPolygonsSetTest {
         double sinTol = Math.sin(tol);
         DoublePrecisionContext precision = createPrecision(tol);
         RegionFactory<S2Point> factory = new RegionFactory<>();
-        SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.PLUS_X, precision);
-        SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.PLUS_Y, precision);
-        SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.PLUS_Z, precision);
+        SphericalPolygonsSet plusX = new SphericalPolygonsSet(Vector3D.Unit.PLUS_X, precision);
+        SphericalPolygonsSet plusY = new SphericalPolygonsSet(Vector3D.Unit.PLUS_Y, precision);
+        SphericalPolygonsSet plusZ = new SphericalPolygonsSet(Vector3D.Unit.PLUS_Z, precision);
         SphericalPolygonsSet threeOctants =
                 (SphericalPolygonsSet) factory.difference(plusZ, factory.intersection(plusX, plusY));
 
@@ -242,20 +242,20 @@ public class SphericalPolygonsSetTest {
             ++count;
             Edge e = v.getIncoming();
             Assert.assertTrue(v == e.getStart().getOutgoing().getEnd());
-            if (e.getCircle().getPole().distance(Vector3D.MINUS_X) < TEST_EPS) {
+            if (e.getCircle().getPole().distance(Vector3D.Unit.MINUS_X) < TEST_EPS) {
                 xPFound = true;
                 sumPoleX += e.getLength();
-            } else if (e.getCircle().getPole().distance(Vector3D.MINUS_Y) < TEST_EPS) {
+            } else if (e.getCircle().getPole().distance(Vector3D.Unit.MINUS_Y) < TEST_EPS) {
                 yPFound = true;
                 sumPoleY += e.getLength();
             } else {
-                Assert.assertEquals(0.0, e.getCircle().getPole().distance(Vector3D.PLUS_Z), TEST_EPS);
+                Assert.assertEquals(0.0, e.getCircle().getPole().distance(Vector3D.Unit.PLUS_Z), TEST_EPS);
                 zPFound = true;
                 sumPoleZ += e.getLength();
             }
-            xVFound = xVFound || v.getLocation().getVector().distance(Vector3D.PLUS_X) < TEST_EPS;
-            yVFound = yVFound || v.getLocation().getVector().distance(Vector3D.PLUS_Y) < TEST_EPS;
-            zVFound = zVFound || v.getLocation().getVector().distance(Vector3D.PLUS_Z) < TEST_EPS;
+            xVFound = xVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_X) < TEST_EPS;
+            yVFound = yVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Y) < TEST_EPS;
+            zVFound = zVFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Z) < TEST_EPS;
         }
         Assert.assertTrue(xPFound);
         Assert.assertTrue(yPFound);
@@ -276,12 +276,12 @@ public class SphericalPolygonsSetTest {
         double tol = 0.01;
         DoublePrecisionContext precision = createPrecision(tol);
         List<SubHyperplane<S2Point>> boundary = new ArrayList<>();
-        boundary.add(create(Vector3D.MINUS_Y, Vector3D.PLUS_X,  Vector3D.PLUS_Z,  precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.MINUS_X, Vector3D.PLUS_Z,  Vector3D.PLUS_Y,  precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.PLUS_Z,  Vector3D.PLUS_Y,  Vector3D.MINUS_X, precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.MINUS_Y, Vector3D.MINUS_X, Vector3D.MINUS_Z, precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.MINUS_X, Vector3D.MINUS_Z, Vector3D.MINUS_Y, precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.PLUS_Z,  Vector3D.MINUS_Y, Vector3D.PLUS_X,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X,  Vector3D.Unit.PLUS_Z,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z,  Vector3D.Unit.PLUS_Y,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.PLUS_Z,  Vector3D.Unit.PLUS_Y,  Vector3D.Unit.MINUS_X, precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_Z, precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Y, precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.PLUS_Z,  Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X,  precision, 0.0, 0.5 * Math.PI));
         SphericalPolygonsSet polygon = new SphericalPolygonsSet(boundary, precision);
 
         Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(S2Point.ofVector(Vector3D.of( 1,  1,  1).normalize())));
@@ -310,12 +310,12 @@ public class SphericalPolygonsSetTest {
             ++count;
             Edge e = v.getIncoming();
             Assert.assertTrue(v == e.getStart().getOutgoing().getEnd());
-            pXFound = pXFound || v.getLocation().getVector().distance(Vector3D.PLUS_X)  < TEST_EPS;
-            mXFound = mXFound || v.getLocation().getVector().distance(Vector3D.MINUS_X) < TEST_EPS;
-            pYFound = pYFound || v.getLocation().getVector().distance(Vector3D.PLUS_Y)  < TEST_EPS;
-            mYFound = mYFound || v.getLocation().getVector().distance(Vector3D.MINUS_Y) < TEST_EPS;
-            pZFound = pZFound || v.getLocation().getVector().distance(Vector3D.PLUS_Z)  < TEST_EPS;
-            mZFound = mZFound || v.getLocation().getVector().distance(Vector3D.MINUS_Z) < TEST_EPS;
+            pXFound = pXFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_X)  < TEST_EPS;
+            mXFound = mXFound || v.getLocation().getVector().distance(Vector3D.Unit.MINUS_X) < TEST_EPS;
+            pYFound = pYFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Y)  < TEST_EPS;
+            mYFound = mYFound || v.getLocation().getVector().distance(Vector3D.Unit.MINUS_Y) < TEST_EPS;
+            pZFound = pZFound || v.getLocation().getVector().distance(Vector3D.Unit.PLUS_Z)  < TEST_EPS;
+            mZFound = mZFound || v.getLocation().getVector().distance(Vector3D.Unit.MINUS_Z) < TEST_EPS;
             Assert.assertEquals(0.5 * Math.PI, e.getLength(), TEST_EPS);
         }
         Assert.assertTrue(pXFound);
@@ -336,14 +336,14 @@ public class SphericalPolygonsSetTest {
         List<SubHyperplane<S2Point>> boundary = new ArrayList<>();
 
         // first part: +X, +Y, +Z octant
-        boundary.add(create(Vector3D.PLUS_Y,  Vector3D.PLUS_Z,  Vector3D.PLUS_X,  precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.PLUS_Z,  Vector3D.PLUS_X,  Vector3D.PLUS_Y,  precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.PLUS_X,  Vector3D.PLUS_Y,  Vector3D.PLUS_Z,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.PLUS_Y,  Vector3D.Unit.PLUS_Z,  Vector3D.Unit.PLUS_X,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.PLUS_Z,  Vector3D.Unit.PLUS_X,  Vector3D.Unit.PLUS_Y,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.PLUS_X,  Vector3D.Unit.PLUS_Y,  Vector3D.Unit.PLUS_Z,  precision, 0.0, 0.5 * Math.PI));
 
         // first part: -X, -Y, -Z octant
-        boundary.add(create(Vector3D.MINUS_Y, Vector3D.MINUS_X, Vector3D.MINUS_Z, precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.MINUS_X, Vector3D.MINUS_Z, Vector3D.MINUS_Y, precision, 0.0, 0.5 * Math.PI));
-        boundary.add(create(Vector3D.MINUS_Z, Vector3D.MINUS_Y, Vector3D.MINUS_X,  precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_Z, precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Y, precision, 0.0, 0.5 * Math.PI));
+        boundary.add(create(Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_X,  precision, 0.0, 0.5 * Math.PI));
 
         SphericalPolygonsSet polygon = new SphericalPolygonsSet(boundary, precision);
 
@@ -379,7 +379,7 @@ public class SphericalPolygonsSetTest {
         double alpha = 0.7;
         DoublePrecisionContext precision = createPrecision(tol);
         S2Point center = S2Point.ofVector(Vector3D.of(1, 1, 1));
-        SphericalPolygonsSet hexa = new SphericalPolygonsSet(center.getVector(), Vector3D.PLUS_Z, alpha, 6, precision);
+        SphericalPolygonsSet hexa = new SphericalPolygonsSet(center.getVector(), Vector3D.Unit.PLUS_Z, alpha, 6, precision);
         SphericalPolygonsSet hole  = new SphericalPolygonsSet(precision,
                                                               S2Point.of(Math.PI / 6, Math.PI / 3),
                                                               S2Point.of(Math.PI / 3, Math.PI / 3),
@@ -409,14 +409,14 @@ public class SphericalPolygonsSetTest {
         double tol = 0.001;
         DoublePrecisionContext precision = createPrecision(tol);
         Vector3D center = Vector3D.of(1, 1, 1);
-        SphericalPolygonsSet hexaOut   = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.9,  6, precision);
-        SphericalPolygonsSet hexaIn    = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.8,  6, precision);
-        SphericalPolygonsSet pentaOut  = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.7,  5, precision);
-        SphericalPolygonsSet pentaIn   = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.6,  5, precision);
-        SphericalPolygonsSet quadriOut = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.5,  4, precision);
-        SphericalPolygonsSet quadriIn  = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.4,  4, precision);
-        SphericalPolygonsSet triOut    = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.25, 3, precision);
-        SphericalPolygonsSet triIn     = new SphericalPolygonsSet(center, Vector3D.PLUS_Z, 0.15, 3, precision);
+        SphericalPolygonsSet hexaOut   = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.9,  6, precision);
+        SphericalPolygonsSet hexaIn    = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.8,  6, precision);
+        SphericalPolygonsSet pentaOut  = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.7,  5, precision);
+        SphericalPolygonsSet pentaIn   = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.6,  5, precision);
+        SphericalPolygonsSet quadriOut = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.5,  4, precision);
+        SphericalPolygonsSet quadriIn  = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.4,  4, precision);
+        SphericalPolygonsSet triOut    = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.25, 3, precision);
+        SphericalPolygonsSet triIn     = new SphericalPolygonsSet(center, Vector3D.Unit.PLUS_Z, 0.15, 3, precision);
 
         RegionFactory<S2Point> factory = new RegionFactory<>();
         SphericalPolygonsSet hexa   = (SphericalPolygonsSet) factory.difference(hexaOut,   hexaIn);

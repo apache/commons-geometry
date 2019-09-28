@@ -30,19 +30,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** Zero vector (coordinates: 0, 0). */
-    public static final Vector2D ZERO   = new Vector2D(0, 0);
-
-    /** Unit vector pointing in the direction of the positive x-axis. */
-    public static final Vector2D PLUS_X = Unit.PLUS_X;
-
-    /** Unit vector pointing in the direction of the negative x-axis. */
-    public static final Vector2D MINUS_X = Unit.MINUS_X;
-
-    /** Unit vector pointing in the direction of the positive y-axis. */
-    public static final Vector2D PLUS_Y = Unit.PLUS_Y;
-
-    /** Unit vector pointing in the direction of the negative y-axis. */
-    public static final Vector2D MINUS_Y = Unit.MINUS_Y;
+    public static final Vector2D ZERO = new Vector2D(0, 0);
 
     // CHECKSTYLE: stop ConstantName
     /** A vector with all coordinates set to NaN. */
@@ -517,17 +505,17 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /**
      * Represents unit vectors.
-     * This allows optimizations to be performed for certain operations.
+     * This allows optimizations for certain operations.
      */
     public static final class Unit extends Vector2D {
         /** Unit vector (coordinates: 1, 0). */
-        static final Unit PLUS_X  = new Unit(1d, 0d);
+        public static final Unit PLUS_X  = new Unit(1d, 0d);
         /** Negation of unit vector (coordinates: -1, 0). */
-        static final Unit MINUS_X = new Unit(-1d, 0d);
+        public static final Unit MINUS_X = new Unit(-1d, 0d);
         /** Unit vector (coordinates: 0, 1). */
-        static final Unit PLUS_Y  = new Unit(0d, 1d);
+        public static final Unit PLUS_Y  = new Unit(0d, 1d);
         /** Negation of unit vector (coordinates: 0, -1). */
-        static final Unit MINUS_Y = new Unit(0d, -1d);
+        public static final Unit MINUS_Y = new Unit(0d, -1d);
 
         /** Serializable version identifier */
         private static final long serialVersionUID = 20180903L;

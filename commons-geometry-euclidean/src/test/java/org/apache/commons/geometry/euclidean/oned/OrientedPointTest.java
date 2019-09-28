@@ -35,10 +35,10 @@ public class OrientedPointTest {
     @Test
     public void testGetDirection() {
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ONE,
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.Unit.PLUS,
                 OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), true, TEST_PRECISION).getDirection(),
                 TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.MINUS_ONE,
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.Unit.MINUS,
                 OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), false, TEST_PRECISION).getDirection(),
                 TEST_EPS);
     }

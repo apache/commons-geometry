@@ -25,63 +25,63 @@ public enum AxisSequence {
     /** Set of Tait-Bryan angles around the <strong>X</strong>, <strong>Y</strong>, and
      * <strong>Z</strong> axes in that order.
      */
-    XYZ(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.PLUS_Z),
+    XYZ(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z),
 
     /** Set of Tait-Bryan angles around the <strong>X</strong>, <strong>Z</strong>, and
      * <strong>Y</strong> axes in that order.
      */
-    XZY(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_X, Vector3D.PLUS_Z, Vector3D.PLUS_Y),
+    XZY(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Y),
 
     /** Set of Tait-Bryan angles around the <strong>Y</strong>, <strong>X</strong>, and
      * <strong>Z</strong> axes in that order.
      */
-    YXZ(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_Y, Vector3D.PLUS_X, Vector3D.PLUS_Z),
+    YXZ(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z),
 
     /** Set of Tait-Bryan angles around the <strong>Y</strong>, <strong>Z</strong>, and
      * <strong>X</strong> axes in that order.
      */
-    YZX(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_Y, Vector3D.PLUS_Z, Vector3D.PLUS_X),
+    YZX(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X),
 
     /** Set of Cardan angles.
      * this ordered set of rotations is around Z, then around X, then
      * around Y
      */
-    ZXY(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Y),
+    ZXY(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y),
 
     /** Set of Tait-Bryan angles around the <strong>Z</strong>, <strong>Y</strong>, and
      * <strong>X</strong> axes in that order.
      */
-    ZYX(AxisSequenceType.TAIT_BRYAN, Vector3D.PLUS_Z, Vector3D.PLUS_Y, Vector3D.PLUS_X),
+    ZYX(AxisSequenceType.TAIT_BRYAN, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X),
 
     /** Set of Euler angles around the <strong>X</strong>, <strong>Y</strong>, and
      * <strong>X</strong> axes in that order.
      */
-    XYX(AxisSequenceType.EULER, Vector3D.PLUS_X, Vector3D.PLUS_Y, Vector3D.PLUS_X),
+    XYX(AxisSequenceType.EULER, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X),
 
     /** Set of Euler angles around the <strong>X</strong>, <strong>Z</strong>, and
      * <strong>X</strong> axes in that order.
      */
-    XZX(AxisSequenceType.EULER, Vector3D.PLUS_X, Vector3D.PLUS_Z, Vector3D.PLUS_X),
+    XZX(AxisSequenceType.EULER, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X),
 
     /** Set of Euler angles around the <strong>Y</strong>, <strong>X</strong>, and
      * <strong>Y</strong> axes in that order.
      */
-    YXY(AxisSequenceType.EULER, Vector3D.PLUS_Y, Vector3D.PLUS_X, Vector3D.PLUS_Y),
+    YXY(AxisSequenceType.EULER, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y),
 
     /** Set of Euler angles around the <strong>Y</strong>, <strong>Z</strong>, and
      * <strong>Y</strong> axes in that order.
      */
-    YZY(AxisSequenceType.EULER, Vector3D.PLUS_Y, Vector3D.PLUS_Z, Vector3D.PLUS_Y),
+    YZY(AxisSequenceType.EULER, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Y),
 
     /** Set of Euler angles around the <strong>Z</strong>, <strong>X</strong>, and
      * <strong>Z</strong> axes in that order.
      */
-    ZXZ(AxisSequenceType.EULER, Vector3D.PLUS_Z, Vector3D.PLUS_X, Vector3D.PLUS_Z),
+    ZXZ(AxisSequenceType.EULER, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z),
 
     /** Set of Euler angles around the <strong>Z</strong>, <strong>Y</strong>, and
      * <strong>Z</strong> axes in that order.
      */
-    ZYZ(AxisSequenceType.EULER, Vector3D.PLUS_Z, Vector3D.PLUS_Y, Vector3D.PLUS_Z);
+    ZYZ(AxisSequenceType.EULER, Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z);
 
     /** The type of axis sequence. */
     private final AxisSequenceType type;

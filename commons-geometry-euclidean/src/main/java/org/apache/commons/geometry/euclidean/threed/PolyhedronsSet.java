@@ -157,12 +157,12 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
             // too thin box, build an empty polygons set
             return new BSPTree<>(Boolean.FALSE);
         }
-        final Plane pxMin = Plane.fromPointAndNormal(Vector3D.of(xMin, 0, 0), Vector3D.MINUS_X, precision);
-        final Plane pxMax = Plane.fromPointAndNormal(Vector3D.of(xMax, 0, 0), Vector3D.PLUS_X,  precision);
-        final Plane pyMin = Plane.fromPointAndNormal(Vector3D.of(0, yMin, 0), Vector3D.MINUS_Y, precision);
-        final Plane pyMax = Plane.fromPointAndNormal(Vector3D.of(0, yMax, 0), Vector3D.PLUS_Y,  precision);
-        final Plane pzMin = Plane.fromPointAndNormal(Vector3D.of(0, 0, zMin), Vector3D.MINUS_Z, precision);
-        final Plane pzMax = Plane.fromPointAndNormal(Vector3D.of(0, 0, zMax), Vector3D.PLUS_Z,  precision);
+        final Plane pxMin = Plane.fromPointAndNormal(Vector3D.of(xMin, 0, 0), Vector3D.Unit.MINUS_X, precision);
+        final Plane pxMax = Plane.fromPointAndNormal(Vector3D.of(xMax, 0, 0), Vector3D.Unit.PLUS_X,  precision);
+        final Plane pyMin = Plane.fromPointAndNormal(Vector3D.of(0, yMin, 0), Vector3D.Unit.MINUS_Y, precision);
+        final Plane pyMax = Plane.fromPointAndNormal(Vector3D.of(0, yMax, 0), Vector3D.Unit.PLUS_Y,  precision);
+        final Plane pzMin = Plane.fromPointAndNormal(Vector3D.of(0, 0, zMin), Vector3D.Unit.MINUS_Z, precision);
+        final Plane pzMax = Plane.fromPointAndNormal(Vector3D.of(0, 0, zMax), Vector3D.Unit.PLUS_Z,  precision);
         final Region<Vector3D> boundary =
             new RegionFactory<Vector3D>().buildConvex(pxMin, pxMax, pyMin, pyMax, pzMin, pzMax);
         return boundary.getTree(false);
@@ -693,8 +693,8 @@ public class PolyhedronsSet extends AbstractRegion<Vector3D, Vector2D> {
 
                 cachedOriginal = (Plane) original;
                 cachedTransform =
-                    org.apache.commons.geometry.euclidean.twod.Line.getTransform(Vector2D.PLUS_X,
-                                                                                 Vector2D.PLUS_Y,
+                    org.apache.commons.geometry.euclidean.twod.Line.getTransform(Vector2D.Unit.PLUS_X,
+                                                                                 Vector2D.Unit.PLUS_Y,
                                                                                  shift);
             }
 
