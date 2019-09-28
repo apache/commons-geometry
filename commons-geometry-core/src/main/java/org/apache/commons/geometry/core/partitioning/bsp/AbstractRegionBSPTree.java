@@ -812,8 +812,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         public void visit(final N node) {
             final P point = getTarget();
 
-            if (node.isInternal() && (minDist < 0.0 || node.getCutHyperplane().offset(point) <= minDist)) {
-                RegionCutBoundary<P> boundary = node.getCutBoundary();
+            if (node.isInternal() && (minDist < 0.0 || isPossibleClosestCut(node.getCut(), point, minDist))) {
+                final RegionCutBoundary<P> boundary = node.getCutBoundary();
                 final P boundaryPt = boundary.closest(point);
 
                 final double dist = boundaryPt.distance(point);
@@ -829,6 +829,19 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                     projected = disambiguateClosestPoint(point, projected, boundaryPt);
                 }
             }
+        }
+
+        /** Return true if the given node cut subhyperplane is a possible candidate for containing the
+         * closest region boundary point to the target.
+         * @param cut the node cut subhyperplane to test
+         * @param target the target point being projected
+         * @param minDist the smallest distance found so far to a region boundary; this value is guaranteed
+         *      to be non-negative
+         * @return true if the subhyperplane is a possible candidate for containing the closest region
+         *      boundary point to the target
+         */
+        protected boolean isPossibleClosestCut(final SubHyperplane<P> cut, final P target, final double minDist) {
+            return Math.abs(cut.getHyperplane().offset(target)) <= minDist;
         }
 
         /** Method used to determine which of points {@code a} and {@code b} should be considered

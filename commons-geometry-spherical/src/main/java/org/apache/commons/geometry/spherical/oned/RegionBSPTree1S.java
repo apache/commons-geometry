@@ -21,13 +21,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -81,8 +81,6 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     /** {@inheritDoc} */
     @Override
     public Point1S project(final Point1S pt) {
-        // use our custom projector so that we can disambiguate points that are
-        // actually equidistant from the target point
         final BoundaryProjector1S projector = new BoundaryProjector1S(pt);
         accept(projector);
 
@@ -157,24 +155,25 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             return Collections.singletonList(AngularInterval.full());
         }
 
-        final List<BoundaryPair> boundaryPairs = new ArrayList<>();
+        final List<BoundaryPair> insideBoundaryPairs = new ArrayList<>();
+        for (RegionNode1S node : this) {
+            if (node.isInside()) {
+                insideBoundaryPairs.add(getNodeBoundaryPair(node));
+            }
+        }
 
-        visitInsideIntervals((min, max) -> {
-            boundaryPairs.add(new BoundaryPair(min, max));
-        });
+        insideBoundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
 
-        boundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
-
-        int boundaryPairCount = boundaryPairs.size();
+        int boundaryPairCount = insideBoundaryPairs.size();
         int boundaryIdx = 0;
 
         // check for wrap-around
         if (boundaryPairCount > 1) {
-            BoundaryPair min = boundaryPairs.get(boundaryPairCount - 1);
-            BoundaryPair max = boundaryPairs.get(0);
+            BoundaryPair min = insideBoundaryPairs.get(boundaryPairCount - 1);
+            BoundaryPair max = insideBoundaryPairs.get(0);
 
             if (min.getMax() == null && max.getMin() == null) {
-                boundaryPairs.set(boundaryPairCount - 1, new BoundaryPair(min.getMin(), max.getMax()));
+                insideBoundaryPairs.set(boundaryPairCount - 1, new BoundaryPair(min.getMin(), max.getMax()));
 
                 ++boundaryIdx; // skip the first entry
             }
@@ -187,7 +186,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         BoundaryPair current = null;
 
         for (; boundaryIdx < boundaryPairCount; ++boundaryIdx) {
-            current = boundaryPairs.get(boundaryIdx);
+            current = insideBoundaryPairs.get(boundaryIdx);
 
             if (start == null) {
                 start = current;
@@ -253,26 +252,10 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         return AngularInterval.of(min, max);
     }
 
-    /** Compute the min/max intervals for all interior convex regions in the tree and
-     * pass the values to the given visitor function.
-     * @param visitor the object that will receive the calculated min and max boundary for each
-     *      insides node's convex region
-     */
-    private void visitInsideIntervals(final BiConsumer<CutAngle, CutAngle> visitor) {
-        for (RegionNode1S node : this) {
-            if (node.isInside()) {
-                visitNodeInterval(node, visitor);
-            }
-        }
-    }
-
-    /** Determine the min/max boundaries for the convex region represented by the given node and pass
-     * the values to the visitor function.
+    /** Return the min/max boundary pair for the convex region represented by the given node.
      * @param node the node to compute the interval for
-     * @param visitor the object that will receive the min and max boundaries for the node's
-     *      convex region
      */
-    private void visitNodeInterval(final RegionNode1S node, final BiConsumer<CutAngle, CutAngle> visitor) {
+    private BoundaryPair getNodeBoundaryPair(final RegionNode1S node) {
         CutAngle min = null;
         CutAngle max = null;
 
@@ -297,7 +280,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             child = parent;
         }
 
-        visitor.accept(min, max);
+        return new BoundaryPair(min, max);
     }
 
     /** {@inheritDoc} */
@@ -447,8 +430,16 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         /** {@inheritDoc} */
         @Override
+        protected boolean isPossibleClosestCut(final SubHyperplane<Point1S> cut, final Point1S target, final double minDist) {
+            // since the space wraps around, consider any cut as possibly being the closest
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         protected Point1S disambiguateClosestPoint(final Point1S target, final Point1S a, final Point1S b) {
-            return target.signedDistance(a) < 0 ? a : b;
+            // prefer the point with the smaller normalize azimuth value
+            return a.getNormalizedAzimuth() < b.getNormalizedAzimuth() ? a : b;
         }
     }
 }

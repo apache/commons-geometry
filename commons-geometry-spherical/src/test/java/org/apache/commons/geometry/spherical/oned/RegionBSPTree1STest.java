@@ -642,6 +642,50 @@ public class RegionBSPTree1STest {
         Assert.assertEquals(1, treeComplement.project(Point1S.of(1.5)).getAzimuth(), TEST_EPS);
     }
 
+    @Test
+    public void testProject_intervalAroundZero_closerOnMinSide() {
+        // arrange
+        double start = -1;
+        double end = 0.5;
+        RegionBSPTree1S tree = AngularInterval.of(start, end, TEST_PRECISION).toTree();
+
+        // act/assert
+        Assert.assertEquals(end, tree.project(Point1S.of(-1.5 * Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.5 * Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(-0.25)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(-0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.25)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.75)).getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testProject_intervalAroundZero_closerOnMaxSide() {
+        // arrange
+        double start = -0.5;
+        double end = 1;
+        RegionBSPTree1S tree = AngularInterval.of(start, end, TEST_PRECISION).toTree();
+
+        // act/assert
+        Assert.assertEquals(end, tree.project(Point1S.of(-1.5 * Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(-Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.5 * Geometry.PI)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.25)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(-0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.ZERO).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(start, tree.project(Point1S.of(0.1)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.25)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.5)).getAzimuth(), TEST_EPS);
+        Assert.assertEquals(end, tree.project(Point1S.of(0.75)).getAzimuth(), TEST_EPS);
+    }
+
     private static void checkSimpleSplit(Split<RegionBSPTree1S> split, AngularInterval minusInterval,
             AngularInterval plusInterval) {
 
