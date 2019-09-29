@@ -45,18 +45,18 @@ public class Point2STest {
     }
 
     @Test
-    public void testOfVector() {
+    public void testFromVector() {
         // arrange
         double quarterPi = 0.25 * Geometry.PI;
 
         // act/assert
-        checkPoint(Point2S.ofVector(Vector3D.of(1, 1, 0)), quarterPi, Geometry.HALF_PI);
-        checkPoint(Point2S.ofVector(Vector3D.of(1, 0, 1)), 0, quarterPi);
-        checkPoint(Point2S.ofVector(Vector3D.of(0, 1, 1)), Geometry.HALF_PI, quarterPi);
+        checkPoint(Point2S.fromVector(Vector3D.of(1, 1, 0)), quarterPi, Geometry.HALF_PI);
+        checkPoint(Point2S.fromVector(Vector3D.of(1, 0, 1)), 0, quarterPi);
+        checkPoint(Point2S.fromVector(Vector3D.of(0, 1, 1)), Geometry.HALF_PI, quarterPi);
 
-        checkPoint(Point2S.ofVector(Vector3D.of(1, -1, 0)), Geometry.TWO_PI - quarterPi, Geometry.HALF_PI);
-        checkPoint(Point2S.ofVector(Vector3D.of(-1, 0, -1)), Geometry.PI, Geometry.PI - quarterPi);
-        checkPoint(Point2S.ofVector(Vector3D.of(0, -1, -1)), Geometry.TWO_PI - Geometry.HALF_PI, Geometry.PI - quarterPi);
+        checkPoint(Point2S.fromVector(Vector3D.of(1, -1, 0)), Geometry.TWO_PI - quarterPi, Geometry.HALF_PI);
+        checkPoint(Point2S.fromVector(Vector3D.of(-1, 0, -1)), Geometry.PI, Geometry.PI - quarterPi);
+        checkPoint(Point2S.fromVector(Vector3D.of(0, -1, -1)), Geometry.TWO_PI - Geometry.HALF_PI, Geometry.PI - quarterPi);
     }
 
     @Test

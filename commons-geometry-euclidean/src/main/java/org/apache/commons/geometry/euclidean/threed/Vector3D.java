@@ -158,19 +158,19 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D vectorTo(Vector3D v) {
+    public Vector3D vectorTo(final Vector3D v) {
         return v.subtract(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Unit directionTo(Vector3D v) {
+    public Unit directionTo(final Vector3D v) {
         return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D lerp(Vector3D p, double t) {
+    public Vector3D lerp(final Vector3D p, final double t) {
         return linearCombination(1.0 - t, this, t, p);
     }
 
@@ -188,7 +188,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D withNorm(double magnitude) {
+    public Vector3D withNorm(final double magnitude) {
         final double m = magnitude / getCheckedNorm();
 
         return new Vector3D(
@@ -200,7 +200,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D add(Vector3D v) {
+    public Vector3D add(final Vector3D v) {
         return new Vector3D(
                     x + v.x,
                     y + v.y,
@@ -210,7 +210,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D add(double factor, Vector3D v) {
+    public Vector3D add(final double factor, final Vector3D v) {
         return new Vector3D(
                     x + (factor * v.x),
                     y + (factor * v.y),
@@ -220,7 +220,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D subtract(Vector3D v) {
+    public Vector3D subtract(final Vector3D v) {
         return new Vector3D(
                     x - v.x,
                     y - v.y,
@@ -230,7 +230,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D subtract(double factor, Vector3D v) {
+    public Vector3D subtract(final double factor, final Vector3D v) {
         return new Vector3D(
                     x - (factor * v.x),
                     y - (factor * v.y),
@@ -252,13 +252,13 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D multiply(double a) {
+    public Vector3D multiply(final double a) {
         return new Vector3D(a * x, a * y, a * z);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distance(Vector3D v) {
+    public double distance(final Vector3D v) {
         return Vectors.norm(
                 x - v.x,
                 y - v.y,
@@ -268,7 +268,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public double distanceSq(Vector3D v) {
+    public double distanceSq(final Vector3D v) {
         return Vectors.normSq(
                 x - v.x,
                 y - v.y,
@@ -285,7 +285,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @see LinearCombination#value(double, double, double, double, double, double)
      */
     @Override
-    public double dot(Vector3D v) {
+    public double dot(final Vector3D v) {
         return LinearCombination.value(x, v.x, y, v.y, z, v.z);
     }
 
@@ -297,7 +297,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * other.</p>
      */
     @Override
-    public double angle(Vector3D v) {
+    public double angle(final Vector3D v) {
         double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
         double dot = dot(v);
@@ -317,13 +317,13 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D project(Vector3D base) {
+    public Vector3D project(final Vector3D base) {
         return getComponent(base, false, Vector3D::new);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D reject(Vector3D base) {
+    public Vector3D reject(final Vector3D base) {
         return getComponent(base, true, Vector3D::new);
     }
 
@@ -337,30 +337,32 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * <pre><code>
      *   Vector3D k = u.normalize();
      *   Vector3D i = k.orthogonal();
-     *   Vector3D j = k.crossProduct(i);
+     *   Vector3D j = k.cross(i);
      * </code></pre>
      * @return a unit vector orthogonal to the instance
      * @throws IllegalNormException if the norm of the instance is zero, NaN,
      *  or infinite
      */
     @Override
-    public Vector3D orthogonal() {
+    public Vector3D.Unit orthogonal() {
         double threshold = 0.6 * getCheckedNorm();
 
+        double inverse;
         if (Math.abs(x) <= threshold) {
-            double inverse  = 1 / Math.sqrt(y * y + z * z);
-            return new Vector3D(0, inverse * z, -inverse * y);
-        } else if (Math.abs(y) <= threshold) {
-            double inverse  = 1 / Math.sqrt(x * x + z * z);
-            return new Vector3D(-inverse * z, 0, inverse * x);
+            inverse  = 1 / Vectors.norm(y, z);
+            return new Unit(0, inverse * z, -inverse * y);
         }
-        double inverse  = 1 / Math.sqrt(x * x + y * y);
-        return new Vector3D(inverse * y, -inverse * x, 0);
+        else if (Math.abs(y) <= threshold) {
+            inverse  = 1 / Vectors.norm(x, z);
+            return new Unit(-inverse * z, 0, inverse * x);
+        }
+        inverse  = 1 / Vectors.norm(x, y);
+        return new Unit(inverse * y, -inverse * x, 0);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D orthogonal(Vector3D dir) {
+    public Vector3D.Unit orthogonal(Vector3D dir) {
         return dir.getComponent(this, true, Vector3D.Unit::from);
     }
 
@@ -459,7 +461,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      *      depending on the value of {@code reject}.
      * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
      */
-    private Vector3D getComponent(Vector3D base, boolean reject, DoubleFunction3N<Vector3D> factory) {
+    private <V extends Vector3D> V getComponent(Vector3D base, boolean reject, DoubleFunction3N<V> factory) {
         final double aDotB = dot(base);
 
         // We need to check the norm value here to ensure that it's legal. However, we don't
@@ -489,7 +491,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param z height (third coordinate value)
      * @return vector instance
      */
-    public static Vector3D of(double x, double y, double z) {
+    public static Vector3D of(final double x, final double y, final double z) {
         return new Vector3D(x, y, z);
     }
 
@@ -498,7 +500,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return new vector
      * @exception IllegalArgumentException if the array does not have 3 elements
      */
-    public static Vector3D of(double[] v) {
+    public static Vector3D of(final double[] v) {
         if (v.length != 3) {
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 3");
         }
@@ -511,7 +513,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector3D parse(String str) {
+    public static Vector3D parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector3D::new);
     }
 
@@ -525,7 +527,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param c first coordinate
      * @return vector with coordinates calculated by {@code a * c}
      */
-    public static Vector3D linearCombination(double a, Vector3D c) {
+    public static Vector3D linearCombination(final double a, final Vector3D c) {
         return c.multiply(a);
     }
 
@@ -541,7 +543,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param v2 second coordinate
      * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2) {
+    public static Vector3D linearCombination(final double a1, final Vector3D v1,
+            final double a2, final Vector3D v2) {
         return new Vector3D(
                 LinearCombination.value(a1, v1.x, a2, v2.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y),
@@ -562,8 +565,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param v3 third coordinate
      * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2,
-            double a3, Vector3D v3) {
+    public static Vector3D linearCombination(final double a1, final Vector3D v1,
+            final double a2, final Vector3D v2,
+            final double a3, final Vector3D v3) {
         return new Vector3D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y),
@@ -586,8 +590,10 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param v4 fourth coordinate
      * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector3D linearCombination(double a1, Vector3D v1, double a2, Vector3D v2,
-            double a3, Vector3D v3, double a4, Vector3D v4) {
+    public static Vector3D linearCombination(final double a1, final Vector3D v1,
+            final double a2, final Vector3D v2,
+            final double a3, final Vector3D v3,
+            final double a4, final Vector3D v4) {
         return new Vector3D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y),
@@ -634,7 +640,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @return a vector whose norm is 1.
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
-        public static Unit from(double x, double y, double z) {
+        public static Unit from(final double x, final double y, final double z) {
             final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y, z));
             return new Unit(x * invNorm, y * invNorm, z * invNorm);
         }
@@ -646,7 +652,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @return a vector whose norm is 1.
          * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
          */
-        public static Unit from(Vector3D v) {
+        public static Unit from(final Vector3D v) {
             return v instanceof Unit ?
                 (Unit) v :
                 from(v.getX(), v.getY(), v.getZ());

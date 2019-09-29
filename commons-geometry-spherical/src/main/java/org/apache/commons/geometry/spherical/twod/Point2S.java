@@ -216,7 +216,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
      * @return point instance with the coordinates determined by the given 3D vector
      * @exception IllegalStateException if vector norm is zero
      */
-    public static Point2S ofVector(final Vector3D vector) {
+    public static Point2S fromVector(final Vector3D vector) {
         final SphericalCoordinates coords = SphericalCoordinates.fromCartesian(vector);
 
         return new Point2S(coords.getAzimuth(), coords.getPolar(), vector.normalize());

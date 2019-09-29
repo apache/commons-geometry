@@ -50,7 +50,7 @@ public class SphericalPolygonsSetTest {
                                                              0x852fd2a0ed8d2f6dl));
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
-            Assert.assertEquals(Location.INSIDE, full.checkPoint(Point2S.ofVector(v)));
+            Assert.assertEquals(Location.INSIDE, full.checkPoint(Point2S.fromVector(v)));
         }
         Assert.assertEquals(4 * Math.PI, new SphericalPolygonsSet(createPrecision(0.01), new Point2S[0]).getSize(), TEST_EPS);
         Assert.assertEquals(0, new SphericalPolygonsSet(createPrecision(0.01), new Point2S[0]).getBoundarySize(), TEST_EPS);
@@ -68,7 +68,7 @@ public class SphericalPolygonsSetTest {
                                                              0x76d9205d6167b6ddl));
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
-            Assert.assertEquals(Location.OUTSIDE, empty.checkPoint(Point2S.ofVector(v)));
+            Assert.assertEquals(Location.OUTSIDE, empty.checkPoint(Point2S.fromVector(v)));
         }
         Assert.assertEquals(0, empty.getSize(), TEST_EPS);
         Assert.assertEquals(0, empty.getBoundarySize(), TEST_EPS);
@@ -88,11 +88,11 @@ public class SphericalPolygonsSetTest {
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
             if (v.getZ() < -sinTol) {
-                Assert.assertEquals(Location.INSIDE, south.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, south.checkPoint(Point2S.fromVector(v)));
             } else if (v.getZ() > sinTol) {
-                Assert.assertEquals(Location.OUTSIDE, south.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.OUTSIDE, south.checkPoint(Point2S.fromVector(v)));
             } else {
-                Assert.assertEquals(Location.BOUNDARY, south.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, south.checkPoint(Point2S.fromVector(v)));
             }
         }
         Assert.assertEquals(1, south.getBoundaryLoops().size());
@@ -127,11 +127,11 @@ public class SphericalPolygonsSetTest {
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() > sinTol) && (v.getY() > sinTol) && (v.getZ() > sinTol)) {
-                Assert.assertEquals(Location.INSIDE, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, octant.checkPoint(Point2S.fromVector(v)));
             } else if ((v.getX() < -sinTol) || (v.getY() < -sinTol) || (v.getZ() < -sinTol)) {
-                Assert.assertEquals(Location.OUTSIDE, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.OUTSIDE, octant.checkPoint(Point2S.fromVector(v)));
             } else {
-                Assert.assertEquals(Location.BOUNDARY, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, octant.checkPoint(Point2S.fromVector(v)));
             }
         }
 
@@ -166,7 +166,7 @@ public class SphericalPolygonsSetTest {
         Assert.assertEquals(3, count);
 
         Assert.assertEquals(0.0,
-                            octant.getBarycenter().distance(Point2S.ofVector(Vector3D.of(1, 1, 1))),
+                            octant.getBarycenter().distance(Point2S.fromVector(Vector3D.of(1, 1, 1))),
                             TEST_EPS);
         Assert.assertEquals(0.5 * Math.PI, octant.getSize(), TEST_EPS);
 
@@ -176,7 +176,7 @@ public class SphericalPolygonsSetTest {
 
         EnclosingBall<Point2S> reversedCap =
                 ((SphericalPolygonsSet) factory.getComplement(octant)).getEnclosingCap();
-        Assert.assertEquals(0, reversedCap.getCenter().distance(Point2S.ofVector(Vector3D.of(-1, -1, -1))), TEST_EPS);
+        Assert.assertEquals(0, reversedCap.getCenter().distance(Point2S.fromVector(Vector3D.of(-1, -1, -1))), TEST_EPS);
         Assert.assertEquals(Math.PI - Math.asin(1.0 / Math.sqrt(3)), reversedCap.getRadius(), TEST_EPS);
 
     }
@@ -192,11 +192,11 @@ public class SphericalPolygonsSetTest {
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() > sinTol) && (v.getY() > sinTol) && (v.getZ() > sinTol)) {
-                Assert.assertEquals(Location.INSIDE, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, octant.checkPoint(Point2S.fromVector(v)));
             } else if ((v.getX() < -sinTol) || (v.getY() < -sinTol) || (v.getZ() < -sinTol)) {
-                Assert.assertEquals(Location.OUTSIDE, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.OUTSIDE, octant.checkPoint(Point2S.fromVector(v)));
             } else {
-                Assert.assertEquals(Location.BOUNDARY, octant.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, octant.checkPoint(Point2S.fromVector(v)));
             }
         }
     }
@@ -221,11 +221,11 @@ public class SphericalPolygonsSetTest {
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
             if (((v.getX() < -sinTol) || (v.getY() < -sinTol)) && (v.getZ() > sinTol)) {
-                Assert.assertEquals(Location.INSIDE, threeOctants.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, threeOctants.checkPoint(Point2S.fromVector(v)));
             } else if (((v.getX() > sinTol) && (v.getY() > sinTol)) || (v.getZ() < -sinTol)) {
-                Assert.assertEquals(Location.OUTSIDE, threeOctants.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.OUTSIDE, threeOctants.checkPoint(Point2S.fromVector(v)));
             } else {
-                Assert.assertEquals(Location.BOUNDARY, threeOctants.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, threeOctants.checkPoint(Point2S.fromVector(v)));
             }
         }
 
@@ -290,14 +290,14 @@ public class SphericalPolygonsSetTest {
 
         SphericalPolygonsSet polygon = new SphericalPolygonsSet(boundary, precision);
 
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.ofVector(Vector3D.of( 1,  1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.ofVector(Vector3D.of(-1,  1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.ofVector(Vector3D.of(-1, -1,  1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.ofVector(Vector3D.of( 1, -1,  1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.ofVector(Vector3D.of( 1,  1, -1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.ofVector(Vector3D.of(-1,  1, -1).normalize())));
-        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.ofVector(Vector3D.of(-1, -1, -1).normalize())));
-        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.ofVector(Vector3D.of( 1, -1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.fromVector(Vector3D.of( 1,  1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.fromVector(Vector3D.of(-1,  1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.fromVector(Vector3D.of(-1, -1,  1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.fromVector(Vector3D.of( 1, -1,  1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.fromVector(Vector3D.of( 1,  1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.fromVector(Vector3D.of(-1,  1, -1).normalize())));
+        Assert.assertEquals(Location.INSIDE,  polygon.checkPoint(Point2S.fromVector(Vector3D.of(-1, -1, -1).normalize())));
+        Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.fromVector(Vector3D.of( 1, -1, -1).normalize())));
 
         Assert.assertEquals(Geometry.TWO_PI, polygon.getSize(), TEST_EPS);
         Assert.assertEquals(3 * Math.PI, polygon.getBoundarySize(), TEST_EPS);
@@ -359,15 +359,15 @@ public class SphericalPolygonsSetTest {
         for (int i = 0; i < 1000; ++i) {
             Vector3D v = Vector3D.of(random.nextVector());
             if ((v.getX() < -sinTol) && (v.getY() < -sinTol) && (v.getZ() < -sinTol)) {
-                Assert.assertEquals(Location.INSIDE, polygon.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, polygon.checkPoint(Point2S.fromVector(v)));
             } else if ((v.getX() < sinTol) && (v.getY() < sinTol) && (v.getZ() < sinTol)) {
-                Assert.assertEquals(Location.BOUNDARY, polygon.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, polygon.checkPoint(Point2S.fromVector(v)));
             } else if ((v.getX() > sinTol) && (v.getY() > sinTol) && (v.getZ() > sinTol)) {
-                Assert.assertEquals(Location.INSIDE, polygon.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.INSIDE, polygon.checkPoint(Point2S.fromVector(v)));
             } else if ((v.getX() > -sinTol) && (v.getY() > -sinTol) && (v.getZ() > -sinTol)) {
-                Assert.assertEquals(Location.BOUNDARY, polygon.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.BOUNDARY, polygon.checkPoint(Point2S.fromVector(v)));
             } else {
-                Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.ofVector(v)));
+                Assert.assertEquals(Location.OUTSIDE, polygon.checkPoint(Point2S.fromVector(v)));
             }
         }
 
@@ -385,7 +385,7 @@ public class SphericalPolygonsSetTest {
         double alpha = 0.7;
         DoublePrecisionContext precision = createPrecision(tol);
 
-        Point2S center = Point2S.ofVector(Vector3D.of(1, 1, 1));
+        Point2S center = Point2S.fromVector(Vector3D.of(1, 1, 1));
         SphericalPolygonsSet hexa = new SphericalPolygonsSet(center.getVector(), Vector3D.Unit.PLUS_Z, alpha, 6, precision);
 
         SphericalPolygonsSet hole  = new SphericalPolygonsSet(precision,
@@ -449,7 +449,7 @@ public class SphericalPolygonsSetTest {
                             concentric.getSize(), TEST_EPS);
 
         // we expect lots of sign changes as we traverse all concentric rings
-        double phi = Point2S.ofVector(center).getPolar();
+        double phi = Point2S.fromVector(center).getPolar();
         Assert.assertEquals(+0.207, concentric.projectToBoundary(Point2S.of(-0.60,  phi)).getOffset(), 0.01);
         Assert.assertEquals(-0.048, concentric.projectToBoundary(Point2S.of(-0.21,  phi)).getOffset(), 0.01);
         Assert.assertEquals(+0.027, concentric.projectToBoundary(Point2S.of(-0.10,  phi)).getOffset(), 0.01);

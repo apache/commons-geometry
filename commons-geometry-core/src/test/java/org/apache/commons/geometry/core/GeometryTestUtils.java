@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 
@@ -50,7 +51,7 @@ public class GeometryTestUtils {
      * @param exceptionType the expected exception type
      */
     public static void assertThrows(Runnable r, Class<?> exceptionType) {
-        assertThrows(r, exceptionType, null);
+        assertThrows(r, exceptionType, (String) null);
     }
 
     /** Asserts that the given Runnable throws an exception of the given type. If
@@ -73,6 +74,33 @@ public class GeometryTestUtils {
 
             if (message != null) {
                 Assert.assertEquals(message, exc.getMessage());
+            }
+        }
+    }
+
+    /** Asserts that the given Runnable throws an exception of the given type. If
+     * {@code pattern} is not null, the exception message is asserted to match the
+     * given regex.
+     * @param r the Runnable instance
+     * @param exceptionType the expected exception type
+     * @param pattern regex pattern to match; ignored if null
+     */
+    public static void assertThrows(Runnable r, Class<?> exceptionType, Pattern pattern) {
+        try {
+            r.run();
+            Assert.fail("Operation should have thrown an exception");
+        }
+        catch (Exception exc) {
+            Class<?> actualType = exc.getClass();
+
+            Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
+                    exceptionType.isAssignableFrom(actualType));
+
+            if (pattern != null) {
+                String message = exc.getMessage();
+
+                String err = "Expected exception message to match /" + pattern + "/ but was [" + message + "]";
+                Assert.assertTrue(err, pattern.matcher(message).matches());
             }
         }
     }

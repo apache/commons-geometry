@@ -171,7 +171,7 @@ public class Circle implements Hyperplane_Old<Point2S>, Embedding_Old<Point2S, P
      */
     @Override
     public Point2S toSpace(final Point1S point) {
-        return Point2S.ofVector(getPointAt(point.getAzimuth()));
+        return Point2S.fromVector(getPointAt(point.getAzimuth()));
     }
 
     /** Get a circle point from its phase around the circle.
@@ -309,7 +309,7 @@ public class Circle implements Hyperplane_Old<Point2S>, Embedding_Old<Point2S, P
         /** {@inheritDoc} */
         @Override
         public Point2S apply(final Point2S point) {
-            return Point2S.ofVector(rotation.apply(point.getVector()));
+            return Point2S.fromVector(rotation.apply(point.getVector()));
         }
 
         /** {@inheritDoc} */
