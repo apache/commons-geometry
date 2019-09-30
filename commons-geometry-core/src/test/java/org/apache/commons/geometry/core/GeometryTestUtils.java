@@ -105,6 +105,15 @@ public class GeometryTestUtils {
         }
     }
 
+    /** Assert that a string contains a given substring value.
+     * @param substr
+     * @param actual
+     */
+    public static void assertContains(String substr, String actual) {
+        String msg = "Expected string to contain [" + substr + "] but was [" + actual + "]";
+        Assert.assertTrue(msg, actual.contains(substr));
+    }
+
     /**
      * Serializes and then recovers an object from a byte array. Returns the deserialized object.
      *

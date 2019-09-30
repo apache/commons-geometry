@@ -74,16 +74,16 @@ public final class Point2S implements Point<Point2S>, Serializable {
         this.vector = (vector != null) ? vector : SphericalCoordinates.toCartesian(1.0, azimuth, polar);
     }
 
-    /** Get the azimuthal angle in the x-y plane in radians.
-     * @return azimuthal angle in the x-y plane
+    /** Get the azimuth angle in the x-y plane in the range {@code [0, 2pi)}.
+     * @return azimuth angle in the x-y plane in the range {@code [0, 2pi)}.
      * @see Point2S#of(double, double)
      */
     public double getAzimuth() {
         return azimuth;
     }
 
-    /** Get the polar angle in radians.
-     * @return polar angle
+    /** Get the polar angle in the range {@code [0, pi)}.
+     * @return polar angle in the range {@code [0, pi)}.
      * @see Point2S#of(double, double)
      */
     public double getPolar() {
@@ -216,7 +216,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
      * @return point instance with the coordinates determined by the given 3D vector
      * @exception IllegalStateException if vector norm is zero
      */
-    public static Point2S fromVector(final Vector3D vector) {
+    public static Point2S from(final Vector3D vector) {
         final SphericalCoordinates coords = SphericalCoordinates.fromCartesian(vector);
 
         return new Point2S(coords.getAzimuth(), coords.getPolar(), vector.normalize());

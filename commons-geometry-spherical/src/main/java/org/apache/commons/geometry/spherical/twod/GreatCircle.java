@@ -48,7 +48,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** Pole or circle center. */
     private final Vector3D.Unit pole;
 
-    /** First axis in the equator plane, origin of the phase angles. */
+    /** First axis in the equator plane, origin of the azimuth angles. */
     private final Vector3D.Unit x;
 
     /** Second axis in the equator plane, in quadrature with respect to x. */
@@ -121,30 +121,51 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         return Geometry.HALF_PI - pole.angle(vec);
     }
 
-    /** Get the phase angle of a direction, in radians. The phase angle is
-     * the angle of the projection of the argument on the equator plane relative
-     * to the plane's x-axis. Since the direction is projected onto the equator
-     * plane, the given vector does not need to belong to the circle.
-     * @param direction direction to compute the phase for
-     * @return phase angle of the direction around the great circle
-     * @see #toSubSpace(Point)
+    /** Get the azimuth angle of a point relative to this great circle instance,
+     *  in the range {@code [0, 2pi)}.
+     * @param pt point to compute the azimuth for
+     * @return azimuth angle of the point in the range {@code [0, 2pi)}
      */
-    public double phase(final Vector3D direction) {
-        return Math.atan2(direction.dot(y), direction.dot(x));
+    public double azimuth(final Point2S pt) {
+        return azimuth(pt.getVector());
     }
 
-    /** Get the point on the great circle with the given phase angle.
-     * @param phase phase angle in radians
+    /** Get the azimuth angle of a vector in the range {@code [0, 2pi)}.
+     * The azimuth angle is the angle of the projection of the argument on the
+     * equator plane relative to the plane's x-axis. Since the vector is
+     * projected onto the equator plane, it does not need to belong to the circle.
+     * Vectors parallel to the great circle's pole do not have a defined azimuth angle.
+     * In these cases, the method follows the rules of the
+     * {@code Math#atan2(double, double)} method and returns {@code 0}.
+     * @param vector vector to compute the great circle azimuth of
+     * @return azimuth angle of the vector around the great circle in the range
+     *      {@code [0, 2pi)}
+     * @see #toSubSpace(Point)
+     */
+    public double azimuth(final Vector3D vector) {
+        double az = Math.atan2(vector.dot(y), vector.dot(x));
+
+        // adjust range
+        if (az < 0) {
+            az += Geometry.TWO_PI;
+        }
+
+        return az;
+    }
+
+    /** Get the vector on the great circle with the given azimuth angle.
+     * @param azimuth azimuth angle in radians
      * @return the point on the great circle with the given phase angle
      */
-    public Vector3D pointAt(final double phase) {
-        return Vector3D.linearCombination(Math.cos(phase), x, Math.sin(phase), y);
+    public Vector3D vectorAt(final double azimuth) {
+        return Vector3D.linearCombination(Math.cos(azimuth), x, Math.sin(azimuth), y);
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2S project(final Point2S point) {
-        return Point2S.fromVector(point.getVector().reject(pole));
+        final double az = azimuth(point.getVector());
+        return Point2S.from(vectorAt(az));
     }
 
     /** {@inheritDoc}
@@ -160,8 +181,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** {@inheritDoc} */
     @Override
     public GreatCircle transform(final Transform<Point2S> transform) {
-        final Point2S tx = transform.apply(Point2S.fromVector(x));
-        final Point2S ty = transform.apply(Point2S.fromVector(y));
+        final Point2S tx = transform.apply(Point2S.from(x));
+        final Point2S ty = transform.apply(Point2S.from(y));
 
         return fromPoints(tx, ty, getPrecision());
     }
@@ -170,7 +191,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     @Override
     public boolean similarOrientation(final Hyperplane<Point2S> other) {
         final GreatCircle otherCircle = (GreatCircle) other;
-        return pole.dot(otherCircle.pole) >= 0.0;
+        return pole.dot(otherCircle.pole) > 0.0;
     }
 
     /** {@inheritDoc} */
@@ -183,13 +204,13 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** {@inheritDoc} */
     @Override
     public Point1S toSubspace(final Point2S point) {
-        return Point1S.of(phase(point.getVector()));
+        return Point1S.of(azimuth(point.getVector()));
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2S toSpace(final Point1S point) {
-        return Point2S.fromVector(pointAt(point.getAzimuth()));
+        return Point2S.from(vectorAt(point.getAzimuth()));
     }
 
     /** {@inheritDoc} */
@@ -237,6 +258,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName())
             .append("[pole= ")
+            .append(pole)
             .append(", x= ")
             .append(x)
             .append(", y= ")

@@ -17,15 +17,36 @@
 package org.apache.commons.geometry.spherical;
 
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.geometry.spherical.twod.Point2S;
 import org.junit.Assert;
 
 /** Class containing various test utilities for spherical space.
  */
 public class SphericalTestUtils {
 
-    /**
-     * Assert that the given vectors are equal, using the specified tolerance value.
-     *
+    /** Assert that the given points are equal, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
+     */
+    public static void assertPointsEqual(Point1S expected, Point1S actual, double tolerance) {
+        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
+    }
+
+    /** Assert that the given points are equal, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
+     */
+    public static void assertPointsEqual(Point2S expected, Point2S actual, double tolerance) {
+        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
+        Assert.assertEquals(msg, expected.getPolar(), actual.getPolar(), tolerance);
+    }
+
+    /** Assert that the given vectors are equal, using the specified tolerance value.
      * @param expected
      * @param actual
      * @param tolerance

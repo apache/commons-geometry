@@ -149,7 +149,7 @@ public class Edge {
             if (unwrappedEnd >= 0) {
                 // the start of the edge is inside the circle
                 previousVertex = addSubEdge(previousVertex,
-                                            new Vertex(Point2S.fromVector(circle.getPointAt(edgeStart + unwrappedEnd))),
+                                            new Vertex(Point2S.from(circle.getPointAt(edgeStart + unwrappedEnd))),
                                             unwrappedEnd, insideList, splitCircle);
                 alreadyManagedLength = unwrappedEnd;
             }
@@ -167,7 +167,7 @@ public class Edge {
             } else {
                 // the edge is long enough to enter inside the circle
                 previousVertex = addSubEdge(previousVertex,
-                                            new Vertex(Point2S.fromVector(circle.getPointAt(edgeStart + arcRelativeStart))),
+                                            new Vertex(Point2S.from(circle.getPointAt(edgeStart + arcRelativeStart))),
                                             arcRelativeStart - alreadyManagedLength, outsideList, splitCircle);
                 alreadyManagedLength = arcRelativeStart;
 
@@ -178,7 +178,7 @@ public class Edge {
                 } else {
                     // the edge is long enough to exit outside of the circle
                     previousVertex = addSubEdge(previousVertex,
-                                                new Vertex(Point2S.fromVector(circle.getPointAt(edgeStart + arcRelativeStart))),
+                                                new Vertex(Point2S.from(circle.getPointAt(edgeStart + arcRelativeStart))),
                                                 arcRelativeStart - alreadyManagedLength, insideList, splitCircle);
                     alreadyManagedLength = arcRelativeStart;
                     previousVertex = addSubEdge(previousVertex, end,
