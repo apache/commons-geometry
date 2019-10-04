@@ -219,12 +219,6 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
             final CutAngle tMin = minBoundary.transform(transform);
             final CutAngle tMax = maxBoundary.transform(transform);
 
-            // return the full circle if the transform expanded the points to
-            // more than the full circle
-            if (tMax.getAzimuth() - tMin.getAzimuth() >= Geometry.TWO_PI) {
-                return full();
-            }
-
             return of(tMin, tMax);
         }
 

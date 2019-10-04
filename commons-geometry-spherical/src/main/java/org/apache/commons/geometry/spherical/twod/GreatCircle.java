@@ -77,6 +77,13 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         return pole;
     }
 
+    /** Get the spherical point located at the positive pole of the instance.
+     * @return the spherical point located at the positive pole of the instance
+     */
+    public Point2S getPolePoint() {
+        return Point2S.from(pole);
+    }
+
     /** Get the x axis of the great circle. This vector defines the {@code 0pi}
      * location of the embedded subspace.
      * @return x axis of the great circle
@@ -310,7 +317,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
             final DoublePrecisionContext precision) {
 
         if (!a.isFinite() || !b.isFinite()) {
-            throw new IllegalArgumentException("Invalid points for great circle creation: " + a + ", " + b);
+            throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
         }
 
         try {

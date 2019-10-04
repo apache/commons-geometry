@@ -302,6 +302,60 @@ public class GreatCircleTest {
     }
 
     @Test
+    public void testTransform_rotateAroundPole() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(
+                Point2S.of(0, Geometry.HALF_PI),
+                Point2S.of(1, Geometry.HALF_PI),
+                TEST_PRECISION);
+
+        Transform2S t = Transform2S.createRotation(circle.getPolePoint(), 0.25 * Geometry.PI);
+
+        // act
+        GreatCircle result = circle.transform(t);
+
+        // assert
+        Assert.assertNotSame(circle, result);
+        checkGreatCircle(result, Vector3D.Unit.PLUS_Z, Vector3D.Unit.from(1, 1, 0));
+    }
+
+    @Test
+    public void testTransform_rotateAroundNonPole() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(
+                Point2S.of(0, Geometry.HALF_PI),
+                Point2S.of(1, Geometry.HALF_PI),
+                TEST_PRECISION);
+
+        Transform2S t = Transform2S.createRotation(Point2S.of(0, Geometry.HALF_PI), Geometry.HALF_PI);
+
+        // act
+        GreatCircle result = circle.transform(t);
+
+        // assert
+        Assert.assertNotSame(circle, result);
+        checkGreatCircle(result, Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X);
+    }
+
+    @Test
+    public void testTransform_piMinusAzimuth() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(
+                Point2S.of(0, Geometry.HALF_PI),
+                Point2S.of(1, Geometry.HALF_PI),
+                TEST_PRECISION);
+
+        Transform2S t = Transform2S.createNegation(Point2S.PLUS_K.getVector()).rotate(Point2S.PLUS_K, Geometry.PI);
+
+        // act
+        GreatCircle result = circle.transform(t);
+
+        // assert
+        Assert.assertNotSame(circle, result);
+        checkGreatCircle(result, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_X);
+    }
+
+    @Test
     public void testSimilarOrientation() {
         // arrange
         GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
@@ -473,6 +527,8 @@ public class GreatCircleTest {
         Point2S plusPolePt = Point2S.from(circle.getPole());
         Point2S minusPolePt = Point2S.from(circle.getPole().negate());
         Point2S origin = Point2S.from(circle.getXAxis());
+
+        SphericalTestUtils.assertPointsEqual(plusPolePt, circle.getPolePoint(), TEST_EPS);
 
         Assert.assertFalse(circle.contains(plusPolePt));
         Assert.assertFalse(circle.contains(minusPolePt));

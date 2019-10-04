@@ -58,6 +58,32 @@ public class Point1STest {
     }
 
     @Test
+    public void testFrom_vector() {
+        // act/assert
+        checkPoint(Point1S.from(Vector2D.of(2, 0)), Geometry.ZERO_PI);
+        checkPoint(Point1S.from(Vector2D.of(0, 0.1)), Geometry.HALF_PI);
+        checkPoint(Point1S.from(Vector2D.of(-0.5, 0)), Geometry.PI);
+        checkPoint(Point1S.from(Vector2D.of(0, -100)), 1.5 * Geometry.PI);
+    }
+
+    @Test
+    public void testFrom_polar() {
+        // act/assert
+        checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), Geometry.ZERO_PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(1, Geometry.HALF_PI)), Geometry.HALF_PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(0.5, Geometry.PI)), Geometry.PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(1e-4, Geometry.MINUS_HALF_PI)), 1.5 * Geometry.PI);
+    }
+
+    @Test
+    public void testFrom_polar_invalidAzimuths() {
+        // act/assert
+        checkPoint(Point1S.from(PolarCoordinates.of(100, Double.POSITIVE_INFINITY)), Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        checkPoint(Point1S.from(PolarCoordinates.of(100, Double.NEGATIVE_INFINITY)), Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkPoint(Point1S.from(PolarCoordinates.of(100, Double.NaN)), Double.NaN, Double.NaN);
+    }
+
+    @Test
     public void testNaN() {
         // act
         Point1S pt = Point1S.of(Double.NaN);
@@ -68,6 +94,7 @@ public class Point1STest {
 
         Assert.assertTrue(Double.isNaN(pt.getAzimuth()));
         Assert.assertTrue(Double.isNaN(pt.getNormalizedAzimuth()));
+        Assert.assertNull(pt.getVector());
 
         Assert.assertTrue(Point1S.NaN.equals(pt));
         Assert.assertFalse(Point1S.of(1.0).equals(Point1S.NaN));
@@ -410,7 +437,12 @@ public class Point1STest {
         Assert.assertEquals(Double.isInfinite(az), pt.isInfinite());
 
         Vector2D vec = pt.getVector();
-        Assert.assertEquals(1, vec.norm(), TEST_EPS);
-        Assert.assertEquals(normAz, PolarCoordinates.fromCartesian(vec).getAzimuth(), TEST_EPS);
+        if (pt.isFinite()) {
+            Assert.assertEquals(1, vec.norm(), TEST_EPS);
+            Assert.assertEquals(normAz, PolarCoordinates.fromCartesian(vec).getAzimuth(), TEST_EPS);
+        }
+        else {
+            Assert.assertNull(vec);
+        }
     }
 }

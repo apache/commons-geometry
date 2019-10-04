@@ -276,11 +276,11 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.full();
 
-        Transform1S translate = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
-        Transform1S invert = FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
+        Transform1S rotate = Transform1S.createRotation(Geometry.HALF_PI);
+        Transform1S invert = Transform1S.createNegation().rotate(Geometry.HALF_PI);
 
         // act/assert
-        checkFull(interval.transform(translate));
+        checkFull(interval.transform(rotate));
         checkFull(interval.transform(invert));
     }
 
@@ -289,33 +289,12 @@ public class AngularIntervalTest {
         // arrange
         AngularInterval interval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
 
-        Transform1S translate = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
-        Transform1S invert = FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI - p.getAzimuth()));
+        Transform1S rotate = Transform1S.createRotation(Geometry.HALF_PI);
+        Transform1S invert = Transform1S.createNegation().rotate(Geometry.HALF_PI);
 
         // act/assert
-        checkInterval(interval.transform(translate), Geometry.PI, 1.5 * Geometry.PI);
-        checkInterval(interval.transform(invert), Geometry.MINUS_HALF_PI, Geometry.ZERO_PI);
-    }
-
-    @Test
-    public void testTransform_scalesToFullInterval() {
-        // arrange
-        AngularInterval posInterval = AngularInterval.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
-        AngularInterval negInterval = AngularInterval.of(-Geometry.PI, -1.5 * Geometry.PI, TEST_PRECISION);
-        AngularInterval mixedInterval = AngularInterval.of(-0.5 * Geometry.PI, 0.5 * Geometry.PI, TEST_PRECISION);
-
-        FunctionTransform1S scale4 = FunctionTransform1S.from(p -> Point1S.of(4 * p.getAzimuth()));
-        FunctionTransform1S scale5 = FunctionTransform1S.from(p -> Point1S.of(5 * p.getAzimuth()));
-
-        // act/assert
-        Assert.assertTrue(posInterval.transform(scale4).isFull());
-        Assert.assertTrue(posInterval.transform(scale5).isFull());
-
-        Assert.assertTrue(negInterval.transform(scale4).isFull());
-        Assert.assertTrue(negInterval.transform(scale5).isFull());
-
-        Assert.assertTrue(mixedInterval.transform(scale4).isFull());
-        Assert.assertTrue(mixedInterval.transform(scale5).isFull());
+        checkInterval(interval.transform(rotate), Geometry.PI, 1.5 * Geometry.PI);
+        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, Geometry.ZERO_PI);
     }
 
     @Test

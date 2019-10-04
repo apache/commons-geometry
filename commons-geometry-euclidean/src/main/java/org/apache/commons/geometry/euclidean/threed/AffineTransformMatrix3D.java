@@ -198,7 +198,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector3D)
      */
     @Override
-    public Vector3D applyDirection(final Vector3D vec) {
+    public Vector3D.Unit applyDirection(final Vector3D vec) {
         return applyVector(vec, Vector3D.Unit::from);
     }
 

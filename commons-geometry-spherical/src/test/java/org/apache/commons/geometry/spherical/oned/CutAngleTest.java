@@ -230,9 +230,9 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testTransform_translate() {
+    public void testTransform_rotate() {
         // arrange
-        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() + Geometry.HALF_PI));
+        Transform1S transform = Transform1S.createRotation(Geometry.HALF_PI);
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -247,26 +247,9 @@ public class CutAngleTest {
     }
 
     @Test
-    public void testTransform_scale() {
-        // arrange
-        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(p.getAzimuth() * 2));
-
-        // act
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
-                Geometry.ZERO_PI, true);
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
-                Geometry.ZERO_PI, false);
-
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
-                3 * Geometry.PI, true);
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
-                -Geometry.PI, false);
-    }
-
-    @Test
     public void testTransform_negate() {
         // arrange
-        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(-p.getAzimuth()));
+        Transform1S transform = Transform1S.createNegation();
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
@@ -487,7 +470,7 @@ public class CutAngleTest {
         // arrange
         CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
 
-        Transform1S transform = FunctionTransform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
+        Transform1S transform = Transform1S.createNegation().rotate(Geometry.PI);
 
         // act
         SubCutAngle result = pt.span().transform(transform);

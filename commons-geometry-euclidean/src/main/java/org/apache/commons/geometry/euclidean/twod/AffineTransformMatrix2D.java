@@ -163,7 +163,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @see #applyVector(Vector2D)
      */
     @Override
-    public Vector2D applyDirection(final Vector2D vec) {
+    public Vector2D.Unit applyDirection(final Vector2D vec) {
         return applyVector(vec, Vector2D.Unit::from);
     }
 

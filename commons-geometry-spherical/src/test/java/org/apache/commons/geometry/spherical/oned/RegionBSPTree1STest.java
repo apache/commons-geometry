@@ -36,11 +36,9 @@ public class RegionBSPTree1STest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Transform1S HALF_PI_PLUS_AZ =
-            FunctionTransform1S.from(p -> Point1S.of(Geometry.HALF_PI + p.getAzimuth()));
+    private static final Transform1S HALF_PI_PLUS_AZ = Transform1S.createRotation(Geometry.HALF_PI);
 
-    private static final Transform1S PI_MINUS_AZ =
-            FunctionTransform1S.from(p -> Point1S.of(Geometry.PI - p.getAzimuth()));
+    private static final Transform1S PI_MINUS_AZ = Transform1S.createNegation().rotate(Geometry.PI);
 
     @Test
     public void testConstructor_default() {
@@ -515,40 +513,6 @@ public class RegionBSPTree1STest {
 
         Assert.assertFalse(empty.isFull());
         Assert.assertTrue(empty.isEmpty());
-    }
-
-    @Test
-    public void testTransform_scale_resultNotFull() {
-        // arrange
-        RegionBSPTree1S tree = RegionBSPTree1S.empty();
-        tree.add(AngularInterval.of(-0.5, 0.5, TEST_PRECISION));
-        tree.add(AngularInterval.of(1, 2, TEST_PRECISION));
-
-        // act
-        tree.transform(FunctionTransform1S.from(p -> Point1S.of(2 * p.getAzimuth())));
-
-        // assert
-        Assert.assertEquals(4, tree.getSize(), TEST_EPS);
-
-        List<AngularInterval> intervals = tree.toIntervals();
-
-        Assert.assertEquals(2, intervals.size());
-        checkInterval(intervals.get(0), 2, 4);
-        checkInterval(intervals.get(1), -1, 1);
-    }
-
-    @Test
-    public void testTransform_scale_resultFull() {
-        // arrange
-        RegionBSPTree1S tree = RegionBSPTree1S.empty();
-        tree.add(AngularInterval.of(-0.5, 0.5, TEST_PRECISION));
-        tree.add(AngularInterval.of(1, 2, TEST_PRECISION));
-
-        // act
-        tree.transform(FunctionTransform1S.from(p -> Point1S.of(8 * p.getAzimuth())));
-
-        // assert
-        Assert.assertTrue(tree.isFull());
     }
 
     @Test

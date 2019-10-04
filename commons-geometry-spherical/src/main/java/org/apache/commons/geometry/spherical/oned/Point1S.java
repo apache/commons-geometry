@@ -63,7 +63,8 @@ public class Point1S implements Point<Point1S>, Serializable {
     private final double normalizedAzimuth;
 
     /** Build a point from its internal components.
-     * @param azimuth azimuthal angle
+     * @param azimuth azimuth angle
+     * @param normalizedAzimuth azimuth angle normalized to the range {@code [0, 2pi)}
      */
     private Point1S(final double azimuth, final double normalizedAzimuth) {
         this.azimuth  = azimuth;
@@ -90,7 +91,11 @@ public class Point1S implements Point<Point1S>, Serializable {
      * @return normalized vector
      */
     public Vector2D getVector() {
-        return PolarCoordinates.toCartesian(1, normalizedAzimuth);
+        if (isFinite()) {
+            return PolarCoordinates.toCartesian(1, azimuth);
+        }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -204,6 +209,24 @@ public class Point1S implements Point<Point1S>, Serializable {
         return precision.eqZero(dist);
     }
 
+    /**
+     * Get a hashCode for the point. Points normally must have exactly the
+     * same azimuth angles in order to have the same hash code. Points
+     * will angles that differ by multiples of {@code 2pi} will not
+     * necessarily have the same hash code.
+     *
+     * <p>All NaN values have the same hash code.</p>
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+        if (isNaN()) {
+            return 542;
+        }
+        return 1759 * Objects.hash(azimuth, normalizedAzimuth);
+    }
+
     /** Test for the exact equality of two points on the 1-sphere.
      *
      * <p>If all coordinates of the given points are exactly the same, and none are
@@ -242,24 +265,6 @@ public class Point1S implements Point<Point1S>, Serializable {
         return false;
     }
 
-    /**
-     * Get a hashCode for the point. Points normally must have exactly the
-     * same azimuth angles in order to have the same hash code. Points
-     * will angles that differ by multiples of {@code 2pi} will not
-     * necessarily have the same hash code.
-     *
-     * <p>All NaN values have the same hash code.</p>
-     *
-     * @return a hash code value for this object
-     */
-    @Override
-    public int hashCode() {
-        if (isNaN()) {
-            return 542;
-        }
-        return 1759 * Objects.hash(azimuth, normalizedAzimuth);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
@@ -272,17 +277,44 @@ public class Point1S implements Point<Point1S>, Serializable {
      * @see #getAzimuth()
      */
     public static Point1S of(final double azimuth) {
-        final double normalizedAzimuth = PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(azimuth);
+        final double normalizedAzimuth = PolarCoordinates.normalizeAzimuth(azimuth);
+
         return new Point1S(azimuth, normalizedAzimuth);
     }
 
-    /** Create a new poitn instance from the given azimuth angle.
+    /** Create a new point instance from the given azimuth angle.
      * @param azimuth azimuth azimuth angle in radians
      * @return point instance with the given azimuth angle
      * @see #getAzimuth()
      */
     public static Point1S of(final PlaneAngle azimuth) {
         return of(azimuth.toRadians());
+    }
+
+    /** Create a new point instance from the given Euclidean 2D vector. The returned point
+     * will have an azimuth value equal to the angle between the positive x-axis and the
+     * given vector, measured in a counter-clockwise direction.
+     * @param vector
+     * @return a new point instance with an azimuth value equal to the angle between the given
+     *      vector and the positive x-axis, measured in a counter-clockwise direction
+     */
+    public static Point1S from(final Vector2D vector) {
+        final PolarCoordinates polar = PolarCoordinates.fromCartesian(vector);
+        final double az = polar.getAzimuth();
+
+        return new Point1S(az, az);
+    }
+
+    /** Create a new point instance containing an azimuth value equal to that of the
+     * given set of polar coordinates.
+     * @param polar polar coordinates to convert to a point
+     * @return a new point instance containing an azimuth value equal to that of
+     *      the given set of polar coordinates.
+     */
+    public static Point1S from(final PolarCoordinates polar) {
+        final double az = polar.getAzimuth();
+
+        return new Point1S(az, az);
     }
 
     /** Parse the given string and returns a new point instance. The expected string
