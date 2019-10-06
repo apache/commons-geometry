@@ -201,23 +201,6 @@ public class Transform2S implements Transform<Point2S>, Serializable {
         return new Transform2S(quaternion.toMatrix());
     }
 
-    /** Create a transform that negates angles measured around the given 3D axis.
-     * @param axis axis to negate the angles measured around
-     * @return a transform that negates angles measured around the given 3D axis
-     */
-    public static Transform2S createNegation(final Vector3D axis) {
-
-        final QuaternionRotation rotation = QuaternionRotation.createVectorRotation(axis, Vector3D.Unit.PLUS_Z);
-        final AffineTransformMatrix3D negation = AffineTransformMatrix3D.createScale(1, -1, 1);
-        final QuaternionRotation invRotation = rotation.inverse();
-
-        final AffineTransformMatrix3D matrix = invRotation.toMatrix()
-                .multiply(negation)
-                .multiply(rotation.toMatrix());
-
-        return new Transform2S(matrix);
-    }
-
     /** Multiply the Euclidean transform matrices of the arguments together.
      * @param a first transform
      * @param b second transform

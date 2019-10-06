@@ -337,23 +337,23 @@ public class GreatCircleTest {
         checkGreatCircle(result, Vector3D.Unit.MINUS_Y, Vector3D.Unit.PLUS_X);
     }
 
-    @Test
-    public void testTransform_piMinusAzimuth() {
-        // arrange
-        GreatCircle circle = GreatCircle.fromPoints(
-                Point2S.of(0, Geometry.HALF_PI),
-                Point2S.of(1, Geometry.HALF_PI),
-                TEST_PRECISION);
-
-        Transform2S t = Transform2S.createNegation(Point2S.PLUS_K.getVector()).rotate(Point2S.PLUS_K, Geometry.PI);
-
-        // act
-        GreatCircle result = circle.transform(t);
-
-        // assert
-        Assert.assertNotSame(circle, result);
-        checkGreatCircle(result, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_X);
-    }
+//    @Test
+//    public void testTransform_piMinusAzimuth() {
+//        // arrange
+//        GreatCircle circle = GreatCircle.fromPoints(
+//                Point2S.of(0, Geometry.HALF_PI),
+//                Point2S.of(1, Geometry.HALF_PI),
+//                TEST_PRECISION);
+//
+//        Transform2S t = Transform2S.createNegation(Point2S.PLUS_K.getVector()).rotate(Point2S.PLUS_K, Geometry.PI);
+//
+//        // act
+//        GreatCircle result = circle.transform(t);
+//
+//        // assert
+//        Assert.assertNotSame(circle, result);
+//        checkGreatCircle(result, Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_X);
+//    }
 
     @Test
     public void testSimilarOrientation() {
