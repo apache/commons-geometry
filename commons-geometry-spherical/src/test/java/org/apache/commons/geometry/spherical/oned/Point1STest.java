@@ -131,6 +131,21 @@ public class Point1STest {
     }
 
     @Test
+    public void testAntipodal() {
+        for (double az = -6 * Geometry.PI; az <= 6 * Geometry.PI; az += 0.1) {
+            // arrange
+            Point1S pt = Point1S.of(az);
+
+            // act
+            Point1S result = pt.antipodal();
+
+            // assert
+            Assert.assertTrue(result.getAzimuth() >= 0 && result.getAzimuth() < Geometry.TWO_PI);
+            Assert.assertEquals(Geometry.PI, pt.distance(result), TEST_EPS);
+        }
+    }
+
+    @Test
     public void testHashCode() {
         // act
         Point1S a = Point1S.of(1.0);

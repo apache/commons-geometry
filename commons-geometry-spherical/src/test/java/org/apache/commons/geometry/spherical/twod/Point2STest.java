@@ -18,13 +18,15 @@ package org.apache.commons.geometry.spherical.twod;
 
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class Point2STest {
 
-    private static final double EPS = 1e-10;
+    private static final double TEST_EPS = 1e-10;
 
     @Test
     public void testProperties() {
@@ -33,12 +35,12 @@ public class Point2STest {
             Point2S p = Point2S.of(1.0 + k * Geometry.TWO_PI, 1.4);
 
             // act/assert
-            Assert.assertEquals(1.0, p.getAzimuth(), EPS);
-            Assert.assertEquals(1.4, p.getPolar(), EPS);
+            Assert.assertEquals(1.0, p.getAzimuth(), TEST_EPS);
+            Assert.assertEquals(1.4, p.getPolar(), TEST_EPS);
 
-            Assert.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), EPS);
-            Assert.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), EPS);
-            Assert.assertEquals(Math.cos(1.4), p.getVector().getZ(), EPS);
+            Assert.assertEquals(Math.cos(1.0) * Math.sin(1.4), p.getVector().getX(), TEST_EPS);
+            Assert.assertEquals(Math.sin(1.0) * Math.sin(1.4), p.getVector().getY(), TEST_EPS);
+            Assert.assertEquals(Math.cos(1.4), p.getVector().getZ(), TEST_EPS);
 
             Assert.assertFalse(p.isNaN());
         }
@@ -98,14 +100,31 @@ public class Point2STest {
     @Test
     public void testDistance() {
         // arrange
-        Point2S a = Point2S.of(1.0, 0.5 * Math.PI);
-        Point2S b = Point2S.of(a.getAzimuth() + 0.5 * Math.PI, a.getPolar());
+        Point2S a = Point2S.of(1.0, 0.5 * Geometry.PI);
+        Point2S b = Point2S.of(a.getAzimuth() + 0.5 * Geometry.PI, a.getPolar());
 
         // act/assert
-        Assert.assertEquals(0.5 * Math.PI, a.distance(b), 1.0e-10);
-        Assert.assertEquals(Math.PI, a.distance(a.negate()), 1.0e-10);
-        Assert.assertEquals(0.5 * Math.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
+        Assert.assertEquals(0.5 * Geometry.PI, a.distance(b), 1.0e-10);
+        Assert.assertEquals(Geometry.PI, a.distance(a.antipodal()), 1.0e-10);
+        Assert.assertEquals(0.5 * Geometry.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
         Assert.assertEquals(0.0, Point2S.of(1.0, 0).distance(Point2S.of(2.0, 0)), 1.0e-10);
+    }
+
+    @Test
+    public void testAntipodal() {
+        for (double az = -6 * Geometry.PI; az <= 6 * Geometry.PI; az += 0.1) {
+            for (double p = 0; p <= Geometry.PI; p += 0.1) {
+                // arrange
+                Point2S pt = Point2S.of(az, p);
+
+                // act
+                Point2S result = pt.antipodal();
+
+                // assert
+                Assert.assertEquals(Geometry.PI, pt.distance(result), TEST_EPS);
+                Assert.assertEquals(-1, pt.getVector().dot(result.getVector()), TEST_EPS);
+            }
+        }
     }
 
     @Test
@@ -115,6 +134,32 @@ public class Point2STest {
 
         // act/assert
         Assert.assertEquals(2, pt.getDimension());
+    }
+
+    @Test
+    public void testEq() {
+        // arrange
+        DoublePrecisionContext smallEps = new EpsilonDoublePrecisionContext(1e-5);
+        DoublePrecisionContext largeEps = new EpsilonDoublePrecisionContext(5e-1);
+
+        Point2S a = Point2S.of(1.0, 2.0);
+        Point2S b = Point2S.of(1.0, 2.01);
+        Point2S c = Point2S.of(1.01, 2.0);
+        Point2S d = Point2S.of(1.0, 2.0);
+        Point2S e = Point2S.of(3.0, 2.0);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a, smallEps));
+        Assert.assertFalse(a.eq(b, smallEps));
+        Assert.assertFalse(a.eq(c, smallEps));
+        Assert.assertTrue(a.eq(d, smallEps));
+        Assert.assertFalse(a.eq(e, smallEps));
+
+        Assert.assertTrue(a.eq(a, largeEps));
+        Assert.assertTrue(a.eq(b, largeEps));
+        Assert.assertTrue(a.eq(c, largeEps));
+        Assert.assertTrue(a.eq(d, largeEps));
+        Assert.assertFalse(a.eq(e, largeEps));
     }
 
     @Test
@@ -159,6 +204,27 @@ public class Point2STest {
     }
 
     @Test
+    public void testEquals_poles() {
+        // arrange
+        Point2S a = Point2S.of(1.0, 0.0);
+        Point2S b = Point2S.of(0.0, 0.0);
+        Point2S c = Point2S.of(1.0, 0.0);
+
+        Point2S d = Point2S.of(-1.0, Geometry.PI);
+        Point2S e = Point2S.of(0.0, Geometry.PI);
+        Point2S f = Point2S.of(-1.0, Geometry.PI);
+
+        // act/assert
+        Assert.assertTrue(a.equals(a));
+        Assert.assertFalse(a.equals(b));
+        Assert.assertTrue(a.equals(c));
+
+        Assert.assertTrue(d.equals(d));
+        Assert.assertFalse(d.equals(e));
+        Assert.assertTrue(d.equals(f));
+    }
+
+    @Test
     public void testToString() {
         // act/assert
         Assert.assertEquals("(0.0, 0.0)", Point2S.of(0.0, 0.0).toString());
@@ -181,7 +247,7 @@ public class Point2STest {
     private static void checkPoint(Point2S p, double az, double polar) {
         String msg = "Expected (" + az + "," + polar + ") but was " + p;
 
-        Assert.assertEquals(msg, az, p.getAzimuth(), EPS);
-        Assert.assertEquals(msg, polar, p.getPolar(), EPS);
+        Assert.assertEquals(msg, az, p.getAzimuth(), TEST_EPS);
+        Assert.assertEquals(msg, polar, p.getPolar(), TEST_EPS);
     }
 }

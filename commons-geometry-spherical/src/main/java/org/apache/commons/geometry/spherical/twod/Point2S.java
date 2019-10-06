@@ -18,8 +18,10 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.io.Serializable;
 
+import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
@@ -121,11 +123,12 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return Double.isFinite(azimuth) && Double.isFinite(polar);
     }
 
-    /** Get the opposite of the instance.
-     * @return a new vector which is opposite to the instance
+    /** Get the point exactly opposite this point on the sphere. The returned
+     * point is {@code pi} distance away from the current instance.
+     * @return the point exactly opposite this point on the sphere
      */
-    public Point2S negate() {
-        return new Point2S(-azimuth, Math.PI - polar, vector.negate());
+    public Point2S antipodal() {
+        return new Point2S(-azimuth, Geometry.PI - polar, vector.negate());
     }
 
     /** {@inheritDoc} */
@@ -134,55 +137,21 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return distance(this, point);
     }
 
-    /** Compute the distance (angular separation) between two points.
-     * @param p1 first vector
-     * @param p2 second vector
-     * @return the angular separation between p1 and p2
+    /** Return true if this point should be considered equivalent to the argument using the
+     * given precision context. This will be true if the distance between the points is
+     * equivalent to zero as evaluated by the precision context.
+     * @param point point to compare with
+     * @param precision precision context used to perform floating point comparisons
+     * @return true if this point should be considered equivalent to the argument using the
+     *      given precision context
      */
-    public static double distance(Point2S p1, Point2S p2) {
-        return p1.vector.angle(p2.vector);
+    public boolean eq(final Point2S point, final DoublePrecisionContext precision) {
+        return precision.eqZero(distance(point));
     }
 
-    /**
-     * Test for the equality of two points on the 2-sphere.
-     * <p>
-     * If all coordinates of two points are exactly the same, and none are
-     * <code>Double.NaN</code>, the two points are considered to be equal.
-     * </p>
-     * <p>
-     * <code>NaN</code> coordinates are considered to affect globally the vector
-     * and be equals to each other - i.e, if either (or all) coordinates of the
-     * 2D vector are equal to <code>Double.NaN</code>, the 2D vector is equal to
-     * {@link #NaN}.
-     * </p>
-     *
-     * @param other Object to test for equality to this
-     * @return true if two points on the 2-sphere objects are equal, false if
-     *         object is null, not an instance of S2Point, or
-     *         not equal to this S2Point instance
-     *
-     */
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (other instanceof Point2S) {
-            final Point2S rhs = (Point2S) other;
-            if (rhs.isNaN()) {
-                return this.isNaN();
-            }
-
-            return (azimuth == rhs.azimuth) && (polar == rhs.polar);
-        }
-        return false;
-    }
-
-    /**
-     * Get a hashCode for the 2D vector.
-     * <p>
-     * All NaN values have the same hash code.</p>
+    /** Get a hashCode for the point.
+     * .
+     * <p>All NaN values have the same hash code.</p>
      *
      * @return a hash code value for this object
      */
@@ -192,6 +161,48 @@ public final class Point2S implements Point<Point2S>, Serializable {
             return 542;
         }
         return 134 * (37 * Double.hashCode(azimuth) +  Double.hashCode(polar));
+    }
+
+    /** Test for the equality of two points.
+     *
+     * <p>If all spherical coordinates of two points are exactly the same, and none are
+     * <code>Double.NaN</code>, the two points are considered to be equal. Note
+     * that the comparison is made using the azimuth and polar coordinates only; the
+     * corresponding 3D vectors are not compared. This is significant at the poles,
+     * where an infinite number of points share the same underlying 3D vector but may
+     * have different spherical coordinates. For example, the points {@code (0, 0)}
+     * and {@code (1, 0)} (both located at a pole but with different azimuths) will
+     * <em>not</em> be considered equal by this method, even though they share the
+     * exact same underlying 3D vector.</p>
+     *
+     * <p>
+     * <code>NaN</code> coordinates are considered to affect the point globally
+     * and be equals to each other - i.e, if either (or all) coordinates of the
+     * point are equal to <code>Double.NaN</code>, the point is equal to
+     * {@link #NaN}.
+     * </p>
+     *
+     * @param other Object to test for equality to this
+     * @return true if two points on the 2-sphere objects are exactly equal, false if
+     *         object is null, not an instance of Point2S, or
+     *         not equal to this Point2S instance
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Point2S)) {
+            return false;
+        }
+
+        final Point2S rhs = (Point2S) other;
+        if (rhs.isNaN()) {
+            return this.isNaN();
+        }
+
+        return Double.compare(azimuth, rhs.azimuth) == 0 &&
+                Double.compare(polar, rhs.polar) == 0;
     }
 
     /** {@inheritDoc} */
@@ -230,5 +241,14 @@ public final class Point2S implements Point<Point2S>, Serializable {
      */
     public static Point2S parse(String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point2S::of);
+    }
+
+    /** Compute the distance (angular separation) between two points.
+     * @param p1 first vector
+     * @param p2 second vector
+     * @return the angular separation between p1 and p2
+     */
+    public static double distance(Point2S p1, Point2S p2) {
+        return p1.vector.angle(p2.vector);
     }
 }

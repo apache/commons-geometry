@@ -197,6 +197,19 @@ public class Point1S implements Point<Point1S>, Serializable {
         throw new GeometryValueException("Cannot normalize azimuth value: " + azimuth);
     }
 
+    /** Get the point exactly opposite this point on the circle, {@code pi} distance away.
+     * The azimuth of the antipodal point is in the range {@code 0, 2pi)}.
+     * @return the point exactly opposite this point on the circle
+     */
+    public Point1S antipodal() {
+        double az = normalizedAzimuth + Geometry.PI;
+        if (az >= Geometry.TWO_PI) {
+            az -= Geometry.TWO_PI;
+        }
+
+        return Point1S.of(az);
+    }
+
     /** Return true if this instance is equivalent to the argument. The points are
      * considered equivalent if the shortest angular distance between them is equal to
      * zero as evaluated by the given precision context. This means that points that differ

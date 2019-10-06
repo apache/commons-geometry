@@ -67,6 +67,14 @@ public class Transform2S implements Transform<Point2S>, Serializable {
         return euclideanTransform.preservesOrientation();
     }
 
+    /** Return a new instance representing the inverse transform operation
+     * of this instance.
+     * @return a transform representing the inverse of this instance
+     */
+    public Transform2S inverse() {
+        return new Transform2S(euclideanTransform.inverse());
+    }
+
     /** Apply a rotation of {@code angle} radians around the given point to this instance.
      * @param pt point to rotate around
      * @param angle rotation angle in radians
@@ -155,7 +163,12 @@ public class Transform2S implements Transform<Point2S>, Serializable {
         return sb.toString();
     }
 
-    /** Return an instance representing the identity transform.
+    /** Return an instance representing the identity transform. This transform is guaranteed
+     * to return an <em>equivalent</em> (ie, co-located) point for any input point. However, the
+     * points are not guaranteed to contain exactly equal coordinates. For example, at the poles, an
+     * infinite number of points exist that vary only in the azimuth coordinate. When one of these
+     * points is transformed by this identity transform, the returned point may contain a different
+     * azimuth value from the input, but it will still represent the same location in space.
      * @return an instance representing the identity transform
      */
     public static Transform2S identity() {

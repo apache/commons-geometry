@@ -472,7 +472,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<Point2S, Point1S> {
         if (isEmpty(root.getMinus()) && isFull(root.getPlus())) {
             // the polygon covers an hemisphere, and its boundary is one 2π long edge
             final Circle circle = (Circle) root.getCut().getHyperplane();
-            return new EnclosingBall<>(Point2S.from(circle.getPole()).negate(),
+            return new EnclosingBall<>(Point2S.from(circle.getPole()).antipodal(),
                                                         0.5 * Math.PI);
         }
         if (isFull(root.getMinus()) && isEmpty(root.getPlus())) {
@@ -514,7 +514,7 @@ public class SphericalPolygonsSet extends AbstractRegion_Old<Point2S, Point1S> {
                 final Point2S outsideS2 = Point2S.from(outsidePoint);
                 final BoundaryProjection_Old<Point2S> projection = projectToBoundary(outsideS2);
                 if (Math.PI - projection.getOffset() < enclosingS2.getRadius()) {
-                    enclosingS2 = new EnclosingBall<>(outsideS2.negate(),
+                    enclosingS2 = new EnclosingBall<>(outsideS2.antipodal(),
                                                                        Math.PI - projection.getOffset(),
                                                                        projection.getProjected());
                 }
