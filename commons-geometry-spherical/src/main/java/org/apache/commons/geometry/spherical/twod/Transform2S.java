@@ -26,8 +26,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 /** Implementation of the {@link Transform} interface for spherical 2D points.
  *
  * <p>This class uses an {@link AffineTransformMatrix3D} to perform spherical point transforms
- * in Euclidean 3D space.
- * </p>
+ * in Euclidean 3D space.</p>
  */
 public class Transform2S implements Transform<Point2S>, Serializable {
 
@@ -36,6 +35,9 @@ public class Transform2S implements Transform<Point2S>, Serializable {
 
     /** Static instance representing the identity transform. */
     private static final Transform2S IDENTITY = new Transform2S(AffineTransformMatrix3D.identity());
+
+    /** Static transform instance that reflects across the x-y plane. */
+    private static final AffineTransformMatrix3D XY_PLANE_REFLECTION = AffineTransformMatrix3D.createScale(1, 1, -1);
 
     /** Euclidean transform matrix underlying the spherical transform. */
     private final AffineTransformMatrix3D euclideanTransform;
@@ -99,6 +101,24 @@ public class Transform2S implements Transform<Point2S>, Serializable {
      */
     public Transform2S rotate(final QuaternionRotation quaternion) {
         return premultiply(createRotation(quaternion));
+    }
+
+    /** Apply a reflection across the equatorial plane defined by the given pole point
+     * to this instance.
+     * @param pole pole point defining the equatorial reflection plane
+     * @return transform resulting from applying the specified reflection to this instance
+     */
+    public Transform2S reflect(final Point2S pole) {
+        return premultiply(createReflection(pole));
+    }
+
+    /** Apply a reflection across the equatorial plane defined by the given pole vector
+     * to this instance.
+     * @param poleVector pole vector defining the equatorial reflection plane
+     * @return transform resulting from applying the specified reflection to this instance
+     */
+    public Transform2S reflect(final Vector3D poleVector) {
+        return premultiply(createReflection(poleVector));
     }
 
     /** Multiply the underlying Euclidean transform of this instance by that of the argument, eg,
@@ -199,6 +219,32 @@ public class Transform2S implements Transform<Point2S>, Serializable {
      */
     public static Transform2S createRotation(final QuaternionRotation quaternion) {
         return new Transform2S(quaternion.toMatrix());
+    }
+
+    /** Create a transform that performs a reflection across the equatorial plane
+     * defined by the given pole point.
+     * @param pole pole point defining the equatorial reflection plane
+     * @return a transform that performs a reflection across the equatorial plane
+     *      defined by the given pole point
+     */
+    public static Transform2S createReflection(final Point2S pole) {
+        return createReflection(pole.getVector());
+    }
+
+    /** Create a transform that performs a reflection across the equatorial plane
+     * defined by the given pole point.
+     * @param poleVector pole vector defining the equatorial reflection plane
+     * @return a transform that performs a reflection across the equatorial plane
+     *      defined by the given pole point
+     */
+    public static Transform2S createReflection(final Vector3D poleVector) {
+        final QuaternionRotation quat = QuaternionRotation.createVectorRotation(poleVector, Vector3D.Unit.PLUS_Z);
+
+        final AffineTransformMatrix3D matrix = quat.toMatrix()
+                .premultiply(XY_PLANE_REFLECTION)
+                .premultiply(quat.inverse().toMatrix());
+
+        return new Transform2S(matrix);
     }
 
     /** Multiply the Euclidean transform matrices of the arguments together.
