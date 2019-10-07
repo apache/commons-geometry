@@ -25,11 +25,11 @@ import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 
 /** Class representing a great circle on the 2-sphere. A great circle is the
@@ -203,9 +203,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubHyperplane<Point2S> span() {
-        // TODO Auto-generated method stub
-        return null;
+    public GreatArc span() {
+        return GreatArc.fromInterval(this, AngularInterval.full());
     }
 
     /** {@inheritDoc} */

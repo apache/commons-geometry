@@ -27,8 +27,10 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
  *
  * <p>This class uses an {@link AffineTransformMatrix3D} to perform spherical point transforms
  * in Euclidean 3D space.</p>
+ *
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Transform2S implements Transform<Point2S>, Serializable {
+public final class Transform2S implements Transform<Point2S>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 1L;

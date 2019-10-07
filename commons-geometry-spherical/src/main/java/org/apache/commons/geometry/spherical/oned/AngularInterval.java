@@ -31,9 +31,9 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * a max. The interval starts at the min azimuth angle and contains all points in the direction of
  * increasing azimuth angles up to max.
  *
- * <p>This class is guaranteed to be immutable.</p>
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
+public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190817L;

@@ -91,6 +91,7 @@ public final class Segment extends AbstractSubLine<Interval>
 
     /** Return the 1D interval for the line segment.
      * @return the 1D interval for the line segment
+     * @see #getSubspaceRegion()
      */
     public Interval getInterval() {
         return interval;

@@ -55,7 +55,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * itself) and no points whatsoever on the other. This is very different from hyperplanes in
  * Euclidean space, which always have infinitely many points on both sides.</p>
  *
- * <p>This class is guaranteed to be immutable</p>
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class CutAngle extends AbstractHyperplane<Point1S>
     implements Equivalency<CutAngle>, Serializable {

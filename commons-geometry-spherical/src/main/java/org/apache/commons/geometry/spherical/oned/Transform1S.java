@@ -33,8 +33,10 @@ import org.apache.commons.geometry.core.Transform;
  * of {@code 1/4} is applied to {@code 0pi}, the result is {@code 0pi} and not {@code 0.5pi}. This breaks
  * the {@link Transform} requirement that transforms be inversible.
  * </p>
+ *
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Transform1S implements Transform<Point1S>, Serializable {
+public final class Transform1S implements Transform<Point1S>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20191001L;
