@@ -216,14 +216,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @return a new instance transformed by the argument
      */
     public AngularInterval transform(final Transform<Point1S> transform) {
-        if (!isFull()) {
-            final CutAngle tMin = minBoundary.transform(transform);
-            final CutAngle tMax = maxBoundary.transform(transform);
-
-            return of(tMin, tMax);
-        }
-
-        return this;
+        return AngularInterval.transform(this, transform, AngularInterval::of);
     }
 
     /** {@inheritDoc}
@@ -423,6 +416,27 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                 (max.getAzimuth() - min.getAzimuth() <= Geometry.PI);
     }
 
+    /** Internal transform method that transforms the given instance, using the factory
+     * method to create a new instance if needed.
+     * @param interval interval to transform
+     * @param transform transform to apply
+     * @param factory object used to create new instances
+     * @return a transformed instance
+     */
+    private static <T extends AngularInterval> T transform(final T interval,
+            final Transform<Point1S> transform,
+            final BiFunction<CutAngle, CutAngle, T> factory) {
+
+        if (!interval.isFull()) {
+            final CutAngle tMin = interval.getMinBoundary().transform(transform);
+            final CutAngle tMax = interval.getMaxBoundary().transform(transform);
+
+            return factory.apply(tMin, tMax);
+        }
+
+        return interval;
+    }
+
     /** Class representing an angular interval with the additional property that the
      * region is convex. By convex, it is meant that the shortest path between any
      * two points in the region is also contained entirely in the region. If there is
@@ -459,6 +473,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         @Override
         public List<AngularInterval.Convex> toConvex() {
             return Collections.singletonList(this);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Convex transform(final Transform<Point1S> transform) {
+            return AngularInterval.transform(this, transform, Convex::of);
         }
 
         /** Split the instance along a circle diameter.The diameter is defined by the given split point and

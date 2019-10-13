@@ -810,6 +810,19 @@ public class AngularIntervalTest {
         Assert.assertNull(split.getPlus());
     }
 
+    @Test
+    public void testConvex_transform() {
+        // arrange
+        AngularInterval.Convex interval = AngularInterval.Convex.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION);
+
+        Transform1S rotate = Transform1S.createRotation(Geometry.HALF_PI);
+        Transform1S invert = Transform1S.createNegation().rotate(Geometry.HALF_PI);
+
+        // act/assert
+        checkInterval(interval.transform(rotate), Geometry.PI, 1.5 * Geometry.PI);
+        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, Geometry.ZERO_PI);
+    }
+
     private static void checkFull(AngularInterval interval) {
         Assert.assertTrue(interval.isFull());
         Assert.assertFalse(interval.isEmpty());

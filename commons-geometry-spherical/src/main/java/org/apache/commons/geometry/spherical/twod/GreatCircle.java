@@ -207,6 +207,41 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         return Arc.fromInterval(this, AngularInterval.full());
     }
 
+    /** Create an arc on this circle between the given points.
+     * @param start start point
+     * @param end end point
+     * @return an arc on this circle between the given points
+     * @throws IllegalArgumentException if the specified interval is not
+     *      convex (ie, the angle between the points is greater than {@code pi}
+     */
+    public Arc arc(final Point2S start, final Point2S end) {
+        return arc(toSubspace(start), toSubspace(end));
+    }
+
+    /** Create an arc on this circle between the given subspace points.
+     * @param start start subspace point
+     * @param end end subspace point
+     * @return an arc on this circle between the given subspace points
+     * @throws IllegalArgumentException if the specified interval is not
+     *      convex (ie, the angle between the points is greater than {@code pi}
+     */
+    public Arc arc(final Point1S start, final Point1S end) {
+        return arc(start.getAzimuth(), end.getAzimuth());
+    }
+
+    /** Create an arc on this circle between the given subspace azimuth values.
+     * @param start start subspace azimuth
+     * @param end end subspace azimuth
+     * @return an arc on this circle between the given subspace azimuths
+     * @throws IllegalArgumentException if the specified interval is not
+     *      convex (ie, the angle between the points is greater than {@code pi}
+     */
+    public Arc arc(final double start, final double end) {
+        return Arc.fromInterval(
+                this,
+                AngularInterval.Convex.of(start, end, getPrecision()));
+    }
+
     /** {@inheritDoc} */
     @Override
     public Point1S toSubspace(final Point2S point) {

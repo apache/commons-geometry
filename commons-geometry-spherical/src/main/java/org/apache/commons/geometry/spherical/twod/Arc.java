@@ -24,8 +24,14 @@ import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
+import org.apache.commons.geometry.spherical.oned.Transform1S;
 
-/** Class representing a single, convex angular interval in a {@link GreatCircle}.
+/** Class representing a single, <em>convex</em> angular interval in a {@link GreatCircle}. Convex
+ * angular intervals are those where the shortest path between all pairs of points in the
+ * interval are completely contained in the interval. In the case of paths that tie for the
+ * shortest length, it is sufficient that one of the paths is completely contained in the
+ * interval. In spherical 2D space, convex arcs either fill the entire great circle or have
+ * an angular size of less than or equal to {@code pi} radians.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
@@ -34,32 +40,53 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
     /** Serializable UID */
     private static final long serialVersionUID = 20191005L;
 
-    /** The interval representing the region of the great circle contained in
-     * the arc.
+    /** The interval representing the region of the great circle contained in the arc.
      */
-    private final AngularInterval interval;
+    private final AngularInterval.Convex interval;
 
     /** Create a new instance from a great circle and the interval embedded in it.
-     * @param greatCircle defining great circle instance
-     * @param interval angular interval embedded in the great circle
+     * @param circle defining great circle instance
+     * @param interval convex angular interval embedded in the great circle
      */
-    private Arc(final GreatCircle greatCircle, final AngularInterval interval) {
-        super(greatCircle);
+    private Arc(final GreatCircle circle, final AngularInterval.Convex interval) {
+        super(circle);
 
         this.interval = interval;
+    }
+
+    /** Return the start point of the arc, or null if the arc represents the full space.
+     * @return the start point of the arc, or null if the arc represents the full space.
+     */
+    public Point2S getStartPoint() {
+        if (!interval.isFull()) {
+            return getCircle().toSpace(interval.getMinBoundary().getPoint());
+        }
+
+        return null;
+    }
+
+    /** Return the end point of the arc, or null if the arc represents the full space.
+     * @return the end point of the arc, or null if the arc represents the full space.
+     */
+    public Point2S getEndPoint() {
+        if (!interval.isFull()) {
+            return getCircle().toSpace(interval.getMaxBoundary().getPoint());
+        }
+
+        return null;
     }
 
     /** Get the angular interval for the arc.
      * @return the angular interval for the arc
      * @see #getSubspaceRegion()
      */
-    public AngularInterval getInterval() {
+    public AngularInterval.Convex getInterval() {
         return interval;
     }
 
     /** {@inheritDoc} */
     @Override
-    public AngularInterval getSubspaceRegion() {
+    public AngularInterval.Convex getSubspaceRegion() {
         return getInterval();
     }
 
@@ -72,6 +99,7 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
     /** {@inheritDoc} */
     @Override
     public Split<Arc> split(final Hyperplane<Point2S> splitter) {
+        // TODO
         return null;
     }
 
@@ -84,7 +112,23 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
     /** {@inheritDoc} */
     @Override
     public Arc reverse() {
-        return new Arc(getCircle().reverse(), interval);
+        return new Arc(
+                getCircle().reverse(),
+                interval.transform(Transform1S.createNegation()));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append("[circle= ")
+            .append(getCircle())
+            .append(", interval= ")
+            .append(getInterval())
+            .append(']');
+
+        return sb.toString();
     }
 
     /** Construct an arc from a great circle and an angular interval.
