@@ -31,9 +31,9 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class representing an angular interval. The interval is defined by two azimuth angles: a min and
- * a max. The interval starts at the min azimuth angle and contains all points in the direction of
- * increasing azimuth angles up to max.
+/** Class representing an angular interval of size greater than zero to {@code 2pi}. The interval is
+ * defined by two azimuth angles: a min and a max. The interval starts at the min azimuth angle and
+ * contains all points in the direction of increasing azimuth angles up to max.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
@@ -251,6 +251,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
 
     /** Return a list of convex intervals comprising this region.
      * @return a list of convex intervals comprising this region
+     * @see Convex
      */
     public List<AngularInterval.Convex> toConvex() {
         if (isConvex(minBoundary, maxBoundary)) {
@@ -422,8 +423,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                 (max.getAzimuth() - min.getAzimuth() <= Geometry.PI);
     }
 
-    /** Class representing an angular interval with the additional property that the subtended
-     * angle is less than or equal to {@code pi}. Intervals of this type are convex.
+    /** Class representing an angular interval with the additional property that the
+     * region is convex. By convex, it is meant that the shortest path between any
+     * two points in the region is also contained entirely in the region. If there is
+     * a tie for shortest path, then it is sufficient that at least one lie entirely
+     * within the region. For spherical 1D space, this means that the angular interval
+     * is either completely full or has a length less than or equal to {@code pi}.
      */
     public static final class Convex extends AngularInterval {
 

@@ -127,6 +127,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * appropriate side of the split.</p>
      *
      * @see CutAngle
+     * @see #splitDiameter(CutAngle)
      */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
@@ -144,6 +145,59 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         return split(splitter, RegionBSPTree1S.empty(), RegionBSPTree1S.empty());
     }
+
+    /** Split the instance along a circle diameter.The diameter is defined by the given
+     * split point and its reversed antipodal point.
+     * @param splitter split point defining one side of the split diameter
+     * @return result of the split operation
+     */
+    public Split<RegionBSPTree1S> splitDiameter(final CutAngle splitter) {
+
+        final CutAngle opposite = CutAngle.fromPointAndDirection(
+                splitter.getPoint().antipodal(),
+                !splitter.isPositiveFacing(),
+                splitter.getPrecision());
+
+        final double plusPoleOffset = splitter.isPositiveFacing() ?
+                +Geometry.HALF_PI :
+                -Geometry.HALF_PI;
+        final Point1S plusPole = Point1S.of(splitter.getAzimuth() + plusPoleOffset);
+
+        final boolean zeroOnPlusSide = splitter.getPrecision()
+                .lte(plusPole.distance(Point1S.ZERO), Geometry.HALF_PI);
+
+        Split<RegionBSPTree1S> firstSplit = split(splitter);
+        Split<RegionBSPTree1S> secondSplit = split(opposite);
+
+        RegionBSPTree1S minus = RegionBSPTree1S.empty();
+        RegionBSPTree1S plus = RegionBSPTree1S.empty();
+
+        if (zeroOnPlusSide) {
+            // zero wrap-around needs to be handled on the plus side of the split
+            safeUnion(plus, firstSplit.getPlus());
+            safeUnion(plus, secondSplit.getPlus());
+
+            minus = firstSplit.getMinus();
+            if (minus != null) {
+                minus = minus.split(opposite).getMinus();
+            }
+        }
+        else {
+            // zero wrap-around needs to be handled on the minus side of the split
+            safeUnion(minus, firstSplit.getMinus());
+            safeUnion(minus, secondSplit.getMinus());
+
+            plus = firstSplit.getPlus();
+            if (plus != null) {
+                plus = plus.split(opposite).getPlus();
+            }
+        }
+
+        return new Split<>(
+                (minus != null && !minus.isEmpty()) ? minus : null,
+                (plus != null && !plus.isEmpty()) ? plus : null);
+    }
+
 
     /** Convert the region represented by this tree into a list of separate
      * {@link AngularInterval}s, arranged in order of ascending min value.
@@ -349,6 +403,17 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         }
 
         return tree;
+    }
+
+    /** Perform a union operation with {@code target} and {@code input}, storing the result
+     * in {@code target}; does nothing if {@code input} is null.
+     * @param target target tree
+     * @param input input tree
+     */
+    private static void safeUnion(final RegionBSPTree1S target, final RegionBSPTree1S input) {
+        if (input != null) {
+            target.union(input);
+        }
     }
 
     /** BSP tree node for one dimensional spherical space.

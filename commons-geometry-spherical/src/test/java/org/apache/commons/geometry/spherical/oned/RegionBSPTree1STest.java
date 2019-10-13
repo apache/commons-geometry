@@ -448,6 +448,194 @@ public class RegionBSPTree1STest {
     }
 
     @Test
+    public void testSplitDiameter_full() {
+        // arrange
+        RegionBSPTree1S full = RegionBSPTree1S.full();
+        CutAngle splitter = CutAngle.createPositiveFacing(Geometry.HALF_PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = full.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> minusIntervals = minus.toIntervals();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 1.5 * Geometry.PI, 2.5 * Geometry.PI);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(1, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), Geometry.HALF_PI, 1.5 * Geometry.PI);
+    }
+
+    @Test
+    public void testSplitDiameter_empty() {
+        // arrange
+        RegionBSPTree1S empty = RegionBSPTree1S.empty();
+        CutAngle splitter = CutAngle.createPositiveFacing(Geometry.HALF_PI, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S> split = empty.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        Assert.assertNull(minus);
+
+        RegionBSPTree1S plus = split.getPlus();
+        Assert.assertNull(plus);
+    }
+
+    @Test
+    public void testSplitDiameter_minus_zeroOnMinusSide() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(0, 1, TEST_PRECISION).toTree();
+        CutAngle splitter = CutAngle.createPositiveFacing(1, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> minusIntervals = minus.toIntervals();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 0, 1);
+
+        RegionBSPTree1S plus = split.getPlus();
+        Assert.assertNull(plus);
+    }
+
+    @Test
+    public void testSplitDiameter_minus_zeroOnPlusSide() {
+        // arrange
+        RegionBSPTree1S tree = AngularInterval.of(1, 2, TEST_PRECISION).toTree();
+        CutAngle splitter = CutAngle.createNegativeFacing(0, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> minusIntervals = minus.toIntervals();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 1, 2);
+
+        RegionBSPTree1S plus = split.getPlus();
+        Assert.assertNull(plus);
+    }
+
+    @Test
+    public void testSplitDiameter_plus_zeroOnMinusSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 2.1, TEST_PRECISION));
+
+        CutAngle splitter = CutAngle.createPositiveFacing(1, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        Assert.assertNull(minus);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(2, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1.1);
+        checkInterval(plusIntervals.get(1), 2, 2.1);
+    }
+
+    @Test
+    public void testSplitDiameter_plus_zeroOnPlusSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 2.1, TEST_PRECISION));
+
+        CutAngle splitter = CutAngle.createNegativeFacing(Geometry.PI - 1, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        Assert.assertNull(minus);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(2, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1.1);
+        checkInterval(plusIntervals.get(1), 2, 2.1);
+    }
+
+    @Test
+    public void testSplitDiameter_both_zeroOnMinusSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
+
+        CutAngle splitter = CutAngle.createPositiveFacing(2.5, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> plusIntervals = minus.toIntervals();
+        Assert.assertEquals(2, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1.1);
+        checkInterval(plusIntervals.get(1), 2, 2.5);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> minusIntervals = plus.toIntervals();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 2.5, 3);
+    }
+
+    @Test
+    public void testSplitDiameter_both_zeroOnPlusSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
+        tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
+
+        CutAngle splitter = CutAngle.createNegativeFacing(2.5, TEST_PRECISION);
+
+        // act
+        Split<RegionBSPTree1S>split = tree.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        RegionBSPTree1S minus = split.getMinus();
+        List<AngularInterval> minusIntervals = minus.toIntervals();
+        Assert.assertEquals(1, minusIntervals.size());
+        checkInterval(minusIntervals.get(0), 2.5, 3);
+
+        RegionBSPTree1S plus = split.getPlus();
+        List<AngularInterval> plusIntervals = plus.toIntervals();
+        Assert.assertEquals(2, plusIntervals.size());
+        checkInterval(plusIntervals.get(0), 1, 1.1);
+        checkInterval(plusIntervals.get(1), 2, 2.5);
+    }
+
+    @Test
     public void testRegionProperties_singleInterval_wrapsZero() {
         // arrange
         RegionBSPTree1S tree = AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.PI,
