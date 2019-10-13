@@ -25,11 +25,11 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 
-/** Class representing a single angular interval in a {@link GreatCircle}.
+/** Class representing a single, convex angular interval in a {@link GreatCircle}.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
+public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20191005L;
@@ -43,7 +43,7 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
      * @param greatCircle defining great circle instance
      * @param interval angular interval embedded in the great circle
      */
-    private GreatArc(final GreatCircle greatCircle, final AngularInterval interval) {
+    private Arc(final GreatCircle greatCircle, final AngularInterval interval) {
         super(greatCircle);
 
         this.interval = interval;
@@ -65,27 +65,26 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
 
     /** {@inheritDoc} */
     @Override
-    public List<GreatArc> toConvex() {
+    public List<Arc> toConvex() {
         return Collections.singletonList(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public GreatArc reverse() {
-        return new GreatArc(getCircle().reverse(), interval);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Split<GreatArc> split(final Hyperplane<Point2S> splitter) {
-        // TODO Auto-generated method stub
+    public Split<Arc> split(final Hyperplane<Point2S> splitter) {
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public GreatArc transform(final Transform<Point2S> transform) {
-        return new GreatArc(getCircle().transform(transform), interval);
+    public Arc transform(final Transform<Point2S> transform) {
+        return new Arc(getCircle().transform(transform), interval);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Arc reverse() {
+        return new Arc(getCircle().reverse(), interval);
     }
 
     /** Construct an arc from a great circle and an angular interval.
@@ -94,7 +93,7 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
      *      in the arc
      * @return an arc created from the given great circle and interval
      */
-    public static GreatArc fromInterval(final GreatCircle circle, final AngularInterval interval) {
-        return new GreatArc(circle, interval);
+    public static Arc fromInterval(final GreatCircle circle, final AngularInterval.Convex interval) {
+        return new Arc(circle, interval);
     }
 }

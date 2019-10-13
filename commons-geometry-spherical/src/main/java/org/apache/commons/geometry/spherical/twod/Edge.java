@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.spherical.oned.Arc;
+import org.apache.commons.geometry.spherical.oned.Arc_Old;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Spherical polygons boundary edge.
@@ -127,7 +127,7 @@ public class Edge {
 
         // get the inside arc, synchronizing its phase with the edge itself
         final double edgeStart        = circle.getPhase(start.getLocation().getVector());
-        final Arc    arc              = circle.getInsideArc(splitCircle);
+        final Arc_Old    arc              = circle.getInsideArc(splitCircle);
         final double arcRelativeStart = PlaneAngleRadians.normalize(arc.getInf(), edgeStart + Math.PI) - edgeStart;
         final double arcRelativeEnd   = arcRelativeStart + arc.getSize();
         final double unwrappedEnd     = arcRelativeEnd - Geometry.TWO_PI;

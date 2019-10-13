@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.spherical.oned.Arc;
+import org.apache.commons.geometry.spherical.oned.Arc_Old;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.partitioning.BSPTreeVisitor_Old;
@@ -90,8 +90,8 @@ class EdgesBuilder implements BSPTreeVisitor_Old<Point2S> {
     private void addContribution(final SubCircle sub, final boolean reversed,
                                  final BSPTree_Old<Point2S> node) {
         final Circle circle  = (Circle) sub.getHyperplane();
-        final List<Arc> arcs = ((ArcsSet) sub.getRemainingRegion()).asList();
-        for (final Arc a : arcs) {
+        final List<Arc_Old> arcs = ((ArcsSet) sub.getRemainingRegion()).asList();
+        for (final Arc_Old a : arcs) {
             final Vertex start = new Vertex(circle.toSpace(Point1S.of(a.getInf())));
             final Vertex end   = new Vertex(circle.toSpace(Point1S.of(a.getSup())));
             start.bindWith(circle);

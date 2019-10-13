@@ -23,7 +23,7 @@ import org.apache.commons.geometry.spherical.partitioning.Transform_Old;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.spherical.oned.Arc;
+import org.apache.commons.geometry.spherical.oned.Arc_Old;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 
@@ -232,10 +232,10 @@ public class Circle implements Hyperplane_Old<Point2S>, Embedding_Old<Point2S, P
      * @param other other circle
      * @return arc of the instance that lies inside the other circle
      */
-    public Arc getInsideArc(final Circle other) {
+    public Arc_Old getInsideArc(final Circle other) {
         final double alpha  = getPhase(other.pole);
         final double halfPi = 0.5 * Math.PI;
-        return new Arc(alpha - halfPi, alpha + halfPi, precision);
+        return new Arc_Old(alpha - halfPi, alpha + halfPi, precision);
     }
 
     /** {@inheritDoc} */

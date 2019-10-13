@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.spherical.oned.Arc;
+import org.apache.commons.geometry.spherical.oned.Arc_Old;
 import org.apache.commons.geometry.spherical.oned.ArcsSet;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.partitioning.AbstractSubHyperplane_Old;
@@ -58,7 +58,7 @@ public class SubCircle extends AbstractSubHyperplane_Old<Point2S, Point1S> {
             return new SplitSubHyperplane<>(null, null);
         } else {
             // the two circles intersect each other
-            final Arc    arc          = thisCircle.getInsideArc(otherCircle);
+            final Arc_Old    arc          = thisCircle.getInsideArc(otherCircle);
             final ArcsSet.Split split = ((ArcsSet) getRemainingRegion()).split(arc);
             final ArcsSet plus        = split.getPlus();
             final ArcsSet minus       = split.getMinus();

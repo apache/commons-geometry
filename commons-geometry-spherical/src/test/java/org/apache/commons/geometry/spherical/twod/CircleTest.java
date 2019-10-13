@@ -22,7 +22,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.spherical.oned.Arc;
+import org.apache.commons.geometry.spherical.oned.Arc_Old;
 import org.apache.commons.geometry.spherical.oned.LimitAngle;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.oned.SubLimitAngle;
@@ -145,7 +145,7 @@ public class CircleTest {
     }
 
     private void checkArcIsInside(final Circle arcCircle, final Circle otherCircle) {
-        Arc arc = arcCircle.getInsideArc(otherCircle);
+        Arc_Old arc = arcCircle.getInsideArc(otherCircle);
         Assert.assertEquals(Math.PI, arc.getSize(), TEST_EPS);
         for (double alpha = arc.getInf(); alpha < arc.getSup(); alpha += 0.1) {
             Assert.assertTrue(otherCircle.getOffset(arcCircle.getPointAt(alpha)) <= 2.0e-15);

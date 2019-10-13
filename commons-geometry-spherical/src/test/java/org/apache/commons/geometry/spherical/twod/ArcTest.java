@@ -24,7 +24,7 @@ import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class GreatArcTest {
+public class ArcTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,7 +34,7 @@ public class GreatArcTest {
     @Test
     public void testFromInterval_full() {
         // act
-        GreatArc arc = GreatArc.fromInterval(
+        Arc arc = Arc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
                 AngularInterval.full());
 
@@ -53,7 +53,7 @@ public class GreatArcTest {
                 Point2S.MINUS_K, Point2S.of(0, Geometry.HALF_PI - 0.1));
     }
 
-    private static void checkClassify(GreatArc arc, RegionLocation loc, Point2S ... pts) {
+    private static void checkClassify(Arc arc, RegionLocation loc, Point2S ... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, arc.classify(pt));
         }

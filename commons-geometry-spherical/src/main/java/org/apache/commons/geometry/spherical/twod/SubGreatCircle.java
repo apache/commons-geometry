@@ -69,15 +69,16 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
 
     /** {@inheritDoc} */
     @Override
-    public List<GreatArc> toConvex() {
+    public List<Arc> toConvex() {
         return region.toIntervals().stream()
-                .map(i -> GreatArc.fromInterval(getCircle(), i))
+                .flatMap(i -> i.toConvex().stream())
+                .map(i -> Arc.fromInterval(getCircle(), i))
                 .collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<? extends SubHyperplane<Point2S>> split(Hyperplane<Point2S> splitter) {
+    public Split<SubGreatCircle> split(Hyperplane<Point2S> splitter) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -87,7 +88,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
      * @throws IllegalArgumentException if the given arc is not from
      *      a great circle equivalent to this instance
      */
-    public void add(final GreatArc arc) {
+    public void add(final Arc arc) {
         validateGreatCircle(arc.getCircle());
 
         region.add(arc.getSubspaceRegion());
@@ -157,8 +158,8 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
          * @param sub the subhyperplane to add; either convex or non-convex
          */
         private void addInternal(final SubHyperplane<Point2S> sub) {
-            if (sub instanceof GreatArc) {
-                subcircle.add((GreatArc) sub);
+            if (sub instanceof Arc) {
+                subcircle.add((Arc) sub);
             }
             else if (sub instanceof SubGreatCircle) {
                 subcircle.add((SubGreatCircle) sub);

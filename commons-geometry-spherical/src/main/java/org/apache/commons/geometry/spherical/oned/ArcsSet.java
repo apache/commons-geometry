@@ -548,15 +548,15 @@ public class ArcsSet extends AbstractRegion_Old<Point1S, Point1S> implements Ite
 
     /** Build an ordered list of arcs representing the instance.
      * <p>This method builds this arcs set as an ordered list of
-     * {@link Arc Arc} elements. An empty tree will build an empty list
+     * {@link Arc_Old Arc} elements. An empty tree will build an empty list
      * while a tree representing the whole circle will build a one
      * element list with bounds set to \( 0 and 2 \pi \).</p>
-     * @return a new ordered list containing {@link Arc Arc} elements
+     * @return a new ordered list containing {@link Arc_Old Arc} elements
      */
-    public List<Arc> asList() {
-        final List<Arc> list = new ArrayList<>();
+    public List<Arc_Old> asList() {
+        final List<Arc_Old> list = new ArrayList<>();
         for (final double[] a : this) {
-            list.add(new Arc(a[0], a[1], getPrecision()));
+            list.add(new Arc_Old(a[0], a[1], getPrecision()));
         }
         return list;
     }
@@ -698,10 +698,10 @@ public class ArcsSet extends AbstractRegion_Old<Point1S, Point1S> implements Ite
      * @param arc arc to check instance against
      * @return one of {@link Side#PLUS}, {@link Side#MINUS}, {@link Side#BOTH}
      * or {@link Side#HYPER}
-     * @deprecated as of 3.6, replaced with {@link #split(Arc)}.{@link Split#getSide()}
+     * @deprecated as of 3.6, replaced with {@link #split(Arc_Old)}.{@link Split#getSide()}
      */
     @Deprecated
-    public Side_Old side(final Arc arc) {
+    public Side_Old side(final Arc_Old arc) {
         return split(arc).getSide();
     }
 
@@ -711,7 +711,7 @@ public class ArcsSet extends AbstractRegion_Old<Point1S, Point1S> implements Ite
      * on the plus side of the arc and the part of the
      * instance on the minus side of the arc
      */
-    public Split split(final Arc arc) {
+    public Split split(final Arc_Old arc) {
 
         final List<Double> minus = new ArrayList<>();
         final List<Double>  plus = new ArrayList<>();

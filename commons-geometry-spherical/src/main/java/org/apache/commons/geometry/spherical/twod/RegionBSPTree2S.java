@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
@@ -46,9 +45,8 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
 
     /** {@inheritDoc} */
     @Override
-    public Split<? extends HyperplaneBoundedRegion<Point2S>> split(Hyperplane<Point2S> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+    public Split<RegionBSPTree2S> split(Hyperplane<Point2S> splitter) {
+        return split(splitter, empty(), empty());
     }
 
     /** {@inheritDoc} */
@@ -62,6 +60,21 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     @Override
     protected RegionNode2S createNode() {
         return new RegionNode2S(this);
+    }
+
+    /** Return a new, empty BSP tree.
+     * @return a new, empty BSP tree.
+     */
+    public static RegionBSPTree2S empty() {
+        return new RegionBSPTree2S(false);
+    }
+
+    /** Return a new, full BSP tree. The returned tree represents the
+     * full space.
+     * @return a new, full BSP tree.
+     */
+    public static RegionBSPTree2S full() {
+        return new RegionBSPTree2S(true);
     }
 
     /** BSP tree node for two dimensional spherical space.

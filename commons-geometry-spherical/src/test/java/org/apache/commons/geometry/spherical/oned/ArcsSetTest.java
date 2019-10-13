@@ -78,7 +78,7 @@ public class ArcsSetTest {
     @Test
     public void testSplitOver2Pi() {
         ArcsSet set = new ArcsSet(TEST_PRECISION);
-        Arc     arc = new Arc(1.5 * Math.PI, 2.5 * Math.PI, TEST_PRECISION);
+        Arc_Old     arc = new Arc_Old(1.5 * Math.PI, 2.5 * Math.PI, TEST_PRECISION);
         ArcsSet.Split split = set.split(arc);
         for (double alpha = 0.0; alpha <= Geometry.TWO_PI; alpha += 0.01) {
             Point1S p = Point1S.of(alpha);
@@ -95,7 +95,7 @@ public class ArcsSetTest {
     @Test
     public void testSplitAtEnd() {
         ArcsSet set = new ArcsSet(TEST_PRECISION);
-        Arc     arc = new Arc(Math.PI, Geometry.TWO_PI, TEST_PRECISION);
+        Arc_Old     arc = new Arc_Old(Math.PI, Geometry.TWO_PI, TEST_PRECISION);
         ArcsSet.Split split = set.split(arc);
         for (double alpha = 0.01; alpha < Geometry.TWO_PI; alpha += 0.01) {
             Point1S p = Point1S.of(alpha);
@@ -186,13 +186,13 @@ public class ArcsSetTest {
     public void testDifference() {
 
         ArcsSet a   = new ArcsSet(1.0, 6.0, TEST_PRECISION);
-        List<Arc> aList = a.asList();
+        List<Arc_Old> aList = a.asList();
         Assert.assertEquals(1,   aList.size());
         Assert.assertEquals(1.0, aList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(6.0, aList.get(0).getSup(), TEST_EPS);
 
         ArcsSet b   = new ArcsSet(3.0, 5.0, TEST_PRECISION);
-        List<Arc> bList = b.asList();
+        List<Arc_Old> bList = b.asList();
         Assert.assertEquals(1,   bList.size());
         Assert.assertEquals(3.0, bList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, bList.get(0).getSup(), TEST_EPS);
@@ -215,7 +215,7 @@ public class ArcsSetTest {
             Assert.assertEquals(Location.OUTSIDE,  aMb.checkPoint(Point1S.of(6.2 + k * Geometry.TWO_PI)));
         }
 
-        List<Arc> aMbList = aMb.asList();
+        List<Arc_Old> aMbList = aMb.asList();
         Assert.assertEquals(2,   aMbList.size());
         Assert.assertEquals(1.0, aMbList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(3.0, aMbList.get(0).getSup(), TEST_EPS);
@@ -230,7 +230,7 @@ public class ArcsSetTest {
 
         ArcsSet a   = (ArcsSet) new RegionFactory_Old<Point1S>().union(new ArcsSet(1.0, 3.0, TEST_PRECISION),
                                                                     new ArcsSet(5.0, 6.0, TEST_PRECISION));
-        List<Arc> aList = a.asList();
+        List<Arc_Old> aList = a.asList();
         Assert.assertEquals(2,   aList.size());
         Assert.assertEquals(1.0, aList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(3.0, aList.get(0).getSup(), TEST_EPS);
@@ -238,7 +238,7 @@ public class ArcsSetTest {
         Assert.assertEquals(6.0, aList.get(1).getSup(), TEST_EPS);
 
         ArcsSet b   = new ArcsSet(0.0, 5.5, TEST_PRECISION);
-        List<Arc> bList = b.asList();
+        List<Arc_Old> bList = b.asList();
         Assert.assertEquals(1,   bList.size());
         Assert.assertEquals(0.0, bList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.5, bList.get(0).getSup(), TEST_EPS);
@@ -260,7 +260,7 @@ public class ArcsSetTest {
             Assert.assertEquals(Location.OUTSIDE,  aMb.checkPoint(Point1S.of(6.2 + k * Geometry.TWO_PI)));
         }
 
-        List<Arc> aMbList = aMb.asList();
+        List<Arc_Old> aMbList = aMb.asList();
         Assert.assertEquals(2,   aMbList.size());
         Assert.assertEquals(1.0, aMbList.get(0).getInf(), TEST_EPS);
         Assert.assertEquals(3.0, aMbList.get(0).getSup(), TEST_EPS);
@@ -289,7 +289,7 @@ public class ArcsSetTest {
         Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(Point1S.of(5.0)));
         Assert.assertEquals(Region_Old.Location.BOUNDARY, set.checkPoint(Point1S.of(5.5)));
 
-        List<Arc> list = set.asList();
+        List<Arc_Old> list = set.asList();
         Assert.assertEquals(2, list.size());
         Assert.assertEquals( 0.5, list.get(0).getInf(), TEST_EPS);
         Assert.assertEquals( 3.0, list.get(0).getSup(), TEST_EPS);
@@ -390,25 +390,25 @@ public class ArcsSetTest {
         ArcsSet set = (ArcsSet) new RegionFactory_Old<Point1S>().difference(new ArcsSet(1.0, 6.0, TEST_PRECISION),
                                                                          new ArcsSet(3.0, 5.0, TEST_PRECISION));
         for (int k = -2; k < 3; ++k) {
-            Assert.assertEquals(Side_Old.MINUS, set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.MINUS, set.split(new Arc_Old(0.5 + k * Geometry.TWO_PI,
                                                               6.1 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc_Old(0.5 + k * Geometry.TWO_PI,
                                                               0.8 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(6.2 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc_Old(6.2 + k * Geometry.TWO_PI,
                                                               6.3 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc(3.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.PLUS,  set.split(new Arc_Old(3.5 + k * Geometry.TWO_PI,
                                                               4.5 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(2.9 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc_Old(2.9 + k * Geometry.TWO_PI,
                                                               4.5 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc_Old(0.5 + k * Geometry.TWO_PI,
                                                               1.2 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
-            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc(0.5 + k * Geometry.TWO_PI,
+            Assert.assertEquals(Side_Old.BOTH,  set.split(new Arc_Old(0.5 + k * Geometry.TWO_PI,
                                                               5.9 + k * Geometry.TWO_PI,
                                                               set.getPrecision())).getSide());
         }
@@ -420,10 +420,10 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s16 = new ArcsSet(1.0, 6.0, TEST_PRECISION);
 
-        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.MINUS, s35.split(new Arc(1.0, 6.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.PLUS,  s35.split(new Arc(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc_Old(3.0, 5.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s16.split(new Arc_Old(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.MINUS, s35.split(new Arc_Old(1.0, 6.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.PLUS,  s35.split(new Arc_Old(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
 
     }
 
@@ -432,17 +432,17 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s46 = new ArcsSet(4.0, 6.0, TEST_PRECISION);
 
-        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc(3.0, 5.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.BOTH, s35.split(new Arc(4.0, 6.0, TEST_PRECISION)).getSide());
-        Assert.assertEquals(Side_Old.BOTH,  s35.split(new Arc(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc_Old(3.0, 5.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s46.split(new Arc_Old(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH, s35.split(new Arc_Old(4.0, 6.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.BOTH,  s35.split(new Arc_Old(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION)).getSide());
     }
 
     @Test
     public void testSideHyper() {
         ArcsSet sub = (ArcsSet) new RegionFactory_Old<Point1S>().getComplement(new ArcsSet(TEST_PRECISION));
         Assert.assertTrue(sub.isEmpty());
-        Assert.assertEquals(Side_Old.HYPER,  sub.split(new Arc(2.0, 3.0, TEST_PRECISION)).getSide());
+        Assert.assertEquals(Side_Old.HYPER,  sub.split(new Arc_Old(2.0, 3.0, TEST_PRECISION)).getSide());
     }
 
     @Test
@@ -451,7 +451,7 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s16 = new ArcsSet(1.0, 6.0, TEST_PRECISION);
 
-        ArcsSet.Split split1 = s16.split(new Arc(3.0, 5.0, TEST_PRECISION));
+        ArcsSet.Split split1 = s16.split(new Arc_Old(3.0, 5.0, TEST_PRECISION));
         ArcsSet split1Plus  = split1.getPlus();
         ArcsSet split1Minus = split1.getMinus();
         Assert.assertEquals(3.0, split1Plus.getSize(), TEST_EPS);
@@ -465,7 +465,7 @@ public class ArcsSetTest {
         Assert.assertEquals(3.0, split1Minus.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, split1Minus.asList().get(0).getSup(), TEST_EPS);
 
-        ArcsSet.Split split2 = s16.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION));
+        ArcsSet.Split split2 = s16.split(new Arc_Old(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION));
         ArcsSet split2Plus  = split2.getPlus();
         ArcsSet split2Minus = split2.getMinus();
         Assert.assertEquals(2.0, split2Plus.getSize(), TEST_EPS);
@@ -479,7 +479,7 @@ public class ArcsSetTest {
         Assert.assertEquals(5.0, split2Minus.asList().get(1).getInf(), TEST_EPS);
         Assert.assertEquals(6.0, split2Minus.asList().get(1).getSup(), TEST_EPS);
 
-        ArcsSet.Split split3 = s35.split(new Arc(1.0, 6.0, TEST_PRECISION));
+        ArcsSet.Split split3 = s35.split(new Arc_Old(1.0, 6.0, TEST_PRECISION));
         ArcsSet split3Plus  = split3.getPlus();
         ArcsSet split3Minus = split3.getMinus();
         Assert.assertNull(split3Plus);
@@ -488,7 +488,7 @@ public class ArcsSetTest {
         Assert.assertEquals(3.0, split3Minus.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, split3Minus.asList().get(0).getSup(), TEST_EPS);
 
-        ArcsSet.Split split4 = s35.split(new Arc(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION));
+        ArcsSet.Split split4 = s35.split(new Arc_Old(6.0, 1.0 + Geometry.TWO_PI, TEST_PRECISION));
         ArcsSet split4Plus  = split4.getPlus();
         ArcsSet split4Minus = split4.getMinus();
         Assert.assertEquals(2.0, split4Plus.getSize(), TEST_EPS);
@@ -505,7 +505,7 @@ public class ArcsSetTest {
         ArcsSet s35 = new ArcsSet(3.0, 5.0, TEST_PRECISION);
         ArcsSet s46 = new ArcsSet(4.0, 6.0, TEST_PRECISION);
 
-        ArcsSet.Split split1 = s46.split(new Arc(3.0, 5.0, TEST_PRECISION));
+        ArcsSet.Split split1 = s46.split(new Arc_Old(3.0, 5.0, TEST_PRECISION));
         ArcsSet split1Plus  = split1.getPlus();
         ArcsSet split1Minus = split1.getMinus();
         Assert.assertEquals(1.0, split1Plus.getSize(), TEST_EPS);
@@ -517,7 +517,7 @@ public class ArcsSetTest {
         Assert.assertEquals(4.0, split1Minus.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, split1Minus.asList().get(0).getSup(), TEST_EPS);
 
-        ArcsSet.Split split2 = s46.split(new Arc(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION));
+        ArcsSet.Split split2 = s46.split(new Arc_Old(5.0, 3.0 + Geometry.TWO_PI, TEST_PRECISION));
         ArcsSet split2Plus  = split2.getPlus();
         ArcsSet split2Minus = split2.getMinus();
         Assert.assertEquals(1.0, split2Plus.getSize(), TEST_EPS);
@@ -529,7 +529,7 @@ public class ArcsSetTest {
         Assert.assertEquals(5.0, split2Minus.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(6.0, split2Minus.asList().get(0).getSup(), TEST_EPS);
 
-        ArcsSet.Split split3 = s35.split(new Arc(4.0, 6.0, TEST_PRECISION));
+        ArcsSet.Split split3 = s35.split(new Arc_Old(4.0, 6.0, TEST_PRECISION));
         ArcsSet split3Plus  = split3.getPlus();
         ArcsSet split3Minus = split3.getMinus();
         Assert.assertEquals(1.0, split3Plus.getSize(), TEST_EPS);
@@ -541,7 +541,7 @@ public class ArcsSetTest {
         Assert.assertEquals(4.0, split3Minus.asList().get(0).getInf(), TEST_EPS);
         Assert.assertEquals(5.0, split3Minus.asList().get(0).getSup(), TEST_EPS);
 
-        ArcsSet.Split split4 = s35.split(new Arc(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION));
+        ArcsSet.Split split4 = s35.split(new Arc_Old(6.0, 4.0 + Geometry.TWO_PI, TEST_PRECISION));
         ArcsSet split4Plus  = split4.getPlus();
         ArcsSet split4Minus = split4.getMinus();
         Assert.assertEquals(1.0, split4Plus.getSize(), TEST_EPS);
@@ -558,7 +558,7 @@ public class ArcsSetTest {
     @Test
     public void testFarSplit() {
         ArcsSet set = new ArcsSet(Math.PI, 2.5 * Math.PI, TEST_PRECISION);
-        ArcsSet.Split split = set.split(new Arc(0.5 * Math.PI, 1.5 * Math.PI, TEST_PRECISION));
+        ArcsSet.Split split = set.split(new Arc_Old(0.5 * Math.PI, 1.5 * Math.PI, TEST_PRECISION));
         ArcsSet splitPlus  = split.getPlus();
         ArcsSet splitMinus = split.getMinus();
         Assert.assertEquals(1,   splitMinus.asList().size());
@@ -579,7 +579,7 @@ public class ArcsSetTest {
         double a = 6.25;
         double b = a - 0.5 * epsilon;
         ArcsSet set = new ArcsSet(a - 1, a, precision);
-        Arc arc = new Arc(b, b + Math.PI, precision);
+        Arc_Old arc = new Arc_Old(b, b + Math.PI, precision);
         ArcsSet.Split split = set.split(arc);
         Assert.assertEquals(set.getSize(), split.getPlus().getSize(),  epsilon);
         Assert.assertNull(split.getMinus());
@@ -591,7 +591,7 @@ public class ArcsSetTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(epsilon);
         double  a       = 4.725;
         ArcsSet set     = new ArcsSet(a, a + 0.5, precision);
-        Arc     arc     = new Arc(a + 0.5 * epsilon, a + 1, precision);
+        Arc_Old     arc     = new Arc_Old(a + 0.5 * epsilon, a + 1, precision);
         ArcsSet.Split split = set.split(arc);
         Assert.assertNotNull(split.getMinus());
         Assert.assertNull(split.getPlus());

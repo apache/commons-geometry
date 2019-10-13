@@ -17,6 +17,10 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -33,13 +37,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
+public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190817L;
-
-    /** Interval instance representing the full space. */
-    private static final AngularInterval FULL = new AngularInterval(null, null, null);
 
     /** The minimum boundary of the interval. */
     private final CutAngle minBoundary;
@@ -57,14 +58,14 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
      * responsible for enforcing these constraints. No validation is performed.
      * @param minBoundary minimum boundary for the interval
      * @param maxBoundary maximum boundary for the interval
-     * @param midpoint the midpoint between the boundaries
      */
-    private AngularInterval(final CutAngle minBoundary, final CutAngle maxBoundary,
-            final Point1S midpoint) {
+    private AngularInterval(final CutAngle minBoundary, final CutAngle maxBoundary) {
 
         this.minBoundary = minBoundary;
         this.maxBoundary = maxBoundary;
-        this.midpoint = midpoint;
+        this.midpoint = (minBoundary != null && maxBoundary != null) ?
+                Point1S.of(0.5 * (minBoundary.getAzimuth() + maxBoundary.getAzimuth())) :
+                null;
     }
 
     /** Get the minimum azimuth angle for the interval, or {@code 0}
@@ -226,15 +227,15 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
     }
 
     /** {@inheritDoc}
-     *
-     * <p>This method returns instances of {@link RegionBSPTree1S} instead of
-     * {@link AngularInterval} since it is possible for a convex angular interval
-     * to be split into disjoint regions by a single hyperplane. These disjoint
-     * regions cannot be represented by this class and require the use of a BSP
-     * tree.</p>
-     *
-     * @see RegionBSPTree1S#split(Hyperplane)
-     */
+    *
+    * <p>This method returns instances of {@link RegionBSPTree1S} instead of
+    * {@link AngularInterval} since it is possible for a convex angular interval
+    * to be split into disjoint regions by a single hyperplane. These disjoint
+    * regions cannot be represented by this class and require the use of a BSP
+    * tree.</p>
+    *
+    * @see RegionBSPTree1S#split(Hyperplane)
+    */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
         return toTree().split(splitter);
@@ -246,6 +247,23 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
      */
     public RegionBSPTree1S toTree() {
         return RegionBSPTree1S.fromInterval(this);
+    }
+
+    /** Return a list of convex intervals comprising this region.
+     * @return a list of convex intervals comprising this region
+     */
+    public List<AngularInterval.Convex> toConvex() {
+        if (isConvex(minBoundary, maxBoundary)) {
+            return Collections.singletonList(new Convex(minBoundary, maxBoundary));
+        }
+
+        final CutAngle midPos = CutAngle.createPositiveFacing(midpoint, minBoundary.getPrecision());
+        final CutAngle midNeg = CutAngle.createNegativeFacing(midpoint, maxBoundary.getPrecision());
+
+        return Arrays.asList(
+                    new Convex(minBoundary, midPos),
+                    new Convex(midNeg, maxBoundary)
+                );
     }
 
     /** {@inheritDoc} */
@@ -266,8 +284,8 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
      * possible azimuth angles.
      * @return an interval representing the full space
      */
-    public static AngularInterval full() {
-        return FULL;
+    public static AngularInterval.Convex full() {
+        return Convex.FULL;
     }
 
     /** Return an instance representing the angular interval between the given min and max azimuth
@@ -297,21 +315,7 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
      * @throws IllegalArgumentException if either azimuth is infinite or NaN
      */
     public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
-        validateIntervalValues(min, max);
-
-        // return the full space if either point is infinite or the points are equivalent
-        if (min.eq(max, precision)) {
-            return full();
-        }
-
-        final Point1S adjustedMax = max.above(min);
-        final double midAz = 0.5 * (adjustedMax.getAzimuth() + min.getAzimuth());
-
-        return new AngularInterval(
-                    CutAngle.createNegativeFacing(min, precision),
-                    CutAngle.createPositiveFacing(adjustedMax, precision),
-                    Point1S.of(midAz)
-                );
+        return createInterval(min, max, precision, AngularInterval::new, Convex.FULL);
     }
 
     /** Return an instance representing the angular interval between the given oriented points.
@@ -324,6 +328,57 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
      * @throws IllegalArgumentException if either argument is infinite or NaN
      */
     public static AngularInterval of(final CutAngle a, final CutAngle b) {
+        return createInterval(a, b, AngularInterval::new, Convex.FULL);
+    }
+
+    /** Internal method to create an interval between the given min and max points. The max point
+     * is adjusted to be numerically above the min point, even if the resulting
+     * azimuth value is greater than or equal to {@code 2pi}. The full instance argument
+     * is returned if either point is infinite or min and max are equivalent as evaluated by the
+     * given precision context.
+     * @param min min azimuth value
+     * @param max max azimuth value
+     * @param precision precision precision context used to compare floating point values
+     * @param factory factory object used to create new instances; this object is passed the validated
+     *      min (negative-facing) cut and the max (positive-facing) cut, in that order
+     * @param fullSpace instance returned if the interval should represent the full space
+     * @return a new instance resulting the angular region between the given min and max points
+     * @throws IllegalArgumentException if either azimuth is infinite or NaN
+     */
+    private static <T extends AngularInterval> T createInterval(final Point1S min, final Point1S max,
+            final DoublePrecisionContext precision, final BiFunction<CutAngle, CutAngle, T> factory,
+            final T fullSpace) {
+
+        validateIntervalValues(min, max);
+
+        // return the full space if either point is infinite or the points are equivalent
+        if (min.eq(max, precision)) {
+            return fullSpace;
+        }
+
+        final Point1S adjustedMax = max.above(min);
+
+        return factory.apply(
+                    CutAngle.createNegativeFacing(min, precision),
+                    CutAngle.createPositiveFacing(adjustedMax, precision)
+                );
+    }
+
+    /** Internal method to create a new interval instance from the given cut angles.
+     * The negative-facing point is used as the minimum boundary and the positive-facing point is
+     * adjusted to be above the minimum. The arguments can be given in any order. The full space
+     * argument is returned if the points are equivalent or are oriented in the same direction.
+     * @param a first cut point
+     * @param b second cut point
+     * @param factory factory object used to create new instances; this object is passed the validated
+     *      min (negative-facing) cut and the max (positive-facing) cut, in that order
+     * @param fullSpace instance returned if the interval should represent the full space
+     * @return a new interval instance created from the given cut angles
+     * @throws IllegalArgumentException if either argument is infinite or NaN
+     */
+    private static <T extends AngularInterval> T createInterval(final CutAngle a, final CutAngle b,
+            final BiFunction<CutAngle, CutAngle, T> factory, final T fullSpace) {
+
         final Point1S aPoint = a.getPoint();
         final Point1S bPoint = b.getPoint();
 
@@ -333,7 +388,7 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
                 aPoint.eq(bPoint, a.getPrecision()) ||
                 bPoint.eq(aPoint, b.getPrecision())) {
             // points are equivalent or facing in the same direction
-            return full();
+            return fullSpace;
         }
 
         final CutAngle min = a.isPositiveFacing() ? b : a;
@@ -342,9 +397,7 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
                 max.getPoint().above(min.getPoint()),
                 max.getPrecision());
 
-        final Point1S mid = Point1S.of(0.5 * (adjustedMax.getAzimuth() + min.getAzimuth()));
-
-        return new AngularInterval(min, adjustedMax, mid);
+        return factory.apply(min, adjustedMax);
     }
 
     /** Validate that the given points can be used to specify an angular interval.
@@ -356,6 +409,170 @@ public final class AngularInterval implements HyperplaneBoundedRegion<Point1S>, 
         if (!a.isFinite() || !b.isFinite()) {
             throw new IllegalArgumentException("Invalid angular interval: [" + a.getAzimuth() +
                     ", " + b.getAzimuth() + "]");
+        }
+    }
+
+    /** Return true if the given cut angles define a convex region.
+     * @param min min (negative-facing) cut angle
+     * @param max max (positive-facing) cut angle
+     * @return true if the given cut angles define a convex region
+     */
+    private static boolean isConvex(final CutAngle min, final CutAngle max) {
+        return min == null || max == null ||
+                (max.getAzimuth() - min.getAzimuth() <= Geometry.PI);
+    }
+
+    /** Class representing an angular interval with the additional property that the subtended
+     * angle is less than or equal to {@code pi}. Intervals of this type are convex.
+     */
+    public static final class Convex extends AngularInterval {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20191012L;
+
+        /** Interval instance representing the full space. */
+        private static final Convex FULL = new Convex(null, null);
+
+        /** Construct a new convex instance from its boundaries and midpoint. No validation
+         * of the argument is performed. Callers are responsible for ensuring that the size
+         * of interval is less than or equal to {@code pi}.
+         * @param minBoundary minimum boundary for the interval
+         * @param maxBoundary maximum boundary for the interval
+         * @param midpoint the midpoint between the boundaries
+         * @throw IllegalArgumentException if the interval is not convex
+         */
+        private Convex(final CutAngle minBoundary, final CutAngle maxBoundary) {
+            super(minBoundary, maxBoundary);
+
+            if (!isConvex(minBoundary, maxBoundary)) {
+                throw new IllegalArgumentException("Interval is not convex: [" + minBoundary.getAzimuth() +
+                        ", " + maxBoundary.getAzimuth() + "]");
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public List<AngularInterval.Convex> toConvex() {
+            return Collections.singletonList(this);
+        }
+
+        /** Split the instance along a circle diameter.The diameter is defined by the given split point and
+         * its reversed antipodal point.
+         * @param splitter split point defining one side of the split diameter
+         * @return result of the split operation
+         */
+        public Split<Convex> splitDiameter(final CutAngle splitter) {
+
+            final CutAngle opposite = CutAngle.fromPointAndDirection(
+                    splitter.getPoint().antipodal(),
+                    !splitter.isPositiveFacing(),
+                    splitter.getPrecision());
+
+            if (isFull()) {
+                final Convex minus = Convex.of(splitter, opposite);
+                final Convex plus = Convex.of(splitter.reverse(), opposite.reverse());
+
+                return new Split<>(minus, plus);
+            }
+
+            final CutAngle minBoundary = getMinBoundary();
+            final CutAngle maxBoundary = getMaxBoundary();
+
+            final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + Geometry.HALF_PI);
+
+            final boolean minIsPos = minBoundary.getPrecision().lte(
+                    posPole.distance(minBoundary.getPoint()), Geometry.HALF_PI);
+            final boolean maxIsPos = maxBoundary.getPrecision().lte(
+                    posPole.distance(maxBoundary.getPoint()), Geometry.HALF_PI);
+
+            final boolean positiveFacingSplit = splitter.isPositiveFacing();
+
+            Convex pos = null;
+            Convex neg = null;
+
+            if (minIsPos) {
+                if (maxIsPos) {
+                    pos = this;
+                }
+                else {
+                    final CutAngle posCut = positiveFacingSplit ?
+                            opposite.reverse() :
+                            opposite;
+                    pos = Convex.of(minBoundary, posCut);
+
+                    final CutAngle negCut = positiveFacingSplit ?
+                            opposite :
+                            opposite.reverse();
+                    neg = Convex.of(negCut, maxBoundary);
+                }
+            }
+            else {
+                if (maxIsPos) {
+                    final CutAngle posCut = positiveFacingSplit ?
+                            splitter.reverse() :
+                            splitter;
+                    pos = Convex.of(maxBoundary, posCut);
+
+                    final CutAngle negCut = positiveFacingSplit ?
+                            splitter :
+                            splitter.reverse();
+                    neg = Convex.of(negCut, minBoundary);
+                }
+                else {
+                    neg = this;
+                }
+            }
+
+            final Convex minus = positiveFacingSplit ? neg : pos;
+            final Convex plus = positiveFacingSplit ? pos : neg;
+
+            return new Split<>(minus, plus);
+        }
+
+        /** Return an instance representing the convex angular interval between the given min and max azimuth
+         * values. The max value is adjusted to be numerically above the min value, even if the resulting
+         * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
+         * is returned if either point is infinite or min and max are equivalent as evaluated by the
+         * given precision context.
+         * @param min min azimuth value
+         * @param max max azimuth value
+         * @param precision precision precision context used to compare floating point values
+         * @return a new instance resulting the angular region between the given min and max azimuths
+         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         *      interval is not convex (meaning it has a size of greater than {@code pi})
+         */
+        public static Convex of(final double min, final double max, final DoublePrecisionContext precision) {
+            return of(Point1S.of(min), Point1S.of(max), precision);
+        }
+
+        /** Return an instance representing the convex angular interval between the given min and max azimuth
+         * points. The max point is adjusted to be numerically above the min point, even if the resulting
+         * azimuth value is greater than or equal to {@code 2pi}. An instance representing the full space
+         * is returned if either point is infinite or min and max are equivalent as evaluated by the
+         * given precision context.
+         * @param min min azimuth value
+         * @param max max azimuth value
+         * @param precision precision precision context used to compare floating point values
+         * @return a new instance resulting the angular region between the given min and max points
+         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         *      interval is not convex (meaning it has a size of greater than {@code pi})
+         */
+        public static Convex of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
+            return createInterval(min, max, precision, Convex::new, Convex.FULL);
+        }
+
+        /** Return an instance representing the convex angular interval between the given oriented points.
+         * The negative-facing point is used as the minimum boundary and the positive-facing point is
+         * adjusted to be above the minimum. The arguments can be given in any order. The full space
+         * is returned if the points are equivalent or are oriented in the same direction.
+         * @param a first oriented point
+         * @param b second oriented point
+         * @return an instance representing the angular interval between the given oriented points
+         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         *      interval is not convex (meaning it has a size of greater than {@code pi})
+         */
+        public static Convex of(final CutAngle a, final CutAngle b) {
+            return createInterval(a, b, Convex::new, Convex.FULL);
         }
     }
 }

@@ -203,8 +203,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc} */
     @Override
-    public GreatArc span() {
-        return GreatArc.fromInterval(this, AngularInterval.full());
+    public Arc span() {
+        return Arc.fromInterval(this, AngularInterval.full());
     }
 
     /** {@inheritDoc} */

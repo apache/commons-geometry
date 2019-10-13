@@ -198,7 +198,7 @@ public class Point1S implements Point<Point1S>, Serializable {
     }
 
     /** Get the point exactly opposite this point on the circle, {@code pi} distance away.
-     * The azimuth of the antipodal point is in the range {@code 0, 2pi)}.
+     * The azimuth of the antipodal point is in the range {@code [0, 2pi)}.
      * @return the point exactly opposite this point on the circle
      */
     public Point1S antipodal() {

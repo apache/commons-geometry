@@ -26,7 +26,7 @@ import org.apache.commons.numbers.core.Precision;
 /** This class represents an arc on a circle.
  * @see ArcsSet
  */
-public class Arc {
+public class Arc_Old {
 
     /** The lower angular bound of the arc. */
     private final double lower;
@@ -56,7 +56,7 @@ public class Arc {
      * @param precision precision context used to compare floating point values
      * @exception IllegalArgumentException if lower is greater than upper
      */
-    public Arc(final double lower, final double upper, final DoublePrecisionContext precision)
+    public Arc_Old(final double lower, final double upper, final DoublePrecisionContext precision)
         throws IllegalArgumentException {
         this.precision = precision;
         if (Precision.equals(lower, upper, 0) || (upper - lower) >= Geometry.TWO_PI) {
