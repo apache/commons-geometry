@@ -376,6 +376,95 @@ public class GreatCircleTest {
     }
 
     @Test
+    public void testSpan() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act
+        Arc span = circle.span();
+
+        // assert
+        Assert.assertSame(circle, span.getCircle());
+        Assert.assertTrue(span.getInterval().isFull());
+
+        Assert.assertNull(span.getStartPoint());
+        Assert.assertNull(span.getEndPoint());
+    }
+
+    @Test
+    public void testArc_points_2s() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act/assert
+        checkArc(circle.arc(Point2S.of(1, Geometry.HALF_PI), Point2S.of(0, 1)),
+                Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI), Point2S.of(0, 0));
+
+        Assert.assertTrue(circle.arc(Point2S.PLUS_I, Point2S.PLUS_I).isFull());
+    }
+
+    @Test
+    public void testArc_points_1s() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act/assert
+        checkArc(circle.arc(Point1S.of(Geometry.PI), Point1S.of(1.5 * Geometry.PI)),
+                Point2S.of(0, Geometry.PI), Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI));
+
+        Assert.assertTrue(circle.arc(Point1S.of(1), Point1S.of(1)).isFull());
+    }
+
+    @Test
+    public void testArc_azimuths() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act/assert
+        checkArc(circle.arc(Geometry.PI, 1.5 * Geometry.PI),
+                Point2S.of(0, Geometry.PI), Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI));
+
+        Assert.assertTrue(circle.arc(1, 1).isFull());
+    }
+
+    @Test
+    public void testIntersection_parallel() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, precision);
+        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, precision);
+        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.of(1, 1e-4, 1e-4), precision);
+        GreatCircle d = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, precision);
+        GreatCircle e = GreatCircle.fromPole(Vector3D.Unit.of(-1, 1e-4, 1e-4), precision);
+
+        // act/assert
+        Assert.assertNull(a.intersection(b));
+        Assert.assertNull(a.intersection(c));
+        Assert.assertNull(a.intersection(d));
+        Assert.assertNull(a.intersection(e));
+    }
+
+    @Test
+    public void testIntersection() {
+        // arrange
+        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act/assert
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Z,
+                a.intersection(b).getVector(), TEST_EPS);
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_Z,
+                b.intersection(a).getVector(), TEST_EPS);
+
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_X,
+                b.intersection(c).getVector(), TEST_EPS);
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_X,
+                c.intersection(b).getVector(), TEST_EPS);
+    }
+
+    @Test
     public void testToSubspace() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
@@ -538,5 +627,10 @@ public class GreatCircleTest {
         Assert.assertEquals(HyperplaneLocation.PLUS, circle.classify(plusPolePt));
         Assert.assertEquals(HyperplaneLocation.MINUS, circle.classify(minusPolePt));
         Assert.assertEquals(HyperplaneLocation.ON, circle.classify(origin));
+    }
+
+    private static void checkArc(Arc arc, Point2S start, Point2S end) {
+        SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }
 }
