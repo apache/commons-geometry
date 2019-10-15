@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class SubLine extends AbstractSubLine<RegionBSPTree1D> implements Serializable {
+public final class SubLine extends AbstractSubLine implements Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190717L;

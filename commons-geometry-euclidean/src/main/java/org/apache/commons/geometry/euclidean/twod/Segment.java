@@ -35,7 +35,7 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Segment extends AbstractSubLine<Interval>
+public final class Segment extends AbstractSubLine
     implements ConvexSubHyperplane<Vector2D> {
 
     /** Serializable UID */

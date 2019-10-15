@@ -604,7 +604,7 @@ public class SubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
 
-        AbstractSubLine<Interval> unknownType = new AbstractSubLine<Interval>(line) {
+        AbstractSubLine unknownType = new AbstractSubLine(line) {
 
             /** Serializable UID */
             private static final long serialVersionUID = 20190729L;

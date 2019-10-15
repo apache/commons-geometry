@@ -23,7 +23,10 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.spherical.oned.AngularInterval;
+import org.apache.commons.geometry.spherical.oned.CutAngle;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 
 /** Class representing an arbitrary region of a great circle.
@@ -43,12 +46,23 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
         this(greatCircle, false);
     }
 
-    public SubGreatCircle(final GreatCircle greatCircle, final boolean full) {
-        this(greatCircle, new RegionBSPTree1S(full));
+    /** Construct a new sub-region for the given great circle. If {@code full}
+     * is true, then the region will cover the entire circle; otherwise,
+     * it will be empty.
+     * @param circle great circle that the sub-region will belong to
+     * @param full if true, the sub-region will cover the entire circle;
+     *      otherwise it will be empty
+     */
+    public SubGreatCircle(final GreatCircle circle, final boolean full) {
+        this(circle, new RegionBSPTree1S(full));
     }
 
-    public SubGreatCircle(final GreatCircle greatCircle, final RegionBSPTree1S region) {
-        super(greatCircle);
+    /** Construct a new instance from its defining great circle and subspace region.
+     * @param circle great circle that the sub-region will belong to
+     * @param region subspace region
+     */
+    public SubGreatCircle(final GreatCircle circle, final RegionBSPTree1S region) {
+        super(circle);
 
         this.region = region;
     }
@@ -76,11 +90,47 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
                 .collect(Collectors.toList());
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>In all cases, the current instance is not modified. However, In order to avoid
+     * unnecessary copying, this method will use the current instance as the split value when
+     * the instance lies entirely on the plus or minus side of the splitter. For example, if
+     * this instance lies entirely on the minus side of the splitter, the subplane
+     * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
+     * will return the current instance if it lies entirely on the plus side. Callers need to make
+     * special note of this, since this class is mutable.</p>
+     */
     @Override
-    public Split<SubGreatCircle> split(Hyperplane<Point2S> splitter) {
-        // TODO Auto-generated method stub
-        return null;
+    public Split<SubGreatCircle> split(final Hyperplane<Point2S> splitter) {
+
+        final GreatCircle splitterCircle = (GreatCircle) splitter;
+        final GreatCircle thisCircle = getCircle();
+
+        final Point2S intersection = splitterCircle.intersection(thisCircle);
+
+        SubGreatCircle minus = null;
+        SubGreatCircle plus = null;
+
+        if (intersection != null) {
+            final CutAngle subSplitter = CutAngle.createPositiveFacing(
+                    thisCircle.toSubspace(intersection), splitterCircle.getPrecision());
+
+            final Split<RegionBSPTree1S> subSplit = region.splitDiameter(subSplitter);
+            final SplitLocation subLoc = subSplit.getLocation();
+
+            if (subLoc == SplitLocation.MINUS) {
+                minus = this;
+            }
+            else if (subLoc == SplitLocation.PLUS) {
+                plus = this;
+            }
+            else if (subLoc == SplitLocation.BOTH) {
+                minus = new SubGreatCircle(thisCircle, subSplit.getMinus());
+                plus =  new SubGreatCircle(thisCircle, subSplit.getPlus());
+            }
+        }
+
+        return new Split<>(minus, plus);
     }
 
     /** Add an arc to this instance.

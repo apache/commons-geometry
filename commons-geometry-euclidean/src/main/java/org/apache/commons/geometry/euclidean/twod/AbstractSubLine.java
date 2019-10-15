@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.function.BiFunction;
 
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
@@ -31,8 +30,7 @@ import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
 
 /** Internal base class for subline implementations.
  */
-abstract class AbstractSubLine<R extends Region<Vector1D>>
-    extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, Line> {
+abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, Line> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20190729L;
@@ -81,7 +79,7 @@ abstract class AbstractSubLine<R extends Region<Vector1D>>
      * @param factory function used to create new subhyperplane instances
      * @return the result of the split operation
      */
-    protected <T extends AbstractSubLine<R>> Split<T> splitInternal(final Hyperplane<Vector2D> splitter,
+    protected <T extends AbstractSubLine> Split<T> splitInternal(final Hyperplane<Vector2D> splitter,
             final T thisInstance, final BiFunction<Line, HyperplaneBoundedRegion<Vector1D>, T> factory) {
 
         final Line thisLine = getLine();

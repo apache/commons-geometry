@@ -53,6 +53,8 @@ public class ArcTest {
         Assert.assertNull(arc.getStartPoint());
         Assert.assertNull(arc.getEndPoint());
 
+        Assert.assertEquals(Geometry.TWO_PI, arc.getSize(), TEST_EPS);
+
         for (double az = 0; az < Geometry.TWO_PI; az += 0.1) {
             checkClassify(arc, RegionLocation.INSIDE, Point2S.of(az, Geometry.HALF_PI));
         }
@@ -272,6 +274,8 @@ public class ArcTest {
 
         checkClassify(arc, RegionLocation.INSIDE, mid);
         checkClassify(arc, RegionLocation.OUTSIDE, mid.antipodal());
+
+        Assert.assertEquals(start.distance(end), arc.getSize(), TEST_EPS);
     }
 
     private static void checkGreatCircle(GreatCircle circle, Vector3D pole, Vector3D x) {
