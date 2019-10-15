@@ -795,10 +795,26 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testSplitDiameter_splitOnBoundaries() {
+    public void testSplitDiameter_splitOnBoundary_negativeFacing() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(Geometry.HALF_PI, Geometry.MINUS_HALF_PI, TEST_PRECISION);
         CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(Geometry.HALF_PI), TEST_PRECISION);
+
+        // act
+        Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(interval, split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplitDiameter_splitOnBoundary_positiveFacing() {
+        // arrange
+        AngularInterval.Convex interval = AngularInterval.Convex.of(0, Geometry.PI, TEST_PRECISION);
+        CutAngle splitter = CutAngle.createPositiveFacing(Point1S.of(Geometry.PI), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);

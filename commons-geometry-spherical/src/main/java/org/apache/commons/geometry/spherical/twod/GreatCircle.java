@@ -237,16 +237,22 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public Arc arc(final double start, final double end) {
-        return Arc.fromInterval(
-                this,
-                AngularInterval.Convex.of(start, end, getPrecision()));
+        return arc(AngularInterval.Convex.of(start, end, getPrecision()));
+    }
+
+    /** Create an arc on this circle consisting of the given subspace interval.
+     * @param interval subspace interval
+     * @return an arc on this circle consisting of the given subspace interval
+     */
+    public Arc arc(final AngularInterval.Convex interval) {
+        return Arc.fromInterval(this, interval);
     }
 
     /** Return one of the two intersection points between this instance and the argument.
      * If the circles occupy the same space (ie, their poles are parallel or anti-parallel),
      * then null is returned. Otherwise, the intersection located at the cross product of
-     * the pole of this instance and that of the argument is returned. The other intersection
-     * point of the pair is antipodal to this point.
+     * the pole of this instance and that of the argument is returned (ie, {@code thisPole.cross(otherPole)}.
+     * The other intersection point of the pair is antipodal to this point.
      * @param other circle to intersect with
      * @return one of the two intersection points between this instance and the argument
      */

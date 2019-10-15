@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.junit.Assert;
 import org.junit.Test;
@@ -425,6 +426,20 @@ public class GreatCircleTest {
                 Point2S.of(0, Geometry.PI), Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI));
 
         Assert.assertTrue(circle.arc(1, 1).isFull());
+    }
+
+    @Test
+    public void testArc_interval() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(1, 2, TEST_PRECISION);
+
+        // act
+        Arc arc = circle.arc(interval);
+
+        // assert
+        Assert.assertSame(circle, arc.getCircle());
+        Assert.assertSame(interval, arc.getInterval());
     }
 
     @Test

@@ -505,21 +505,27 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
 
             final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + Geometry.HALF_PI);
 
-            final boolean minIsPos = minBoundary.getPrecision().lte(
-                    posPole.distance(minBoundary.getPoint()), Geometry.HALF_PI);
-            final boolean maxIsPos = maxBoundary.getPrecision().lte(
-                    posPole.distance(maxBoundary.getPoint()), Geometry.HALF_PI);
+            final int minLoc = minBoundary.getPrecision().compare(Geometry.HALF_PI,
+                    posPole.distance(minBoundary.getPoint()));
+            final int maxLoc = maxBoundary.getPrecision().compare(Geometry.HALF_PI,
+                    posPole.distance(maxBoundary.getPoint()));
 
             final boolean positiveFacingSplit = splitter.isPositiveFacing();
 
+            // assume a positive orientation of the splitter for region location
+            // purposes and adjust later
             Convex pos = null;
             Convex neg = null;
 
-            if (minIsPos) {
-                if (maxIsPos) {
+            if (minLoc > 0) {
+                // min is on the pos side
+
+                if (maxLoc >= 0) {
+                    // max is directly on the splitter or on the pos side
                     pos = this;
                 }
                 else {
+                    // min is on the pos side and max is on the neg side
                     final CutAngle posCut = positiveFacingSplit ?
                             opposite.reverse() :
                             opposite;
@@ -531,8 +537,15 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                     neg = Convex.of(negCut, maxBoundary);
                 }
             }
-            else {
-                if (maxIsPos) {
+            else if (minLoc < 0){
+                // min is on the neg side
+
+                if (maxLoc <= 0) {
+                    // max is directly on the splitter or on the neg side
+                    neg = this;
+                }
+                else {
+                    // min is on the neg side and max is on the pos side
                     final CutAngle posCut = positiveFacingSplit ?
                             splitter.reverse() :
                             splitter;
@@ -543,11 +556,21 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                             splitter.reverse();
                     neg = Convex.of(negCut, minBoundary);
                 }
+            }
+            else {
+                // min is directly on the splitter; determine whether it was on the main split
+                // point or its antipodal point
+                if (splitter.getPoint().distance(minBoundary.getPoint()) < Geometry.HALF_PI) {
+                    // on main splitter; interval will be located on pos side of split
+                    pos = this;
+                }
                 else {
+                    // on antipodal point; interval will be located on neg side of split
                     neg = this;
                 }
             }
 
+            // adjust for the actual orientation of the splitter
             final Convex minus = positiveFacingSplit ? neg : pos;
             final Convex plus = positiveFacingSplit ? pos : neg;
 

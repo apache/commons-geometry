@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -137,6 +139,105 @@ public class ArcTest {
 
         // assert
         checkArc(result, Point2S.PLUS_I, Point2S.PLUS_J);
+    }
+
+    @Test
+    public void testSplit_full() {
+        // arrange
+        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
+
+        // act
+        Split<Arc> split = arc.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        Arc minus = split.getMinus();
+        Assert.assertSame(arc.getCircle(), minus.getCircle());
+        checkArc(minus, Point2S.MINUS_J, Point2S.PLUS_J);
+        checkClassify(minus, RegionLocation.OUTSIDE, Point2S.MINUS_I);
+        checkClassify(minus, RegionLocation.INSIDE, Point2S.PLUS_I);
+
+        Arc plus = split.getPlus();
+        Assert.assertSame(arc.getCircle(), plus.getCircle());
+        checkArc(plus, Point2S.PLUS_J, Point2S.MINUS_J);
+        checkClassify(plus, RegionLocation.INSIDE, Point2S.MINUS_I);
+        checkClassify(plus, RegionLocation.OUTSIDE, Point2S.PLUS_I);
+    }
+
+    @Test
+    public void testSplit_both() {
+        // arrange
+        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+                .arc(Geometry.HALF_PI, Geometry.PI);
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, 1), TEST_PRECISION);
+
+        // act
+        Split<Arc> split = arc.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        Arc minus = split.getMinus();
+        Assert.assertSame(arc.getCircle(), minus.getCircle());
+        checkArc(minus, Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI), Point2S.MINUS_J);
+
+        Arc plus = split.getPlus();
+        Assert.assertSame(arc.getCircle(), plus.getCircle());
+        checkArc(plus, Point2S.of(0, 0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
+    }
+
+    @Test
+    public void testSplit_minus() {
+        // arrange
+        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+                .arc(Geometry.HALF_PI, Geometry.PI);
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
+
+        // act
+        Split<Arc> split = arc.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Arc minus = split.getMinus();
+        Assert.assertSame(arc, minus);
+
+        Arc plus = split.getPlus();
+        Assert.assertNull(plus);
+    }
+
+    @Test
+    public void testSplit_plus() {
+        // arrange
+        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+                .arc(Geometry.HALF_PI, Geometry.PI);
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act
+        Split<Arc> split = arc.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Arc minus = split.getMinus();
+        Assert.assertNull(minus);
+
+        Arc plus = split.getPlus();
+        Assert.assertSame(arc, plus);
+    }
+
+    @Test
+    public void testSplit_parallelAndAntiparallel() {
+        // arrange
+        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
+
+        // act/assert
+        Assert.assertEquals(SplitLocation.NEITHER,
+                arc.split(GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION)).getLocation());
+        Assert.assertEquals(SplitLocation.NEITHER,
+                arc.split(GreatCircle.fromPole(Vector3D.Unit.MINUS_Z, TEST_PRECISION)).getLocation());
     }
 
     @Test

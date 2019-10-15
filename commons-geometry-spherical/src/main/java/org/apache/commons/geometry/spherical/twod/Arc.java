@@ -23,7 +23,9 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
+import org.apache.commons.geometry.spherical.oned.CutAngle;
 import org.apache.commons.geometry.spherical.oned.Transform1S;
 
 /** Class representing a single, <em>convex</em> angular interval in a {@link GreatCircle}. Convex
@@ -99,8 +101,34 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
     /** {@inheritDoc} */
     @Override
     public Split<Arc> split(final Hyperplane<Point2S> splitter) {
-        // TODO
-        return null;
+        final GreatCircle splitterCircle = (GreatCircle) splitter;
+        final GreatCircle thisCircle = getCircle();
+
+        final Point2S intersection = splitterCircle.intersection(thisCircle);
+
+        Arc minus = null;
+        Arc plus = null;
+
+        if (intersection != null) {
+            final CutAngle subSplitter = CutAngle.createPositiveFacing(
+                    thisCircle.toSubspace(intersection), splitterCircle.getPrecision());
+
+            final Split<AngularInterval.Convex> subSplit = interval.splitDiameter(subSplitter);
+            final SplitLocation subLoc = subSplit.getLocation();
+
+            if (subLoc == SplitLocation.MINUS) {
+                minus = this;
+            }
+            else if (subLoc == SplitLocation.PLUS) {
+                plus = this;
+            }
+            else if (subLoc == SplitLocation.BOTH) {
+                minus = Arc.fromInterval(thisCircle, subSplit.getMinus());
+                plus = Arc.fromInterval(thisCircle, subSplit.getPlus());
+            }
+        }
+
+        return new Split<>(minus, plus);
     }
 
     /** {@inheritDoc} */
