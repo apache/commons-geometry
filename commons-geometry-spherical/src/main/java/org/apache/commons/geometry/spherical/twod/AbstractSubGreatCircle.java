@@ -55,7 +55,7 @@ abstract class AbstractSubGreatCircle
 
     /** {@inheritDoc} */
     @Override
-    public Builder<Point2S> builder() {
+    public SubGreatCircleBuilder builder() {
         return new SubGreatCircleBuilder(circle);
     }
 

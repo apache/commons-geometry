@@ -22,7 +22,6 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -368,7 +367,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param precision precision context used to compare floating point values
      * @return great circle instance containing the given points
      * @throws IllegalArgumentException if either of the given points is NaN or infinite
-     * @throws GeometryException if the given points are equal or antipodal
+     * @throws GeometryException if the given points are equal or antipodal as evaluated by
+     *      the given precision context
      */
     public static GreatCircle fromPoints(final Point2S a, final Point2S b,
             final DoublePrecisionContext precision) {
@@ -377,21 +377,25 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
             throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
         }
 
-        try {
-            final Vector3D.Unit x = a.getVector().normalize();
-            final Vector3D.Unit pole = x.cross(b.getVector()).normalize();
-            final Vector3D.Unit y = pole.cross(x).normalize();
+        String err = null;
 
-            return new GreatCircle(pole, x, y, precision);
+        final double dist = a.distance(b);
+        if (precision.eqZero(dist)) {
+            err = "equal";
         }
-        catch (IllegalNormException exc) {
-            // throw something more informative than an illegal norm
-            final String cause = a.getVector().dot(b.getVector()) > 0 ?
-                    "equal" :
-                    "antipodal";
+        else if (precision.eq(dist, Geometry.PI)) {
+            err = "antipodal";
+        }
 
+        if (err != null) {
             throw new GeometryException("Cannot create great circle from points " + a + " and " + b +
-                    ": points are " + cause);
+                    ": points are " + err);
         }
+
+        final Vector3D.Unit x = a.getVector().normalize();
+        final Vector3D.Unit pole = x.cross(b.getVector()).normalize();
+        final Vector3D.Unit y = pole.cross(x).normalize();
+
+        return new GreatCircle(pole, x, y, precision);
     }
 }

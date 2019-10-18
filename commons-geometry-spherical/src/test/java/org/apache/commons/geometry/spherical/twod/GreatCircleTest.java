@@ -98,6 +98,10 @@ public class GreatCircleTest {
         }, GeometryException.class, Pattern.compile("^.*points are equal$"));
 
         GeometryTestUtils.assertThrows(() -> {
+            GreatCircle.fromPoints(p1, Point2S.of(1e-12, Geometry.HALF_PI), TEST_PRECISION);
+        }, GeometryException.class, Pattern.compile("^.*points are equal$"));
+
+        GeometryTestUtils.assertThrows(() -> {
             GreatCircle.fromPoints(
                     Point2S.from(Vector3D.Unit.PLUS_X),
                     Point2S.from(Vector3D.Unit.MINUS_X),

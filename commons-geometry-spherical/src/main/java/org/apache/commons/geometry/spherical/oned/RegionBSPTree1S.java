@@ -219,28 +219,34 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         insideBoundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
 
         int boundaryPairCount = insideBoundaryPairs.size();
-        int boundaryIdx = 0;
 
-        // check for wrap-around
+        // Find the index of the first boundary pair that is not connected to pair before it.
+        // This will be our start point for merging intervals together.
+        int startOffset = 0;
         if (boundaryPairCount > 1) {
-            BoundaryPair min = insideBoundaryPairs.get(boundaryPairCount - 1);
-            BoundaryPair max = insideBoundaryPairs.get(0);
+            BoundaryPair current = null;
+            BoundaryPair previous = insideBoundaryPairs.get(boundaryPairCount - 1);
 
-            if (min.getMax() == null && max.getMin() == null) {
-                insideBoundaryPairs.set(boundaryPairCount - 1, new BoundaryPair(min.getMin(), max.getMax()));
+            for (int i = 0; i < boundaryPairCount; ++i, previous = current) {
+                current = insideBoundaryPairs.get(i);
 
-                ++boundaryIdx; // skip the first entry
+                if (!Objects.equals(current.getMin(), previous.getMax())) {
+                    startOffset = i;
+                    break;
+                }
             }
         }
 
+        // Go through the pairs starting at the start offset and create intervals
+        // for each set of adjacent pairs.
         final List<AngularInterval> intervals = new ArrayList<>();
 
         BoundaryPair start = null;
         BoundaryPair end = null;
         BoundaryPair current = null;
 
-        for (; boundaryIdx < boundaryPairCount; ++boundaryIdx) {
-            current = insideBoundaryPairs.get(boundaryIdx);
+        for (int i = 0; i < boundaryPairCount; ++i) {
+            current = insideBoundaryPairs.get((i + startOffset) % boundaryPairCount);
 
             if (start == null) {
                 start = current;
@@ -251,7 +257,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 end = current;
             }
             else {
-                // these intervals should not be merged
+                // these intervals should be separate
                 intervals.add(createInterval(start, end));
 
                 // queue up the next pair

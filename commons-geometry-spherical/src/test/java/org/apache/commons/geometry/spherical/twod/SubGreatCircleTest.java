@@ -19,7 +19,11 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -29,6 +33,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
+import org.apache.commons.geometry.spherical.twod.SubGreatCircle.SubGreatCircleBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -128,6 +133,30 @@ public class SubGreatCircleTest {
         checkClassify(sub, RegionLocation.OUTSIDE,
                 Point2S.of(0.5, Geometry.HALF_PI), Point2S.of(2.5, Geometry.HALF_PI),
                 Point2S.of(1.5, 1), Point2S.of(1.5, Geometry.PI - 1));
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
+        RegionBSPTree1S region = RegionBSPTree1S.empty();
+        region.add(AngularInterval.of(Geometry.PI, Geometry.MINUS_HALF_PI, TEST_PRECISION));
+        region.add(AngularInterval.of(0, Geometry.HALF_PI, TEST_PRECISION));
+
+        Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI)
+                .reflect(Point2S.of(-0.25 * Geometry.PI,  Geometry.HALF_PI));
+
+        SubGreatCircle sub = new SubGreatCircle(circle, region);
+
+        // act
+        SubGreatCircle result = sub.transform(t);
+
+        // assert
+        List<Arc> arcs = result.toConvex();
+        Assert.assertEquals(2, arcs.size());
+
+        checkArc(arcs.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
+        checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_J);
     }
 
     @Test
@@ -283,6 +312,146 @@ public class SubGreatCircleTest {
                 sub.split(GreatCircle.fromPole(Vector3D.Unit.MINUS_Z, TEST_PRECISION)).getLocation());
     }
 
+    @Test
+    public void testAdd_arc() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+        GreatCircle closeCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
+                Point2S.of((1.5 * Geometry.PI) - 1e-11, Geometry.HALF_PI), TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        // act
+        sub.add(circle.arc(Point2S.of(1.5 * Geometry.PI, 0.75 * Geometry.PI), Point2S.MINUS_J));
+        sub.add(closeCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * Geometry.PI, 0.75 * Geometry.PI)));
+
+        // assert
+        List<Arc> arcs = sub.toConvex();
+
+        Assert.assertEquals(1, arcs.size());
+        checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAdd_arc_differentCircle() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+        GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
+                Point2S.of((1.5 * Geometry.PI) - 1e-2, Geometry.HALF_PI), TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        // act/assert
+        sub.add(otherCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * Geometry.PI, 0.75 * Geometry.PI)));
+    }
+
+    @Test
+    public void testAdd_subGreatCircle() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+        GreatCircle closeCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
+                Point2S.of((1.5 * Geometry.PI) - 1e-11, Geometry.HALF_PI), TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        RegionBSPTree1S regionA = RegionBSPTree1S.empty();
+        regionA.add(AngularInterval.of(Geometry.PI, 1.25 * Geometry.PI, TEST_PRECISION));
+        regionA.add(AngularInterval.of(0.25 * Geometry.PI, Geometry.HALF_PI, TEST_PRECISION));
+
+        RegionBSPTree1S regionB = RegionBSPTree1S.empty();
+        regionB.add(AngularInterval.of(1.5 * Geometry.PI, 0.25 * Geometry.PI, TEST_PRECISION));
+
+        // act
+        sub.add(new SubGreatCircle(circle, regionA));
+        sub.add(new SubGreatCircle(closeCircle, regionB));
+
+        // assert
+        List<Arc> arcs = sub.toConvex();
+
+        Assert.assertEquals(2, arcs.size());
+        checkArc(arcs.get(0), Point2S.of(Geometry.HALF_PI, 0), Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.PI));
+        checkArc(arcs.get(1), Point2S.PLUS_J, Point2S.MINUS_J);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAdd_subGreatCircle_otherCircle() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+        GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
+                Point2S.of((1.5 * Geometry.PI) - 1e-5, Geometry.HALF_PI), TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        // act/assert
+        sub.add(new SubGreatCircle(otherCircle, RegionBSPTree1S.full()));
+    }
+
+    @Test
+    public void testBuilder() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        RegionBSPTree1S region = RegionBSPTree1S.empty();
+        region.add(AngularInterval.of(Geometry.PI, 1.25 * Geometry.PI, TEST_PRECISION));
+        region.add(AngularInterval.of(0.25 * Geometry.PI, Geometry.HALF_PI, TEST_PRECISION));
+
+        // act
+        SubGreatCircleBuilder builder = sub.builder();
+
+        builder.add(new SubGreatCircle(circle, region));
+        builder.add(circle.arc(1.5 * Geometry.PI, 0.25 * Geometry.PI));
+
+        SubGreatCircle result = builder.build();
+
+        // assert
+        List<Arc> arcs = result.toConvex();
+
+        Assert.assertEquals(2, arcs.size());
+        checkArc(arcs.get(0), Point2S.of(Geometry.HALF_PI, 0), Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.PI));
+        checkArc(arcs.get(1), Point2S.PLUS_J, Point2S.MINUS_J);
+    }
+
+    @Test
+    public void testBuilder_invalidArgs() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
+        GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        SubGreatCircleBuilder builder = sub.builder();
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            builder.add(otherCircle.span());
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.add(new SubGreatCircle(otherCircle));
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            builder.add(new UnknownSubHyperplane());
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        SubGreatCircle sub = new SubGreatCircle(circle);
+
+        // act
+        String str = sub.toString();
+
+        // assert
+        GeometryTestUtils.assertContains("SubGreatCircle[", str);
+        GeometryTestUtils.assertContains("circle= GreatCircle[", str);
+        GeometryTestUtils.assertContains("region= RegionBSPTree1S[", str);
+    }
+
     private static void checkClassify(SubHyperplane<Point2S> sub, RegionLocation loc, Point2S ... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, sub.classify(pt));
@@ -292,5 +461,68 @@ public class SubGreatCircleTest {
     private static void checkArc(Arc arc, Point2S start, Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
+    }
+
+    private static class UnknownSubHyperplane implements SubHyperplane<Point2S> {
+
+        @Override
+        public Split<? extends SubHyperplane<Point2S>> split(Hyperplane<Point2S> splitter) {
+            return null;
+        }
+
+        @Override
+        public Hyperplane<Point2S> getHyperplane() {
+            return null;
+        }
+
+        @Override
+        public boolean isFull() {
+            return false;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public boolean isInfinite() {
+            return false;
+        }
+
+        @Override
+        public boolean isFinite() {
+            return false;
+        }
+
+        @Override
+        public double getSize() {
+            return 0;
+        }
+
+        @Override
+        public RegionLocation classify(Point2S point) {
+            return null;
+        }
+
+        @Override
+        public Point2S closest(Point2S point) {
+            return null;
+        }
+
+        @Override
+        public Builder<Point2S> builder() {
+            return null;
+        }
+
+        @Override
+        public SubHyperplane<Point2S> transform(Transform<Point2S> transform) {
+            return null;
+        }
+
+        @Override
+        public List<? extends ConvexSubHyperplane<Point2S>> toConvex() {
+            return null;
+        }
     }
 }

@@ -25,7 +25,6 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.CutAngle;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 
@@ -154,6 +153,21 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
         validateGreatCircle(subcircle.getCircle());
 
         region.union(subcircle.getSubspaceRegion());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[')
+            .append("circle= ")
+            .append(getCircle())
+            .append(", region= ")
+            .append(region)
+            .append(']');
+
+        return sb.toString();
     }
 
     /** Validate that the given great circle is equivalent to the circle

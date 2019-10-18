@@ -242,7 +242,39 @@ public class RegionBSPTree1STest {
     }
 
     @Test
-    public void testToIntervals_multipleInterval() {
+    public void testToIntervals_wrapAround_joinedIntervalsOnPositiveSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(0.25 * Geometry.PI, Geometry.HALF_PI, TEST_PRECISION));
+        tree.add(AngularInterval.of(1.5 * Geometry.PI, 0.25 * Geometry.PI, TEST_PRECISION));
+
+        // act
+        List<AngularInterval> intervals = tree.toIntervals();
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+
+        checkInterval(intervals.get(0), 1.5 * Geometry.PI, Geometry.HALF_PI);
+    }
+
+    @Test
+    public void testToIntervals_wrapAround_joinedIntervalsOnNegativeSide() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(1.75 * Geometry.PI, Geometry.HALF_PI, TEST_PRECISION));
+        tree.add(AngularInterval.of(1.5 * Geometry.PI, 1.75 * Geometry.PI, TEST_PRECISION));
+
+        // act
+        List<AngularInterval> intervals = tree.toIntervals();
+
+        // assert
+        Assert.assertEquals(1, intervals.size());
+
+        checkInterval(intervals.get(0), 1.5 * Geometry.PI, Geometry.HALF_PI);
+    }
+
+    @Test
+    public void testToIntervals_multipleIntervals() {
         // arrange
         RegionBSPTree1S tree = RegionBSPTree1S.empty();
         tree.add(AngularInterval.of(Geometry.MINUS_HALF_PI, Geometry.HALF_PI, TEST_PRECISION));
