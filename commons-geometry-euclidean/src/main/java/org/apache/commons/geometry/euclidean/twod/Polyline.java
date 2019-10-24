@@ -31,7 +31,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * line segment equivalent to the start vertex of the next line segment. The first segment,
  * the last segment, or both may be infinite.
  *
- * <p>This class is guaranteed to be immutable.</p>
+ * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
 public class Polyline implements Iterable<Segment>, Serializable {
@@ -43,7 +43,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
     private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
     /** List of line segments comprising the instance. */
-    private List<Segment> segments;
+    private final List<Segment> segments;
 
     /** Simple constructor. No validation is performed on the input segments.
      * @param segments line segments comprising the instance

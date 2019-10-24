@@ -259,7 +259,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * given bounding lines. The returned instance represents the area that is on the
      * minus side of all of the given lines. Note that this method does not support areas
      * of zero size (ie, infinitely thin areas or points.)
-     * @param boundingLines lines used to define the convex area
+     * @param bounds lines used to define the convex area
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if no lines are
      *      given
@@ -267,15 +267,15 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      *      meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
-    public static ConvexArea fromBounds(final Line ... boundingLines) {
-        return fromBounds(Arrays.asList(boundingLines));
+    public static ConvexArea fromBounds(final Line ... bounds) {
+        return fromBounds(Arrays.asList(bounds));
     }
 
     /** Create a convex area formed by the intersection of the negative half-spaces of the
      * given bounding lines. The returned instance represents the area that is on the
      * minus side of all of the given lines. Note that this method does not support areas
      * of zero size (ie, infinitely thin areas or points.)
-     * @param boundingLines lines used to define the convex area
+     * @param bounds lines used to define the convex area
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if the collection
      *      is empty
@@ -283,8 +283,8 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      *      meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
-    public static ConvexArea fromBounds(final Iterable<Line> boundingLines) {
-        final List<Segment> segments = new ConvexRegionBoundaryBuilder<>(Segment.class).build(boundingLines);
+    public static ConvexArea fromBounds(final Iterable<Line> bounds) {
+        final List<Segment> segments = new ConvexRegionBoundaryBuilder<>(Segment.class).build(bounds);
         return segments.isEmpty() ? full() : new ConvexArea(segments);
     }
 }

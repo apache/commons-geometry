@@ -30,7 +30,7 @@ import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ArcTest {
+public class GreatArcTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,7 +40,7 @@ public class ArcTest {
     @Test
     public void testFromInterval_full() {
         // act
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
                 AngularInterval.full());
 
@@ -67,7 +67,7 @@ public class ArcTest {
     @Test
     public void testFromInterval_partial() {
         // arrange
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION),
                 AngularInterval.Convex.of(Geometry.HALF_PI, 1.5 * Geometry.PI, TEST_PRECISION));
 
@@ -83,12 +83,12 @@ public class ArcTest {
     @Test
     public void testToConvex() {
         // arrange
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
                 AngularInterval.Convex.of(Geometry.ZERO_PI, Geometry.PI, TEST_PRECISION));
 
         // act
-        List<Arc> result = arc.toConvex();
+        List<GreatArc> result = arc.toConvex();
 
         // assert
         Assert.assertEquals(1, result.size());
@@ -98,12 +98,12 @@ public class ArcTest {
     @Test
     public void testReverse_full() {
         // arrange
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
                 AngularInterval.full());
 
         // act
-        Arc result = arc.reverse();
+        GreatArc result = arc.reverse();
 
         // assert
         checkGreatCircle(result.getCircle(), Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
@@ -114,12 +114,12 @@ public class ArcTest {
     @Test
     public void testReverse() {
         // arrange
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
                 AngularInterval.Convex.of(Geometry.HALF_PI, Geometry.PI, TEST_PRECISION));
 
         // act
-        Arc result = arc.reverse();
+        GreatArc result = arc.reverse();
 
         // assert
         checkGreatCircle(result.getCircle(), Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y);
@@ -130,14 +130,14 @@ public class ArcTest {
     @Test
     public void testTransform() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION)
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION)
                 .arc(Geometry.PI, Geometry.MINUS_HALF_PI);
 
         Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI)
                 .reflect(Point2S.of(-0.25 * Geometry.PI,  Geometry.HALF_PI));
 
         // act
-        Arc result = arc.transform(t);
+        GreatArc result = arc.transform(t);
 
         // assert
         checkArc(result, Point2S.PLUS_I, Point2S.PLUS_J);
@@ -146,22 +146,22 @@ public class ArcTest {
     @Test
     public void testSplit_full() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         // act
-        Split<Arc> split = arc.split(splitter);
+        Split<GreatArc> split = arc.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        Arc minus = split.getMinus();
+        GreatArc minus = split.getMinus();
         Assert.assertSame(arc.getCircle(), minus.getCircle());
         checkArc(minus, Point2S.MINUS_J, Point2S.PLUS_J);
         checkClassify(minus, RegionLocation.OUTSIDE, Point2S.MINUS_I);
         checkClassify(minus, RegionLocation.INSIDE, Point2S.PLUS_I);
 
-        Arc plus = split.getPlus();
+        GreatArc plus = split.getPlus();
         Assert.assertSame(arc.getCircle(), plus.getCircle());
         checkArc(plus, Point2S.PLUS_J, Point2S.MINUS_J);
         checkClassify(plus, RegionLocation.INSIDE, Point2S.MINUS_I);
@@ -171,21 +171,21 @@ public class ArcTest {
     @Test
     public void testSplit_both() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
                 .arc(Geometry.HALF_PI, Geometry.PI);
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, 1), TEST_PRECISION);
 
         // act
-        Split<Arc> split = arc.split(splitter);
+        Split<GreatArc> split = arc.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        Arc minus = split.getMinus();
+        GreatArc minus = split.getMinus();
         Assert.assertSame(arc.getCircle(), minus.getCircle());
         checkArc(minus, Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI), Point2S.MINUS_J);
 
-        Arc plus = split.getPlus();
+        GreatArc plus = split.getPlus();
         Assert.assertSame(arc.getCircle(), plus.getCircle());
         checkArc(plus, Point2S.of(0, 0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
     }
@@ -193,47 +193,47 @@ public class ArcTest {
     @Test
     public void testSplit_minus() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
                 .arc(Geometry.HALF_PI, Geometry.PI);
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
 
         // act
-        Split<Arc> split = arc.split(splitter);
+        Split<GreatArc> split = arc.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Arc minus = split.getMinus();
+        GreatArc minus = split.getMinus();
         Assert.assertSame(arc, minus);
 
-        Arc plus = split.getPlus();
+        GreatArc plus = split.getPlus();
         Assert.assertNull(plus);
     }
 
     @Test
     public void testSplit_plus() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
                 .arc(Geometry.HALF_PI, Geometry.PI);
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<Arc> split = arc.split(splitter);
+        Split<GreatArc> split = arc.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Arc minus = split.getMinus();
+        GreatArc minus = split.getMinus();
         Assert.assertNull(minus);
 
-        Arc plus = split.getPlus();
+        GreatArc plus = split.getPlus();
         Assert.assertSame(arc, plus);
     }
 
     @Test
     public void testSplit_parallelAndAntiparallel() {
         // arrange
-        Arc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
 
         // act/assert
         Assert.assertEquals(SplitLocation.NEITHER,
@@ -245,7 +245,7 @@ public class ArcTest {
     @Test
     public void testToString() {
         // arrange
-        Arc arc = Arc.fromInterval(
+        GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
                 AngularInterval.Convex.of(1, 2, TEST_PRECISION));
 
@@ -258,13 +258,13 @@ public class ArcTest {
         Assert.assertTrue(str.contains("interval= Convex"));
     }
 
-    private static void checkClassify(Arc arc, RegionLocation loc, Point2S ... pts) {
+    private static void checkClassify(GreatArc arc, RegionLocation loc, Point2S ... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, arc.classify(pt));
         }
     }
 
-    private static void checkArc(Arc arc, Point2S start, Point2S end) {
+    private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
 

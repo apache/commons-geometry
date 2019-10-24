@@ -152,7 +152,7 @@ public class SubGreatCircleTest {
         SubGreatCircle result = sub.transform(t);
 
         // assert
-        List<Arc> arcs = result.toConvex();
+        List<GreatArc> arcs = result.toConvex();
         Assert.assertEquals(2, arcs.size());
 
         checkArc(arcs.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
@@ -176,7 +176,7 @@ public class SubGreatCircleTest {
         SubGreatCircle minus = split.getMinus();
         Assert.assertSame(sub.getCircle(), minus.getCircle());
 
-        List<Arc> minusArcs = minus.toConvex();
+        List<GreatArc> minusArcs = minus.toConvex();
         Assert.assertEquals(1, minusArcs.size());
         checkArc(minusArcs.get(0), Point2S.MINUS_J, Point2S.PLUS_J);
 
@@ -186,7 +186,7 @@ public class SubGreatCircleTest {
         SubGreatCircle plus = split.getPlus();
         Assert.assertSame(sub.getCircle(), plus.getCircle());
 
-        List<Arc> plusArcs = plus.toConvex();
+        List<GreatArc> plusArcs = plus.toConvex();
         Assert.assertEquals(1, plusArcs.size());
         checkArc(plusArcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
 
@@ -237,7 +237,7 @@ public class SubGreatCircleTest {
 
         SubGreatCircle minus = split.getMinus();
         Assert.assertSame(sub.getCircle(), minus.getCircle());
-        List<Arc> minusArcs = minus.toConvex();
+        List<GreatArc> minusArcs = minus.toConvex();
         Assert.assertEquals(2, minusArcs.size());
         checkArc(minusArcs.get(0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI), Point2S.MINUS_J);
         checkArc(minusArcs.get(1), Point2S.of(1.5 * Geometry.PI, Geometry.HALF_PI + 1),
@@ -245,7 +245,7 @@ public class SubGreatCircleTest {
 
         SubGreatCircle plus = split.getPlus();
         Assert.assertSame(sub.getCircle(), plus.getCircle());
-        List<Arc> plusArcs = plus.toConvex();
+        List<GreatArc> plusArcs = plus.toConvex();
         Assert.assertEquals(2, plusArcs.size());
         checkArc(plusArcs.get(0), Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI), Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI - 1));
         checkArc(plusArcs.get(1), Point2S.of(0, 0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
@@ -326,7 +326,7 @@ public class SubGreatCircleTest {
         sub.add(closeCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * Geometry.PI, 0.75 * Geometry.PI)));
 
         // assert
-        List<Arc> arcs = sub.toConvex();
+        List<GreatArc> arcs = sub.toConvex();
 
         Assert.assertEquals(1, arcs.size());
         checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
@@ -366,7 +366,7 @@ public class SubGreatCircleTest {
         sub.add(new SubGreatCircle(closeCircle, regionB));
 
         // assert
-        List<Arc> arcs = sub.toConvex();
+        List<GreatArc> arcs = sub.toConvex();
 
         Assert.assertEquals(2, arcs.size());
         checkArc(arcs.get(0), Point2S.of(Geometry.HALF_PI, 0), Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.PI));
@@ -406,7 +406,7 @@ public class SubGreatCircleTest {
         SubGreatCircle result = builder.build();
 
         // assert
-        List<Arc> arcs = result.toConvex();
+        List<GreatArc> arcs = result.toConvex();
 
         Assert.assertEquals(2, arcs.size());
         checkArc(arcs.get(0), Point2S.of(Geometry.HALF_PI, 0), Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.PI));
@@ -458,7 +458,7 @@ public class SubGreatCircleTest {
         }
     }
 
-    private static void checkArc(Arc arc, Point2S start, Point2S end) {
+    private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }

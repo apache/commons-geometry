@@ -1,0 +1,163 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.geometry.spherical.twod;
+
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.junit.Assert;
+
+public class ConvexArea2STest {
+
+    private static final double TEST_EPS = 1e-10;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testFull() {
+        // act
+        ConvexArea2S area = ConvexArea2S.full();
+
+        // assert
+        Assert.assertTrue(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+        Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(4 * Geometry.PI, area.getSize(), TEST_EPS);
+        Assert.assertNull(area.getBarycenter());
+
+        Assert.assertEquals(0, area.getBoundaries().size());
+
+        checkClassify(area, RegionLocation.INSIDE,
+                Point2S.PLUS_I, Point2S.MINUS_I,
+                Point2S.PLUS_J, Point2S.MINUS_J,
+                Point2S.PLUS_K, Point2S.MINUS_K);
+    }
+
+    @Test
+    public void testFromBounds_empty() {
+        // act
+        ConvexArea2S area = ConvexArea2S.fromBounds();
+
+        // assert
+        Assert.assertTrue(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+        Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(4 * Geometry.PI, area.getSize(), TEST_EPS);
+        Assert.assertNull(area.getBarycenter());
+
+        Assert.assertEquals(0, area.getBoundaries().size());
+
+        checkClassify(area, RegionLocation.INSIDE,
+                Point2S.PLUS_I, Point2S.MINUS_I,
+                Point2S.PLUS_J, Point2S.MINUS_J,
+                Point2S.PLUS_K, Point2S.MINUS_K);
+    }
+
+    @Test
+    public void testFromBounds_singleBound() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+
+        // act
+        ConvexArea2S area = ConvexArea2S.fromBounds(circle);
+
+        // assert
+        Assert.assertFalse(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+        Assert.assertEquals(2 * Geometry.PI, area.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(2 * Geometry.PI, area.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, area.getBarycenter(), TEST_EPS);
+
+        Assert.assertEquals(1, area.getBoundaries().size());
+        GreatArc arc = area.getBoundaries().get(0);
+        Assert.assertTrue(arc.isFull());
+        SphericalTestUtils.assertPointsEq(Point2S.MINUS_J, arc.getCircle().getPolePoint(), TEST_EPS);
+
+        checkClassify(area, RegionLocation.INSIDE, Point2S.PLUS_J);
+
+        checkClassify(area, RegionLocation.BOUNDARY,
+                Point2S.PLUS_I, Point2S.MINUS_I,
+                Point2S.PLUS_K, Point2S.MINUS_K);
+
+        checkClassify(area, RegionLocation.OUTSIDE, Point2S.MINUS_J);
+    }
+
+    @Test
+    public void testFromBounds_twoBounds() {
+        // arrange
+        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPoints(
+                Point2S.PLUS_K, Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI), TEST_PRECISION);
+
+        // act
+        ConvexArea2S area = ConvexArea2S.fromBounds(a, b);
+
+        Assert.assertFalse(area.isFull());
+        Assert.assertFalse(area.isEmpty());
+        Assert.assertEquals(2 * Geometry.PI, area.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, area.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.125 * Geometry.PI, Geometry.HALF_PI), area.getBarycenter(), TEST_EPS);
+
+        List<GreatArc> arcs = sortArcs(area.getBoundaries());
+        Assert.assertEquals(2, arcs.size());
+        checkArc(area.getBoundaries().get(0), Point2S.MINUS_K, Point2S.PLUS_K);
+        checkArc(area.getBoundaries().get(1), Point2S.PLUS_K, Point2S.MINUS_K);
+
+        checkClassify(area, RegionLocation.INSIDE,
+                Point2S.of(0.125 * Geometry.PI, 0.1),
+                Point2S.of(0.125 * Geometry.PI, Geometry.HALF_PI),
+                Point2S.of(0.125 * Geometry.PI, Geometry.PI - 0.1));
+
+        checkClassify(area, RegionLocation.BOUNDARY,
+                Point2S.PLUS_I, Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI),
+                Point2S.PLUS_K, Point2S.MINUS_K);
+
+        checkClassify(area, RegionLocation.OUTSIDE,
+                Point2S.PLUS_J, Point2S.MINUS_J);
+    }
+
+    private static List<GreatArc> sortArcs(List<GreatArc> arcs) {
+        List<GreatArc> result = new ArrayList<>(arcs);
+
+        Collections.sort(result, (a, b) ->
+            Vector3D.COORDINATE_ASCENDING_ORDER.compare(a.getCircle().getPole(), b.getCircle().getPole()));
+
+        return result;
+    }
+
+    private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
+        SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
+    }
+
+    private static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
+        for (Point2S pt : pts) {
+            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+        }
+    }
+}

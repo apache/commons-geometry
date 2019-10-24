@@ -37,7 +37,7 @@ import org.apache.commons.geometry.spherical.oned.Transform1S;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
+public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20191005L;
@@ -50,7 +50,7 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
      * @param circle defining great circle instance
      * @param interval convex angular interval embedded in the great circle
      */
-    private Arc(final GreatCircle circle, final AngularInterval.Convex interval) {
+    private GreatArc(final GreatCircle circle, final AngularInterval.Convex interval) {
         super(circle);
 
         this.interval = interval;
@@ -94,20 +94,20 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
 
     /** {@inheritDoc} */
     @Override
-    public List<Arc> toConvex() {
+    public List<GreatArc> toConvex() {
         return Collections.singletonList(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<Arc> split(final Hyperplane<Point2S> splitter) {
+    public Split<GreatArc> split(final Hyperplane<Point2S> splitter) {
         final GreatCircle splitterCircle = (GreatCircle) splitter;
         final GreatCircle thisCircle = getCircle();
 
         final Point2S intersection = splitterCircle.intersection(thisCircle);
 
-        Arc minus = null;
-        Arc plus = null;
+        GreatArc minus = null;
+        GreatArc plus = null;
 
         if (intersection != null) {
             final CutAngle subSplitter = CutAngle.createPositiveFacing(
@@ -123,8 +123,8 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
                 plus = this;
             }
             else if (subLoc == SplitLocation.BOTH) {
-                minus = Arc.fromInterval(thisCircle, subSplit.getMinus());
-                plus = Arc.fromInterval(thisCircle, subSplit.getPlus());
+                minus = GreatArc.fromInterval(thisCircle, subSplit.getMinus());
+                plus = GreatArc.fromInterval(thisCircle, subSplit.getPlus());
             }
         }
 
@@ -133,14 +133,14 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
 
     /** {@inheritDoc} */
     @Override
-    public Arc transform(final Transform<Point2S> transform) {
-        return new Arc(getCircle().transform(transform), interval);
+    public GreatArc transform(final Transform<Point2S> transform) {
+        return new GreatArc(getCircle().transform(transform), interval);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Arc reverse() {
-        return new Arc(
+    public GreatArc reverse() {
+        return new GreatArc(
                 getCircle().reverse(),
                 interval.transform(Transform1S.createNegation()));
     }
@@ -165,7 +165,7 @@ public class Arc extends AbstractSubGreatCircle implements ConvexSubHyperplane<P
      *      in the arc
      * @return an arc created from the given great circle and interval
      */
-    public static Arc fromInterval(final GreatCircle circle, final AngularInterval.Convex interval) {
-        return new Arc(circle, interval);
+    public static GreatArc fromInterval(final GreatCircle circle, final AngularInterval.Convex interval) {
+        return new GreatArc(circle, interval);
     }
 }

@@ -386,7 +386,7 @@ public class GreatCircleTest {
         GreatCircle circle = GreatCircle.fromPoleAndXAxis(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Arc span = circle.span();
+        GreatArc span = circle.span();
 
         // assert
         Assert.assertSame(circle, span.getCircle());
@@ -439,7 +439,7 @@ public class GreatCircleTest {
         AngularInterval.Convex interval = AngularInterval.Convex.of(1, 2, TEST_PRECISION);
 
         // act
-        Arc arc = circle.arc(interval);
+        GreatArc arc = circle.arc(interval);
 
         // assert
         Assert.assertSame(circle, arc.getCircle());
@@ -481,6 +481,103 @@ public class GreatCircleTest {
                 b.intersection(c).getVector(), TEST_EPS);
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_X,
                 c.intersection(b).getVector(), TEST_EPS);
+    }
+
+    @Test
+    public void testAngle_withoutReferencePoint() {
+     // arrange
+        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle c = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle d = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle e = GreatCircle.fromPoleAndXAxis(
+                Vector3D.Unit.of(1, 0, 1),
+                Vector3D.Unit.PLUS_Y,
+                TEST_PRECISION);
+
+        GreatCircle f = GreatCircle.fromPoleAndXAxis(
+                Vector3D.Unit.of(1, 0, -1),
+                Vector3D.Unit.PLUS_Y,
+                TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0, a.angle(a), TEST_EPS);
+        Assert.assertEquals(Geometry.PI, a.angle(b), TEST_EPS);
+
+        Assert.assertEquals(Geometry.HALF_PI, a.angle(c), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, c.angle(a), TEST_EPS);
+
+        Assert.assertEquals(Geometry.HALF_PI, a.angle(d), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, d.angle(a), TEST_EPS);
+
+        Assert.assertEquals(0.25 * Geometry.PI, a.angle(e), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, e.angle(a), TEST_EPS);
+
+        Assert.assertEquals(0.75 * Geometry.PI, a.angle(f), TEST_EPS);
+        Assert.assertEquals(0.75 * Geometry.PI, f.angle(a), TEST_EPS);
+    }
+
+    @Test
+    public void testAngle_withReferencePoint() {
+        // arrange
+        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle c = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle d = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle e = GreatCircle.fromPoleAndXAxis(
+                Vector3D.Unit.of(1, 0, 1),
+                Vector3D.Unit.PLUS_Y,
+                TEST_PRECISION);
+
+        GreatCircle f = GreatCircle.fromPoleAndXAxis(
+                Vector3D.Unit.of(1, 0, -1),
+                Vector3D.Unit.PLUS_Y,
+                TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(0, a.angle(a, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(0, a.angle(a, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(-Geometry.PI, a.angle(b, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(-Geometry.PI, a.angle(b, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(Geometry.HALF_PI, a.angle(c, Point2S.PLUS_I), TEST_EPS);
+        Assert.assertEquals(-Geometry.HALF_PI, a.angle(c, Point2S.MINUS_I), TEST_EPS);
+
+        Assert.assertEquals(-Geometry.HALF_PI, c.angle(a, Point2S.PLUS_I), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, c.angle(a, Point2S.MINUS_I), TEST_EPS);
+
+        Assert.assertEquals(Geometry.HALF_PI, a.angle(d, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(-Geometry.HALF_PI, a.angle(d, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(-Geometry.HALF_PI, d.angle(a, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, d.angle(a, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(0.25 * Geometry.PI, a.angle(e, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, a.angle(e, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(-0.25 * Geometry.PI, e.angle(a, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, e.angle(a, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(0.75 * Geometry.PI, a.angle(f, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(-0.75 * Geometry.PI, a.angle(f, Point2S.MINUS_J), TEST_EPS);
+
+        Assert.assertEquals(-0.75 * Geometry.PI, f.angle(a, Point2S.PLUS_J), TEST_EPS);
+        Assert.assertEquals(0.75 * Geometry.PI, f.angle(a, Point2S.MINUS_J), TEST_EPS);
+    }
+
+    @Test
+    public void testAngle_withReferencePoint_pointEquidistanceFromIntersections() {
+        // arrange
+        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPoleAndXAxis(
+                Vector3D.Unit.of(1, 0, 1),
+                Vector3D.Unit.PLUS_Y,
+                TEST_PRECISION);
+
+        // act/assert
+        Assert.assertEquals(-0.25 * Geometry.PI, a.angle(b, Point2S.PLUS_I), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, a.angle(b, Point2S.MINUS_I), TEST_EPS);
     }
 
     @Test
@@ -648,7 +745,7 @@ public class GreatCircleTest {
         Assert.assertEquals(HyperplaneLocation.ON, circle.classify(origin));
     }
 
-    private static void checkArc(Arc arc, Point2S start, Point2S end) {
+    private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }

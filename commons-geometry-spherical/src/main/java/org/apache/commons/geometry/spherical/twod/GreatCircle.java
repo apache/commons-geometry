@@ -202,8 +202,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc} */
     @Override
-    public Arc span() {
-        return Arc.fromInterval(this, AngularInterval.full());
+    public GreatArc span() {
+        return GreatArc.fromInterval(this, AngularInterval.full());
     }
 
     /** Create an arc on this circle between the given points.
@@ -213,7 +213,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
-    public Arc arc(final Point2S start, final Point2S end) {
+    public GreatArc arc(final Point2S start, final Point2S end) {
         return arc(toSubspace(start), toSubspace(end));
     }
 
@@ -224,7 +224,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
-    public Arc arc(final Point1S start, final Point1S end) {
+    public GreatArc arc(final Point1S start, final Point1S end) {
         return arc(start.getAzimuth(), end.getAzimuth());
     }
 
@@ -235,7 +235,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
-    public Arc arc(final double start, final double end) {
+    public GreatArc arc(final double start, final double end) {
         return arc(AngularInterval.Convex.of(start, end, getPrecision()));
     }
 
@@ -243,8 +243,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param interval subspace interval
      * @return an arc on this circle consisting of the given subspace interval
      */
-    public Arc arc(final AngularInterval.Convex interval) {
-        return Arc.fromInterval(this, interval);
+    public GreatArc arc(final AngularInterval.Convex interval) {
+        return GreatArc.fromInterval(this, interval);
     }
 
     /** Return one of the two intersection points between this instance and the argument.
@@ -262,6 +262,43 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         }
 
         return null;
+    }
+
+    /** Compute the angle between this great circle and the argument.
+     * The return value is the angle between the poles of the two circles,
+     * in the range {@code [0, pi]}.
+     * @param other great circle to compute the angle with
+     * @return the angle between this great circle and the argument in the
+     *      range {@code [0, pi]}
+     * @see #angle(GreatCircle, Point2S)
+     */
+    public double angle(final GreatCircle other) {
+        return pole.angle(other.pole);
+    }
+
+    /** Compute the angle between this great circle and the argument, measured
+     * at the intersection point closest to the given point. The value is computed
+     * as if a tangent line was drawn from each great circle at the intersection
+     * point closest to {@code pt}, and the angle required to rotate the tangent
+     * line representing the current instance to align with that of the given
+     * instance was measured. The return value lies in the range {@code [-pi, pi)} and
+     * has an absolute value equal to that returned by {@link #angle(GreatCircle)}, but
+     * possibly a different sign. If the given point is equidistant from both intersection
+     * points (as evaluated by this instance's precision context), then the point is assumed
+     * to be closest to the point opposite the cross product of the two poles.
+     * @param other great circle to compute the angle with
+     * @return the angle between this great circle and the argument as measured at the
+     *      intersection point closest to the given point; the value is in the range
+     *      {@code [-pi, pi)}
+     * @see #angle(GreatCircle)
+     */
+    public double angle(final GreatCircle other, final Point2S pt) {
+        final double theta = angle(other);
+        final Vector3D cross = pole.cross(other.pole);
+
+        return getPrecision().gt(pt.getVector().dot(cross), 0) ?
+                theta :
+                -theta;
     }
 
     /** {@inheritDoc} */

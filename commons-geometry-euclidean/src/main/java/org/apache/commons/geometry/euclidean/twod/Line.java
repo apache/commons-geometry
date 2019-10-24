@@ -311,8 +311,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
     }
 
     /** Compute the angle in radians between this instance's direction and the direction
-     * of the given line. The return value is in the range {@code [-pi, +pi)}. Note
-     * that this method always returns a value, even for parallel or coincident lines.
+     * of the given line. The return value is in the range {@code [-pi, +pi)}. This method
+     * always returns a value, even for parallel or coincident lines.
      * @param other other line
      * @return the angle required to rotate this line to point in the direction of
      *      the given line
