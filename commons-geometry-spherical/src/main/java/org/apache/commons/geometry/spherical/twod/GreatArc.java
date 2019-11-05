@@ -20,12 +20,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.CutAngle;
+import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.oned.Transform1S;
 
 /** Class representing a single, <em>convex</em> angular interval in a {@link GreatCircle}. Convex
@@ -145,18 +148,63 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
                 interval.transform(Transform1S.createNegation()));
     }
 
-    /** {@inheritDoc} */
+    /** Return a string representation of this great arc.
+     *
+     * <p>In order to keep the string representation short but useful, the exact format of the return
+     * value depends on the properties of the arc. See below for examples.
+     *
+     * <ul>
+     *      <li>Full arc
+     *          <ul>
+     *              <li>{@code GreatArc[full= true, circle= GreatCircle[pole= (0.0, 0.0, 1.0), x= (1.0, 0.0, 0.0), y= (0.0, 1.0, 0.0)]}</li>
+     *          </ul>
+     *      </li>
+     *      <li>Non-full arc
+     *          <ul>
+     *              <li>{@code GreatArc[start= (1.0, 1.5707963267948966), end= (2.0, 1.5707963267948966)}</li>
+     *          </ul>
+     *      </li>
+     * </ul>
+     * </p>
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getSimpleName())
-            .append("[circle= ")
-            .append(getCircle())
-            .append(", interval= ")
-            .append(getInterval())
-            .append(']');
+            .append("[");
+
+        if (isFull()) {
+            sb.append("full= true, circle= ")
+                .append(getCircle());
+        }
+        else {
+            sb.append("start= ")
+                .append(getStartPoint())
+                .append(", end= ")
+                .append(getEndPoint());
+        }
 
         return sb.toString();
+    }
+
+    /** Construct an arc along the shortest path between the given points. The underlying
+     * great circle is oriented in the direction from {@code start} to {@code end}.
+     * @param start start point for the interval
+     * @param end end point point for the interval
+     * @return an arc representing the shortest path between the given points
+     * @throws IllegalArgumentException if either of the given points is NaN or infinite
+     * @throws GeometryException if the given points are equal or antipodal as evaluated by
+     *      the given precision context
+     * @see GreatCircle#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.DoublePrecisionContext)
+     */
+    public static GreatArc fromPoints(final Point2S start, final Point2S end, final DoublePrecisionContext precision) {
+        final GreatCircle circle = GreatCircle.fromPoints(start, end, precision);
+
+        final Point1S subspaceStart = circle.toSubspace(start);
+        final Point1S subspaceEnd = circle.toSubspace(end);
+        final AngularInterval.Convex interval = AngularInterval.Convex.of(subspaceStart, subspaceEnd, precision);
+
+        return fromInterval(circle, interval);
     }
 
     /** Construct an arc from a great circle and an angular interval.

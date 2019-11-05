@@ -406,14 +406,20 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
         }
     }
 
-    /** Return true if the given cut angles define a convex region.
+    /** Return true if the given cut angles define a convex region. By convention, the
+     * precision context from the min cut is used for the floating point comparison.
      * @param min min (negative-facing) cut angle
      * @param max max (positive-facing) cut angle
      * @return true if the given cut angles define a convex region
      */
     private static boolean isConvex(final CutAngle min, final CutAngle max) {
-        return min == null || max == null ||
-                (max.getAzimuth() - min.getAzimuth() <= Geometry.PI);
+        if (min != null && max != null) {
+            final double dist = max.getAzimuth() - min.getAzimuth();
+            final DoublePrecisionContext precision = min.getPrecision();
+            return precision.lte(dist, Geometry.PI);
+        }
+
+        return true;
     }
 
     /** Internal transform method that transforms the given instance, using the factory
@@ -458,7 +464,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
          * @param minBoundary minimum boundary for the interval
          * @param maxBoundary maximum boundary for the interval
          * @param midpoint the midpoint between the boundaries
-         * @throw IllegalArgumentException if the interval is not convex
+         * @throws IllegalArgumentException if the interval is not convex
          */
         private Convex(final CutAngle minBoundary, final CutAngle maxBoundary) {
             super(minBoundary, maxBoundary);

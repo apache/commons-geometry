@@ -50,7 +50,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
-    public static final Point2S NaN = new Point2S(Double.NaN, Double.NaN, Vector3D.NaN);
+    public static final Point2S NaN = new Point2S(Double.NaN, Double.NaN, null);
     // CHECKSTYLE: resume ConstantName
 
     /** Serializable UID. */
@@ -63,17 +63,19 @@ public final class Point2S implements Point<Point2S>, Serializable {
     private final double polar;
 
     /** Corresponding 3D normalized vector. */
-    private final Vector3D vector;
+    private final Vector3D.Unit vector;
 
     /** Build a point from its internal components.
      * @param azimuth azimuthal angle in the x-y plane
      * @param polar polar angle
      * @param vector corresponding vector; if null, the vector is computed
      */
-    private Point2S(final double azimuth, final double polar, final Vector3D vector) {
+    private Point2S(final double azimuth, final double polar, final Vector3D.Unit vector) {
         this.azimuth = SphericalCoordinates.normalizeAzimuth(azimuth);
         this.polar = SphericalCoordinates.normalizePolar(polar);
-        this.vector = (vector != null) ? vector : SphericalCoordinates.toCartesian(1.0, azimuth, polar);
+        this.vector = (vector != null) ?
+                vector :
+                computeVector(azimuth, polar);
     }
 
     /** Get the azimuth angle in the x-y plane in the range {@code [0, 2pi)}.
@@ -92,10 +94,12 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return polar;
     }
 
-    /** Get the corresponding normalized vector in the 3D Euclidean space.
+    /** Get the corresponding normalized vector in 3D Euclidean space.
+     * This value will be null if the spherical coordinates of the point
+     * are infinite or NaN.
      * @return normalized vector
      */
-    public Vector3D getVector() {
+    public Vector3D.Unit getVector() {
         return vector;
     }
 
@@ -250,5 +254,19 @@ public final class Point2S implements Point<Point2S>, Serializable {
      */
     public static double distance(Point2S p1, Point2S p2) {
         return p1.vector.angle(p2.vector);
+    }
+
+    /** Compute the 3D Euclidean vector associated with the given spherical coordinates.
+     * Null is returned if the coordinates are infinite or NaN.
+     * @param azimuth azimuth value
+     * @param polar polar value
+     * @return the 3D Euclidean vector associated with the given spherical coordinates
+     *      or null if either of the arguments are infinite or NaN.
+     */
+    private static Vector3D.Unit computeVector(final double azimuth, final double polar) {
+        if (Double.isFinite(azimuth) && Double.isFinite(polar)) {
+            return SphericalCoordinates.toCartesian(1, azimuth, polar).normalize();
+        }
+        return null;
     }
 }

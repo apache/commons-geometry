@@ -597,7 +597,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_orientedPoints() {
+    public void testConvex_of_cutAngles() {
         // arrange
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-3);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-2);
@@ -623,7 +623,7 @@ public class AngularIntervalTest {
     }
 
     @Test
-    public void testConvex_of_orientedPoints_invalidArgs() {
+    public void testConvex_of_cutAngles_invalidArgs() {
         // arrange
         CutAngle pt = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
         CutAngle nan = CutAngle.createPositiveFacing(Point1S.NaN, TEST_PRECISION);

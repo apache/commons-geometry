@@ -95,7 +95,7 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
                         -arc.getSize(), arc.getCircle().getPole());
             }
 
-            return Point2S.from(barycenter);
+            return Point2S.from(barycenter.normalize());
         }
 
         return null;
@@ -105,6 +105,14 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     @Override
     public Split<ConvexArea2S> split(final Hyperplane<Point2S> splitter) {
         return splitInternal(splitter, this, GreatArc.class, ConvexArea2S::new);
+    }
+
+    /** Get a path instance representing the boundary of the area. The path is oriented
+     * so that the minus sides of the arcs lie on the inside of the area.
+     * @return the boundary path of the area
+     */
+    public ArcPath getBoundaryPath() {
+        return ArcPath.fromArcs(getBoundaries());
     }
 
     /** Return an instance representing the full spherical 2D space.

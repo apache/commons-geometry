@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a polyline, ie, a connected series of line segments. The line
@@ -166,6 +168,40 @@ public class Polyline implements Iterable<Segment>, Serializable {
         return false;
     }
 
+    /** Transform this instance with the argument, returning the result in a new instance.
+     * @param transform the transform to apply
+     * @return a new instance, transformed by the argument
+     */
+    public Polyline transform(final Transform<Vector2D> transform) {
+        if (!isEmpty()) {
+            final List<Segment> transformed = segments.stream()
+                    .map(s -> s.transform(transform))
+                    .collect(Collectors.toCollection(() -> new ArrayList<>()));
+
+            return new Polyline(transformed);
+        }
+
+        return this;
+    }
+
+    /** Return a new instance with all line segment directions, and their order,
+     * reversed. The last segment in this instance will be the first in the
+     * returned instance.
+     * @return a new instance with the polyline reversed
+     */
+    public Polyline reverse() {
+        if (!isEmpty()) {
+            final List<Segment> reversed = segments.stream()
+                    .map(s -> s.reverse())
+                    .collect(Collectors.toCollection(() -> new ArrayList<>()));
+            Collections.reverse(reversed);
+
+            return new Polyline(reversed);
+        }
+
+        return this;
+    }
+
     /** Construct a {@link RegionBSPTree2D} from the line segments in this instance.
      * @return a bsp tree constructed from the line segments in this instance
      */
@@ -246,33 +282,33 @@ public class Polyline implements Iterable<Segment>, Serializable {
      *          <ul>
      *              <li>{@code Polyline[empty= true]}</li>
      *          </ul>
- *          </li>
- *          <li>Single segment
- *              <ul>
- *                  <li>{@code Polyline[segment= Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]]}</li>
- *                  <li>{@code Polyline[segment= Segment[start= (0.0, 0.0), end= (1.0, 0.0)]]}</li>
- *              </ul>
- *          </li>
- *          <li>Path with infinite start segment
- *              <ul>
- *                  <li>{@code Polyline[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
- *              </ul>
- *          </li>
- *          <li>Path with infinite end segment
- *              <ul>
- *                  <li>{@code Polyline[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
- *              </ul>
- *          </li>
- *          <li>Path with infinite start and end segments
- *              <ul>
- *                  <li>{@code Polyline[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
- *              </ul>
- *          </li>
- *          <li>Path with no infinite segments
- *              <ul>
- *                  <li>{@code Polyline[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
- *              </ul>
- *          </li>
+     *      </li>
+     *      <li>Single segment
+     *          <ul>
+     *              <li>{@code Polyline[segment= Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]]}</li>
+     *              <li>{@code Polyline[segment= Segment[start= (0.0, 0.0), end= (1.0, 0.0)]]}</li>
+     *          </ul>
+     *      </li>
+     *      <li>Path with infinite start segment
+     *          <ul>
+     *              <li>{@code Polyline[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
+     *          </ul>
+     *      </li>
+     *      <li>Path with infinite end segment
+     *          <ul>
+     *              <li>{@code Polyline[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+     *          </ul>
+     *      </li>
+     *      <li>Path with infinite start and end segments
+     *          <ul>
+     *              <li>{@code Polyline[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+     *          </ul>
+     *      </li>
+     *      <li>Path with no infinite segments
+     *          <ul>
+     *              <li>{@code Polyline[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
+     *          </ul>
+     *      </li>
      * </ul>
      * </p>
      */
@@ -347,30 +383,56 @@ public class Polyline implements Iterable<Segment>, Serializable {
         return builder.build();
     }
 
+    /** Build a new polyline from the given vertices. A line segment is created
+     * from the last vertex to the first one, if the two vertices are not already
+     * considered equal using the given precision context. This method is equivalent to
+     * calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * fromVertices(vertices, true, precision)}
+     * @param vertices the vertices to construct the closed path from
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new closed polyline constructed from the given vertices
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     */
+    public static Polyline fromVertexLoop(final Collection<Vector2D> vertices,
+            final DoublePrecisionContext precision) {
+
+        return fromVertices(vertices, true, precision);
+    }
+
+    /** Build a new polyline from the given vertices. No additional segment is added
+     * from the last vertex to the first. This method is equivalent to calling
+     * {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * fromVertices(vertices, false, precision)}.
+     * @param vertices the vertices to construct the path from
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new polyline constructed from the given vertices
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     */
+    public static Polyline fromVertices(final Collection<Vector2D> vertices,
+            final DoublePrecisionContext precision) {
+
+        return fromVertices(vertices, false, precision);
+    }
+
     /** Build a new polyline from the given vertices.
      * @param vertices the vertices to construct the path from
+     * @param close if true, a line segment is created from the last vertex
+     *      given to the first one, if the two vertices are not already considered
+     *      equal using the given precision context.
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new polyline constructed from the given vertices
      */
     public static Polyline fromVertices(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
+            final boolean close, final DoublePrecisionContext precision) {
 
-        return builder(precision).appendVertices(vertices).build();
-    }
+        final Builder builder = builder(precision).appendVertices(vertices);
 
-    /** Build a new polyline from the given vertices. A line segment is created
-     * from the last vertex given to the first one, if the two vertices are not considered
-     * equal using the given precision context.
-     * @param vertices the vertices to construct the closed path from
-     * @param precision precision context used to construct the line segment
-     *      instances for the path
-     * @return new closed polyline constructed from the given vertices
-     */
-    public static Polyline fromVertexLoop(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
-
-        return builder(precision).appendVertices(vertices).close();
+        return close ?
+                builder.close() :
+                builder.build();
     }
 
     /** Return a line segment path containing no segments.

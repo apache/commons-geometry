@@ -19,7 +19,9 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -78,6 +80,86 @@ public class GreatArcTest {
         Assert.assertFalse(arc.isInfinite());
 
         checkArc(arc, Point2S.PLUS_K, Point2S.MINUS_K);
+    }
+
+    @Test
+    public void testFromPoints() {
+        // arrange
+        Point2S start = Point2S.PLUS_I;
+        Point2S end = Point2S.MINUS_K;
+
+        // act
+        GreatArc arc = GreatArc.fromPoints(start, end, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(arc.isFull());
+        Assert.assertFalse(arc.isEmpty());
+        Assert.assertTrue(arc.isFinite());
+        Assert.assertFalse(arc.isInfinite());
+
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Y, arc.getCircle().getPole(), TEST_EPS);
+
+        checkArc(arc, start, end);
+
+        checkClassify(arc, RegionLocation.INSIDE, Point2S.of(0, 0.75 * Geometry.PI));
+        checkClassify(arc, RegionLocation.BOUNDARY, start, end);
+        checkClassify(arc, RegionLocation.OUTSIDE,
+                Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.PI, 0.75 * Geometry.PI),
+                Point2S.of(Geometry.PI, 0.25 * Geometry.PI));
+    }
+
+    @Test
+    public void testFromPoints_almostPi() {
+        // arrange
+        Point2S start = Point2S.PLUS_J;
+        Point2S end = Point2S.of(1.5 * Geometry.PI, Geometry.HALF_PI - 1e-5);
+
+        // act
+        GreatArc arc = GreatArc.fromPoints(start, end, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(arc.isFull());
+        Assert.assertFalse(arc.isEmpty());
+        Assert.assertTrue(arc.isFinite());
+        Assert.assertFalse(arc.isInfinite());
+
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_X, arc.getCircle().getPole(), TEST_EPS);
+
+        checkArc(arc, start, end);
+
+        checkClassify(arc, RegionLocation.INSIDE, Point2S.PLUS_K);
+        checkClassify(arc, RegionLocation.BOUNDARY, start, end);
+        checkClassify(arc, RegionLocation.OUTSIDE, Point2S.MINUS_K);
+    }
+
+    @Test
+    public void testFromPoints_usesShortestPath() {
+        // act/assert
+        SphericalTestUtils.assertVectorsEqual(
+                Vector3D.Unit.MINUS_Y,
+                GreatArc.fromPoints(
+                        Point2S.PLUS_I,
+                        Point2S.of(Geometry.PI, Geometry.HALF_PI - 1e-5),
+                        TEST_PRECISION).getCircle().getPole(), TEST_EPS);
+
+        SphericalTestUtils.assertVectorsEqual(
+                Vector3D.Unit.PLUS_Y,
+                GreatArc.fromPoints(
+                        Point2S.PLUS_I,
+                        Point2S.of(Geometry.PI, Geometry.HALF_PI + 1e-5),
+                        TEST_PRECISION).getCircle().getPole(), TEST_EPS);
+    }
+
+    @Test
+    public void testFromPoints_invalidPoints() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            GreatArc.fromPoints(Point2S.PLUS_I, Point2S.of(1e-12, Geometry.HALF_PI), TEST_PRECISION);
+        }, GeometryException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            GreatArc.fromPoints(Point2S.PLUS_I, Point2S.MINUS_I, TEST_PRECISION);
+        }, GeometryException.class);
     }
 
     @Test
@@ -243,7 +325,21 @@ public class GreatArcTest {
     }
 
     @Test
-    public void testToString() {
+    public void testToString_full() {
+        // arrange
+        GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span();
+
+        // act
+        String str = arc.toString();
+
+        // assert
+        GeometryTestUtils.assertContains("GreatArc[", str);
+        GeometryTestUtils.assertContains("full= true", str);
+        GeometryTestUtils.assertContains("circle= GreatCircle[", str);
+    }
+
+    @Test
+    public void testToString_notFull() {
         // arrange
         GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION),
@@ -253,9 +349,9 @@ public class GreatArcTest {
         String str = arc.toString();
 
         // assert
-        Assert.assertTrue(str.contains("Arc"));
-        Assert.assertTrue(str.contains("circle= GreatCircle"));
-        Assert.assertTrue(str.contains("interval= Convex"));
+        GeometryTestUtils.assertContains("GreatArc[", str);
+        GeometryTestUtils.assertContains("start= (", str);
+        GeometryTestUtils.assertContains("end= (", str);
     }
 
     private static void checkClassify(GreatArc arc, RegionLocation loc, Point2S ... pts) {

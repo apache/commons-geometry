@@ -398,7 +398,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     }
 
     /** Create a great circle instance from two points on the circle. The x-axis of the
-     * instance points to the location of the first point.
+     * instance points to the location of the first point. The orientation of the circle
+     * is along the shortest path between the two points.
      * @param a first point on the great circle
      * @param b second point on the great circle
      * @param precision precision context used to compare floating point values

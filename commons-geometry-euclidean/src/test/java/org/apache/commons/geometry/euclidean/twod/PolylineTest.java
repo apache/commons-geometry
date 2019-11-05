@@ -496,6 +496,34 @@ public class PolylineTest {
     }
 
     @Test
+    public void testFromVertices_booleanArg() {
+        // arrange
+        Vector2D p1 = Vector2D.ZERO;
+        Vector2D p2 = Vector2D.of(1, 0);
+        Vector2D p3 = Vector2D.of(0, 1);
+
+        // act
+        Polyline open = Polyline.fromVertices(Arrays.asList(p1, p2, p3), false, TEST_PRECISION);
+        Polyline closed = Polyline.fromVertices(Arrays.asList(p1, p2, p3), true, TEST_PRECISION);
+
+        // assert
+        Assert.assertFalse(open.isClosed());
+
+        List<Segment> openSegments = open.getSegments();
+        Assert.assertEquals(2, openSegments.size());
+        assertFiniteSegment(openSegments.get(0), p1, p2);
+        assertFiniteSegment(openSegments.get(1), p2, p3);
+
+        Assert.assertTrue(closed.isClosed());
+
+        List<Segment> closedSegments = closed.getSegments();
+        Assert.assertEquals(3, closedSegments.size());
+        assertFiniteSegment(closedSegments.get(0), p1, p2);
+        assertFiniteSegment(closedSegments.get(1), p2, p3);
+        assertFiniteSegment(closedSegments.get(2), p3, p1);
+    }
+
+    @Test
     public void testGetSegments_listIsNotModifiable() {
         // arrange
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
@@ -531,6 +559,164 @@ public class PolylineTest {
         Assert.assertEquals(2, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_X);
         assertFiniteSegment(segments.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
+    }
+
+    @Test
+    public void testTransform_empty() {
+        // arrange
+        Polyline path = Polyline.empty();
+        FunctionTransform2D t = FunctionTransform2D.from(v -> v.add(Vector2D.Unit.PLUS_X));
+
+        // act/assert
+        Assert.assertSame(path, path.transform(t));
+    }
+
+    @Test
+    public void testTransform_finite() {
+        // arrange
+        Polyline path = Polyline.builder(TEST_PRECISION)
+                .append(Vector2D.Unit.ZERO)
+                .append(Vector2D.Unit.PLUS_X)
+                .append(Vector2D.Unit.PLUS_Y)
+                .close();
+
+        AffineTransformMatrix2D t =
+                AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), Geometry.HALF_PI);
+
+        // act
+        Polyline result = path.transform(t);
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertTrue(result.isClosed());
+        Assert.assertTrue(result.isFinite());
+
+        List<Segment> segments = result.getSegments();
+
+        Assert.assertEquals(3, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.of(2, 0), Vector2D.of(2, 1));
+        assertFiniteSegment(segments.get(1), Vector2D.of(2, 1), Vector2D.Unit.PLUS_X);
+        assertFiniteSegment(segments.get(2), Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
+    }
+
+    @Test
+    public void testTransform_infinite() {
+        // arrange
+        Polyline path = Polyline.fromSegments(
+                Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
+
+        FunctionTransform2D t = FunctionTransform2D.from(v -> v.add(Vector2D.Unit.PLUS_X));
+
+        // act
+        Polyline result = path.transform(t);
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertFalse(result.isFinite());
+
+        List<Segment> segments = result.getSegments();
+
+        Assert.assertEquals(1, segments.size());
+        Segment segment = segments.get(0);
+        Assert.assertTrue(segment.isInfinite());
+        Assert.assertNull(segment.getStartPoint());
+        Assert.assertNull(segment.getEndPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, segment.getLine().getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, segment.getLine().getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testReverse_empty() {
+        // arrange
+        Polyline path = Polyline.empty();
+
+        // act/assert
+        Assert.assertSame(path, path.reverse());
+    }
+
+    @Test
+    public void testReverse() {
+        // arrange
+        Polyline path = Polyline.builder(TEST_PRECISION)
+                .append(Vector2D.Unit.ZERO)
+                .append(Vector2D.Unit.PLUS_X)
+                .append(Vector2D.Unit.PLUS_Y)
+                .close();
+
+        // act
+        Polyline result = path.reverse();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertTrue(result.isClosed());
+        Assert.assertTrue(result.isFinite());
+
+        List<Segment> segments = result.getSegments();
+
+        Assert.assertEquals(3, segments.size());
+        assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_Y);
+        assertFiniteSegment(segments.get(1), Vector2D.Unit.PLUS_Y, Vector2D.Unit.PLUS_X);
+        assertFiniteSegment(segments.get(2), Vector2D.Unit.PLUS_X, Vector2D.Unit.ZERO);
+    }
+
+    @Test
+    public void testReverse_singleInfinite() {
+        // arrange
+        Polyline path = Polyline.fromSegments(
+                Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
+
+        // act
+        Polyline result = path.reverse();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertFalse(result.isFinite());
+
+        List<Segment> segments = result.getSegments();
+
+        Assert.assertEquals(1, segments.size());
+        Segment segment = segments.get(0);
+        Assert.assertTrue(segment.isInfinite());
+        Assert.assertNull(segment.getStartPoint());
+        Assert.assertNull(segment.getEndPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.ZERO, segment.getLine().getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y, segment.getLine().getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testReverse_doubleInfinite() {
+        // arrange
+        Segment a = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).segmentTo(Vector2D.ZERO);
+        Segment b = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).segmentFrom(Vector2D.ZERO);
+
+        Polyline path = Polyline.fromSegments(a, b);
+
+        // act
+        Polyline result = path.reverse();
+
+        // assert
+        Assert.assertNotSame(path, result);
+        Assert.assertFalse(result.isClosed());
+        Assert.assertFalse(result.isFinite());
+
+        List<Segment> segments = result.getSegments();
+        Assert.assertEquals(2, segments.size());
+
+        Segment bResult = segments.get(0);
+        Assert.assertTrue(bResult.isInfinite());
+        Assert.assertNull(bResult.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getLine().getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X, bResult.getLine().getDirection(), TEST_EPS);
+
+        Segment aResult = segments.get(1);
+        Assert.assertTrue(aResult.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, aResult.getStartPoint(), TEST_EPS);
+        Assert.assertNull(aResult.getEndPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, aResult.getLine().getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y, aResult.getLine().getDirection(), TEST_EPS);
     }
 
     @Test

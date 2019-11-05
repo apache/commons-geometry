@@ -67,6 +67,7 @@ public class Point2STest {
         Assert.assertTrue(Point2S.NaN.isNaN());
         Assert.assertTrue(Point2S.NaN.equals(Point2S.of(Double.NaN, 1.0)));
         Assert.assertFalse(Point2S.of(1.0, 1.3).equals(Point2S.NaN));
+        Assert.assertNull(Point2S.NaN.getVector());
 
         Assert.assertEquals(Point2S.NaN.hashCode(), Point2S.of(Double.NaN, Double.NaN).hashCode());
     }
