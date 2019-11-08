@@ -40,15 +40,15 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
 
     /** {@inheritDoc} */
     @Override
-    protected ConnectorEntry selectConnection(ConnectorEntry incoming, List<ConnectorEntry> outgoing) {
+    protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {
 
         // search for the best connection
         final Line segmentLine = incoming.getSegment().getLine();
 
         double selectedInteriorAngle = Double.POSITIVE_INFINITY;
-        ConnectorEntry selected = null;
+        ConnectableSegment selected = null;
 
-        for (ConnectorEntry candidate : outgoing) {
+        for (ConnectableSegment candidate : outgoing) {
             double interiorAngle = Geometry.PI - segmentLine.angle(candidate.getSegment().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {

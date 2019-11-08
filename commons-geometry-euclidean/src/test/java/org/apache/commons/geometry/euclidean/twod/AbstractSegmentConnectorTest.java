@@ -515,11 +515,5 @@ public class AbstractSegmentConnectorTest {
     private static class TestConnector extends AbstractSegmentConnector {
 
         private static final long serialVersionUID = 1L;
-
-        @Override
-        protected ConnectorEntry selectConnection(ConnectorEntry incoming, List<ConnectorEntry> outgoing) {
-            // simply choose the first option
-            return outgoing.get(0);
-        }
     }
 }
