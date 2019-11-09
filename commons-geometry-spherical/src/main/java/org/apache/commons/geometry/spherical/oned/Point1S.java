@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -52,6 +53,27 @@ public class Point1S implements Point<Point1S>, Serializable {
     /** A point with all coordinates set to NaN. */
     public static final Point1S NaN = Point1S.of(Double.NaN);
     // CHECKSTYLE: resume ConstantName
+
+    /** Comparator that sorts points by normalized azimuth in ascending order.
+     * Points are only considered equal if their normalized azimuths match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
+     * @see #getNormalizedAzimuth()
+     */
+    public static final Comparator<Point1S> NORMALIZED_AZIMUTH_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth());
+        }
+        else if (a != null) {
+            cmp = -1;
+        }
+        else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;

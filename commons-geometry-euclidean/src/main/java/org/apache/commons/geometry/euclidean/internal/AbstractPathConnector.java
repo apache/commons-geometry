@@ -24,30 +24,30 @@ import java.util.TreeSet;
 
 /** Abstract base class for joining unconnected path elements into connected, directional
  * paths. The connection algorithm is exposed as a set of protected methods, allowing subclasses
- * to define their own public API. Implementations must supply their own subclass of {@link Element}
+ * to define their own public API. Implementations must supply their own subclass of {@link ConnectableElement}
  * specific for the objects being connected.
  *
  * <p>The connection algorithm proceeds as follows:
  * <ul>
- *      <li>Create a sorted list of {@link Element}s.</li>
+ *      <li>Create a sorted list of {@link ConnectableElement}s.</li>
  *      <li>For each element, attempt to find other elements with start points next the
- *      first instance's end point by calling {@link Element#getConnectionSearchKey()} and
+ *      first instance's end point by calling {@link ConnectableElement#getConnectionSearchKey()} and
  *      using the returned instance to locate a search start location in the sorted element list.</li>
  *      <li>Search up through the sorted list from the start location, testing each element for possible connectivity with
- *      {@link Element#canConnectTo(Element)}. Collect possible connections in a list. Terminate the search
- *      when {@link Element#shouldContinueConnectionSearch(Element, boolean, List, List)} returns false.
+ *      {@link ConnectableElement#canConnectTo(ConnectableElement)}. Collect possible connections in a list. Terminate the search
+ *      when {@link ConnectableElement#shouldContinueConnectionSearch(ConnectableElement, boolean, List, List)} returns false.
  *      <li>Repeat the previous step searching downward through the list from the start location.</li>
- *      <li>Select the best connection option from the list of possible connections, using {@link #selectPointConnection(Element, List)}
- *      and/or {@link #selectConnection(Element, List)} when multiple possibilities are found.</li>
+ *      <li>Select the best connection option from the list of possible connections, using {@link #selectPointConnection(ConnectableElement, List)}
+ *      and/or {@link #selectConnection(ConnectableElement, List)} when multiple possibilities are found.</li>
  *      <li>Repeat the above steps for each element. When done, the elements represent a linked list
  *      of connected paths.</li>
  * </ul>
  * </p>
  *
  * <p>This class is not thread-safe.</p>
- * @see Element
+ * @see ConnectableElement
  */
-public abstract class AbstractPathConnector<E extends AbstractPathConnector.Element<E>>
+public abstract class AbstractPathConnector<E extends AbstractPathConnector.ConnectableElement<E>>
     implements Serializable {
 
     /** Serializable UID*/
@@ -171,8 +171,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
             // search up
             for (E candidate : pathElements.tailSet(searchKey)) {
                 if (!addPossibleConnection(element, candidate) &&
-                        !element.shouldContinueConnectionSearch(candidate, true,
-                                possiblePointConnections, possibleConnections)) {
+                        !element.shouldContinueConnectionSearch(candidate, true)) {
                     break;
                 }
             }
@@ -180,8 +179,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
             // search down
             for (E candidate : pathElementsDescending.tailSet(searchKey, false)) {
                 if (!addPossibleConnection(element, candidate) &&
-                        !element.shouldContinueConnectionSearch(candidate, false,
-                                possiblePointConnections, possibleConnections)) {
+                        !element.shouldContinueConnectionSearch(candidate, false)) {
                     break;
                 }
             }
@@ -200,7 +198,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
                 candidate.hasStart() &&
                 element.canConnectTo(candidate)) {
 
-            if (candidate.hasZeroLength()) {
+            if (element.endPointsEq(candidate)) {
                 possiblePointConnections.add(candidate);
             }
             else {
@@ -247,14 +245,14 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
     }
 
     /** Method called to select a connection to use for a given segment when multiple non-length-zero
-     * connections are available. By default, the first connection available is used.
+     * connections are available. In this case, the selection of the outgoing connection depends only
+     * on the desired characteristics of the connected path.
      * @param incoming the incoming segment
-     * @param outgoing list of available outgoing connections
+     * @param outgoing list of available outgoing connections; will always contain at least
+     *      two elements
      * @return the connection to use
      */
-    protected E selectConnection(final E incoming, final List<E> outgoing) {
-        return outgoing.get(0);
-    }
+    protected abstract E selectConnection(final E incoming, final List<E> outgoing);
 
     /** Class used to represent connectable path elements for use with {@link AbstractPathConnector}.
      * Subclasses must fulfill the following requirements in order for path connection operations
@@ -266,12 +264,15 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
      *      <li>Implement {@link #getConnectionSearchKey()} such that it returns an instance that will be placed
      *      next to elements with start points close to the current instance's end point when sorted with
      *      {@link #compareTo(Object)}.</li>
-     *      <li>Implement {@link #shouldContinueConnectionSearch(Element, boolean)} such that it returns
+     *      <li>Implement {@link #shouldContinueConnectionSearch(ConnectableElement, boolean)} such that it returns
      *      false when the search for possible connections through a sorted list of elements may terminate.</li>
      * </ul>
      * @see AbstractPathConnector
      */
-    public static abstract class Element<E extends Element<E>> implements Comparable<E> {
+    public static abstract class ConnectableElement<E extends ConnectableElement<E>> implements Comparable<E>, Serializable {
+
+        /** Serializable UID */
+        private static final long serialVersionUID = 20191107L;
 
         /** Next connected element. */
         private E next;
@@ -297,7 +298,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
         }
 
         /** Set the next connected element for this path. This is intended for
-         * internal use only. Callers should use the {@link #connectTo(Element)}
+         * internal use only. Callers should use the {@link #connectTo(ConnectableElement)}
          * method instead.
          * @param next next path element
          */
@@ -320,7 +321,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
         }
 
         /** Set the previous connected element for this path. This is intended for
-         * internal use only. Callers should use the {@link #connectTo(Element)}
+         * internal use only. Callers should use the {@link #connectTo(ConnectableElement)}
          * method instead.
          * @param previous previous path element
          */
@@ -401,12 +402,13 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
          */
         public abstract boolean hasEnd();
 
-        /** Return true if this instance should be considered to have
-         * zero length.
-         * @return true if this instance should be considered to have
-         *      zero length
+        /** Return true if the end point of this instance should be considered
+         * equivalent to the end point of the argument.
+         * @param other element to compare end points with
+         * @return true if this instance has an end point equivalent to that
+         *      of the argument
          */
-        public abstract boolean hasZeroLength();
+        public abstract boolean endPointsEq(E other);
 
         /** Return true if this instance's end point can be connected to
          * the argument's start point.
@@ -418,10 +420,10 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
         public abstract boolean canConnectTo(E next);
 
         /** Return the relative angle between this element and the argument.
-         * @param element element to compute the angle with
+         * @param other element to compute the angle with
          * @return the relative angle between this element and the argument
          */
-        public abstract double getRelativeAngle(E element);
+        public abstract double getRelativeAngle(E other);
 
         /** Get a new instance used as a search key to help locate other elements
          * with start points matching this instance's end point. The only restriction
@@ -433,18 +435,15 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Elem
         public abstract E getConnectionSearchKey();
 
         /** Return true if the search for possible connections should continue through
-         * the sorted set of possible path elements given the current candidate element,
-         * search direction, and lists of discovered connections. The search operation
-         * stops when this method returns false.
+         * the sorted set of possible path elements given the current candidate element
+         * and search direction. The search operation stops for the given direction
+         * when this method returns false.
          * @param candidate last tested candidate connection element
          * @param ascending true if the search is proceeding in an ascending direction;
          *      false otherwise
-         * @param possiblePointconnections current list of possible zero-length connections
-         * @param possibleConnections current list of possible non-zero-length connections
          * @return true if the connection search should continue
          */
-        public abstract boolean shouldContinueConnectionSearch(E candidate, boolean ascending,
-                List<E> possiblePointConnections, List<E> possibleConnections);
+        public abstract boolean shouldContinueConnectionSearch(E candidate, boolean ascending);
 
         /** Return the current instance as the generic type.
          * @return the current instance as the generic type.

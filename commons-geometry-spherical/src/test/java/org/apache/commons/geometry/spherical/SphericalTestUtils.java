@@ -53,7 +53,7 @@ public class SphericalTestUtils {
      * @param tolerance
      */
     public static void assertPointsEq(Point2S expected, Point2S actual, double tolerance) {
-        String msg = "Expected point to be equalivalent to " + expected + " but was " + actual + ";";
+        String msg = "Expected point to be equivalent to " + expected + " but was " + actual + ";";
         Assert.assertTrue(msg, expected.eq(actual, new EpsilonDoublePrecisionContext(tolerance)));
     }
 

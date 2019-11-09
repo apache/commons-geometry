@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Point;
@@ -52,6 +53,31 @@ public final class Point2S implements Point<Point2S>, Serializable {
     /** A point with all coordinates set to NaN. */
     public static final Point2S NaN = new Point2S(Double.NaN, Double.NaN, null);
     // CHECKSTYLE: resume ConstantName
+
+    /** Comparator that sorts points in component-wise ascending order, first sorting
+     * by polar value and then by azimuth value. Points are only considered equal if
+     * their components match exactly. Null arguments are evaluated as being greater
+     * than non-null arguments.
+     */
+    public static final Comparator<Point2S> POLAR_AZIMUTH_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getPolar(), b.getPolar());
+
+            if (cmp == 0) {
+                cmp = Double.compare(a.getAzimuth(), b.getAzimuth());
+            }
+        }
+        else if (a != null) {
+            cmp = -1;
+        }
+        else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;

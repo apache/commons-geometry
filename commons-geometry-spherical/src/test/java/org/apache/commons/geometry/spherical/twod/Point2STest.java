@@ -17,6 +17,8 @@
 package org.apache.commons.geometry.spherical.twod;
 
 
+import java.util.Comparator;
+
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -44,6 +46,24 @@ public class Point2STest {
 
             Assert.assertFalse(p.isNaN());
         }
+    }
+
+    @Test
+    public void testAzimuthPolarComparator() {
+        // arrange
+        Comparator<Point2S> comp = Point2S.POLAR_AZIMUTH_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, comp.compare(Point2S.of(1, 2), Point2S.of(1, 2)));
+        Assert.assertEquals(1, comp.compare(Point2S.of(1, 2), Point2S.of(2, 1)));
+        Assert.assertEquals(-1, comp.compare(Point2S.of(2, 1), Point2S.of(1, 2)));
+
+        Assert.assertEquals(-1, comp.compare(Point2S.of(1, 2), Point2S.of(1, 3)));
+        Assert.assertEquals(1, comp.compare(Point2S.of(1, 3), Point2S.of(1, 2)));
+
+        Assert.assertEquals(1, comp.compare(null, Point2S.of(1, 2)));
+        Assert.assertEquals(-1, comp.compare(Point2S.of(1, 2), null));
+        Assert.assertEquals(0, comp.compare(null, null));
     }
 
     @Test

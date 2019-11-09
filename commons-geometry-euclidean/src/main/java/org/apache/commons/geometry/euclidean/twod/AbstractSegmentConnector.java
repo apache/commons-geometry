@@ -31,12 +31,22 @@ public abstract class AbstractSegmentConnector
     /** Serializable UID */
     private static final long serialVersionUID = 20190528L;
 
+    /** Add a line segment to the connector, leaving it unconnected until a later call to
+     * to {@link #connect(Iterable)} or {@link #connectAll()}.
+     * @param segment line segment to add
+     * @see #connect(Iterable)
+     * @see #connectAll()
+     */
+    public void add(final Segment segment) {
+        addPathElement(new ConnectableSegment(segment));
+    }
+
     /** Add a collection of line segments to the connector, leaving them unconnected
      * until a later call to {@link #connect(Iterable)} or
-     * {@link #getConnected()}.
+     * {@link #connectAll()}.
      * @param segments line segments to add
      * @see #connect(Iterable)
-     * @see #getConnected()
+     * @see #connectAll()
      * @see #add(Segment)
      */
     public void add(final Iterable<Segment> segments) {
@@ -45,19 +55,15 @@ public abstract class AbstractSegmentConnector
         }
     }
 
-    /** Add a line segment to the connector, leaving it unconnected until a later call to
-     * to {@link #connect(Iterable)} or {@link #getConnected()}.
-     * @param segment line segment to add
-     * @see #connect(Iterable)
-     * @see #getConnected()
-     */
-    public void add(final Segment segment) {
-        addPathElement(new ConnectableSegment(segment));
-    }
-
     /** Add a collection of line segments to the connector and attempt to connect each new
-     * segment with existing segments.
+     * segment with existing segments. Connections made at this time will not be
+     * overwritten by subsequent calls to this or other connection methods.
+     * (eg, {@link #connectAll()}).
+     *
+     * <p>The connector is not reset by this call. Additional segments can still be added
+     * to the current set of paths.</p>
      * @param segments line segments to connect
+     * @see #connectAll()
      */
     public void connect(final Iterable<Segment> segments) {
         List<ConnectableSegment> newEntries = new ArrayList<>();
@@ -69,28 +75,35 @@ public abstract class AbstractSegmentConnector
         connectPathElements(newEntries);
     }
 
-    /** Add the given line segments to this instance and get the connected polylines
-     * (ie, line segment paths). This call is equivalent to
+    /** Add the given line segments to this instance and connect all current
+     * segments into polylines (ie, line segment paths). This call is equivalent to
      * <pre>
      *      connector.add(segments);
-     *      List&lt;Polyline&gt; result = connector.getConnected();
+     *      List&lt;Polyline&gt; result = connector.connectAll();
      * </pre>
+     *
+     * <p>The connector is reset after this call. Further calls to
+     * add or connect line segments will result in new paths being
+     * generated.</p>
      * @param segments line segments to add
      * @return the connected line segment paths
      * @see #add(Iterable)
-     * @see #getConnected()
+     * @see #connectAll()
      */
-    public List<Polyline> getConnected(final Iterable<Segment> segments) {
+    public List<Polyline> connectAll(final Iterable<Segment> segments) {
         add(segments);
-        return getConnected();
+        return connectAll();
     }
 
-    /** Get the current list of connected polylines (ie, line segment paths). The connector
-     * is reset after this call. Further calls to add line segments will result in new paths
-     * being generated.
+    /** Connect all current segments into connected paths, returning the result as a
+     * list of polylines.
+     *
+     * <p>The connector is reset after this call. Further calls to
+     * add or connect line segments will result in new paths being
+     * generated.</p>
      * @return the connected line segments paths
      */
-    public List<Polyline> getConnected() {
+    public List<Polyline> connectAll() {
         final List<ConnectableSegment> roots = computePathRoots();
         final List<Polyline> paths = new ArrayList<>(roots.size());
 
@@ -123,23 +136,26 @@ public abstract class AbstractSegmentConnector
 
     /** Internal class used to connect line segments together.
      */
-    protected static class ConnectableSegment extends AbstractPathConnector.Element<ConnectableSegment> {
+    protected static class ConnectableSegment extends AbstractPathConnector.ConnectableElement<ConnectableSegment> {
 
-        /** Entry start point. Other entries will connect to this instance at this point. */
+        /** Serializable UID */
+        private static final long serialVersionUID = 20191107L;
+
+        /** Segment start point. This will be used to connect to other path elements. */
         private final Vector2D start;
 
         /** Line segment for the entry. */
         private final Segment segment;
 
         /** Create a new instance with the given start point. This constructor is
-         * intended only for performing searches for other entries.
+         * intended only for performing searches for other path elements.
          * @param start start point
          */
         public ConnectableSegment(final Vector2D start) {
             this(start, null);
         }
 
-        /** Create a new instance from the given line segment
+        /** Create a new instance from the given line segment.
          * @param segment line segment
          */
         public ConnectableSegment(final Segment segment) {
@@ -171,18 +187,30 @@ public abstract class AbstractSegmentConnector
         /** {@inheritDoc} */
         @Override
         public boolean hasEnd() {
-            return segment.getEndPoint() != null;
+            return segment != null && segment.getEndPoint() != null;
+        }
+
+        /** Return true if this instance has a size equivalent to zero.
+         * @return true if this instance has a size equivalent to zero.
+         */
+        public boolean hasZeroSize() {
+            return segment != null && segment.getPrecision().eqZero(segment.getSize());
         }
 
         /** {@inheritDoc} */
         @Override
-        public boolean hasZeroLength() {
-            return segment.getPrecision().eqZero(segment.getSize());
+        public boolean endPointsEq(final ConnectableSegment other) {
+            if (hasEnd() && other.hasEnd()) {
+                return segment.getEndPoint()
+                        .eq(other.segment.getEndPoint(), segment.getPrecision());
+            }
+
+            return false;
         }
 
         /** {@inheritDoc} */
         @Override
-        public boolean canConnectTo(ConnectableSegment next) {
+        public boolean canConnectTo(final ConnectableSegment next) {
             final Vector2D end = segment.getEndPoint();
             final Vector2D start = next.start;
 
@@ -204,8 +232,7 @@ public abstract class AbstractSegmentConnector
 
         /** {@inheritDoc} */
         @Override
-        public boolean shouldContinueConnectionSearch(final ConnectableSegment candidate, final boolean ascending,
-                final List<ConnectableSegment> possiblePointConnections, final List<ConnectableSegment> possibleConnections) {
+        public boolean shouldContinueConnectionSearch(final ConnectableSegment candidate, final boolean ascending) {
 
             if (candidate.hasStart()) {
                 final double candidateX = candidate.getSegment().getStartPoint().getX();
@@ -232,7 +259,7 @@ public abstract class AbstractSegmentConnector
 
                 if (cmp == 0 && thisHasSegment) {
                     // place point-like segments before ones with non-zero length
-                    cmp = Boolean.compare(this.hasZeroLength(), other.hasZeroLength());
+                    cmp = Boolean.compare(this.hasZeroSize(), other.hasZeroSize());
 
                     if (cmp == 0) {
                         // sort by line angle

@@ -42,21 +42,21 @@ public class AbstractSegmentConnectorTest {
     private TestConnector connector = new TestConnector();
 
     @Test
-    public void testGetConnected_emptyCollection() {
+    public void testConnectAll_emptyCollection() {
         // act
-        List<Polyline> paths = connector.getConnected(Collections.emptyList());
+        List<Polyline> paths = connector.connectAll(Collections.emptyList());
 
         // assert
         Assert.assertEquals(0, paths.size());
     }
 
     @Test
-    public void testGetConnected_singleInfiniteLine() {
+    public void testConnectAll_singleInfiniteLine() {
         // arrange
         Segment segment = Y_AXIS.span();
 
         // act
-        List<Polyline> paths = connector.getConnected(Arrays.asList(segment));
+        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -67,12 +67,12 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_singleHalfInfiniteLine_noEndPoint() {
+    public void testConnectAll_singleHalfInfiniteLine_noEndPoint() {
         // arrange
         Segment segment = Y_AXIS.segmentFrom(Vector2D.ZERO);
 
         // act
-        List<Polyline> paths = connector.getConnected(Arrays.asList(segment));
+        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -83,12 +83,12 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_singleHalfInfiniteLine_noStartPoint() {
+    public void testConnectAll_singleHalfInfiniteLine_noStartPoint() {
         // arrange
         Segment segment = Y_AXIS.segmentTo(Vector2D.ZERO);
 
         // act
-        List<Polyline> paths = connector.getConnected(Arrays.asList(segment));
+        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -99,7 +99,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_disjointSegments() {
+    public void testConnectAll_disjointSegments() {
         // arrange
         Segment a = Y_AXIS.segment(Vector2D.of(0, 1), Vector2D.of(0, 2));
         Segment b = Y_AXIS.segment(Vector2D.of(0, -1), Vector2D.ZERO);
@@ -107,7 +107,7 @@ public class AbstractSegmentConnectorTest {
         List<Segment> segments = Arrays.asList(a, b);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -117,7 +117,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_singleClosedPath() {
+    public void testConnectAll_singleClosedPath() {
         // arrange
         Polyline input = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -127,7 +127,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -137,7 +137,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_multipleClosedPaths() {
+    public void testConnectAll_multipleClosedPaths() {
         // arrange
         Polyline a = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -159,7 +159,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -175,7 +175,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_singleOpenPath() {
+    public void testConnectAll_singleOpenPath() {
         // arrange
         Polyline input = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
@@ -185,7 +185,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -195,7 +195,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_mixOfOpenConnectedAndInfinite() {
+    public void testConnectAll_mixOfOpenConnectedAndInfinite() {
         // arrange
         Segment inputYInf = Y_AXIS.segmentTo(Vector2D.ZERO);
         Segment inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
@@ -218,7 +218,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -237,14 +237,14 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_pathWithSinglePoint() {
+    public void testConnectAll_pathWithSinglePoint() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
 
         List<Segment> segments = Arrays.asList(Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -253,7 +253,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_pathWithPointLikeConnectedSegments() {
+    public void testConnectAll_pathWithPointLikeConnectedSegments() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -276,7 +276,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -285,7 +285,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_flatLineRegion() {
+    public void testConnectAll_flatLineRegion() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -299,7 +299,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -312,7 +312,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_singlePointRegion() {
+    public void testConnectAll_singlePointRegion() {
         // arrange
         Vector2D p0 = Vector2D.of(1, 0);
 
@@ -325,7 +325,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -338,7 +338,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_pathWithPointLikeUnconnectedSegments() {
+    public void testConnectAll_pathWithPointLikeUnconnectedSegments() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -352,7 +352,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -368,7 +368,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_pathStartingWithPoint() {
+    public void testConnectAll_pathStartingWithPoint() {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
@@ -383,7 +383,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -395,7 +395,7 @@ public class AbstractSegmentConnectorTest {
     }
 
     @Test
-    public void testGetConnected_intersectingPaths() {
+    public void testConnectAll_intersectingPaths() {
         // arrange
         Polyline a = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1))
@@ -412,7 +412,7 @@ public class AbstractSegmentConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.getConnected(segments);
+        List<Polyline> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -431,8 +431,8 @@ public class AbstractSegmentConnectorTest {
         Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        List<Polyline> firstPaths = connector.getConnected(Arrays.asList(a));
-        List<Polyline> secondPaths = connector.getConnected(Arrays.asList(b));
+        List<Polyline> firstPaths = connector.connectAll(Arrays.asList(a));
+        List<Polyline> secondPaths = connector.connectAll(Arrays.asList(b));
 
         // assert
         Assert.assertEquals(1, firstPaths.size());
@@ -453,7 +453,7 @@ public class AbstractSegmentConnectorTest {
         connector.add(Arrays.asList(a, b));
         connector.add(Arrays.asList(c));
 
-        List<Polyline> paths = connector.getConnected();
+        List<Polyline> paths = connector.connectAll();
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -473,7 +473,7 @@ public class AbstractSegmentConnectorTest {
         connector.connect(Arrays.asList(a, b));
         connector.connect(Arrays.asList(c));
 
-        List<Polyline> paths = connector.getConnected();
+        List<Polyline> paths = connector.connectAll();
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -515,5 +515,11 @@ public class AbstractSegmentConnectorTest {
     private static class TestConnector extends AbstractSegmentConnector {
 
         private static final long serialVersionUID = 1L;
+
+        @Override
+        protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {
+            // just choose the first element
+            return outgoing.get(0);
+        }
     }
 }

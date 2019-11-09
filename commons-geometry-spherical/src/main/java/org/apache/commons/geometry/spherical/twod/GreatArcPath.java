@@ -28,13 +28,13 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a connected sequence of {@link GreatArc} instances.
  */
-public class ArcPath implements Iterable<GreatArc>, Serializable {
+public class GreatArcPath implements Iterable<GreatArc>, Serializable {
 
     /** Serializable UID */
     private static final long serialVersionUID = 20191028L;
 
     /** Instance containing no arcs. */
-    private static final ArcPath EMPTY = new ArcPath(Collections.emptyList());
+    private static final GreatArcPath EMPTY = new GreatArcPath(Collections.emptyList());
 
     /** Arcs comprising the instance. */
     private final List<GreatArc> arcs;
@@ -42,7 +42,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
     /** Simple constructor. No validation is performed on the input arc.
      * @param arcs arcs for the path, in connection order
      */
-    private ArcPath(final List<GreatArc> arcs) {
+    private GreatArcPath(final List<GreatArc> arcs) {
         this.arcs = Collections.unmodifiableList(arcs);
     }
 
@@ -201,7 +201,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
      * @param arcs arc instance to use to construct the path
      * @return a new instance constructed from the given arc instances
      */
-    public static ArcPath fromArcs(final GreatArc ... arcs) {
+    public static GreatArcPath fromArcs(final GreatArc ... arcs) {
         return fromArcs(Arrays.asList(arcs));
     }
 
@@ -209,7 +209,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
      * @param arcs arc instance to use to construct the path
      * @return a new instance constructed from the given arc instances
      */
-    public static ArcPath fromArcs(final Collection<GreatArc> arcs) {
+    public static GreatArcPath fromArcs(final Collection<GreatArc> arcs) {
         final Builder builder = builder(null);
         for (GreatArc arc : arcs) {
             builder.append(arc);
@@ -229,7 +229,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
      * @return a new path formed by connecting the given points
      * @see #fromPoints(Collection, boolean, DoublePrecisionContext)
      */
-    public static ArcPath fromPointLoop(final Collection<Point2S> points, final DoublePrecisionContext precision) {
+    public static GreatArcPath fromPointLoop(final Collection<Point2S> points, final DoublePrecisionContext precision) {
         return fromPoints(points, true, precision);
     }
 
@@ -243,7 +243,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
      * @return a new path formed by connecting the given points
      * @see #fromPoints(Collection, boolean, DoublePrecisionContext)
      */
-    public static ArcPath fromPoints(final Collection<Point2S> points, final DoublePrecisionContext precision) {
+    public static GreatArcPath fromPoints(final Collection<Point2S> points, final DoublePrecisionContext precision) {
         return fromPoints(points, false, precision);
     }
 
@@ -256,7 +256,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
      *      path
      * @return a new path formed by connecting the given points
      */
-    public static ArcPath fromPoints(final Collection<Point2S> points, final boolean close,
+    public static GreatArcPath fromPoints(final Collection<Point2S> points, final boolean close,
             final DoublePrecisionContext precision) {
 
         final Builder builder = builder(precision);
@@ -281,7 +281,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
     /** Get an instance containing no arcs.
      * @return an instance containing no arcs
      */
-    public static ArcPath empty() {
+    public static GreatArcPath empty() {
         return EMPTY;
     }
 
@@ -497,10 +497,10 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
             return this;
         }
 
-        /** Close the current path and build a new {@link ArcPath} instance.
+        /** Close the current path and build a new {@link GreatArcPath} instance.
          * @return new closed path instance
          */
-        public ArcPath close() {
+        public GreatArcPath close() {
             final GreatArc end = getEndArc();
 
             if (end != null) {
@@ -517,10 +517,10 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
             return build();
         }
 
-        /** Build a {@link ArcPath} instance from the configured path.
+        /** Build a {@link GreatArcPath} instance from the configured path.
          * @return new path instance
          */
-        public ArcPath build() {
+        public GreatArcPath build() {
             // combine all of the arcs
             List<GreatArc> result = null;
 
@@ -552,7 +552,7 @@ public class ArcPath implements Iterable<GreatArc>, Serializable {
 
             // build the final path instance, using the shared empty instance if
             // no arcs are present
-            return result.isEmpty() ? empty() : new ArcPath(result);
+            return result.isEmpty() ? empty() : new GreatArcPath(result);
         }
 
         /** Validate that the given arcs are connected, meaning that the end point of {@code previous}

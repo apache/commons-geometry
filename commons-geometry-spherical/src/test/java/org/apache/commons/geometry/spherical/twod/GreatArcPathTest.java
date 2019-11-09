@@ -33,7 +33,7 @@ import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ArcPathTest {
+public class GreatArcPathTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,7 +43,7 @@ public class ArcPathTest {
     @Test
     public void testEmpty() {
         // act
-        ArcPath path = ArcPath.empty();
+        GreatArcPath path = GreatArcPath.empty();
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -62,7 +62,7 @@ public class ArcPathTest {
     @Test
     public void testFromPoints_boolean_empty() {
         // act
-        ArcPath path = ArcPath.fromPoints(Collections.emptyList(), true, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromPoints(Collections.emptyList(), true, TEST_PRECISION);
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -86,7 +86,7 @@ public class ArcPathTest {
                 Point2S.PLUS_J);
 
         // act
-        ArcPath path = ArcPath.fromPoints(points, false, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromPoints(points, false, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -112,7 +112,7 @@ public class ArcPathTest {
                 Point2S.PLUS_J);
 
         // act
-        ArcPath path = ArcPath.fromPoints(points, true, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromPoints(points, true, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -148,7 +148,7 @@ public class ArcPathTest {
                 almostPlusI);
 
         // act
-        ArcPath path = ArcPath.fromPoints(points, true, precision);
+        GreatArcPath path = GreatArcPath.fromPoints(points, true, precision);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -179,7 +179,7 @@ public class ArcPathTest {
                 Point2S.PLUS_I);
 
         // act
-        ArcPath path = ArcPath.fromPoints(points, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromPoints(points, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -205,7 +205,7 @@ public class ArcPathTest {
                 Point2S.MINUS_K);
 
         // act
-        ArcPath path = ArcPath.fromPointLoop(points, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromPointLoop(points, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -240,7 +240,7 @@ public class ArcPathTest {
         GreatArc c = GreatArc.fromPoints(ptC, ptD, TEST_PRECISION);
 
         // act
-        ArcPath path = ArcPath.fromArcs(a, b, c);
+        GreatArcPath path = GreatArcPath.fromArcs(a, b, c);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -264,7 +264,7 @@ public class ArcPathTest {
         GreatArc fullArc = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
-        ArcPath path = ArcPath.fromArcs(fullArc);
+        GreatArcPath path = GreatArcPath.fromArcs(fullArc);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -288,7 +288,7 @@ public class ArcPathTest {
         GreatArc a = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         GreatArc b = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
-        ArcPath path = ArcPath.fromArcs(Arrays.asList(a, b));
+        GreatArcPath path = GreatArcPath.fromArcs(Arrays.asList(a, b));
 
         List<GreatArc> arcs = new ArrayList<>();
 
@@ -310,10 +310,10 @@ public class ArcPathTest {
         Point2S d = Point2S.of(-1, Geometry.HALF_PI);
         Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
 
-        ArcPath.Builder builder = ArcPath.builder(TEST_PRECISION);
+        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        ArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
+        GreatArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
             .appendPoints(c, d)
             .append(e)
             .append(GreatArc.fromPoints(e, a, TEST_PRECISION))
@@ -346,10 +346,10 @@ public class ArcPathTest {
         Point2S d = Point2S.of(-1, Geometry.HALF_PI);
         Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
 
-        ArcPath.Builder builder = ArcPath.builder(TEST_PRECISION);
+        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        ArcPath path = builder.prepend(GreatArc.fromPoints(e, a, TEST_PRECISION))
+        GreatArcPath path = builder.prepend(GreatArc.fromPoints(e, a, TEST_PRECISION))
             .prependPoints(Arrays.asList(c, d))
             .prepend(b)
             .prepend(GreatArc.fromPoints(a, b, TEST_PRECISION))
@@ -382,10 +382,10 @@ public class ArcPathTest {
         Point2S d = Point2S.of(-1, Geometry.HALF_PI);
         Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
 
-        ArcPath.Builder builder = ArcPath.builder(TEST_PRECISION);
+        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        ArcPath path = builder.prepend(a)
+        GreatArcPath path = builder.prepend(a)
                 .append(b)
                 .prepend(e)
                 .append(c)
@@ -418,10 +418,10 @@ public class ArcPathTest {
         Point2S d = Point2S.of(-1, Geometry.HALF_PI);
         Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
 
-        ArcPath.Builder builder = ArcPath.builder(TEST_PRECISION);
+        GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        ArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
+        GreatArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
                 .prepend(GreatArc.fromPoints(e, a, TEST_PRECISION))
                 .append(c)
                 .prepend(d)
@@ -450,13 +450,13 @@ public class ArcPathTest {
     public void testBuilder_points_noPrecisionGiven() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(null)
+            GreatArcPath.builder(null)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J);
         }, IllegalStateException.class, "Unable to create arc: no point precision specified");
 
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(null)
+            GreatArcPath.builder(null)
                 .prepend(Point2S.PLUS_I)
                 .prepend(Point2S.PLUS_J);
         }, IllegalStateException.class, "Unable to create arc: no point precision specified");
@@ -466,14 +466,14 @@ public class ArcPathTest {
     public void testBuilder_arcsNotConnected() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .append(GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
         }, IllegalStateException.class, Pattern.compile("^Path arcs are not connected.*"));
 
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .prepend(Point2S.PLUS_I)
                 .prepend(Point2S.PLUS_J)
                 .prepend(GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
@@ -484,13 +484,13 @@ public class ArcPathTest {
     public void testBuilder_addToFullArc() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .append(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .append(Point2S.PLUS_J);
         }, IllegalStateException.class, Pattern.compile("^Cannot add point .* after full arc.*"));
 
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .prepend(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .prepend(Point2S.PLUS_J);
         }, IllegalStateException.class, Pattern.compile("^Cannot add point .* before full arc.*"));
@@ -500,13 +500,13 @@ public class ArcPathTest {
     public void testBuilder_onlySinglePointGiven() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_J)
                 .build();
         }, IllegalStateException.class, Pattern.compile("^Unable to create path; only a single point provided.*"));
 
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .prepend(Point2S.PLUS_J)
                 .build();
         }, IllegalStateException.class,  Pattern.compile("^Unable to create path; only a single point provided.*"));
@@ -516,7 +516,7 @@ public class ArcPathTest {
     public void testBuilder_cannotClose() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ArcPath.builder(TEST_PRECISION)
+            GreatArcPath.builder(TEST_PRECISION)
                 .append(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .close();
         }, IllegalStateException.class, "Unable to close path: path is full");
@@ -525,31 +525,31 @@ public class ArcPathTest {
     @Test
     public void testToString_empty() {
         // arrange
-        ArcPath path = ArcPath.empty();
+        GreatArcPath path = GreatArcPath.empty();
 
         // act
         String str = path.toString();
 
         // assert
-        Assert.assertEquals("ArcPath[empty= true]", str);
+        Assert.assertEquals("GreatArcPath[empty= true]", str);
     }
 
     @Test
     public void testToString_singleFullArc() {
         // arrange
-        ArcPath path = ArcPath.fromArcs(GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
+        GreatArcPath path = GreatArcPath.fromArcs(GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
 
         // act
         String str = path.toString();
 
         // assert
-        GeometryTestUtils.assertContains("ArcPath[full= true, circle= GreatCircle[", str);
+        GeometryTestUtils.assertContains("GreatArcPath[full= true, circle= GreatCircle[", str);
     }
 
     @Test
     public void testToString_nonFullArcs() {
         // arrange
-        ArcPath path = ArcPath.builder(TEST_PRECISION)
+        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
                 .build();

@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 
-/** Line segment connector subclass that selects between multiple connection
- * options based on the resulting interior angle. An interior angle in this
+/** Line segment connector that selects between multiple connection options
+ * based on the resulting interior angle. An interior angle in this
  * case is the angle created between an incoming segment and an outgoing segment
  * as measured on the minus (interior) side of the incoming line. If looking
  * along the direction of the incoming line segment, smaller interior angles
@@ -74,7 +74,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * @see Maximize
      */
     public static List<Polyline> connectMaximized(final Collection<Segment> segments) {
-        return new Maximize().getConnected(segments);
+        return new Maximize().connectAll(segments);
     }
 
     /** Convenience method for connecting a set of line segments with interior angles minimized
@@ -84,7 +84,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * @see Minimize
      */
     public static List<Polyline> connectMinimized(final Collection<Segment> segments) {
-        return new Minimize().getConnected(segments);
+        return new Minimize().connectAll(segments);
     }
 
     /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment

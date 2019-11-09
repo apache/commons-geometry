@@ -111,8 +111,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * so that the minus sides of the arcs lie on the inside of the area.
      * @return the boundary path of the area
      */
-    public ArcPath getBoundaryPath() {
-        return ArcPath.fromArcs(getBoundaries());
+    public GreatArcPath getBoundaryPath() {
+        return GreatArcPath.fromArcs(getBoundaries());
     }
 
     /** Return an instance representing the full spherical 2D space.

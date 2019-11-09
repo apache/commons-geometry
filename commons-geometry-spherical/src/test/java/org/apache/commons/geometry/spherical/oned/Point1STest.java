@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
+import java.util.Comparator;
+
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
@@ -37,6 +39,22 @@ public class Point1STest {
         // act/assert
         Assert.assertEquals(0.0, Point1S.ZERO.getAzimuth(), TEST_EPS);
         Assert.assertEquals(Math.PI, Point1S.PI.getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testNormalizedAzimuthComparator() {
+        // arrange
+        Comparator<Point1S> comp = Point1S.NORMALIZED_AZIMUTH_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, comp.compare(Point1S.of(1), Point1S.of(1)));
+        Assert.assertEquals(-1, comp.compare(Point1S.of(0), Point1S.of(1)));
+        Assert.assertEquals(1, comp.compare(Point1S.of(1), Point1S.of(0)));
+        Assert.assertEquals(1, comp.compare(Point1S.of(1), Point1S.of(0.1 + Geometry.TWO_PI)));
+
+        Assert.assertEquals(1, comp.compare(null, Point1S.of(0)));
+        Assert.assertEquals(-1, comp.compare(Point1S.of(0), null));
+        Assert.assertEquals(0, comp.compare(null, null));
     }
 
     @Test

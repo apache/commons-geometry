@@ -158,7 +158,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
         connector.connect(boundaries());
 
-        return connector.getConnected().stream()
+        return connector.connectAll().stream()
                 .map(Polyline::simplify).collect(Collectors.toList());
     }
 
