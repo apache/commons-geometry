@@ -260,6 +260,24 @@ public class AbstractGreatArcPathConnectorTest {
         assertPathPoints(b, Point2S.PLUS_J, Point2S.PLUS_K);
     }
 
+    @Test
+    public void testConnectorCanBeReused() {
+        // arrange
+        GreatArc a = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatArc b = GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
+
+        // act
+        List<GreatArcPath> path1 = connector.connectAll(Arrays.asList(a));
+        List<GreatArcPath> path2 = connector.connectAll(Arrays.asList(b));
+
+        // assert
+        Assert.assertEquals(1, path1.size());
+        assertPathPoints(path1.get(0), Point2S.PLUS_I, Point2S.PLUS_J);
+
+        Assert.assertEquals(1, path2.size());
+        assertPathPoints(path2.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
+    }
+
     private static void assertPathPoints(GreatArcPath path, Point2S ... points) {
         List<Point2S> expectedPoints = Arrays.asList(points);
         List<Point2S> actualPoints = path.getPoints();

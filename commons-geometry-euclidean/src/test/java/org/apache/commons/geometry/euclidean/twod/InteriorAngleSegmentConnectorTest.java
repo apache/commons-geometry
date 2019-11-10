@@ -40,7 +40,7 @@ public class InteriorAngleSegmentConnectorTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testGetPaths_noSegments() {
+    public void testConnectAll_noSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = new ArrayList<>();
@@ -54,7 +54,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_singleFiniteSegment() {
+    public void testConnectAll_singleFiniteSegment() {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = Arrays.asList(
@@ -72,7 +72,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_dualConnectedSegments() {
+    public void testConnectAll_dualConnectedSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = Arrays.asList(
@@ -92,7 +92,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_singleFiniteSegmentLoop() {
+    public void testConnectAll_singleFiniteSegmentLoop() {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
@@ -110,7 +110,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_disjointPaths() {
+    public void testConnectAll_disjointPaths() {
         runWithMaxAndMin(connector -> {
             // arrange
             List<Segment> segments = new ArrayList<>();
@@ -140,7 +140,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_squaresJoinedAtVertex_maximize() {
+    public void testConnectAll_squaresJoinedAtVertex_maximize() {
         // arrange
         Maximize connector = new Maximize();
 
@@ -164,7 +164,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_mutipleSegmentsAtVertex_maximize() {
+    public void testConnectAll_mutipleSegmentsAtVertex_maximize() {
         // arrange
         Maximize connector = new Maximize();
 
@@ -187,7 +187,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_squaresJoinedAtVertex_minimize() {
+    public void testConnectAll_squaresJoinedAtVertex_minimize() {
         // arrange
         Minimize connector = new Minimize();
 
@@ -213,7 +213,7 @@ public class InteriorAngleSegmentConnectorTest {
     }
 
     @Test
-    public void testGetPaths_mutipleSegmentsAtVertex_minimize() {
+    public void testConnectAll_mutipleSegmentsAtVertex_minimize() {
         // arrange
         Minimize connector = new Minimize();
 
