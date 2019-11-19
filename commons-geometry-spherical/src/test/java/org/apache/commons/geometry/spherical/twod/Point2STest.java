@@ -20,8 +20,6 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;

@@ -637,6 +637,72 @@ public class ConvexArea2STest {
         checkArc(area.trim(slanted.span()), c1.intersection(slanted), slanted.intersection(c2));
     }
 
+    @Test
+    public void testSplit_both() {
+        // arrange
+        GreatCircle c1 = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle c2 = GreatCircle.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
+
+        ConvexArea2S area = ConvexArea2S.fromBounds(c1, c2);
+
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
+
+        // act
+        Split<ConvexArea2S> split = area.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
+
+        Point2S p1 = c1.intersection(splitter);
+        Point2S p2 = splitter.intersection(c2);
+
+        ConvexArea2S minus = split.getMinus();
+        assertPath(minus.getBoundaryPath(), Point2S.PLUS_K, p1, p2, Point2S.PLUS_K);
+
+        ConvexArea2S plus = split.getPlus();
+        assertPath(plus.getBoundaryPath(), p1, Point2S.MINUS_K, p2, p1);
+
+        Assert.assertEquals(area.getSize(), minus.getSize() + plus.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testSplit_minus() {
+        // arrange
+        ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
+                    Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
+                ), TEST_PRECISION);
+
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, -1, 1), TEST_PRECISION);
+
+        // act
+        Split<ConvexArea2S> split = area.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+
+        Assert.assertSame(area, split.getMinus());
+        Assert.assertNull(split.getPlus());;
+    }
+
+    @Test
+    public void testSplit_plus() {
+        // arrange
+        ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
+                    Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
+                ), TEST_PRECISION);
+
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, -1), TEST_PRECISION);
+
+        // act
+        Split<ConvexArea2S> split = area.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());;
+        Assert.assertSame(area, split.getPlus());
+    }
+
     private static List<GreatArc> sortArcs(List<GreatArc> arcs) {
         List<GreatArc> result = new ArrayList<>(arcs);
 
@@ -662,6 +728,20 @@ public class ConvexArea2STest {
     private static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+        }
+    }
+
+    private static void assertPath(GreatArcPath path, Point2S ... expectedVertices) {
+        List<Point2S> vertices = path.getVertices();
+
+        Assert.assertEquals(expectedVertices.length, vertices.size());
+        for (int i = 0; i < expectedVertices.length; ++i) {
+
+            if (!expectedVertices[i].eq(vertices.get(i), TEST_PRECISION)) {
+                String msg = "Unexpected point in path at index " + i + ". Expected " +
+                        Arrays.toString(expectedVertices) + " but received " + vertices;
+                Assert.fail(msg);
+            }
         }
     }
 
