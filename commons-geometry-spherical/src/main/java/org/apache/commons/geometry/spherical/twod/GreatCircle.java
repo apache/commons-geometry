@@ -57,7 +57,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param pole pole vector of the great circle
      * @param x x axis in the equator plane
      * @param y y axis in the equator plane
-     * @param precision
+     * @param precision precision context used for floating point comparisons
      */
     private GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit x, final Vector3D.Unit y,
             final DoublePrecisionContext precision) {
@@ -101,10 +101,11 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc}
      *
-     * <p>The returned offset values are in the range {@code [+pi/2, -pi/2]},
+     * <p>The returned offset values are in the range {@code [-pi/2, +pi/2]},
      * with a point directly on the circle's pole vector having an offset of
-     * {@code +pi/2} and its antipodal point having an offset of {@code -pi/2}.
-     * Thus, the circle's pole vector points toward the plus side of the hyperplane.</p>
+     * {@code -pi/2} and its antipodal point having an offset of {@code +pi/2}.
+     * Thus, the circle's pole vector points toward the <em>minus</em> side of
+     * the hyperplane.</p>
      *
      * @see #offset(Vector3D)
      */
@@ -115,16 +116,16 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** Get the offset (oriented distance) of a direction.
      *
-     * <p>The offset computed here is equal to {@code pi/2} minus the angle
-     * between the circle's pole and the given vector. Thus, the pole vector
-     * has an offset of {@code +pi/2}, a point on the circle itself has an
+     * <p>The offset computed here is equal to the angle between the circle's
+     * pole and the given vector minus {@code pi/2}. Thus, the pole vector
+     * has an offset of {@code -pi/2}, a point on the circle itself has an
      * offset of {@code 0}, and the negation of the pole vector has an offset
-     * of {@code -pi/2}.</p>
+     * of {@code +pi/2}.</p>
      * @param vec
      * @return
      */
     public double offset(final Vector3D vec) {
-        return Geometry.HALF_PI - pole.angle(vec);
+        return pole.angle(vec) - Geometry.HALF_PI;
     }
 
     /** Get the azimuth angle of a point relative to this great circle instance,

@@ -209,7 +209,7 @@ public class InteriorAngleGreatArcConnectorTest {
 
     private static void assertPathPoints(GreatArcPath path, Point2S ... points) {
         List<Point2S> expectedPoints = Arrays.asList(points);
-        List<Point2S> actualPoints = path.getPoints();
+        List<Point2S> actualPoints = path.getVertices();
 
         String msg = "Expected path points to equal " + expectedPoints + " but was " + actualPoints;
         Assert.assertEquals(msg, expectedPoints.size(), actualPoints.size());

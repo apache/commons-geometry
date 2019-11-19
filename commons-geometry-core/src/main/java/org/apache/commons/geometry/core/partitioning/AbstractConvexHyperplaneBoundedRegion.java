@@ -50,8 +50,9 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         this.boundaries = Collections.unmodifiableList(boundaries);
     }
 
-    /** Get the boundaries of the convex region.
-     * @return the boundaries of the convex region.
+    /** Get the boundaries of the convex region. The exact ordering of the boundaries
+     * is not guaranteed.
+     * @return the boundaries of the convex region
      */
     public List<S> getBoundaries() {
         return boundaries;

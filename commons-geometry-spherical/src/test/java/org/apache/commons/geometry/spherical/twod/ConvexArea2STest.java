@@ -32,7 +32,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConvexArea2STest {
@@ -41,6 +40,10 @@ public class ConvexArea2STest {
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    // epsilon value for use when comparing computed barycenter locations;
+    // this must currently be set much higher than the other epsilon
+    private static final double BARYCENTER_EPS = 1e-2;
 
     @Test
     public void testFull() {
@@ -85,7 +88,7 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_singleBound() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(circle);
@@ -101,7 +104,7 @@ public class ConvexArea2STest {
         Assert.assertEquals(1, area.getBoundaries().size());
         GreatArc arc = area.getBoundaries().get(0);
         Assert.assertTrue(arc.isFull());
-        SphericalTestUtils.assertPointsEq(Point2S.MINUS_J, arc.getCircle().getPolePoint(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, arc.getCircle().getPolePoint(), TEST_EPS);
 
         checkClassify(area, RegionLocation.INSIDE, Point2S.PLUS_J);
 
@@ -115,9 +118,9 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_lune_intersectionAtPoles() {
         // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
         GreatCircle b = GreatCircle.fromPoints(
-                Point2S.PLUS_K, Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI), TEST_PRECISION);
+                Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI), Point2S.PLUS_K, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(a, b);
@@ -132,8 +135,8 @@ public class ConvexArea2STest {
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(2, arcs.size());
-        checkArc(area.getBoundaries().get(0), Point2S.MINUS_K, Point2S.PLUS_K);
-        checkArc(area.getBoundaries().get(1), Point2S.PLUS_K, Point2S.MINUS_K);
+        checkArc(arcs.get(0), Point2S.PLUS_K, Point2S.MINUS_K);
+        checkArc(arcs.get(1), Point2S.MINUS_K, Point2S.PLUS_K);
 
         checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0.125 * Geometry.PI, 0.1),
@@ -162,34 +165,35 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(2 * Geometry.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(Geometry.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.PI, 0.75 * Geometry.PI), area.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * Geometry.PI), area.getBarycenter(), TEST_EPS);
         checkBarycenter(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(2, arcs.size());
-        checkArc(area.getBoundaries().get(0), Point2S.PLUS_J, Point2S.MINUS_J);
-        checkArc(area.getBoundaries().get(1), Point2S.MINUS_J, Point2S.PLUS_J);
+        checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
+        checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_J);
 
         checkClassify(area, RegionLocation.INSIDE,
-                Point2S.of(0.75 * Geometry.PI, 0.6 * Geometry.PI),
-                Point2S.of(Geometry.PI, 0.75 * Geometry.PI),
-                Point2S.of(1.25 * Geometry.PI, 0.6 * Geometry.PI));
+                Point2S.of(0, 0.25 * Geometry.PI),
+                Point2S.of(0.25, 0.4 * Geometry.PI),
+                Point2S.of(-0.25, 0.4 * Geometry.PI));
 
         checkClassify(area, RegionLocation.BOUNDARY,
-                Point2S.PLUS_J, Point2S.MINUS_J,
-                Point2S.MINUS_I, Point2S.MINUS_K);
+                Point2S.PLUS_I, Point2S.PLUS_K,
+                Point2S.PLUS_J, Point2S.MINUS_J);
 
         checkClassify(area, RegionLocation.OUTSIDE,
-                Point2S.PLUS_I, Point2S.PLUS_K);
+                Point2S.MINUS_I, Point2S.MINUS_K,
+                Point2S.of(Geometry.PI, 0.25 * Geometry.PI),
+                Point2S.of(Geometry.PI, 0.75 * Geometry.PI));
     }
 
-    @Ignore // TODO: fix this
     @Test
     public void testFromBounds_triangle_large() {
         // arrange
-        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.MINUS_Y, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(Arrays.asList(a, b, c));
@@ -200,43 +204,16 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * Geometry.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(Geometry.HALF_PI, area.getSize(), TEST_EPS);
 
-//        // determine the center by the intersection of two bisecting lines
-//        Point2S m1 = Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI);
-//        Point2S m2 = Point2S.of(0, 0.25 * Geometry.PI);
-//
-//        GreatCircle c1 = GreatCircle.fromPoints(m1, Point2S.PLUS_K, TEST_PRECISION);
-//        GreatCircle c2 = GreatCircle.fromPoints(m2, Point2S.PLUS_J, TEST_PRECISION);
-//
-//        Point2S center = c2.intersection(c1);
-//
-//        SphericalTestUtils.assertPointsEq(center, area.getBarycenter(), TEST_EPS);
-        Point2S bc = area.getBarycenter();
-
-        GreatCircle splitter = GreatCircle.fromPoints(bc, Point2S.of(0, 0.1 * Geometry.PI), TEST_PRECISION);
-        Split<ConvexArea2S> split = area.split(splitter);
-
-        ConvexArea2S minus = split.getMinus();
-        ConvexArea2S plus = split.getPlus();
-
-        System.out.println(minus.getBoundaryPath());
-        System.out.println(plus.getBoundaryPath());
-
-        double minusSize = minus.getSize();
-        double plusSize = plus.getSize();
-
-        System.out.println(minusSize);
-        System.out.println(plusSize);
-
         checkBarycenter(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
-        checkArc(area.getBoundaries().get(0), Point2S.PLUS_K, Point2S.PLUS_J);
-        checkArc(area.getBoundaries().get(1), Point2S.PLUS_I, Point2S.PLUS_K);
-        checkArc(area.getBoundaries().get(2), Point2S.PLUS_J, Point2S.PLUS_I);
+        checkArc(arcs.get(0), Point2S.PLUS_K, Point2S.PLUS_I);
+        checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_J);
+        checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
         checkClassify(area, RegionLocation.INSIDE,
-                area.getBarycenter(), Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
+                Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
         checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
@@ -247,23 +224,22 @@ public class ConvexArea2STest {
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
 
-    @Ignore // TODO: fix this
     @Test
     public void testFromBounds_triangle_small() {
         // arrange
         double azMin = 1.125 * Geometry.PI;
         double azMax = 1.375 * Geometry.PI;
         double azMid = 0.5 * (azMin + azMax);
-        double polarTop = 0;
+        double polarTop = 0.1;
         double polarBottom = 0.25 * Geometry.PI;
 
         Point2S p1 = Point2S.of(azMin, polarBottom);
         Point2S p2 = Point2S.of(azMax, polarBottom);
         Point2S p3 = Point2S.of(azMid, polarTop);
 
-        GreatCircle a = GreatCircle.fromPoints(p2, p1, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(p3, p2, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoints(p1, p3, TEST_PRECISION);
+        GreatCircle a = GreatCircle.fromPoints(p1, p2, TEST_PRECISION);
+        GreatCircle b = GreatCircle.fromPoints(p2, p3, TEST_PRECISION);
+        GreatCircle c = GreatCircle.fromPoints(p3, p1, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(Arrays.asList(a, b, c));
@@ -276,46 +252,22 @@ public class ConvexArea2STest {
         double size = Geometry.TWO_PI - a.angle(b) - b.angle(c) - c.angle(a);
         Assert.assertEquals(size, area.getSize(), TEST_EPS);
 
-        Point2S m1 = Point2S.of(azMid, polarBottom);
-        Point2S m2 = Point2S.of(azMin, 0.5 * (polarTop + polarBottom));
-
-        Point2S center = GreatCircle.fromPoints(m2, p2, TEST_PRECISION).intersection(
-                GreatCircle.fromPoints(m1, p3, TEST_PRECISION));
-
-//        System.out.println(p1);
-//        System.out.println(p2);
-//        System.out.println(p3);
-//        System.out.println();
-//        System.out.println(center);
-//        System.out.println(area.getBarycenter());
-//
-//        Point2S barycenter = area.getBarycenter();
-//        checkClassify(area, RegionLocation.INSIDE, barycenter);
-//        Assert.assertEquals(p1.distance(barycenter), p2.distance(barycenter), TEST_EPS);
-//        SphericalTestUtils.assertPointsEqual(center, area.getBarycenter(), TEST_EPS);
-
         checkBarycenter(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
 
-        System.out.println(area.getBoundaries().get(0).getCircle());
-        System.out.println(area.getBoundaries().get(1).getCircle());
-        System.out.println(area.getBoundaries().get(2).getCircle());
+        checkArc(arcs.get(0), p3, p1);
+        checkArc(arcs.get(1), p1, p2);
+        checkArc(arcs.get(2), p2, p3);
 
-        checkArc(area.getBoundaries().get(0), p3, p2);
-        checkArc(area.getBoundaries().get(1), Point2S.PLUS_I, Point2S.PLUS_K);
-        checkArc(area.getBoundaries().get(2), Point2S.PLUS_J, Point2S.PLUS_I);
-
-        checkClassify(area, RegionLocation.INSIDE,
-                area.getBarycenter(), Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
+        checkClassify(area, RegionLocation.INSIDE, Point2S.of(azMid, 0.11));
 
         checkClassify(area, RegionLocation.BOUNDARY,
-                Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.HALF_PI, 0.304 * Geometry.PI),
-                Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI));
+                p1, p2, p3, p1.slerp(p2, 0.2));
 
         checkClassify(area, RegionLocation.OUTSIDE,
+                Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
 
@@ -323,7 +275,7 @@ public class ConvexArea2STest {
         List<GreatArc> result = new ArrayList<>(arcs);
 
         Collections.sort(result, (a, b) ->
-            Vector3D.COORDINATE_ASCENDING_ORDER.compare(a.getCircle().getPole(), b.getCircle().getPole()));
+            Point2S.POLAR_AZIMUTH_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint()));
 
         return result;
     }
@@ -341,11 +293,12 @@ public class ConvexArea2STest {
 
     private static void checkBarycenter(ConvexArea2S area) {
         Point2S barycenter = area.getBarycenter();
+        double size = area.getSize();
 
         checkClassify(area, RegionLocation.INSIDE, barycenter);
 
-        // make sure that all hyperplanes that pass through the barycenter split the
-        // area into regions of equal size
+        // make sure that each hyperplane from the vertex through the barycenter
+        // splits the region into equally sized sections
         GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
         for (double az = 0; az <= Geometry.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
@@ -354,11 +307,24 @@ public class ConvexArea2STest {
             Split<ConvexArea2S> split = area.split(splitter);
 
             Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
-            double minusSize = split.getMinus().getSize();
-            double pluSize = split.getPlus().getSize();
 
-            String msg = "Hyperplane " + splitter + " does not split area into equal sections";
-            Assert.assertEquals(msg, minusSize, pluSize, TEST_EPS);
+            ConvexArea2S minus = split.getMinus();
+            double minusSize = minus.getSize();
+            Point2S minusBc = minus.getBarycenter();
+
+            Vector3D weightedMinus = minusBc.getVector()
+                    .multiply(minus.getSize());
+
+            ConvexArea2S plus = split.getPlus();
+            double plusSize = plus.getSize();
+            Point2S plusBc = plus.getBarycenter();
+
+            Vector3D weightedPlus = plusBc.getVector()
+                    .multiply(plus.getSize());
+            Point2S computedBarycenter = Point2S.from(weightedMinus.add(weightedPlus));
+
+            Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
+            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, BARYCENTER_EPS);
         }
     }
 }

@@ -114,7 +114,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      *      the full space
      * @see #getBarycenter()
      */
-    public Point1S getMidpoint() {
+    public Point1S getMidPoint() {
         return midpoint;
     }
 
@@ -152,12 +152,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
 
     /** {@inheritDoc}
      *
-     * <p>This method is an alias for {@link #getMidpoint()}.</p>
-     * @see #getMidpoint()
+     * <p>This method is an alias for {@link #getMidPoint()}.</p>
+     * @see #getMidPoint()
      */
     @Override
     public Point1S getBarycenter() {
-        return getMidpoint();
+        return getMidPoint();
     }
 
     /** {@inheritDoc} */

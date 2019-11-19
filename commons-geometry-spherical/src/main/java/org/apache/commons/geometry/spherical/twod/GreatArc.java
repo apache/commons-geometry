@@ -81,6 +81,17 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
         return null;
     }
 
+    /** Return the midpoint of the arc, or null if the arc represents the full space.
+     * @return the midpoint of the arc, or null if the arc represents the full space.
+     */
+    public Point2S getMidPoint() {
+        if (!interval.isFull()) {
+            return getCircle().toSpace(interval.getMidPoint());
+        }
+
+        return null;
+    }
+
     /** Get the angular interval for the arc.
      * @return the angular interval for the arc
      * @see #getSubspaceRegion()
@@ -113,7 +124,9 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
         GreatArc plus = null;
 
         if (intersection != null) {
-            final CutAngle subSplitter = CutAngle.createPositiveFacing(
+            // use a negative-facing cut angle to account for the fact that the great circle
+            // poles point to the minus side of the circle
+            final CutAngle subSplitter = CutAngle.createNegativeFacing(
                     thisCircle.toSubspace(intersection), splitterCircle.getPrecision());
 
             final Split<AngularInterval.Convex> subSplit = interval.splitDiameter(subSplitter);

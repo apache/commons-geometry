@@ -140,12 +140,12 @@ public class GreatCircleTest {
         }
 
         // +1/-1
-        Assert.assertEquals(1, circle.offset(Point2S.of(Geometry.HALF_PI + 1, Geometry.HALF_PI)), TEST_EPS);
-        Assert.assertEquals(-1, circle.offset(Point2S.of(Geometry.MINUS_HALF_PI + 1, Geometry.HALF_PI)), TEST_EPS);
+        Assert.assertEquals(-1, circle.offset(Point2S.of(Geometry.HALF_PI + 1, Geometry.HALF_PI)), TEST_EPS);
+        Assert.assertEquals(1, circle.offset(Point2S.of(Geometry.MINUS_HALF_PI + 1, Geometry.HALF_PI)), TEST_EPS);
 
         // poles
-        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Point2S.of(Geometry.PI, Geometry.HALF_PI)), TEST_EPS);
-        Assert.assertEquals(Geometry.MINUS_HALF_PI, circle.offset(Point2S.of(Geometry.ZERO_PI, Geometry.HALF_PI)), TEST_EPS);
+        Assert.assertEquals(Geometry.MINUS_HALF_PI, circle.offset(Point2S.of(Geometry.PI, Geometry.HALF_PI)), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Point2S.of(Geometry.ZERO_PI, Geometry.HALF_PI)), TEST_EPS);
     }
 
     @Test
@@ -163,19 +163,19 @@ public class GreatCircleTest {
         Assert.assertEquals(0, circle.offset(Vector3D.of(0, 0, -1)), TEST_EPS);
 
         // +1/-1
-        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 1, 0)), TEST_EPS);
-        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 0, 1)), TEST_EPS);
-        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, -1, 0)), TEST_EPS);
-        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 0, -1)), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 1, 0)), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 0, 1)), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, -1, 0)), TEST_EPS);
+        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(-1, 0, -1)), TEST_EPS);
 
-        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 1, 0)), TEST_EPS);
-        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 0, 1)), TEST_EPS);
-        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(1, -1, 0)), TEST_EPS);
-        Assert.assertEquals(-0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 0, -1)), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 1, 0)), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 0, 1)), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(1, -1, 0)), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, circle.offset(Vector3D.of(1, 0, -1)), TEST_EPS);
 
         // poles
-        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Vector3D.Unit.MINUS_X), TEST_EPS);
-        Assert.assertEquals(Geometry.MINUS_HALF_PI, circle.offset(Vector3D.Unit.PLUS_X), TEST_EPS);
+        Assert.assertEquals(Geometry.MINUS_HALF_PI, circle.offset(Vector3D.Unit.MINUS_X), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Vector3D.Unit.PLUS_X), TEST_EPS);
     }
 
     @Test
@@ -740,8 +740,8 @@ public class GreatCircleTest {
         Assert.assertFalse(circle.contains(minusPolePt));
         Assert.assertTrue(circle.contains(origin));
 
-        Assert.assertEquals(HyperplaneLocation.PLUS, circle.classify(plusPolePt));
-        Assert.assertEquals(HyperplaneLocation.MINUS, circle.classify(minusPolePt));
+        Assert.assertEquals(HyperplaneLocation.MINUS, circle.classify(plusPolePt));
+        Assert.assertEquals(HyperplaneLocation.PLUS, circle.classify(minusPolePt));
         Assert.assertEquals(HyperplaneLocation.ON, circle.classify(origin));
     }
 

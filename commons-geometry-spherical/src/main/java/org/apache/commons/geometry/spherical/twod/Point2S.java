@@ -25,6 +25,7 @@ import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 
 /** This class represents a point on the 2-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
@@ -165,6 +166,26 @@ public final class Point2S implements Point<Point2S>, Serializable {
     @Override
     public double distance(final Point2S point) {
         return distance(this, point);
+    }
+
+    /** Spherically interpolate a point along the shortest arc between this point and
+     * the given point. The parameter {@code t} controls the interpolation and is expected
+     * to be in the range {@code [0, 1]}, with {@code 0} returning a point equivalent to the
+     * current instance {@code 1} returning a point equivalent to the given instance. If the
+     * points are antipodal, then an arbitrary arc is chosen from the infinite number available.
+     * @param other other point to interpolate with
+     * @param t interpolation parameter
+     * @return spherically interpolated point
+     * @see QuaternionRotation#slerp(QuaternionRotation)
+     * @see QuaternionRotation#createVectorRotation(Vector3D, Vector3D)
+     */
+    public Point2S slerp(final Point2S other, final double t) {
+        final QuaternionRotation start = QuaternionRotation.identity();
+        final QuaternionRotation end = QuaternionRotation.createVectorRotation(getVector(), other.getVector());
+
+        final QuaternionRotation quat = QuaternionRotation.of(start.slerp(end).apply(t));
+
+        return Point2S.from(quat.apply(getVector()));
     }
 
     /** Return true if this point should be considered equivalent to the argument using the

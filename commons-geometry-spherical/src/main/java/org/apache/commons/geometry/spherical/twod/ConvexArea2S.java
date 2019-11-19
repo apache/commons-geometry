@@ -28,7 +28,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a convex area in 2D spherical space. The boundaries of this
- * area, if any, are composed of convex arcs.
+ * area, if any, are composed of convex great circle arcs.
  */
 public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Point2S, GreatArc> {
 
@@ -44,19 +44,50 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     /** Constant containing the area of half of the spherical space. */
     private static final double HALF_SIZE = Geometry.TWO_PI;
 
-    /** Simple constructor. Callers are responsible for ensuring that the given path
-     * represents the boundary of a convex area. No validation is performed.
+    /** Construct an instance from its boundaries. Callers are responsible for ensuring
+     * that the given path represents the boundary of a convex area. No validation is
+     * performed.
      * @param boundaries the boundaries of the convex area
      */
     private ConvexArea2S(final List<GreatArc> boundaries) {
         super(boundaries);
     }
 
+    /** Get an array of interior angles for the area. An empty array is returned if there
+     * are no boundary intersections (ie, it has only one boundary or no boundaries at all).
+     *
+     * <p>The order of the angles corresponds with the order of the boundaries returned
+     * by {@link #getBoundaries()}: if {@code i} is an index into the boundaries list,
+     * then {@code angles[i]} is the angle between boundaries {@code i} and {@code i+1}.</p>
+     * @return an array of interior angles for the area
+     */
+    public double[] getInteriorAngles() {
+        final List<GreatArc> arcs = getBoundaryPath().getArcs();
+        final int numSides = arcs.size();
+
+        if (numSides < 2) {
+            return new double[0];
+        }
+
+        final double[] angles = new double[numSides];
+
+        GreatArc current;
+        GreatArc next;
+        for (int i = 0; i < numSides; ++i) {
+            current = arcs.get(i);
+            next = arcs.get((i + 1) % numSides);
+
+            angles[i] = Geometry.PI - current.getCircle()
+                    .angle(next.getCircle(), current.getEndPoint());
+        }
+
+        return angles;
+    }
+
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        final List<GreatArc> arcs = getBoundaries();
-        final int numSides = arcs.size();
+        final int numSides = getBoundaries().size();
 
         if (numSides == 0) {
             return FULL_SIZE;
@@ -67,38 +98,42 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         else {
             // use the extended version of Girard's theorem
             // https://en.wikipedia.org/wiki/Spherical_trigonometry#Girard's_theorem
+            final double[] angles = getInteriorAngles();
+            final double sum = Arrays.stream(angles).sum();
 
-            double sum = 0;
-            double interiorAngle;
-
-            for (int i = 0; i < numSides; ++i) {
-                // since the area is convex, we will only have positive interior angles
-                interiorAngle = Geometry.PI - arcs.get(i).getCircle()
-                        .angle(arcs.get((i + 1) % numSides).getCircle());
-
-                sum += interiorAngle;
-            }
-
-            return sum - ((numSides - 2) * Geometry.PI);
+            return sum - ((angles.length - 2) * Geometry.PI);
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public Point2S getBarycenter() {
-        if (!isFull()) {
+        List<GreatArc> arcs = getBoundaries();
+        int numSides = arcs.size();
+
+        if (numSides == 0) {
+            // full space; no barycenter
+            return null;
+        }
+        else if (numSides == 1) {
+            // hemisphere; barycenter is the pole of the hemisphere
+            return arcs.get(0).getCircle().getPolePoint();
+        }
+        else {
+            // 2 or more sides; use an extension of the approach outlined here:
+            // https://archive.org/details/centroidinertiat00broc
+            // In short, the barycenter is the sum of the pole vectors of each side
+            // multiplied by their arc lengths.
             Vector3D barycenter = Vector3D.ZERO;
 
             for (GreatArc arc : getBoundaries()) {
                 barycenter = Vector3D.linearCombination(
                         1, barycenter,
-                        -arc.getSize(), arc.getCircle().getPole());
+                        arc.getSize(), arc.getCircle().getPole());
             }
 
-            return Point2S.from(barycenter.normalize());
+            return Point2S.from(barycenter);
         }
-
-        return null;
     }
 
     /** {@inheritDoc} */
@@ -112,7 +147,12 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @return the boundary path of the area
      */
     public GreatArcPath getBoundaryPath() {
-        return GreatArcPath.fromArcs(getBoundaries());
+        final List<GreatArcPath> paths = InteriorAngleGreatArcConnector.connectMinimized(getBoundaries());
+        if (paths.isEmpty()) {
+            return GreatArcPath.empty();
+        }
+
+        return paths.get(0);
     }
 
     /** Return an instance representing the full spherical 2D space.
@@ -152,6 +192,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      */
     public static ConvexArea2S fromBounds(final Iterable<GreatCircle> bounds) {
         final List<GreatArc> arcs = new ConvexRegionBoundaryBuilder<>(GreatArc.class).build(bounds);
-        return arcs.isEmpty() ? full() : new ConvexArea2S(arcs);
+        return arcs.isEmpty() ?
+                full() :
+                new ConvexArea2S(arcs);
     }
 }

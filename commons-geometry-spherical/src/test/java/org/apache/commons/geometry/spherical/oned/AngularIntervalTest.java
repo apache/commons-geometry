@@ -849,7 +849,7 @@ public class AngularIntervalTest {
         Assert.assertEquals(Geometry.TWO_PI, interval.getMax(), TEST_EPS);
 
         Assert.assertNull(interval.getBarycenter());
-        Assert.assertNull(interval.getMidpoint());
+        Assert.assertNull(interval.getMidPoint());
 
         Assert.assertEquals(Geometry.TWO_PI, interval.getSize(), TEST_EPS);
         Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
@@ -873,16 +873,16 @@ public class AngularIntervalTest {
         Assert.assertEquals(min, interval.getMin(), TEST_EPS);
         Assert.assertEquals(max, interval.getMax(), TEST_EPS);
 
-        Assert.assertEquals(0.5 * (max + min), interval.getMidpoint().getAzimuth(), TEST_EPS);
-        Assert.assertSame(interval.getMidpoint(), interval.getBarycenter());
+        Assert.assertEquals(0.5 * (max + min), interval.getMidPoint().getAzimuth(), TEST_EPS);
+        Assert.assertSame(interval.getMidPoint(), interval.getBarycenter());
 
         Assert.assertEquals(0, interval.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(max - min, interval.getSize(), TEST_EPS);
 
-        checkClassify(interval, RegionLocation.INSIDE, interval.getMidpoint());
+        checkClassify(interval, RegionLocation.INSIDE, interval.getMidPoint());
         checkClassify(interval, RegionLocation.BOUNDARY,
                 interval.getMinBoundary().getPoint(), interval.getMaxBoundary().getPoint());
-        checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidpoint().getAzimuth() + Geometry.PI));
+        checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidPoint().getAzimuth() + Geometry.PI));
     }
 
     private static void checkClassify(Region<Point1S> region, RegionLocation loc, Point1S ... pts) {

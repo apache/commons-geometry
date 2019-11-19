@@ -239,15 +239,15 @@ public class GreatArcTest {
 
         GreatArc minus = split.getMinus();
         Assert.assertSame(arc.getCircle(), minus.getCircle());
-        checkArc(minus, Point2S.MINUS_J, Point2S.PLUS_J);
-        checkClassify(minus, RegionLocation.OUTSIDE, Point2S.MINUS_I);
-        checkClassify(minus, RegionLocation.INSIDE, Point2S.PLUS_I);
+        checkArc(minus, Point2S.PLUS_J, Point2S.MINUS_J);
+        checkClassify(minus, RegionLocation.OUTSIDE, Point2S.PLUS_I);
+        checkClassify(minus, RegionLocation.INSIDE, Point2S.MINUS_I);
 
         GreatArc plus = split.getPlus();
         Assert.assertSame(arc.getCircle(), plus.getCircle());
-        checkArc(plus, Point2S.PLUS_J, Point2S.MINUS_J);
-        checkClassify(plus, RegionLocation.INSIDE, Point2S.MINUS_I);
-        checkClassify(plus, RegionLocation.OUTSIDE, Point2S.PLUS_I);
+        checkArc(plus, Point2S.MINUS_J, Point2S.PLUS_J);
+        checkClassify(plus, RegionLocation.INSIDE, Point2S.PLUS_I);
+        checkClassify(plus, RegionLocation.OUTSIDE, Point2S.MINUS_I);
     }
 
     @Test
@@ -265,11 +265,11 @@ public class GreatArcTest {
 
         GreatArc minus = split.getMinus();
         Assert.assertSame(arc.getCircle(), minus.getCircle());
-        checkArc(minus, Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI), Point2S.MINUS_J);
+        checkArc(minus, Point2S.of(0, 0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
 
         GreatArc plus = split.getPlus();
         Assert.assertSame(arc.getCircle(), plus.getCircle());
-        checkArc(plus, Point2S.of(0, 0), Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
+        checkArc(plus, Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI), Point2S.MINUS_J);
     }
 
     @Test
@@ -277,7 +277,8 @@ public class GreatArcTest {
         // arrange
         GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
                 .arc(Geometry.HALF_PI, Geometry.PI);
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
 
         // act
         Split<GreatArc> split = arc.split(splitter);
@@ -297,7 +298,7 @@ public class GreatArcTest {
         // arrange
         GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION)
                 .arc(Geometry.HALF_PI, Geometry.PI);
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
 
         // act
         Split<GreatArc> split = arc.split(splitter);
@@ -366,7 +367,7 @@ public class GreatArcTest {
 
         checkClassify(arc, RegionLocation.BOUNDARY, start, end);
 
-        Point2S mid = arc.getCircle().toSpace(arc.getInterval().getMidpoint());
+        Point2S mid = arc.getCircle().toSpace(arc.getInterval().getMidPoint());
 
         checkClassify(arc, RegionLocation.INSIDE, mid);
         checkClassify(arc, RegionLocation.OUTSIDE, mid.antipodal());

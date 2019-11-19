@@ -20,9 +20,12 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -129,6 +132,77 @@ public class Point2STest {
         Assert.assertEquals(Geometry.PI, a.distance(a.antipodal()), 1.0e-10);
         Assert.assertEquals(0.5 * Geometry.PI, Point2S.MINUS_I.distance(Point2S.MINUS_K), 1.0e-10);
         Assert.assertEquals(0.0, Point2S.of(1.0, 0).distance(Point2S.of(2.0, 0)), 1.0e-10);
+    }
+
+    @Test
+    public void testSlerp_alongEquator() {
+        // arrange
+        Point2S p1 = Point2S.PLUS_I;
+        Point2S p2 = Point2S.PLUS_J;
+
+        // act/assert
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * Geometry.HALF_PI, Geometry.HALF_PI), p1.slerp(p2, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * Geometry.HALF_PI, Geometry.HALF_PI), p1.slerp(p2, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * Geometry.HALF_PI, Geometry.HALF_PI), p1.slerp(p2, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p2, p1.slerp(p2, 1), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(p2, p2.slerp(p1, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.75 * Geometry.HALF_PI, Geometry.HALF_PI), p2.slerp(p1, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.5 * Geometry.HALF_PI, Geometry.HALF_PI), p2.slerp(p1, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.25 * Geometry.HALF_PI, Geometry.HALF_PI), p2.slerp(p1, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p1, p2.slerp(p1, 1), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.MINUS_I, p1.slerp(p2, 2), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.MINUS_J, p1.slerp(p2, -1), TEST_EPS);
+    }
+
+    @Test
+    public void testSlerp_alongMeridian() {
+        // arrange
+        Point2S p1 = Point2S.PLUS_J;
+        Point2S p2 = Point2S.PLUS_K;
+
+        // act/assert
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p2, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.75 * Geometry.HALF_PI), p1.slerp(p2, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.5 * Geometry.HALF_PI), p1.slerp(p2, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.HALF_PI), p1.slerp(p2, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p2, p1.slerp(p2, 1), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(p2, p2.slerp(p1, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.25 * Geometry.HALF_PI), p2.slerp(p1, 0.25), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.5 * Geometry.HALF_PI), p2.slerp(p1, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, 0.75 * Geometry.HALF_PI), p2.slerp(p1, 0.75), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p1, p2.slerp(p1, 1), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(Point2S.MINUS_J, p1.slerp(p2, 2), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.MINUS_K, p1.slerp(p2, -1), TEST_EPS);
+    }
+
+    @Test
+    public void testSlerp_samePoint() {
+        // arrange
+        Point2S p1 = Point2S.PLUS_I;
+
+        // act/assert
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 0.5), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 1), TEST_EPS);
+    }
+
+    @Test
+    public void testSlerp_antipodal() {
+        // arrange
+        Point2S p1 = Point2S.PLUS_I;
+        Point2S p2 = Point2S.MINUS_I;
+
+        // act/assert
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 0), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(p1, p1.slerp(p1, 1), TEST_EPS);
+
+        Point2S pt = p1.slerp(p2, 0.5);
+        Assert.assertEquals(p1.distance(pt), p2.distance(pt), TEST_EPS);
     }
 
     @Test
