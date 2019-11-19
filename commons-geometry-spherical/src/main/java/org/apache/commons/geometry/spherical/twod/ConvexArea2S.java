@@ -16,15 +16,21 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a convex area in 2D spherical space. The boundaries of this
@@ -53,12 +59,25 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         super(boundaries);
     }
 
+    /** Get a path instance representing the boundary of the area. The path is oriented
+     * so that the minus sides of the arcs lie on the inside of the area.
+     * @return the boundary path of the area
+     */
+    public GreatArcPath getBoundaryPath() {
+        final List<GreatArcPath> paths = InteriorAngleGreatArcConnector.connectMinimized(getBoundaries());
+        if (paths.isEmpty()) {
+            return GreatArcPath.empty();
+        }
+
+        return paths.get(0);
+    }
+
     /** Get an array of interior angles for the area. An empty array is returned if there
      * are no boundary intersections (ie, it has only one boundary or no boundaries at all).
      *
      * <p>The order of the angles corresponds with the order of the boundaries returned
      * by {@link #getBoundaries()}: if {@code i} is an index into the boundaries list,
-     * then {@code angles[i]} is the angle between boundaries {@code i} and {@code i+1}.</p>
+     * then {@code angles[i]} is the angle between boundaries {@code i} and {@code (i+1) % boundariesSize}.</p>
      * @return an array of interior angles for the area
      */
     public double[] getInteriorAngles() {
@@ -142,17 +161,18 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return splitInternal(splitter, this, GreatArc.class, ConvexArea2S::new);
     }
 
-    /** Get a path instance representing the boundary of the area. The path is oriented
-     * so that the minus sides of the arcs lie on the inside of the area.
-     * @return the boundary path of the area
+    /** Return a new instance transformed by the argument.
+     * @param transform transform to apply
+     * @return a new instance transformed by the argument
      */
-    public GreatArcPath getBoundaryPath() {
-        final List<GreatArcPath> paths = InteriorAngleGreatArcConnector.connectMinimized(getBoundaries());
-        if (paths.isEmpty()) {
-            return GreatArcPath.empty();
-        }
+    public ConvexArea2S transform(final Transform<Point2S> transform) {
+        return transformInternal(transform, this, GreatArc.class, ConvexArea2S::new);
+    }
 
-        return paths.get(0);
+    /** {@inheritDoc} */
+    @Override
+    public GreatArc trim(final ConvexSubHyperplane<Point2S> convexSubHyperplane) {
+        return (GreatArc) super.trim(convexSubHyperplane);
     }
 
     /** Return an instance representing the full spherical 2D space.
@@ -160,6 +180,88 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      */
     public static ConvexArea2S full() {
         return FULL;
+    }
+
+    /** Construct a convex area by creating great circles between adjacent vertices. The vertices must be given in a counter-clockwise
+     * around order the interior of the shape. If the area is intended to be closed, the beginning point must be repeated
+     * at the end of the path.
+     * @param vertices vertices to use to construct the area
+     * @param precision precision context used to create new great circle instances
+     * @return a convex area constructed using great circles between adjacent vertices
+     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
+     */
+    public static ConvexArea2S fromVertices(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+        return fromVertices(vertices, false, precision);
+    }
+
+    /** Construct a convex area by creating great circles between adjacent vertices. An implicit great circle is created between the
+     * last vertex given and the first one, if needed. The vertices must be given in a counter-clockwise around order the interior
+     * of the shape.
+     * @param vertices vertices to use to construct the area
+     * @param precision precision context used to create new great circles instances
+     * @return a convex area constructed using great circles between adjacent vertices
+     * @see #fromVertices(Collection, DoublePrecisionContext)
+     */
+    public static ConvexArea2S fromVertexLoop(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+        return fromVertices(vertices, true, precision);
+    }
+
+    /** Construct a convex area from great circles between adjacent vertices.
+     * @param vertices vertices to use to construct the area
+     * @param close if true, an additional great circle will be created between the last and first vertex
+     * @param precision precision context used to create new great circle instances
+     * @return a convex area constructed using great circles between adjacent vertices
+     */
+    public static ConvexArea2S fromVertices(final Collection<Point2S> vertices, final boolean close,
+            final DoublePrecisionContext precision) {
+
+        if (vertices.isEmpty()) {
+            return full();
+        }
+
+        final List<GreatCircle> circles = new ArrayList<>();
+
+        Point2S first = null;
+        Point2S prev = null;
+        Point2S cur = null;
+
+        for (Point2S vertex : vertices) {
+            cur = vertex;
+
+            if (first == null) {
+                first = cur;
+            }
+
+            if (prev != null && !cur.eq(prev, precision)) {
+                circles.add(GreatCircle.fromPoints(prev, cur, precision));
+            }
+
+            prev = cur;
+        }
+
+        if (close && cur != null && !cur.eq(first, precision)) {
+            circles.add(GreatCircle.fromPoints(cur, first, precision));
+        }
+
+        if (!vertices.isEmpty() && circles.isEmpty()) {
+            throw new IllegalStateException("Unable to create convex area: only a single unique vertex provided");
+        }
+
+        return fromBounds(circles);
+    }
+
+    /** Construct a convex area from an arc path. The area represents the intersection of all of the negative
+     * half-spaces of the great circles in the path. The boundaries of the returned area may therefore not match
+     * the arcs in the path.
+     * @param path path to construct the area from
+     * @return a convex area constructed from the great circles in the given path
+     */
+    public static ConvexArea2S fromPath(final GreatArcPath path) {
+        final List<GreatCircle> bounds = path.getArcs().stream()
+                .map(a -> a.getCircle())
+                .collect(Collectors.toList());
+
+        return fromBounds(bounds);
     }
 
     /** Create a convex area formed by the intersection of the negative half-spaces of the

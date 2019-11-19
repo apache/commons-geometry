@@ -181,6 +181,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @param precision precision context used to create new line instances
      * @return a convex area constructed using lines between adjacent vertices
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
     public static ConvexArea fromVertices(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
         return fromVertices(vertices, false, precision);
@@ -193,18 +194,19 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @param precision precision context used to create new line instances
      * @return a convex area constructed using lines between adjacent vertices
      * @see #fromVertices(Collection, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
     public static ConvexArea fromVertexLoop(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
         return fromVertices(vertices, true, precision);
     }
 
-    /** Internal method for creating a convex area from lines between adjacent vertices.
+    /** Construct a convex area from lines between adjacent vertices.
      * @param vertices vertices to use to construct the area
      * @param close if true, an additional line will be created between the last and first vertex
      * @param precision precision context used to create new line instances
      * @return a convex area constructed using lines between adjacent vertices
      */
-    private static ConvexArea fromVertices(final Collection<Vector2D> vertices, boolean close, final DoublePrecisionContext precision) {
+    public static ConvexArea fromVertices(final Collection<Vector2D> vertices, boolean close, final DoublePrecisionContext precision) {
         if (vertices.isEmpty()) {
             return full();
         }
