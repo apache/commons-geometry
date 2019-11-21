@@ -21,7 +21,7 @@ package org.apache.commons.geometry.core.exception;
  */
 public class IllegalNormException extends GeometryValueException {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180909L;
 
     /** Simple constructor accepting the illegal norm value.

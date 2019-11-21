@@ -74,7 +74,7 @@ public interface Region<P extends Point<P>> {
     /** Project a point onto the boundary of the region. Null is returned if
      * the region contains no boundaries (ie, is either {@link #isFull() full}
      * or {@link #isEmpty() empty}).
-     * @param point point to project
+     * @param pt pt to project
      * @return projection of the point on the boundary of the region or null
      *      if the region does not contain any boundaries
      */

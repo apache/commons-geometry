@@ -301,6 +301,13 @@ public class RegionBSPTree2STest {
     }
 
     @Test
+    public void testProject_noBoundaries() {
+        // act/assert
+        Assert.assertNull(RegionBSPTree2S.empty().project(Point2S.PLUS_I));
+        Assert.assertNull(RegionBSPTree2S.full().project(Point2S.PLUS_I));
+    }
+
+    @Test
     public void testGeometricProperties_full() {
         // arrange
         RegionBSPTree2S tree = RegionBSPTree2S.full();

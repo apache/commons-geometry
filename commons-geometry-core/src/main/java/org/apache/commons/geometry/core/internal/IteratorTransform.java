@@ -88,5 +88,5 @@ public abstract class IteratorTransform<I, T> implements Iterator<T> {
      * the input value and add one or more values to the output queue.
      * @param input value from the input iterator
      */
-    protected abstract void acceptInput(final I input);
+    protected abstract void acceptInput(I input);
 }

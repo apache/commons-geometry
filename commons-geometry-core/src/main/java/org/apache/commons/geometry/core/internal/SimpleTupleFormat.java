@@ -25,7 +25,7 @@ public class SimpleTupleFormat {
     /** Default value separator string. */
     private static final String DEFAULT_SEPARATOR = ",";
 
-    /** Space character */
+    /** Space character. */
     private static final String SPACE = " ";
 
     /** Static instance configured with default values. Tuples in this format
@@ -34,13 +34,13 @@ public class SimpleTupleFormat {
     private static final SimpleTupleFormat DEFAULT_INSTANCE =
             new SimpleTupleFormat(",", "(", ")");
 
-    /** String separating tuple values */
+    /** String separating tuple values. */
     private final String separator;
 
-    /** String used to signal the start of a tuple; may be null */
+    /** String used to signal the start of a tuple; may be null. */
     private final String prefix;
 
-    /** String used to signal the end of a tuple; may be null */
+    /** String used to signal the end of a tuple; may be null. */
     private final String suffix;
 
     /** Constructs a new instance with the default string separator (a comma)

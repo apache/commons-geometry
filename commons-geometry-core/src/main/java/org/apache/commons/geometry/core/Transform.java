@@ -29,7 +29,7 @@ import java.util.function.Function;
  *      <li>The transform must be <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a>.
  *      This means that points and parallel lines must be preserved by the transformation. For example,
  *      a translation or rotation in Euclidean 3D space meets this requirement because a mapping exists for
- *      all points and lines and planes that are parallel before the transform remain parallel afterwards.
+ *      all points and lines that are parallel before the transform remain parallel afterwards.
  *      However, a projective transform that causes parallel lines to meet at a point in infinity does not.
  *      </li>
  *      <li>The transform must be <em>inversible</em>. An inverse transform must exist that will return
@@ -50,7 +50,7 @@ public interface Transform<P extends Point<P>> extends Function<P, P> {
      * For example, in Euclidean 2D space, this will be true for translations,
      * rotations, and scalings but will be false for reflections.
      * @return true if the transform preserves the orientation of the space
-     * @see https://en.wikipedia.org/wiki/Orientation_(vector_space)
+     * @see <a href="https://en.wikipedia.org/wiki/Orientation_(vector_space)">Orientation</a>
      */
     boolean preservesOrientation();
 }

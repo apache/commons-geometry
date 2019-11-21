@@ -20,23 +20,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+/** This interface defines mappings between a space and one of its subspaces.
 
-/** This interface defines mappers between a space and one of its subspaces.
-
- * <p>Subspaces are the lower dimensions subsets of a n-dimensions
- * space. The (n-1)-dimension subspaces are specific subspaces known
- * as {@link Hyperplane hyperplanes}. This interface can be used regardless
- * of the dimensions differences. For example, a line in 3D Euclidean space
- * can map directly from 3 dimensions to 1.</p>
-
- * <p>In the 3D Euclidean space, hyperplanes are 2D planes, and the 1D
- * subspaces are lines.</p>
-
+ * <p>Subspaces are the lower-dimension subsets of a space. For example,
+ * in an n-dimension space, the subspaces are the (n-1) dimension space,
+ * the (n-2) dimension space, and so on. This interface can be used regardless
+ * of the difference in number of dimensions between the space and the target
+ * subspace. For example, a line in 3D Euclidean space can use this interface
+ * to map directly from 3D Euclidean space to 1D Euclidean space (ie, the location
+ * along the line).</p>
+ *
  * @param <P> Point type defining the embedding space.
  * @param <S> Point type defining the embedded subspace.
-
- * @see Hyperplane
  */
 public interface Embedding<P extends Point<P>, S extends Point<S>> {
 
