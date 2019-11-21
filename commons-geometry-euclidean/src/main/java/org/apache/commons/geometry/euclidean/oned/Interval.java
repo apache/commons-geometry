@@ -343,7 +343,7 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.
      * @return a BSP tree representing the same region
-     * @see RegionBSPTree1D#fromInterval(Interval)
+     * @see RegionBSPTree1D#from(Interval)
      */
     public RegionBSPTree1D toTree() {
         return RegionBSPTree1D.fromInterval(this);

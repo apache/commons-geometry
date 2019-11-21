@@ -337,6 +337,20 @@ public class Point2STest {
         Point2S.parse("abc");
     }
 
+    @Test
+    public void testArea() {
+        // arrange
+        Point2S a = Point2S.PLUS_I;
+        Point2S b = Point2S.PLUS_J;
+        Point2S c = Point2S.PLUS_K;
+        Point2S d = Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI);
+
+        // act/assert
+        Assert.assertEquals(0.5 * Geometry.PI, Point2S.area(a, b, c), TEST_EPS);
+        Assert.assertEquals(0.5 * Geometry.PI, Point2S.area(a, c, b), TEST_EPS);
+        Assert.assertEquals(0.25 * Geometry.PI, Point2S.area(a, d, c), TEST_EPS);
+    }
+
     private static void checkPoint(Point2S p, double az, double polar) {
         String msg = "Expected (" + az + "," + polar + ") but was " + p;
 

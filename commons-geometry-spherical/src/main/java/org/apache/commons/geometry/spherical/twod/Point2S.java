@@ -290,7 +290,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
      * @return point instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Point2S parse(String str) {
+    public static Point2S parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, Point2S::of);
     }
 
@@ -299,8 +299,36 @@ public final class Point2S implements Point<Point2S>, Serializable {
      * @param p2 second vector
      * @return the angular separation between p1 and p2
      */
-    public static double distance(Point2S p1, Point2S p2) {
+    public static double distance(final Point2S p1, final Point2S p2) {
         return p1.vector.angle(p2.vector);
+    }
+
+    /** Compute the signed area of the spherical triangle defined by the given points. The
+     * area is positive if the triangle winds to the left and negative if it winds to the
+     * right.
+     * @param p1 first triangle point
+     * @param p2 second triangle point
+     * @param p3 third triangle point
+     * @return
+     */
+    public static double area(final Point2S p1, final Point2S p2, final Point2S p3) {
+        final double a = p1.distance(p2);
+        final double b = p2.distance(p3);
+        final double c = p3.distance(p1);
+
+        final double sinA = Math.sin(a);
+        final double sinB = Math.sin(b);
+        final double sinC = Math.sin(c);
+
+        final double cosA = Math.cos(a);
+        final double cosB = Math.cos(b);
+        final double cosC = Math.cos(c);
+
+        final double angleA = Math.acos((cosA - (cosB * cosC)) / (sinB * sinC));
+        final double angleB = Math.acos((cosB - (cosC * cosA)) / (sinC * sinA));
+        final double angleC = Math.acos((cosC - (cosA * cosB)) / (sinA * sinB));
+
+        return (angleA + angleB + angleC) - Geometry.PI;
     }
 
     /** Compute the 3D Euclidean vector associated with the given spherical coordinates.

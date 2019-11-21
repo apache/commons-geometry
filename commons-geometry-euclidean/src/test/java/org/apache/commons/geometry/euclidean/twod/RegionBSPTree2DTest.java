@@ -836,7 +836,7 @@ public class RegionBSPTree2DTest {
         ConvexArea area = ConvexArea.full();
 
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
         Assert.assertNull(tree.getBarycenter());
 
         // assert
@@ -850,7 +850,7 @@ public class RegionBSPTree2DTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
 
         // assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
@@ -869,7 +869,7 @@ public class RegionBSPTree2DTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.fromConvexArea(area);
+        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
 
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);

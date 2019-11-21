@@ -58,7 +58,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
+     * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree3D copy() {
         RegionBSPTree3D result = RegionBSPTree3D.empty();
@@ -96,7 +96,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** Recursive method to compute the convex volumes of all inside leaf nodes in the subtree rooted at the given
      * node. The computed convex volumes are added to the given list.
      * @param node root of the subtree to compute the convex volumes for
-     * @param nodeArea the convex volume for the current node; this will be split by the node's cut hyperplane to
+     * @param nodeVolume the convex volume for the current node; this will be split by the node's cut hyperplane to
      *      form the convex volumes for any child nodes
      * @param result list containing the results of the computation
      */
@@ -276,7 +276,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @param volume convex volume instance
      * @return a new BSP tree instance representing the same region as the argument
      */
-    public static RegionBSPTree3D fromConvexVolume(final ConvexVolume volume) {
+    public static RegionBSPTree3D from(final ConvexVolume volume) {
         RegionBSPTree3D tree = RegionBSPTree3D.full();
         tree.insert(volume.getBoundaries());
 

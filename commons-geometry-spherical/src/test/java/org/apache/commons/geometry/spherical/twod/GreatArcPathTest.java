@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -179,7 +180,7 @@ public class GreatArcPathTest {
                 Point2S.PLUS_I);
 
         // act
-        GreatArcPath path = GreatArcPath.fromPoints(points, TEST_PRECISION);
+        GreatArcPath path = GreatArcPath.fromVertices(points, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -197,7 +198,7 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testFromPointLoop() {
+    public void testFromVertexLoop() {
         // arrange
         List<Point2S> points = Arrays.asList(
                 Point2S.MINUS_I,
@@ -299,6 +300,67 @@ public class GreatArcPathTest {
 
         // assert
         Assert.assertEquals(arcs, Arrays.asList(a, b));
+    }
+
+    @Test
+    public void testToTree_empty() {
+        // act
+        RegionBSPTree2S tree = GreatArcPath.empty().toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+    }
+
+    @Test
+    public void testToTree_halfSpace() {
+        // arrange
+        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
+                .append(Point2S.PLUS_I)
+                .append(Point2S.PLUS_J)
+                .build();
+
+        // act
+        RegionBSPTree2S tree = path.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(Geometry.TWO_PI, tree.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getBarycenter(), TEST_EPS);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.PLUS_K);
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, Point2S.MINUS_K);
+    }
+
+    @Test
+    public void testToTree_triangle() {
+        // arrange
+        GreatArcPath path = GreatArcPath.builder(TEST_PRECISION)
+                .append(Point2S.PLUS_I)
+                .append(Point2S.PLUS_J)
+                .append(Point2S.PLUS_K)
+                .close();
+
+        // act
+        RegionBSPTree2S tree = path.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(Geometry.HALF_PI, tree.getSize(), TEST_EPS);
+
+        Point2S bc = Point2S.from(Point2S.PLUS_I.getVector()
+                .add(Point2S.PLUS_J.getVector())
+                .add(Point2S.PLUS_K.getVector()));
+
+        SphericalTestUtils.assertPointsEq(bc, tree.getBarycenter(), TEST_EPS);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.of(0.5, 0.5));
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
+                Point2S.MINUS_K, Point2S.MINUS_I, Point2S.MINUS_J);
     }
 
     @Test

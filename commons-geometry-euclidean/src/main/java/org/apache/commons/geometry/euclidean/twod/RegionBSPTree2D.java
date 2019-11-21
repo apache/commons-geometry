@@ -56,7 +56,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
+     * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree2D copy() {
         RegionBSPTree2D result = RegionBSPTree2D.empty();
@@ -94,7 +94,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @param area the convex area to add
      */
     public void add(final ConvexArea area) {
-        union(fromConvexArea(area));
+        union(from(area));
     }
 
     /** Return a list of {@link ConvexArea}s representing the same region
@@ -136,13 +136,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public Split<RegionBSPTree2D> split(Hyperplane<Vector2D> splitter) {
+    public Split<RegionBSPTree2D> split(final Hyperplane<Vector2D> splitter) {
         return split(splitter, RegionBSPTree2D.empty(), RegionBSPTree2D.empty());
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D project(Vector2D pt) {
+    public Vector2D project(final Vector2D pt) {
         // use our custom projector so that we can disambiguate points that are
         // actually equidistant from the target point
         final BoundaryProjector2D projector = new BoundaryProjector2D(pt);
@@ -277,7 +277,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @return tree instance representing the same area as the given
      *      convex area
      */
-    public static RegionBSPTree2D fromConvexArea(final ConvexArea area) {
+    public static RegionBSPTree2D from(final ConvexArea area) {
         final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.insert(area.getBoundaries());
 

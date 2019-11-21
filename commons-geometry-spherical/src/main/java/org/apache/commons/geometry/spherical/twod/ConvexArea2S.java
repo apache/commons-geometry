@@ -175,6 +175,13 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return (GreatArc) super.trim(convexSubHyperplane);
     }
 
+    /** Return a BSP tree instance representing the same region as the current instance.
+     * @return a BSP tree instance representing the same region as the current instance
+     */
+    public RegionBSPTree2S toTree() {
+        return RegionBSPTree2S.from(this);
+    }
+
     /** Return an instance representing the full spherical 2D space.
      * @return an instance representing the full spherical 2D space.
      */

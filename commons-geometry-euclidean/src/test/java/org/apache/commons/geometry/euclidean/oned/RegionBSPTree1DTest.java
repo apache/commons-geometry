@@ -808,7 +808,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1.0, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1.0, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
 
@@ -828,7 +828,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point_splitOnPoint_positiveFacingSplitter() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION);
 
@@ -848,7 +848,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point_splitOnPoint_negativeFacingSplitter() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromInterval(Interval.point(1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
 

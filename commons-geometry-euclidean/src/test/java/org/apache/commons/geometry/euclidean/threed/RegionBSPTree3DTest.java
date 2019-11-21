@@ -181,7 +181,7 @@ public class RegionBSPTree3DTest {
         ConvexVolume volume = ConvexVolume.full();
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromConvexVolume(volume);
+        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
         Assert.assertNull(tree.getBarycenter());
 
         // assert
@@ -194,7 +194,7 @@ public class RegionBSPTree3DTest {
         ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromConvexVolume(volume);
+        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
 
         // assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
@@ -220,7 +220,7 @@ public class RegionBSPTree3DTest {
                 );
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.fromConvexVolume(volume);
+        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
 
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);

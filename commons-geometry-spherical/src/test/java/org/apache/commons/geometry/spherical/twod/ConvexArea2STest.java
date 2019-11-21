@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -60,7 +59,7 @@ public class ConvexArea2STest {
 
         Assert.assertEquals(0, area.getBoundaries().size());
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.PLUS_I, Point2S.MINUS_I,
                 Point2S.PLUS_J, Point2S.MINUS_J,
                 Point2S.PLUS_K, Point2S.MINUS_K);
@@ -80,7 +79,7 @@ public class ConvexArea2STest {
 
         Assert.assertEquals(0, area.getBoundaries().size());
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.PLUS_I, Point2S.MINUS_I,
                 Point2S.PLUS_J, Point2S.MINUS_J,
                 Point2S.PLUS_K, Point2S.MINUS_K);
@@ -107,13 +106,13 @@ public class ConvexArea2STest {
         Assert.assertTrue(arc.isFull());
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, arc.getCircle().getPolePoint(), TEST_EPS);
 
-        checkClassify(area, RegionLocation.INSIDE, Point2S.PLUS_J);
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, Point2S.PLUS_J);
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.MINUS_I,
                 Point2S.PLUS_K, Point2S.MINUS_K);
 
-        checkClassify(area, RegionLocation.OUTSIDE, Point2S.MINUS_J);
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE, Point2S.MINUS_J);
     }
 
     @Test
@@ -139,16 +138,16 @@ public class ConvexArea2STest {
         checkArc(arcs.get(0), Point2S.PLUS_K, Point2S.MINUS_K);
         checkArc(arcs.get(1), Point2S.MINUS_K, Point2S.PLUS_K);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0.125 * Geometry.PI, 0.1),
                 Point2S.of(0.125 * Geometry.PI, Geometry.HALF_PI),
                 Point2S.of(0.125 * Geometry.PI, Geometry.PI - 0.1));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI),
                 Point2S.PLUS_K, Point2S.MINUS_K);
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_J, Point2S.MINUS_J);
     }
 
@@ -174,16 +173,16 @@ public class ConvexArea2STest {
         checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
         checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_J);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0, 0.25 * Geometry.PI),
                 Point2S.of(0.25, 0.4 * Geometry.PI),
                 Point2S.of(-0.25, 0.4 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_K,
                 Point2S.PLUS_J, Point2S.MINUS_J);
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_K,
                 Point2S.of(Geometry.PI, 0.25 * Geometry.PI),
                 Point2S.of(Geometry.PI, 0.75 * Geometry.PI));
@@ -216,15 +215,15 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_J);
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.HALF_PI, 0.304 * Geometry.PI),
                 Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
 
@@ -268,12 +267,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), p1, p2);
         checkArc(arcs.get(2), p2, p3);
 
-        checkClassify(area, RegionLocation.INSIDE, Point2S.of(azMid, 0.11));
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, Point2S.of(azMid, 0.11));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 p1, p2, p3, p1.slerp(p2, 0.2));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
@@ -313,12 +312,12 @@ public class ConvexArea2STest {
         checkArc(arcs.get(2), p4, p1);
         checkArc(arcs.get(3), p3, p4);
 
-        checkClassify(area, RegionLocation.INSIDE, Point2S.of(0.2, 0.11));
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, Point2S.of(0.2, 0.11));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 p1, p2, p3, p4, p1.slerp(p2, 0.2));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
@@ -361,13 +360,13 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.MINUS_I);
         checkArc(arcs.get(2), Point2S.MINUS_K, Point2S.MINUS_J);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(1.25 * Geometry.PI, 0.75 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
     }
 
@@ -403,16 +402,16 @@ public class ConvexArea2STest {
         checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
         checkArc(arcs.get(1), Point2S.MINUS_J, Point2S.PLUS_J);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(-0.25 * Geometry.PI, 0.25 * Geometry.PI),
                 Point2S.of(0, 0.25 * Geometry.PI),
                 Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J,
                 Point2S.PLUS_K, Point2S.MINUS_J);
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_K);
     }
 
@@ -443,15 +442,15 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_J);
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.HALF_PI, 0.304 * Geometry.PI),
                 Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
 
@@ -519,15 +518,15 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_J);
         checkArc(arcs.get(2), Point2S.PLUS_J, Point2S.PLUS_K);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K,
                 Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.HALF_PI, 0.304 * Geometry.PI),
                 Point2S.of(0.25 * Geometry.PI, Geometry.HALF_PI));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.MINUS_I, Point2S.MINUS_J, Point2S.MINUS_K);
     }
 
@@ -600,15 +599,15 @@ public class ConvexArea2STest {
         checkArc(arcs.get(1), Point2S.PLUS_I, Point2S.PLUS_K);
         checkArc(arcs.get(2), Point2S.MINUS_J, Point2S.PLUS_I);
 
-        checkClassify(area, RegionLocation.INSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE,
                 Point2S.of(-0.25 * Geometry.PI, 0.25 * Geometry.PI));
 
-        checkClassify(area, RegionLocation.BOUNDARY,
+        SphericalTestUtils.checkClassify(area, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.MINUS_J, Point2S.PLUS_K,
                 Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.MINUS_HALF_PI, 0.304 * Geometry.PI),
                 Point2S.of(-0.25 * Geometry.PI, Geometry.HALF_PI));
 
-        checkClassify(area, RegionLocation.OUTSIDE,
+        SphericalTestUtils.checkClassify(area, RegionLocation.OUTSIDE,
                 Point2S.PLUS_J, Point2S.MINUS_I, Point2S.MINUS_K);
     }
 
@@ -681,7 +680,7 @@ public class ConvexArea2STest {
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
         Assert.assertSame(area, split.getMinus());
-        Assert.assertNull(split.getPlus());;
+        Assert.assertNull(split.getPlus());
     }
 
     @Test
@@ -699,8 +698,28 @@ public class ConvexArea2STest {
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        Assert.assertNull(split.getMinus());;
+        Assert.assertNull(split.getMinus());
         Assert.assertSame(area, split.getPlus());
+    }
+
+    @Test
+    public void testToTree() {
+        // arrange
+        ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
+                    Point2S.of(0.1, 0.1), Point2S.of(-0.4, 1),
+                    Point2S.of(0.15, 1.5), Point2S.of(0.3, 1.2),
+                    Point2S.of(0.1, 0.1)
+                ), TEST_PRECISION);
+
+        // act
+        RegionBSPTree2S tree = area.toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(area.getSize(), tree.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(area.getBarycenter(), tree.getBarycenter(), TEST_EPS);
     }
 
     private static List<GreatArc> sortArcs(List<GreatArc> arcs) {
@@ -725,12 +744,6 @@ public class ConvexArea2STest {
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }
 
-    private static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
-        for (Point2S pt : pts) {
-            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
-        }
-    }
-
     private static void assertPath(GreatArcPath path, Point2S ... expectedVertices) {
         List<Point2S> vertices = path.getVertices();
 
@@ -749,7 +762,7 @@ public class ConvexArea2STest {
         Point2S barycenter = area.getBarycenter();
         double size = area.getSize();
 
-        checkClassify(area, RegionLocation.INSIDE, barycenter);
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, barycenter);
 
         GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
         for (double az = 0; az <= Geometry.TWO_PI; az += 0.2) {

@@ -494,6 +494,11 @@ public class SphericalPolygonsSetTest {
         EnclosingBall<Point2S> enclosing = zone.getEnclosingCap();
         Vector3D enclosingCenter = enclosing.getCenter().getVector();
 
+        System.out.println(zone.getBoundarySize());
+        System.out.println(zone.getSize());
+        System.out.println(zone.getBarycenter());
+
+
         double step = Math.toRadians(0.1);
         for (Vertex loopStart : zone.getBoundaryLoops()) {
             int count = 0;

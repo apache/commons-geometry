@@ -143,7 +143,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a BSP tree instance representing the same region as the current instance
      */
     public RegionBSPTree3D toTree() {
-        return RegionBSPTree3D.fromConvexVolume(this);
+        return RegionBSPTree3D.from(this);
     }
 
     /** Return an instance representing the full 3D volume.

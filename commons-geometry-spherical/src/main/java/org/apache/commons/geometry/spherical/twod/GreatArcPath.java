@@ -150,6 +150,16 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
         return arcs.iterator();
     }
 
+    /** Construct a {@link RegionBSPTree2S} from the arcs in this instance.
+     * @return a bsp tree constructed from the arcs in this instance
+     */
+    public RegionBSPTree2S toTree() {
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.insert(this);
+
+        return tree;
+    }
+
     /** Return a string representation of this arc path instance.
     *
     * <p>In order to keep the string representation short but useful, the exact format of the return
@@ -243,7 +253,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
      * @return a new path formed by connecting the given vertices
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
-    public static GreatArcPath fromPoints(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+    public static GreatArcPath fromVertices(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
         return fromVertices(vertices, false, precision);
     }
 

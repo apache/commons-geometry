@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.spherical;
 
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.Point1S;
@@ -67,5 +69,16 @@ public class SphericalTestUtils {
         Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
         Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
         Assert.assertEquals(msg, expected.getZ(), actual.getZ(), tolerance);
+    }
+
+    /** Assert that the given points lie in the specified location relative to the region.
+     * @param region region to test
+     * @param loc expected location of the given points
+     * @param pts points to test
+     */
+    public static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
+        for (Point2S pt : pts) {
+            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+        }
     }
 }
