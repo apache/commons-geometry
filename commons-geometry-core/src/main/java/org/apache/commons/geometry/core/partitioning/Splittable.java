@@ -19,7 +19,7 @@ package org.apache.commons.geometry.core.partitioning;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface representing objects that can be split by hyperplanes.
- * @param <T> Point implementation type
+ * @param <P> Point implementation type
  * @param <S> Split type
  */
 public interface Splittable<P extends Point<P>, S extends Splittable<P, S>> {

@@ -60,7 +60,7 @@ abstract class AbstractSubGreatCircle
     }
 
     /** Return the object used to perform floating point comparisons, which is the
-     * same object used by the underlying {@link GreatCircle).
+     * same object used by the underlying {@link GreatCircle}.
      * @return precision object used to perform floating point comparisons.
      */
     public DoublePrecisionContext getPrecision() {

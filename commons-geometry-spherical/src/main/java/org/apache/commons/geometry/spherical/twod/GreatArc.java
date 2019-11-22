@@ -178,7 +178,6 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
      *          </ul>
      *      </li>
      * </ul>
-     * </p>
      */
     @Override
     public String toString() {
@@ -204,6 +203,7 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
      * great circle is oriented in the direction from {@code start} to {@code end}.
      * @param start start point for the interval
      * @param end end point point for the interval
+     * @param precision precision context used to compare floating point numbers
      * @return an arc representing the shortest path between the given points
      * @throws IllegalArgumentException if either of the given points is NaN or infinite
      * @throws GeometryException if the given points are equal or antipodal as evaluated by

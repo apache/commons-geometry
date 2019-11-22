@@ -282,7 +282,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @param rotation the rotation to apply
      * @return a new transform containing the result of applying a rotation to the
      *      current instance
-     * @see QuaternionRotation#toTransformMatrix()
+     * @see QuaternionRotation#toMatrix()
      */
     public AffineTransformMatrix3D rotate(final QuaternionRotation rotation) {
         return multiply(rotation.toMatrix(), this);
@@ -295,7 +295,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @param rotation the rotation to apply
      * @return a new transform containing the result of applying a rotation about the given center
      *      point to the current instance
-     * @see QuaternionRotation#toTransformMatrix()
+     * @see QuaternionRotation#toMatrix()
      */
     public AffineTransformMatrix3D rotate(final Vector3D center, final QuaternionRotation rotation) {
         return multiply(createRotation(center, rotation), this);
@@ -611,7 +611,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @param center the center of rotation
      * @param rotation the rotation to apply
      * @return a new transform representing a rotation about the given center point
-     * @see QuaternionRotation#toTransformMatrix()
+     * @see QuaternionRotation#toMatrix()
      */
     public static AffineTransformMatrix3D createRotation(final Vector3D center, final QuaternionRotation rotation) {
         return createTranslation(center.negate())

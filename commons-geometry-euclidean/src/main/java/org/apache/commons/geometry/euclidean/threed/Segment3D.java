@@ -144,7 +144,6 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
      *      <li>Start point and end point -
      *          {@code "Segment3D[start= (0.0, 0.0, 0.0), end= (1.0, 0.0, 0.0)]}"</li>
      * </ul>
-     * </p>
      */
     @Override
     public String toString() {

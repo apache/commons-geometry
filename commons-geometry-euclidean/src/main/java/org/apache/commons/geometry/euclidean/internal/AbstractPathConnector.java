@@ -34,15 +34,15 @@ import java.util.TreeSet;
  *      first instance's end point by calling {@link ConnectableElement#getConnectionSearchKey()} and
  *      using the returned instance to locate a search start location in the sorted element list.</li>
  *      <li>Search up through the sorted list from the start location, testing each element for possible connectivity with
- *      {@link ConnectableElement#canConnectTo(ConnectableElement)}. Collect possible connections in a list. Terminate the search
- *      when {@link ConnectableElement#shouldContinueConnectionSearch(ConnectableElement, boolean, List, List)} returns false.
+ *      {@link ConnectableElement#canConnectTo(AbstractPathConnector.ConnectableElement)}. Collect possible connections in a list. Terminate the search
+ *      when {@link ConnectableElement#shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)} returns false.
  *      <li>Repeat the previous step searching downward through the list from the start location.</li>
- *      <li>Select the best connection option from the list of possible connections, using {@link #selectPointConnection(ConnectableElement, List)}
- *      and/or {@link #selectConnection(ConnectableElement, List)} when multiple possibilities are found.</li>
+ *      <li>Select the best connection option from the list of possible connections, using
+ *      {@link #selectPointConnection(AbstractPathConnector.ConnectableElement, List)}
+ *      and/or {@link #selectConnection(AbstractPathConnector.ConnectableElement, List)} when multiple possibilities are found.</li>
  *      <li>Repeat the above steps for each element. When done, the elements represent a linked list
  *      of connected paths.</li>
  * </ul>
- * </p>
  *
  * <p>This class is not thread-safe.</p>
  * @see ConnectableElement
@@ -264,7 +264,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      *      <li>Implement {@link #getConnectionSearchKey()} such that it returns an instance that will be placed
      *      next to elements with start points close to the current instance's end point when sorted with
      *      {@link #compareTo(Object)}.</li>
-     *      <li>Implement {@link #shouldContinueConnectionSearch(ConnectableElement, boolean)} such that it returns
+     *      <li>Implement {@link #shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)} such that it returns
      *      false when the search for possible connections through a sorted list of elements may terminate.</li>
      * </ul>
      * @see AbstractPathConnector
@@ -298,7 +298,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         }
 
         /** Set the next connected element for this path. This is intended for
-         * internal use only. Callers should use the {@link #connectTo(ConnectableElement)}
+         * internal use only. Callers should use the {@link #connectTo(AbstractPathConnector.ConnectableElement)}
          * method instead.
          * @param next next path element
          */
@@ -321,7 +321,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         }
 
         /** Set the previous connected element for this path. This is intended for
-         * internal use only. Callers should use the {@link #connectTo(ConnectableElement)}
+         * internal use only. Callers should use the {@link #connectTo(AbstractPathConnector.ConnectableElement)}
          * method instead.
          * @param previous previous path element
          */
@@ -330,7 +330,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         }
 
         /** Connect this instance's end point to the given element's start point. No validation
-         * is performed in this method. The {@link #canConnectTo(C)} method must
+         * is performed in this method. The {@link #canConnectTo(AbstractPathConnector.ConnectableElement)} method must
          * have been called previously.
          * @param next the next element in the path
          */

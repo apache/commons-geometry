@@ -135,10 +135,10 @@ public final class SubLine extends AbstractSubLine implements Serializable {
      * @throws IllegalArgumentException if the given subline is not from
      *      a line equivalent to this instance
      */
-    public void add(final SubLine subLine) {
-        validateLine(subLine.getLine());
+    public void add(final SubLine subline) {
+        validateLine(subline.getLine());
 
-        region.union(subLine.getSubspaceRegion());
+        region.union(subline.getSubspaceRegion());
     }
 
     /** {@inheritDoc} */

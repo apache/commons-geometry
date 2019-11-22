@@ -154,7 +154,7 @@ public abstract class AbstractGreatArcConnector
         }
 
         /** Create a new instance from the given arc.
-         * @param sarc arc for the instance
+         * @param arc arc for the instance
          */
         public ConnectableGreatArc(final GreatArc arc) {
             this(arc.getStartPoint(), arc);

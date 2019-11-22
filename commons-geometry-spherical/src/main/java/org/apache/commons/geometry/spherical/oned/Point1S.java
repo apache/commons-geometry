@@ -237,6 +237,7 @@ public class Point1S implements Point<Point1S>, Serializable {
      * zero as evaluated by the given precision context. This means that points that differ
      * in azimuth by multiples of {@code 2pi} are considered equivalent.
      * @param other point to compare with
+     * @param precision precision context used for floating point comparisons
      * @return true if this instance is equivalent to the argument
      */
     public boolean eq(final Point1S other, final DoublePrecisionContext precision) {
@@ -329,7 +330,7 @@ public class Point1S implements Point<Point1S>, Serializable {
     /** Create a new point instance from the given Euclidean 2D vector. The returned point
      * will have an azimuth value equal to the angle between the positive x-axis and the
      * given vector, measured in a counter-clockwise direction.
-     * @param vector
+     * @param vector 3D vector to create the point from
      * @return a new point instance with an azimuth value equal to the angle between the given
      *      vector and the positive x-axis, measured in a counter-clockwise direction
      */

@@ -374,7 +374,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         }
 
         /** Add a segment defined by the given points.
-         * @param vertices array of vertices defining the facet
+         * @param start start point
+         * @param end end point
          * @return this builder instance
          */
         public Builder addSegment(final Vector2D start, final Vector2D end) {

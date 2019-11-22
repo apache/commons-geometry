@@ -65,7 +65,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
     /** Return true if {@code newAngle} represents a better interior angle than {@code previousAngle}.
      * @param newAngle the new angle under consideration
      * @param previousAngle the previous best angle
-     * @return
+     * @return true if {@code newAngle} represents a better interior angle than {@code previousAngle}
      */
     protected abstract boolean isBetterAngle(final double newAngle, final double previousAngle);
 

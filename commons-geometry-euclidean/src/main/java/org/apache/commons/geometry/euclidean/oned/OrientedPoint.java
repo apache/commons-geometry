@@ -200,7 +200,6 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      *  <li>have equivalent locations as evaluated by the precision context, and</li>
      *  <li>point in the same direction</li>
      * </ul>
-     * </p>
      * @param other the point to compare with
      * @return true if this instance should be considered equivalent to the argument
      */

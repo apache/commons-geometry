@@ -145,7 +145,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * region. The exact ordering of the boundaries is determined by the internal structure
      * of the tree.
      * @return an {@link Iterable} for iterating over the boundaries of the region
-     * @see #getBoundary()
+     * @see #getBoundaries()
      */
     public Iterable<? extends ConvexSubHyperplane<P>> boundaries() {
         return createBoundaryIterable(Function.identity());
@@ -154,6 +154,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Internal method for creating the iterable instances used to iterate the region boundaries.
      * @param typeConverter function to convert the generic convex subhyperplane type into
      *      the type specific for this tree
+     * @param <C> ConvexSubhyperplane implementation type
      * @return an iterable to iterating the region boundaries
      */
     protected <C extends ConvexSubHyperplane<P>> Iterable<C> createBoundaryIterable(
@@ -181,6 +182,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Iternal method for creating a list of the region boundaries.
      * @param typeConverter function to convert the generic convex subhyperplane type into
      *      the type specific for this tree
+     * @param <C> ConvexSubhyperplane implementation type
      * @return a list of the region boundaries
      */
     protected <C extends ConvexSubHyperplane<P>> List<C> createBoundaryList(
@@ -212,8 +214,9 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Helper method implementing the algorithm for splitting a tree by a hyperplane. Subclasses
      * should call this method with two instantiated trees of the correct type.
      * @param splitter splitting hyperplane
-     * @param tree1 first tree object
-     * @param tree2 second tree object
+     * @param minus tree that will contain the minus side of the split result
+     * @param plus tree that will contain the plus side of the split result
+     * @param <T> Tree implementation type
      * @return result of splitting this tree with the given hyperplane
      */
     protected <T extends AbstractRegionBSPTree<P, N>> Split<T> split(final Hyperplane<P> splitter,
@@ -253,6 +256,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     }
 
     /** Compute the size-related properties of the region.
+     * @return object containing size properties for the region
      */
     protected abstract RegionSizeProperties<P> computeRegionSizeProperties();
 
@@ -669,13 +673,15 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
      */
-    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends AbstractBSPTreeMergeOperator<P, N> {
+    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends AbstractBSPTreeMergeOperator<P, N> {
 
         /** Merge two input trees, storing the output in the third. The output tree can be one of the
          * input trees. The output tree is condensed before the method returns.
          * @param inputTree1 first input tree
          * @param inputTree2 second input tree
-         * @param outputTree
+         * @param outputTree the tree that will contain the result of the merge; may be one
+         *      of the input trees
          */
         public void apply(final AbstractRegionBSPTree<P, N> inputTree1, final AbstractRegionBSPTree<P, N> inputTree2,
                 final AbstractRegionBSPTree<P, N> outputTree) {
@@ -689,7 +695,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean union operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -706,7 +713,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean intersection operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -723,7 +731,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean difference operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -754,7 +763,8 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     /** Class for performing boolean symmetric difference (xor) operations on region trees.
      * @param <P> Point implementation type
      */
-    public static class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>> extends RegionMergeOperator<P, N> {
+    public static class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
 
         /** {@inheritDoc} */
         @Override
@@ -906,7 +916,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class that iterates over the boundary convex subhyperplanes from a set of region nodes.
      * @param <P> Point implementation type
-     * @parma <C> Boundary convex subhyperplane implementation type
+     * @param <C> Boundary convex subhyperplane implementation type
      * @param <N> BSP tree node implementation type
      */
     protected static class RegionBoundaryIterator<P extends Point<P>, C extends ConvexSubHyperplane<P>, N extends AbstractRegionNode<P, N>>

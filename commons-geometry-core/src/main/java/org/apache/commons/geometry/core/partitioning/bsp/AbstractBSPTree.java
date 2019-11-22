@@ -34,7 +34,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
- * @param <T> Node implementation type
+ * @param <N> BSP tree node implementation type
  */
 public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
     implements BSPTree<P, N>, Serializable {
@@ -68,6 +68,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** Set the root node for the tree. Cached tree properties are invalidated
      * with {@link #invalidate()}.
+     * @param root new root node for the tree
      */
     protected void setRoot(final N root) {
         this.root = root;
@@ -166,6 +167,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** Get a simple string representation of the tree structure. The returned string contains
      * the tree structure down to {@code maxDepth}.
+     * @param maxDepth the maximum depth in the tree to print; nodes below this depth are skipped
      * @return a string representation of the tree
      */
     public String treeString(final int maxDepth) {
@@ -470,14 +472,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * attributes, then this tree could be used to represent a region consisting of a single line or a region
      * consisting of the entire space except for the single line. This would not be possible if nodes were not
      * able to have cut hyperplanes that were coincident with parent cuts but in opposite directions.
-     * </p>
      *
      * <p>
      * Another way of looking at the rules above is that inserting a hyperplane into the tree that exactly
      * matches the hyperplane of a parent node does not add any information to the tree. However, adding a
      * hyperplane to the tree that is coincident with a parent node but with the opposite orientation,
      * <em>does</em> add information to the tree.
-     * </p>
      *
      * @param node the node representing the region to fit the subhyperplane to
      * @param sub the subhyperplane to trim to the node's region
@@ -535,8 +535,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * subhyperplane fits the region represented by the node.</p>
      *
      * <p>This method always calls {@link #invalidate()} to invalidate cached tree properties.</p>
-     * @param node
-     * @param cut
+     * @param node the node to cut
+     * @param cut the convex subhyperplane to set as the node cut
      */
     protected void cutNode(final N node, final ConvexSubHyperplane<P> cut) {
         N plus = null;;
@@ -785,7 +785,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Abstract implementation of {@link BSPTree.Node}. This class is intended for use with
      * {@link AbstractBSPTree} and delegates tree mutation methods back to the parent tree object.
      * @param <P> Point implementation type
-     * @param <T> Node implementation type
+     * @param <N> BSP tree node implementation type
      */
     public static abstract class AbstractNode<P extends Point<P>, N extends AbstractNode<P, N>> implements BSPTree.Node<P, N>, Serializable {
 

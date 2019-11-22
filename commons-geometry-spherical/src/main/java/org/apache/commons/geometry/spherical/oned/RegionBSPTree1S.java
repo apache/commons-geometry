@@ -61,7 +61,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
+     * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1S copy() {
         RegionBSPTree1S result = RegionBSPTree1S.empty();

@@ -112,9 +112,9 @@ public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHype
      */
     SubHyperplane<P> transform(Transform<P> transform);
 
-    /** Convert this instance into a list of convex child
-     * subhyperplanes.
-     * @return
+    /** Convert this instance into a list of convex child subhyperplanes.
+     * @return a list of convex subhyperplanes representing the same subspace
+     *      region as this instance
      */
     List<? extends ConvexSubHyperplane<P>> toConvex();
 
@@ -125,18 +125,19 @@ public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHype
     static interface Builder<P extends Point<P>> {
 
         /** Add a {@link SubHyperplane} instance to the builder.
-         * @param sub
+         * @param sub subhyperplane to add to this instance
          */
         void add(SubHyperplane<P> sub);
 
         /** Add a {@link ConvexSubHyperplane} instance to the builder.
-         * @param sub
+         * @param sub convex subhyperplane to add to this instance
          */
         void add(ConvexSubHyperplane<P> sub);
 
         /** Get a {@link SubHyperplane} representing the union
          * of all input subhyperplanes.
-         * @return
+         * @return subhyperplane representing the union of all input
+         *      subhyperplanes
          */
         SubHyperplane<P> build();
     }

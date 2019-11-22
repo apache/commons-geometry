@@ -40,7 +40,7 @@ import java.util.function.Function;
  * </ol>
  * Implementations that do not meet these requirements cannot be expected to produce correct results in
  * algorithms that use this interface.
- * </p>
+ *
  * @param <P> Point implementation type
  * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Space</a>
  */

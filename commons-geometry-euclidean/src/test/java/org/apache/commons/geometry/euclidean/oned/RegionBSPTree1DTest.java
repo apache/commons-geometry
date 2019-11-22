@@ -142,7 +142,7 @@ public class RegionBSPTree1DTest {
         // act/assert
         Assert.assertEquals(0.0, RegionBSPTree1D.full().getBoundarySize(), TEST_EPS);
         Assert.assertEquals(0.0, RegionBSPTree1D.empty().getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.0, RegionBSPTree1D.fromIntervals(
+        Assert.assertEquals(0.0, RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.of(4, 5, TEST_PRECISION)
                 ).getBoundarySize(), TEST_EPS);
@@ -173,7 +173,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testProject_singlePoint() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
         // act/assert
         checkBoundaryProjection(tree, -1, 1);
@@ -191,7 +191,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testProject_noMinBoundary() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION));
 
         // act/assert
         checkBoundaryProjection(tree, -1, 1);
@@ -207,7 +207,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testProject_noMaxBoundary() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION));
 
         // act/assert
         checkBoundaryProjection(tree, -1, 1);
@@ -223,7 +223,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testProject_closedInterval() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.of(1, 3, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.of(1, 3, TEST_PRECISION));
 
         // act/assert
         checkBoundaryProjection(tree, -1, 1);
@@ -245,7 +245,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testProject_multipleIntervals() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.max(-1, TEST_PRECISION),
                     Interval.point(1, TEST_PRECISION),
                     Interval.of(2, 3, TEST_PRECISION),
@@ -639,7 +639,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testTransform_noReflection() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.min(3, TEST_PRECISION)
                 );
@@ -661,7 +661,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testTransform_withReflection() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.min(3, TEST_PRECISION)
                 );
@@ -683,7 +683,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testTransform_withReflection_functionBasedTransform() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.min(3, TEST_PRECISION)
                 );
@@ -808,7 +808,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1.0, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1.0, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
 
@@ -828,7 +828,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point_splitOnPoint_positiveFacingSplitter() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION);
 
@@ -848,7 +848,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testSplit_point_splitOnPoint_negativeFacingSplitter() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Interval.point(1, TEST_PRECISION));
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
         OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
 
@@ -1097,7 +1097,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testGetMinMax_multipleIntervals() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(3, 5, TEST_PRECISION),
                     Interval.of(-4, -2, TEST_PRECISION),
                     Interval.of(0, 0, TEST_PRECISION)
@@ -1111,7 +1111,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testGetMinMax_pointsAtMinAndMax() {
         // arrange
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(5, 5, TEST_PRECISION),
                     Interval.of(-4, -4, TEST_PRECISION),
                     Interval.of(0, 0, TEST_PRECISION)
@@ -1147,7 +1147,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testFromIntervals_iterable() {
         // act
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.of(3, 4, TEST_PRECISION)
                 ));
@@ -1166,7 +1166,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testFromIntervals_iterable_noItervals() {
         // act
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(Arrays.asList());
+        RegionBSPTree1D tree = RegionBSPTree1D.from(Arrays.asList());
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -1178,7 +1178,7 @@ public class RegionBSPTree1DTest {
     @Test
     public void testFromIntervals_varargs() {
         // act
-        RegionBSPTree1D tree = RegionBSPTree1D.fromIntervals(
+        RegionBSPTree1D tree = RegionBSPTree1D.from(
                     Interval.of(1, 2, TEST_PRECISION),
                     Interval.of(3, 4, TEST_PRECISION)
                 );

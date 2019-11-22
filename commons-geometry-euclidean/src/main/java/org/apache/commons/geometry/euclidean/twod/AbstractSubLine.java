@@ -43,7 +43,7 @@ abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, 
     }
 
     /** Get the line that this segment lies on. This method is an alias
-     * for {@link getHyperplane()}.
+     * for {@link #getHyperplane()}.
      * @return the line that this segment lies on
      * @see #getHyperplane()
      */
@@ -64,7 +64,7 @@ abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, 
     }
 
     /** Return the object used to perform floating point comparisons, which is the
-     * same object used by the underlying {@link Line).
+     * same object used by the underlying {@link Line}).
      * @return precision object used to perform floating point comparisons.
      */
     public DoublePrecisionContext getPrecision() {
@@ -77,6 +77,7 @@ abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, 
      * @param thisInstance a reference to the current instance; this is passed as
      *      an argument in order to allow it to be a generic type
      * @param factory function used to create new subhyperplane instances
+     * @param <T> Subline implementation type
      * @return the result of the split operation
      */
     protected <T extends AbstractSubLine> Split<T> splitInternal(final Hyperplane<Vector2D> splitter,

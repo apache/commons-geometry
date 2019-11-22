@@ -157,7 +157,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * given bounding planes. The returned instance represents the volume that is on the
      * minus side of all of the given plane. Note that this method does not support volumes
      * of zero size (ie, infinitely thin volumes or points.)
-     * @param boundingPlanes planes used to define the convex area
+     * @param planes planes used to define the convex area
      * @return a new convex volume instance representing the volume on the minus side of all
      *      of the bounding plane or an instance representing the full space if the collection
      *      is empty

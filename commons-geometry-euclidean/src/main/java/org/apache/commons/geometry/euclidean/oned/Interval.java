@@ -139,8 +139,7 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
         return classify(pt.getX());
     }
 
-    /** Classify a point with respect to the interval. This is a convenience
-     * overload of {@link #classify(Vector1D)} for use in one dimension.
+    /** Classify a point with respect to the interval.
      * @param location the location to classify
      * @return the classification of the point with respect to the interval
      * @see #classify(Vector1D)
@@ -184,10 +183,10 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
     }
 
     /** Return true if the given point location is on the inside or boundary
-     * of the region. This is a convenience overload of {@link Interval#contains(Vector1D)}
-     * for use in one dimension.
+     * of the region.
      * @param x the location to test
      * @return true if the location is on the inside or boundary of the region
+     * @see #contains(Point)
      */
     public boolean contains(final double x) {
         return classify(x) != RegionLocation.OUTSIDE;
@@ -343,10 +342,10 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
 
     /** Return a {@link RegionBSPTree1D} representing the same region as this instance.
      * @return a BSP tree representing the same region
-     * @see RegionBSPTree1D#from(Interval)
+     * @see RegionBSPTree1D#from(Interval, Interval...)
      */
     public RegionBSPTree1D toTree() {
-        return RegionBSPTree1D.fromInterval(this);
+        return RegionBSPTree1D.from(this);
     }
 
     /** {@inheritDoc} */
@@ -368,7 +367,8 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
      * @param a first point location
      * @param b second point location
      * @param precision precision context used to compare floating point numbers
-     * @throw IllegalArgumentException if either number is {@link Double#NaN NaN} or the numbers
+     * @return a new interval representing the region between the given point locations
+     * @throws IllegalArgumentException if either number is {@link Double#NaN NaN} or the numbers
      *      are both infinite and have the same sign
      */
     public static Interval of(final double a, final double b, final DoublePrecisionContext precision) {
@@ -397,17 +397,25 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
      * @param a first point
      * @param b second point
      * @param precision precision context used to compare floating point numbers
-     * @throw IllegalArgumentException if either point is {@link Vector1D#isNaN() NaN} or the points
+     * @return a new interval representing the region between the given points
+     * @throws IllegalArgumentException if either point is {@link Vector1D#isNaN() NaN} or the points
      *      are both {@link Vector1D#isInfinite() infinite} and have the same sign
      */
     public static Interval of(final Vector1D a, final Vector1D b, final DoublePrecisionContext precision) {
         return of(a.getX(), b.getX(), precision);
     }
 
-    /** Create a new interval from the given hyperplanes.
-     * @param a
-     * @param b
-     * @return
+    /** Create a new interval from the given hyperplanes. The hyperplanes may be given in
+     * any order but one must be positive-facing and the other negative-facing, with the positive-facing
+     * hyperplane located above the negative-facing hyperplane. Either or both argument may be null,
+     * in which case the returned interval will extend to infinity in the appropriate direction. If both
+     * arguments are null, an interval representing the full space is returned.
+     * @param a first hyperplane; may be null
+     * @param b second hyperplane; may be null
+     * @return a new interval representing the region between the given hyperplanes
+     * @throws IllegalArgumentException if the hyperplanes have the same orientation or
+     *      do not form an interval (for example, if the positive-facing hyperplane is below
+     *      the negative-facing hyperplane)
      */
     public static Interval of(final OrientedPoint a, final OrientedPoint b) {
         // determine the ordering of the hyperplanes

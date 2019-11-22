@@ -163,10 +163,11 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      *      an argument in order to allow it to be a generic type
      * @param subhpType the type used for the boundary subhyperplanes
      * @param factory function used to create new convex region instances
+     * @param <R> Region implementation type
      * @return the result of the transform operation
      */
-    protected <T extends AbstractConvexHyperplaneBoundedRegion<P, S>> T transformInternal(final Transform<P> transform,
-            final T thisInstance, final Class<S> subhpType, final Function<List<S>, T> factory) {
+    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> R transformInternal(final Transform<P> transform,
+            final R thisInstance, final Class<S> subhpType, final Function<List<S>, R> factory) {
 
         if (isFull()) {
             return thisInstance;
@@ -223,14 +224,15 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      *      an argument in order to allow it to be a generic type
      * @param subhpType the type used for the boundary subhyperplanes
      * @param factory function used to create new convex region instances
+     * @param <R> Region implementation type
      * @return the result of the split operation
      */
-    protected <T extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<T> splitInternal(final Hyperplane<P> splitter,
-            final T thisInstance, final Class<S> subhpType, final Function<List<S>, T> factory) {
+    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternal(final Hyperplane<P> splitter,
+            final R thisInstance, final Class<S> subhpType, final Function<List<S>, R> factory) {
 
         if (isFull() ) {
-            final T minus = factory.apply(Arrays.asList(subhpType.cast(splitter.span())));
-            final T plus = factory.apply(Arrays.asList(subhpType.cast(splitter.reverse().span())));
+            final R minus = factory.apply(Arrays.asList(subhpType.cast(splitter.span())));
+            final R plus = factory.apply(Arrays.asList(subhpType.cast(splitter.reverse().span())));
 
             return new Split<>(minus, plus);
         }

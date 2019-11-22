@@ -21,8 +21,8 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
-/** Class representing the portion of a
- * {@link RegionBSPTree.RegionNode RegionNode}'s cut subhyperplane that
+/** Class representing the portion of an
+ * {@link AbstractRegionBSPTree.AbstractRegionNode AbstractRegionNode}'s cut subhyperplane that
  * lies on the boundary of the region. Portions of this subhyperplane
  * may be oriented so that the plus side of the subhyperplane points toward
  * the outside of the region ({@link #getOutsideFacing()}) and other portions

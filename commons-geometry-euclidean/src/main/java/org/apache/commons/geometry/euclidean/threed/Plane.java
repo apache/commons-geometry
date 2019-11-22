@@ -214,7 +214,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      *
      * @param point in-plane point (must be a {@link Vector2D} instance)
      * @return 3D space point
-     * @see #toSubSpace
+     * @see #toSubspace(Vector3D)
      */
     @Override
     public Vector3D toSpace(final Vector2D point) {
@@ -520,11 +520,10 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     *
     * <p>Instances are considered equivalent if they
     * <ul>
-    *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-    *  <li>have equivalent origins (as evaluated by the precision context), and</li>
-    *  <li>have equivalent {@code u} and {@code v} vectors (as evaluated by the precision context)</li>
+    *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+    *   <li>have equivalent origins (as evaluated by the precision context), and</li>
+    *   <li>have equivalent {@code u} and {@code v} vectors (as evaluated by the precision context)</li>
     * </ul>
-    * </p>
     * @param other the point to compare with
     * @return true if this instance should be considered equivalent to the argument
     */

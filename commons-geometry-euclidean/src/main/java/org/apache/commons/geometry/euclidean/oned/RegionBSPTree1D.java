@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +59,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
     /** Return a deep copy of this instance.
      * @return a deep copy of this instance.
-     * @see {@link #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)}
+     * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1D copy() {
         RegionBSPTree1D result = RegionBSPTree1D.empty();
@@ -74,25 +73,23 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @param interval the interval to add
      */
     public void add(final Interval interval) {
-        union(fromInterval(interval));
+        union(intervalToTree(interval));
     }
 
-    /** Classify a point location with respect to the region. This is
-     * a convenience overload of {@link #classify(Vector1D)} for
-     * use in one dimension.
+    /** Classify a point location with respect to the region.
      * @param x the point to classify
      * @return the location of the point with respect to the region
-     * @see #classify(Vector1D)
+     * @see #classify(Point)
      */
     public RegionLocation classify(final double x) {
         return classify(Vector1D.of(x));
     }
 
     /** Return true if the given point location is on the inside or boundary
-     * of the region. This is a convenience overload of {@link Interval#contains(Vector1D)}
-     * for use in one dimension.
+     * of the region.
      * @param x the location to test
      * @return true if the location is on the inside or boundary of the region
+     * @see #contains(Point)
      */
     public boolean contains(final double x) {
         return contains(Vector1D.of(x));
@@ -133,7 +130,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
    }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
-     * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITE} if
+     * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITY} if
      * the region is empty.
      * @return the minimum value on the inside of the region
      */
@@ -345,12 +342,42 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         return new RegionBSPTree1D(false);
     }
 
-    /** Construct a new instance from the given interval.
+    /** Construct a new instance from one or more intervals. The returned tree
+     * represents the same region as the union of all of the input intervals.
      * @param interval the input interval
-     * @return a new instance representing the same region as the
-     *      given interval
+     * @param more additional intervals to add to the region
+     * @return a new instance representing the same region as the union
+     *      of all of the given intervals
      */
-    public static RegionBSPTree1D fromInterval(final Interval interval) {
+    public static RegionBSPTree1D from(final Interval interval, final Interval ... more) {
+        final RegionBSPTree1D tree = intervalToTree(interval);
+
+        for (Interval additional : more) {
+            tree.add(additional);
+        }
+
+        return tree;
+    }
+
+    /** Construct a new instance from the given collection of intervals.
+     * @param intervals the intervals to populate the region with
+     * @return a new instance constructed from the given collection of intervals
+     */
+    public static RegionBSPTree1D from(final Iterable<Interval> intervals) {
+        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+
+        for (Interval interval : intervals) {
+            tree.add(interval);
+        }
+
+        return tree;
+    }
+
+    /** Return a tree representing the same region as the given interval.
+     * @param interval interval to create a tree from
+     * @return a tree representing the same region as the given interval
+     */
+    private static RegionBSPTree1D intervalToTree(final Interval interval) {
         final OrientedPoint minBoundary = interval.getMinBoundary();
         final OrientedPoint maxBoundary = interval.getMaxBoundary();
 
@@ -369,28 +396,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         }
 
         return tree;
-    }
-
-    /** Construct a new instance from the given collection of intervals.
-     * @param intervals the intervals to populate the region with
-     * @return a new instance constructed from the given collection of intervals
-     */
-    public static RegionBSPTree1D fromIntervals(Iterable<Interval> intervals) {
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
-
-        for (Interval interval : intervals) {
-            tree.add(interval);
-        }
-
-        return tree;
-    }
-
-    /** Construct a new instance from the given intervals.
-     * @param intervals the intervals to populate the region with
-     * @return a new instance constructed from the given intervals
-     */
-    public static RegionBSPTree1D fromIntervals(Interval ... intervals) {
-        return fromIntervals(Arrays.asList(intervals));
     }
 
     /** BSP tree node for one dimensional Euclidean space.

@@ -131,7 +131,6 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      *          context (points separated by multiples of 2pi are considered equivalent), and
      *    <li>point in the same direction.</li>
      * </ol>
-     * </p>
      * @see Point1S#eq(Point1S, DoublePrecisionContext)
      */
     @Override
@@ -265,9 +264,9 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * @param precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle fromPointAndDirection(final Point1S pt, final boolean positiveFacing,
+    public static CutAngle fromPointAndDirection(final Point1S point, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
-        return new CutAngle(pt, positiveFacing, precision);
+        return new CutAngle(point, positiveFacing, precision);
     }
 
     /** Create a new instance at the given azimuth, oriented so that the plus side of the hyperplane points
@@ -286,8 +285,8 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createPositiveFacing(final Point1S pt, final DoublePrecisionContext precision) {
-        return fromPointAndDirection(pt, true, precision);
+    public static CutAngle createPositiveFacing(final Point1S point, final DoublePrecisionContext precision) {
+        return fromPointAndDirection(point, true, precision);
     }
 
     /** Create a new instance at the given azimuth, oriented so that the plus side of the hyperplane points
@@ -306,8 +305,8 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * @param precision precision precision context used to determine floating point equality
      * @return a new instance
      */
-    public static CutAngle createNegativeFacing(final Point1S pt, final DoublePrecisionContext precision) {
-        return fromPointAndDirection(pt, false, precision);
+    public static CutAngle createNegativeFacing(final Point1S point, final DoublePrecisionContext precision) {
+        return fromPointAndDirection(point, false, precision);
     }
 
     /** {@link ConvexSubHyperplane} implementation for spherical 1D space. Since there are no subspaces in 1D,

@@ -303,34 +303,6 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return p1.vector.angle(p2.vector);
     }
 
-    /** Compute the signed area of the spherical triangle defined by the given points. The
-     * area is positive if the triangle winds to the left and negative if it winds to the
-     * right.
-     * @param p1 first triangle point
-     * @param p2 second triangle point
-     * @param p3 third triangle point
-     * @return
-     */
-    public static double area(final Point2S p1, final Point2S p2, final Point2S p3) {
-        final double a = p1.distance(p2);
-        final double b = p2.distance(p3);
-        final double c = p3.distance(p1);
-
-        final double sinA = Math.sin(a);
-        final double sinB = Math.sin(b);
-        final double sinC = Math.sin(c);
-
-        final double cosA = Math.cos(a);
-        final double cosB = Math.cos(b);
-        final double cosC = Math.cos(c);
-
-        final double angleA = Math.acos((cosA - (cosB * cosC)) / (sinB * sinC));
-        final double angleB = Math.acos((cosB - (cosC * cosA)) / (sinC * sinA));
-        final double angleC = Math.acos((cosC - (cosA * cosB)) / (sinA * sinB));
-
-        return (angleA + angleB + angleC) - Geometry.PI;
-    }
-
     /** Compute the 3D Euclidean vector associated with the given spherical coordinates.
      * Null is returned if the coordinates are infinite or NaN.
      * @param azimuth azimuth value

@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.core.internal;
 
 /** Interface for determining equivalency, not exact equality, between
- * two objects. This is performs a function similar to {@link #equals(Object)}
+ * two objects. This is performs a function similar to {@link Object#equals(Object)}
  * but allows fuzzy comparisons to occur instead of strict equality. This is
  * especially useful when comparing objects with floating point values that
  * may not be exact but are operationally equivalent.

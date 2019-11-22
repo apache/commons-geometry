@@ -78,6 +78,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      *      <li>{@link NodeCutRule#MINUS} - continue the search in the minus subtree</li>
      *      <li>{@link NodeCutRule#PLUS} - continue the search in the plus subtree</li>
      *      <li>{@link NodeCutRule#NODE} - stop the search and return the internal node</li>
+     * </ul>
      * @param pt test point used to locate a node in the tree
      * @param cutRule value used to determine the search behavior when the test point lies
      *      exactly on the cut subhyperplane of an internal node
@@ -194,7 +195,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
         boolean isPlus();
 
         /** Insert a cut into this node. If the given hyperplane intersects
-         * this node's region, then the node's cut is set to the {@link ConvexSubHyerplane}
+         * this node's region, then the node's cut is set to the {@link ConvexSubHyperplane}
          * representing the intersection, new plus and minus child leaf nodes
          * are assigned, and true is returned. If the hyperplane does not intersect
          * the node's region, then the node's cut and plus and minus child references

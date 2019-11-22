@@ -310,7 +310,6 @@ public class Polyline implements Iterable<Segment>, Serializable {
      *          </ul>
      *      </li>
      * </ul>
-     * </p>
      */
     @Override
     public String toString() {
@@ -517,6 +516,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
         }
 
         /** Append a line segment to the end of the polyline.
+         * @param segment line segment to append to the polyline
          * @return the current builder instance
          * @throws IllegalStateException if the polyline contains a previous segment
          *      and the end vertex of the previous segment is not equivalent to the
@@ -583,6 +583,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
         }
 
         /** Prepend a line segment to the beginning of the polyline.
+         * @param segment line segment to prepend to the polyline
          * @return the current builder instance
          * @throws IllegalStateException if the polyline contains a start segment
          *      and the end vertex of the given segment is not equivalent to the

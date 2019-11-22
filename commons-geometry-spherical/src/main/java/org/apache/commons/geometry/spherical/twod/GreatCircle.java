@@ -19,7 +19,6 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
@@ -121,8 +120,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * has an offset of {@code -pi/2}, a point on the circle itself has an
      * offset of {@code 0}, and the negation of the pole vector has an offset
      * of {@code +pi/2}.</p>
-     * @param vec
-     * @return
+     * @param vec vector to compute the offset for
+     * @return the offset (oriented distance) of a direction
      */
     public double offset(final Vector3D vec) {
         return pole.angle(vec) - Geometry.HALF_PI;
@@ -147,7 +146,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param vector vector to compute the great circle azimuth of
      * @return azimuth angle of the vector around the great circle in the range
      *      {@code [0, 2pi)}
-     * @see #toSubSpace(Point)
+     * @see #toSubspace(Point2S)
      */
     public double azimuth(final Vector3D vector) {
         double az = Math.atan2(vector.dot(y), vector.dot(x));
@@ -288,6 +287,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * points (as evaluated by this instance's precision context), then the point is assumed
      * to be closest to the point opposite the cross product of the two poles.
      * @param other great circle to compute the angle with
+     * @param pt point determining the circle intersection to compute the angle at
      * @return the angle between this great circle and the argument as measured at the
      *      intersection point closest to the given point; the value is in the range
      *      {@code [-pi, pi)}

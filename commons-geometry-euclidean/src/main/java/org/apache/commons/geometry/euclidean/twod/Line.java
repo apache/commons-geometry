@@ -348,7 +348,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * of the instance.</p>
      * @param line line to check
      * @return offset of the line
-     * @see #distance(Line_Old)
+     * @see #distance(Line)
      */
     public double offset(final Line line) {
         if (isParallel(line)) {
@@ -424,7 +424,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param line line to compute the closest distance to
      * @return the shortest distance between this instance and the
      *      given line
-     * @see #offset(Line_Old)
+     * @see #offset(Line)
      */
     public double distance(final Line line) {
         return Math.abs(offset(line));
@@ -444,11 +444,10 @@ public final class Line extends AbstractHyperplane<Vector2D>
     *
     * <p>Instances are considered equivalent if they
     * <ul>
-    *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-    *  <li>have equivalent locations (as evaluated by the precision context), and</li>
-    *  <li>point in the same direction (as evaluated by the precision context)</li>
+    *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+    *   <li>have equivalent locations (as evaluated by the precision context), and</li>
+    *   <li>point in the same direction (as evaluated by the precision context)</li>
     * </ul>
-    * </p>
     * @param other the point to compare with
     * @return true if this instance should be considered equivalent to the argument
     */

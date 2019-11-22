@@ -185,7 +185,6 @@ public final class Segment extends AbstractSubLine
     *      <li>Start point and end point -
     *          {@code "Segment[start= (0.0, 0.0), end= (1.0, 0.0)]"}</li>
     * </ul>
-    * </p>
     */
    @Override
    public String toString() {

@@ -34,7 +34,7 @@ public interface Hyperplane<P extends Point<P>> {
     double offset(P point);
 
     /** Classify a point with respect to this hyperplane.
-     * @param sub the point to classify
+     * @param point the point to classify
      * @return the relative location of the point with
      *      respect to this instance
      */

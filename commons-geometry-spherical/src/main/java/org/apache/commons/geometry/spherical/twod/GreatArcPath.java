@@ -182,7 +182,6 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
     *          </ul>
     *      </li>
     * </ul>
-    * </p>
     */
    @Override
    public String toString() {
@@ -367,6 +366,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
         }
 
         /** Append an arc to the end of the path.
+         * @param arc arc to append to the path
          * @return the current builder instance
          * @throws IllegalStateException if the path contains a previous arc
          *      and the end point of the previous arc is not equivalent to the
@@ -434,6 +434,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
         }
 
         /** Prepend an arc to the beginning of the path.
+         * @param arc arc to prepend to the path
          * @return the current builder instance
          * @throws IllegalStateException if the path contains a start arc
          *      and the end point of the given arc is not equivalent to the

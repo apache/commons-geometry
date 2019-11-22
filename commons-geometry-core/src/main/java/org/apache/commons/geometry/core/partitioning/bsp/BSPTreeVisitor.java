@@ -140,9 +140,9 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         }
     }
 
-    /** {@link BSPTreeTraversal} implementation that orders tree nodes so that nodes farthest from the target point are traversed
+    /** {@link BSPTreeVisitor} base class that orders tree nodes so that nodes farthest from the target point are traversed
      * first. This is done by choosing {@link Order#PLUS_NODE_MINUS}
-     * when the target point lies on the minus side of the node's cut hyperplane and {@link Order#MINUS_NODE_MINUS}
+     * when the target point lies on the minus side of the node's cut hyperplane and {@link Order#MINUS_NODE_PLUS}
      * when it lies on the plus side. The order {@link Order#MINUS_NODE_PLUS} order is used when
      * the target point lies directly on the node's cut hyerplane and no child node is closer than the other.
      * @param <P> Point implementation type
