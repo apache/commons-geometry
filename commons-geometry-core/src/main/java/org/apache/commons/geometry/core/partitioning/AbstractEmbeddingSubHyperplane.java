@@ -28,10 +28,12 @@ import org.apache.commons.geometry.core.RegionLocation;
  * @param <S> Subspace point implementation type
  * @param <H> Hyperplane containing the embedded subspace
  */
-public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S extends Point<S>, H extends EmbeddingHyperplane<P, S>>
-    implements SubHyperplane<P>, Serializable {
+public abstract class AbstractEmbeddingSubHyperplane<
+    P extends Point<P>,
+    S extends Point<S>,
+    H extends EmbeddingHyperplane<P, S>> implements SubHyperplane<P>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190729L;
 
     /** {@inheritDoc} */
@@ -70,7 +72,7 @@ public abstract class AbstractEmbeddingSubHyperplane<P extends Point<P>, S exten
         final H hyperplane = getHyperplane();
 
         if (hyperplane.contains(point)) {
-            S subPoint = hyperplane.toSubspace(point);
+            final S subPoint = hyperplane.toSubspace(point);
 
             return getSubspaceRegion().classify(subPoint);
         }

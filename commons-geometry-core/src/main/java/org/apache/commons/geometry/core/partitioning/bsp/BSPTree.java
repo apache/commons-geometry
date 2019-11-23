@@ -32,7 +32,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     /** Enum specifying possible behaviors when a point used to locate a node
      * falls directly on the cut subhyperplane of an internal node.
      */
-    public static enum NodeCutRule {
+    enum NodeCutRule {
 
         /** Choose the minus child of the internal node and continue searching.
          * This behavior will result in a leaf node always being returned by the
@@ -122,8 +122,9 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
 
     /** Interface for Binary Space Partitioning (BSP) tree nodes.
      * @param <P> Point type
+     * @param <N> BSP tree node implementation type
      */
-    public static interface Node<P extends Point<P>, N extends Node<P, N>> extends BSPSubtree<P, N> {
+    interface Node<P extends Point<P>, N extends Node<P, N>> extends BSPSubtree<P, N> {
 
         /** Get the {@link BSPTree} that owns the node.
          * @return the owning tree

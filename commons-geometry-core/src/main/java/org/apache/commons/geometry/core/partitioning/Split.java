@@ -73,8 +73,7 @@ public final class Split<T> {
     public SplitLocation getLocation() {
         if (minus != null) {
             return plus != null ? SplitLocation.BOTH : SplitLocation.MINUS;
-        }
-        else if (plus != null) {
+        } else if (plus != null) {
             return SplitLocation.PLUS;
         }
         return SplitLocation.NEITHER;
@@ -91,7 +90,7 @@ public final class Split<T> {
             .append(minus)
             .append(", plus= ")
             .append(plus)
-            .append("]");
+            .append(']');
 
         return sb.toString();
     }

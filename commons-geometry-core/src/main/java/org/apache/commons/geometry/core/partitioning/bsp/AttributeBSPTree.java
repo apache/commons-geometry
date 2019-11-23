@@ -23,9 +23,10 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <T> Tree node attribute type
  */
-public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, AttributeBSPTree.AttributeNode<P, T>> {
+public class AttributeBSPTree<P extends Point<P>, T>
+    extends AbstractBSPTree<P, AttributeBSPTree.AttributeNode<P, T>> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190306L;
 
     /** The initial attribute value to use for newly created nodes. */
@@ -73,12 +74,13 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
      * @param <P> Point implementation type
      * @param <T> Tree node attribute type
      */
-    public static class AttributeNode<P extends Point<P>, T> extends AbstractBSPTree.AbstractNode<P, AttributeNode<P, T>> {
+    public static class AttributeNode<P extends Point<P>, T>
+        extends AbstractBSPTree.AbstractNode<P, AttributeNode<P, T>> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 1L;
 
-        /** The node attribute */
+        /** The node attribute. */
         private T attribute;
 
         /** Simple constructor.
@@ -110,11 +112,11 @@ public class AttributeBSPTree<P extends Point<P>, T> extends AbstractBSPTree<P, 
         }
 
         /** Set the attribute for this node. The node is returned.
-         * @param attribute attribute to set for the node
+         * @param attributeValue attribute to set for the node
          * @return the node instance
          */
-        public AttributeNode<P, T> attr(final T attribute) {
-            setAttribute(attribute);
+        public AttributeNode<P, T> attr(final T attributeValue) {
+            setAttribute(attributeValue);
 
             return this;
         }

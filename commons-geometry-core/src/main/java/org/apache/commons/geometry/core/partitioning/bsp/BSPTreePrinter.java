@@ -23,33 +23,34 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node;
  * @param <P> Point implementation type
  * @param <N> Node implementation type
  */
-final class BSPTreePrinter <P extends Point<P>, N extends Node<P, N>> implements BSPTreeVisitor<P, N> {
+final class BSPTreePrinter<P extends Point<P>, N extends Node<P, N>>
+    implements BSPTreeVisitor<P, N> {
 
-    /** Line indent string */
+    /** Line indent string. */
     private static final String INDENT = "    ";
 
-    /** New line character */
+    /** New line character. */
     private static final String NEW_LINE = "\n";
 
-    /** Entry prefix for nodes on the minus side of their parent */
+    /** Entry prefix for nodes on the minus side of their parent. */
     private static final String MINUS_CHILD = "[-] ";
 
-    /** Entry prefix for nodes on the plus side of their parent */
+    /** Entry prefix for nodes on the plus side of their parent. */
     private static final String PLUS_CHILD = "[+] ";
 
-    /** Ellipsis for truncated representations */
+    /** Ellipsis for truncated representations. */
     private static final String ELLIPSIS = "...";
 
-    /** Maximum depth of nodes that will be printed */
+    /** Maximum depth of nodes that will be printed. */
     private final int maxDepth;
 
-    /** Contains the string output */
+    /** Contains the string output. */
     private final StringBuilder output = new StringBuilder();
 
-    /** Simple constructor
+    /** Simple constructor.
      * @param maxDepth maximum depth of nodes to be printed
      */
-    public BSPTreePrinter(final int maxDepth) {
+    BSPTreePrinter(final int maxDepth) {
         this.maxDepth = maxDepth;
     }
 
@@ -61,8 +62,7 @@ final class BSPTreePrinter <P extends Point<P>, N extends Node<P, N>> implements
         if (depth <= maxDepth) {
             startLine(node);
             writeNode(node);
-        }
-        else if (depth == maxDepth + 1 && node.isPlus()) {
+        } else if (depth == maxDepth + 1 && node.isPlus()) {
             startLine(node);
             write(ELLIPSIS);
         }
@@ -83,7 +83,7 @@ final class BSPTreePrinter <P extends Point<P>, N extends Node<P, N>> implements
         }
 
         final int depth = node.depth();
-        for (int i=0; i<depth; ++i) {
+        for (int i = 0; i < depth; ++i) {
             write(INDENT);
         }
     }
@@ -95,8 +95,7 @@ final class BSPTreePrinter <P extends Point<P>, N extends Node<P, N>> implements
         if (node.getParent() != null) {
             if (node.isMinus()) {
                 write(MINUS_CHILD);
-            }
-            else {
+            } else {
                 write(PLUS_CHILD);
             }
         }

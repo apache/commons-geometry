@@ -26,10 +26,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 1L;
 
-    /** Precision object used to perform floating point comparisons */
+    /** Precision object used to perform floating point comparisons. */
     private final DoublePrecisionContext precision;
 
     /** Construct an instance using the given precision context.
@@ -47,8 +47,7 @@ public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperpla
         final int cmp = precision.sign(offsetValue);
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;
-        }
-        else if (cmp < 0) {
+        } else if (cmp < 0) {
             return HyperplaneLocation.MINUS;
         }
         return HyperplaneLocation.ON;

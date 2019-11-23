@@ -28,10 +28,12 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
  * the outside of the region ({@link #getOutsideFacing()}) and other portions
  * of the same subhyperplane may be oriented so that the plus side points
  * toward the inside of the region ({@link #getInsideFacing()}).
+ *
+ * @param <P> Point implementation type
  */
 public final class RegionCutBoundary<P extends Point<P>> implements Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190310L;
 
     /** Portion of the region cut subhyperplane with its plus side facing the
@@ -44,6 +46,12 @@ public final class RegionCutBoundary<P extends Point<P>> implements Serializable
      */
     private final SubHyperplane<P> outsideFacing;
 
+    /** Simple constructor.
+     * @param insideFacing portion of the region cut subhyperplane with its plus side facing the
+     *      inside of the region
+     * @param outsideFacing portion of the region cut subhyperplane with its plus side facing the
+     *      outside of the region
+     */
     public RegionCutBoundary(final SubHyperplane<P> insideFacing, final SubHyperplane<P> outsideFacing) {
         this.insideFacing = insideFacing;
         this.outsideFacing = outsideFacing;
@@ -82,8 +90,7 @@ public final class RegionCutBoundary<P extends Point<P>> implements Serializable
                 return insideFacingPt;
             }
             return outsideFacingPt;
-        }
-        else if (insideFacingPt != null) {
+        } else if (insideFacingPt != null) {
             return insideFacingPt;
         }
         return outsideFacingPt;

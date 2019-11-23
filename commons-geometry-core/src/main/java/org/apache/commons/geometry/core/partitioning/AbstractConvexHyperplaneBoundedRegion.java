@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.exception.GeometryException;
 public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, S extends ConvexSubHyperplane<P>>
     implements HyperplaneBoundedRegion<P>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190812L;
 
     /** List of boundaries for the region. */
@@ -78,7 +78,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
     @Override
     public double getBoundarySize() {
         double sum = 0.0;
-        for (S boundary : boundaries) {
+        for (final S boundary : boundaries) {
             sum += boundary.getSize();
         }
 
@@ -91,13 +91,12 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         boolean isOn = false;
 
         HyperplaneLocation loc;
-        for (S boundary : boundaries) {
+        for (final S boundary : boundaries) {
             loc = boundary.getHyperplane().classify(pt);
 
             if (loc == HyperplaneLocation.PLUS) {
                 return RegionLocation.OUTSIDE;
-            }
-            else if (loc == HyperplaneLocation.ON) {
+            } else if (loc == HyperplaneLocation.ON) {
                 isOn = true;
             }
         }
@@ -115,7 +114,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         P closestPt = null;
         double closestDist = Double.POSITIVE_INFINITY;
 
-        for (S boundary : boundaries) {
+        for (final S boundary : boundaries) {
             projected = boundary.closest(pt);
             dist = pt.distance(projected);
 
@@ -136,7 +135,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      */
     public ConvexSubHyperplane<P> trim(final ConvexSubHyperplane<P> convexSubHyperplane) {
         ConvexSubHyperplane<P> remaining = convexSubHyperplane;
-        for (S boundary : boundaries) {
+        for (final S boundary : boundaries) {
             remaining = remaining.split(boundary.getHyperplane()).getMinus();
             if (remaining == null) {
                 break;
@@ -166,20 +165,21 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      * @param <R> Region implementation type
      * @return the result of the transform operation
      */
-    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> R transformInternal(final Transform<P> transform,
-            final R thisInstance, final Class<S> subhpType, final Function<List<S>, R> factory) {
+    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> R transformInternal(
+            final Transform<P> transform, final R thisInstance, final Class<S> subhpType,
+            final Function<List<S>, R> factory) {
 
         if (isFull()) {
             return thisInstance;
         }
 
-        final List<S> boundaries = getBoundaries();
+        final List<S> origBoundaries = getBoundaries();
 
-        final int size = boundaries.size();
+        final int size = origBoundaries.size();
         final List<S> tBoundaries = new ArrayList<>(size);
 
         // determine if the hyperplanes should be reversed
-        final S boundary = boundaries.get(0);
+        final S boundary = origBoundaries.get(0);
         ConvexSubHyperplane<P> tBoundary = boundary.transform(transform);
 
         final boolean reverseDirection = swapsInsideOutside(transform);
@@ -190,8 +190,8 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
         }
         tBoundaries.add(subhpType.cast(tBoundary));
 
-        for (int i=1; i<boundaries.size(); ++i) {
-            tBoundary = boundaries.get(i).transform(transform);
+        for (int i = 1; i < origBoundaries.size(); ++i) {
+            tBoundary = origBoundaries.get(i).transform(transform);
 
             if (reverseDirection) {
                 tBoundary = tBoundary.reverse();
@@ -227,16 +227,16 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
      * @param <R> Region implementation type
      * @return the result of the split operation
      */
-    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternal(final Hyperplane<P> splitter,
-            final R thisInstance, final Class<S> subhpType, final Function<List<S>, R> factory) {
+    protected <R extends AbstractConvexHyperplaneBoundedRegion<P, S>> Split<R> splitInternal(
+            final Hyperplane<P> splitter, final R thisInstance, final Class<S> subhpType,
+            final Function<List<S>, R> factory) {
 
-        if (isFull() ) {
+        if (isFull()) {
             final R minus = factory.apply(Arrays.asList(subhpType.cast(splitter.span())));
             final R plus = factory.apply(Arrays.asList(subhpType.cast(splitter.reverse().span())));
 
             return new Split<>(minus, plus);
-        }
-        else {
+        } else {
             final ConvexSubHyperplane<P> trimmedSplitter = trim(splitter.span());
 
             if (trimmedSplitter == null) {
@@ -246,11 +246,12 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                 // on the minus side of the splitter or lies directly on the splitter and has
                 // the same orientation, then the area lies on the minus side of the splitter.
                 // Otherwise, it lies on the plus side.
-                ConvexSubHyperplane<P> testSegment = boundaries.get(0);
-                SplitLocation testLocation = testSegment.split(splitter).getLocation();
+                final ConvexSubHyperplane<P> testSegment = boundaries.get(0);
+                final SplitLocation testLocation = testSegment.split(splitter).getLocation();
 
                 if (SplitLocation.MINUS == testLocation ||
-                        (SplitLocation.NEITHER == testLocation && splitter.similarOrientation(testSegment.getHyperplane()))) {
+                        (SplitLocation.NEITHER == testLocation &&
+                            splitter.similarOrientation(testSegment.getHyperplane()))) {
                     return new Split<>(thisInstance, null);
                 }
 
@@ -264,7 +265,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             ConvexSubHyperplane<P> minusBoundary;
             ConvexSubHyperplane<P> plusBoundary;
 
-            for (S boundary : boundaries) {
+            for (final S boundary : boundaries) {
                 split = boundary.split(splitter);
 
                 minusBoundary = split.getMinus();
@@ -319,16 +320,16 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             int outerIdx = 0;
             ConvexSubHyperplane<P> subhp;
 
-            for (Hyperplane<P> hp : bounds) {
+            for (final Hyperplane<P> hp : bounds) {
                 ++outerIdx;
                 subhp = hp.span();
 
                 int innerIdx = 0;
-                for (Hyperplane<P> splitter : bounds) {
+                for (final Hyperplane<P> splitter : bounds) {
                     ++innerIdx;
 
                     if (hp != splitter) {
-                        Split<? extends ConvexSubHyperplane<P>> split = subhp.split(splitter);
+                        final Split<? extends ConvexSubHyperplane<P>> split = subhp.split(splitter);
 
                         if (split.getLocation() == SplitLocation.NEITHER) {
                             if (hp.similarOrientation(splitter)) {
@@ -337,24 +338,21 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
                                 if (outerIdx > innerIdx) {
                                     subhp = null;
                                 }
-                            }
-                            else {
+                            } else {
                                 // two or more splitters are coincident and have opposite
                                 // orientations, meaning that no area is on the minus side
                                 // of both
                                 notConvex = true;
                                 break;
                             }
-                        }
-                        else {
+                        } else {
                             subhp = subhp.split(splitter).getMinus();
                         }
 
                         if (subhp == null) {
                             break;
                         }
-                    }
-                    else if (outerIdx > innerIdx) {
+                    } else if (outerIdx > innerIdx) {
                         // this hyperplane is duplicated in the list; skip all but the
                         // first insertion of its subhyperplane
                         subhp = null;

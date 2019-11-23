@@ -39,10 +39,10 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
 public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
     implements BSPTree<P, N>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190330L;
 
-    /** The default number of levels to print when creating a string representation of the tree */
+    /** The default number of levels to print when creating a string representation of the tree. */
     private static final int DEFAULT_TREE_STRING_MAX_DEPTH = 8;
 
     /** Integer value set on various node fields when a value is unknown. */
@@ -118,12 +118,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs) {
-        for (ConvexSubHyperplane<P> convexSub : convexSubs) {
+        for (final ConvexSubHyperplane<P> convexSub : convexSubs) {
             insert(convexSub);
         }
     }
 
-    /** Return an iterator over the nodes in the tree */
+    /** Return an iterator over the nodes in the tree. */
     @Override
     public Iterator<N> iterator() {
         return new NodeIterator<>(getRoot());
@@ -190,7 +190,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 .toString();
     }
 
-    /** Create a new node for this tree
+    /** Create a new node for this tree.
      * @return a new node for this tree
      */
     protected abstract N createNode();
@@ -204,6 +204,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst destination node
      */
     protected void copyNodeProperties(final N src, final N dst) {
+        // no-op
     }
 
     /** Method called to initialize a new child node. Subclasses can use this method to
@@ -214,6 +215,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      false if it will be the parent's minus child
      */
     protected void initChildNode(final N parent, final N child, final boolean isPlus) {
+        // no-op
     }
 
     /** Create a non-structural copy of the given node. Properties such as parent/child
@@ -309,8 +311,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                         srcParent.getCut(),
                         dstChild,
                         copyNode(srcParent.getPlus()));
-            }
-            else {
+            } else {
                 dstParent.setSubtree(
                         srcParent.getCut(),
                         copyNode(srcParent.getMinus()),
@@ -333,9 +334,9 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @return the smallest node in the tree containing the point
      */
     protected N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
-        Hyperplane<P> cutHyper = start.getCutHyperplane();
+        final Hyperplane<P> cutHyper = start.getCutHyperplane();
         if (cutHyper != null) {
-            HyperplaneLocation cutLoc = cutHyper.classify(pt);
+            final HyperplaneLocation cutLoc = cutHyper.classify(pt);
 
             final boolean onPlusSide = cutLoc == HyperplaneLocation.PLUS;
             final boolean onMinusSide = cutLoc == HyperplaneLocation.MINUS;
@@ -343,8 +344,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
             if (onMinusSide || (onCut && cutBehavior == NodeCutRule.MINUS)) {
                 return findNode(start.getMinus(), pt, cutBehavior);
-            }
-            else if (onPlusSide || (onCut && cutBehavior == NodeCutRule.PLUS)) {
+            } else if (onPlusSide || (onCut && cutBehavior == NodeCutRule.PLUS)) {
                 return findNode(start.getPlus(), pt, cutBehavior);
             }
         }
@@ -356,45 +356,44 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param visitor the visitor to pass nodes to
      */
     protected void acceptVisitor(final N node, BSPTreeVisitor<P, N> visitor) {
-        if (node.isLeaf()){
+        if (node.isLeaf()) {
             visitor.visit(node);
-        }
-        else {
+        } else {
             final Order order = visitor.visitOrder(node);
 
             if (order != null) {
 
                 switch (order) {
-                    case PLUS_MINUS_NODE:
-                        acceptVisitor(node.getPlus(), visitor);
-                        acceptVisitor(node.getMinus(), visitor);
-                        visitor.visit(node);
-                        break;
-                    case PLUS_NODE_MINUS:
-                        acceptVisitor(node.getPlus(), visitor);
-                        visitor.visit(node);
-                        acceptVisitor(node.getMinus(), visitor);
-                        break;
-                    case MINUS_PLUS_NODE:
-                        acceptVisitor(node.getMinus(), visitor);
-                        acceptVisitor(node.getPlus(), visitor);
-                        visitor.visit(node);
-                        break;
-                    case MINUS_NODE_PLUS:
-                        acceptVisitor(node.getMinus(), visitor);
-                        visitor.visit(node);
-                        acceptVisitor(node.getPlus(), visitor);
-                        break;
-                    case NODE_PLUS_MINUS:
-                        visitor.visit(node);
-                        acceptVisitor(node.getPlus(), visitor);
-                        acceptVisitor(node.getMinus(), visitor);
-                        break;
-                    case NODE_MINUS_PLUS:
-                        visitor.visit(node);
-                        acceptVisitor(node.getMinus(), visitor);
-                        acceptVisitor(node.getPlus(), visitor);
-                        break;
+                case PLUS_MINUS_NODE:
+                    acceptVisitor(node.getPlus(), visitor);
+                    acceptVisitor(node.getMinus(), visitor);
+                    visitor.visit(node);
+                    break;
+                case PLUS_NODE_MINUS:
+                    acceptVisitor(node.getPlus(), visitor);
+                    visitor.visit(node);
+                    acceptVisitor(node.getMinus(), visitor);
+                    break;
+                case MINUS_PLUS_NODE:
+                    acceptVisitor(node.getMinus(), visitor);
+                    acceptVisitor(node.getPlus(), visitor);
+                    visitor.visit(node);
+                    break;
+                case MINUS_NODE_PLUS:
+                    acceptVisitor(node.getMinus(), visitor);
+                    visitor.visit(node);
+                    acceptVisitor(node.getPlus(), visitor);
+                    break;
+                case NODE_PLUS_MINUS:
+                    visitor.visit(node);
+                    acceptVisitor(node.getPlus(), visitor);
+                    acceptVisitor(node.getMinus(), visitor);
+                    break;
+                default: // NODE_MINUS_PLUS:
+                    visitor.visit(node);
+                    acceptVisitor(node.getMinus(), visitor);
+                    acceptVisitor(node.getPlus(), visitor);
+                    break;
                 }
             }
         }
@@ -439,7 +438,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     protected boolean insertNodeCut(final N node, final Hyperplane<P> cutter) {
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
-        ConvexSubHyperplane<P> cut = trimToNode(node, cutter.span());
+        final ConvexSubHyperplane<P> cut = trimToNode(node, cutter.span());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
             cutNode(node, null);
@@ -501,8 +500,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 if (result.getHyperplane().similarOrientation(parentNode.getCutHyperplane())) {
                     result = null;
                 }
-            }
-            else {
+            } else {
                 result = currentNode.isPlus() ? split.getPlus() : split.getMinus();
             }
 
@@ -539,7 +537,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param cut the convex subhyperplane to set as the node cut
      */
     protected void cutNode(final N node, final ConvexSubHyperplane<P> cut) {
-        N plus = null;;
+        N plus = null;
         N minus = null;
 
         if (cut != null) {
@@ -580,9 +578,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final ConvexSubHyperplane<P> trimmed) {
         if (node.isLeaf()) {
             cutNode(node, trimmed);
-        }
-        else {
-            Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
+        } else {
+            final Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
 
             final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
             final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
@@ -642,8 +639,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 plus.extract(splitRoot.getPlus());
             }
             minus.extract(splitRoot.getMinus());
-        }
-        else {
+        } else {
             plus.extract(splitRoot.getPlus());
         }
     }
@@ -707,8 +703,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
                 resultPlus = copyNode(node);
                 resultPlus.setSubtree(node.getCut(), importSubtree(node.getMinus()), nodePlusSplit.getPlus());
-            }
-            else {
+            } else {
                 // partitioner is on node cut plus side, node cut is on partitioner minus side
                 final N nodePlusSplit = splitSubtree(node.getPlus(), partitioner);
 
@@ -717,8 +712,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
                 resultPlus = nodePlusSplit.getPlus();
             }
-        }
-        else if (partitionerSplitSide == SplitLocation.MINUS) {
+        } else if (partitionerSplitSide == SplitLocation.MINUS) {
             if (nodeCutSplitSide == SplitLocation.MINUS) {
                 // partitioner is on node cut minus side, node cut is on partitioner minus side
                 final N nodeMinusSplit = splitSubtree(node.getMinus(), partitioner);
@@ -727,8 +721,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 resultMinus.setSubtree(node.getCut(), nodeMinusSplit.getMinus(), importSubtree(node.getPlus()));
 
                 resultPlus = nodeMinusSplit.getPlus();
-            }
-            else {
+            } else {
                 // partitioner is on node cut minus side, node cut is on partitioner plus side
                 final N nodeMinusSplit = splitSubtree(node.getMinus(), partitioner);
 
@@ -737,8 +730,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 resultPlus = copyNode(node);
                 resultPlus.setSubtree(node.getCut(), nodeMinusSplit.getPlus(), importSubtree(node.getPlus()));
             }
-        }
-        else if (partitionerSplitSide == SplitLocation.BOTH) {
+        } else if (partitionerSplitSide == SplitLocation.BOTH) {
             // partitioner and node cut split each other
             final N nodeMinusSplit = splitSubtree(node.getMinus(), partitionerSplit.getMinus());
             final N nodePlusSplit = splitSubtree(node.getPlus(), partitionerSplit.getPlus());
@@ -748,8 +740,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
             resultPlus = copyNode(node);
             resultPlus.setSubtree(nodeCutSplit.getPlus(), nodeMinusSplit.getPlus(), nodePlusSplit.getPlus());
-        }
-        else {
+        } else {
             // partitioner and node cut are parallel or anti-parallel
             final boolean sameOrientation = partitioner.getHyperplane().similarOrientation(node.getCutHyperplane());
 
@@ -787,18 +778,19 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param <P> Point implementation type
      * @param <N> BSP tree node implementation type
      */
-    public static abstract class AbstractNode<P extends Point<P>, N extends AbstractNode<P, N>> implements BSPTree.Node<P, N>, Serializable {
+    public abstract static class AbstractNode<P extends Point<P>, N extends AbstractNode<P, N>>
+        implements BSPTree.Node<P, N>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190225L;
 
-        /** The owning tree instance */
+        /** The owning tree instance. */
         private final AbstractBSPTree<P, N> tree;
 
-        /** The parent node; this will be null for the tree root node */
+        /** The parent node; this will be null for the tree root node. */
         private N parent;
 
-        /** The subhyperplane cutting the node's region; this will be null for leaf nodes */
+        /** The subhyperplane cutting the node's region; this will be null for leaf nodes. */
         private ConvexSubHyperplane<P> cut;
 
         /** The node lying on the minus side of the cut subhyperplane; this will be null
@@ -854,7 +846,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
                 // calculate our depth based on our parent's depth, if
                 // possible
                 if (parent != null) {
-                    int parentDepth = parent.depth();
+                    final int parentDepth = parent.depth();
                     if (parentDepth != UNKNOWN_VALUE) {
                         depth = parentDepth + 1;
                     }
@@ -871,8 +863,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             if (height == UNKNOWN_VALUE) {
                 if (isLeaf()) {
                     height = 0;
-                }
-                else {
+                } else {
                     height = Math.max(getMinus().height(), getPlus().height()) + 1;
                 }
             }
@@ -989,7 +980,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             sb.append(this.getClass().getSimpleName())
                 .append("[cut= ")
                 .append(getCut())
-                .append("]");
+                .append(']');
 
             return sb.toString();
         }
@@ -1001,34 +992,34 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * ensuring that any given subhyperplane fits the region defined by the node and that
          * any child nodes belong to this tree and are correctly initialized.</p>
          *
-         * @param cut the new cut subhyperplane for the node
-         * @param minus the new minus child for the node
-         * @param plus the new plus child for the node
+         * @param newCut the new cut subhyperplane for the node
+         * @param newMinus the new minus child for the node
+         * @param newPlus the new plus child for the node
          */
-        protected void setSubtree(final ConvexSubHyperplane<P> cut, final N minus, final N plus) {
-            this.cut = cut;
+        protected void setSubtree(final ConvexSubHyperplane<P> newCut, final N newMinus, final N newPlus) {
+            this.cut = newCut;
 
             final N self = getSelf();
 
-            // cast for access to private members
-            AbstractNode<P, N> minusNode = minus;
-            AbstractNode<P, N> plusNode = plus;
+            // cast for access to private member
+            AbstractNode<P, N> minusNode = newMinus;
+            AbstractNode<P, N> plusNode = newPlus;
 
             // get the child depth now if we know it offhand, otherwise set it to the unknown value
             // and have the child pull it when needed
             final int childDepth = (depth != UNKNOWN_VALUE) ? depth + 1 : UNKNOWN_VALUE;
 
-            if (minus != null) {
+            if (newMinus != null) {
                 minusNode.parent = self;
                 minusNode.depth = childDepth;
             }
-            this.minus = minus;
+            this.minus = newMinus;
 
-            if (plus != null) {
+            if (newPlus != null) {
                 plusNode.parent = self;
                 plusNode.depth = childDepth;
             }
-            this.plus = plus;
+            this.plus = newPlus;
         }
 
         /**
@@ -1081,7 +1072,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     public static class NodeIterator<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
 
-        /** The current node stack */
+        /** The current node stack. */
         private final Deque<N> stack = new LinkedList<>();
 
         /** Create a new instance for iterating over the nodes in the given subtree.

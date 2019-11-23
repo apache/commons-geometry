@@ -24,7 +24,6 @@ import java.util.function.Function;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.IteratorTransform;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -39,11 +38,14 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestF
  * class can be used to represent polygons in Euclidean 2D space and polyhedrons
  * in Euclidean 3D space.
  * @param <P> Point implementation type
+ * @param <N> BSP tree node implementation type
  */
-public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
+public abstract class AbstractRegionBSPTree<
+        P extends Point<P>,
+        N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
     extends AbstractBSPTree<P, N> implements HyperplaneBoundedRegion<P> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 1L;
 
     /** Value used to indicate an unknown size. */
@@ -126,7 +128,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             double sum = 0.0;
 
             RegionCutBoundary<P> boundary;
-            for (AbstractRegionNode<P, N> node : this) {
+            for (final AbstractRegionNode<P, N> node : this) {
                 boundary = node.getCutBoundary();
                 if (boundary != null) {
                     sum += boundary.getInsideFacing().getSize();
@@ -262,7 +264,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** {@inheritDoc}
      *
-     * <p>If the point is {@link Spatial#isNaN() NaN}, then
+     * <p>If the point is {@link org.apache.commons.geometry.core.Spatial#isNaN() NaN}, then
      * {@link RegionLocation#OUTSIDE} is returned.</p>
      */
     @Override
@@ -284,17 +286,14 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
         if (node.isLeaf()) {
             // the point is in a leaf, so the classification is just the leaf location
             return node.getLocation();
-        }
-        else {
+        } else {
             final HyperplaneLocation cutLoc = node.getCutHyperplane().classify(point);
 
             if (cutLoc == HyperplaneLocation.MINUS) {
                 return classifyRecursive(node.getMinus(), point);
-            }
-            else if (cutLoc == HyperplaneLocation.PLUS) {
+            } else if (cutLoc == HyperplaneLocation.PLUS) {
                 return classifyRecursive(node.getPlus(), point);
-            }
-            else {
+            } else {
                 // the point is on the cut boundary; classify against both child
                 // subtrees and see if we end up with the same result or not
                 RegionLocation minusLoc = classifyRecursive(node.getMinus(), point);
@@ -328,11 +327,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param node the node at the root of the subtree to switch
      */
     private void complementRecursive(final AbstractRegionNode<P, N> node) {
-        if (node != null)
-        {
-            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE)
-                    ? RegionLocation.OUTSIDE
-                    : RegionLocation.INSIDE;
+        if (node != null) {
+            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE) ?
+                    RegionLocation.OUTSIDE :
+                    RegionLocation.INSIDE;
 
             node.setLocation(newLoc);
 
@@ -519,12 +517,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
             if (node.isLeaf()) {
                 if (node.isInside() && in != null) {
                     in.add(sub);
-                }
-                else if (node.isOutside() && out != null) {
+                } else if (node.isOutside() && out != null) {
                     out.add(sub);
                 }
-            }
-            else {
+            } else {
                 final Split<? extends ConvexSubHyperplane<P>> split = sub.split(node.getCutHyperplane());
 
                 // Continue further on down the subtree with the same subhyperplane if the
@@ -532,8 +528,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 if (split.getLocation() == SplitLocation.NEITHER) {
                     characterizeSubHyperplane(sub, node.getPlus(), in, out);
                     characterizeSubHyperplane(sub, node.getMinus(), in, out);
-                }
-                else {
+                } else {
                     characterizeSubHyperplane(split.getPlus(), node.getPlus(), in, out);
                     characterizeSubHyperplane(split.getMinus(), node.getMinus(), in, out);
                 }
@@ -561,11 +556,12 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** {@link BSPTree.Node} implementation for use with {@link AbstractRegionBSPTree}s.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public abstract static class AbstractRegionNode<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends AbstractBSPTree.AbstractNode<P, N> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 1L;
 
         /** The location for the node. This will only be set on leaf nodes. */
@@ -672,6 +668,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class containing the basic algorithm for merging region BSP trees.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends AbstractBSPTreeMergeOperator<P, N> {
@@ -694,6 +691,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class for performing boolean union operations on region trees.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public static class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
@@ -712,6 +710,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class for performing boolean intersection operations on region trees.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public static class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
@@ -730,6 +729,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class for performing boolean difference operations on region trees.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public static class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
@@ -746,8 +746,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 output.getTree().complementRecursive(output);
 
                 return output;
-            }
-            else if (node2.isInside()) {
+            } else if (node2.isInside()) {
                 // this region is inside of tree2 and so cannot be in the result region
                 final N output = outputNode();
                 output.setLocation(RegionLocation.OUTSIDE);
@@ -762,6 +761,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
     /** Class for performing boolean symmetric difference (xor) operations on region trees.
      * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
      */
     public static class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends RegionMergeOperator<P, N> {
@@ -780,8 +780,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                     output.getTree().complementRecursive(output);
 
                     return output;
-                }
-                else {
+                } else {
                     // this region is not in node1, so only include subregions that
                     // in node2
                     return node2;
@@ -801,7 +800,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
     protected static class BoundaryProjector<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends ClosestFirstVisitor<P, N> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190504L;
 
         /** The projected point. */
@@ -832,8 +831,7 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
                 if (minDist < 0.0 || cmp < 0) {
                     projected = boundaryPt;
                     minDist = dist;
-                }
-                else if (cmp == 0) {
+                } else if (cmp == 0) {
                     // the two points are the _exact_ same distance from the reference point, so use
                     // a separate method to disambiguate them
                     projected = disambiguateClosestPoint(point, projected, boundaryPt);
@@ -845,13 +843,14 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
          * closest region boundary point to the target.
          * @param cut the node cut subhyperplane to test
          * @param target the target point being projected
-         * @param minDist the smallest distance found so far to a region boundary; this value is guaranteed
+         * @param currentMinDist the smallest distance found so far to a region boundary; this value is guaranteed
          *      to be non-negative
          * @return true if the subhyperplane is a possible candidate for containing the closest region
          *      boundary point to the target
          */
-        protected boolean isPossibleClosestCut(final SubHyperplane<P> cut, final P target, final double minDist) {
-            return Math.abs(cut.getHyperplane().offset(target)) <= minDist;
+        protected boolean isPossibleClosestCut(final SubHyperplane<P> cut, final P target,
+                final double currentMinDist) {
+            return Math.abs(cut.getHyperplane().offset(target)) <= currentMinDist;
         }
 
         /** Method used to determine which of points {@code a} and {@code b} should be considered
@@ -879,15 +878,15 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * of the combined computation.
      * @param <P> Point implementation type
      */
-    protected static class RegionSizeProperties <P extends Point<P>> implements Serializable {
+    protected static class RegionSizeProperties<P extends Point<P>> implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190428L;
 
-        /** The size of the region */
+        /** The size of the region. */
         private final double size;
 
-        /** The barycenter of the region */
+        /** The barycenter of the region. */
         private final P barycenter;
 
         /** Simple constructor.
@@ -919,7 +918,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
      * @param <C> Boundary convex subhyperplane implementation type
      * @param <N> BSP tree node implementation type
      */
-    protected static class RegionBoundaryIterator<P extends Point<P>, C extends ConvexSubHyperplane<P>, N extends AbstractRegionNode<P, N>>
+    protected static final class RegionBoundaryIterator<
+            P extends Point<P>,
+            C extends ConvexSubHyperplane<P>,
+            N extends AbstractRegionNode<P, N>>
         extends IteratorTransform<N, C> {
 
         /** Function that converts from the convex subhyperplane type to the output type. */
@@ -927,8 +929,10 @@ public abstract class AbstractRegionBSPTree<P extends Point<P>, N extends Abstra
 
         /** Simple constructor.
          * @param inputIterator iterator that will provide all nodes in the tree
+         * @param typeConverter function that converts from the convex subhyperplane type to the output type
          */
-        private RegionBoundaryIterator(final Iterator<N> inputIterator, final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+        private RegionBoundaryIterator(final Iterator<N> inputIterator,
+                final Function<ConvexSubHyperplane<P>, C> typeConverter) {
             super(inputIterator);
 
             this.typeConverter = typeConverter;

@@ -298,8 +298,7 @@ public class SimpleTupleFormat {
             matchSequence(str, separator, pos);
 
             return value;
-        }
-        catch (NumberFormatException exc) {
+        } catch (NumberFormatException exc) {
             fail(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
             return 0.0; // for the compiler
         }
@@ -342,7 +341,7 @@ public class SimpleTupleFormat {
         int idx = pos.getIndex();
         final int len = str.length();
 
-        for (; idx<len; ++idx) {
+        for (; idx < len; ++idx) {
             if (!Character.isWhitespace(str.codePointAt(idx))) {
                 break;
             }
@@ -369,7 +368,7 @@ public class SimpleTupleFormat {
 
         int i = idx;
         int s = 0;
-        for (; i<inputLength && s<seqLength; ++i, ++s) {
+        for (; i < inputLength && s < seqLength; ++i, ++s) {
             if (str.codePointAt(i) != seq.codePointAt(s)) {
                 break;
             }
@@ -444,7 +443,7 @@ public class SimpleTupleFormat {
      */
     private static class TupleParseException extends IllegalArgumentException {
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180629;
 
         /** Simple constructor.

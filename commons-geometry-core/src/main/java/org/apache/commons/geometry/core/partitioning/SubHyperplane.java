@@ -122,7 +122,7 @@ public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHype
      * instance.
      * @param <P> Point implementation type
      */
-    static interface Builder<P extends Point<P>> {
+    interface Builder<P extends Point<P>> {
 
         /** Add a {@link SubHyperplane} instance to the builder.
          * @param sub subhyperplane to add to this instance
