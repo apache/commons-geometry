@@ -118,8 +118,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             final Vector1D transformedZeroDir = transform.apply(getDirection());
 
             transformedDir = transformedZero.vectorTo(transformedZeroDir);
-        }
-        else {
+        } else {
             final Vector1D transformedPointPlusDir = transform.apply(point.add(getDirection()));
             transformedDir = transformedPoint.vectorTo(transformedPointPlusDir);
         }
@@ -167,8 +166,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         final int cmp = getPrecision().sign(offsetValue);
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;
-        }
-        else if (cmp < 0) {
+        } else if (cmp < 0) {
             return HyperplaneLocation.MINUS;
         }
         return HyperplaneLocation.ON;
@@ -234,8 +232,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof OrientedPoint)) {
+        } else if (!(obj instanceof OrientedPoint)) {
             return false;
         }
 
@@ -345,7 +342,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      */
     public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190405L;
 
         /** The underlying hyperplane for this instance. */
@@ -395,10 +392,10 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         *
         * <p>This method simply returns true.</p>
         */
-       @Override
-       public boolean isFinite() {
-           return true;
-       }
+        @Override
+        public boolean isFinite() {
+            return true;
+        }
 
         /** {@inheritDoc}
          *
@@ -440,8 +437,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
-            }
-            else if (side == HyperplaneLocation.PLUS) {
+            } else if (side == HyperplaneLocation.PLUS) {
                 plus = this;
             }
 
@@ -491,9 +487,9 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
+    public static final class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190405L;
 
         /** Base subhyperplane for the builder. */
@@ -536,8 +532,8 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             return sb.toString();
         }
 
-        /** Validate the given subhyperplane lies on the same hyperplane
-         * @param sub
+        /** Validate the given subhyperplane lies on the same hyperplane.
+         * @param sub subhyperplane to validate
          */
         private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
             final OrientedPoint baseHyper = base.getHyperplane();

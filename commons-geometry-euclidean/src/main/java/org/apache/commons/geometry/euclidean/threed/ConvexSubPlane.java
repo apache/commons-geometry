@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -37,7 +36,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     implements ConvexSubHyperplane<Vector3D>  {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190729L;
 
     /** The embedded 2D area. */
@@ -118,26 +117,31 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
      * @param precision precision context used to compare floating point values
      * @return a new instance defined by the given sequence of vertices
      * @throws IllegalArgumentException if fewer than 3 vertices are given
-     * @throws GeometryException if the vertices do not define a unique plane
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
+     *      unique plane
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
      * @see Plane#fromPoints(Collection, DoublePrecisionContext)
      */
-    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts,
+            final DoublePrecisionContext precision) {
         return fromVertices(pts, precision, false);
     }
 
     /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
-    * at least 3 unique vertices must be given. In contrast with the {@link #fromVertices(Collection, DoublePrecisionContext)}
-    * method, the first point in the sequence is included at the end if needed, in order to form a closed loop.
+    * at least 3 unique vertices must be given. In contrast with the
+    * {@link #fromVertices(Collection, DoublePrecisionContext)} method, the first point in the sequence is included
+    * at the end if needed, in order to form a closed loop.
     * @param pts collection of points defining the convex subplane
     * @param precision precision context used to compare floating point values
     * @return a new instance defined by the given sequence of vertices
     * @throws IllegalArgumentException if fewer than 3 vertices are given
-    * @throws GeometryException if the vertices do not define a unique plane
+    * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
+    *       unique plane
     * @see #fromVertices(Collection, DoublePrecisionContext)
     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
     */
-    public static ConvexSubPlane fromVertexLoop(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
+    public static ConvexSubPlane fromVertexLoop(final Collection<Vector3D> pts,
+            final DoublePrecisionContext precision) {
         return fromVertices(pts, precision, true);
     }
 

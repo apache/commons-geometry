@@ -33,24 +33,29 @@ import java.util.TreeSet;
  *      <li>For each element, attempt to find other elements with start points next the
  *      first instance's end point by calling {@link ConnectableElement#getConnectionSearchKey()} and
  *      using the returned instance to locate a search start location in the sorted element list.</li>
- *      <li>Search up through the sorted list from the start location, testing each element for possible connectivity with
- *      {@link ConnectableElement#canConnectTo(AbstractPathConnector.ConnectableElement)}. Collect possible connections in a list. Terminate the search
- *      when {@link ConnectableElement#shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)} returns false.
+ *      <li>Search up through the sorted list from the start location, testing each element for possible connectivity
+ *      with {@link ConnectableElement#canConnectTo(AbstractPathConnector.ConnectableElement)}. Collect possible
+ *      connections in a list. Terminate the search when
+ *      {@link ConnectableElement#shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)}
+ *      returns false.
  *      <li>Repeat the previous step searching downward through the list from the start location.</li>
  *      <li>Select the best connection option from the list of possible connections, using
  *      {@link #selectPointConnection(AbstractPathConnector.ConnectableElement, List)}
- *      and/or {@link #selectConnection(AbstractPathConnector.ConnectableElement, List)} when multiple possibilities are found.</li>
+ *      and/or {@link #selectConnection(AbstractPathConnector.ConnectableElement, List)} when multiple possibilities
+ *      are found.</li>
  *      <li>Repeat the above steps for each element. When done, the elements represent a linked list
  *      of connected paths.</li>
  * </ul>
  *
  * <p>This class is not thread-safe.</p>
+ *
+ * @param <E> Element type
  * @see ConnectableElement
  */
 public abstract class AbstractPathConnector<E extends AbstractPathConnector.ConnectableElement<E>>
     implements Serializable {
 
-    /** Serializable UID*/
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191106L;
 
     /** List of path elements. */
@@ -72,7 +77,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
     protected void connectPathElements(final Iterable<E> elements) {
         elements.forEach(this::addPathElement);
 
-        for (E element : elements) {
+        for (final E element : elements) {
             makeForwardConnection(element);
         }
     }
@@ -96,13 +101,13 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      * @return a list of root elements for the computed connected paths
      */
     protected List<E> computePathRoots() {
-        for (E segment : pathElements) {
+        for (final E segment : pathElements) {
             followForwardConnections(segment);
         }
 
         List<E> rootEntries = new ArrayList<>();
         E root;
-        for (E segment : pathElements) {
+        for (final E segment : pathElements) {
             root = segment.exportPath();
             if (root != null) {
                 rootEntries.add(root);
@@ -142,8 +147,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
             next = (possiblePointConnections.size() == 1) ?
                     possiblePointConnections.get(0) :
                     selectPointConnection(element, possiblePointConnections);
-        }
-        else if (!possibleConnections.isEmpty()) {
+        } else if (!possibleConnections.isEmpty()) {
 
             next = (possibleConnections.size() == 1) ?
                     possibleConnections.get(0) :
@@ -200,8 +204,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
 
             if (element.endPointsEq(candidate)) {
                 possiblePointConnections.add(candidate);
-            }
-            else {
+            } else {
                 possibleConnections.add(candidate);
             }
 
@@ -211,10 +214,10 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         return false;
     }
 
-    /** Method called to select a connection to use for a given element when multiple zero-length connections are available.
-     * The algorithm here attempts to choose the point most likely to produce a logical path by selecting the outgoing element
-     * with the smallest relative angle with the incoming element, with unconnected element preferred over ones that are already
-     * connected (thereby allowing other connections to occur in the path).
+    /** Method called to select a connection to use for a given element when multiple zero-length connections are
+     * available. The algorithm here attempts to choose the point most likely to produce a logical path by selecting
+     * the outgoing element with the smallest relative angle with the incoming element, with unconnected element
+     * preferred over ones that are already connected (thereby allowing other connections to occur in the path).
      * @param incoming the incoming element
      * @param outgoingList list of available outgoing point-like connections
      * @return the connection to use
@@ -228,7 +231,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         E bestElement = null;
         boolean bestIsUnconnected = false;
 
-        for (E outgoing : outgoingList) {
+        for (final E outgoing : outgoingList) {
             angle = Math.abs(incoming.getRelativeAngle(outgoing));
             isUnconnected = !outgoing.hasNext();
 
@@ -252,7 +255,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      *      two elements
      * @return the connection to use
      */
-    protected abstract E selectConnection(final E incoming, final List<E> outgoing);
+    protected abstract E selectConnection(E incoming, List<E> outgoing);
 
     /** Class used to represent connectable path elements for use with {@link AbstractPathConnector}.
      * Subclasses must fulfill the following requirements in order for path connection operations
@@ -264,14 +267,18 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      *      <li>Implement {@link #getConnectionSearchKey()} such that it returns an instance that will be placed
      *      next to elements with start points close to the current instance's end point when sorted with
      *      {@link #compareTo(Object)}.</li>
-     *      <li>Implement {@link #shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)} such that it returns
-     *      false when the search for possible connections through a sorted list of elements may terminate.</li>
+     *      <li>Implement {@link #shouldContinueConnectionSearch(AbstractPathConnector.ConnectableElement, boolean)}
+     *      such that it returns false when the search for possible connections through a sorted list of elements
+     *      may terminate.</li>
      * </ul>
+     *
+     * @param <E> Element type
      * @see AbstractPathConnector
      */
-    public static abstract class ConnectableElement<E extends ConnectableElement<E>> implements Comparable<E>, Serializable {
+    public abstract static class ConnectableElement<E extends ConnectableElement<E>>
+        implements Comparable<E>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191107L;
 
         /** Next connected element. */
@@ -330,13 +337,13 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         }
 
         /** Connect this instance's end point to the given element's start point. No validation
-         * is performed in this method. The {@link #canConnectTo(AbstractPathConnector.ConnectableElement)} method must
-         * have been called previously.
-         * @param next the next element in the path
+         * is performed in this method. The {@link #canConnectTo(AbstractPathConnector.ConnectableElement)}
+         * method must have been called previously.
+         * @param nextElement the next element in the path
          */
-        public void connectTo(final E next) {
-            setNext(next);
-            next.setPrevious(getSelf());
+        public void connectTo(final E nextElement) {
+            setNext(nextElement);
+            nextElement.setPrevious(getSelf());
         }
 
         /** Export the path that this element belongs to, returning the root
@@ -412,12 +419,12 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
 
         /** Return true if this instance's end point can be connected to
          * the argument's start point.
-         * @param next candidate for the next element in the path; this value
+         * @param nextElement candidate for the next element in the path; this value
          *      is guaranteed to not be null and to contain a start point
          * @return true if this instance's end point can be connected to
          *      the argument's start point
          */
-        public abstract boolean canConnectTo(E next);
+        public abstract boolean canConnectTo(E nextElement);
 
         /** Return the relative angle between this element and the argument.
          * @param other element to compute the angle with

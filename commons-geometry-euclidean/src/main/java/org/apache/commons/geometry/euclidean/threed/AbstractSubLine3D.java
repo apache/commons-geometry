@@ -27,12 +27,15 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  */
 abstract class AbstractSubLine3D<R extends Region<Vector1D>> implements Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190812L;
 
     /** The line that this instance belongs to. */
     private final Line3D line;
 
+    /** Construct a new instance belonging to the given line.
+     * @param line line the instance belongs to
+     */
     protected AbstractSubLine3D(final Line3D line) {
         this.line = line;
     }

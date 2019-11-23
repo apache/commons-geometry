@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -33,7 +32,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  */
 public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190704L;
 
     /** Line point closest to the origin. */
@@ -367,8 +366,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
      * @param precision floating point precision context
      * @return a new line instance that contains both of the given point and that has
      *      a direction going from the first point to the second point
-     * @throws IllegalNormException if the points lie too close to create a non-zero
-     *      direction vector
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the points lie too close to
+     *      create a non-zero direction vector
      */
     public static Line3D fromPoints(final Vector3D p1, final Vector3D p2,
             final DoublePrecisionContext precision) {
@@ -381,7 +380,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
      * @param precision floating point precision context
      * @return a new line instance that contains the given point and points in the
      *      given direction
-     * @throws IllegalNormException if the direction cannot be normalized
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the direction cannot be normalized
      */
     public static Line3D fromPointAndDirection(final Vector3D pt, final Vector3D direction,
             final DoublePrecisionContext precision) {
@@ -397,7 +396,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
      */
     public static final class SubspaceTransform implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190809L;
 
         /** The transformed line. */

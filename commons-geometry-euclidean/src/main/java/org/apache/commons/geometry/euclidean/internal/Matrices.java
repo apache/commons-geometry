@@ -20,7 +20,7 @@ package org.apache.commons.geometry.euclidean.internal;
  */
 public final class Matrices {
 
-    /** Private constructor */
+    /** Private constructor. */
     private Matrices() {}
 
     /** Compute the determinant of the 2x2 matrix represented by the given values.

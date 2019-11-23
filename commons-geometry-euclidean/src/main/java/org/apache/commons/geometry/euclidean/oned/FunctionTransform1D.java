@@ -23,7 +23,8 @@ import java.util.function.Function;
 public final class FunctionTransform1D implements Transform1D {
 
     /** Static instance representing the identity transform. */
-    private static final FunctionTransform1D IDENTITY = new FunctionTransform1D(Function.identity(), true, Vector1D.ZERO);
+    private static final FunctionTransform1D IDENTITY =
+            new FunctionTransform1D(Function.identity(), true, Vector1D.ZERO);
 
     /** The underlying function for the transform. */
     private final Function<Vector1D, Vector1D> fn;

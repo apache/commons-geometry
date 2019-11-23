@@ -34,7 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
     extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190729L;
 
     /** The plane defining this instance. */
@@ -115,15 +115,12 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
 
             if (comp < 0) {
                 return new Split<>(thisInstance, null);
-            }
-            else if (comp > 0) {
+            } else if (comp > 0) {
                 return new Split<>(null, thisInstance);
-            }
-            else {
+            } else {
                 return new Split<>(null, null);
             }
-        }
-        else {
+        } else {
             // the lines intersect; split the subregion
             final Vector3D intersectionOrigin = intersection.getOrigin();
             final Vector2D subspaceP1 = thisPlane.toSubspace(intersectionOrigin);
@@ -131,13 +128,13 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
 
             final Line subspaceSplitter = Line.fromPoints(subspaceP1, subspaceP2, getPrecision());
 
-            final Split<? extends HyperplaneBoundedRegion<Vector2D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final Split<? extends HyperplaneBoundedRegion<Vector2D>> split =
+                    thisInstance.getSubspaceRegion().split(subspaceSplitter);
             final SplitLocation subspaceSplitLoc = split.getLocation();
 
             if (SplitLocation.MINUS == subspaceSplitLoc) {
                 return new Split<>(thisInstance, null);
-            }
-            else if (SplitLocation.PLUS == subspaceSplitLoc) {
+            } else if (SplitLocation.PLUS == subspaceSplitLoc) {
                 return new Split<>(null, thisInstance);
             }
 

@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.exception.GeometryException;
  */
 public class NonInvertibleTransformException extends GeometryException {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180927L;
 
     /** Simple constructor accepting an error message.

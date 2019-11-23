@@ -22,10 +22,11 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 
 /** Class that wraps a {@link Function} with the {@link Transform3D} interface.
  */
-public class FunctionTransform3D implements Transform3D {
+public final class FunctionTransform3D implements Transform3D {
 
     /** Static instance representing the identity transform. */
-    private static final FunctionTransform3D IDENTITY = new FunctionTransform3D(Function.identity(), true, Vector3D.ZERO);
+    private static final FunctionTransform3D IDENTITY =
+            new FunctionTransform3D(Function.identity(), true, Vector3D.ZERO);
 
     /** The underlying function for the transform. */
     private final Function<Vector3D, Vector3D> fn;

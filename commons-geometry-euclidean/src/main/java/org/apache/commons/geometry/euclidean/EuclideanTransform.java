@@ -20,6 +20,8 @@ import org.apache.commons.geometry.core.Transform;
 
 /** Extension transform interface for Euclidean space. This interface provides an additional method
  * for transforming vectors as opposed to points.
+ *
+ * @param <V> Vector implementation type
  */
 public interface EuclideanTransform<V extends EuclideanVector<V>> extends Transform<V> {
 
@@ -34,5 +36,5 @@ public interface EuclideanTransform<V extends EuclideanVector<V>> extends Transf
     * @param vec the vector to transform
     * @return the new, transformed vector
     */
-    abstract V applyVector(V vec);
+    V applyVector(V vec);
 }

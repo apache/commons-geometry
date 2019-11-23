@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Comparator;
 import java.util.function.Function;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -285,8 +284,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * called on a vector pointing along the positive x-axis, then a unit vector representing
      * the positive y-axis is returned.
      * @return a unit vector orthogonal to the current instance
-     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
-     *  or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the current instance
+     *      is zero, NaN, or infinite
      */
     @Override
     public Vector2D.Unit orthogonal() {
@@ -402,7 +401,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param factory factory function used to build the final vector
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if {@code base} has a
+     *      zero, NaN, or infinite norm
      */
     private <T extends Vector2D> T getComponent(final Vector2D base, final boolean reject,
             final DoubleFunction2N<T> factory) {
@@ -571,7 +571,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @param x Vector coordinate.
          * @param y Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value
+         *      is zero, NaN, or infinite
          */
         public static Unit from(final double x, final double y) {
             final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y));
@@ -583,7 +584,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+         *      value is zero, NaN, or infinite
          */
         public static Unit from(final Vector2D v) {
             return v instanceof Unit ?

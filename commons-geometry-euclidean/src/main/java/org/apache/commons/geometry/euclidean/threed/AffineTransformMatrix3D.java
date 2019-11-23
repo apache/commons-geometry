@@ -38,22 +38,22 @@ import org.apache.commons.numbers.core.Precision;
 public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D>
     implements Transform3D, Serializable {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180923L;
 
-    /** The number of internal matrix elements */
+    /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 12;
 
-    /** String used to start the transform matrix string representation */
+    /** String used to start the transform matrix string representation. */
     private static final String MATRIX_START = "[ ";
 
-    /** String used to end the transform matrix string representation */
+    /** String used to end the transform matrix string representation. */
     private static final String MATRIX_END = " ]";
 
-    /** String used to separate elements in the matrix string representation */
+    /** String used to separate elements in the matrix string representation. */
     private static final String ELEMENT_SEPARATOR = ", ";
 
-    /** String used to separate rows in the matrix string representation */
+    /** String used to separate rows in the matrix string representation. */
     private static final String ROW_SEPARATOR = "; ";
 
     /** Shared transform set to the identity matrix. */
@@ -63,31 +63,31 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
                 0, 0, 1, 0
             );
 
-    /** Transform matrix entry <code>m<sub>0,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,0</sub></code>. */
     private final double m00;
-    /** Transform matrix entry <code>m<sub>0,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,1</sub></code>. */
     private final double m01;
-    /** Transform matrix entry <code>m<sub>0,2</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,2</sub></code>. */
     private final double m02;
-    /** Transform matrix entry <code>m<sub>0,3</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,3</sub></code>. */
     private final double m03;
 
-    /** Transform matrix entry <code>m<sub>1,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,0</sub></code>. */
     private final double m10;
-    /** Transform matrix entry <code>m<sub>1,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,1</sub></code>. */
     private final double m11;
-    /** Transform matrix entry <code>m<sub>1,2</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,2</sub></code>. */
     private final double m12;
-    /** Transform matrix entry <code>m<sub>1,3</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,3</sub></code>. */
     private final double m13;
 
-    /** Transform matrix entry <code>m<sub>2,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>2,0</sub></code>. */
     private final double m20;
-    /** Transform matrix entry <code>m<sub>2,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>2,1</sub></code>. */
     private final double m21;
-    /** Transform matrix entry <code>m<sub>2,2</sub></code> */
+    /** Transform matrix entry <code>m<sub>2,2</sub></code>. */
     private final double m22;
-    /** Transform matrix entry <code>m<sub>2,3</sub></code> */
+    /** Transform matrix entry <code>m<sub>2,3</sub></code>. */
     private final double m23;
 
     /**
@@ -142,9 +142,9 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      */
     public double[] toArray() {
         return new double[] {
-                m00, m01, m02, m03,
-                m10, m11, m12, m13,
-                m20, m21, m22, m23
+            m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23
         };
     }
 
@@ -216,10 +216,10 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
     *
     * <p>This simply returns the current instance.</p>
     */
-   @Override
-   public AffineTransformMatrix3D toMatrix() {
-       return this;
-   }
+    @Override
+    public AffineTransformMatrix3D toMatrix() {
+        return this;
+    }
 
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
@@ -357,18 +357,18 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         final double invDet = 1.0 / det;
 
         final double c00 = invDet * Matrices.determinant(m11, m12, m21, m22);
-        final double c01 = - invDet * Matrices.determinant(m10, m12, m20, m22);
+        final double c01 = -invDet * Matrices.determinant(m10, m12, m20, m22);
         final double c02 = invDet * Matrices.determinant(m10, m11, m20, m21);
 
-        final double c10 = - invDet * Matrices.determinant(m01, m02, m21, m22);
+        final double c10 = -invDet * Matrices.determinant(m01, m02, m21, m22);
         final double c11 = invDet * Matrices.determinant(m00, m02, m20, m22);
-        final double c12 = - invDet * Matrices.determinant(m00, m01, m20, m21);
+        final double c12 = -invDet * Matrices.determinant(m00, m01, m20, m21);
 
         final double c20 = invDet * Matrices.determinant(m01, m02, m11, m12);
-        final double c21 = - invDet * Matrices.determinant(m00, m02, m10, m12);
+        final double c21 = -invDet * Matrices.determinant(m00, m02, m10, m12);
         final double c22 = invDet * Matrices.determinant(m00, m01, m10, m11);
 
-        final double c30 = - invDet * Matrices.determinant(
+        final double c30 = -invDet * Matrices.determinant(
                     m01, m02, m03,
                     m11, m12, m13,
                     m21, m22, m23
@@ -378,7 +378,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
                     m10, m12, m13,
                     m20, m22, m23
                 );
-        final double c32 = - invDet * Matrices.determinant(
+        final double c32 = -invDet * Matrices.determinant(
                     m00, m01, m03,
                     m10, m11, m13,
                     m20, m21, m23
@@ -397,9 +397,12 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         final int prime = 31;
         int result = 1;
 
-        result = (result * prime) + (Double.hashCode(m00) - Double.hashCode(m01) + Double.hashCode(m02) - Double.hashCode(m03));
-        result = (result * prime) + (Double.hashCode(m10) - Double.hashCode(m11) + Double.hashCode(m12) - Double.hashCode(m13));
-        result = (result * prime) + (Double.hashCode(m20) - Double.hashCode(m21) + Double.hashCode(m22) - Double.hashCode(m23));
+        result = (result * prime) + (Double.hashCode(m00) - Double.hashCode(m01) +
+                Double.hashCode(m02) - Double.hashCode(m03));
+        result = (result * prime) + (Double.hashCode(m10) - Double.hashCode(m11) +
+                Double.hashCode(m12) - Double.hashCode(m13));
+        result = (result * prime) + (Double.hashCode(m20) - Double.hashCode(m21) +
+                Double.hashCode(m22) - Double.hashCode(m23));
 
         return result;
     }
@@ -411,7 +414,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @return true if all transform matrix elements are exactly equal; otherwise false
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -502,7 +505,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @return a new transform initialized with the given matrix values
      * @throws IllegalArgumentException if the array does not have 12 elements
      */
-    public static AffineTransformMatrix3D of(final double ... arr) {
+    public static AffineTransformMatrix3D of(final double... arr) {
         if (arr.length != NUM_ELEMENTS) {
             throw new IllegalArgumentException("Dimension mismatch: " + arr.length + " != " + NUM_ELEMENTS);
         }
@@ -538,7 +541,9 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @param t fourth column vector; this corresponds to the translation of the transform
      * @return a new transform with the given column vectors
      */
-    public static AffineTransformMatrix3D fromColumnVectors(final Vector3D u, final Vector3D v, final Vector3D w, final Vector3D t) {
+    public static AffineTransformMatrix3D fromColumnVectors(final Vector3D u, final Vector3D v,
+            final Vector3D w, final Vector3D t) {
+
         return new AffineTransformMatrix3D(
                     u.getX(), v.getX(), w.getX(), t.getX(),
                     u.getY(), v.getY(), w.getY(), t.getY(),
@@ -624,7 +629,8 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      * @param b second transform
      * @return the transform computed as {@code a x b}
      */
-    private static AffineTransformMatrix3D multiply(final AffineTransformMatrix3D a, final AffineTransformMatrix3D b) {
+    private static AffineTransformMatrix3D multiply(final AffineTransformMatrix3D a,
+            final AffineTransformMatrix3D b) {
 
         // calculate the matrix elements
         final double c00 = LinearCombination.value(a.m00, b.m00, a.m01, b.m10, a.m02, b.m20);
@@ -639,8 +645,8 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
 
         final double c20 = LinearCombination.value(a.m20, b.m00, a.m21, b.m10, a.m22, b.m20);
         final double c21 = LinearCombination.value(a.m20, b.m01, a.m21, b.m11, a.m22, b.m21);
-        final double c22 = LinearCombination.value(a.m20, b.m02, a.m21 , b.m12, a.m22, b.m22);
-        final double c23 = LinearCombination.value(a.m20, b.m03, a.m21 , b.m13, a.m22, b.m23) + a.m23;
+        final double c22 = LinearCombination.value(a.m20, b.m02, a.m21, b.m12, a.m22, b.m22);
+        final double c23 = LinearCombination.value(a.m20, b.m03, a.m21, b.m13, a.m22, b.m23) + a.m23;
 
         return new AffineTransformMatrix3D(
                     c00, c01, c02, c03,
@@ -657,7 +663,8 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
      */
     private static void validateElementForInverse(final double element) {
         if (!Double.isFinite(element)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " + element);
+            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " +
+                    element);
         }
     }
 }

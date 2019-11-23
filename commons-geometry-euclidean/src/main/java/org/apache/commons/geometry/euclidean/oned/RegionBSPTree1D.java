@@ -34,7 +34,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
  */
 public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190405L;
 
     /** Comparator used to sort BoundaryPairs by ascending location.  */
@@ -100,34 +100,34 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     *  <p>This method simply returns 0 because boundaries in one dimension do not
     *  have any size.</p>
     */
-   @Override
-   public double getBoundarySize() {
-       return 0;
-   }
+    @Override
+    public double getBoundarySize() {
+        return 0;
+    }
 
-   /** {@inheritDoc} */
-   @Override
-   public Vector1D project(final Vector1D pt) {
-       // use our custom projector so that we can disambiguate points that are
-       // actually equidistant from the target point
-       final BoundaryProjector1D projector = new BoundaryProjector1D(pt);
-       accept(projector);
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D project(final Vector1D pt) {
+        // use our custom projector so that we can disambiguate points that are
+        // actually equidistant from the target point
+        final BoundaryProjector1D projector = new BoundaryProjector1D(pt);
+        accept(projector);
 
-       return projector.getProjected();
-   }
+        return projector.getProjected();
+    }
 
-   /** {@inheritDoc}
-    *
-    * <p>When splitting trees representing single points with a splitter lying directly
-    * on the point, the result point is placed on one side of the splitter based on its
-    * orientation: if the splitter is positive-facing, the point is placed on the plus
-    * side of the split; if the splitter is negative-facing, the point is placed on the
-    * minus side of the split.</p>
-    */
-   @Override
-   public Split<RegionBSPTree1D> split(final Hyperplane<Vector1D> splitter) {
-       return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
-   }
+    /** {@inheritDoc}
+     *
+     * <p>When splitting trees representing single points with a splitter lying directly
+     * on the point, the result point is placed on one side of the splitter based on its
+     * orientation: if the splitter is positive-facing, the point is placed on the plus
+     * side of the split; if the splitter is negative-facing, the point is placed on the
+     * minus side of the split.</p>
+     */
+    @Override
+    public Split<RegionBSPTree1D> split(final Hyperplane<Vector1D> splitter) {
+        return split(splitter, RegionBSPTree1D.empty(), RegionBSPTree1D.empty());
+    }
 
     /** Get the minimum value on the inside of the region; returns {@link Double#NEGATIVE_INFINITY}
      * if the region does not have a minimum value and {@link Double#POSITIVE_INFINITY} if
@@ -195,12 +195,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
             if (start == null) {
                 start = current;
                 end = current;
-            }
-            else if (Objects.equals(end.getMax(), current.getMin())) {
+            } else if (Objects.equals(end.getMax(), current.getMin())) {
                 // these intervals should be merged
                 end = current;
-            }
-            else {
+            } else {
                 // these intervals should not be merged
                 intervals.add(createInterval(start, end));
 
@@ -279,8 +277,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
                 if (max == null) {
                     max = pt;
                 }
-            }
-            else if (min == null){
+            } else if (min == null) {
                 min = pt;
             }
 
@@ -349,10 +346,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @return a new instance representing the same region as the union
      *      of all of the given intervals
      */
-    public static RegionBSPTree1D from(final Interval interval, final Interval ... more) {
+    public static RegionBSPTree1D from(final Interval interval, final Interval... more) {
         final RegionBSPTree1D tree = intervalToTree(interval);
 
-        for (Interval additional : more) {
+        for (final Interval additional : more) {
             tree.add(additional);
         }
 
@@ -366,7 +363,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     public static RegionBSPTree1D from(final Iterable<Interval> intervals) {
         RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
-        for (Interval interval : intervals) {
+        for (final Interval interval : intervals) {
             tree.add(interval);
         }
 
@@ -402,7 +399,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     public static final class RegionNode1D extends AbstractRegionBSPTree.AbstractRegionNode<Vector1D, RegionNode1D> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190405L;
 
         /** Simple constructor.
@@ -432,10 +429,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     private static final class BoundaryPair {
 
-        /** The min boundary */
+        /** The min boundary. */
         private final OrientedPoint min;
 
-        /** The max boundary */
+        /** The max boundary. */
         private final OrientedPoint max;
 
         /** Simple constructor.
@@ -475,13 +472,13 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     private static final class BoundaryProjector1D extends BoundaryProjector<Vector1D, RegionNode1D> {
 
-        /** Serializable UID */
-        private static final long serialVersionUID = 1L;
+        /** Serializable UID. */
+        private static final long serialVersionUID = 20190405L;
 
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        public BoundaryProjector1D(Vector1D point) {
+        BoundaryProjector1D(Vector1D point) {
             super(point);
         }
 
@@ -512,10 +509,10 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
         /** {@inheritDoc} */
         @Override
-        public void accept(final OrientedPoint min, final OrientedPoint max) {
+        public void accept(final OrientedPoint minBoundary, final OrientedPoint maxBoundary) {
             // reverse the oriented point directions if needed
-            this.min = (min != null && min.isPositiveFacing()) ? min.reverse() : min;
-            this.max = (max != null && !max.isPositiveFacing()) ? max.reverse() : max;
+            this.min = (minBoundary != null && minBoundary.isPositiveFacing()) ? minBoundary.reverse() : minBoundary;
+            this.max = (maxBoundary != null && !maxBoundary.isPositiveFacing()) ? maxBoundary.reverse() : maxBoundary;
         }
 
         /** Return the computed interval.
@@ -568,8 +565,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
                 if (size > 0.0) {
                     // use the scaled sum if we have a non-zero size
                     barycenter = Vector1D.of(scaledBarycenterSum / size);
-                }
-                else {
+                } else {
                     // use the raw sum if we don't have a size; this will be
                     // the case if the region only contains points with zero size
                     barycenter = Vector1D.of(rawBarycenterSum / count);

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -265,8 +264,8 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if no lines are
      *      given
-     * @throws GeometryException if the given set of bounding lines do not form a convex area,
-     *      meaning that there is no region that is on the minus side of all of the bounding
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding lines do
+     *      not form a convex area, meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
     public static ConvexArea fromBounds(final Line ... bounds) {
@@ -281,8 +280,8 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding lines or an instance representing the full area if the collection
      *      is empty
-     * @throws GeometryException if the given set of bounding lines do not form a convex area,
-     *      meaning that there is no region that is on the minus side of all of the bounding
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding lines do
+     *      not form a convex area, meaning that there is no region that is on the minus side of all of the bounding
      *      lines.
      */
     public static ConvexArea fromBounds(final Iterable<Line> bounds) {

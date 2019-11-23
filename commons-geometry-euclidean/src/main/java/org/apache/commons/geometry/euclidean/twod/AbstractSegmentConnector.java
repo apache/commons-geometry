@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -273,6 +274,27 @@ public abstract class AbstractSegmentConnector
                 }
             }
             return cmp;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return Objects.hash(start, segment);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || !this.getClass().equals(obj.getClass())) {
+                return false;
+            }
+
+            final ConnectableSegment other = (ConnectableSegment) obj;
+            return Objects.equals(this.start, other.start) &&
+                    Objects.equals(this.segment, other.segment);
         }
 
         /** {@inheritDoc} */

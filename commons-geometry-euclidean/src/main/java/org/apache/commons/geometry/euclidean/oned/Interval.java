@@ -32,7 +32,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable {
+public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190210L;
@@ -150,8 +150,7 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
 
         if (minLoc == RegionLocation.BOUNDARY || maxLoc == RegionLocation.BOUNDARY) {
             return RegionLocation.BOUNDARY;
-        }
-        else if (minLoc == RegionLocation.INSIDE && maxLoc == RegionLocation.INSIDE) {
+        } else if (minLoc == RegionLocation.INSIDE && maxLoc == RegionLocation.INSIDE) {
             return RegionLocation.INSIDE;
         }
         return RegionLocation.OUTSIDE;
@@ -160,22 +159,19 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
     /** Classify the location using the given interval boundary, which may be null.
      * @param location the location to classify
      * @param boundary interval boundary to classify against
-     * @return
+     * @return the location of the point relative to the boundary
      */
     private RegionLocation classifyWithBoundary(final double location, final OrientedPoint boundary) {
         if (Double.isNaN(location)) {
             return RegionLocation.OUTSIDE;
-        }
-        else if (boundary == null) {
+        } else if (boundary == null) {
             return RegionLocation.INSIDE;
-        }
-        else {
+        } else {
             final HyperplaneLocation hyperLoc = boundary.classify(location);
 
             if (hyperLoc == HyperplaneLocation.ON) {
                 return RegionLocation.BOUNDARY;
-            }
-            else if (hyperLoc == HyperplaneLocation.PLUS) {
+            } else if (hyperLoc == HyperplaneLocation.PLUS) {
                 return RegionLocation.OUTSIDE;
             }
             return RegionLocation.INSIDE;
@@ -209,26 +205,23 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
 
         if (minBoundary != null && maxBoundary != null) {
             // both boundaries are present; use the closest
-            double minOffset = minBoundary.offset(pt.getX());
-            double maxOffset = maxBoundary.offset(pt.getX());
+            final double minOffset = minBoundary.offset(pt.getX());
+            final double maxOffset = maxBoundary.offset(pt.getX());
 
-            double minDist = Math.abs(minOffset);
-            double maxDist = Math.abs(maxOffset);
+            final double minDist = Math.abs(minOffset);
+            final double maxDist = Math.abs(maxOffset);
 
             // Project onto the max boundary if it's the closest or the point is on its plus side.
             // Otherwise, project onto the min boundary.
             if (maxDist < minDist || maxOffset > 0) {
                 boundary = maxBoundary;
-            }
-            else {
+            } else {
                 boundary = minBoundary;
             }
-        }
-        else if (minBoundary != null) {
+        } else if (minBoundary != null) {
             // only the min boundary is present
             boundary = minBoundary;
-        }
-        else if (maxBoundary != null) {
+        } else if (maxBoundary != null) {
             // only the max boundary is present
             boundary = maxBoundary;
         }
@@ -318,12 +311,10 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
             if (splitterMinLoc != null && splitterMinLoc != HyperplaneLocation.MINUS) {
                 // splitter is on or below min boundary
                 high = this;
-            }
-            else if (splitterMaxLoc != null && splitterMaxLoc != HyperplaneLocation.MINUS) {
+            } else if (splitterMaxLoc != null && splitterMaxLoc != HyperplaneLocation.MINUS) {
                 // splitter is on or above max boundary
                 low = this;
-            }
-            else {
+            } else {
                 // the interval is split in two
                 low = new Interval(minBoundary, OrientedPoint.createPositiveFacing(
                         splitPoint, splitOrientedPoint.getPrecision()));
@@ -425,21 +416,20 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
         if (a != null && b != null) {
             // both hyperplanes are present, so validate then against each other
             if (a.isPositiveFacing() == b.isPositiveFacing()) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: "
-                        + a + ", " + b);
+                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: " +
+                        a + ", " + b);
             }
 
             if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
                     b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: "
-                            + a + ", " + b);
+                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: " +
+                    a + ", " + b);
             }
 
             // min boundary faces -infinity, max boundary faces +infinity
             minBoundary = a.isPositiveFacing() ? b : a;
             maxBoundary = a.isPositiveFacing() ? a : b;
-        }
-        else if (a == null) {
+        } else if (a == null) {
             if (b == null) {
                 // no boundaries; return the full number line
                 return FULL;
@@ -447,16 +437,13 @@ public class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable
 
             if (b.isPositiveFacing()) {
                 maxBoundary = b;
-            }
-            else {
+            } else {
                 minBoundary = b;
             }
-        }
-        else {
+        } else {
             if (a.isPositiveFacing()) {
                 maxBoundary = a;
-            }
-            else {
+            } else {
                 minBoundary = a;
             }
         }

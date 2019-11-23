@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
-
 /** Base class for affine transform matrices in Euclidean space.
  *
  * @param <V> Vector/point implementation type defining the space.
@@ -31,7 +29,8 @@ public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>
      *
      * @param vec the vector to transform
      * @return the new, transformed unit vector
-     * @throws IllegalNormException if the transformed vector coordinates cannot be normalized
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the transformed vector coordinates
+     *      cannot be normalized
      * @see #applyVector(EuclideanVector)
      */
     public abstract V applyDirection(V vec);
