@@ -32,12 +32,15 @@ import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
  */
 abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, Line> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190729L;
 
     /** The line defining this instance. */
     private final Line line;
 
+    /** Construct a new instance based on the given line.
+     * @param line line forming the base of the instance
+     */
     AbstractSubLine(final Line line) {
         this.line = line;
     }
@@ -96,15 +99,12 @@ abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, 
 
             if (comp < 0) {
                 return new Split<>(thisInstance, null);
-            }
-            else if (comp > 0) {
+            } else if (comp > 0) {
                 return new Split<>(null, thisInstance);
-            }
-            else {
+            } else {
                 return new Split<>(null, null);
             }
-        }
-        else {
+        } else {
             // the lines intersect; split the subregion
             final Vector1D splitPt = thisLine.toSubspace(intersection);
             final boolean positiveFacing = thisLine.angle(splitterLine) > 0.0;
@@ -112,13 +112,13 @@ abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, 
             final OrientedPoint subspaceSplitter = OrientedPoint.fromPointAndDirection(splitPt,
                     positiveFacing, getPrecision());
 
-            final Split<? extends HyperplaneBoundedRegion<Vector1D>> split = thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final Split<? extends HyperplaneBoundedRegion<Vector1D>> split =
+                    thisInstance.getSubspaceRegion().split(subspaceSplitter);
             final SplitLocation subspaceSplitLoc = split.getLocation();
 
             if (SplitLocation.MINUS == subspaceSplitLoc) {
                 return new Split<>(thisInstance, null);
-            }
-            else if (SplitLocation.PLUS == subspaceSplitLoc) {
+            } else if (SplitLocation.PLUS == subspaceSplitLoc) {
                 return new Split<>(null, thisInstance);
             }
 

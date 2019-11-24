@@ -28,8 +28,20 @@ import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
  */
 public final class Segment3D extends AbstractSubLine3D<Interval> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190702L;
+
+    /** String used to indicate the start point of the segment in the toString() representation. */
+    private static final String START_STR = "start= ";
+
+    /** String used to indicate the direction the segment in the toString() representation. */
+    private static final String DIR_STR = "direction= ";
+
+    /** String used to indicate the end point of the segment in the toString() representation. */
+    private static final String END_STR = "end= ";
+
+    /** String used as a separator value in the toString() representation. */
+    private static final String SEP_STR = ", ";
 
     /** The interval representing the region of the line contained in
      * the line segment.
@@ -67,7 +79,7 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
      *      exists
      */
     public Vector3D getStartPoint() {
-        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()): null;
+        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()) : null;
     }
 
     /** Get the end point of the line segment or null if no end point
@@ -76,7 +88,7 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
      *      exists
      */
     public Vector3D getEndPoint() {
-        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()): null;
+        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()) : null;
     }
 
     /** Return true if the segment is infinite.
@@ -155,29 +167,30 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
             .append('[');
 
         if (startPoint != null && endPoint != null) {
-            sb.append("start= ")
+            sb.append(START_STR)
                 .append(startPoint)
-                .append(", end= ")
+                .append(SEP_STR)
+                .append(END_STR)
                 .append(endPoint);
-        }
-        else if (startPoint != null) {
-            sb.append("start= ")
+        } else if (startPoint != null) {
+            sb.append(START_STR)
                 .append(startPoint)
-                .append(", direction= ")
+                .append(SEP_STR)
+                .append(DIR_STR)
                 .append(getLine().getDirection());
-        }
-        else if (endPoint != null) {
-            sb.append("direction= ")
+        } else if (endPoint != null) {
+            sb.append(DIR_STR)
                 .append(getLine().getDirection())
-                .append(", end= ")
+                .append(SEP_STR)
+                .append(END_STR)
                 .append(endPoint);
-        }
-        else {
+        } else {
             final Line3D line = getLine();
 
             sb.append("lineOrigin= ")
                 .append(line.getOrigin())
-                .append(", lineDirection= ")
+                .append(SEP_STR)
+                .append("lineDirection= ")
                 .append(line.getDirection());
         }
 
@@ -193,7 +206,9 @@ public final class Segment3D extends AbstractSubLine3D<Interval> {
      * @param precision precision context used to determine floating point equality
      * @return a new line segment between {@code start} and {@code end}.
      */
-    public static Segment3D fromPoints(final Vector3D start, final Vector3D end, final DoublePrecisionContext precision) {
+    public static Segment3D fromPoints(final Vector3D start, final Vector3D end,
+            final DoublePrecisionContext precision) {
+
         final Line3D line = Line3D.fromPoints(start, end, precision);
         return fromPointsOnLine(line, start, end);
     }

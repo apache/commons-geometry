@@ -17,9 +17,11 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -359,7 +361,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serial
      * @param b second point location
      * @param precision precision context used to compare floating point numbers
      * @return a new interval representing the region between the given point locations
-     * @throws IllegalArgumentException if either number is {@link Double#NaN NaN} or the numbers
+     * @throws GeometryException if either number is {@link Double#NaN NaN} or the numbers
      *      are both infinite and have the same sign
      */
     public static Interval of(final double a, final double b, final DoublePrecisionContext precision) {
@@ -389,7 +391,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serial
      * @param b second point
      * @param precision precision context used to compare floating point numbers
      * @return a new interval representing the region between the given points
-     * @throws IllegalArgumentException if either point is {@link Vector1D#isNaN() NaN} or the points
+     * @throws GeometryException if either point is {@link Vector1D#isNaN() NaN} or the points
      *      are both {@link Vector1D#isInfinite() infinite} and have the same sign
      */
     public static Interval of(final Vector1D a, final Vector1D b, final DoublePrecisionContext precision) {
@@ -404,7 +406,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serial
      * @param a first hyperplane; may be null
      * @param b second hyperplane; may be null
      * @return a new interval representing the region between the given hyperplanes
-     * @throws IllegalArgumentException if the hyperplanes have the same orientation or
+     * @throws GeometryException if the hyperplanes have the same orientation or
      *      do not form an interval (for example, if the positive-facing hyperplane is below
      *      the negative-facing hyperplane)
      */
@@ -416,14 +418,14 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serial
         if (a != null && b != null) {
             // both hyperplanes are present, so validate then against each other
             if (a.isPositiveFacing() == b.isPositiveFacing()) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes have same orientation: " +
-                        a + ", " + b);
+                throw new GeometryException(
+                        MessageFormat.format("Invalid interval: hyperplanes have same orientation: {0}, {1}", a, b));
             }
 
             if (a.classify(b.getPoint()) == HyperplaneLocation.PLUS ||
                     b.classify(a.getPoint()) == HyperplaneLocation.PLUS) {
-                throw new IllegalArgumentException("Invalid interval: hyperplanes do not form interval: " +
-                    a + ", " + b);
+                throw new GeometryException(
+                        MessageFormat.format("Invalid interval: hyperplanes do not form interval: {0}, {1}", a, b));
             }
 
             // min boundary faces -infinity, max boundary faces +infinity
@@ -500,14 +502,15 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serial
      * must not be NaN and if infinite, must have opposite signs.
      * @param a first value
      * @param b second value
-     * @throws IllegalArgumentException if either value is NaN or if both values are infinite
+     * @throws GeometryException if either value is NaN or if both values are infinite
      *      and have the same sign
      */
     private static void validateIntervalValues(final double a, final double b) {
         if (Double.isNaN(a) || Double.isNaN(b) ||
                 (Double.isInfinite(a) && Double.compare(a, b) == 0)) {
 
-            throw new IllegalArgumentException("Invalid interval values: [" + a + ", " + b + "]");
+            throw new GeometryException(
+                    MessageFormat.format("Invalid interval values: [{0}, {1}]", a, b));
         }
     }
 }

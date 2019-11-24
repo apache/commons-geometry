@@ -29,7 +29,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 public abstract class AbstractSegmentConnector
     extends AbstractPathConnector<AbstractSegmentConnector.ConnectableSegment> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190528L;
 
     /** Add a line segment to the connector, leaving it unconnected until a later call to
@@ -139,7 +139,7 @@ public abstract class AbstractSegmentConnector
      */
     protected static class ConnectableSegment extends AbstractPathConnector.ConnectableElement<ConnectableSegment> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191107L;
 
         /** Segment start point. This will be used to connect to other path elements. */
@@ -213,10 +213,10 @@ public abstract class AbstractSegmentConnector
         @Override
         public boolean canConnectTo(final ConnectableSegment next) {
             final Vector2D end = segment.getEndPoint();
-            final Vector2D start = next.start;
+            final Vector2D nextStart = next.start;
 
-            return end != null && start != null &&
-                    end.eq(start, segment.getPrecision());
+            return end != null && nextStart != null &&
+                    end.eq(nextStart, segment.getPrecision());
         }
 
         /** {@inheritDoc} */

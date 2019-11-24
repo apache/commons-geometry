@@ -24,7 +24,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -36,10 +35,12 @@ import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
+/** Class representing a plane in 3 dimensional Euclidean space.
+ */
 public final class Plane extends AbstractHyperplane<Vector3D>
     implements EmbeddingHyperplane<Vector3D, Vector2D>, Equivalency<Plane> {
 
-    /** Serializable version UID */
+    /** Serializable version UID. */
     private static final long serialVersionUID = 20190702L;
 
     /** First normalized vector of the plane frame (in plane). */
@@ -62,7 +63,6 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param w unit normal vector
      * @param originOffset offset of the origin with respect to the plane.
      * @param precision precision context used to compare floating point values
-     * @throws IllegalArgumentException if the provided vectors are coplanar or not normalized
      */
     private Plane(final Vector3D u, final Vector3D v, final Vector3D w, double originOffset,
             final DoublePrecisionContext precision) {
@@ -176,7 +176,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         Vector3D p1 = project(line.getOrigin());
         Vector3D p2 = p1.add(projectedLineDirection);
 
-        return Line3D.fromPoints(p1,p2, getPrecision());
+        return Line3D.fromPoints(p1, p2, getPrecision());
     }
 
     /**
@@ -552,8 +552,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof Plane)) {
+        } else if (!(obj instanceof Plane)) {
             return false;
         }
 
@@ -591,10 +590,11 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param v v vector (on plane)
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
-     * @throws IllegalArgumentException if the provided vectors are collinear
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+     *      values is zero, NaN, or infinite.
      */
-    public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v, final DoublePrecisionContext precision) {
+    public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v,
+            final DoublePrecisionContext precision) {
         Vector3D uNorm = u.normalize();
         Vector3D vNorm = uNorm.orthogonal(v);
         Vector3D wNorm = uNorm.cross(vNorm).normalize();
@@ -609,7 +609,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+     *      values is zero, NaN, or infinite.
      */
     public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
         return fromPointAndNormal(Vector3D.ZERO, normal, precision);
@@ -622,9 +623,11 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws IllegalNormException if the norm of the given values is zero, NaN, or infinite.
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+     *      values is zero, NaN, or infinite.
      */
-    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal, final DoublePrecisionContext precision) {
+    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal,
+            final DoublePrecisionContext precision) {
         Vector3D w = normal.normalize();
         double originOffset = -p.dot(w);
 
@@ -717,8 +720,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
                         if (w == null) {
                             // save the first non-zero cross product as our normal
                             w = cross.normalize();
-                        }
-                        else if (!precision.eq(1.0, Math.abs(w.dot(cross) / crossNorm))) {
+                        } else if (!precision.eq(1.0, Math.abs(w.dot(cross) / crossNorm))) {
                             // if the normalized dot product is not either +1 or -1, then
                             // the points are not coplanar
                             nonPlanar = true;
@@ -751,7 +753,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      */
     public static final class SubspaceTransform implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190807L;
 
         /** The transformed plane. */

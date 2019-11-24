@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -33,11 +32,11 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
  */
 public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190811L;
 
     /** Instance representing the full 3D volume. */
-    private static ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
+    private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
 
     /** Simple constructor. Callers are responsible for ensuring that the given path
      * represents the boundary of a convex area. No validation is performed.
@@ -161,12 +160,12 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a new convex volume instance representing the volume on the minus side of all
      *      of the bounding plane or an instance representing the full space if the collection
      *      is empty
-     * @throws GeometryException if the given set of bounding planes do not form a convex vplume,
-     *      meaning that there is no region that is on the minus side of all of the bounding
-     *      planes.
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding
+     *      planes do not form a convex volume, meaning that there is no region that is on the minus side
+     *      of all of the bounding planes.
      */
-    public static ConvexVolume fromBounds(final Plane ... planes) {
-        return fromBounds(Arrays.asList(planes));
+    public static ConvexVolume from(final Plane... planes) {
+        return from(Arrays.asList(planes));
     }
 
     /** Create a convex volume formed by the intersection of the negative half-spaces of the
@@ -177,12 +176,13 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a new convex volume instance representing the volume on the minus side of all
      *      of the bounding plane or an instance representing the full space if the collection
      *      is empty
-     * @throws GeometryException if the given set of bounding planes do not form a convex vplume,
-     *      meaning that there is no region that is on the minus side of all of the bounding
-     *      planes.
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding planes
+     *      do not form a convex volume, meaning that there is no region that is on the minus side of all of
+ *          the bounding planes.
      */
-    public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
-        final List<ConvexSubPlane> subplanes = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class).build(boundingPlanes);
+    public static ConvexVolume from(final Iterable<Plane> boundingPlanes) {
+        final List<ConvexSubPlane> subplanes = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class)
+                .build(boundingPlanes);
         return subplanes.isEmpty() ? full() : new ConvexVolume(subplanes);
     }
 }

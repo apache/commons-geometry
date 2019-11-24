@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +39,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public class Polyline implements Iterable<Segment>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190522L;
 
     /** Polyline instance containing no segments. */
@@ -242,8 +243,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
             if (testIdx > idx + 1) {
                 // we found something to merge
                 simplified.add(currentLine.segment(current.getSubspaceStart(), end));
-            }
-            else {
+            } else {
                 simplified.add(current);
             }
 
@@ -252,7 +252,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
 
         // combine the first and last items if needed
         if (isClosed() && simplified.size() > 2 && simplified.get(0).getLine().equals(
-                simplified.get(simplified.size() -1).getLine())) {
+                simplified.get(simplified.size() - 1).getLine())) {
 
             final Segment startSegment = simplified.get(0);
             final Segment endSegment = simplified.remove(simplified.size() - 1);
@@ -319,12 +319,10 @@ public class Polyline implements Iterable<Segment>, Serializable {
 
         if (segments.isEmpty()) {
             sb.append("empty= true");
-        }
-        else if (segments.size() == 1) {
+        } else if (segments.size() == 1) {
             sb.append("segment= ")
                 .append(segments.get(0));
-        }
-        else {
+        } else {
             final Segment startSegment = getStartSegment();
             if (startSegment.getStartPoint() == null) {
                 sb.append("startDirection= ")
@@ -342,7 +340,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
             }
         }
 
-       sb.append("]");
+        sb.append(']');
 
         return sb.toString();
     }
@@ -363,7 +361,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
      * @return new polyline containing the given line segment in order
      * @throws IllegalStateException if the segments do not form a connected polyline
      */
-    public static Polyline fromSegments(final Segment ... segments) {
+    public static Polyline fromSegments(final Segment... segments) {
         return fromSegments(Arrays.asList(segments));
     }
 
@@ -445,7 +443,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
      */
     public static final class Builder implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190522L;
 
         /** Line segments appended to the polyline. */
@@ -481,12 +479,12 @@ public class Polyline implements Iterable<Segment>, Serializable {
         /** Set the precision context. This context is used only when creating line segments
          * from appended or prepended vertices. It is not used when adding existing
          * {@link Segment} instances since those contain their own precision contexts.
-         * @param precision precision context to use when creating line segments
+         * @param builderPrecision precision context to use when creating line segments
          *      from vertices
          * @return this instance
          */
-        public Builder setPrecision(final DoublePrecisionContext precision) {
-            this.precision = precision;
+        public Builder setPrecision(final DoublePrecisionContext builderPrecision) {
+            this.precision = builderPrecision;
 
             return this;
         }
@@ -543,15 +541,16 @@ public class Polyline implements Iterable<Segment>, Serializable {
                 // make sure that we're not adding to an infinite segment
                 final Segment end = getEndSegment();
                 if (end != null) {
-                    throw new IllegalStateException("Cannot add vertex " + vertex + " after infinite line segment: " + end);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Cannot add vertex {0} after infinite line segment: {1}",
+                                    vertex, end));
                 }
 
                 // this is the first vertex added
                 startVertex = vertex;
                 endVertex = vertex;
                 endVertexPrecision = vertexPrecision;
-            }
-            else if (!endVertex.eq(vertex, endVertexPrecision)) {
+            } else if (!endVertex.eq(vertex, endVertexPrecision)) {
                 // only add the vertex if its not equal to the end point
                 // of the last segment
                 appendInternal(Segment.fromPoints(endVertex, vertex, endVertexPrecision));
@@ -578,7 +577,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
          * @return this instance
          * @see #append(Vector2D)
          */
-        public Builder appendVertices(final Vector2D ... vertices) {
+        public Builder appendVertices(final Vector2D... vertices) {
             return appendVertices(Arrays.asList(vertices));
         }
 
@@ -610,15 +609,16 @@ public class Polyline implements Iterable<Segment>, Serializable {
                 // make sure that we're not adding to an infinite segment
                 final Segment start = getStartSegment();
                 if (start != null) {
-                    throw new IllegalStateException("Cannot add vertex " + vertex + " before infinite line segment: " + start);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Cannot add vertex {0} before infinite line segment: {1}",
+                                    vertex, start));
                 }
 
                 // this is the first vertex added
                 startVertex = vertex;
                 endVertex = vertex;
                 endVertexPrecision = vertexPrecision;
-            }
-            else if (!vertex.eq(startVertex, vertexPrecision)) {
+            } else if (!vertex.eq(startVertex, vertexPrecision)) {
                 // only add if the vertex is not equal to the start
                 // point of the first segment
                 prependInternal(Segment.fromPoints(vertex, startVertex, vertexPrecision));
@@ -649,8 +649,8 @@ public class Polyline implements Iterable<Segment>, Serializable {
          * @return this instance
          * @see #prepend(Vector2D)
          */
-        public Builder prependVertices(final Vector2D ... vertices) {
-            for (int i=vertices.length - 1; i >=0 ; --i) {
+        public Builder prependVertices(final Vector2D... vertices) {
+            for (int i = vertices.length - 1; i >= 0; --i) {
                 prepend(vertices[i]);
             }
 
@@ -668,8 +668,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
                     if (!endVertex.eq(startVertex, endVertexPrecision)) {
                         appendInternal(Segment.fromPoints(endVertex, startVertex, endVertexPrecision));
                     }
-                }
-                else {
+                } else {
                     throw new IllegalStateException("Unable to close polyline: polyline is infinite");
                 }
             }
@@ -692,8 +691,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
             if (appendedSegments != null) {
                 if (result == null) {
                     result = appendedSegments;
-                }
-                else {
+                } else {
                     result.addAll(appendedSegments);
                 }
             }
@@ -703,7 +701,9 @@ public class Polyline implements Iterable<Segment>, Serializable {
             }
 
             if (result.isEmpty() && startVertex != null) {
-                throw new IllegalStateException("Unable to create polyline; only a single vertex provided: " + startVertex);
+                throw new IllegalStateException(
+                        MessageFormat.format("Unable to create polyline; only a single vertex provided: {0} ",
+                                startVertex));
             }
 
             // clear internal state
@@ -718,6 +718,8 @@ public class Polyline implements Iterable<Segment>, Serializable {
         /** Validate that the given segments are connected, meaning that the end vertex of {@code previous}
          * is equivalent to the start vertex of {@code next}. The segments are considered valid if either
          * segment is null.
+         * @param previous previous segment
+         * @param next next segment
          * @throws IllegalStateException if previous and next are not null and the end vertex of previous
          *      is not equivalent the start vertex of next
          */
@@ -725,13 +727,14 @@ public class Polyline implements Iterable<Segment>, Serializable {
             if (previous != null && next != null) {
                 final Vector2D nextStartVertex = next.getStartPoint();
                 final Vector2D previousEndVertex = previous.getEndPoint();
-                final DoublePrecisionContext precision = previous.getPrecision();
+                final DoublePrecisionContext previousPrecision = previous.getPrecision();
 
                 if (nextStartVertex == null || previousEndVertex == null ||
-                        !(nextStartVertex.eq(previousEndVertex, precision))) {
+                        !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
 
-                    throw new IllegalStateException("Polyline segments are not connected: " +
-                        "previous= " + previous + ", next= " + next);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Polyline segments are not connected: previous= {0}, next= {1}",
+                                    previous, next));
                 }
             }
         }
@@ -816,9 +819,9 @@ public class Polyline implements Iterable<Segment>, Serializable {
      * unecessary line segments divisions. The {@link #simplify()} method on this
      * class simply returns the same instance.
      */
-    private static class SimplifiedPolyline extends Polyline
-    {
-        /** Serializable UID */
+    private static final class SimplifiedPolyline extends Polyline {
+
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190619;
 
         /** Create a new instance containing the given line segments. No validation is

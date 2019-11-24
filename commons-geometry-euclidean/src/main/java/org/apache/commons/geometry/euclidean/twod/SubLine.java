@@ -36,10 +36,10 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  */
 public final class SubLine extends AbstractSubLine implements Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190717L;
 
-    /** The 1D region representing the area on the line */
+    /** The 1D region representing the area on the line. */
     private final RegionBSPTree1D region;
 
     /** Construct a new, empty subline for the given line.
@@ -90,7 +90,7 @@ public final class SubLine extends AbstractSubLine implements Serializable {
         final Line line = getLine();
         final List<Segment> segments = new ArrayList<>(intervals.size());
 
-        for (Interval interval : intervals) {
+        for (final Interval interval : intervals) {
             segments.add(Segment.fromInterval(line, interval));
         }
 
@@ -115,7 +115,7 @@ public final class SubLine extends AbstractSubLine implements Serializable {
      */
     @Override
     public Split<SubLine> split(final Hyperplane<Vector2D> splitter) {
-        return splitInternal(splitter, this, (line, region) -> new SubLine(line, (RegionBSPTree1D) region));
+        return splitInternal(splitter, this, (line, reg) -> new SubLine(line, (RegionBSPTree1D) reg));
     }
 
     /** Add a line segment to this instance..
@@ -214,11 +214,9 @@ public final class SubLine extends AbstractSubLine implements Serializable {
         private void addInternal(final SubHyperplane<Vector2D> sub) {
             if (sub instanceof Segment) {
                 subline.add((Segment) sub);
-            }
-            else if (sub instanceof SubLine) {
+            } else if (sub instanceof SubLine) {
                 subline.add((SubLine) sub);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }
         }

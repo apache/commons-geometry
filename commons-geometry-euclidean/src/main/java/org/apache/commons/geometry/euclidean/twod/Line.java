@@ -482,8 +482,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof Line)) {
+        } else if (!(obj instanceof Line)) {
             return false;
         }
 
@@ -530,7 +529,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @throws GeometryValueException If {@code dir} has zero length, as evaluated by the
      *      given precision context
      */
-    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir, final DoublePrecisionContext precision) {
+    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir,
+            final DoublePrecisionContext precision) {
         if (dir.isZero(precision)) {
             throw new GeometryValueException("Line direction cannot be zero");
         }
@@ -549,7 +549,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @return new line containing {@code pt} and forming the given angle with the
      *      abscissa (x) axis.
      */
-    public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
+    public static Line fromPointAndAngle(final Vector2D pt, final double angle,
+            final DoublePrecisionContext precision) {
         final Vector2D.Unit dir = Vector2D.Unit.from(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
     }
@@ -559,7 +560,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      */
     public static final class SubspaceTransform implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190809L;
 
         /** The transformed line. */

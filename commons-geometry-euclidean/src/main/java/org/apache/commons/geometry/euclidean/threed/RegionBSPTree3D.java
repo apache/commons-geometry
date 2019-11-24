@@ -39,7 +39,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190702L;
 
     /** Create a new, empty region. */
@@ -100,14 +100,15 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      *      form the convex volumes for any child nodes
      * @param result list containing the results of the computation
      */
-    private void toConvexRecursive(final RegionNode3D node, final ConvexVolume nodeVolume, final List<ConvexVolume> result) {
+    private void toConvexRecursive(final RegionNode3D node, final ConvexVolume nodeVolume,
+            final List<ConvexVolume> result) {
+
         if (node.isLeaf()) {
             // base case; only add to the result list if the node is inside
             if (node.isInside()) {
                 result.add(nodeVolume);
             }
-        }
-        else {
+        } else {
             // recurse
             Split<ConvexVolume> split = nodeVolume.split(node.getCutHyperplane());
 
@@ -219,9 +220,8 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     protected RegionSizeProperties<Vector3D> computeRegionSizeProperties() {
         // handle simple cases
         if (isFull()) {
-           return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
-        }
-        else if (isEmpty()) {
+            return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
+        } else if (isEmpty()) {
             return new RegionSizeProperties<>(0, null);
         }
 
@@ -296,7 +296,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      */
     public static final class RegionNode3D extends AbstractRegionBSPTree.AbstractRegionNode<Vector3D, RegionNode3D> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190702L;
 
         /** Simple constructor.
@@ -352,7 +352,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @see #addIndexedFacet(List)
          * @see #addIndexedFacets(int[][])
          */
-        public Builder withVertexList(final Vector3D ... vertices) {
+        public Builder withVertexList(final Vector3D... vertices) {
             return withVertexList(Arrays.asList(vertices));
         }
 
@@ -392,7 +392,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param vertices array of vertices defining the facet
          * @return this builder instance
          */
-        public Builder addFacet(final Vector3D ... vertices) {
+        public Builder addFacet(final Vector3D... vertices) {
             return addFacet(Arrays.asList(vertices));
         }
 
@@ -436,9 +436,9 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @return this builder instance
          * @see #withVertexList(List)
          */
-        public Builder addIndexedFacet(int ... vertexIndices) {
+        public Builder addIndexedFacet(int... vertexIndices) {
             final Vector3D[] vertices = new Vector3D[vertexIndices.length];
-            for (int i=0; i<vertexIndices.length; ++i) {
+            for (int i = 0; i < vertexIndices.length; ++i) {
                 vertices[i] = vertexList.get(vertexIndices[i]);
             }
 
@@ -490,7 +490,9 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @throws GeometryValueException if the width, height, or depth of the defined region is zero
          *      as evaluated by the precision context.
          */
-        public Builder addCenteredRect(final Vector3D center, final double xSize, final double ySize, final double zSize) {
+        public Builder addCenteredRect(final Vector3D center, final double xSize, final double ySize,
+                final double zSize) {
+
             return addRect(Vector3D.of(
                         center.getX() - (xSize * 0.5),
                         center.getY() - (ySize * 0.5),
@@ -577,7 +579,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      */
     private static final class BoundaryProjector3D extends BoundaryProjector<Vector3D, RegionNode3D> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190811L;
 
         /** Simple constructor.
@@ -674,8 +676,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
             if (Double.isInfinite(area)) {
                 volumeSum = Double.POSITIVE_INFINITY;
-            }
-            else if (baseBarycenter != null) {
+            } else if (baseBarycenter != null) {
                 Plane plane = subplane.getPlane();
                 Vector3D facetBarycenter = plane.toSpace(base.getBarycenter());
 

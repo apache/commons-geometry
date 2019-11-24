@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -266,11 +267,11 @@ public class QuaternionRotationTest {
     @Test
     public void testFromAxisAngle_invalidAngle() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NaN), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NaN), GeometryValueException.class,
                 "Invalid angle: NaN");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.POSITIVE_INFINITY), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.POSITIVE_INFINITY), GeometryValueException.class,
                 "Invalid angle: Infinity");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NEGATIVE_INFINITY), IllegalArgumentException.class,
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NEGATIVE_INFINITY), GeometryValueException.class,
                 "Invalid angle: -Infinity");
     }
 

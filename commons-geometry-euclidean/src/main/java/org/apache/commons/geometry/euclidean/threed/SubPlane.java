@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -35,10 +36,10 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
  */
 public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190717L;
 
-    /** The 2D region representing the area on the plane */
+    /** The 2D region representing the area on the plane. */
     private final RegionBSPTree2D region;
 
     /** Construct a new, empty subplane for the given plane.
@@ -77,7 +78,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
         final Plane plane = getPlane();
         final List<ConvexSubPlane> subplanes = new ArrayList<>(areas.size());
 
-        for (ConvexArea area : areas) {
+        for (final ConvexArea area : areas) {
             subplanes.add(ConvexSubPlane.fromConvexArea(plane, area));
         }
 
@@ -119,7 +120,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
 
     /** Add a convex subplane to this instance.
      * @param subplane convex subplane to add
-     * @throws IllegalArgumentException if the given convex subplane is not from
+     * @throws GeometryValueException if the given convex subplane is not from
      *      a plane equivalent to this instance
      */
     public void add(final ConvexSubPlane subplane) {
@@ -130,7 +131,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
 
     /** Add a subplane to this instance.
      * @param subplane subplane to add
-     * @throws IllegalArgumentException if the given convex subplane is not from
+     * @throws GeometryValueException if the given convex subplane is not from
      *      a plane equivalent to this instance
      */
     public void add(final SubPlane subplane) {
@@ -141,15 +142,15 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
 
     /** Validate that the given plane is equivalent to the plane
      * defining this subplane.
-     * @param inputPlane
-     * @throws IllegalArgumentException if the given plane is not equivalent
+     * @param inputPlane plane to validate
+     * @throws GeometryValueException if the given plane is not equivalent
      *      to the plane for this instance
      */
     private void validatePlane(final Plane inputPlane) {
         final Plane plane = getPlane();
 
         if (!plane.eq(inputPlane)) {
-            throw new IllegalArgumentException("Argument is not on the same " +
+            throw new GeometryValueException("Argument is not on the same " +
                     "plane. Expected " + plane + " but was " +
                     inputPlane);
         }
@@ -193,11 +194,9 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
         private void addInternal(final SubHyperplane<Vector3D> sub) {
             if (sub instanceof ConvexSubPlane) {
                 subplane.add((ConvexSubPlane) sub);
-            }
-            else if (sub instanceof SubPlane) {
+            } else if (sub instanceof SubPlane) {
                 subplane.add((SubPlane) sub);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }
         }

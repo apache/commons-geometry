@@ -95,7 +95,7 @@ public enum AxisSequence {
     /** Axis of the third rotation. */
     private final Vector3D axis3;
 
-    /** Simple constructor
+    /** Simple constructor.
      * @param type the axis sequence type
      * @param axis1 first rotation axis
      * @param axis2 second rotation axis
@@ -141,6 +141,6 @@ public enum AxisSequence {
      * @return a 3-element array containing the rotation axes in order
      */
     public Vector3D[] toArray() {
-        return new Vector3D[] { axis1, axis2, axis3 };
+        return new Vector3D[]{axis1, axis2, axis3};
     }
 }

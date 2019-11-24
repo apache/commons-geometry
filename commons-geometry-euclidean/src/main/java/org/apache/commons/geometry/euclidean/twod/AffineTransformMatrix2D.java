@@ -37,22 +37,22 @@ import org.apache.commons.numbers.core.Precision;
 public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D>
     implements Transform2D, Serializable {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20181005L;
 
-    /** The number of internal matrix elements */
+    /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 6;
 
-    /** String used to start the transform matrix string representation */
+    /** String used to start the transform matrix string representation. */
     private static final String MATRIX_START = "[ ";
 
-    /** String used to end the transform matrix string representation */
+    /** String used to end the transform matrix string representation. */
     private static final String MATRIX_END = " ]";
 
-    /** String used to separate elements in the matrix string representation */
+    /** String used to separate elements in the matrix string representation. */
     private static final String ELEMENT_SEPARATOR = ", ";
 
-    /** String used to separate rows in the matrix string representation */
+    /** String used to separate rows in the matrix string representation. */
     private static final String ROW_SEPARATOR = "; ";
 
     /** Shared transform set to the identity matrix. */
@@ -61,18 +61,18 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
                 0, 1, 0
             );
 
-    /** Transform matrix entry <code>m<sub>0,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,0</sub></code>. */
     private final double m00;
-    /** Transform matrix entry <code>m<sub>0,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,1</sub></code>. */
     private final double m01;
-    /** Transform matrix entry <code>m<sub>0,2</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,2</sub></code>. */
     private final double m02;
 
-    /** Transform matrix entry <code>m<sub>1,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,0</sub></code>. */
     private final double m10;
-    /** Transform matrix entry <code>m<sub>1,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,1</sub></code>. */
     private final double m11;
-    /** Transform matrix entry <code>m<sub>1,2</sub></code> */
+    /** Transform matrix entry <code>m<sub>1,2</sub></code>. */
     private final double m12;
 
     /**
@@ -112,8 +112,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      */
     public double[] toArray() {
         return new double[] {
-                m00, m01, m02,
-                m10, m11, m12
+            m00, m01, m02,
+            m10, m11, m12
         };
     }
 
@@ -180,10 +180,10 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
     *
     * <p>This simply returns the current instance.</p>
     */
-   @Override
-   public AffineTransformMatrix2D toMatrix() {
-       return this;
-   }
+    @Override
+    public AffineTransformMatrix2D toMatrix() {
+        return this;
+    }
 
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
@@ -315,13 +315,13 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         final double invDet = 1.0 / det;
 
         final double c00 = invDet * m11;
-        final double c01 = - invDet * m10;
+        final double c01 = -invDet * m10;
 
-        final double c10 = - invDet * m01;
+        final double c10 = -invDet * m01;
         final double c11 = invDet * m00;
 
         final double c20 = invDet * Matrices.determinant(m01, m02, m11, m12);
-        final double c21 = - invDet * Matrices.determinant(m00, m02, m10, m12);
+        final double c21 = -invDet * Matrices.determinant(m00, m02, m10, m12);
 
         return new AffineTransformMatrix2D(
                     c00, c10, c20,
@@ -417,7 +417,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @return a new transform initialized with the given matrix values
      * @throws IllegalArgumentException if the array does not have 6 elements
      */
-    public static AffineTransformMatrix2D of(final double ... arr) {
+    public static AffineTransformMatrix2D of(final double... arr) {
         if (arr.length != NUM_ELEMENTS) {
             throw new IllegalArgumentException("Dimension mismatch: " + arr.length + " != " + NUM_ELEMENTS);
         }
@@ -551,7 +551,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @param b second transform
      * @return the transform computed as {@code a x b}
      */
-    private static AffineTransformMatrix2D multiply(final AffineTransformMatrix2D a, final AffineTransformMatrix2D b) {
+    private static AffineTransformMatrix2D multiply(final AffineTransformMatrix2D a,
+            final AffineTransformMatrix2D b) {
 
         final double c00 = LinearCombination.value(a.m00, b.m00, a.m01, b.m10);
         final double c01 = LinearCombination.value(a.m00, b.m01, a.m01, b.m11);
@@ -575,7 +576,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      */
     private static void validateElementForInverse(final double element) {
         if (!Double.isFinite(element)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " + element);
+            throw new NonInvertibleTransformException(
+                    "Transform is not invertible; invalid matrix element: " + element);
         }
     }
 }

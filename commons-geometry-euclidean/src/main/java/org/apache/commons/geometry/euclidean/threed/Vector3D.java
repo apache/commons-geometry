@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Comparator;
 import java.util.function.Function;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -63,27 +62,25 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
                     cmp = Double.compare(a.getZ(), b.getZ());
                 }
             }
-        }
-        else if (a != null) {
+        } else if (a != null) {
             cmp = -1;
-        }
-        else if (b != null) {
+        } else if (b != null) {
             cmp = 1;
         }
 
         return cmp;
     };
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180903L;
 
-    /** Abscissa (first coordinate value) */
+    /** Abscissa (first coordinate value). */
     private final double x;
 
-    /** Ordinate (second coordinate value) */
+    /** Ordinate (second coordinate value). */
     private final double y;
 
-    /** Height (third coordinate value)*/
+    /** Height (third coordinate value). */
     private final double z;
 
     /** Simple constructor.
@@ -123,7 +120,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @return the coordinates for this instance
      */
     public double[] toArray() {
-        return new double[] { x, y, z };
+        return new double[]{x, y, z};
     }
 
     /** {@inheritDoc} */
@@ -340,8 +337,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      *   Vector3D j = k.cross(i);
      * </code></pre>
      * @return a unit vector orthogonal to the instance
-     * @throws IllegalNormException if the norm of the instance is zero, NaN,
-     *  or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the instance
+     *      is zero, NaN, or infinite
      */
     @Override
     public Vector3D.Unit orthogonal() {
@@ -351,8 +348,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         if (Math.abs(x) <= threshold) {
             inverse  = 1 / Vectors.norm(y, z);
             return new Unit(0, inverse * z, -inverse * y);
-        }
-        else if (Math.abs(y) <= threshold) {
+        } else if (Math.abs(y) <= threshold) {
             inverse  = 1 / Vectors.norm(x, z);
             return new Unit(-inverse * z, 0, inverse * x);
         }
@@ -457,9 +453,11 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      *      returned. If false, the projection of this instance onto {@code base}
      *      is returned.
      * @param factory factory function used to build the final vector
+     * @param <V> Vector implementation type
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if {@code base} has a zero, NaN,
+     *      or infinite norm
      */
     private <V extends Vector3D> V getComponent(Vector3D base, boolean reject, DoubleFunction3N<V> factory) {
         final double aDotB = dot(base);
@@ -618,7 +616,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         /** Negation of unit vector (coordinates: 0, 0, -1). */
         public static final Unit MINUS_Z = new Unit(0d, 0d, -1d);
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given
@@ -638,7 +636,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @param y Vector coordinate.
          * @param z Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value
+         *      is zero, NaN, or infinite
          */
         public static Unit from(final double x, final double y, final double z) {
             final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y, z));
@@ -650,7 +649,8 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+         *      value is zero, NaN, or infinite
          */
         public static Unit from(final Vector3D v) {
             return v instanceof Unit ?

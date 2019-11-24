@@ -59,24 +59,22 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
             if (cmp == 0) {
                 cmp = Double.compare(a.getY(), b.getY());
             }
-        }
-        else if (a != null) {
+        } else if (a != null) {
             cmp = -1;
-        }
-        else if (b != null) {
+        } else if (b != null) {
             cmp = 1;
         }
 
         return cmp;
     };
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
-    /** Abscissa (first coordinate) */
+    /** Abscissa (first coordinate). */
     private final double x;
 
-    /** Ordinate (second coordinate) */
+    /** Ordinate (second coordinate). */
     private final double y;
 
     /** Simple constructor.
@@ -106,7 +104,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return coordinates for this instance
      */
     public double[] toArray() {
-        return new double[] { x, y };
+        return new double[]{x, y};
     }
 
     /** {@inheritDoc} */
@@ -399,6 +397,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      *      returned. If false, the projection of this instance onto {@code base}
      *      is returned.
      * @param factory factory function used to build the final vector
+     * @param <T> Vector implementation type
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
      * @throws org.apache.commons.geometry.core.exception.IllegalNormException if {@code base} has a
@@ -553,7 +552,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         /** Negation of unit vector (coordinates: 0, -1). */
         public static final Unit MINUS_Y = new Unit(0d, -1d);
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given

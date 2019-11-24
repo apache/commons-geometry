@@ -473,10 +473,8 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         public String toString() {
             final StringBuilder sb = new StringBuilder();
             sb.append(this.getClass().getSimpleName())
-                .append("[point= ")
-                .append(hyperplane.getPoint())
-                .append(", direction= ")
-                .append(hyperplane.getDirection())
+                .append("[hyperplane= ")
+                .append(hyperplane)
                 .append(']');
 
             return sb.toString();

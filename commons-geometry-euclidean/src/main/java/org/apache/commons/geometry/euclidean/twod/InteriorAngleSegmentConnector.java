@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.Geometry;
  */
 public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConnector {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190530L;
 
     /** {@inheritDoc} */
@@ -65,7 +65,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * @param previousAngle the previous best angle
      * @return true if {@code newAngle} represents a better interior angle than {@code previousAngle}
      */
-    protected abstract boolean isBetterAngle(final double newAngle, final double previousAngle);
+    protected abstract boolean isBetterAngle(double newAngle, double previousAngle);
 
     /** Convenience method for connecting a set of line segments with interior angles maximized
      * when possible. This method is equivalent to {@code new Maximize().connect(segments)}.
@@ -95,7 +95,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      */
     public static class Maximize extends InteriorAngleSegmentConnector {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190530L;
 
         /** {@inheritDoc} */
@@ -113,7 +113,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      */
     public static class Minimize extends InteriorAngleSegmentConnector {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190530L;
 
         /** {@inheritDoc} */

@@ -33,7 +33,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190519L;
 
     /** List of line segment paths comprising the region boundary. */
@@ -124,8 +124,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             if (node.isInside()) {
                 result.add(nodeArea);
             }
-        }
-        else {
+        } else {
             // recurse
             Split<ConvexArea> split = nodeArea.split(node.getCutHyperplane());
 
@@ -167,9 +166,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     protected RegionSizeProperties<Vector2D> computeRegionSizeProperties() {
         // handle simple cases
         if (isFull()) {
-           return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
-        }
-        else if (isEmpty()) {
+            return new RegionSizeProperties<>(Double.POSITIVE_INFINITY, null);
+        } else if (isEmpty()) {
             return new RegionSizeProperties<>(0, null);
         }
 
@@ -297,7 +295,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      */
     public static final class RegionNode2D extends AbstractRegionBSPTree.AbstractRegionNode<Vector2D, RegionNode2D> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190519L;
 
         /** Simple constructor.
@@ -487,13 +485,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      */
     private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190811L;
 
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        public BoundaryProjector2D(Vector2D point) {
+        BoundaryProjector2D(final Vector2D point) {
             super(point);
         }
 

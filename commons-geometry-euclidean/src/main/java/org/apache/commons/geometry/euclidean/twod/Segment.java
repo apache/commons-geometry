@@ -38,8 +38,20 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 public final class Segment extends AbstractSubLine
     implements ConvexSubHyperplane<Vector2D> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190729L;
+
+    /** String used to indicate the start point of the segment in the toString() representation. */
+    private static final String START_STR = "start= ";
+
+    /** String used to indicate the direction the segment in the toString() representation. */
+    private static final String DIR_STR = "direction= ";
+
+    /** String used to indicate the end point of the segment in the toString() representation. */
+    private static final String END_STR = "end= ";
+
+    /** String used as a separator value in the toString() representation. */
+    private static final String SEP_STR = ", ";
 
     /** The interval representing the region of the line contained in
      * the line segment.
@@ -77,7 +89,7 @@ public final class Segment extends AbstractSubLine
      *      exists
      */
     public Vector2D getStartPoint() {
-        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()): null;
+        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()) : null;
     }
 
     /** Get the end point of the line segment or null if no end point
@@ -86,7 +98,7 @@ public final class Segment extends AbstractSubLine
      *      exists
      */
     public Vector2D getEndPoint() {
-        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()): null;
+        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()) : null;
     }
 
     /** Return the 1D interval for the line segment.
@@ -186,46 +198,46 @@ public final class Segment extends AbstractSubLine
     *          {@code "Segment[start= (0.0, 0.0), end= (1.0, 0.0)]"}</li>
     * </ul>
     */
-   @Override
-   public String toString() {
-       final Vector2D startPoint = getStartPoint();
-       final Vector2D endPoint = getEndPoint();
+    @Override
+    public String toString() {
+        final Vector2D startPoint = getStartPoint();
+        final Vector2D endPoint = getEndPoint();
 
-       final StringBuilder sb = new StringBuilder();
-       sb.append(this.getClass().getSimpleName())
-           .append('[');
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[');
 
-       if (startPoint != null && endPoint != null) {
-           sb.append("start= ")
-               .append(startPoint)
-               .append(", end= ")
-               .append(endPoint);
-       }
-       else if (startPoint != null) {
-           sb.append("start= ")
-               .append(startPoint)
-               .append(", direction= ")
-               .append(getLine().getDirection());
-       }
-       else if (endPoint != null) {
-           sb.append("direction= ")
-               .append(getLine().getDirection())
-               .append(", end= ")
-               .append(endPoint);
-       }
-       else {
-           final Line line = getLine();
+        if (startPoint != null && endPoint != null) {
+            sb.append(START_STR)
+                .append(startPoint)
+                .append(SEP_STR)
+                .append(END_STR)
+                .append(endPoint);
+        } else if (startPoint != null) {
+            sb.append(START_STR)
+                .append(startPoint)
+                .append(SEP_STR)
+                .append(DIR_STR)
+                .append(getLine().getDirection());
+        } else if (endPoint != null) {
+            sb.append(DIR_STR)
+                .append(getLine().getDirection())
+                .append(SEP_STR)
+                .append(END_STR)
+                .append(endPoint);
+        } else {
+            final Line line = getLine();
 
-           sb.append("lineOrigin= ")
-               .append(line.getOrigin())
-               .append(", lineDirection= ")
-               .append(line.getDirection());
-       }
+            sb.append("lineOrigin= ")
+                .append(line.getOrigin())
+                .append(", lineDirection= ")
+                .append(line.getDirection());
+        }
 
-       sb.append(']');
+        sb.append(']');
 
-       return sb.toString();
-   }
+        return sb.toString();
+    }
 
     /** Create a line segment between two points. The underlying line points in the direction from {@code start}
      * to {@code end}.

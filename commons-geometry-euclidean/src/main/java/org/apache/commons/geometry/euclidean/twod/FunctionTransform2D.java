@@ -22,10 +22,11 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 
 /** Class that wraps a {@link Function} with the {@link Transform2D} interface.
  */
-public class FunctionTransform2D implements Transform2D {
+public final class FunctionTransform2D implements Transform2D {
 
     /** Static instance representing the identity transform. */
-    private static final FunctionTransform2D IDENTITY = new FunctionTransform2D(Function.identity(), true, Vector2D.ZERO);
+    private static final FunctionTransform2D IDENTITY =
+            new FunctionTransform2D(Function.identity(), true, Vector2D.ZERO);
 
     /** The underlying function for the transform. */
     private final Function<Vector2D, Vector2D> fn;
