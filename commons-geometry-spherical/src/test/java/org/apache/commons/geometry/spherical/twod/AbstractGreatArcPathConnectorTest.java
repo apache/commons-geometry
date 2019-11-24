@@ -35,10 +35,10 @@ public class AbstractGreatArcPathConnectorTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final GreatCircle XY_PLANE = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle XY_PLANE = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final GreatCircle XZ_PLANE = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle XZ_PLANE = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
     private TestConnector connector = new TestConnector();
@@ -87,7 +87,7 @@ public class AbstractGreatArcPathConnectorTest {
     @Test
     public void testConnectAll_singleLune() {
         // arrange
-        GreatCircle upperBound = GreatCircle.fromPoleAndXAxis(
+        GreatCircle upperBound = GreatCircle.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
 
         connector.add(XY_PLANE.arc(0, Geometry.PI));
@@ -108,7 +108,7 @@ public class AbstractGreatArcPathConnectorTest {
     @Test
     public void testConnectAll_singleLune_pathsNotOrientedCorrectly() {
         // arrange
-        GreatCircle upperBound = GreatCircle.fromPoleAndXAxis(
+        GreatCircle upperBound = GreatCircle.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
 
         connector.add(XY_PLANE.arc(0, Geometry.PI));

@@ -45,7 +45,7 @@ public class SubGreatCircleTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final GreatCircle XY_CIRCLE = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle XY_CIRCLE = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
     @Test

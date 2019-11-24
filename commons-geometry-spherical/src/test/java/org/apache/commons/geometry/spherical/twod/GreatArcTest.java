@@ -377,7 +377,7 @@ public class GreatArcTest {
 
     private static void checkGreatCircle(GreatCircle circle, Vector3D pole, Vector3D x) {
         SphericalTestUtils.assertVectorsEqual(pole, circle.getPole(), TEST_EPS);
-        SphericalTestUtils.assertVectorsEqual(x, circle.getXAxis(), TEST_EPS);
-        SphericalTestUtils.assertVectorsEqual(pole.cross(x), circle.getYAxis(), TEST_EPS);
+        SphericalTestUtils.assertVectorsEqual(x, circle.getU(), TEST_EPS);
+        SphericalTestUtils.assertVectorsEqual(pole.cross(x), circle.getV(), TEST_EPS);
     }
 }

@@ -46,13 +46,13 @@ public class RegionBSPTree2STest {
     // this must currently be set much higher than the other epsilon
     private static final double BARYCENTER_EPS = 1e-2;
 
-    private static final GreatCircle EQUATOR = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle EQUATOR = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final GreatCircle X_MERIDIAN = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle X_MERIDIAN = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final GreatCircle Y_MERIDIAN = GreatCircle.fromPoleAndXAxis(
+    private static final GreatCircle Y_MERIDIAN = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test

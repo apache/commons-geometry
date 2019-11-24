@@ -33,7 +33,8 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 /** Class representing a great circle on the 2-sphere. A great circle is the
  * intersection of a sphere with a plane that passes through its center. It is
  * the largest diameter circle that can be drawn on the sphere and partitions the
- * sphere into two hemispheres.
+ * sphere into two hemispheres. The vectors {@code u} and {@code v} lie in the great
+ * circle plane, while the vector {@code w} (the pole) is perpendicular to it.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
@@ -47,24 +48,24 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     private final Vector3D.Unit pole;
 
     /** First axis in the equator plane, origin of the azimuth angles. */
-    private final Vector3D.Unit x;
+    private final Vector3D.Unit u;
 
-    /** Second axis in the equator plane, in quadrature with respect to x. */
-    private final Vector3D.Unit y;
+    /** Second axis in the equator plane, in quadrature with respect to u. */
+    private final Vector3D.Unit v;
 
     /** Simple constructor. Callers are responsible for ensuring the inputs are valid.
      * @param pole pole vector of the great circle
-     * @param x x axis in the equator plane
-     * @param y y axis in the equator plane
+     * @param u u axis in the equator plane
+     * @param v v axis in the equator plane
      * @param precision precision context used for floating point comparisons
      */
-    private GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit x, final Vector3D.Unit y,
+    private GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit u, final Vector3D.Unit v,
             final DoublePrecisionContext precision) {
         super(precision);
 
         this.pole = pole;
-        this.x = x;
-        this.y = y;
+        this.u = u;
+        this.v = v;
     }
 
     /** Get the pole of the great circle. This vector is perpendicular to the
@@ -82,20 +83,28 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         return Point2S.from(pole);
     }
 
-    /** Get the x axis of the great circle. This vector defines the {@code 0pi}
-     * location of the embedded subspace.
-     * @return x axis of the great circle
+    /** Get the u axis of the great circle. This vector is located in the equator plane and defines
+     * the {@code 0pi} location of the embedded subspace.
+     * @return u axis of the great circle
      */
-    public Vector3D.Unit getXAxis() {
-        return x;
+    public Vector3D.Unit getU() {
+        return u;
     }
 
-    /** Get the y axis of the great circle. This vector lies in the equator plane,
-     * perpendicular to the x-axis.
-     * @return y axis of the great circle
+    /** Get the v axis of the great circle. This vector lies in the equator plane,
+     * perpendicular to the u-axis.
+     * @return v axis of the great circle
      */
-    public Vector3D.Unit getYAxis() {
-        return y;
+    public Vector3D.Unit getV() {
+        return v;
+    }
+
+    /** Get the w (pole) axis of the great circle. The method is equivalent to {@code #getPole()}.
+     * @return the w (pole) axis of the great circle.
+     * @see #getPole()
+     */
+    public Vector3D.Unit getW() {
+        return getPole();
     }
 
     /** {@inheritDoc}
@@ -138,7 +147,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** Get the azimuth angle of a vector in the range {@code [0, 2pi)}.
      * The azimuth angle is the angle of the projection of the argument on the
-     * equator plane relative to the plane's x-axis. Since the vector is
+     * equator plane relative to the plane's u-axis. Since the vector is
      * projected onto the equator plane, it does not need to belong to the circle.
      * Vectors parallel to the great circle's pole do not have a defined azimuth angle.
      * In these cases, the method follows the rules of the
@@ -149,7 +158,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @see #toSubspace(Point2S)
      */
     public double azimuth(final Vector3D vector) {
-        double az = Math.atan2(vector.dot(y), vector.dot(x));
+        double az = Math.atan2(vector.dot(v), vector.dot(u));
 
         // adjust range
         if (az < 0) {
@@ -164,7 +173,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @return the point on the great circle with the given phase angle
      */
     public Vector3D vectorAt(final double azimuth) {
-        return Vector3D.linearCombination(Math.cos(azimuth), x, Math.sin(azimuth), y);
+        return Vector3D.linearCombination(Math.cos(azimuth), u, Math.sin(azimuth), v);
     }
 
     /** {@inheritDoc} */
@@ -176,21 +185,21 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
     /** {@inheritDoc}
      *
-     * <p>The returned instance has the same x-axis but opposite pole and y-axis
+     * <p>The returned instance has the same u-axis but opposite pole and v-axis
      * as this instance.</p>
      */
     @Override
     public GreatCircle reverse() {
-        return new GreatCircle(pole.negate(), x, y.negate(), getPrecision());
+        return new GreatCircle(pole.negate(), u, v.negate(), getPrecision());
     }
 
     /** {@inheritDoc} */
     @Override
     public GreatCircle transform(final Transform<Point2S> transform) {
-        final Point2S tx = transform.apply(Point2S.from(x));
-        final Point2S ty = transform.apply(Point2S.from(y));
+        final Point2S tu = transform.apply(Point2S.from(u));
+        final Point2S tv = transform.apply(Point2S.from(v));
 
-        return fromPoints(tx, ty, getPrecision());
+        return fromPoints(tu, tv, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -325,14 +334,14 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
         return precision.equals(other.getPrecision()) &&
                 pole.eq(other.pole, precision) &&
-                x.eq(other.x, precision) &&
-                y.eq(other.y, precision);
+                u.eq(other.u, precision) &&
+                v.eq(other.v, precision);
     }
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return Objects.hash(pole, x, y, getPrecision());
+        return Objects.hash(pole, u, v, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -347,8 +356,8 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         GreatCircle other = (GreatCircle) obj;
 
         return Objects.equals(this.pole, other.pole) &&
-                Objects.equals(this.x, other.x) &&
-                Objects.equals(this.y, other.y) &&
+                Objects.equals(this.u, other.u) &&
+                Objects.equals(this.v, other.v) &&
                 Objects.equals(this.getPrecision(), other.getPrecision());
     }
 
@@ -359,45 +368,45 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         sb.append(getClass().getSimpleName())
             .append("[pole= ")
             .append(pole)
-            .append(", x= ")
-            .append(x)
-            .append(", y= ")
-            .append(y)
+            .append(", u= ")
+            .append(u)
+            .append(", v= ")
+            .append(v)
             .append(']');
 
         return sb.toString();
     }
 
-    /** Create a great circle instance from its pole vector. An arbitrary x-axis is chosen.
+    /** Create a great circle instance from its pole vector. An arbitrary u-axis is chosen.
      * @param pole pole vector for the great circle
      * @param precision precision context used to compare floating point values
      * @return a great circle defined by the given pole vector
      */
     public static GreatCircle fromPole(final Vector3D pole, final DoublePrecisionContext precision) {
-        final Vector3D.Unit x = pole.orthogonal();
-        final Vector3D.Unit y = pole.cross(x).normalize();
-        return new GreatCircle(pole.normalize(), x, y, precision);
+        final Vector3D.Unit u = pole.orthogonal();
+        final Vector3D.Unit v = pole.cross(u).normalize();
+        return new GreatCircle(pole.normalize(), u, v, precision);
     }
 
-    /** Create a great circle instance from its pole vector and a vector representing the x-axis
-     * in the equator plane. The x-axis vector defines the {@code 0pi} location for the embedded
+    /** Create a great circle instance from its pole vector and a vector representing the u-axis
+     * in the equator plane. The u-axis vector defines the {@code 0pi} location for the embedded
      * subspace.
      * @param pole pole vector for the great circle
-     * @param x x-axis direction for the equator plane
+     * @param u u-axis direction for the equator plane
      * @param precision precision context used to compare floating point values
-     * @return a great circle defined by the given pole vector and x-axis direction
+     * @return a great circle defined by the given pole vector and u-axis direction
      */
-    public static GreatCircle fromPoleAndXAxis(final Vector3D pole, final Vector3D x,
+    public static GreatCircle fromPoleAndU(final Vector3D pole, final Vector3D u,
             final DoublePrecisionContext precision) {
 
         final Vector3D.Unit unitPole = pole.normalize();
-        final Vector3D.Unit unitX = pole.orthogonal(x);
-        final Vector3D.Unit unitY = pole.cross(x).normalize();
+        final Vector3D.Unit unitX = pole.orthogonal(u);
+        final Vector3D.Unit unitY = pole.cross(u).normalize();
 
         return new GreatCircle(unitPole, unitX, unitY, precision);
     }
 
-    /** Create a great circle instance from two points on the circle. The x-axis of the
+    /** Create a great circle instance from two points on the circle. The u-axis of the
      * instance points to the location of the first point. The orientation of the circle
      * is along the shortest path between the two points.
      * @param a first point on the great circle
@@ -428,10 +437,10 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
                     ": points are " + err);
         }
 
-        final Vector3D.Unit x = a.getVector().normalize();
-        final Vector3D.Unit pole = x.cross(b.getVector()).normalize();
-        final Vector3D.Unit y = pole.cross(x).normalize();
+        final Vector3D.Unit u = a.getVector().normalize();
+        final Vector3D.Unit pole = u.cross(b.getVector()).normalize();
+        final Vector3D.Unit v = pole.cross(u).normalize();
 
-        return new GreatCircle(pole, x, y, precision);
+        return new GreatCircle(pole, u, v, precision);
     }
 }
