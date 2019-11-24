@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
@@ -348,7 +348,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         Assert.assertEquals(perimeter, hullRegion.getBoundarySize(), 1.0e-12);
 
         for (int i = 0; i < referenceHull.length; ++i) {
-            Assert.assertEquals(Location.BOUNDARY, hullRegion.checkPoint(referenceHull[i]));
+            Assert.assertEquals(RegionLocation.BOUNDARY, hullRegion.classify(referenceHull[i]));
         }
 
     }
@@ -425,10 +425,10 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         final Region<Vector2D> region = hull.createRegion();
 
         for (final Vector2D p : points) {
-            Location location = region.checkPoint(p);
-            Assert.assertTrue(location != Location.OUTSIDE);
+            RegionLocation location = region.classify(p);
+            Assert.assertTrue(location != RegionLocation.OUTSIDE);
 
-            if (location == Location.BOUNDARY && includesCollinearPoints) {
+            if (location == RegionLocation.BOUNDARY && includesCollinearPoints) {
                 Assert.assertTrue(hullVertices.contains(p));
             }
         }

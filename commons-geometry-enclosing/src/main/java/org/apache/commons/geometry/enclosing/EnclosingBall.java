@@ -45,7 +45,7 @@ public class EnclosingBall<P extends Point<P>> implements Serializable {
      * @param support support points used to define the ball
      */
     @SafeVarargs
-    public EnclosingBall(final P center, final double radius, final P ... support) {
+    public EnclosingBall(final P center, final double radius, final P... support) {
         this.center  = center;
         this.radius  = radius;
         this.support = support.clone();

@@ -51,13 +51,13 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  */
 public final class PolarCoordinates implements Spatial, Serializable {
 
-    /** Serializable version UID */
+    /** Serializable version UID. */
     private static final long serialVersionUID = 20180630L;
 
-    /** Radius value */
+    /** Radius value. */
     private final double radius;
 
-    /** Azimuth angle in radians */
+    /** Azimuth angle in radians. */
     private final double azimuth;
 
     /** Simple constructor. Input values are normalized.
@@ -72,7 +72,7 @@ public final class PolarCoordinates implements Spatial, Serializable {
         }
 
         this.radius = radius;
-        this.azimuth = normalizeAzimuth(azimuth);;
+        this.azimuth = normalizeAzimuth(azimuth);
     }
 
     /** Return the radius value. The value will be greater than or equal to 0.
@@ -106,6 +106,12 @@ public final class PolarCoordinates implements Spatial, Serializable {
     @Override
     public boolean isInfinite() {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return Double.isFinite(radius) && Double.isFinite(azimuth);
     }
 
     /** Convert this set of polar coordinates to Cartesian coordinates.

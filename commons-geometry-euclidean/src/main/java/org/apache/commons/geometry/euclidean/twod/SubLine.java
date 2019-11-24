@@ -16,184 +16,210 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.AbstractSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.BSPTree;
+import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.Region.Location;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
+import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
-/** This class represents a sub-hyperplane for {@link Line}.
+/** Class representing an arbitrary region of a line. This class can represent
+ * both convex and non-convex regions of its underlying line.
+ *
+ * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public class SubLine extends AbstractSubHyperplane<Vector2D, Vector1D> {
+public final class SubLine extends AbstractSubLine implements Serializable {
 
-    /** Simple constructor.
-     * @param hyperplane underlying hyperplane
-     * @param remainingRegion remaining region of the hyperplane
+    /** Serializable UID. */
+    private static final long serialVersionUID = 20190717L;
+
+    /** The 1D region representing the area on the line. */
+    private final RegionBSPTree1D region;
+
+    /** Construct a new, empty subline for the given line.
+     * @param line line defining the subline
      */
-    public SubLine(final Hyperplane<Vector2D> hyperplane,
-                   final Region<Vector1D> remainingRegion) {
-        super(hyperplane, remainingRegion);
+    public SubLine(final Line line) {
+        this(line, false);
     }
 
-    /** Create a sub-line from two endpoints.
-     * @param start start point
-     * @param end end point
-     * @param precision precision context used to compare floating point values
+    /** Construct a new subline for the given line. If {@code full}
+     * is true, then the subline will cover the entire line; otherwise,
+     * it will be empty.
+     * @param line line defining the subline
+     * @param full if true, the subline will cover the entire space;
+     *      otherwise it will be empty
      */
-    public SubLine(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        super(Line.fromPoints(start, end, precision), buildIntervalSet(start, end, precision));
+    public SubLine(final Line line, boolean full) {
+        this(line, new RegionBSPTree1D(full));
     }
 
-    /** Create a sub-line from a segment.
-     * @param segment single segment forming the sub-line
+    /** Construct a new instance from its defining line and subspace region.
+     * @param line line defining the subline
+     * @param region subspace region for the subline
      */
-    public SubLine(final Segment segment) {
-        super(segment.getLine(),
-              buildIntervalSet(segment.getStart(), segment.getEnd(), segment.getLine().getPrecision()));
+    public SubLine(final Line line, final RegionBSPTree1D region) {
+        super(line);
+
+        this.region = region;
     }
 
-    /** Get the endpoints of the sub-line.
-     * <p>
-     * A subline may be any arbitrary number of disjoints segments, so the endpoints
-     * are provided as a list of endpoint pairs. Each element of the list represents
-     * one segment, and each segment contains a start point at index 0 and an end point
-     * at index 1. If the sub-line is unbounded in the negative infinity direction,
-     * the start point of the first segment will have infinite coordinates. If the
-     * sub-line is unbounded in the positive infinity direction, the end point of the
-     * last segment will have infinite coordinates. So a sub-line covering the whole
-     * line will contain just one row and both elements of this row will have infinite
-     * coordinates. If the sub-line is empty, the returned list will contain 0 segments.
-     * </p>
-     * @return list of segments endpoints
-     */
-    public List<Segment> getSegments() {
+    /** {@inheritDoc} */
+    @Override
+    public SubLine transform(final Transform<Vector2D> transform) {
+        final SubspaceTransform st = getLine().subspaceTransform(transform);
 
-        final Line line = (Line) getHyperplane();
-        final List<Interval> list = ((IntervalsSet) getRemainingRegion()).asList();
-        final List<Segment> segments = new ArrayList<>(list.size());
+        final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
+        tRegion.copy(region);
+        tRegion.transform(st.getTransform());
 
-        for (final Interval interval : list) {
-            final Vector2D start = line.toSpace(Vector1D.of(interval.getInf()));
-            final Vector2D end   = line.toSpace(Vector1D.of(interval.getSup()));
-            segments.add(new Segment(start, end, line));
+        return new SubLine(st.getLine(), tRegion);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Segment> toConvex() {
+        final List<Interval> intervals = region.toIntervals();
+
+        final Line line = getLine();
+        final List<Segment> segments = new ArrayList<>(intervals.size());
+
+        for (final Interval interval : intervals) {
+            segments.add(Segment.fromInterval(line, interval));
         }
 
         return segments;
-
-    }
-
-    /** Get the intersection of the instance and another sub-line.
-     * <p>
-     * This method is related to the {@link Line#intersection(Line)
-     * intersection} method in the {@link Line Line} class, but in addition
-     * to compute the point along infinite lines, it also checks the point
-     * lies on both sub-line ranges.
-     * </p>
-     * @param subLine other sub-line which may intersect instance
-     * @param includeEndPoints if true, endpoints are considered to belong to
-     * instance (i.e. they are closed sets) and may be returned, otherwise endpoints
-     * are considered to not belong to instance (i.e. they are open sets) and intersection
-     * occurring on endpoints lead to null being returned
-     * @return the intersection point if there is one, null if the sub-lines don't intersect
-     */
-    public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
-
-        // retrieve the underlying lines
-        Line line1 = (Line) getHyperplane();
-        Line line2 = (Line) subLine.getHyperplane();
-
-        // compute the intersection on infinite line
-        Vector2D v2D = line1.intersection(line2);
-        if (v2D == null) {
-            return null;
-        }
-
-        // check location of point with respect to first sub-line
-        Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
-
-        // check location of point with respect to second sub-line
-        Location loc2 = subLine.getRemainingRegion().checkPoint(line2.toSubSpace(v2D));
-
-        if (includeEndPoints) {
-            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v2D : null;
-        } else {
-            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v2D : null;
-        }
-
-    }
-
-    /** Build an interval set from two points.
-     * @param start start point
-     * @param end end point
-     * @param precision precision context used to compare floating point values
-     * @return an interval set
-     */
-    private static IntervalsSet buildIntervalSet(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        final Line line = Line.fromPoints(start, end, precision);
-        return new IntervalsSet(line.toSubSpace(start).getX(),
-                                line.toSubSpace(end).getX(),
-                                precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected AbstractSubHyperplane<Vector2D, Vector1D> buildNew(final Hyperplane<Vector2D> hyperplane,
-                                                                       final Region<Vector1D> remainingRegion) {
-        return new SubLine(hyperplane, remainingRegion);
+    public RegionBSPTree1D getSubspaceRegion() {
+        return region;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>In all cases, the current instance is not modified. However, In order to avoid
+     * unnecessary copying, this method will use the current instance as the split value when
+     * the instance lies entirely on the plus or minus side of the splitter. For example, if
+     * this instance lies entirely on the minus side of the splitter, the subplane
+     * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
+     * will return the current instance if it lies entirely on the plus side. Callers need to make
+     * special note of this, since this class is mutable.</p>
+     */
+    @Override
+    public Split<SubLine> split(final Hyperplane<Vector2D> splitter) {
+        return splitInternal(splitter, this, (line, reg) -> new SubLine(line, (RegionBSPTree1D) reg));
+    }
+
+    /** Add a line segment to this instance..
+     * @param segment line segment to add
+     * @throws GeometryException if the given line segment is not from
+     *      a line equivalent to this instance
+     */
+    public void add(final Segment segment) {
+        validateLine(segment.getLine());
+
+        region.add(segment.getSubspaceRegion());
+    }
+
+    /** Add the region represented by the given subline to this instance.
+     * The argument is not modified.
+     * @param subline subline to add
+     * @throws GeometryException if the given subline is not from
+     *      a line equivalent to this instance
+     */
+    public void add(final SubLine subline) {
+        validateLine(subline.getLine());
+
+        region.union(subline.getSubspaceRegion());
     }
 
     /** {@inheritDoc} */
     @Override
-    public SplitSubHyperplane<Vector2D> split(final Hyperplane<Vector2D> hyperplane) {
+    public String toString() {
+        final Line line = getLine();
 
-        final Line    thisLine  = (Line) getHyperplane();
-        final Line    otherLine = (Line) hyperplane;
-        final Vector2D crossing = thisLine.intersection(otherLine);
-        final DoublePrecisionContext precision = thisLine.getPrecision();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[')
+            .append("lineOrigin= ")
+            .append(line.getOrigin())
+            .append(", lineDirection= ")
+            .append(line.getDirection())
+            .append(", region= ")
+            .append(region)
+            .append(']');
 
-        if (crossing == null) {
-            // the lines are parallel
-            final double global = otherLine.getOffset(thisLine);
-            final int comparison = precision.compare(global, 0.0);
+        return sb.toString();
+    }
 
-            if (comparison < 0) {
-                return new SplitSubHyperplane<>(null, this);
-            } else if (comparison > 0) {
-                return new SplitSubHyperplane<>(this, null);
+    /** Validate that the given line is equivalent to the line
+     * defining this subline.
+     * @param inputLine the line to validate
+     * @throws GeometryException if the given line is not equivalent
+     *      to the line for this instance
+     */
+    private void validateLine(final Line inputLine) {
+        final Line line = getLine();
+
+        if (!line.eq(inputLine)) {
+            throw new GeometryException("Argument is not on the same " +
+                    "line. Expected " + line + " but was " +
+                    inputLine);
+        }
+    }
+
+    /** {@link Builder} implementation for sublines.
+     */
+    public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D> {
+
+        /** SubLine instance created by this builder. */
+        private final SubLine subline;
+
+        /** Construct a new instance for building subline region for the given line.
+         * @param line the underlying line for the subline region
+         */
+        public SubLineBuilder(final Line line) {
+            this.subline = new SubLine(line);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void add(final SubHyperplane<Vector2D> sub) {
+            addInternal(sub);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void add(final ConvexSubHyperplane<Vector2D> sub) {
+            addInternal(sub);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public SubLine build() {
+            return subline;
+        }
+
+        /** Internal method for adding subhyperplanes to this builder.
+         * @param sub the subhyperplane to add; either convex or non-convex
+         */
+        private void addInternal(final SubHyperplane<Vector2D> sub) {
+            if (sub instanceof Segment) {
+                subline.add((Segment) sub);
+            } else if (sub instanceof SubLine) {
+                subline.add((SubLine) sub);
             } else {
-                return new SplitSubHyperplane<>(null, null);
+                throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }
         }
-
-        // the lines do intersect
-        final boolean direct = Math.sin(thisLine.getAngle() - otherLine.getAngle()) < 0;
-        final Vector1D x      = thisLine.toSubSpace(crossing);
-        final SubHyperplane<Vector1D> subPlus  =
-                OrientedPoint.fromPointAndDirection(x, !direct, precision).wholeHyperplane();
-        final SubHyperplane<Vector1D> subMinus =
-                OrientedPoint.fromPointAndDirection(x,  direct, precision).wholeHyperplane();
-
-        final BSPTree<Vector1D> splitTree = getRemainingRegion().getTree(false).split(subMinus);
-        final BSPTree<Vector1D> plusTree  = getRemainingRegion().isEmpty(splitTree.getPlus()) ?
-                                               new BSPTree<Vector1D>(Boolean.FALSE) :
-                                               new BSPTree<>(subPlus, new BSPTree<Vector1D>(Boolean.FALSE),
-                                                                        splitTree.getPlus(), null);
-        final BSPTree<Vector1D> minusTree = getRemainingRegion().isEmpty(splitTree.getMinus()) ?
-                                               new BSPTree<Vector1D>(Boolean.FALSE) :
-                                               new BSPTree<>(subMinus, new BSPTree<Vector1D>(Boolean.FALSE),
-                                                                        splitTree.getMinus(), null);
-        return new SplitSubHyperplane<>(new SubLine(thisLine.copySelf(), new IntervalsSet(plusTree, precision)),
-                                                   new SubLine(thisLine.copySelf(), new IntervalsSet(minusTree, precision)));
-
     }
-
 }

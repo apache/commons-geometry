@@ -23,8 +23,8 @@ public final class Geometry {
     /** Alias for {@link Math#PI}, placed here for completeness. */
     public static final double PI = Math.PI;
 
-    /** Constant value for {@code -pi} */
-    public static final double MINUS_PI = - Math.PI;
+    /** Constant value for {@code -pi}. */
+    public static final double MINUS_PI = -Math.PI;
 
     /** Constant value for {@code 2*pi}. */
     public static final double TWO_PI = 2.0 * Math.PI;
@@ -36,7 +36,7 @@ public final class Geometry {
     public static final double HALF_PI = 0.5 * Math.PI;
 
     /** Constant value for {@code - pi/2}. */
-    public static final double MINUS_HALF_PI = - 0.5 * Math.PI;
+    public static final double MINUS_HALF_PI = -0.5 * Math.PI;
 
     /** Constant value for {@code  3*pi/2}. */
     public static final double THREE_HALVES_PI = 1.5 * Math.PI;
@@ -46,6 +46,6 @@ public final class Geometry {
      */
     public static final double ZERO_PI = 0.0;
 
-    /** Private constructor */
+    /** Private constructor. */
     private Geometry() {}
 }

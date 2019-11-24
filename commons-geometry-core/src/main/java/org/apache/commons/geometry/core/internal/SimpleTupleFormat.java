@@ -25,7 +25,7 @@ public class SimpleTupleFormat {
     /** Default value separator string. */
     private static final String DEFAULT_SEPARATOR = ",";
 
-    /** Space character */
+    /** Space character. */
     private static final String SPACE = " ";
 
     /** Static instance configured with default values. Tuples in this format
@@ -34,13 +34,13 @@ public class SimpleTupleFormat {
     private static final SimpleTupleFormat DEFAULT_INSTANCE =
             new SimpleTupleFormat(",", "(", ")");
 
-    /** String separating tuple values */
+    /** String separating tuple values. */
     private final String separator;
 
-    /** String used to signal the start of a tuple; may be null */
+    /** String used to signal the start of a tuple; may be null. */
     private final String prefix;
 
-    /** String used to signal the end of a tuple; may be null */
+    /** String used to signal the end of a tuple; may be null. */
     private final String suffix;
 
     /** Constructs a new instance with the default string separator (a comma)
@@ -298,8 +298,7 @@ public class SimpleTupleFormat {
             matchSequence(str, separator, pos);
 
             return value;
-        }
-        catch (NumberFormatException exc) {
+        } catch (NumberFormatException exc) {
             fail(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
             return 0.0; // for the compiler
         }
@@ -342,7 +341,7 @@ public class SimpleTupleFormat {
         int idx = pos.getIndex();
         final int len = str.length();
 
-        for (; idx<len; ++idx) {
+        for (; idx < len; ++idx) {
             if (!Character.isWhitespace(str.codePointAt(idx))) {
                 break;
             }
@@ -369,7 +368,7 @@ public class SimpleTupleFormat {
 
         int i = idx;
         int s = 0;
-        for (; i<inputLength && s<seqLength; ++i, ++s) {
+        for (; i < inputLength && s < seqLength; ++i, ++s) {
             if (str.codePointAt(i) != seq.codePointAt(s)) {
                 break;
             }
@@ -444,7 +443,7 @@ public class SimpleTupleFormat {
      */
     private static class TupleParseException extends IllegalArgumentException {
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180629;
 
         /** Simple constructor.

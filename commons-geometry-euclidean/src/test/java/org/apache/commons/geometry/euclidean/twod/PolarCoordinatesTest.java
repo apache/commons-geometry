@@ -173,6 +173,26 @@ public class PolarCoordinatesTest {
     }
 
     @Test
+    public void testIsFinite() {
+        // act/assert
+        Assert.assertTrue(PolarCoordinates.of(1, 0).isFinite());
+        Assert.assertTrue(PolarCoordinates.of(1, Geometry.PI).isFinite());
+
+        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NaN).isFinite());
+
+        Assert.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+
+        Assert.assertFalse(PolarCoordinates.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(PolarCoordinates.of(0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(PolarCoordinates.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
+
+        Assert.assertFalse(PolarCoordinates.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(PolarCoordinates.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY).isFinite());
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         PolarCoordinates a = PolarCoordinates.of(1, 2);

@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
@@ -137,6 +138,12 @@ public final class SphericalCoordinates implements Spatial, Serializable {
         return !isNaN() && (Double.isInfinite(radius) || Double.isInfinite(azimuth) || Double.isInfinite(polar));
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFinite() {
+        return Double.isFinite(radius) && Double.isFinite(azimuth) && Double.isFinite(polar);
+    }
+
     /** Convert this set of spherical coordinates to a Cartesian form.
      * @return A 3-dimensional vector with an equivalent set of
      *      Cartesian coordinates.
@@ -221,7 +228,7 @@ public final class SphericalCoordinates implements Spatial, Serializable {
      * @return a set of spherical coordinates equivalent to the given Cartesian coordinates
      */
     public static SphericalCoordinates fromCartesian(final double x, final double y, final double z) {
-        final double radius = Math.sqrt((x*x) + (y*y) + (z*z));
+        final double radius = Vectors.norm(x, y, z);
         final double azimuth = Math.atan2(y, x);
 
         // default the polar angle to 0 when the radius is 0

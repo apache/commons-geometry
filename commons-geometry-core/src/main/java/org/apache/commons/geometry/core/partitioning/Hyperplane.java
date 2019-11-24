@@ -17,80 +17,69 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.Transform;
 
-/** This interface represents an hyperplane of a space.
-
- * <p>The most prominent place where hyperplane appears in space
- * partitioning is as cutters. Each partitioning node in a {@link
- * BSPTree BSP tree} has a cut {@link SubHyperplane sub-hyperplane}
- * which is either an hyperplane or a part of an hyperplane. In an
- * n-dimensions Euclidean space, an hyperplane is an (n-1)-dimensions
- * hyperplane (for example a traditional plane in the 3D Euclidean
- * space). They can be more exotic objects in specific fields, for
- * example a circle on the surface of the unit sphere.</p>
-
- * <p>
- * Note that this interface is <em>not</em> intended to be implemented
- * by Apache Commons Geometry users, it is only intended to be implemented
- * within the library itself. New methods may be added even for minor
- * versions, which breaks compatibility for external implementations.
- * </p>
-
- * @param <P> Point type defining the space
+/** Interface representing a hyperplane, which is a subspace of degree
+ * one less than the space it is embedded in.
+ * @param <P> Point implementation type
  */
 public interface Hyperplane<P extends Point<P>> {
 
-    /** Copy the instance.
-     * <p>The instance created is completely independant of the original
-     * one. A deep copy is used, none of the underlying objects are
-     * shared (except for immutable objects).</p>
-     * @return a new hyperplane, copy of the instance
+    /** Get the offset (oriented distance) of a point with respect
+     * to this instance. Points with an offset of zero lie on the
+     * hyperplane itself.
+     * @param point the point to compute the offset for
+     * @return the offset of the point
      */
-    Hyperplane<P> copySelf();
+    double offset(P point);
 
-    /** Get the offset (oriented distance) of a point.
-     * <p>The offset is 0 if the point is on the underlying hyperplane,
-     * it is positive if the point is on one particular side of the
-     * hyperplane, and it is negative if the point is on the other side,
-     * according to the hyperplane natural orientation.</p>
-     * @param point point to check
-     * @return offset of the point
+    /** Classify a point with respect to this hyperplane.
+     * @param point the point to classify
+     * @return the relative location of the point with
+     *      respect to this instance
      */
-    double getOffset(P point);
+    HyperplaneLocation classify(P point);
 
-    /** Project a point to the hyperplane.
-     * @param point point to project
-     * @return projected point
+    /** Return true if the given point lies on the hyperplane.
+     * @param point the point to test
+     * @return true if the point lies on the hyperplane
+     */
+    boolean contains(P point);
+
+    /** Project a point onto this instance.
+     * @param point the point to project
+     * @return the projection of the point onto this instance. The returned
+     *      point lies on the hyperplane.
      */
     P project(P point);
 
-    /** Get the object used to determine floating point equality for this hyperplane.
-     * This determines which points belong to the hyperplane and which do not, or pictured
-     * another way, the "thickness" of the hyperplane.
-     * @return the floating point precision context for the instance
+    /** Return a hyperplane that has the opposite orientation as this instance.
+     * That is, the plus side of this instance is the minus side of the returned
+     * instance and vice versa.
+     * @return a hyperplane with the opposite orientation
      */
-    DoublePrecisionContext getPrecision();
+    Hyperplane<P> reverse();
 
-    /** Check if the instance has the same orientation as another hyperplane.
-     * <p>This method is expected to be called on parallel hyperplanes. The
-     * method should <em>not</em> re-check for parallelism, only for
-     * orientation, typically by testing something like the sign of the
-     * dot-products of normals.</p>
-     * @param other other hyperplane to check against the instance
-     * @return true if the instance and the other hyperplane have
-     * the same orientation
+    /** Transform this instance using the given {@link Transform}.
+     * @param transform object to transform this instance with
+     * @return a new, transformed hyperplane
      */
-    boolean sameOrientationAs(Hyperplane<P> other);
+    Hyperplane<P> transform(Transform<P> transform);
 
-    /** Build a sub-hyperplane covering the whole hyperplane.
-     * @return a sub-hyperplane covering the whole hyperplane
+    /** Return true if this instance has a similar orientation to the given hyperplane,
+     * meaning that they point in generally the same direction. This method is not
+     * used to determine exact equality of hyperplanes, but rather to determine whether
+     * two hyperplanes that contain the same points are parallel (point in the same direction)
+     * or anti-parallel (point in opposite directions).
+     * @param other the hyperplane to compare with
+     * @return true if the hyperplanes point in generally the same direction and could
+     *      possibly be parallel
      */
-    SubHyperplane<P> wholeHyperplane();
+    boolean similarOrientation(Hyperplane<P> other);
 
-    /** Build a region covering the whole space.
-     * @return a region containing the instance
+    /** Return a {@link ConvexSubHyperplane} spanning this entire hyperplane. The returned
+     * subhyperplane contains all points lying in this hyperplane and no more.
+     * @return a {@link ConvexSubHyperplane} containing all points lying in this hyperplane
      */
-    Region<P> wholeSpace();
-
+    ConvexSubHyperplane<P> span();
 }

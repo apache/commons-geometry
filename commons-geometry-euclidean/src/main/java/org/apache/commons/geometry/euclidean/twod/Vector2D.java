@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
+import java.util.Comparator;
+import java.util.function.Function;
+
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -45,20 +47,41 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
     public static final Vector2D NEGATIVE_INFINITY =
         new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-    /** Serializable UID */
+    /** Comparator that sorts vectors in component-wise ascending order.
+     * Vectors are only considered equal if their coordinates match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
+     */
+    public static final Comparator<Vector2D> COORDINATE_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getX(), b.getX());
+            if (cmp == 0) {
+                cmp = Double.compare(a.getY(), b.getY());
+            }
+        } else if (a != null) {
+            cmp = -1;
+        } else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
+
+    /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
-    /** Abscissa (first coordinate) */
+    /** Abscissa (first coordinate). */
     private final double x;
 
-    /** Ordinate (second coordinate) */
+    /** Ordinate (second coordinate). */
     private final double y;
 
     /** Simple constructor.
      * @param x abscissa (first coordinate)
      * @param y ordinate (second coordinate)
      */
-    private Vector2D(double x, double y) {
+    private Vector2D(final double x, final double y) {
         this.x = x;
         this.y = y;
     }
@@ -81,7 +104,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return coordinates for this instance
      */
     public double[] toArray() {
-        return new double[] { x, y };
+        return new double[]{x, y};
     }
 
     /** {@inheritDoc} */
@@ -104,19 +127,25 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D vectorTo(Vector2D v) {
+    public boolean isFinite() {
+        return Double.isFinite(x) && Double.isFinite(y);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D vectorTo(final Vector2D v) {
         return v.subtract(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Unit directionTo(Vector2D v) {
+    public Unit directionTo(final Vector2D v) {
         return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D lerp(Vector2D p, double t) {
+    public Vector2D lerp(final Vector2D p, final double t) {
         return linearCombination(1.0 - t, this, t, p);
     }
 
@@ -140,7 +169,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D withNorm(double magnitude) {
+    public Vector2D withNorm(final double magnitude) {
         final double invNorm = 1.0 / getCheckedNorm();
 
         return new Vector2D(
@@ -151,25 +180,25 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D add(Vector2D v) {
+    public Vector2D add(final Vector2D v) {
         return new Vector2D(x + v.x, y + v.y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D add(double factor, Vector2D v) {
+    public Vector2D add(final double factor, final Vector2D v) {
         return new Vector2D(x + (factor * v.x), y + (factor * v.y));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D subtract(Vector2D v) {
+    public Vector2D subtract(final Vector2D v) {
         return new Vector2D(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D subtract(double factor, Vector2D v) {
+    public Vector2D subtract(final double factor, final Vector2D v) {
         return new Vector2D(x - (factor * v.x), y - (factor * v.y));
     }
 
@@ -187,25 +216,25 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D multiply(double a) {
+    public Vector2D multiply(final double a) {
         return new Vector2D(a * x, a * y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distance(Vector2D v) {
+    public double distance(final Vector2D v) {
         return Vectors.norm(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distanceSq(Vector2D v) {
+    public double distanceSq(final Vector2D v) {
         return Vectors.normSq(x - v.x, y - v.y);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double dot(Vector2D v) {
+    public double dot(final Vector2D v) {
         return LinearCombination.value(x, v.x, y, v.y);
     }
 
@@ -217,7 +246,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * other.</p>
      */
     @Override
-    public double angle(Vector2D v) {
+    public double angle(final Vector2D v) {
         double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
         double dot = dot(v);
@@ -237,13 +266,13 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D project(Vector2D base) {
+    public Vector2D project(final Vector2D base) {
         return getComponent(base, false, Vector2D::new);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D reject(Vector2D base) {
+    public Vector2D reject(final Vector2D base) {
         return getComponent(base, true, Vector2D::new);
     }
 
@@ -253,17 +282,17 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * called on a vector pointing along the positive x-axis, then a unit vector representing
      * the positive y-axis is returned.
      * @return a unit vector orthogonal to the current instance
-     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
-     *  or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the current instance
+     *      is zero, NaN, or infinite
      */
     @Override
-    public Vector2D orthogonal() {
+    public Vector2D.Unit orthogonal() {
         return Unit.from(-y, x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D orthogonal(Vector2D dir) {
+    public Vector2D.Unit orthogonal(final Vector2D dir) {
         return dir.getComponent(this, true, Vector2D.Unit::from);
     }
 
@@ -287,19 +316,18 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
                 -y, v.x);
     }
 
-    /** Apply the given transform to this vector, returning the result as a
-     * new vector instance.
-     * @param transform the transform to apply
-     * @return a new, transformed vector
-     * @see AffineTransformMatrix2D#apply(Vector2D)
+    /** Convenience method to apply a function to this vector. This
+     * can be used to transform the vector inline with other methods.
+     * @param fn the function to apply
+     * @return the transformed vector
      */
-    public Vector2D transform(AffineTransformMatrix2D transform) {
-        return transform.apply(this);
+    public Vector2D transform(final Function<Vector2D, Vector2D> fn) {
+        return fn.apply(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(final Vector2D vec, final DoublePrecisionContext precision) {
+    public boolean eq(final Vector2D vec, final DoublePrecisionContext precision) {
         return precision.eq(x, vec.x) &&
                 precision.eq(y, vec.y);
     }
@@ -339,7 +367,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }
@@ -369,11 +397,14 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      *      returned. If false, the projection of this instance onto {@code base}
      *      is returned.
      * @param factory factory function used to build the final vector
+     * @param <T> Vector implementation type
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws IllegalNormException if {@code base} has a zero, NaN, or infinite norm
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if {@code base} has a
+     *      zero, NaN, or infinite norm
      */
-    private Vector2D getComponent(Vector2D base, boolean reject, DoubleFunction2N<Vector2D> factory) {
+    private <T extends Vector2D> T getComponent(final Vector2D base, final boolean reject,
+            final DoubleFunction2N<T> factory) {
         final double aDotB = dot(base);
 
         // We need to check the norm value here to ensure that it's legal. However, we don't
@@ -401,7 +432,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param y abscissa (second coordinate value)
      * @return vector instance
      */
-    public static Vector2D of(double x, double y) {
+    public static Vector2D of(final double x, final double y) {
         return new Vector2D(x, y);
     }
 
@@ -410,7 +441,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return new vector
      * @exception IllegalArgumentException if the array does not have 2 elements
      */
-    public static Vector2D of(double[] v) {
+    public static Vector2D of(final double[] v) {
         if (v.length != 2) {
             throw new IllegalArgumentException("Dimension mismatch: " + v.length + " != 2");
         }
@@ -423,7 +454,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector2D parse(String str) {
+    public static Vector2D parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
     }
 
@@ -437,7 +468,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param c first coordinate
      * @return vector with coordinates calculated by {@code a * c}
      */
-    public static Vector2D linearCombination(double a, Vector2D c) {
+    public static Vector2D linearCombination(final double a, final Vector2D c) {
         return new Vector2D(a * c.x, a * c.y);
     }
 
@@ -453,7 +484,8 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param v2 second coordinate
      * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2) {
+    public static Vector2D linearCombination(final double a1, final Vector2D v1,
+            final double a2, final Vector2D v2) {
         return new Vector2D(
                 LinearCombination.value(a1, v1.x, a2, v2.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y));
@@ -473,8 +505,9 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param v3 third coordinate
      * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2,
-            double a3, Vector2D v3) {
+    public static Vector2D linearCombination(final double a1, final Vector2D v1,
+            final double a2, final Vector2D v2,
+            final double a3, final Vector2D v3) {
         return new Vector2D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y));
@@ -496,8 +529,10 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param v4 fourth coordinate
      * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector2D linearCombination(double a1, Vector2D v1, double a2, Vector2D v2,
-            double a3, Vector2D v3, double a4, Vector2D v4) {
+    public static Vector2D linearCombination(final double a1, Vector2D v1,
+            final double a2, final Vector2D v2,
+            final double a3, final Vector2D v3,
+            final double a4, final Vector2D v4) {
         return new Vector2D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x),
                 LinearCombination.value(a1, v1.y, a2, v2.y, a3, v3.y, a4, v4.y));
@@ -517,7 +552,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         /** Negation of unit vector (coordinates: 0, -1). */
         public static final Unit MINUS_Y = new Unit(0d, -1d);
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given
@@ -535,9 +570,10 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          * @param x Vector coordinate.
          * @param y Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value
+         *      is zero, NaN, or infinite
          */
-        public static Unit from(double x, double y) {
+        public static Unit from(final double x, final double y) {
             final double invNorm = 1 / Vectors.checkedNorm(Vectors.norm(x, y));
             return new Unit(x * invNorm, y * invNorm);
         }
@@ -547,9 +583,10 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+         *      value is zero, NaN, or infinite
          */
-        public static Unit from(Vector2D v) {
+        public static Unit from(final Vector2D v) {
             return v instanceof Unit ?
                 (Unit) v :
                 from(v.getX(), v.getY());

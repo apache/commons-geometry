@@ -19,6 +19,13 @@
     "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
     "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
+  <suppress checks="ParameterNumber" files=".*/internal/Matrices" />
+  <suppress checks="ParameterNumber" files=".*/oned/Vector1D" />
+  <suppress checks="ParameterNumber" files=".*/threed/AffineTransformMatrix3D" />
+  <suppress checks="ParameterNumber" files=".*/threed/Vector3D" />
+  <suppress checks="ParameterNumber" files=".*/threed/rotation/QuaternionRotation" />
+  <suppress checks="ParameterNumber" files=".*/twod/Vector2D" />
+
   <!-- Be more lenient on tests. -->
   <suppress checks="Javadoc" files=".*[/\\]test[/\\].*" />
   <suppress checks="MultipleStringLiterals" files=".*[/\\]test[/\\].*" />

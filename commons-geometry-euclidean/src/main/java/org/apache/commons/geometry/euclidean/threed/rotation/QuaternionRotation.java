@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -40,7 +41,7 @@ import org.apache.commons.numbers.quaternion.Slerp;
  */
 public final class QuaternionRotation implements Rotation3D, Serializable {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20181018L;
 
     /** Threshold value for the dot product of antiparallel vectors. If the dot product of two vectors is
@@ -92,8 +93,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         // vector is to just try to normalize it and see if we fail
         try {
             return Vector3D.Unit.from(quat.getX(), quat.getY(), quat.getZ());
-        }
-        catch (IllegalNormException exc) {
+        } catch (IllegalNormException exc) {
             return Vector3D.Unit.PLUS_X;
         }
     }
@@ -155,6 +155,70 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
                 );
     }
 
+    /** {@inheritDoc}
+     *
+     * <p>This method simply calls {@code apply(vec)} since rotations treat
+     * points and vectors similarly.</p>
+     */
+    @Override
+    public Vector3D applyVector(final Vector3D vec) {
+        return apply(vec);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns true since rotations always preserve the orientation
+     * of the space.</p>
+     */
+    @Override
+    public boolean preservesOrientation() {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public AffineTransformMatrix3D toMatrix() {
+
+        final double qw = quat.getW();
+        final double qx = quat.getX();
+        final double qy = quat.getY();
+        final double qz = quat.getZ();
+
+        // pre-calculate products that we'll need
+        final double xx = qx * qx;
+        final double xy = qx * qy;
+        final double xz = qx * qz;
+        final double xw = qx * qw;
+
+        final double yy = qy * qy;
+        final double yz = qy * qz;
+        final double yw = qy * qw;
+
+        final double zz = qz * qz;
+        final double zw = qz * qw;
+
+        final double m00 = 1.0 - (2.0 * (yy + zz));
+        final double m01 = 2.0 * (xy - zw);
+        final double m02 = 2.0 * (xz + yw);
+        final double m03 = 0.0;
+
+        final double m10 = 2.0 * (xy + zw);
+        final double m11 = 1.0 - (2.0 * (xx + zz));
+        final double m12 = 2.0 * (yz - xw);
+        final double m13 = 0.0;
+
+        final double m20 = 2.0 * (xz - yw);
+        final double m21 = 2.0 * (yz + xw);
+        final double m22 = 1.0 - (2.0 * (xx + yy));
+        final double m23 = 0.0;
+
+        return AffineTransformMatrix3D.of(
+                    m00, m01, m02, m03,
+                    m10, m11, m12, m13,
+                    m20, m21, m22, m23
+                );
+    }
+
     /**
      * Multiply this instance by the given argument, returning the result as
      * a new instance. This is equivalent to the expression {@code t * q} where
@@ -207,55 +271,6 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
      */
     public Slerp slerp(QuaternionRotation end) {
         return new Slerp(quat, end.quat);
-    }
-
-    /**
-     * Return a {@link AffineTransformMatrix3D} that performs the rotation
-     * represented by this instance.
-     *
-     * @return an {@link AffineTransformMatrix3D} instance that performs the rotation
-     *         represented by this instance
-     */
-    public AffineTransformMatrix3D toTransformMatrix() {
-
-        final double qw = quat.getW();
-        final double qx = quat.getX();
-        final double qy = quat.getY();
-        final double qz = quat.getZ();
-
-        // pre-calculate products that we'll need
-        final double xx = qx * qx;
-        final double xy = qx * qy;
-        final double xz = qx * qz;
-        final double xw = qx * qw;
-
-        final double yy = qy * qy;
-        final double yz = qy * qz;
-        final double yw = qy * qw;
-
-        final double zz = qz * qz;
-        final double zw = qz * qw;
-
-        final double m00 = 1.0 - (2.0 * (yy + zz));
-        final double m01 = 2.0 * (xy - zw);
-        final double m02 = 2.0 * (xz + yw);
-        final double m03 = 0.0;
-
-        final double m10 = 2.0 * (xy + zw);
-        final double m11 = 1.0 - (2.0 * (xx + zz));
-        final double m12 = 2.0 * (yz - xw);
-        final double m13 = 0.0;
-
-        final double m20 = 2.0 * (xz - yw);
-        final double m21 = 2.0 * (yz + xw);
-        final double m22 = 1.0 - (2.0 * (xx + yy));
-        final double m23 = 0.0;
-
-        return AffineTransformMatrix3D.of(
-                    m00, m01, m02, m03,
-                    m10, m11, m12, m13,
-                    m20, m21, m22, m23
-                );
     }
 
     /** Get a sequence of axis-angle rotations that produce an overall rotation equivalent to this instance.
@@ -349,16 +364,13 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         if (frame == AxisReferenceFrame.RELATIVE) {
             if (sequenceType == AxisSequenceType.TAIT_BRYAN) {
                 return getRelativeTaitBryanAngles(axis1, axis2, axis3);
-            }
-            else if (sequenceType == AxisSequenceType.EULER) {
+            } else if (sequenceType == AxisSequenceType.EULER) {
                 return getRelativeEulerAngles(axis1, axis2, axis3);
             }
-        }
-        else if (frame == AxisReferenceFrame.ABSOLUTE) {
+        } else if (frame == AxisReferenceFrame.ABSOLUTE) {
             if (sequenceType == AxisSequenceType.TAIT_BRYAN) {
                 return getAbsoluteTaitBryanAngles(axis1, axis2, axis3);
-            }
-            else if (sequenceType == AxisSequenceType.EULER) {
+            } else if (sequenceType == AxisSequenceType.EULER) {
                 return getAbsoluteEulerAngles(axis1, axis2, axis3);
             }
         }
@@ -394,7 +406,9 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             final double angle1TanY = vec2.dot(axis1.cross(axis2));
             final double angle1TanX = vec2.dot(axis2);
 
-            final double angle2 = angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD ? Geometry.HALF_PI : Geometry.MINUS_HALF_PI;
+            final double angle2 = angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD ?
+                    Geometry.HALF_PI :
+                    Geometry.MINUS_HALF_PI;
 
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),
@@ -560,7 +574,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
      * @return a new instance representing the defined rotation
      *
      * @throws IllegalNormException if the given axis cannot be normalized
-     * @throws IllegalArgumentException if the angle is NaN or infinite
+     * @throws GeometryValueException if the angle is NaN or infinite
      */
     public static QuaternionRotation fromAxisAngle(final Vector3D axis, final double angle) {
         // reference formula:
@@ -568,7 +582,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         final Vector3D normAxis = axis.normalize();
 
         if (!Double.isFinite(angle)) {
-            throw new IllegalArgumentException("Invalid angle: " + angle);
+            throw new GeometryValueException("Invalid angle: " + angle);
         }
 
         final double halfAngle = 0.5 * angle;
@@ -766,8 +780,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             y = (m02 - m20) * sinv;
             z = (m10 - m01) * sinv;
             w = 0.25 * s;
-        }
-        else if ((m00 > m11) && (m00 > m22)) {
+        } else if ((m00 > m11) && (m00 > m22)) {
             // let s = 4*x
             final double s = 2.0 * Math.sqrt(1.0 + m00 - m11 - m22);
             final double sinv = 1.0 / s;
@@ -776,8 +789,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             y = (m01 + m10) * sinv;
             z = (m02 + m20) * sinv;
             w = (m21 - m12) * sinv;
-        }
-        else if (m11 > m22) {
+        } else if (m11 > m22) {
             // let s = 4*y
             final double s = 2.0 * Math.sqrt(1.0 + m11 - m00 - m22);
             final double sinv = 1.0 / s;
@@ -786,8 +798,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
             y = 0.25 * s;
             z = (m21 + m12) * sinv;
             w = (m02 - m20) * sinv;
-        }
-        else {
+        } else {
             // let s = 4*z
             final double s = 2.0 * Math.sqrt(1.0 + m22 - m00 - m11);
             final double sinv = 1.0 / s;
@@ -813,7 +824,7 @@ public final class QuaternionRotation implements Rotation3D, Serializable {
         int i;
         int j;
 
-        for (i=0, j=len-1; i < len / 2; ++i, --j) {
+        for (i = 0, j = len - 1; i < len / 2; ++i, --j) {
             temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;

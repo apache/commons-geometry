@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
-
 /**
  * Abstract base class for Euclidean vectors with two or more dimensions.
  *
@@ -26,7 +24,7 @@ import org.apache.commons.geometry.core.exception.IllegalNormException;
 public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensionalEuclideanVector<V>>
         extends EuclideanVector<V> {
 
-    /** Serializable version identifer */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20181017L;
 
     /** Get the projection of the instance onto the given base vector. The returned
@@ -37,7 +35,8 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * </code>
      * @param base base vector
      * @return the vector projection of the instance onto {@code base}
-     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
+     * @exception org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the base vector is
+     *      zero, NaN, or infinite
      * @see #reject(MultiDimensionalEuclideanVector)
      */
     public abstract V project(V base);
@@ -52,15 +51,16 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * </code>
      * @param base base vector
      * @return the vector rejection of the instance from {@code base}
-     * @exception IllegalNormException if the norm of the base vector is zero, NaN, or infinite
+     * @exception org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the base vector is
+     *      zero, NaN, or infinite
      * @see #project(MultiDimensionalEuclideanVector)
      */
     public abstract V reject(V base);
 
     /** Get a unit vector orthogonal to the instance.
      * @return a unit vector orthogonal to the current instance
-     * @throws IllegalNormException if the norm of the current instance is zero, NaN,
-     *  or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the current instance
+     *      is zero, NaN, or infinite
      */
     public abstract V orthogonal();
 
@@ -70,8 +70,8 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * @param dir the direction to use for generating the orthogonal vector
      * @return unit vector orthogonal to the current vector and pointing in the direction of
      *      {@code dir} that does not lie along the current vector
-     * @throws IllegalNormException if either vector norm is zero, NaN or infinite,
-     *      or the given vector is collinear with this vector.
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if either vector norm is
+     *      zero, NaN or infinite, or the given vector is collinear with this vector.
      */
     public abstract V orthogonal(V dir);
 }

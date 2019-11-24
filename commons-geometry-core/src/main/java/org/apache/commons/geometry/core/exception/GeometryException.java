@@ -22,7 +22,7 @@ package org.apache.commons.geometry.core.exception;
  */
 public class GeometryException extends RuntimeException {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180909L;
 
     /** Simple constructor with error message.

@@ -17,10 +17,12 @@
 package org.apache.commons.geometry.euclidean.twod.hull;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.partitioning.Region;
-import org.apache.commons.geometry.core.partitioning.RegionFactory;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -127,7 +129,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                 this.lineSegments = new Segment[1];
                 final Vector2D p1 = vertices[0];
                 final Vector2D p2 = vertices[1];
-                this.lineSegments[0] = new Segment(p1, p2, Line.fromPoints(p1, p2, precision));
+                this.lineSegments[0] = Segment.fromPoints(p1, p2, precision);
             } else {
                 this.lineSegments = new Segment[size];
                 Vector2D firstPoint = null;
@@ -138,13 +140,11 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
                         firstPoint = point;
                         lastPoint = point;
                     } else {
-                        this.lineSegments[index++] =
-                                new Segment(lastPoint, point, Line.fromPoints(lastPoint, point, precision));
+                        this.lineSegments[index++] = Segment.fromPoints(lastPoint, point, precision);
                         lastPoint = point;
                     }
                 }
-                this.lineSegments[index] =
-                        new Segment(lastPoint, firstPoint, Line.fromPoints(lastPoint, firstPoint, precision));
+                this.lineSegments[index] = Segment.fromPoints(lastPoint, firstPoint, precision);
             }
         }
         return lineSegments;
@@ -152,16 +152,15 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public Region<Vector2D> createRegion() {
+    public ConvexArea createRegion() {
         if (vertices.length < 3) {
-            throw new IllegalStateException("Region generation requires at least 3 vertices but found only " + vertices.length);
+            throw new IllegalStateException("Region generation requires at least 3 vertices but found only " +
+                    vertices.length);
         }
-        final RegionFactory<Vector2D> factory = new RegionFactory<>();
-        final Segment[] segments = retrieveLineSegments();
-        final Line[] lineArray = new Line[segments.length];
-        for (int i = 0; i < segments.length; i++) {
-            lineArray[i] = segments[i].getLine();
-        }
-        return factory.buildConvex(lineArray);
+
+        List<Line> bounds = Arrays.asList(retrieveLineSegments()).stream()
+            .map(Segment::getLine).collect(Collectors.toList());
+
+        return ConvexArea.fromBounds(bounds);
     }
 }
