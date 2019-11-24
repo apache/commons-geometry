@@ -464,9 +464,9 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a scale factor for first coordinate
-     * @param c first coordinate
-     * @return vector with coordinates calculated by {@code a * c}
+     * @param a scale factor for first vector
+     * @param c first vector
+     * @return vector calculated by {@code a * c}
      */
     public static Vector2D linearCombination(final double a, final Vector2D c) {
         return new Vector2D(a * c.x, a * c.y);
@@ -478,11 +478,11 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
      */
     public static Vector2D linearCombination(final double a1, final Vector2D v1,
             final double a2, final Vector2D v2) {
@@ -497,13 +497,13 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
     public static Vector2D linearCombination(final double a1, final Vector2D v1,
             final double a2, final Vector2D v2,
@@ -519,15 +519,15 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @param a4 scale factor for fourth coordinate
-     * @param v4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @param a4 scale factor for fourth vector
+     * @param v4 fourth vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
     public static Vector2D linearCombination(final double a1, Vector2D v1,
             final double a2, final Vector2D v2,

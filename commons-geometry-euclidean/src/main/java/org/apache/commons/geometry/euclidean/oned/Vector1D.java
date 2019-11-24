@@ -326,9 +326,9 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a scale factor for first coordinate
-     * @param c first coordinate
-     * @return vector with coordinates calculated by {@code a * c}
+     * @param a scale factor for first vector
+     * @param c first vector
+     * @return vector calculated by {@code a * c}
      */
     public static Vector1D linearCombination(final double a, final Vector1D c) {
         return new Vector1D(a * c.x);
@@ -340,11 +340,11 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
      */
     public static Vector1D linearCombination(final double a1, final Vector1D v1,
             final double a2, final Vector1D v2) {
@@ -359,13 +359,13 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
     public static Vector1D linearCombination(final double a1, final Vector1D v1,
             final double a2, final Vector1D v2,
@@ -381,15 +381,15 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @param a4 scale factor for fourth coordinate
-     * @param v4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @param a4 scale factor for fourth vector
+     * @param v4 fourth vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
     public static Vector1D linearCombination(final double a1, final Vector1D v1,
             final double a2, final Vector1D v2,
@@ -405,7 +405,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * This allows optimizations to be performed for certain operations.
      */
     public static final class Unit extends Vector1D {
-
         /** Unit vector (coordinates: 1). */
         public static final Unit PLUS  = new Unit(1d);
         /** Negation of unit vector (coordinates: -1). */
