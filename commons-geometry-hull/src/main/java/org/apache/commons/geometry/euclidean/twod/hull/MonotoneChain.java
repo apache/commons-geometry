@@ -118,7 +118,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         }
 
         // special case: if the lower and upper hull may contain only 1 point if all are identical
-        if (hullVertices.isEmpty() && ! lowerHull.isEmpty()) {
+        if (hullVertices.isEmpty() && !lowerHull.isEmpty()) {
             hullVertices.add(lowerHull.get(0));
         }
 

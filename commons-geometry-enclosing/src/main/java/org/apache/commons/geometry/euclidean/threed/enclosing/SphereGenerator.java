@@ -33,7 +33,7 @@ import org.apache.commons.numbers.fraction.BigFraction;
  */
 public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
-    /** Base epsilon value */
+    /** Base epsilon value. */
     private static final double BASE_EPS = 1e-10;
 
     /** {@inheritDoc} */
@@ -57,7 +57,8 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                     if (support.size() < 4) {
 
                         // delegate to 2D disk generator
-                        final DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
+                        final DoublePrecisionContext precision =
+                                new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
                         final Plane p = Plane.fromPoints(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubspace(vA),

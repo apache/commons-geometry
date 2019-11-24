@@ -27,7 +27,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
-    /** Default epsilon vlaue. */
+    /** Default epsilon value. */
     private static final double DEFAULT_EPSILON = 1e-10;
 
     /** Precision context used to compare floating point numbers. */
@@ -58,7 +58,8 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      * added as hull vertices
      * @param precision precision context used to compare floating point numbers
      */
-    protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints, final DoublePrecisionContext precision) {
+    protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints,
+            final DoublePrecisionContext precision) {
         this.includeCollinearPoints = includeCollinearPoints;
         this.precision = precision;
     }

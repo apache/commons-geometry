@@ -154,7 +154,8 @@ public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
     @Override
     public ConvexArea createRegion() {
         if (vertices.length < 3) {
-            throw new IllegalStateException("Region generation requires at least 3 vertices but found only " + vertices.length);
+            throw new IllegalStateException("Region generation requires at least 3 vertices but found only " +
+                    vertices.length);
         }
 
         List<Line> bounds = Arrays.asList(retrieveLineSegments()).stream()
