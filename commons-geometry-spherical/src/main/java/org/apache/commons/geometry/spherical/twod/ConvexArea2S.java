@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -38,7 +37,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Point2S, GreatArc> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191021L;
 
     /** Instance representing the full spherical area. */
@@ -110,11 +109,9 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
 
         if (numSides == 0) {
             return FULL_SIZE;
-        }
-        else if (numSides == 1) {
+        } else if (numSides == 1) {
             return HALF_SIZE;
-        }
-        else {
+        } else {
             // use the extended version of Girard's theorem
             // https://en.wikipedia.org/wiki/Spherical_trigonometry#Girard's_theorem
             final double[] angles = getInteriorAngles();
@@ -133,12 +130,10 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         if (numSides == 0) {
             // full space; no barycenter
             return null;
-        }
-        else if (numSides == 1) {
+        } else if (numSides == 1) {
             // hemisphere; barycenter is the pole of the hemisphere
             return arcs.get(0).getCircle().getPolePoint();
-        }
-        else {
+        } else {
             // 2 or more sides; use an extension of the approach outlined here:
             // https://archive.org/details/centroidinertiat00broc
             // In short, the barycenter is the sum of the pole vectors of each side
@@ -189,27 +184,29 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return FULL;
     }
 
-    /** Construct a convex area by creating great circles between adjacent vertices. The vertices must be given in a counter-clockwise
-     * around order the interior of the shape. If the area is intended to be closed, the beginning point must be repeated
-     * at the end of the path.
+    /** Construct a convex area by creating great circles between adjacent vertices. The vertices must be given
+     * in a counter-clockwise around order the interior of the shape. If the area is intended to be closed, the
+     * beginning point must be repeated at the end of the path.
      * @param vertices vertices to use to construct the area
      * @param precision precision context used to create new great circle instances
      * @return a convex area constructed using great circles between adjacent vertices
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
      */
-    public static ConvexArea2S fromVertices(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+    public static ConvexArea2S fromVertices(final Collection<Point2S> vertices,
+            final DoublePrecisionContext precision) {
         return fromVertices(vertices, false, precision);
     }
 
-    /** Construct a convex area by creating great circles between adjacent vertices. An implicit great circle is created between the
-     * last vertex given and the first one, if needed. The vertices must be given in a counter-clockwise around order the interior
-     * of the shape.
+    /** Construct a convex area by creating great circles between adjacent vertices. An implicit great circle is
+     * created between the last vertex given and the first one, if needed. The vertices must be given in a
+     * counter-clockwise around order the interior of the shape.
      * @param vertices vertices to use to construct the area
      * @param precision precision context used to create new great circles instances
      * @return a convex area constructed using great circles between adjacent vertices
      * @see #fromVertices(Collection, DoublePrecisionContext)
      */
-    public static ConvexArea2S fromVertexLoop(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+    public static ConvexArea2S fromVertexLoop(final Collection<Point2S> vertices,
+            final DoublePrecisionContext precision) {
         return fromVertices(vertices, true, precision);
     }
 
@@ -279,11 +276,11 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding great circles or an instance representing the full area if no
      *      circles are given
-     * @throws GeometryException if the given set of bounding great circles do not form a convex
-     *      area, meaning that there is no region that is on the minus side of all of the bounding
-     *      circles.
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding great
+     *      circles do not form a convex area, meaning that there is no region that is on the minus side of all
+     *      of the bounding circles.
      */
-    public static ConvexArea2S fromBounds(final GreatCircle ... bounds) {
+    public static ConvexArea2S fromBounds(final GreatCircle... bounds) {
         return fromBounds(Arrays.asList(bounds));
     }
 
@@ -295,9 +292,9 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding great circles or an instance representing the full area if no
      *      circles are given
-     * @throws GeometryException if the given set of bounding great circles do not form a convex
-     *      area, meaning that there is no region that is on the minus side of all of the bounding
-     *      circles.
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding great
+     *      circles do not form a convex area, meaning that there is no region that is on the minus side of all
+     *      of the bounding circles.
      */
     public static ConvexArea2S fromBounds(final Iterable<GreatCircle> bounds) {
         final List<GreatArc> arcs = new ConvexRegionBoundaryBuilder<>(GreatArc.class).build(bounds);

@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.Geometry;
  */
 public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcConnector {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191107L;
 
     /** {@inheritDoc} */
@@ -67,7 +67,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      * @param previousAngle the previous best angle
      * @return true if {@code newAngle} represents a better interior angle than {@code previousAngle}
      */
-    protected abstract boolean isBetterAngle(final double newAngle, final double previousAngle);
+    protected abstract boolean isBetterAngle(double newAngle, double previousAngle);
 
     /** Convenience method for connecting a set of arcs with interior angles maximized
      * when possible. This method is equivalent to {@code new Maximize().connect(segments)}.
@@ -97,7 +97,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      */
     public static class Maximize extends InteriorAngleGreatArcConnector {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191107L;
 
         /** {@inheritDoc} */
@@ -115,7 +115,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      */
     public static class Minimize extends InteriorAngleGreatArcConnector {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191107L;
 
         /** {@inheritDoc} */

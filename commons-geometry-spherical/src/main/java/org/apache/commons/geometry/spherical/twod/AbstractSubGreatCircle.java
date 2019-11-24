@@ -26,7 +26,7 @@ import org.apache.commons.geometry.spherical.twod.SubGreatCircle.SubGreatCircleB
 abstract class AbstractSubGreatCircle
     extends AbstractEmbeddingSubHyperplane<Point2S, Point1S, GreatCircle> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191005L;
 
     /** The great circle defining this instance. */

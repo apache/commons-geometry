@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.twod;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,9 +29,9 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a connected sequence of {@link GreatArc} instances.
  */
-public class GreatArcPath implements Iterable<GreatArc>, Serializable {
+public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191028L;
 
     /** Instance containing no arcs. */
@@ -173,44 +174,44 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
     *      </li>
     *      <li>Single, full arc
     *          <ul>
-    *              <li>{@code GreatArcPath[full= true, circle= GreatCircle[pole= (0.0, 0.0, 1.0), x= (0.0, 1.0, -0.0), y= (-1.0, 0.0, 0.0)]]}</li>
+    *              <li>{@code GreatArcPath[full= true, circle= GreatCircle[pole= (0.0, 0.0, 1.0),
+    *              x= (0.0, 1.0, -0.0), y= (-1.0, 0.0, 0.0)]]}</li>
     *          </ul>
     *      </li>
     *      <li>One or more non-full arcs
     *          <ul>
-    *              <li>{@code GreatArcPath[vertices= [(0.0, 1.5707963267948966), (1.5707963267948966, 1.5707963267948966)]]}</li>
+    *              <li>{@code GreatArcPath[vertices= [(0.0, 1.5707963267948966),
+    *              (1.5707963267948966, 1.5707963267948966)]]}</li>
     *          </ul>
     *      </li>
     * </ul>
     */
-   @Override
-   public String toString() {
-       final StringBuilder sb = new StringBuilder();
-       sb.append(this.getClass().getSimpleName())
-           .append('[');
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass().getSimpleName())
+            .append('[');
 
-       if (isEmpty()) {
-           sb.append("empty= true");
-       }
-       else if (arcs.size() == 1 && arcs.get(0).isFull()) {
-           sb.append("full= true, circle= ")
-               .append(arcs.get(0).getCircle());
-       }
-       else {
-           sb.append("vertices= ")
-               .append(getVertices());
-       }
+        if (isEmpty()) {
+            sb.append("empty= true");
+        } else if (arcs.size() == 1 && arcs.get(0).isFull()) {
+            sb.append("full= true, circle= ")
+                .append(arcs.get(0).getCircle());
+        } else {
+            sb.append("vertices= ")
+                .append(getVertices());
+        }
 
-      sb.append("]");
+        sb.append("]");
 
-       return sb.toString();
-   }
+        return sb.toString();
+    }
 
     /** Construct a new path from the given arcs.
      * @param arcs arc instance to use to construct the path
      * @return a new instance constructed from the given arc instances
      */
-    public static GreatArcPath fromArcs(final GreatArc ... arcs) {
+    public static GreatArcPath fromArcs(final GreatArc... arcs) {
         return fromArcs(Arrays.asList(arcs));
     }
 
@@ -238,7 +239,8 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
      * @return a new path formed by connecting the given vertices
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
-    public static GreatArcPath fromVertexLoop(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+    public static GreatArcPath fromVertexLoop(final Collection<Point2S> vertices,
+            final DoublePrecisionContext precision) {
         return fromVertices(vertices, true, precision);
     }
 
@@ -252,7 +254,8 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
      * @return a new path formed by connecting the given vertices
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
-    public static GreatArcPath fromVertices(final Collection<Point2S> vertices, final DoublePrecisionContext precision) {
+    public static GreatArcPath fromVertices(final Collection<Point2S> vertices,
+            final DoublePrecisionContext precision) {
         return fromVertices(vertices, false, precision);
     }
 
@@ -298,7 +301,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
      */
     public static final class Builder implements Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191031L;
 
         /** Arcs appended to the path. */
@@ -334,11 +337,11 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
         /** Set the precision context. This context is used only when creating arcs
          * from appended or prepended points. It is not used when adding existing
          * {@link GreatArc} instances since those contain their own precision contexts.
-         * @param precision precision context to use when creating arcs from points
+         * @param builderPrecision precision context to use when creating arcs from points
          * @return this instance
          */
-        public Builder setPrecision(final DoublePrecisionContext precision) {
-            this.precision = precision;
+        public Builder setPrecision(final DoublePrecisionContext builderPrecision) {
+            this.precision = builderPrecision;
 
             return this;
         }
@@ -387,21 +390,21 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
          * @see #setPrecision(DoublePrecisionContext)
          */
         public Builder append(final Point2S vertex) {
-            final DoublePrecisionContext precision = getAddPointPrecision();
+            final DoublePrecisionContext vertexPrecision = getAddPointPrecision();
 
             if (endVertex == null) {
                 // make sure that we're not adding to a full arc
                 final GreatArc end = getEndArc();
                 if (end != null) {
-                    throw new IllegalStateException("Cannot add point " + vertex + " after full arc: " + end);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Cannot add point {0} after full arc: {1}", vertex, end));
                 }
 
                 // this is the first vertex added
                 startVertex = vertex;
                 endVertex = vertex;
-                endVertexPrecision = precision;
-            }
-            else if (!endVertex.eq(vertex, endVertexPrecision)) {
+                endVertexPrecision = vertexPrecision;
+            } else if (!endVertex.eq(vertex, vertexPrecision)) {
                 // only add the vertex if its not equal to the end point
                 // of the last arc
                 appendInternal(GreatArc.fromPoints(endVertex, vertex, endVertexPrecision));
@@ -429,7 +432,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
          * @return this instance
          * @see #append(Point2S)
          */
-        public Builder appendVertices(final Point2S ... vertices) {
+        public Builder appendVertices(final Point2S... vertices) {
             return appendVertices(Arrays.asList(vertices));
         }
 
@@ -461,15 +464,15 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
                 // make sure that we're not adding to a full arc
                 final GreatArc start = getStartArc();
                 if (start != null) {
-                    throw new IllegalStateException("Cannot add point " + vertex + " before full arc: " + start);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Cannot add point {0} before full arc: {1}", vertex, start));
                 }
 
                 // this is the first vertex added
                 startVertex = vertex;
                 endVertex = vertex;
                 endVertexPrecision = vertexPrecision;
-            }
-            else if (!vertex.eq(startVertex, vertexPrecision)) {
+            } else if (!vertex.eq(startVertex, vertexPrecision)) {
                 // only add if the vertex is not equal to the start
                 // point of the first arc
                 prependInternal(GreatArc.fromPoints(vertex, startVertex, vertexPrecision));
@@ -500,8 +503,8 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
          * @return this instance
          * @see #prepend(Point2S)
          */
-        public Builder prependPoints(final Point2S ... vertices) {
-            for (int i=vertices.length - 1; i >=0 ; --i) {
+        public Builder prependPoints(final Point2S... vertices) {
+            for (int i = vertices.length - 1; i >= 0; --i) {
                 prepend(vertices[i]);
             }
 
@@ -519,8 +522,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
                     if (!endVertex.eq(startVertex, endVertexPrecision)) {
                         appendInternal(GreatArc.fromPoints(endVertex, startVertex, endVertexPrecision));
                     }
-                }
-                else {
+                } else {
                     throw new IllegalStateException("Unable to close path: path is full");
                 }
             }
@@ -543,8 +545,7 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
             if (appendedArcs != null) {
                 if (result == null) {
                     result = appendedArcs;
-                }
-                else {
+                } else {
                     result.addAll(appendedArcs);
                 }
             }
@@ -554,7 +555,9 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
             }
 
             if (result.isEmpty() && startVertex != null) {
-                throw new IllegalStateException("Unable to create path; only a single point provided: " + startVertex);
+                throw new IllegalStateException(
+                        MessageFormat.format("Unable to create path; only a single point provided: {0}",
+                                startVertex));
             }
 
             // clear internal state
@@ -569,6 +572,8 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
         /** Validate that the given arcs are connected, meaning that the end point of {@code previous}
          * is equivalent to the start point of {@code next}. The arcs are considered valid if either
          * arc is null.
+         * @param previous previous arc
+         * @param next next arc
          * @throws IllegalStateException if previous and next are not null and the end point of previous
          *      is not equivalent the start point of next
          */
@@ -576,13 +581,14 @@ public class GreatArcPath implements Iterable<GreatArc>, Serializable {
             if (previous != null && next != null) {
                 final Point2S nextStartVertex = next.getStartPoint();
                 final Point2S previousEndVertex = previous.getEndPoint();
-                final DoublePrecisionContext precision = previous.getPrecision();
+                final DoublePrecisionContext previousPrecision = previous.getPrecision();
 
                 if (nextStartVertex == null || previousEndVertex == null ||
-                        !(nextStartVertex.eq(previousEndVertex, precision))) {
+                        !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
 
-                    throw new IllegalStateException("Path arcs are not connected: " +
-                        "previous= " + previous + ", next= " + next);
+                    throw new IllegalStateException(
+                            MessageFormat.format("Path arcs are not connected: previous= {0}, next= {1}",
+                                    previous, next));
                 }
             }
         }

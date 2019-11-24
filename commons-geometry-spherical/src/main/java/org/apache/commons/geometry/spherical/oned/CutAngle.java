@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -153,23 +154,21 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         return positiveFacing ? +dist : -dist;
     }
 
-    /** {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public HyperplaneLocation classify(final Point1S point) {
+    public HyperplaneLocation classify(final Point1S pt) {
         final DoublePrecisionContext precision = getPrecision();
 
-        final Point1S compPt = Point1S.ZERO.eq(point, precision) ?
+        final Point1S compPt = Point1S.ZERO.eq(pt, precision) ?
                 Point1S.ZERO :
-                point;
+                pt;
 
         final double offsetValue = offset(compPt);
         final int cmp = precision.sign(offsetValue);
 
         if (cmp > 0) {
             return HyperplaneLocation.PLUS;
-        }
-        else if (cmp < 0) {
+        } else if (cmp < 0) {
             return HyperplaneLocation.MINUS;
         }
 
@@ -178,7 +177,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
 
     /** {@inheritDoc} */
     @Override
-    public Point1S project(final Point1S point) {
+    public Point1S project(final Point1S pt) {
         return this.point;
     }
 
@@ -220,8 +219,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof CutAngle)) {
+        } else if (!(obj instanceof CutAngle)) {
             return false;
         }
 
@@ -315,7 +313,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      */
     public static class SubCutAngle implements ConvexSubHyperplane<Point1S>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190825L;
 
         /** The underlying hyperplane for this instance. */
@@ -365,10 +363,10 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         *
         * <p>This method simply returns true.</p>
         */
-       @Override
-       public boolean isFinite() {
-           return true;
-       }
+        @Override
+        public boolean isFinite() {
+            return true;
+        }
 
         /** {@inheritDoc}
          *
@@ -410,8 +408,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
-            }
-            else if (side == HyperplaneLocation.PLUS) {
+            } else if (side == HyperplaneLocation.PLUS) {
                 plus = this;
             }
 
@@ -447,10 +444,8 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         public String toString() {
             final StringBuilder sb = new StringBuilder();
             sb.append(this.getClass().getSimpleName())
-                .append("[point= ")
-                .append(hyperplane.getPoint())
-                .append(", positiveFacing= ")
-                .append(hyperplane.positiveFacing)
+                .append("[hyperplane= ")
+                .append(hyperplane)
                 .append(']');
 
             return sb.toString();
@@ -461,9 +456,9 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S>, Serializable {
+    public static final class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S>, Serializable {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190825L;
 
         /** Base subhyperplane for the builder. */
@@ -506,15 +501,15 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
             return sb.toString();
         }
 
-        /** Validate the given subhyperplane lies on the same hyperplane
-         * @param sub
+        /** Validate the given subhyperplane lies on the same hyperplane.
+         * @param sub subhyperplane to validate
          */
         private void validateHyperplane(final SubHyperplane<Point1S> sub) {
             final CutAngle baseHyper = base.getHyperplane();
             final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
-                throw new IllegalArgumentException("Argument is not on the same " +
+                throw new GeometryValueException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);
             }

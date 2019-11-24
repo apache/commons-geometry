@@ -69,11 +69,9 @@ public final class Point2S implements Point<Point2S>, Serializable {
             if (cmp == 0) {
                 cmp = Double.compare(a.getAzimuth(), b.getAzimuth());
             }
-        }
-        else if (a != null) {
+        } else if (a != null) {
             cmp = -1;
-        }
-        else if (b != null) {
+        } else if (b != null) {
             cmp = 1;
         }
 
@@ -262,7 +260,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return SimpleTupleFormat.getDefault().format(getAzimuth(), getPolar());
     }
 
-    /** Build a vector from its spherical coordinates
+    /** Build a vector from its spherical coordinates.
      * @param azimuth azimuthal angle in the x-y plane
      * @param polar polar angle
      * @return point instance with the given coordinates
@@ -273,7 +271,7 @@ public final class Point2S implements Point<Point2S>, Serializable {
         return new Point2S(azimuth, polar, null);
     }
 
-    /** Build a point from its underlying 3D vector
+    /** Build a point from its underlying 3D vector.
      * @param vector 3D vector
      * @return point instance with the coordinates determined by the given 3D vector
      * @exception IllegalStateException if vector norm is zero

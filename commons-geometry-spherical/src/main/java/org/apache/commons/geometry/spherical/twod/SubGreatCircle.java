@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -32,10 +33,10 @@ import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
  */
 public final class SubGreatCircle extends AbstractSubGreatCircle {
 
-    /** {@inheritDoc} */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191005L;
 
-    /** The 1D region on the great circle */
+    /** The 1D region on the great circle. */
     private final RegionBSPTree1S region;
 
     /** Construct a new, empty subhyperplane for the given great circle.
@@ -119,11 +120,9 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
 
             if (subLoc == SplitLocation.MINUS) {
                 minus = this;
-            }
-            else if (subLoc == SplitLocation.PLUS) {
+            } else if (subLoc == SplitLocation.PLUS) {
                 plus = this;
-            }
-            else if (subLoc == SplitLocation.BOTH) {
+            } else if (subLoc == SplitLocation.BOTH) {
                 minus = new SubGreatCircle(thisCircle, subSplit.getMinus());
                 plus =  new SubGreatCircle(thisCircle, subSplit.getPlus());
             }
@@ -134,7 +133,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
 
     /** Add an arc to this instance.
      * @param arc arc to add
-     * @throws IllegalArgumentException if the given arc is not from
+     * @throws GeometryException if the given arc is not from
      *      a great circle equivalent to this instance
      */
     public void add(final GreatArc arc) {
@@ -146,7 +145,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
     /** Add the region represented by the given subcircle to this instance.
      * The argument is not modified.
      * @param subcircle subcircle to add
-     * @throws IllegalArgumentException if the given subcircle is not from
+     * @throws GeometryException if the given subcircle is not from
      *      a great circle equivalent to this instance
      */
     public void add(final SubGreatCircle subcircle) {
@@ -173,14 +172,14 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
     /** Validate that the given great circle is equivalent to the circle
      * defining this instance.
      * @param inputCircle the great circle to validate
-     * @throws IllegalArgumentException if the argument is not equivalent
+     * @throws GeometryException if the argument is not equivalent
      *      to the great circle for this instance
      */
     private void validateGreatCircle(final GreatCircle inputCircle) {
         final GreatCircle circle = getCircle();
 
         if (!circle.eq(inputCircle)) {
-            throw new IllegalArgumentException("Argument is not on the same " +
+            throw new GeometryException("Argument is not on the same " +
                     "great circle. Expected " + circle + " but was " +
                     inputCircle);
         }
@@ -224,11 +223,9 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
         private void addInternal(final SubHyperplane<Point2S> sub) {
             if (sub instanceof GreatArc) {
                 subcircle.add((GreatArc) sub);
-            }
-            else if (sub instanceof SubGreatCircle) {
+            } else if (sub instanceof SubGreatCircle) {
                 subcircle.add((SubGreatCircle) sub);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }
         }

@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -55,27 +56,27 @@ public class AngularIntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.NEGATIVE_INFINITY, 0, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(0, Double.POSITIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.NaN, 0, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(0, Double.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Double.NaN, Double.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -96,27 +97,27 @@ public class AngularIntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.of(Double.NEGATIVE_INFINITY), Point1S.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.ZERO, Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.of(Double.POSITIVE_INFINITY), Point1S.of(Double.NEGATIVE_INFINITY), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.NaN, Point1S.ZERO, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.ZERO, Point1S.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(Point1S.NaN, Point1S.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -154,15 +155,15 @@ public class AngularIntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(pt, nan);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(nan, pt);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.of(nan, nan);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -543,19 +544,19 @@ public class AngularIntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(0, Geometry.PI + 1e-1, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Geometry.HALF_PI, Geometry.MINUS_HALF_PI + 1, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(0, -0.5, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -580,20 +581,20 @@ public class AngularIntervalTest {
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Point1S.of(Double.NEGATIVE_INFINITY),
                     Point1S.of(Double.POSITIVE_INFINITY), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Point1S.of(0), Point1S.of(Geometry.PI + 1e-1), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Point1S.of(Geometry.HALF_PI),
                     Point1S.of(Geometry.MINUS_HALF_PI + 1), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Point1S.of(0), Point1S.of(-0.5), TEST_PRECISION);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -631,21 +632,21 @@ public class AngularIntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(pt, nan);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(nan, pt);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(nan, nan);
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(
                     CutAngle.createNegativeFacing(1, TEST_PRECISION),
                     CutAngle.createPositiveFacing(0.5, TEST_PRECISION));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test

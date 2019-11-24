@@ -32,7 +32,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
  */
 public final class Transform2S implements Transform<Point2S>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 1L;
 
     /** Static instance representing the identity transform. */

@@ -41,7 +41,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class Point1S implements Point<Point1S>, Serializable {
+public final class Point1S implements Point<Point1S>, Serializable {
 
     /** A point with coordinates set to {@code 0*pi}. */
     public static final Point1S ZERO = Point1S.of(Geometry.ZERO_PI);
@@ -64,11 +64,9 @@ public class Point1S implements Point<Point1S>, Serializable {
 
         if (a != null && b != null) {
             cmp = Double.compare(a.getNormalizedAzimuth(), b.getNormalizedAzimuth());
-        }
-        else if (a != null) {
+        } else if (a != null) {
             cmp = -1;
-        }
-        else if (b != null) {
+        } else if (b != null) {
             cmp = 1;
         }
 

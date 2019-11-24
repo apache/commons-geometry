@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -544,14 +545,14 @@ public class CutAngleTest {
         // act/assert
         GeometryTestUtils.assertThrows(
                 () -> builder.add(CutAngle.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
         GeometryTestUtils.assertThrows(
                 () -> builder.add(CutAngle.createNegativeFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
 
         GeometryTestUtils.assertThrows(
                 () -> builder.add((SubHyperplane<Point1S>) CutAngle.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
     }
 
     @Test

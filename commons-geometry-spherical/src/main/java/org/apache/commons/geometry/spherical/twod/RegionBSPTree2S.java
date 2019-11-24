@@ -32,7 +32,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTree2S.RegionNode2S> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191005L;
 
     /** Constant containing the area of the full spherical space. */
@@ -112,14 +112,14 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      *      form the convex areas for any child nodes
      * @param result list containing the results of the computation
      */
-    private void toConvexRecursive(final RegionNode2S node, final ConvexArea2S nodeArea, final List<ConvexArea2S> result) {
+    private void toConvexRecursive(final RegionNode2S node, final ConvexArea2S nodeArea,
+            final List<ConvexArea2S> result) {
         if (node.isLeaf()) {
             // base case; only add to the result list if the node is inside
             if (node.isInside()) {
                 result.add(nodeArea);
             }
-        }
-        else {
+        } else {
             // recurse
             Split<ConvexArea2S> split = nodeArea.split(node.getCutHyperplane());
 
@@ -150,9 +150,8 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     protected RegionSizeProperties<Point2S> computeRegionSizeProperties() {
         // handle simple cases
         if (isFull()) {
-           return new RegionSizeProperties<>(FULL_SIZE, null);
-        }
-        else if (isEmpty()) {
+            return new RegionSizeProperties<>(FULL_SIZE, null);
+        } else if (isEmpty()) {
             return new RegionSizeProperties<>(0, null);
         }
 
@@ -253,7 +252,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      */
     public static final class RegionNode2S extends AbstractRegionBSPTree.AbstractRegionNode<Point2S, RegionNode2S> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191005L;
 
         /** Simple constructor.
@@ -283,13 +282,13 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      */
     private static final class BoundaryProjector2S extends BoundaryProjector<Point2S, RegionNode2S> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191120L;
 
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        public BoundaryProjector2S(Point2S point) {
+        BoundaryProjector2S(Point2S point) {
             super(point);
         }
 

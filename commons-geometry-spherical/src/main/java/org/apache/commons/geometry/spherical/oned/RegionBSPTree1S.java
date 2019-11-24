@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTree1S.RegionNode1S> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190817L;
 
     /** Comparator used to sort BoundaryPairs by ascending azimuth.  */
@@ -137,8 +137,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             CutAngle cut = (CutAngle) splitter;
             if (cut.isPositiveFacing()) {
                 return new Split<>(null, copy());
-            }
-            else {
+            } else {
                 return new Split<>(copy(), null);
             }
         }
@@ -181,8 +180,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             if (minus != null) {
                 minus = minus.split(opposite).getMinus();
             }
-        }
-        else {
+        } else {
             // zero wrap-around needs to be handled on the minus side of the split
             safeUnion(minus, firstSplit.getMinus());
             safeUnion(minus, secondSplit.getMinus());
@@ -251,12 +249,10 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             if (start == null) {
                 start = current;
                 end = current;
-            }
-            else if (Objects.equals(end.getMax(), current.getMin())) {
+            } else if (Objects.equals(end.getMax(), current.getMin())) {
                 // these intervals should be merged
                 end = current;
-            }
-            else {
+            } else {
                 // these intervals should be separate
                 intervals.add(createInterval(start, end));
 
@@ -295,8 +291,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             if (min.isPositiveFacing()) {
                 min = min.reverse();
             }
-        }
-        else {
+        } else {
             min = CutAngle.createNegativeFacing(Geometry.ZERO_PI, precision);
         }
 
@@ -304,8 +299,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             if (!max.isPositiveFacing()) {
                 max = max.reverse();
             }
-        }
-        else {
+        } else {
             max = CutAngle.createPositiveFacing(Geometry.TWO_PI, precision);
         }
 
@@ -314,6 +308,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
     /** Return the min/max boundary pair for the convex region represented by the given node.
      * @param node the node to compute the interval for
+     * @return the min/max boundary pair for the convex region represented by the given node
      */
     private BoundaryPair getNodeBoundaryPair(final RegionNode1S node) {
         CutAngle min = null;
@@ -332,8 +327,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 if (max == null) {
                     max = pt;
                 }
-            }
-            else if (min == null){
+            } else if (min == null) {
                 min = pt;
             }
 
@@ -426,7 +420,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     public static final class RegionNode1S extends AbstractRegionBSPTree.AbstractRegionNode<Point1S, RegionNode1S> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190922L;
 
         /** Simple constructor.
@@ -447,10 +441,10 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     private static final class BoundaryPair {
 
-        /** The min boundary */
+        /** The min boundary. */
         private final CutAngle min;
 
-        /** The max boundary */
+        /** The max boundary. */
         private final CutAngle max;
 
         /** Simple constructor.
@@ -489,19 +483,20 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     private static final class BoundaryProjector1S extends BoundaryProjector<Point1S, RegionNode1S> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20190926L;
 
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */
-        public BoundaryProjector1S(final Point1S point) {
+        BoundaryProjector1S(final Point1S point) {
             super(point);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected boolean isPossibleClosestCut(final SubHyperplane<Point1S> cut, final Point1S target, final double minDist) {
+        protected boolean isPossibleClosestCut(final SubHyperplane<Point1S> cut, final Point1S target,
+                final double minDist) {
             // since the space wraps around, consider any cut as possibly being the closest
             return true;
         }

@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -332,7 +333,7 @@ public class SubGreatCircleTest {
         checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GeometryException.class)
     public void testAdd_arc_differentCircle() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
@@ -373,7 +374,7 @@ public class SubGreatCircleTest {
         checkArc(arcs.get(1), Point2S.PLUS_J, Point2S.MINUS_J);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GeometryException.class)
     public void testAdd_subGreatCircle_otherCircle() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
@@ -426,11 +427,11 @@ public class SubGreatCircleTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.add(otherCircle.span());
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new SubGreatCircle(otherCircle));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new UnknownSubHyperplane());

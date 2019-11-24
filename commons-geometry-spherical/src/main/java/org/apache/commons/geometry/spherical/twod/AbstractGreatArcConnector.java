@@ -18,6 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -28,7 +29,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 public abstract class AbstractGreatArcConnector
     extends AbstractPathConnector<AbstractGreatArcConnector.ConnectableGreatArc> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191107L;
 
     /** Add an arc to the connector, leaving it unconnected until a later call to
@@ -136,7 +137,7 @@ public abstract class AbstractGreatArcConnector
      */
     protected static class ConnectableGreatArc extends AbstractPathConnector.ConnectableElement<ConnectableGreatArc> {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191107L;
 
         /** Segment start point. This will be used to connect to other path elements. */
@@ -210,10 +211,10 @@ public abstract class AbstractGreatArcConnector
         @Override
         public boolean canConnectTo(final ConnectableGreatArc next) {
             final Point2S end = arc.getEndPoint();
-            final Point2S start = next.start;
+            final Point2S nextStart = next.start;
 
-            return end != null && start != null &&
-                    end.eq(start, arc.getPrecision());
+            return end != null && nextStart != null &&
+                    end.eq(nextStart, arc.getPrecision());
         }
 
         /** {@inheritDoc} */
@@ -270,6 +271,27 @@ public abstract class AbstractGreatArcConnector
             }
 
             return cmp;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return Objects.hash(start, arc);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || !this.getClass().equals(obj.getClass())) {
+                return false;
+            }
+
+            final ConnectableGreatArc other = (ConnectableGreatArc) obj;
+            return Objects.equals(this.start, other.start) &&
+                    Objects.equals(this.arc, other.arc);
         }
 
         /** {@inheritDoc} */

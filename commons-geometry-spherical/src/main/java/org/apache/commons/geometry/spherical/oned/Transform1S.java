@@ -38,7 +38,7 @@ import org.apache.commons.geometry.core.Transform;
  */
 public final class Transform1S implements Transform<Point1S>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191001L;
 
     /** Static instance representing the identity transform. */
@@ -48,14 +48,14 @@ public final class Transform1S implements Transform<Point1S>, Serializable {
     private static final Transform1S NEGATION = new Transform1S(-1, 0);
 
     /** Value to scale the point azimuth by. This will only be +1/-1. */
-    private final double scale ;
+    private final double scale;
 
     /** Value to rotate the point azimuth by. */
     private final double rotate;
 
     /** Construct a new instance from its transform components.
-     * @param scale
-     * @param rotate
+     * @param scale scale value for the transform; must only be +1 or -1
+     * @param rotate rotation value
      */
     private Transform1S(final double scale, final double rotate) {
         this.scale = scale;
@@ -141,11 +141,10 @@ public final class Transform1S implements Transform<Point1S>, Serializable {
      * @return a transform that is the inverse of the current instance
      */
     public Transform1S inverse() {
-
         final double invScale = 1.0 / scale;
 
         final double resultScale = invScale;
-        final double resultRotate = - (rotate * invScale);
+        final double resultRotate = -(rotate * invScale);
 
         return new Transform1S(resultScale, resultRotate);
     }

@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.spherical.oned;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.function.BiFunction;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -39,7 +41,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190817L;
 
     /** The minimum boundary of the interval. */
@@ -172,8 +174,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
             if ((!wraps && (minLoc == HyperplaneLocation.PLUS || maxLoc == HyperplaneLocation.PLUS)) ||
                     (wraps && minLoc == HyperplaneLocation.PLUS && maxLoc == HyperplaneLocation.PLUS)) {
                 return RegionLocation.OUTSIDE;
-            }
-            else if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
+            } else if (minLoc == HyperplaneLocation.ON || maxLoc == HyperplaneLocation.ON) {
                 return RegionLocation.BOUNDARY;
             }
         }
@@ -291,7 +292,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max azimuths
-     * @throws IllegalArgumentException if either azimuth is infinite or NaN
+     * @throws GeometryException if either azimuth is infinite or NaN
      */
     public static AngularInterval of(final double min, final double max, final DoublePrecisionContext precision) {
         return of(Point1S.of(min), Point1S.of(max), precision);
@@ -306,7 +307,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param max max azimuth value
      * @param precision precision precision context used to compare floating point values
      * @return a new instance resulting the angular region between the given min and max points
-     * @throws IllegalArgumentException if either azimuth is infinite or NaN
+     * @throws GeometryException if either azimuth is infinite or NaN
      */
     public static AngularInterval of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
         return createInterval(min, max, precision, AngularInterval::new, Convex.FULL);
@@ -319,7 +320,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param a first oriented point
      * @param b second oriented point
      * @return an instance representing the angular interval between the given oriented points
-     * @throws IllegalArgumentException if either argument is infinite or NaN
+     * @throws GeometryException if either argument is infinite or NaN
      */
     public static AngularInterval of(final CutAngle a, final CutAngle b) {
         return createInterval(a, b, AngularInterval::new, Convex.FULL);
@@ -335,9 +336,10 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param precision precision precision context used to compare floating point values
      * @param factory factory object used to create new instances; this object is passed the validated
      *      min (negative-facing) cut and the max (positive-facing) cut, in that order
+     * @param <T> Angular interval implementation type
      * @param fullSpace instance returned if the interval should represent the full space
      * @return a new instance resulting the angular region between the given min and max points
-     * @throws IllegalArgumentException if either azimuth is infinite or NaN
+     * @throws GeometryException if either azimuth is infinite or NaN
      */
     private static <T extends AngularInterval> T createInterval(final Point1S min, final Point1S max,
             final DoublePrecisionContext precision, final BiFunction<CutAngle, CutAngle, T> factory,
@@ -367,8 +369,9 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param factory factory object used to create new instances; this object is passed the validated
      *      min (negative-facing) cut and the max (positive-facing) cut, in that order
      * @param fullSpace instance returned if the interval should represent the full space
+     * @param <T> Angular interval implementation type
      * @return a new interval instance created from the given cut angles
-     * @throws IllegalArgumentException if either argument is infinite or NaN
+     * @throws GeometryException if either argument is infinite or NaN
      */
     private static <T extends AngularInterval> T createInterval(final CutAngle a, final CutAngle b,
             final BiFunction<CutAngle, CutAngle, T> factory, final T fullSpace) {
@@ -397,12 +400,12 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
     /** Validate that the given points can be used to specify an angular interval.
      * @param a first point
      * @param b second point
-     * @throws IllegalArgumentException if either point is infinite NaN
+     * @throws GeometryException if either point is infinite NaN
      */
     private static void validateIntervalValues(final Point1S a, final Point1S b) {
         if (!a.isFinite() || !b.isFinite()) {
-            throw new IllegalArgumentException("Invalid angular interval: [" + a.getAzimuth() +
-                    ", " + b.getAzimuth() + "]");
+            throw new GeometryException(MessageFormat.format("Invalid angular interval: [{0}, {1}]",
+                    a.getAzimuth(), b.getAzimuth()));
         }
     }
 
@@ -427,6 +430,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * @param interval interval to transform
      * @param transform transform to apply
      * @param factory object used to create new instances
+     * @param <T> Angular interval implementation type
      * @return a transformed instance
      */
     private static <T extends AngularInterval> T transform(final T interval,
@@ -452,7 +456,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      */
     public static final class Convex extends AngularInterval {
 
-        /** Serializable UID */
+        /** Serializable UID. */
         private static final long serialVersionUID = 20191012L;
 
         /** Interval instance representing the full space. */
@@ -463,15 +467,14 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
          * of interval is less than or equal to {@code pi}.
          * @param minBoundary minimum boundary for the interval
          * @param maxBoundary maximum boundary for the interval
-         * @param midpoint the midpoint between the boundaries
-         * @throws IllegalArgumentException if the interval is not convex
+         * @throws GeometryException if the interval is not convex
          */
         private Convex(final CutAngle minBoundary, final CutAngle maxBoundary) {
             super(minBoundary, maxBoundary);
 
             if (!isConvex(minBoundary, maxBoundary)) {
-                throw new IllegalArgumentException("Interval is not convex: [" + minBoundary.getAzimuth() +
-                        ", " + maxBoundary.getAzimuth() + "]");
+                throw new GeometryException(MessageFormat.format("Interval is not convex: [{0}, {1}]",
+                        minBoundary.getAzimuth(), maxBoundary.getAzimuth()));
             }
         }
 
@@ -529,8 +532,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                 if (maxLoc >= 0) {
                     // max is directly on the splitter or on the pos side
                     pos = this;
-                }
-                else {
+                } else {
                     // min is on the pos side and max is on the neg side
                     final CutAngle posCut = positiveFacingSplit ?
                             opposite.reverse() :
@@ -542,15 +544,13 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                             opposite.reverse();
                     neg = Convex.of(negCut, maxBoundary);
                 }
-            }
-            else if (minLoc < 0){
+            } else if (minLoc < 0) {
                 // min is on the neg side
 
                 if (maxLoc <= 0) {
                     // max is directly on the splitter or on the neg side
                     neg = this;
-                }
-                else {
+                } else {
                     // min is on the neg side and max is on the pos side
                     final CutAngle posCut = positiveFacingSplit ?
                             splitter.reverse() :
@@ -562,15 +562,13 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
                             splitter.reverse();
                     neg = Convex.of(negCut, minBoundary);
                 }
-            }
-            else {
+            } else {
                 // min is directly on the splitter; determine whether it was on the main split
                 // point or its antipodal point
                 if (splitter.getPoint().distance(minBoundary.getPoint()) < Geometry.HALF_PI) {
                     // on main splitter; interval will be located on pos side of split
                     pos = this;
-                }
-                else {
+                } else {
                     // on antipodal point; interval will be located on neg side of split
                     neg = this;
                 }
@@ -592,7 +590,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
          * @param max max azimuth value
          * @param precision precision precision context used to compare floating point values
          * @return a new instance resulting the angular region between the given min and max azimuths
-         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         * @throws GeometryException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
         public static Convex of(final double min, final double max, final DoublePrecisionContext precision) {
@@ -608,7 +606,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
          * @param max max azimuth value
          * @param precision precision precision context used to compare floating point values
          * @return a new instance resulting the angular region between the given min and max points
-         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         * @throws GeometryException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
         public static Convex of(final Point1S min, final Point1S max, final DoublePrecisionContext precision) {
@@ -622,7 +620,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
          * @param a first oriented point
          * @param b second oriented point
          * @return an instance representing the angular interval between the given oriented points
-         * @throws IllegalArgumentException if either azimuth is infinite or NaN, or the given angular
+         * @throws GeometryException if either azimuth is infinite or NaN, or the given angular
          *      interval is not convex (meaning it has a size of greater than {@code pi})
          */
         public static Convex of(final CutAngle a, final CutAngle b) {

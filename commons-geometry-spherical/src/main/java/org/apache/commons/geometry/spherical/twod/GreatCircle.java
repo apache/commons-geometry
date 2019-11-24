@@ -40,7 +40,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 public final class GreatCircle extends AbstractHyperplane<Point2S>
     implements EmbeddingHyperplane<Point2S, Point1S>, Equivalency<GreatCircle> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20190928L;
 
     /** Pole or circle center. */
@@ -340,8 +340,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof GreatCircle)) {
+        } else if (!(obj instanceof GreatCircle)) {
             return false;
         }
 
@@ -421,8 +420,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         final double dist = a.distance(b);
         if (precision.eqZero(dist)) {
             err = "equal";
-        }
-        else if (precision.eq(dist, Geometry.PI)) {
+        } else if (precision.eq(dist, Geometry.PI)) {
             err = "antipodal";
         }
 

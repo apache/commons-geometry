@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -40,9 +39,9 @@ import org.apache.commons.geometry.spherical.oned.Transform1S;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
+public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
 
-    /** Serializable UID */
+    /** Serializable UID. */
     private static final long serialVersionUID = 20191005L;
 
     /** The interval representing the region of the great circle contained in the arc.
@@ -134,11 +133,9 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
 
             if (subLoc == SplitLocation.MINUS) {
                 minus = this;
-            }
-            else if (subLoc == SplitLocation.PLUS) {
+            } else if (subLoc == SplitLocation.PLUS) {
                 plus = this;
-            }
-            else if (subLoc == SplitLocation.BOTH) {
+            } else if (subLoc == SplitLocation.BOTH) {
                 minus = GreatArc.fromInterval(thisCircle, subSplit.getMinus());
                 plus = GreatArc.fromInterval(thisCircle, subSplit.getPlus());
             }
@@ -188,8 +185,7 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
         if (isFull()) {
             sb.append("full= true, circle= ")
                 .append(getCircle());
-        }
-        else {
+        } else {
             sb.append("start= ")
                 .append(getStartPoint())
                 .append(", end= ")
@@ -206,8 +202,8 @@ public class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperpl
      * @param precision precision context used to compare floating point numbers
      * @return an arc representing the shortest path between the given points
      * @throws IllegalArgumentException if either of the given points is NaN or infinite
-     * @throws GeometryException if the given points are equal or antipodal as evaluated by
-     *      the given precision context
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given points are equal or
+     *      antipodal as evaluated by the given precision context
      * @see GreatCircle#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.DoublePrecisionContext)
      */
     public static GreatArc fromPoints(final Point2S start, final Point2S end, final DoublePrecisionContext precision) {
