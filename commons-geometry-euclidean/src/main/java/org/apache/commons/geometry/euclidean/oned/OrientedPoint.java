@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
@@ -538,7 +539,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             final OrientedPoint inputHyper = (OrientedPoint) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
-                throw new IllegalArgumentException("Argument is not on the same " +
+                throw new GeometryException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);
             }

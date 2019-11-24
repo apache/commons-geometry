@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -120,7 +120,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
 
     /** Add a convex subplane to this instance.
      * @param subplane convex subplane to add
-     * @throws GeometryValueException if the given convex subplane is not from
+     * @throws GeometryException if the given convex subplane is not from
      *      a plane equivalent to this instance
      */
     public void add(final ConvexSubPlane subplane) {
@@ -131,7 +131,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
 
     /** Add a subplane to this instance.
      * @param subplane subplane to add
-     * @throws GeometryValueException if the given convex subplane is not from
+     * @throws GeometryException if the given convex subplane is not from
      *      a plane equivalent to this instance
      */
     public void add(final SubPlane subplane) {
@@ -143,14 +143,14 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements
     /** Validate that the given plane is equivalent to the plane
      * defining this subplane.
      * @param inputPlane plane to validate
-     * @throws GeometryValueException if the given plane is not equivalent
+     * @throws GeometryException if the given plane is not equivalent
      *      to the plane for this instance
      */
     private void validatePlane(final Plane inputPlane) {
         final Plane plane = getPlane();
 
         if (!plane.eq(inputPlane)) {
-            throw new GeometryValueException("Argument is not on the same " +
+            throw new GeometryException("Argument is not on the same " +
                     "plane. Expected " + plane + " but was " +
                     inputPlane);
         }

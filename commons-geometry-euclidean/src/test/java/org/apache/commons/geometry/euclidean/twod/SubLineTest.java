@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
@@ -222,11 +223,11 @@ public class SubLineTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             subline.add(Segment.fromInterval(otherLine, 0, 1));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             subline.add(new SubLine(otherLine));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test
@@ -592,11 +593,11 @@ public class SubLineTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.add(Segment.fromInterval(otherLine, 0, 1));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new SubLine(otherLine));
-        }, IllegalArgumentException.class);
+        }, GeometryException.class);
     }
 
     @Test

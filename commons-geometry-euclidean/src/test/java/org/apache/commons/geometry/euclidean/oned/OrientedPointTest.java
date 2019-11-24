@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -587,14 +588,14 @@ public class OrientedPointTest {
         // act/assert
         GeometryTestUtils.assertThrows(
                 () -> builder.add(OrientedPoint.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
         GeometryTestUtils.assertThrows(
                 () -> builder.add(OrientedPoint.createNegativeFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
 
         GeometryTestUtils.assertThrows(
                 () -> builder.add((SubHyperplane<Vector1D>) OrientedPoint.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+                GeometryException.class);
     }
 
     @Test

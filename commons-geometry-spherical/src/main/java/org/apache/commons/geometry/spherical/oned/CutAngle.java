@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -509,7 +509,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
             final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
-                throw new GeometryValueException("Argument is not on the same " +
+                throw new GeometryException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);
             }

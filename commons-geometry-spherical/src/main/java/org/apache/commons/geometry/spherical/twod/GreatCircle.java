@@ -210,7 +210,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start point
      * @param end end point
      * @return an arc on this circle between the given points
-     * @throws IllegalArgumentException if the specified interval is not
+     * @throws GeometryException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final Point2S start, final Point2S end) {
@@ -221,7 +221,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start subspace point
      * @param end end subspace point
      * @return an arc on this circle between the given subspace points
-     * @throws IllegalArgumentException if the specified interval is not
+     * @throws GeometryException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final Point1S start, final Point1S end) {
@@ -232,7 +232,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start subspace azimuth
      * @param end end subspace azimuth
      * @return an arc on this circle between the given subspace azimuths
-     * @throws IllegalArgumentException if the specified interval is not
+     * @throws GeometryException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final double start, final double end) {
@@ -404,15 +404,14 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param b second point on the great circle
      * @param precision precision context used to compare floating point values
      * @return great circle instance containing the given points
-     * @throws IllegalArgumentException if either of the given points is NaN or infinite
-     * @throws GeometryException if the given points are equal or antipodal as evaluated by
-     *      the given precision context
+     * @throws GeometryException if either of the given points is NaN or infinite, or if the given points are
+     *      equal or antipodal as evaluated by the given precision context
      */
     public static GreatCircle fromPoints(final Point2S a, final Point2S b,
             final DoublePrecisionContext precision) {
 
         if (!a.isFinite() || !b.isFinite()) {
-            throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
+            throw new GeometryException("Invalid points for great circle: " + a + ", " + b);
         }
 
         String err = null;
