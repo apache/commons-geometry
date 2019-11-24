@@ -112,22 +112,6 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     }
 
     /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
-     * at least 3 unique vertices must be given.
-     * @param pts collection of points defining the convex subplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance defined by the given sequence of vertices
-     * @throws IllegalArgumentException if fewer than 3 vertices are given
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
-     *      unique plane
-     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
-     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
-     */
-    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts,
-            final DoublePrecisionContext precision) {
-        return fromVertices(pts, precision, false);
-    }
-
-    /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
     * at least 3 unique vertices must be given. In contrast with the
     * {@link #fromVertices(Collection, DoublePrecisionContext)} method, the first point in the sequence is included
     * at the end if needed, in order to form a closed loop.
@@ -138,29 +122,50 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
     *       unique plane
     * @see #fromVertices(Collection, DoublePrecisionContext)
+    * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
     */
     public static ConvexSubPlane fromVertexLoop(final Collection<Vector3D> pts,
             final DoublePrecisionContext precision) {
-        return fromVertices(pts, precision, true);
+        return fromVertices(pts, true, precision);
     }
 
-    /** Internal method to create convex subplane instances from sequences of points.
-     * @param pts collection of points
+    /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
+     * at least 3 unique vertices must be given.
+     * @param pts collection of points defining the convex subplane
      * @param precision precision context used to compare floating point values
-     * @param makeLoop if true, the point sequence will implicitly include the start point again at the end; otherwise
-     *      the vertex sequence is taken as-is
-     * @return a new convex subplane instance
+     * @return a new instance defined by the given sequence of vertices
+     * @throws IllegalArgumentException if fewer than 3 vertices are given
+     * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
+     *      unique plane
+     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
      */
-    private static ConvexSubPlane fromVertices(final Collection<Vector3D> pts, final DoublePrecisionContext precision,
-            final boolean makeLoop) {
+    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts,
+            final DoublePrecisionContext precision) {
+        return fromVertices(pts, false, precision);
+    }
+
+    /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
+     * at least 3 unique vertices must be given. If {@code close} is true, the vertices are made into a closed loop
+     * by including the start point at the end if needed.
+     * @param pts collection of points
+     * @param close if true, the point sequence will implicitly include the start point again at the end; otherwise
+     *      the vertex sequence is taken as-is
+     * @param precision precision context used to compare floating point values
+     * @return a new convex subplane instance
+     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #fromVertices(Collection, DoublePrecisionContext)
+     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
+     */
+    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts, final boolean close,
+            final DoublePrecisionContext precision) {
 
         final Plane plane = Plane.fromPoints(pts, precision);
 
         final List<Vector2D> subspacePts = plane.toSubspace(pts);
-        final ConvexArea area = makeLoop ?
-                ConvexArea.fromVertexLoop(subspacePts, precision) :
-                ConvexArea.fromVertices(subspacePts, precision);
+        final ConvexArea area = ConvexArea.fromVertices(subspacePts, close, precision);
 
         return new ConvexSubPlane(plane, area);
     }

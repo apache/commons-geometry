@@ -58,7 +58,7 @@ public class ConvexVolumeTest {
     @Test
     public void testTOTree() {
         // arrange
-        ConvexVolume volume = ConvexVolume.from(
+        ConvexVolume volume = ConvexVolume.fromBounds(
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
@@ -87,7 +87,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_noPlanes() {
         // act
-        ConvexVolume vol = ConvexVolume.from();
+        ConvexVolume vol = ConvexVolume.fromBounds();
 
         // assert
         Assert.assertSame(ConvexVolume.full(), vol);
@@ -96,7 +96,7 @@ public class ConvexVolumeTest {
     @Test
     public void testFromBounds_halfspace() {
         // act
-        ConvexVolume vol = ConvexVolume.from(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        ConvexVolume vol = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // assert
         Assert.assertFalse(vol.isFull());
@@ -217,7 +217,7 @@ public class ConvexVolumeTest {
                     Plane.fromPointAndNormal(center.add(Vector3D.of( 0, 0, -zDelta)), Vector3D.Unit.MINUS_Z, TEST_PRECISION)
                 );
 
-        return ConvexVolume.from(planes);
+        return ConvexVolume.fromBounds(planes);
     }
 
     private static void checkClassify(Region<Vector3D> region, RegionLocation loc, Vector3D ... pts) {

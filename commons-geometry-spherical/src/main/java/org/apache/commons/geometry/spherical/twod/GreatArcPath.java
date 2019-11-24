@@ -271,12 +271,9 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
     public static GreatArcPath fromVertices(final Collection<Point2S> vertices, final boolean close,
             final DoublePrecisionContext precision) {
 
-        final Builder builder = builder(precision);
-        builder.appendVertices(vertices);
-
-        return close ?
-                builder.close() :
-                builder.build();
+        return builder(precision)
+                .appendVertices(vertices)
+                .build(close);
     }
 
     /** Return a {@link Builder} instance configured with the given precision
@@ -511,29 +508,32 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
             return this;
         }
 
-        /** Close the current path and build a new {@link GreatArcPath} instance.
+        /** Close the current path and build a new {@link GreatArcPath} instance. This method is equivalent
+         * to {@code builder.build(true)}.
          * @return new closed path instance
          */
         public GreatArcPath close() {
-            final GreatArc end = getEndArc();
-
-            if (end != null) {
-                if (startVertex != null && endVertex != null) {
-                    if (!endVertex.eq(startVertex, endVertexPrecision)) {
-                        appendInternal(GreatArc.fromPoints(endVertex, startVertex, endVertexPrecision));
-                    }
-                } else {
-                    throw new IllegalStateException("Unable to close path: path is full");
-                }
-            }
-
-            return build();
+            return build(true);
         }
 
-        /** Build a {@link GreatArcPath} instance from the configured path.
+        /** Build a {@link GreatArcPath} instance from the configured path. This method is equivalent
+         * to {@code builder.build(false)}.
          * @return new path instance
          */
         public GreatArcPath build() {
+            return build(false);
+        }
+
+        /** Build a {@link GreatArcPath} instance from the configured path.
+         * @param close if true, the path will be closed by adding an end point equivalent to the
+         *      start point
+         * @return new path instance
+         */
+        public GreatArcPath build(final boolean close) {
+            if (close) {
+                closePath();
+            }
+
             // combine all of the arcs
             List<GreatArc> result = null;
 
@@ -567,6 +567,23 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
             // build the final path instance, using the shared empty instance if
             // no arcs are present
             return result.isEmpty() ? empty() : new GreatArcPath(result);
+        }
+
+        /** Close the path by adding an end point equivalent to the path start point.
+         * @throws IllegalStateException if the path cannot be closed
+         */
+        private void closePath() {
+            final GreatArc end = getEndArc();
+
+            if (end != null) {
+                if (startVertex != null && endVertex != null) {
+                    if (!endVertex.eq(startVertex, endVertexPrecision)) {
+                        appendInternal(GreatArc.fromPoints(endVertex, startVertex, endVertexPrecision));
+                    }
+                } else {
+                    throw new IllegalStateException("Unable to close path: path is full");
+                }
+            }
         }
 
         /** Validate that the given arcs are connected, meaning that the end point of {@code previous}

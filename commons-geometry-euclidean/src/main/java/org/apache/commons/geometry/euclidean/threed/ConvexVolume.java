@@ -164,8 +164,8 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      *      planes do not form a convex volume, meaning that there is no region that is on the minus side
      *      of all of the bounding planes.
      */
-    public static ConvexVolume from(final Plane... planes) {
-        return from(Arrays.asList(planes));
+    public static ConvexVolume fromBounds(final Plane... planes) {
+        return fromBounds(Arrays.asList(planes));
     }
 
     /** Create a convex volume formed by the intersection of the negative half-spaces of the
@@ -180,7 +180,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      *      do not form a convex volume, meaning that there is no region that is on the minus side of all of
  *          the bounding planes.
      */
-    public static ConvexVolume from(final Iterable<Plane> boundingPlanes) {
+    public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
         final List<ConvexSubPlane> subplanes = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class)
                 .build(boundingPlanes);
         return subplanes.isEmpty() ? full() : new ConvexVolume(subplanes);

@@ -191,7 +191,7 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFromConvexVolume_infinite() {
         // arrange
-        ConvexVolume volume = ConvexVolume.from(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
@@ -209,7 +209,7 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFromConvexVolume_finite() {
         // arrange
-        ConvexVolume volume = ConvexVolume.from(
+        ConvexVolume volume = ConvexVolume.fromBounds(
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),

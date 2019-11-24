@@ -425,11 +425,9 @@ public class Polyline implements Iterable<Segment>, Serializable {
     public static Polyline fromVertices(final Collection<Vector2D> vertices,
             final boolean close, final DoublePrecisionContext precision) {
 
-        final Builder builder = builder(precision).appendVertices(vertices);
-
-        return close ?
-                builder.close() :
-                builder.build();
+        return builder(precision)
+                .appendVertices(vertices)
+                .build(close);
     }
 
     /** Return a line segment path containing no segments.
@@ -657,29 +655,32 @@ public class Polyline implements Iterable<Segment>, Serializable {
             return this;
         }
 
-        /** Close the current polyline and build a new {@link Polyline} instance.
+        /** Close the current polyline and build a new {@link Polyline} instance.  This method is equivalent
+         * to {@code builder.build(true)}.
          * @return new closed polyline instance
          */
         public Polyline close() {
-            final Segment end = getEndSegment();
-
-            if (end != null) {
-                if (startVertex != null && endVertex != null) {
-                    if (!endVertex.eq(startVertex, endVertexPrecision)) {
-                        appendInternal(Segment.fromPoints(endVertex, startVertex, endVertexPrecision));
-                    }
-                } else {
-                    throw new IllegalStateException("Unable to close polyline: polyline is infinite");
-                }
-            }
-
-            return build();
+            return build(true);
         }
 
-        /** Build a {@link Polyline} instance from the configured polyline.
+        /** Build a {@link Polyline} instance from the configured polyline. This method is equivalent
+         * to {@code builder.build(false)}.
          * @return new polyline instance
          */
         public Polyline build() {
+            return build(false);
+        }
+
+        /** Build a {@link Polyline} instance from the configured polyline.
+         * @param close if true, the path will be closed by adding an end point equivalent to the
+         *      start point
+         * @return new polyline instance
+         */
+        public Polyline build(final boolean close) {
+            if (close) {
+                closePath();
+            }
+
             // combine all of the segments
             List<Segment> result = null;
 
@@ -713,6 +714,23 @@ public class Polyline implements Iterable<Segment>, Serializable {
             // build the final polyline instance, using the shared empty instance if
             // no segments are present
             return result.isEmpty() ? empty() : new Polyline(result);
+        }
+
+        /** Close the path by adding an end point equivalent to the path start point.
+         * @throws IllegalStateException if the path cannot be closed
+         */
+        private void closePath() {
+            final Segment end = getEndSegment();
+
+            if (end != null) {
+                if (startVertex != null && endVertex != null) {
+                    if (!endVertex.eq(startVertex, endVertexPrecision)) {
+                        appendInternal(Segment.fromPoints(endVertex, startVertex, endVertexPrecision));
+                    }
+                } else {
+                    throw new IllegalStateException("Unable to close polyline: polyline is infinite");
+                }
+            }
         }
 
         /** Validate that the given segments are connected, meaning that the end vertex of {@code previous}
