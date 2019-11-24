@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -62,6 +63,25 @@ public class Vector2DTest {
 
         Assert.assertSame(Vector2D.Unit.PLUS_Y.normalize(), Vector2D.Unit.PLUS_Y);
         Assert.assertSame(Vector2D.Unit.MINUS_Y.normalize(), Vector2D.Unit.MINUS_Y);
+    }
+
+    @Test
+    public void testCoordinateAscendingOrder() {
+        // arrange
+        Comparator<Vector2D> cmp = Vector2D.COORDINATE_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, cmp.compare(Vector2D.of(1, 2), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(0, 2), Vector2D.of(1, 2)));
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 1), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(1, cmp.compare(Vector2D.of(2, 2), Vector2D.of(1, 2)));
+        Assert.assertEquals(1, cmp.compare(Vector2D.of(1, 3), Vector2D.of(1, 2)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector2D.of(1, 3), null));
+        Assert.assertEquals(1, cmp.compare(null, Vector2D.of(1, 2)));
+        Assert.assertEquals(0, cmp.compare(null, null));
     }
 
     @Test
@@ -122,6 +142,24 @@ public class Vector2DTest {
         Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isInfinite());
         Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isInfinite());
         Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isInfinite());
+    }
+
+    @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(Vector2D.ZERO.isFinite());
+        Assert.assertTrue(Vector2D.of(1, 1).isFinite());
+
+        Assert.assertFalse(Vector2D.of(0, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, 0).isFinite());
+        Assert.assertFalse(Vector2D.of(0, Double.POSITIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, 0).isFinite());
+
+        Assert.assertFalse(Vector2D.of(0, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NEGATIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.POSITIVE_INFINITY, Double.NaN).isFinite());
+        Assert.assertFalse(Vector2D.of(Double.NaN, Double.POSITIVE_INFINITY).isFinite());
     }
 
     @Test
@@ -809,20 +847,20 @@ public class Vector2DTest {
         Vector2D vec = Vector2D.of(1, -2);
 
         // act/assert
-        Assert.assertTrue(vec.equals(vec, smallEps));
-        Assert.assertTrue(vec.equals(vec, largeEps));
+        Assert.assertTrue(vec.eq(vec, smallEps));
+        Assert.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), smallEps));
-        Assert.assertTrue(vec.equals(Vector2D.of(1.0000007, -2.0000009), largeEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), smallEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.0000007, -2.0000009), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector2D.of(1.004, -2), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -2.004), smallEps));
-        Assert.assertTrue(vec.equals(Vector2D.of(1.004, -2.004), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1.004, -2), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -2.004), smallEps));
+        Assert.assertTrue(vec.eq(Vector2D.of(1.004, -2.004), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), smallEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(1, -3), largeEps));
-        Assert.assertFalse(vec.equals(Vector2D.of(2, -2), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), smallEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(1, -3), largeEps));
+        Assert.assertFalse(vec.eq(Vector2D.of(2, -2), largeEps));
     }
 
     @Test

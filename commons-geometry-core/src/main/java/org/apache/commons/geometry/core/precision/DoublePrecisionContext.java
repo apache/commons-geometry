@@ -23,7 +23,7 @@ import java.util.Comparator;
  */
 public abstract class DoublePrecisionContext implements Comparator<Double>, Serializable {
 
-    /** Serializable identifier */
+    /** Serializable identifier. */
     private static final long serialVersionUID = 20190121L;
 
     /** Return true if the given values are considered equal to each other.
@@ -85,6 +85,22 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
         return compare(a, b) >= 0;
     }
 
+    /** Return the sign of the argument: 0 if the value is considered equal to
+     * zero, -1 if less than 0, and +1 if greater than 0.
+     * @param a number to determine the sign of
+     * @return 0 if the number is considered equal to 0, -1 if less than
+     *      0, and +1 if greater than 0
+     */
+    public int sign(final double a) {
+        final int cmp = compare(a, 0.0);
+        if (cmp < 0) {
+            return -1;
+        } else if (cmp > 0) {
+            return 1;
+        }
+        return 0;
+    }
+
     /** {@inheritDoc} */
     @Override
     public int compare(final Double a, final Double b) {
@@ -110,7 +126,7 @@ public abstract class DoublePrecisionContext implements Comparator<Double>, Seri
      *      first is smaller than the second, {@code 1} is the first is larger
      *      than the second or either value is NaN.
      */
-    public abstract int compare(final double a, final double b);
+    public abstract int compare(double a, double b);
 
     /** Get the largest positive double value that is still considered equal
      * to zero by this instance.

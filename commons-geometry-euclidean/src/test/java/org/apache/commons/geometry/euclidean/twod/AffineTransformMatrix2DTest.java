@@ -632,6 +632,60 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
+    public void testDeterminant() {
+        // act/assert
+        Assert.assertEquals(1.0, AffineTransformMatrix2D.identity().determinant(), EPS);
+        Assert.assertEquals(6.0, AffineTransformMatrix2D.of(
+                2, 0, 4,
+                0, 3, 5
+            ).determinant(), EPS);
+        Assert.assertEquals(-6.0, AffineTransformMatrix2D.of(
+                2, 0, 4,
+                0, -3, 5
+            ).determinant(), EPS);
+        Assert.assertEquals(-5.0, AffineTransformMatrix2D.of(
+                1, 3, 0,
+                2, 1, 0
+            ).determinant(), EPS);
+        Assert.assertEquals(-0.0, AffineTransformMatrix2D.of(
+                0, 0, 1,
+                0, 0, 2
+            ).determinant(), EPS);
+    }
+
+    @Test
+    public void testPreservesOrientation() {
+        // act/assert
+        Assert.assertTrue(AffineTransformMatrix2D.identity().preservesOrientation());
+        Assert.assertTrue(AffineTransformMatrix2D.of(
+                2, 0, 4,
+                0, 3, 5
+            ).preservesOrientation());
+
+        Assert.assertFalse(AffineTransformMatrix2D.of(
+                2, 0, 4,
+                0, -3, 5
+            ).preservesOrientation());
+        Assert.assertFalse(AffineTransformMatrix2D.of(
+                1, 3, 0,
+                2, 1, 0
+            ).preservesOrientation());
+        Assert.assertFalse(AffineTransformMatrix2D.of(
+                0, 0, 1,
+                0, 0, 2
+            ).preservesOrientation());
+    }
+
+    @Test
+    public void testToMatrix() {
+        // arrange
+        AffineTransformMatrix2D t = AffineTransformMatrix2D.createScale(2.0);
+
+        // act/assert
+        Assert.assertSame(t, t.toMatrix());
+    }
+
+    @Test
     public void testMultiply() {
         // arrange
         AffineTransformMatrix2D a = AffineTransformMatrix2D.of(

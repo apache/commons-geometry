@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Vector;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 
@@ -34,7 +33,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 public abstract class EuclideanVector<V extends EuclideanVector<V>>
     implements Vector<V>, Point<V>, Serializable {
 
-    /** Serializable version identifer */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20181017L;
 
     /** Return the vector representing the displacement from this vector
@@ -51,8 +50,8 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @param v the vector that the returned vector will be directed toward
      * @return unit vector representing the direction of displacement <em>from</em> this vector
      *      <em>to</em> the given vector
-     * @throws IllegalNormException if the norm of the vector pointing from this instance to {@code v}
-     *      is zero, NaN, or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the vector pointing
+     *      from this instance to {@code v} is zero, NaN, or infinite
      */
     public abstract V directionTo(V v);
 
@@ -82,7 +81,7 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @return true if the current instance is considered equal to the given vector when using
      *      the given precision context; otherwise false
      */
-    public abstract boolean equals(V v, DoublePrecisionContext precision);
+    public abstract boolean eq(V v, DoublePrecisionContext precision);
 
     /** Return true if the current instance is considered equal to the zero vector as evaluated by the
      * given precision context. This is a convenience method equivalent to
@@ -91,16 +90,18 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @param precision precision context used to determine floating point equality
      * @return true if the current instance is considered equal to the zero vector when using
      *      the given precision context; otherwise false
-     * @see #equals(EuclideanVector, DoublePrecisionContext)
+     * @see #eq(EuclideanVector, DoublePrecisionContext)
      */
     public boolean isZero(final DoublePrecisionContext precision) {
-        return equals(getZero(), precision);
+        return eq(getZero(), precision);
     }
 
-    /** Return the vector norm value, throwing an {@link IllegalNormException} if the value
-     * is not real (ie, NaN or infinite) or zero.
+    /** Return the vector norm value, throwing an
+     * {@link org.apache.commons.geometry.core.exception.IllegalNormException} if the value is not real
+     * (ie, NaN or infinite) or zero.
      * @return the vector norm value, guaranteed to be real and non-zero
-     * @throws IllegalNormException if the vector norm is zero, NaN, or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the vector norm is
+     *      zero, NaN, or infinite
      */
     protected double getCheckedNorm() {
         return Vectors.checkedNorm(this);

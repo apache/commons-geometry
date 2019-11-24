@@ -94,6 +94,19 @@ public class DoublePrecisionContextTest {
     }
 
     @Test
+    public void testSign() {
+        // act/assert
+        Assert.assertEquals(0, ctx.sign(0.0));
+
+        Assert.assertEquals(1, ctx.sign(1e-3));
+        Assert.assertEquals(-1, ctx.sign(-1e-3));
+
+        Assert.assertEquals(1, ctx.sign(Double.NaN));
+        Assert.assertEquals(1, ctx.sign(Double.POSITIVE_INFINITY));
+        Assert.assertEquals(-1, ctx.sign(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
     public void testCompare() {
         // act/assert
         Assert.assertEquals(0, ctx.compare(1, 1));

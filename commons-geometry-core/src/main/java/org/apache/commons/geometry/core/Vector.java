@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core;
 
-import org.apache.commons.geometry.core.exception.IllegalNormException;
-
 /** Interface representing a vector in a vector space or displacement vectors
  * in an affine space.
  *
@@ -96,7 +94,8 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Get a normalized vector aligned with the instance. The returned
      * vector has a magnitude of 1.
      * @return a new normalized vector
-     * @exception IllegalNormException if the norm is zero, NaN, or infinite
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm is
+     *      zero, NaN, or infinite
      */
     V normalize();
 
@@ -131,7 +130,8 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
      * @return angular separation between this instance and v in radians
-     * @exception IllegalNormException if either vector has a zero, NaN, or infinite norm
+     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if either
+     *      vector has a zero, NaN, or infinite norm
      */
     double angle(V v);
 }

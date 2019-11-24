@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -59,6 +60,25 @@ public class Vector1DTest {
     }
 
     @Test
+    public void testCoordinateAscendingOrderComparator() {
+        // arrange
+        Comparator<Vector1D> cmp = Vector1D.COORDINATE_ASCENDING_ORDER;
+
+        // act/assert
+        Assert.assertEquals(0, cmp.compare(Vector1D.of(1), Vector1D.of(1)));
+        Assert.assertEquals(1, cmp.compare(Vector1D.of(2), Vector1D.of(1)));
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(0), Vector1D.of(1)));
+
+        Assert.assertEquals(0, cmp.compare(Vector1D.of(0), Vector1D.of(0)));
+        Assert.assertEquals(1, cmp.compare(Vector1D.of(1e-15), Vector1D.of(0)));
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(-1e-15), Vector1D.of(0)));
+
+        Assert.assertEquals(-1, cmp.compare(Vector1D.of(1), null));
+        Assert.assertEquals(1, cmp.compare(null, Vector1D.of(1)));
+        Assert.assertEquals(0, cmp.compare(null, null));
+    }
+
+    @Test
     public void testCoordinates() {
         // act/assert
         Assert.assertEquals(-1, Vector1D.of(-1).getX(), 0.0);
@@ -92,6 +112,18 @@ public class Vector1DTest {
 
         Assert.assertFalse(Vector1D.of(1).isInfinite());
         Assert.assertFalse(Vector1D.of(Double.NaN).isInfinite());
+    }
+
+    @Test
+    public void testFinite() {
+        // act/assert
+        Assert.assertTrue(Vector1D.ZERO.isFinite());
+        Assert.assertTrue(Vector1D.of(1).isFinite());
+
+        Assert.assertFalse(Vector1D.of(Double.NEGATIVE_INFINITY).isFinite());
+        Assert.assertFalse(Vector1D.of(Double.POSITIVE_INFINITY).isFinite());
+
+        Assert.assertFalse(Vector1D.of(Double.NaN).isFinite());
     }
 
     @Test
@@ -503,17 +535,17 @@ public class Vector1DTest {
         Vector1D vec = Vector1D.of(1);
 
         // act/assert
-        Assert.assertTrue(vec.equals(vec, smallEps));
-        Assert.assertTrue(vec.equals(vec, largeEps));
+        Assert.assertTrue(vec.eq(vec, smallEps));
+        Assert.assertTrue(vec.eq(vec, largeEps));
 
-        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), smallEps));
-        Assert.assertTrue(vec.equals(Vector1D.of(1.0000007), largeEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.0000007), smallEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.0000007), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector1D.of(1.004), smallEps));
-        Assert.assertTrue(vec.equals(Vector1D.of(1.004), largeEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(1.004), smallEps));
+        Assert.assertTrue(vec.eq(Vector1D.of(1.004), largeEps));
 
-        Assert.assertFalse(vec.equals(Vector1D.of(2), smallEps));
-        Assert.assertFalse(vec.equals(Vector1D.of(-2), largeEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(2), smallEps));
+        Assert.assertFalse(vec.eq(Vector1D.of(-2), largeEps));
     }
 
     @Test

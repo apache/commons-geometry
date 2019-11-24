@@ -63,7 +63,7 @@ import org.apache.commons.numbers.core.Precision;
  */
 public final class AxisAngleSequence implements Serializable {
 
-    /** Serializable identifier*/
+    /** Serializable identifier. */
     private static final long serialVersionUID = 20181125L;
 
     /** Reference frame for defining axis positions. */
@@ -88,8 +88,8 @@ public final class AxisAngleSequence implements Serializable {
      * @param angle2 angle around the second axis in radians
      * @param angle3 angle around the third axis in radians
      */
-    public AxisAngleSequence(final AxisReferenceFrame referenceFrame, final AxisSequence axisSequence, final double angle1,
-            final double angle2, final double angle3) {
+    public AxisAngleSequence(final AxisReferenceFrame referenceFrame, final AxisSequence axisSequence,
+            final double angle1, final double angle2, final double angle3) {
         this.referenceFrame = referenceFrame;
         this.axisSequence = axisSequence;
 
@@ -137,7 +137,7 @@ public final class AxisAngleSequence implements Serializable {
      * @return an array containing the 3 rotation angles
      */
     public double[] getAngles() {
-        return new double[] { angle1, angle2, angle3 };
+        return new double[]{angle1, angle2, angle3};
     }
 
     /** {@inheritDoc} */

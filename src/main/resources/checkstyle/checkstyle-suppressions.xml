@@ -19,6 +19,19 @@
     "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
     "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
+  <!-- allow internal Matrices.determinant() method for 3x3 matrices -->
+  <suppress checks="ParameterNumber" files=".*/internal/Matrices" />
+  <!-- allow Vector1D.linearCombination() methods -->
+  <suppress checks="ParameterNumber" files=".*/oned/Vector1D" />
+  <!-- allow internal, non-array constructor -->
+  <suppress checks="ParameterNumber" files=".*/threed/AffineTransformMatrix3D" />
+  <!-- allow Vector3D.linearCombination() methods -->
+  <suppress checks="ParameterNumber" files=".*/threed/Vector3D" />
+  <!-- allow internal, non-array QuaterionRotation.orthogonalRotationMatrixToQuaternion() method -->
+  <suppress checks="ParameterNumber" files=".*/threed/rotation/QuaternionRotation" />
+  <!-- allow Vector2D.linearCombination() methods -->
+  <suppress checks="ParameterNumber" files=".*/twod/Vector2D" />
+
   <!-- Be more lenient on tests. -->
   <suppress checks="Javadoc" files=".*[/\\]test[/\\].*" />
   <suppress checks="MultipleStringLiterals" files=".*[/\\]test[/\\].*" />

@@ -21,7 +21,7 @@ package org.apache.commons.geometry.core.exception;
  */
 public class GeometryValueException extends GeometryException {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20190210L;
 
     /** Simple constructor with error message.

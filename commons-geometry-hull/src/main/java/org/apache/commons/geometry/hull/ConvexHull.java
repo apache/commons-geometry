@@ -19,7 +19,7 @@ package org.apache.commons.geometry.hull;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.Region;
+import org.apache.commons.geometry.core.Region;
 
 /**
  * This class represents a convex hull.

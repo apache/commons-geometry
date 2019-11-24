@@ -16,8 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.Comparator;
+import java.util.function.Function;
+
 import org.apache.commons.geometry.core.Geometry;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
@@ -45,6 +47,24 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     public static final Vector1D NEGATIVE_INFINITY =
         new Vector1D(Double.NEGATIVE_INFINITY);
 
+    /** Comparator that sorts vectors in component-wise ascending order.
+     * Vectors are only considered equal if their coordinates match exactly.
+     * Null arguments are evaluated as being greater than non-null arguments.
+     */
+    public static final Comparator<Vector1D> COORDINATE_ASCENDING_ORDER = (a, b) -> {
+        int cmp = 0;
+
+        if (a != null && b != null) {
+            cmp = Double.compare(a.getX(), b.getX());
+        } else if (a != null) {
+            cmp = -1;
+        } else if (b != null) {
+            cmp = 1;
+        }
+
+        return cmp;
+    };
+
     /** Serializable UID. */
     private static final long serialVersionUID = 20180710L;
 
@@ -54,7 +74,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
     /** Simple constructor.
      * @param x abscissa (coordinate value)
      */
-    private Vector1D(double x) {
+    private Vector1D(final double x) {
         this.x = x;
     }
 
@@ -86,19 +106,25 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D vectorTo(Vector1D v) {
+    public boolean isFinite() {
+        return Double.isFinite(x);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D vectorTo(final Vector1D v) {
         return v.subtract(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Unit directionTo(Vector1D v) {
+    public Unit directionTo(final Vector1D v) {
         return vectorTo(v).normalize();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D lerp(Vector1D p, double t) {
+    public Vector1D lerp(final Vector1D p, final double t) {
         return linearCombination(1.0 - t, this, t, p);
     }
 
@@ -122,32 +148,32 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D withNorm(double magnitude) {
+    public Vector1D withNorm(final double magnitude) {
         getCheckedNorm(); // validate our norm value
-        return (x > 0.0)? new Vector1D(magnitude) : new Vector1D(-magnitude);
+        return (x > 0.0) ? new Vector1D(magnitude) : new Vector1D(-magnitude);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D add(Vector1D v) {
+    public Vector1D add(final Vector1D v) {
         return new Vector1D(x + v.x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D add(double factor, Vector1D v) {
+    public Vector1D add(final double factor, final Vector1D v) {
         return new Vector1D(x + (factor * v.x));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D subtract(Vector1D v) {
+    public Vector1D subtract(final Vector1D v) {
         return new Vector1D(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D subtract(double factor, Vector1D v) {
+    public Vector1D subtract(final double factor, final Vector1D v) {
         return new Vector1D(x - (factor * v.x));
     }
 
@@ -165,25 +191,25 @@ public class Vector1D extends EuclideanVector<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D multiply(double a) {
+    public Vector1D multiply(final double a) {
         return new Vector1D(a * x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distance(Vector1D v) {
+    public double distance(final Vector1D v) {
         return Vectors.norm(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distanceSq(Vector1D v) {
+    public double distanceSq(final Vector1D v) {
         return Vectors.normSq(x - v.x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double dot(Vector1D v) {
+    public double dot(final Vector1D v) {
         return x * v.x;
     }
 
@@ -204,19 +230,18 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return (sig1 == sig2) ? 0.0 : Geometry.PI;
     }
 
-    /** Apply the given transform to this vector, returning the result as a
-     * new vector instance.
-     * @param transform the transform to apply
-     * @return a new, transformed vector
-     * @see AffineTransformMatrix1D#apply(Vector1D)
+    /** Convenience method to apply a function to this vector. This
+     * can be used to transform the vector inline with other methods.
+     * @param fn the function to apply
+     * @return the transformed vector
      */
-    public Vector1D transform(AffineTransformMatrix1D transform) {
-        return transform.apply(this);
+    public Vector1D transform(final Function<Vector1D, Vector1D> fn) {
+        return fn.apply(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(final Vector1D vec, final DoublePrecisionContext precision) {
+    public boolean eq(final Vector1D vec, final DoublePrecisionContext precision) {
         return precision.eq(x, vec.x);
     }
 
@@ -254,7 +279,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      *
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
 
         if (this == other) {
             return true;
@@ -281,7 +306,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * @param x vector coordinate
      * @return vector instance
      */
-    public static Vector1D of(double x) {
+    public static Vector1D of(final double x) {
         return new Vector1D(x);
     }
 
@@ -291,7 +316,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * @return vector instance represented by the string
      * @throws IllegalArgumentException if the given string has an invalid format
      */
-    public static Vector1D parse(String str) {
+    public static Vector1D parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector1D::new);
     }
 
@@ -301,11 +326,11 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a scale factor for first coordinate
-     * @param c first coordinate
-     * @return vector with coordinates calculated by {@code a * c}
+     * @param a scale factor for first vector
+     * @param c first vector
+     * @return vector calculated by {@code a * c}
      */
-    public static Vector1D linearCombination(double a, Vector1D c) {
+    public static Vector1D linearCombination(final double a, final Vector1D c) {
         return new Vector1D(a * c.x);
     }
 
@@ -315,13 +340,15 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2)}
      */
-    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2) {
+    public static Vector1D linearCombination(final double a1, final Vector1D v1,
+            final double a2, final Vector1D v2) {
+
         return new Vector1D(
                 LinearCombination.value(a1, v1.x, a2, v2.x));
     }
@@ -332,16 +359,18 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @return vector with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3)}
      */
-    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2,
-            double a3, Vector1D v3) {
+    public static Vector1D linearCombination(final double a1, final Vector1D v1,
+            final double a2, final Vector1D v2,
+            final double a3, final Vector1D v3) {
+
         return new Vector1D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x));
     }
@@ -352,18 +381,21 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * corresponding scale factors.
      * </p>
      *
-     * @param a1 scale factor for first coordinate
-     * @param v1 first coordinate
-     * @param a2 scale factor for second coordinate
-     * @param v2 second coordinate
-     * @param a3 scale factor for third coordinate
-     * @param v3 third coordinate
-     * @param a4 scale factor for fourth coordinate
-     * @param v4 fourth coordinate
-     * @return point with coordinates calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
+     * @param a1 scale factor for first vector
+     * @param v1 first vector
+     * @param a2 scale factor for second vector
+     * @param v2 second vector
+     * @param a3 scale factor for third vector
+     * @param v3 third vector
+     * @param a4 scale factor for fourth vector
+     * @param v4 fourth vector
+     * @return vector calculated by {@code (a1 * v1) + (a2 * v2) + (a3 * v3) + (a4 * v4)}
      */
-    public static Vector1D linearCombination(double a1, Vector1D v1, double a2, Vector1D v2,
-            double a3, Vector1D v3, double a4, Vector1D v4) {
+    public static Vector1D linearCombination(final double a1, final Vector1D v1,
+            final double a2, final Vector1D v2,
+            final double a3, final Vector1D v3,
+            final double a4, final Vector1D v4) {
+
         return new Vector1D(
                 LinearCombination.value(a1, v1.x, a2, v2.x, a3, v3.x, a4, v4.x));
     }
@@ -378,7 +410,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         /** Negation of unit vector (coordinates: -1). */
         public static final Unit MINUS = new Unit(-1d);
 
-        /** Serializable version identifier */
+        /** Serializable version identifier. */
         private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given
@@ -394,7 +426,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          *
          * @param x Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value is
+         *      zero, NaN, or infinite
          */
         public static Unit from(double x) {
             Vectors.checkedNorm(Vectors.norm(x));
@@ -406,7 +439,8 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws IllegalNormException if the norm of the given value is zero, NaN, or infinite
+         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value is
+         *      zero, NaN, or infinite
          */
         public static Unit from(Vector1D v) {
             return v instanceof Unit ?

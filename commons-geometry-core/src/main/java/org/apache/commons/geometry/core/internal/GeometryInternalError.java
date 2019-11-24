@@ -27,7 +27,7 @@ public class GeometryInternalError extends IllegalStateException {
             "error in the algorithm implementation than in the calling code or data. Please file a bug report " +
             "with the developers.";
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20180913L;
 
     /** Simple constructor with a default error message.

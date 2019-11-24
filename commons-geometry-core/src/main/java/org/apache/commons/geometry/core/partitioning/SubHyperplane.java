@@ -16,127 +16,129 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 
-/** This interface represents the remaining parts of an hyperplane after
- * other parts have been chopped off.
+/** Interface representing subhyperplanes, which are regions
+ * embedded in a hyperplane.
 
- * <p>sub-hyperplanes are obtained when parts of an {@link
- * Hyperplane hyperplane} are chopped off by other hyperplanes that
- * intersect it. The remaining part is a convex region. Such objects
- * appear in {@link BSPTree BSP trees} as the intersection of a cut
- * hyperplane with the convex region which it splits, the chopping
- * hyperplanes are the cut hyperplanes closer to the tree root.</p>
-
- * <p>
- * Note that this interface is <em>not</em> intended to be implemented
- * by Apache Commons Math users, it is only intended to be implemented
- * within the library itself. New methods may be added even for minor
- * versions, which breaks compatibility for external implementations.
- * </p>
-
- * @param <P> Point type defining the embedding space.
+ * @param <P> Point implementation type
  */
-public interface SubHyperplane<P extends Point<P>> {
+public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHyperplane<P>> {
 
-    /** Copy the instance.
-     * <p>The instance created is completely independent of the original
-     * one. A deep copy is used, none of the underlying objects are
-     * shared (except for the nodes attributes and immutable
-     * objects).</p>
-     * @return a new sub-hyperplane, copy of the instance
-     */
-    SubHyperplane<P> copySelf();
-
-    /** Get the underlying hyperplane.
-     * @return underlying hyperplane
+    /** Get the hyperplane that this instance is embedded in.
+     * @return the hyperplane that this instance is embedded in.
      */
     Hyperplane<P> getHyperplane();
 
-    /** Check if the instance is empty.
-     * @return true if the instance is empty
+    /** Return true if this instance contains all points in the
+     * hyperplane.
+     * @return true if this instance contains all points in the
+     *      hyperplane
+     */
+    boolean isFull();
+
+    /** Return true if this instance does not contain any points.
+     * @return true if this instance does not contain any points
      */
     boolean isEmpty();
 
-    /** Get the size of the instance.
-     * @return the size of the instance (this is a length in 1D, an area
-     * in 2D, a volume in 3D ...)
+    /** Return true if this instance has infinite size.
+     * @return true if this instance has infinite size
+     */
+    boolean isInfinite();
+
+    /** Return true if this instance has finite size.
+     * @return true if this instance has finite size
+     */
+    boolean isFinite();
+
+    /** Return the size of this instance. This will have different
+     * meanings in different spaces and dimensions. For example, in
+     * Euclidean space, this will be length in 2D and area in 3D.
+     * @return the size of this instance
      */
     double getSize();
 
-    /** Split the instance in two parts by an hyperplane.
-     * @param hyperplane splitting hyperplane
-     * @return an object containing both the part of the instance
-     * on the plus side of the hyperplane and the part of the
-     * instance on the minus side of the hyperplane
+    /** Classify a point with respect to the subhyperplane's region. The point is
+     * classified as follows:
+     * <ul>
+     *  <li>{@link RegionLocation#INSIDE INSIDE} - The point lies on the hyperplane
+     *      and inside of the subhyperplane's region.</li>
+     *  <li>{@link RegionLocation#BOUNDARY BOUNDARY} - The point lies on the hyperplane
+     *      and is on the boundary of the subhyperplane's region.</li>
+     *  <li>{@link RegionLocation#OUTSIDE OUTSIDE} - The point does not lie on
+     *      the hyperplane or it does lie on the hyperplane but is outside of the
+     *      subhyperplane's region.</li>
+     * </ul>
+     * @param point the point to classify
+     * @return classification of the point with respect to the subhyperplane's hyperplane
+     *      and region
      */
-    SplitSubHyperplane<P> split(Hyperplane<P> hyperplane);
+    RegionLocation classify(P point);
 
-    /** Compute the union of the instance and another sub-hyperplane.
-     * @param other other sub-hyperplane to union (<em>must</em> be in the
-     * same hyperplane as the instance)
-     * @return a new sub-hyperplane, union of the instance and other
+    /** Return true if the subhyperplane contains the given point, meaning that the point
+     * lies on the hyperplane and is not on the outside of the subhyperplane's region.
+     * @param point the point to check
+     * @return true if the point is contained in the subhyperplane
      */
-    SubHyperplane<P> reunite(SubHyperplane<P> other);
-
-    /** Class holding the results of the {@link #split split} method.
-     * @param <U> Type of the embedding space.
-     */
-    class SplitSubHyperplane<U extends Point<U>> {
-
-        /** Part of the sub-hyperplane on the plus side of the splitting hyperplane. */
-        private final SubHyperplane<U> plus;
-
-        /** Part of the sub-hyperplane on the minus side of the splitting hyperplane. */
-        private final SubHyperplane<U> minus;
-
-        /** Build a SplitSubHyperplane from its parts.
-         * @param plus part of the sub-hyperplane on the plus side of the
-         * splitting hyperplane
-         * @param minus part of the sub-hyperplane on the minus side of the
-         * splitting hyperplane
-         */
-        public SplitSubHyperplane(final SubHyperplane<U> plus,
-                                  final SubHyperplane<U> minus) {
-            this.plus  = plus;
-            this.minus = minus;
-        }
-
-        /** Get the part of the sub-hyperplane on the plus side of the splitting hyperplane.
-         * @return part of the sub-hyperplane on the plus side of the splitting hyperplane
-         */
-        public SubHyperplane<U> getPlus() {
-            return plus;
-        }
-
-        /** Get the part of the sub-hyperplane on the minus side of the splitting hyperplane.
-         * @return part of the sub-hyperplane on the minus side of the splitting hyperplane
-         */
-        public SubHyperplane<U> getMinus() {
-            return minus;
-        }
-
-        /** Get the side of the split sub-hyperplane with respect to its splitter.
-         * @return {@link Side#PLUS} if only {@link #getPlus()} is neither null nor empty,
-         * {@link Side#MINUS} if only {@link #getMinus()} is neither null nor empty,
-         * {@link Side#BOTH} if both {@link #getPlus()} and {@link #getMinus()}
-         * are neither null nor empty or {@link Side#HYPER} if both {@link #getPlus()} and
-         * {@link #getMinus()} are either null or empty
-         */
-        public Side getSide() {
-            if (plus != null && !plus.isEmpty()) {
-                if (minus != null && !minus.isEmpty()) {
-                    return Side.BOTH;
-                } else {
-                    return Side.PLUS;
-                }
-            } else if (minus != null && !minus.isEmpty()) {
-                return Side.MINUS;
-            } else {
-                return Side.HYPER;
-            }
-        }
-
+    default boolean contains(P point) {
+        final RegionLocation loc = classify(point);
+        return loc != null && loc != RegionLocation.OUTSIDE;
     }
 
+    /** Return the closest point to the argument that is contained in the subhyperplane
+     * (ie, not classified as {@link RegionLocation#OUTSIDE outside}), or null if no
+     * such point exists.
+     * @param point the reference point
+     * @return the closest point to the reference point that is contained in the subhyperplane,
+     *      or null if no such point exists
+     */
+    P closest(P point);
+
+    /** Return a {@link Builder} instance for joining multiple
+     * subhyperplanes together.
+     * @return a new builder instance
+     */
+    Builder<P> builder();
+
+    /** Return a new subhyperplane instance resulting from the application
+     * of the given transform. The current instance is not modified.
+     * @param transform the transform instance to apply
+     * @return new transformed subhyperplane instance
+     */
+    SubHyperplane<P> transform(Transform<P> transform);
+
+    /** Convert this instance into a list of convex child subhyperplanes.
+     * @return a list of convex subhyperplanes representing the same subspace
+     *      region as this instance
+     */
+    List<? extends ConvexSubHyperplane<P>> toConvex();
+
+    /** Interface for joining multiple {@link SubHyperplane}s into a single
+     * instance.
+     * @param <P> Point implementation type
+     */
+    interface Builder<P extends Point<P>> {
+
+        /** Add a {@link SubHyperplane} instance to the builder.
+         * @param sub subhyperplane to add to this instance
+         */
+        void add(SubHyperplane<P> sub);
+
+        /** Add a {@link ConvexSubHyperplane} instance to the builder.
+         * @param sub convex subhyperplane to add to this instance
+         */
+        void add(ConvexSubHyperplane<P> sub);
+
+        /** Get a {@link SubHyperplane} representing the union
+         * of all input subhyperplanes.
+         * @return subhyperplane representing the union of all input
+         *      subhyperplanes
+         */
+        SubHyperplane<P> build();
+    }
 }

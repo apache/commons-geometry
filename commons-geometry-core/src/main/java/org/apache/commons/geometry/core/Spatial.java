@@ -38,4 +38,10 @@ public interface Spatial {
      *      are NaN
      */
     boolean isInfinite();
+
+    /** Returns true if all values in this element are finite, meaning
+     * they are not NaN or infinite.
+     * @return true if all values in this element are finite
+     */
+    boolean isFinite();
 }

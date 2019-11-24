@@ -16,105 +16,69 @@
  */
 package org.apache.commons.geometry.spherical;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.TreeBuilder;
-import org.apache.commons.geometry.core.partitioning.TreeDumper;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.geometry.spherical.oned.ArcsSet;
-import org.apache.commons.geometry.spherical.oned.LimitAngle;
-import org.apache.commons.geometry.spherical.oned.S1Point;
-import org.apache.commons.geometry.spherical.twod.Circle;
-import org.apache.commons.geometry.spherical.twod.S2Point;
-import org.apache.commons.geometry.spherical.twod.SphericalPolygonsSet;
+import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.geometry.spherical.twod.Point2S;
+import org.junit.Assert;
 
-/** Test utilities for spherical spaces.
+/** Class containing various test utilities for spherical space.
  */
 public class SphericalTestUtils {
 
-    /** Get a string representation of an {@link ArcsSet}.
-     * @param arcsSet region to dump
-     * @return string representation of the region
+    /** Assert that the given points are equal, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
      */
-    public static String dump(final ArcsSet arcsSet) {
-        final TreeDumper<S1Point> visitor = new TreeDumper<S1Point>("ArcsSet") {
-
-            /** {@inheritDoc} */
-            @Override
-            protected void formatHyperplane(final Hyperplane<S1Point> hyperplane) {
-                final LimitAngle h = (LimitAngle) hyperplane;
-                getFormatter().format("%22.15e %b %s",
-                                      h.getLocation().getAzimuth(), h.isDirect(), h.getPrecision().toString());
-            }
-
-        };
-        arcsSet.getTree(false).visit(visitor);
-        return visitor.getDump();
+    public static void assertPointsEqual(Point1S expected, Point1S actual, double tolerance) {
+        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
     }
 
-    /** Get a string representation of a {@link SphericalPolygonsSet}.
-     * @param sphericalPolygonsSet region to dump
-     * @return string representation of the region
+    /** Assert that the given points are equal, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
      */
-    public static String dump(final SphericalPolygonsSet sphericalPolygonsSet) {
-        final TreeDumper<S2Point> visitor = new TreeDumper<S2Point>("SphericalPolygonsSet") {
-
-            /** {@inheritDoc} */
-            @Override
-            protected void formatHyperplane(final Hyperplane<S2Point> hyperplane) {
-                final Circle h = (Circle) hyperplane;
-                getFormatter().format("%22.15e %22.15e %22.15e %s",
-                                      h.getPole().getX(), h.getPole().getY(), h.getPole().getZ(),
-                                      h.getPrecision().toString());
-            }
-
-        };
-        sphericalPolygonsSet.getTree(false).visit(visitor);
-        return visitor.getDump();
+    public static void assertPointsEqual(Point2S expected, Point2S actual, double tolerance) {
+        String msg = "Expected point to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getAzimuth(), actual.getAzimuth(), tolerance);
+        Assert.assertEquals(msg, expected.getPolar(), actual.getPolar(), tolerance);
     }
 
-    /** Parse a string representation of an {@link ArcsSet}.
-     * @param s string to parse
-     * @return parsed region
-     * @exception IOException if the string cannot be read
-     * @exception ParseException if the string cannot be parsed
+    /** Assert that the given points are equalivalent, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
      */
-    public static ArcsSet parseArcsSet(final String s)
-        throws IOException, ParseException {
-        final TreeBuilder<S1Point> builder = new TreeBuilder<S1Point>("ArcsSet", s) {
-
-            /** {@inheritDoc} */
-            @Override
-            protected LimitAngle parseHyperplane()
-                throws ParseException {
-                return new LimitAngle(S1Point.of(getNumber()), getBoolean(), getPrecision());
-            }
-
-        };
-        return new ArcsSet(builder.getTree(), builder.getPrecision());
+    public static void assertPointsEq(Point2S expected, Point2S actual, double tolerance) {
+        String msg = "Expected point to be equivalent to " + expected + " but was " + actual + ";";
+        Assert.assertTrue(msg, expected.eq(actual, new EpsilonDoublePrecisionContext(tolerance)));
     }
 
-    /** Parse a string representation of a {@link SphericalPolygonsSet}.
-     * @param s string to parse
-     * @return parsed region
-     * @exception IOException if the string cannot be read
-     * @exception ParseException if the string cannot be parsed
+    /** Assert that the given vectors are equal, using the specified tolerance value.
+     * @param expected
+     * @param actual
+     * @param tolerance
      */
-    public static SphericalPolygonsSet parseSphericalPolygonsSet(final String s)
-        throws IOException, ParseException {
-        final TreeBuilder<S2Point> builder = new TreeBuilder<S2Point>("SphericalPolygonsSet", s) {
-
-            /** {@inheritDoc} */
-            @Override
-            public Circle parseHyperplane()
-                throws ParseException {
-                return new Circle(Vector3D.of(getNumber(), getNumber(), getNumber()), getPrecision());
-            }
-
-        };
-        return new SphericalPolygonsSet(builder.getTree(), builder.getPrecision());
+    public static void assertVectorsEqual(Vector3D expected, Vector3D actual, double tolerance) {
+        String msg = "Expected vector to equal " + expected + " but was " + actual + ";";
+        Assert.assertEquals(msg, expected.getX(), actual.getX(), tolerance);
+        Assert.assertEquals(msg, expected.getY(), actual.getY(), tolerance);
+        Assert.assertEquals(msg, expected.getZ(), actual.getZ(), tolerance);
     }
 
+    /** Assert that the given points lie in the specified location relative to the region.
+     * @param region region to test
+     * @param loc expected location of the given points
+     * @param pts points to test
+     */
+    public static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
+        for (Point2S pt : pts) {
+            Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
+        }
+    }
 }

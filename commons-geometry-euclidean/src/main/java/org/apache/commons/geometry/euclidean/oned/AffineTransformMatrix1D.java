@@ -19,12 +19,12 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.io.Serializable;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
-import org.apache.commons.geometry.euclidean.AffineTransformMatrix;
+import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.core.Precision;
 
-/** Class using a matrix to represent a affine transformations in 1 dimensional Euclidean space.
+/** Class using a matrix to represent affine transformations in 1 dimensional Euclidean space.
 *
 * <p>Instances of this class use a 2x2 matrix for all transform operations.
 * The last row of this matrix is always set to the values <code>[0 1]</code> and so
@@ -32,29 +32,30 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vector1D, Vector1D>, Serializable {
+public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D>
+    implements Transform1D, Serializable {
 
-    /** Serializable version identifier */
+    /** Serializable version identifier. */
     private static final long serialVersionUID = 20181006L;
 
-    /** The number of internal matrix elements */
+    /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 2;
 
-    /** String used to start the transform matrix string representation */
+    /** String used to start the transform matrix string representation. */
     private static final String MATRIX_START = "[ ";
 
-    /** String used to end the transform matrix string representation */
+    /** String used to end the transform matrix string representation. */
     private static final String MATRIX_END = " ]";
 
-    /** String used to separate elements in the matrix string representation */
+    /** String used to separate elements in the matrix string representation. */
     private static final String ELEMENT_SEPARATOR = ", ";
 
     /** Shared transform set to the identity matrix. */
     private static final AffineTransformMatrix1D IDENTITY_INSTANCE = new AffineTransformMatrix1D(1, 0);
 
-    /** Transform matrix entry <code>m<sub>0,0</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,0</sub></code>. */
     private final double m00;
-    /** Transform matrix entry <code>m<sub>0,1</sub></code> */
+    /** Transform matrix entry <code>m<sub>0,1</sub></code>. */
     private final double m01;
 
     /**
@@ -81,7 +82,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      */
     public double[] toArray() {
         return new double[] {
-                m00, m01
+            m00, m01
         };
     }
 
@@ -107,8 +108,23 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @see #applyVector(Vector1D)
      */
     @Override
-    public Vector1D applyDirection(final Vector1D vec) {
+    public Vector1D.Unit applyDirection(final Vector1D vec) {
         return applyVector(vec, Vector1D.Unit::from);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double determinant() {
+        return m00;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This simply returns the current instance.</p>
+     */
+    @Override
+    public AffineTransformMatrix1D toMatrix() {
+        return this;
     }
 
     /** Get a new transform containing the result of applying a translation logically after
@@ -214,7 +230,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
         final double invDet = 1.0 / det;
 
         final double c00 = invDet;
-        final double c01 = - (this.m01 * invDet);
+        final double c01 = -(this.m01 * invDet);
 
         return new AffineTransformMatrix1D(c00, c01);
     }
@@ -288,7 +304,7 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @return a new transform initialized with the given matrix values
      * @throws IllegalArgumentException if the array does not have 2 elements
      */
-    public static AffineTransformMatrix1D of(final double ... arr) {
+    public static AffineTransformMatrix1D of(final double... arr) {
         if (arr.length != NUM_ELEMENTS) {
             throw new IllegalArgumentException("Dimension mismatch: " + arr.length + " != " + NUM_ELEMENTS);
         }
@@ -341,7 +357,8 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      * @param b second transform
      * @return the transform computed as {@code a x b}
      */
-    private static AffineTransformMatrix1D multiply(final AffineTransformMatrix1D a, final AffineTransformMatrix1D b) {
+    private static AffineTransformMatrix1D multiply(final AffineTransformMatrix1D a,
+            final AffineTransformMatrix1D b) {
 
         // calculate the matrix elements
         final double c00 = a.m00 * b.m00;
@@ -358,7 +375,8 @@ public final class AffineTransformMatrix1D implements AffineTransformMatrix<Vect
      */
     private static void validateElementForInverse(final double element) {
         if (!Double.isFinite(element)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " + element);
+            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " +
+                    element);
         }
     }
 }

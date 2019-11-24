@@ -19,14 +19,15 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.partitioning.Embedding;
+import org.apache.commons.geometry.core.internal.Equivalency;
+import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
+import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.IntervalsSet;
-import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
+import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
+import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -57,7 +58,8 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * points with negative offsets and the right half plane is the set of
  * points with positive offsets.</p>
  */
-public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vector1D>, Serializable {
+public final class Line extends AbstractHyperplane<Vector2D>
+    implements EmbeddingHyperplane<Vector2D, Vector1D>, Equivalency<Line> {
 
     /** Serializable UID. */
     private static final long serialVersionUID = 20190120L;
@@ -68,18 +70,16 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
     /** The distance between the origin and the line. */
     private final double originOffset;
 
-    /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
-
     /** Simple constructor.
      * @param direction The direction of the line.
      * @param originOffset The signed distance between the line and the origin.
      * @param precision Precision context used to compare floating point numbers.
      */
     private Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
+        super(precision);
+
         this.direction = direction;
         this.originOffset = originOffset;
-        this.precision = precision;
     }
 
     /** Get the angle of the line in radians with respect to the abscissa (+x) axis. The
@@ -127,35 +127,154 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
 
     /** {@inheritDoc} */
     @Override
-    public DoublePrecisionContext getPrecision() {
-        return precision;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Line copySelf() {
-        return this;
-    }
-
-    /** Get the reverse of the instance, meaning a line containing the same
-     * points but with the opposite orientation.
-     * @return a new line, with orientation opposite to the instance orientation
-     */
     public Line reverse() {
-        return new Line(direction.negate(), -originOffset, precision);
+        return new Line(direction.negate(), -originOffset, getPrecision());
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D toSubSpace(final Vector2D point) {
-        return Vector1D.of(direction.dot(point));
+    public Line transform(final Transform<Vector2D> transform) {
+        final Vector2D origin = getOrigin();
+
+        final Vector2D tOrigin = transform.apply(origin);
+        final Vector2D tOriginPlusDir = transform.apply(origin.add(getDirection()));
+
+        return fromPoints(tOrigin, tOriginPlusDir, getPrecision());
+    }
+
+    /** Get an object containing the current line transformed by the argument along with a
+     * 1D transform that can be applied to subspace points. The subspace transform transforms
+     * subspace points such that their 2D location in the transformed line is the same as their
+     * 2D location in the original line after the 2D transform is applied. For example, consider
+     * the code below:
+     * <pre>
+     *      SubspaceTransform st = line.subspaceTransform(transform);
+     *
+     *      Vector1D subPt = Vector1D.of(1);
+     *
+     *      Vector2D a = transform.apply(line.toSpace(subPt)); // transform in 2D space
+     *      Vector2D b = st.getLine().toSpace(st.getTransform().apply(subPt)); // transform in 1D space
+     * </pre>
+     * At the end of execution, the points {@code a} (which was transformed using the original
+     * 2D transform) and {@code b} (which was transformed in 1D using the subspace transform)
+     * are equivalent.
+     *
+     * @param transform the transform to apply to this instance
+     * @return an object containing the transformed line along with a transform that can be applied
+     *      to subspace points
+     * @see #transform(Transform)
+     */
+    public SubspaceTransform subspaceTransform(final Transform<Vector2D> transform) {
+        final Vector2D origin = getOrigin();
+
+        final Vector2D p1 = transform.apply(origin);
+        final Vector2D p2 = transform.apply(origin.add(direction));
+
+        final Line tLine = Line.fromPoints(p1, p2, getPrecision());
+
+        final Vector1D tSubspaceOrigin = tLine.toSubspace(p1);
+        final Vector1D tSubspaceDirection = tSubspaceOrigin.vectorTo(tLine.toSubspace(p2));
+
+        final double translation = tSubspaceOrigin.getX();
+        final double scale = tSubspaceDirection.getX();
+
+        final AffineTransformMatrix1D subspaceTransform = AffineTransformMatrix1D.of(scale, translation);
+
+        return new SubspaceTransform(tLine, subspaceTransform);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Segment span() {
+        return segment(Interval.full());
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param interval interval representing the 1D region for the line segment
+     * @return a new line segment on this line
+     */
+    public Segment segment(final Interval interval) {
+        return Segment.fromInterval(this, interval);
+    }
+
+    /** Create a new line segment from the given interval.
+     * @param a first 1D location for the interval
+     * @param b second 1D location for the interval
+     * @return a new line segment on this line
+     */
+    public Segment segment(final double a, final double b) {
+        return Segment.fromInterval(this, a, b);
+    }
+
+    /** Create a new line segment between the projections of the two
+     * given points onto this line.
+     * @param a first point
+     * @param b second point
+     * @return a new line segment on this line
+     */
+    public Segment segment(final Vector2D a, final Vector2D b) {
+        return Segment.fromInterval(this, toSubspace(a), toSubspace(b));
+    }
+
+    /** Create a new line segment that starts at infinity and continues along
+     * the line up to the projection of the given point.
+     * @param pt point defining the end point of the line segment; the end point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public Segment segmentTo(final Vector2D pt) {
+        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    }
+
+    /** Create a new line segment that starts at the projection of the given point
+     * and continues in the direction of the line to infinity, similar to a ray.
+     * @param pt point defining the start point of the line segment; the start point
+     *      is equal to the projection of this point onto the line
+     * @return a new, half-open line segment
+     */
+    public Segment segmentFrom(final Vector2D pt) {
+        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
+    }
+
+    /** Create a new, empty subline based on this line.
+     * @return a new, empty subline based on this line
+     */
+    public SubLine subline() {
+        return new SubLine(this);
+    }
+
+    /** Get the abscissa of the given point on the line. The abscissa represents
+     * the distance the projection of the point on the line is from the line's
+     * origin point (the point on the line closest to the origin of the
+     * 2D space). Abscissa values increase in the direction of the line. This method
+     * is exactly equivalent to {@link #toSubspace(Vector2D)} except that this method
+     * returns a double instead of a {@link Vector1D}.
+     * @param point point to compute the abscissa for
+     * @return abscissa value of the point
+     * @see #toSubspace(Vector2D)
+     */
+    public double abscissa(final Vector2D point) {
+        return direction.dot(point);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector1D toSubspace(final Vector2D point) {
+        return Vector1D.of(abscissa(point));
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D toSpace(final Vector1D point) {
-        final double abscissa = point.getX();
+        return toSpace(point.getX());
+    }
 
+    /** Convert the given abscissa value (1D location on the line)
+     * into a 2D point.
+     * @param abscissa value to convert
+     * @return 2D point corresponding to the line abscissa value
+     */
+    public Vector2D toSpace(final double abscissa) {
         // The 2D coordinate is equal to the projection of the
         // 2D origin onto the line plus the direction multiplied
         // by the abscissa. We can combine everything into a single
@@ -175,7 +294,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      */
     public Vector2D intersection(final Line other) {
         final double area = this.direction.signedArea(other.direction);
-        if (precision.eqZero(area)) {
+        if (getPrecision().eqZero(area)) {
             // lines are parallel
             return null;
         }
@@ -191,36 +310,35 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
         return Vector2D.of(x, y);
     }
 
+    /** Compute the angle in radians between this instance's direction and the direction
+     * of the given line. The return value is in the range {@code [-pi, +pi)}. This method
+     * always returns a value, even for parallel or coincident lines.
+     * @param other other line
+     * @return the angle required to rotate this line to point in the direction of
+     *      the given line
+     */
+    public double angle(final Line other) {
+        final double thisAngle = Math.atan2(direction.getY(), direction.getX());
+        final double otherAngle = Math.atan2(other.direction.getY(), other.direction.getX());
+
+        return PlaneAngleRadians.normalizeBetweenMinusPiAndPi(otherAngle - thisAngle);
+    }
+
     /** {@inheritDoc} */
     @Override
     public Vector2D project(final Vector2D point) {
-        return toSpace(toSubSpace(point));
+        return toSpace(toSubspace(point));
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubLine wholeHyperplane() {
-        return new SubLine(this, new IntervalsSet(precision));
-    }
-
-    /** Build a region covering the whole space.
-     * @return a region containing the instance (really a {@link
-     * PolygonsSet PolygonsSet} instance)
-     */
-    @Override
-    public PolygonsSet wholeSpace() {
-        return new PolygonsSet(precision);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getOffset(final Vector2D point) {
+    public double offset(final Vector2D point) {
         return originOffset - direction.signedArea(point);
     }
 
-    /** Get the offset (oriented distance) of a line. Since an infinite
-     * number of distances can be calculated between points on two different
-     * lines, this methods returns the value closest to zero. For intersecting
+    /** Get the offset (oriented distance) of the given line relative to this instance.
+     * Since an infinite number of distances can be calculated between points on two
+     * different lines, this method returns the value closest to zero. For intersecting
      * lines, this will simply be zero. For parallel lines, this will be the
      * perpendicular distance between the two lines, as a signed value.
      *
@@ -232,7 +350,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @return offset of the line
      * @see #distance(Line)
      */
-    public double getOffset(final Line line) {
+    public double offset(final Line line) {
         if (isParallel(line)) {
             // since the lines are parallel, the offset between
             // them is simply the difference between their origin offsets,
@@ -248,7 +366,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
 
     /** {@inheritDoc} */
     @Override
-    public boolean sameOrientationAs(final Hyperplane<Vector2D> other) {
+    public boolean similarOrientation(final Hyperplane<Vector2D> other) {
         final Line otherLine = (Line) other;
         return direction.dot(otherLine.direction) >= 0.0;
     }
@@ -273,8 +391,9 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @param p point to check
      * @return true if p belongs to the line
      */
+    @Override
     public boolean contains(final Vector2D p) {
-        return precision.eqZero(getOffset(p));
+        return getPrecision().eqZero(offset(p));
     }
 
     /** Check if this instance completely contains the other line.
@@ -284,7 +403,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @return true if this instance contains all points in the given line
      */
     public boolean contains(final Line line) {
-        return isParallel(line) && precision.eqZero(getOffset(line));
+        return isParallel(line) && getPrecision().eqZero(offset(line));
     }
 
     /** Compute the distance between the instance and a point.
@@ -296,7 +415,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @return distance between the instance and the point
      */
     public double distance(final Vector2D p) {
-        return Math.abs(getOffset(p));
+        return Math.abs(offset(p));
     }
 
     /** Compute the shortest distance between this instance and
@@ -305,10 +424,10 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @param line line to compute the closest distance to
      * @return the shortest distance between this instance and the
      *      given line
-     * @see #getOffset(Line)
+     * @see #offset(Line)
      */
     public double distance(final Line line) {
-        return Math.abs(getOffset(line));
+        return Math.abs(offset(line));
     }
 
     /** Check if the instance is parallel to another line.
@@ -318,20 +437,31 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      */
     public boolean isParallel(final Line line) {
         final double area = direction.signedArea(line.direction);
-        return precision.eqZero(area);
+        return getPrecision().eqZero(area);
     }
 
-    /** Transform this instance with the given transform.
-     * @param transform transform to apply to this instance
-     * @return a new transformed line
-     */
-    public Line transform(final Transform<Vector2D, Vector1D> transform) {
-        final Vector2D origin = getOrigin();
+    /** {@inheritDoc}
+    *
+    * <p>Instances are considered equivalent if they
+    * <ul>
+    *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+    *   <li>have equivalent locations (as evaluated by the precision context), and</li>
+    *   <li>point in the same direction (as evaluated by the precision context)</li>
+    * </ul>
+    * @param other the point to compare with
+    * @return true if this instance should be considered equivalent to the argument
+    */
+    @Override
+    public boolean eq(final Line other) {
+        if (this == other) {
+            return true;
+        }
 
-        final Vector2D p1 = transform.apply(origin);
-        final Vector2D p2 = transform.apply(origin.add(direction));
+        final DoublePrecisionContext precision = getPrecision();
 
-        return Line.fromPoints(p1, p2, precision);
+        return precision.equals(other.getPrecision()) &&
+                getOrigin().eq(other.getOrigin(), precision) &&
+                precision.eq(getAngle(), other.getAngle());
     }
 
     /** {@inheritDoc} */
@@ -342,7 +472,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
         int result = 1;
         result = (prime * result) + Objects.hashCode(direction);
         result = (prime * result) + Double.hashCode(originOffset);
-        result = (prime * result) + Objects.hashCode(precision);
+        result = (prime * result) + Objects.hashCode(getPrecision());
 
         return result;
     }
@@ -352,8 +482,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        }
-        else if (!(obj instanceof Line)) {
+        } else if (!(obj instanceof Line)) {
             return false;
         }
 
@@ -361,7 +490,7 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
 
         return Objects.equals(this.direction, other.direction) &&
                 Double.compare(this.originOffset, other.originOffset) == 0 &&
-                Objects.equals(this.precision, other.precision);
+                Objects.equals(this.getPrecision(), other.getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -400,7 +529,8 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @throws GeometryValueException If {@code dir} has zero length, as evaluated by the
      *      given precision context
      */
-    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir, final DoublePrecisionContext precision) {
+    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir,
+            final DoublePrecisionContext precision) {
         if (dir.isZero(precision)) {
             throw new GeometryValueException("Line direction cannot be zero");
         }
@@ -419,67 +549,48 @@ public final class Line implements Hyperplane<Vector2D>, Embedding<Vector2D, Vec
      * @return new line containing {@code pt} and forming the given angle with the
      *      abscissa (x) axis.
      */
-    public static Line fromPointAndAngle(final Vector2D pt, final double angle, final DoublePrecisionContext precision) {
+    public static Line fromPointAndAngle(final Vector2D pt, final double angle,
+            final DoublePrecisionContext precision) {
         final Vector2D.Unit dir = Vector2D.Unit.from(Math.cos(angle), Math.sin(angle));
         return fromPointAndDirection(pt, dir, precision);
     }
 
-    // TODO: Remove this method and associated class after the Transform interface has been simplified.
-    // See GEOMETRY-24.
-
-    /** Create a {@link Transform} instance from a set of column vectors. The returned object can be used
-     * to transform {@link SubLine} instances.
-     * @param u first column vector; this corresponds to the first basis vector
-     *      in the coordinate frame
-     * @param v second column vector; this corresponds to the second basis vector
-     *      in the coordinate frame
-     * @param t third column vector; this corresponds to the translation of the transform
-     * @return a new transform instance
+    /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace
+     * transform produces the equivalent of the 2D transform in 1D.
      */
-    public static Transform<Vector2D, Vector1D> getTransform(final Vector2D u, final Vector2D v, final Vector2D t) {
-        final AffineTransformMatrix2D matrix = AffineTransformMatrix2D.fromColumnVectors(u, v, t);
-        return new LineTransform(matrix);
-    }
+    public static final class SubspaceTransform implements Serializable {
 
-    /** Class wrapping an {@link AffineTransformMatrix2D} with the methods necessary to fulfill the full
-     * {@link Transform} interface.
-     */
-    private static class LineTransform implements Transform<Vector2D, Vector1D> {
+        /** Serializable UID. */
+        private static final long serialVersionUID = 20190809L;
 
-        /** Transform matrix */
-        private final AffineTransformMatrix2D matrix;
+        /** The transformed line. */
+        private final Line line;
+
+        /** The subspace transform instance. */
+        private final AffineTransformMatrix1D transform;
 
         /** Simple constructor.
-         * @param matrix transform matrix
+         * @param line the transformed line
+         * @param transform 1D transform that can be applied to subspace points
          */
-        LineTransform(final AffineTransformMatrix2D matrix) {
-            this.matrix = matrix;
+        public SubspaceTransform(final Line line, final AffineTransformMatrix1D transform) {
+            this.line = line;
+            this.transform = transform;
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Vector2D apply(final Vector2D point) {
-            return matrix.apply(point);
+        /** Get the transformed line instance.
+         * @return the transformed line instance
+         */
+        public Line getLine() {
+            return line;
         }
 
-        /** {@inheritDoc} */
-        @Override
-        public Line apply(final Hyperplane<Vector2D> hyperplane) {
-            final Line line = (Line) hyperplane;
-            return line.transform(matrix);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SubHyperplane<Vector1D> apply(final SubHyperplane<Vector1D> sub,
-                                                final Hyperplane<Vector2D> original,
-                                                final Hyperplane<Vector2D> transformed) {
-            final OrientedPoint op = (OrientedPoint) sub.getHyperplane();
-            final Line originalLine  = (Line) original;
-            final Line transformedLine = (Line) transformed;
-            final Vector1D newLoc =
-                transformedLine.toSubSpace(apply(originalLine.toSpace(op.getLocation())));
-            return OrientedPoint.fromPointAndDirection(newLoc, op.getDirection(), originalLine.precision).wholeHyperplane();
+        /** Get the 1D transform that can be applied to subspace points. This transform can be used
+         * to perform the equivalent of the 2D transform in 1D space.
+         * @return the subspace transform instance
+         */
+        public AffineTransformMatrix1D getTransform() {
+            return transform;
         }
     }
 }
