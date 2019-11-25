@@ -121,32 +121,32 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     public Vector2D getBarycenter() {
         List<Segment> boundaries = getBoundaries();
 
-        if (!boundaries.isEmpty()) {
-            double quadrilateralAreaSum = 0.0;
-            double scaledSumX = 0.0;
-            double scaledSumY = 0.0;
+        double quadrilateralAreaSum = 0.0;
+        double scaledSumX = 0.0;
+        double scaledSumY = 0.0;
 
-            double signedArea;
-            Vector2D startPoint;
-            Vector2D endPoint;
+        double signedArea;
+        Vector2D startPoint;
+        Vector2D endPoint;
 
-            for (Segment seg : boundaries) {
-                if (seg.isInfinite()) {
-                    // infinite => no barycenter
-                    return null;
-                }
-
-                startPoint = seg.getStartPoint();
-                endPoint = seg.getEndPoint();
-
-                signedArea = startPoint.signedArea(endPoint);
-
-                quadrilateralAreaSum += signedArea;
-
-                scaledSumX += signedArea * (startPoint.getX() + endPoint.getX());
-                scaledSumY += signedArea * (startPoint.getY() + endPoint.getY());
+        for (Segment seg : boundaries) {
+            if (seg.isInfinite()) {
+                // infinite => no barycenter
+                return null;
             }
 
+            startPoint = seg.getStartPoint();
+            endPoint = seg.getEndPoint();
+
+            signedArea = startPoint.signedArea(endPoint);
+
+            quadrilateralAreaSum += signedArea;
+
+            scaledSumX += signedArea * (startPoint.getX() + endPoint.getX());
+            scaledSumY += signedArea * (startPoint.getY() + endPoint.getY());
+        }
+
+        if (quadrilateralAreaSum > 0) {
             return Vector2D.of(scaledSumX, scaledSumY).multiply(1.0 / (3.0 * quadrilateralAreaSum));
         }
 

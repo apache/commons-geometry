@@ -76,10 +76,6 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
     /** {@inheritDoc} */
     @Override
     public Vector3D getBarycenter() {
-        if (isFull()) {
-            return null;
-        }
-
         double volumeSum = 0.0;
 
         double sumX = 0.0;
@@ -106,16 +102,20 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
             sumZ += scaledVolume * facetBarycenter.getZ();
         }
 
-        double size = volumeSum / 3.0;
+        if (volumeSum > 0) {
+            double size = volumeSum / 3.0;
 
-        // Since the volume we used when adding together the facet contributions
-        // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
-        // of 3/4 to adjust for the actual barycenter position in each pyramid.
-        final double barycenterScale = 1.0 / (4 * size);
-        return Vector3D.of(
-                sumX * barycenterScale,
-                sumY * barycenterScale,
-                sumZ * barycenterScale);
+            // Since the volume we used when adding together the facet contributions
+            // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
+            // of 3/4 to adjust for the actual barycenter position in each pyramid.
+            final double barycenterScale = 1.0 / (4 * size);
+            return Vector3D.of(
+                    sumX * barycenterScale,
+                    sumY * barycenterScale,
+                    sumZ * barycenterScale);
+        }
+
+        return null;
     }
 
     /** {@inheritDoc} */
