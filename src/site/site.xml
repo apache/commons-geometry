@@ -22,7 +22,20 @@
     <href>/index.html</href>
   </bannerRight>
 
+  <skin>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-skin</artifactId>
+    <version>4.2</version>
+  </skin>
+
   <body>
+    <!-- Custom <head> tag with injected XHTML is supported. -->
+    <head>
+      <![CDATA[<script type="text/javascript" id="MathJax-script" async
+               src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+               </script>]]>
+    </head>
+
     <menu name="Geometry">
       <item name="Overview" href="/index.html"/>
       <item name="Downloads" href="https://commons.apache.org/geometry/download_geometry.cgi"/>
@@ -38,11 +51,33 @@
     <menu name="User Guide">
       <item name="Contents" href="/userguide/index.html"/>
     </menu>
-
-    <head>
-      <![CDATA[<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-      </script>]]>
-    </head>
-
   </body>
+
+  <custom>
+    <!-- Escaping with CDATA is not required. -->
+    <footer>
+      <div class="center">
+        Apache Commons, Apache @project.name@, Apache, the Apache feather
+        logo, and the Apache Commons project logos are trademarks of The Apache
+        Software Foundation.
+        All other marks mentioned may be trademarks or registered
+        trademarks of their respective owners.
+      </div>
+    </footer>
+
+    <!-- Custom properties controlling the commons-skin template. -->
+    <commonsSkin>
+      <!--
+          Convert preformatted source section tags to prettyprint:
+          <div class="source"><pre> to <div class="source"><pre
+          class="prettyprint">
+      -->
+      <prettyPrintSourcePreTags>false</prettyPrintSourcePreTags>
+
+      <!-- Add the "linenums" class to the prettyprint enabled source
+           tags -->
+      <prettyPrintLineNumbersEnabled>false</prettyPrintLineNumbersEnabled>
+    </commonsSkin>
+  </custom>
+
 </project>
