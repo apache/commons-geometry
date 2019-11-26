@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
@@ -52,7 +52,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -1);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.from(Function.identity());
+        FunctionTransform2D t = FunctionTransform2D.from(UnaryOperator.identity());
 
         // assert
         Assert.assertTrue(t.preservesOrientation());

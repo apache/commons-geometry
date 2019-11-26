@@ -16,18 +16,18 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-/** Class that wraps a {@link Function} with the {@link Transform1D} interface.
+/** Class that wraps a {@link UnaryOperator} with the {@link Transform1D} interface.
  */
 public final class FunctionTransform1D implements Transform1D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform1D IDENTITY =
-            new FunctionTransform1D(Function.identity(), true, Vector1D.ZERO);
+            new FunctionTransform1D(UnaryOperator.identity(), true, Vector1D.ZERO);
 
     /** The underlying function for the transform. */
-    private final Function<Vector1D, Vector1D> fn;
+    private final UnaryOperator<Vector1D> fn;
 
     /** True if the transform preserves spatial orientation. */
     private final boolean preservesOrientation;
@@ -40,7 +40,7 @@ public final class FunctionTransform1D implements Transform1D {
      * @param preservesOrientation true if the transform preserves spatial orientation
      * @param translation the translation component of the transform
      */
-    private FunctionTransform1D(final Function<Vector1D, Vector1D> fn, final boolean preservesOrientation,
+    private FunctionTransform1D(final UnaryOperator<Vector1D> fn, final boolean preservesOrientation,
             final Vector1D translation) {
         this.fn = fn;
         this.preservesOrientation = preservesOrientation;
@@ -84,7 +84,7 @@ public final class FunctionTransform1D implements Transform1D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform1D from(final Function<Vector1D, Vector1D> fn) {
+    public static FunctionTransform1D from(final UnaryOperator<Vector1D> fn) {
         final Vector1D tOne = fn.apply(Vector1D.Unit.PLUS);
         final Vector1D tZero = fn.apply(Vector1D.ZERO);
 

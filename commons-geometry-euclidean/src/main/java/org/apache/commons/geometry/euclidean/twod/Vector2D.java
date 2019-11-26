@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Comparator;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -321,7 +321,7 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
      * @param fn the function to apply
      * @return the transformed vector
      */
-    public Vector2D transform(final Function<Vector2D, Vector2D> fn) {
+    public Vector2D transform(final UnaryOperator<Vector2D> fn) {
         return fn.apply(this);
     }
 

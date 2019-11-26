@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.junit.Assert;
@@ -52,7 +52,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -1, -1);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(Function.identity());
+        FunctionTransform3D t = FunctionTransform3D.from(UnaryOperator.identity());
 
         // assert
         Assert.assertTrue(t.preservesOrientation());

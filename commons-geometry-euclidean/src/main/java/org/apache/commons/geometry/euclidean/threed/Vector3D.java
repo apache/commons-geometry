@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Comparator;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -377,7 +377,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param fn the function to apply
      * @return the transformed vector
      */
-    public Vector3D transform(final Function<Vector3D, Vector3D> fn) {
+    public Vector3D transform(final UnaryOperator<Vector3D> fn) {
         return fn.apply(this);
     }
 

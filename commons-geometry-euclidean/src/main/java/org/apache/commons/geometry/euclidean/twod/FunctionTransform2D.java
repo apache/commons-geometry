@@ -16,20 +16,20 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 
-/** Class that wraps a {@link Function} with the {@link Transform2D} interface.
+/** Class that wraps a {@link UnaryOperator} with the {@link Transform2D} interface.
  */
 public final class FunctionTransform2D implements Transform2D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform2D IDENTITY =
-            new FunctionTransform2D(Function.identity(), true, Vector2D.ZERO);
+            new FunctionTransform2D(UnaryOperator.identity(), true, Vector2D.ZERO);
 
     /** The underlying function for the transform. */
-    private final Function<Vector2D, Vector2D> fn;
+    private final UnaryOperator<Vector2D> fn;
 
     /** True if the transform preserves spatial orientation. */
     private final boolean preservesOrientation;
@@ -42,7 +42,7 @@ public final class FunctionTransform2D implements Transform2D {
      * @param preservesOrientation true if the transform preserves spatial orientation
      * @param translation the translation component of the transform
      */
-    private FunctionTransform2D(final Function<Vector2D, Vector2D> fn, final boolean preservesOrientation,
+    private FunctionTransform2D(final UnaryOperator<Vector2D> fn, final boolean preservesOrientation,
             final Vector2D translation) {
         this.fn = fn;
         this.preservesOrientation = preservesOrientation;
@@ -87,7 +87,7 @@ public final class FunctionTransform2D implements Transform2D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform2D from(final Function<Vector2D, Vector2D> fn) {
+    public static FunctionTransform2D from(final UnaryOperator<Vector2D> fn) {
         final Vector2D tPlusX = fn.apply(Vector2D.Unit.PLUS_X);
         final Vector2D tPlusY = fn.apply(Vector2D.Unit.PLUS_Y);
         final Vector2D tZero = fn.apply(Vector2D.ZERO);

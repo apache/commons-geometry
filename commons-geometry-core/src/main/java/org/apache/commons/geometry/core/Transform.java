@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /** This interface represents an <em>inversible affine transform</em> in a space.
  * Common examples of this type of transform in Euclidean space include
@@ -44,7 +44,7 @@ import java.util.function.Function;
  * @param <P> Point implementation type
  * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Space</a>
  */
-public interface Transform<P extends Point<P>> extends Function<P, P> {
+public interface Transform<P extends Point<P>> extends UnaryOperator<P> {
 
     /** Return true if the transform preserves the orientation of the space.
      * For example, in Euclidean 2D space, this will be true for translations,

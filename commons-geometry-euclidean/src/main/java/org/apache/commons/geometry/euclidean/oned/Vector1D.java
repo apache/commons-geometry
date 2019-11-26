@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.euclidean.oned;
 
 import java.util.Comparator;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -235,7 +235,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
      * @param fn the function to apply
      * @return the transformed vector
      */
-    public Vector1D transform(final Function<Vector1D, Vector1D> fn) {
+    public Vector1D transform(final UnaryOperator<Vector1D> fn) {
         return fn.apply(this);
     }
 

@@ -16,20 +16,20 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 
-/** Class that wraps a {@link Function} with the {@link Transform3D} interface.
+/** Class that wraps a {@link UnaryOperator} with the {@link Transform3D} interface.
  */
 public final class FunctionTransform3D implements Transform3D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform3D IDENTITY =
-            new FunctionTransform3D(Function.identity(), true, Vector3D.ZERO);
+            new FunctionTransform3D(UnaryOperator.identity(), true, Vector3D.ZERO);
 
     /** The underlying function for the transform. */
-    private final Function<Vector3D, Vector3D> fn;
+    private final UnaryOperator<Vector3D> fn;
 
     /** True if the transform preserves spatial orientation. */
     private final boolean preservesOrientation;
@@ -42,7 +42,7 @@ public final class FunctionTransform3D implements Transform3D {
      * @param preservesOrientation true if the transform preserves spatial orientation
      * @param translation the translation component of the transform
      */
-    private FunctionTransform3D(final Function<Vector3D, Vector3D> fn, final boolean preservesOrientation,
+    private FunctionTransform3D(final UnaryOperator<Vector3D> fn, final boolean preservesOrientation,
             final Vector3D translation) {
         this.fn = fn;
         this.preservesOrientation = preservesOrientation;
@@ -88,7 +88,7 @@ public final class FunctionTransform3D implements Transform3D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform3D from(final Function<Vector3D, Vector3D> fn) {
+    public static FunctionTransform3D from(final UnaryOperator<Vector3D> fn) {
         final Vector3D tPlusX = fn.apply(Vector3D.Unit.PLUS_X);
         final Vector3D tPlusY = fn.apply(Vector3D.Unit.PLUS_Y);
         final Vector3D tPlusZ = fn.apply(Vector3D.Unit.PLUS_Z);

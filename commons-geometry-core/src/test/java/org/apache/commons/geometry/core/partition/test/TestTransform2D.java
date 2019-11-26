@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.Transform;
 
@@ -26,7 +26,7 @@ import org.apache.commons.geometry.core.Transform;
 public class TestTransform2D implements Transform<TestPoint2D> {
 
     /** Underlying transform function. */
-    private final Function<TestPoint2D, TestPoint2D> fn;
+    private final UnaryOperator<TestPoint2D> fn;
 
     /** True if the transform preserves the handedness of the space. */
     private final boolean preservesHandedness;
@@ -34,7 +34,7 @@ public class TestTransform2D implements Transform<TestPoint2D> {
     /** Create a new instance using the given transform function.
      * @param fn transform function
      */
-    public TestTransform2D(final Function<TestPoint2D, TestPoint2D> fn) {
+    public TestTransform2D(final UnaryOperator<TestPoint2D> fn) {
         this.fn = fn;
 
         final TestPoint2D tx = fn.apply(TestPoint2D.PLUS_X);
