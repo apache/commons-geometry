@@ -242,7 +242,7 @@ public abstract class AbstractRegionBSPTree<
             splitPlus = plus.isEmpty() ? null : plus;
         }
 
-        return new Split<T>(splitMinus, splitPlus);
+        return new Split<>(splitMinus, splitPlus);
     }
 
     /** Get the size-related properties for the region. The value is computed
@@ -498,7 +498,7 @@ public abstract class AbstractRegionBSPTree<
             }
         }
 
-        return new RegionCutBoundary<P>(insideFacing.build(), outsideFacing.build());
+        return new RegionCutBoundary<>(insideFacing.build(), outsideFacing.build());
     }
 
     /** Recursive method to characterize a convex subhyperplane with respect to the region's

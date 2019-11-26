@@ -52,7 +52,7 @@ public class AttributeBSPTree<P extends Point<P>, T>
     /** {@inheritDoc} */
     @Override
     protected AttributeNode<P, T> createNode() {
-        return new AttributeNode<P, T>(this);
+        return new AttributeNode<>(this);
     }
 
     /** {@inheritDoc} */

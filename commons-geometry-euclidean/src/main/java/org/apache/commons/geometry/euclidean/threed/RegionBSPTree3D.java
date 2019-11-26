@@ -659,7 +659,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
                         sumZ * barycenterScale);
             }
 
-            return new RegionSizeProperties<Vector3D>(size, barycenter);
+            return new RegionSizeProperties<>(size, barycenter);
         }
 
         /** Add the facet contribution of the given node cut boundary. If {@code reverse} is true,
