@@ -667,7 +667,7 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
          * @return the first item from the given list or null if it does not exist
          */
         private GreatArc getFirst(final List<GreatArc> list) {
-            if (list != null && list.size() > 0) {
+            if (list != null && !list.isEmpty()) {
                 return list.get(0);
             }
             return null;
@@ -679,7 +679,7 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
          * @return the last item from the given list or null if it does not exist
          */
         private GreatArc getLast(final List<GreatArc> list) {
-            if (list != null && list.size() > 0) {
+            if (list != null && !list.isEmpty()) {
                 return list.get(list.size() - 1);
             }
             return null;

@@ -814,7 +814,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
          * @return the first item from the given list or null if it does not exist
          */
         private Segment getFirst(final List<Segment> list) {
-            if (list != null && list.size() > 0) {
+            if (list != null && !list.isEmpty()) {
                 return list.get(0);
             }
             return null;
@@ -826,7 +826,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
          * @return the last item from the given list or null if it does not exist
          */
         private Segment getLast(final List<Segment> list) {
-            if (list != null && list.size() > 0) {
+            if (list != null && !list.isEmpty()) {
                 return list.get(list.size() - 1);
             }
             return null;
