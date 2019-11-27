@@ -25,10 +25,6 @@ import org.apache.commons.geometry.core.Point;
  */
 public class AttributeBSPTree<P extends Point<P>, T>
     extends AbstractBSPTree<P, AttributeBSPTree.AttributeNode<P, T>> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190306L;
-
     /** The initial attribute value to use for newly created nodes. */
     private final T initialNodeAttribute;
 
@@ -76,10 +72,6 @@ public class AttributeBSPTree<P extends Point<P>, T>
      */
     public static class AttributeNode<P extends Point<P>, T>
         extends AbstractBSPTree.AbstractNode<P, AttributeNode<P, T>> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 1L;
-
         /** The node attribute. */
         private T attribute;
 

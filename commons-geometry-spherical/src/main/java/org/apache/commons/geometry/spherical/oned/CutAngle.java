@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -59,11 +58,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class CutAngle extends AbstractHyperplane<Point1S>
-    implements Equivalency<CutAngle>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190817L;
-
+    implements Equivalency<CutAngle> {
     /** Hyperplane location as a point. */
     private final Point1S point;
 
@@ -311,11 +306,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class SubCutAngle implements ConvexSubHyperplane<Point1S>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190825L;
-
+    public static class SubCutAngle implements ConvexSubHyperplane<Point1S> {
         /** The underlying hyperplane for this instance. */
         private final CutAngle hyperplane;
 
@@ -456,11 +447,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
      * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static final class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190825L;
-
+    public static final class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S> {
         /** Base subhyperplane for the builder. */
         private final SubCutAngle base;
 

@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
@@ -31,11 +29,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
  *
  * @param <P> Point implementation type
  */
-public final class RegionCutBoundary<P extends Point<P>> implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190310L;
-
+public final class RegionCutBoundary<P extends Point<P>> {
     /** Portion of the region cut subhyperplane with its plus side facing the
      * inside of the region.
      */

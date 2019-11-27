@@ -35,10 +35,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 /** BSP tree representing regions in 1D spherical space.
  */
 public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTree1S.RegionNode1S> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190817L;
-
     /** Comparator used to sort BoundaryPairs by ascending azimuth.  */
     private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
         return Double.compare(a.getMinValue(), b.getMinValue());
@@ -419,10 +415,6 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     /** BSP tree node for one dimensional spherical space.
      */
     public static final class RegionNode1S extends AbstractRegionBSPTree.AbstractRegionNode<Point1S, RegionNode1S> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190922L;
-
         /** Simple constructor.
          * @param tree the owning tree instance
          */
@@ -482,10 +474,6 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     /** Class used to project points onto the region boundary.
      */
     private static final class BoundaryProjector1S extends BoundaryProjector<Point1S, RegionNode1S> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190926L;
-
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */

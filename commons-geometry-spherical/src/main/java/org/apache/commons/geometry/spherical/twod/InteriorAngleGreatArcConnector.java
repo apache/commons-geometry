@@ -34,10 +34,6 @@ import org.apache.commons.geometry.core.Geometry;
  * </p>
  */
 public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcConnector {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191107L;
-
     /** {@inheritDoc} */
     @Override
     protected ConnectableGreatArc selectConnection(final ConnectableGreatArc incoming,
@@ -96,10 +92,6 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      * arc.
      */
     public static class Maximize extends InteriorAngleGreatArcConnector {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191107L;
-
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {
@@ -114,10 +106,6 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
      * arc.
      */
     public static class Minimize extends InteriorAngleGreatArcConnector {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191107L;
-
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {

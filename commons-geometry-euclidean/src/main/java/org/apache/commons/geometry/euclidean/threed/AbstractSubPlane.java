@@ -33,10 +33,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
     extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190729L;
-
     /** The plane defining this instance. */
     private final Plane plane;
 

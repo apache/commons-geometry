@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class Polyline implements Iterable<Segment>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190522L;
-
+public class Polyline implements Iterable<Segment> {
     /** Polyline instance containing no segments. */
     private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
@@ -439,11 +434,7 @@ public class Polyline implements Iterable<Segment>, Serializable {
 
     /** Class used to build polylines.
      */
-    public static final class Builder implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190522L;
-
+    public static final class Builder {
         /** Line segments appended to the polyline. */
         private List<Segment> appendedSegments = null;
 
@@ -838,10 +829,6 @@ public class Polyline implements Iterable<Segment>, Serializable {
      * class simply returns the same instance.
      */
     private static final class SimplifiedPolyline extends Polyline {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190619;
-
         /** Create a new instance containing the given line segments. No validation is
          * performed on the inputs. Caller must ensure that the given segments represent
          * a valid, simplified path.

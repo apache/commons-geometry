@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -31,10 +29,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
  * @param <V> Vector implementation type
  */
 public abstract class EuclideanVector<V extends EuclideanVector<V>>
-    implements Vector<V>, Point<V>, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20181017L;
+    implements Vector<V>, Point<V> {
 
     /** Return the vector representing the displacement from this vector
      * to the given vector. This is exactly equivalent to {@code v.subtract(thisVector)}

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod.hull;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,11 +31,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
 /**
  * This class represents a convex hull in an two-dimensional Euclidean space.
  */
-public class ConvexHull2D implements ConvexHull<Vector2D>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20140129L;
-
+public class ConvexHull2D implements ConvexHull<Vector2D> {
     /** Vertices of the hull. */
     private final Vector2D[] vertices;
 

@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,11 +38,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190817L;
-
+public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     /** The minimum boundary of the interval. */
     private final CutAngle minBoundary;
 
@@ -455,10 +450,6 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S>, Serial
      * is either completely full or has a length less than or equal to {@code pi}.
      */
     public static final class Convex extends AngularInterval {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191012L;
-
         /** Interval instance representing the full space. */
         private static final Convex FULL = new Convex(null, null);
 

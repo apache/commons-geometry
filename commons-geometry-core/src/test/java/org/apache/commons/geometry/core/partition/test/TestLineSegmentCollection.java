@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,11 +30,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 /** Class containing a collection line segments. This class should only be used for
  * testing purposes.
  */
-public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D>, Serializable {
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 20190303L;
-
+public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D> {
     /** The collection of line-segments making up the subhyperplane.
      */
     private final List<TestLineSegment> segments;

@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
@@ -36,11 +34,7 @@ import org.apache.commons.numbers.core.Precision;
  * </p>
  */
 public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D>
-    implements Transform3D, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20180923L;
-
+    implements Transform3D {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 12;
 

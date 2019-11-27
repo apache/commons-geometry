@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.enclosing;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 
 /** This class represents a ball enclosing some points.
@@ -25,11 +23,7 @@ import org.apache.commons.geometry.core.Point;
  * @see Point
  * @see Encloser
  */
-public class EnclosingBall<P extends Point<P>> implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20140126L;
-
+public class EnclosingBall<P extends Point<P>> {
     /** Center of the ball. */
     private final P center;
 

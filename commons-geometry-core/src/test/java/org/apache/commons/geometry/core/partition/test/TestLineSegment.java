@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,11 +29,7 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 /** Class representing a line segment in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D>, Serializable {
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 20190224L;
-
+public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
     /** Abscissa of the line segment start point. */
     private final double start;
 

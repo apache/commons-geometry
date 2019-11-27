@@ -40,10 +40,6 @@ import org.apache.commons.geometry.spherical.oned.Transform1S;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191005L;
-
     /** The interval representing the region of the great circle contained in the arc.
      */
     private final AngularInterval.Convex interval;

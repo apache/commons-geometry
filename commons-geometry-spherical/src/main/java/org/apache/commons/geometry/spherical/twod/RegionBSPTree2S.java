@@ -31,10 +31,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 /** BSP tree representing regions in 2D spherical space.
  */
 public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTree2S.RegionNode2S> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191005L;
-
     /** Constant containing the area of the full spherical space. */
     private static final double FULL_SIZE = 4 * Geometry.PI;
 
@@ -251,10 +247,6 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     /** BSP tree node for two dimensional spherical space.
      */
     public static final class RegionNode2S extends AbstractRegionBSPTree.AbstractRegionNode<Point2S, RegionNode2S> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191005L;
-
         /** Simple constructor.
          * @param tree tree owning the instance.
          */
@@ -281,10 +273,6 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     /** Class used to project points onto the region boundary.
      */
     private static final class BoundaryProjector2S extends BoundaryProjector<Point2S, RegionNode2S> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191120L;
-
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */

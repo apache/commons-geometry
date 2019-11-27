@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -25,11 +23,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 /** Internal base class for 3 dimensional subline implementations.
  * @param <R> 1D subspace region type
  */
-abstract class AbstractSubLine3D<R extends Region<Vector1D>> implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190812L;
-
+abstract class AbstractSubLine3D<R extends Region<Vector1D>> {
     /** The line that this instance belongs to. */
     private final Line3D line;
 

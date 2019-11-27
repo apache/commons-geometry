@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -65,11 +63,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">Spherical Coordinate System</a>
  */
-public final class SphericalCoordinates implements Spatial, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20180623L;
-
+public final class SphericalCoordinates implements Spatial {
     /** Radius value. */
     private final double radius;
 

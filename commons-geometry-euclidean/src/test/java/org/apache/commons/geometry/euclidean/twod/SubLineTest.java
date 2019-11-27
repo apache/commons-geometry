@@ -606,10 +606,6 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
 
         AbstractSubLine unknownType = new AbstractSubLine(line) {
-
-            /** Serializable UID */
-            private static final long serialVersionUID = 20190729L;
-
             @Override
             public boolean isInfinite() {
                 return false;

@@ -32,10 +32,6 @@ import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 /** Class representing an arbitrary region of a great circle.
  */
 public final class SubGreatCircle extends AbstractSubGreatCircle {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191005L;
-
     /** The 1D region on the great circle. */
     private final RegionBSPTree1S region;
 

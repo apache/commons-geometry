@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
@@ -60,10 +59,6 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  */
 public final class Line extends AbstractHyperplane<Vector2D>
     implements EmbeddingHyperplane<Vector2D, Vector1D>, Equivalency<Line> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190120L;
-
     /** The direction of the line as a normalized vector. */
     private final Vector2D direction;
 
@@ -558,11 +553,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace
      * transform produces the equivalent of the 2D transform in 1D.
      */
-    public static final class SubspaceTransform implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190809L;
-
+    public static final class SubspaceTransform {
         /** The transformed line. */
         private final Line line;
 

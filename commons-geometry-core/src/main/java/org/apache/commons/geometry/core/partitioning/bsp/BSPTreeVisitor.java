@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 
 /** Interface for visiting the nodes in a {@link BSPTree} or {@link BSPSubtree}.
@@ -86,11 +84,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
      * @param <N> BSP tree node implementation type
      */
     abstract class TargetPointVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>>
-        implements BSPTreeVisitor<P, N>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190504L;
-
+        implements BSPTreeVisitor<P, N> {
         /** Point serving as the target of the traversal. */
         private final P target;
 
@@ -119,10 +113,6 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
      */
     abstract class ClosestFirstVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>>
         extends TargetPointVisitor<P, N> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190504L;
-
         /** Simple constructor.
          * @param target the point serving as the target for the traversal
          */
@@ -150,10 +140,6 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
      */
     abstract class FarthestFirstVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>>
         extends TargetPointVisitor<P, N> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190504L;
-
         /** Simple constructor.
          * @param target the point serving as the target for the traversal
          */

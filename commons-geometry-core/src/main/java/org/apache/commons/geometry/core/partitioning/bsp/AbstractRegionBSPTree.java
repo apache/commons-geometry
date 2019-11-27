@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,10 +43,6 @@ public abstract class AbstractRegionBSPTree<
         P extends Point<P>,
         N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
     extends AbstractBSPTree<P, N> implements HyperplaneBoundedRegion<P> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 1L;
-
     /** Value used to indicate an unknown size. */
     private static final double UNKNOWN_SIZE = -1.0;
 
@@ -560,10 +555,6 @@ public abstract class AbstractRegionBSPTree<
      */
     public abstract static class AbstractRegionNode<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends AbstractBSPTree.AbstractNode<P, N> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 1L;
-
         /** The location for the node. This will only be set on leaf nodes. */
         private RegionLocation location;
 
@@ -799,10 +790,6 @@ public abstract class AbstractRegionBSPTree<
      */
     protected static class BoundaryProjector<P extends Point<P>, N extends AbstractRegionNode<P, N>>
         extends ClosestFirstVisitor<P, N> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190504L;
-
         /** The projected point. */
         private P projected;
 
@@ -878,11 +865,7 @@ public abstract class AbstractRegionBSPTree<
      * of the combined computation.
      * @param <P> Point implementation type
      */
-    protected static class RegionSizeProperties<P extends Point<P>> implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190428L;
-
+    protected static class RegionSizeProperties<P extends Point<P>> {
         /** The size of the region. */
         private final double size;
 

@@ -38,10 +38,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * Euclidean space.
  */
 public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190702L;
-
     /** Create a new, empty region. */
     public RegionBSPTree3D() {
         this(false);
@@ -295,10 +291,6 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** BSP tree node for three dimensional Euclidean space.
      */
     public static final class RegionNode3D extends AbstractRegionBSPTree.AbstractRegionNode<Vector3D, RegionNode3D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190702L;
-
         /** Simple constructor.
          * @param tree the owning tree instance
          */
@@ -578,10 +570,6 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     /** Class used to project points onto the 3D region boundary.
      */
     private static final class BoundaryProjector3D extends BoundaryProjector<Vector3D, RegionNode3D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190811L;
-
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */

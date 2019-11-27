@@ -28,10 +28,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public abstract class AbstractGreatArcConnector
     extends AbstractPathConnector<AbstractGreatArcConnector.ConnectableGreatArc> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191107L;
-
     /** Add an arc to the connector, leaving it unconnected until a later call to
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param arc arc to add
@@ -136,10 +132,6 @@ public abstract class AbstractGreatArcConnector
     /** Internal class for connecting {@link GreatArc}s into {@link GreatArcPath}s.
      */
     protected static class ConnectableGreatArc extends AbstractPathConnector.ConnectableElement<ConnectableGreatArc> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191107L;
-
         /** Segment start point. This will be used to connect to other path elements. */
         private final Point2S start;
 

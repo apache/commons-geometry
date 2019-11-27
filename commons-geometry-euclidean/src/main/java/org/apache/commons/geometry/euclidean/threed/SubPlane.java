@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +33,7 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190717L;
-
+public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
     /** The 2D region representing the area on the plane. */
     private final RegionBSPTree2D region;
 

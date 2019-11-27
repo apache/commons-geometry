@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,10 +38,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 public final class Plane extends AbstractHyperplane<Vector3D>
     implements EmbeddingHyperplane<Vector3D, Vector2D>, Equivalency<Plane> {
-
-    /** Serializable version UID. */
-    private static final long serialVersionUID = 20190702L;
-
     /** First normalized vector of the plane frame (in plane). */
     private final Vector3D u;
 
@@ -751,11 +746,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     /** Class containing a transformed plane instance along with a subspace (2D) transform. The subspace
      * transform produces the equivalent of the 3D transform in 2D.
      */
-    public static final class SubspaceTransform implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190807L;
-
+    public static final class SubspaceTransform {
         /** The transformed plane. */
         private final Plane plane;
 

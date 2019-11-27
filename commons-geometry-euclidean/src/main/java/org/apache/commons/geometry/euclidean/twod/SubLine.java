@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +34,7 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class SubLine extends AbstractSubLine implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190717L;
-
+public final class SubLine extends AbstractSubLine {
     /** The 1D region representing the area on the line. */
     private final RegionBSPTree1D region;
 

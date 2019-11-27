@@ -33,10 +33,6 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
  * Euclidean space.
  */
 public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190405L;
-
     /** Comparator used to sort BoundaryPairs by ascending location.  */
     private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
         return Double.compare(a.getMinValue(), b.getMinValue());
@@ -398,10 +394,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** BSP tree node for one dimensional Euclidean space.
      */
     public static final class RegionNode1D extends AbstractRegionBSPTree.AbstractRegionNode<Vector1D, RegionNode1D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190405L;
-
         /** Simple constructor.
          * @param tree the owning tree instance
          */
@@ -471,10 +463,6 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** Class used to project points onto the region boundary.
      */
     private static final class BoundaryProjector1D extends BoundaryProjector<Vector1D, RegionNode1D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190405L;
-
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */

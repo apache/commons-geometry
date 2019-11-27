@@ -16,19 +16,13 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Base class for hyperplane implementations.
  * @param <P> Point implementation type
  */
-public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 1L;
-
+public abstract class AbstractHyperplane<P extends Point<P>> implements Hyperplane<P> {
     /** Precision object used to perform floating point comparisons. */
     private final DoublePrecisionContext precision;
 

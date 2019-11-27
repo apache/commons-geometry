@@ -82,10 +82,6 @@ public class AbstractEmbeddingSubHyperplaneTest {
     }
 
     private static class StubSubHyperplane extends AbstractEmbeddingSubHyperplane<TestPoint2D, TestPoint1D, TestLine> {
-
-        /** Serializable UID */
-        private static final long serialVersionUID = 20190729L;
-
         private StubRegion1D region = new StubRegion1D();
 
         @Override

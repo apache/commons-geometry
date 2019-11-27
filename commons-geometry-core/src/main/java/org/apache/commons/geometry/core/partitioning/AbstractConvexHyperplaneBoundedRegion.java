@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,11 +33,7 @@ import org.apache.commons.geometry.core.exception.GeometryException;
  * @param <S> Convex subhyperplane implementation type
  */
 public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, S extends ConvexSubHyperplane<P>>
-    implements HyperplaneBoundedRegion<P>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190812L;
-
+    implements HyperplaneBoundedRegion<P> {
     /** List of boundaries for the region. */
     private final List<S> boundaries;
 

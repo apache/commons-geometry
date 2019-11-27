@@ -23,10 +23,6 @@ package org.apache.commons.geometry.euclidean;
  */
 public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensionalEuclideanVector<V>>
         extends EuclideanVector<V> {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20181017L;
-
     /** Get the projection of the instance onto the given base vector. The returned
      * vector is parallel to {@code base}. Vector projection and rejection onto
      * a given base are related by the equation

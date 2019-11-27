@@ -36,10 +36,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  * area, if any, are composed of convex great circle arcs.
  */
 public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Point2S, GreatArc> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191021L;
-
     /** Instance representing the full spherical area. */
     private static final ConvexArea2S FULL = new ConvexArea2S(Collections.emptyList());
 

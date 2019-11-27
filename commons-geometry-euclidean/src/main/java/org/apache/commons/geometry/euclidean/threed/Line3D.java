@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
@@ -30,11 +29,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190704L;
-
+public final class Line3D implements Embedding<Vector3D, Vector1D> {
     /** Line point closest to the origin. */
     private final Vector3D origin;
 
@@ -394,11 +389,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Serializable
     /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace
      * transform produces the equivalent of the 3D transform in 1D.
      */
-    public static final class SubspaceTransform implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190809L;
-
+    public static final class SubspaceTransform {
         /** The transformed line. */
         private final Line3D line;
 

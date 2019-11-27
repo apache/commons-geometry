@@ -33,10 +33,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * The boundaries of this area, if any, are composed of line segments.
  */
 public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190619L;
-
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
 

@@ -32,10 +32,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * Euclidean space.
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190519L;
-
     /** List of line segment paths comprising the region boundary. */
     private List<Polyline> boundaryPaths;
 
@@ -294,10 +290,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** BSP tree node for two dimensional Euclidean space.
      */
     public static final class RegionNode2D extends AbstractRegionBSPTree.AbstractRegionNode<Vector2D, RegionNode2D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190519L;
-
         /** Simple constructor.
          * @param tree the owning tree instance
          */
@@ -484,10 +476,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** Class used to project points onto the 2D region boundary.
      */
     private static final class BoundaryProjector2D extends BoundaryProjector<Vector2D, RegionNode2D> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190811L;
-
         /** Simple constructor.
          * @param point the point to project onto the region's boundary
          */

@@ -16,16 +16,11 @@
  */
 package org.apache.commons.geometry.core.precision;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 /** Class encapsulating the concept of comparison operations for doubles.
  */
-public abstract class DoublePrecisionContext implements Comparator<Double>, Serializable {
-
-    /** Serializable identifier. */
-    private static final long serialVersionUID = 20190121L;
-
+public abstract class DoublePrecisionContext implements Comparator<Double> {
     /** Return true if the given values are considered equal to each other.
      * @param a first value
      * @param b second value

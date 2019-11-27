@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
@@ -33,11 +31,7 @@ import org.apache.commons.numbers.core.Precision;
 * </p>
 */
 public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D>
-    implements Transform1D, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20181006L;
-
+    implements Transform1D {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 2;
 

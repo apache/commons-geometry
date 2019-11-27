@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -26,16 +24,13 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 /** Class representing a line in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D>, Serializable {
+public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
 
     /** Line pointing along the positive x-axis. */
     public static final TestLine X_AXIS = new TestLine(0, 0, 1, 0);
 
     /** Line pointing along the positive y-axis. */
     public static final TestLine Y_AXIS = new TestLine(0, 0, 0, 1);
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 20190224L;
 
     /** X value of the normalized line direction. */
     private final double directionX;

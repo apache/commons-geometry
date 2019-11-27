@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -41,7 +40,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Point1S implements Point<Point1S>, Serializable {
+public final class Point1S implements Point<Point1S> {
 
     /** A point with coordinates set to {@code 0*pi}. */
     public static final Point1S ZERO = Point1S.of(Geometry.ZERO_PI);
@@ -72,9 +71,6 @@ public final class Point1S implements Point<Point1S>, Serializable {
 
         return cmp;
     };
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20180710L;
 
     /** Azimuthal angle in radians. */
     private final double azimuth;

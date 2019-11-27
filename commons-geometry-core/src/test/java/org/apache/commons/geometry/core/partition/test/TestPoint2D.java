@@ -16,14 +16,12 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 
 /** Class representing a point in two dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestPoint2D implements Point<TestPoint2D>, Serializable {
+public class TestPoint2D implements Point<TestPoint2D> {
 
     /** Instance representing the coordinates {@code (0, 0)} */
     public static final TestPoint2D ZERO = new TestPoint2D(0, 0);
@@ -33,9 +31,6 @@ public class TestPoint2D implements Point<TestPoint2D>, Serializable {
 
     /** Instance representing the coordinates {@code (0, 1)} */
     public static final TestPoint2D PLUS_Y = new TestPoint2D(0, 1);
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 20190224L;
 
     /** X coordinate */
     private final double x;

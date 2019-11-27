@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -61,11 +60,7 @@ import org.apache.commons.numbers.core.Precision;
  * @see <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler Angles</a>
  * @see QuaternionRotation
  */
-public final class AxisAngleSequence implements Serializable {
-
-    /** Serializable identifier. */
-    private static final long serialVersionUID = 20181125L;
-
+public final class AxisAngleSequence {
     /** Reference frame for defining axis positions. */
     private final AxisReferenceFrame referenceFrame;
 

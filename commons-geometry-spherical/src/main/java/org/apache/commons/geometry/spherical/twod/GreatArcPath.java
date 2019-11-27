@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +28,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a connected sequence of {@link GreatArc} instances.
  */
-public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191028L;
-
+public final class GreatArcPath implements Iterable<GreatArc> {
     /** Instance containing no arcs. */
     private static final GreatArcPath EMPTY = new GreatArcPath(Collections.emptyList());
 
@@ -296,11 +291,7 @@ public final class GreatArcPath implements Iterable<GreatArc>, Serializable {
 
     /** Class used to build arc paths.
      */
-    public static final class Builder implements Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191031L;
-
+    public static final class Builder {
         /** Arcs appended to the path. */
         private List<GreatArc> appendedArcs = null;
 

@@ -16,18 +16,12 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Point;
 
 /** Class representing a point in one dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestPoint1D implements Point<TestPoint1D>, Serializable {
-
-    /** Serializable UID */
-    private static final long serialVersionUID = 1L;
-
+public class TestPoint1D implements Point<TestPoint1D> {
     /** X coordinate */
     private final double x;
 

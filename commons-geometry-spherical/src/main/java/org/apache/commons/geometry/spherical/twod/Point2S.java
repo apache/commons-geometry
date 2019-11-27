@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -30,7 +29,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 /** This class represents a point on the 2-sphere.
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Point2S implements Point<Point2S>, Serializable {
+public final class Point2S implements Point<Point2S> {
 
     /** +I (coordinates: ( azimuth = 0, polar = pi/2 )). */
     public static final Point2S PLUS_I = new Point2S(0, 0.5 * Math.PI, Vector3D.Unit.PLUS_X);
@@ -77,10 +76,6 @@ public final class Point2S implements Point<Point2S>, Serializable {
 
         return cmp;
     };
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20180710L;
-
     /** Azimuthal angle in the x-y plane. */
     private final double azimuth;
 

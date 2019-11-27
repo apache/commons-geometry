@@ -71,9 +71,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return cmp;
     };
 
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20180903L;
-
     /** Abscissa (first coordinate value). */
     private final double x;
 
@@ -615,9 +612,6 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         public static final Unit PLUS_Z  = new Unit(0d, 0d, 1d);
         /** Negation of unit vector (coordinates: 0, 0, -1). */
         public static final Unit MINUS_Z = new Unit(0d, 0d, -1d);
-
-        /** Serializable version identifier. */
-        private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given
          * values represent a normalized vector.

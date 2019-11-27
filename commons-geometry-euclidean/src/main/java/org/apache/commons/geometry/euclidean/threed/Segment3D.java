@@ -27,10 +27,6 @@ import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
  * <p>This class is guaranteed to be immutable.</p>
  */
 public final class Segment3D extends AbstractSubLine3D<Interval> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190702L;
-
     /** String used to indicate the start point of the segment in the toString() representation. */
     private static final String START_STR = "start= ";
 

@@ -65,9 +65,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         return cmp;
     };
 
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20180710L;
-
     /** Abscissa (coordinate value). */
     private final double x;
 
@@ -409,9 +406,6 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         public static final Unit PLUS  = new Unit(1d);
         /** Negation of unit vector (coordinates: -1). */
         public static final Unit MINUS = new Unit(-1d);
-
-        /** Serializable version identifier. */
-        private static final long serialVersionUID = 20180903L;
 
         /** Simple constructor. Callers are responsible for ensuring that the given
          * values represent a normalized vector.

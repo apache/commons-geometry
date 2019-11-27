@@ -40,10 +40,6 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
  */
 public final class GreatCircle extends AbstractHyperplane<Point2S>
     implements EmbeddingHyperplane<Point2S, Point1S>, Equivalency<GreatCircle> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190928L;
-
     /** Pole or circle center. */
     private final Vector3D.Unit pole;
 

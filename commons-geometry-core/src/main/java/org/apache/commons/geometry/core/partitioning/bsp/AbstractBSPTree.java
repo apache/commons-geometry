@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import java.io.Serializable;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,11 +36,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
  * @param <N> BSP tree node implementation type
  */
 public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
-    implements BSPTree<P, N>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190330L;
-
+    implements BSPTree<P, N> {
     /** The default number of levels to print when creating a string representation of the tree. */
     private static final int DEFAULT_TREE_STRING_MAX_DEPTH = 8;
 
@@ -779,11 +774,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param <N> BSP tree node implementation type
      */
     public abstract static class AbstractNode<P extends Point<P>, N extends AbstractNode<P, N>>
-        implements BSPTree.Node<P, N>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190225L;
-
+        implements BSPTree.Node<P, N> {
         /** The owning tree instance. */
         private final AbstractBSPTree<P, N> tree;
 

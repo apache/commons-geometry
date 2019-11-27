@@ -35,10 +35,6 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  */
 public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     implements ConvexSubHyperplane<Vector3D>  {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190729L;
-
     /** The embedded 2D area. */
     private final ConvexArea area;
 

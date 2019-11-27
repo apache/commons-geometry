@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.internal;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
@@ -52,12 +51,7 @@ import java.util.TreeSet;
  * @param <E> Element type
  * @see ConnectableElement
  */
-public abstract class AbstractPathConnector<E extends AbstractPathConnector.ConnectableElement<E>>
-    implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191106L;
-
+public abstract class AbstractPathConnector<E extends AbstractPathConnector.ConnectableElement<E>> {
     /** List of path elements. */
     private final NavigableSet<E> pathElements = new TreeSet<>();
 
@@ -276,11 +270,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      * @see AbstractPathConnector
      */
     public abstract static class ConnectableElement<E extends ConnectableElement<E>>
-        implements Comparable<E>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191107L;
-
+        implements Comparable<E> {
         /** Next connected element. */
         private E next;
 

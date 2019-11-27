@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Transform;
 
 /** Implementation of the {@link Transform} interface for spherical 1D points.
@@ -36,11 +34,7 @@ import org.apache.commons.geometry.core.Transform;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Transform1S implements Transform<Point1S>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191001L;
-
+public final class Transform1S implements Transform<Point1S> {
     /** Static instance representing the identity transform. */
     private static final Transform1S IDENTITY = new Transform1S(1, 0);
 

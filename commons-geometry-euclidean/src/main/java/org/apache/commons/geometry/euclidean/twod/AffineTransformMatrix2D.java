@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
@@ -35,11 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 * </p>
 */
 public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D>
-    implements Transform2D, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20181005L;
-
+    implements Transform2D {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 6;
 

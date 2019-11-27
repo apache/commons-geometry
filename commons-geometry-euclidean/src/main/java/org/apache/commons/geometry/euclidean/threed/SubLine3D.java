@@ -30,10 +30,6 @@ import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
 public final class SubLine3D extends AbstractSubLine3D<RegionBSPTree1D> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190702L;
-
     /** The 1D region representing the area on the line. */
     private final RegionBSPTree1D region;
 

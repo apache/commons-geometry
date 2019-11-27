@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -30,11 +28,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Transform2S implements Transform<Point2S>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 1L;
-
+public final class Transform2S implements Transform<Point2S> {
     /** Static instance representing the identity transform. */
     private static final Transform2S IDENTITY = new Transform2S(AffineTransformMatrix3D.identity());
 

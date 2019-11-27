@@ -37,10 +37,6 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  */
 public final class Segment extends AbstractSubLine
     implements ConvexSubHyperplane<Vector2D> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190729L;
-
     /** String used to indicate the start point of the segment in the toString() representation. */
     private static final String START_STR = "start= ";
 

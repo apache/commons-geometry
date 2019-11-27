@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -42,11 +41,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class OrientedPoint extends AbstractHyperplane<Vector1D>
-    implements Hyperplane<Vector1D>, Equivalency<OrientedPoint>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190210L;
-
+    implements Hyperplane<Vector1D>, Equivalency<OrientedPoint> {
     /** Hyperplane location as a point. */
     private final Vector1D point;
 
@@ -341,11 +336,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190405L;
-
+    public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D> {
         /** The underlying hyperplane for this instance. */
         private final OrientedPoint hyperplane;
 
@@ -486,11 +477,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static final class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D>, Serializable {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190405L;
-
+    public static final class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D> {
         /** Base subhyperplane for the builder. */
         private final SubOrientedPoint base;
 

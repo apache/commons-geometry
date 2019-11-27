@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 
 import org.apache.commons.geometry.core.RegionLocation;
@@ -34,11 +33,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Interval implements HyperplaneBoundedRegion<Vector1D>, Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190210L;
-
+public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
     /** Interval instance representing the entire real number line. */
     private static final Interval FULL = new Interval(null, null);
 

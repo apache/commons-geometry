@@ -34,10 +34,6 @@ import org.apache.commons.geometry.core.Geometry;
  * </p>
  */
 public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConnector {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190530L;
-
     /** {@inheritDoc} */
     @Override
     protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {
@@ -94,10 +90,6 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * line segment.
      */
     public static class Maximize extends InteriorAngleSegmentConnector {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190530L;
-
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {
@@ -112,10 +104,6 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      * line segment.
      */
     public static class Minimize extends InteriorAngleSegmentConnector {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20190530L;
-
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {

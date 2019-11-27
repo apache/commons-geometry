@@ -29,10 +29,6 @@ import org.apache.commons.numbers.core.Precision;
  * @see Precision#compareTo(double, double, double)
  */
 public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
-
-    /** Serializable identifier. */
-    private static final long serialVersionUID = 20190119L;
-
     /** Epsilon value. */
     private final double epsilon;
 

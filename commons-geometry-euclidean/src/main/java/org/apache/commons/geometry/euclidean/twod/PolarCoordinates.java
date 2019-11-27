@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.io.Serializable;
-
 import org.apache.commons.geometry.core.Geometry;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -49,11 +47,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Polar_coordinate_system">Polar Coordinate System</a>
  */
-public final class PolarCoordinates implements Spatial, Serializable {
-
-    /** Serializable version UID. */
-    private static final long serialVersionUID = 20180630L;
-
+public final class PolarCoordinates implements Spatial {
     /** Radius value. */
     private final double radius;
 

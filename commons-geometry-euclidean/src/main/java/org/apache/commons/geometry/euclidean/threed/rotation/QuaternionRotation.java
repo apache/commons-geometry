@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Geometry;
@@ -39,11 +38,7 @@ import org.apache.commons.numbers.quaternion.Slerp;
  *
  * @see Quaternion
  */
-public final class QuaternionRotation implements Rotation3D, Serializable {
-
-    /** Serializable version identifier. */
-    private static final long serialVersionUID = 20181018L;
-
+public final class QuaternionRotation implements Rotation3D {
     /** Threshold value for the dot product of antiparallel vectors. If the dot product of two vectors is
      * less than this value, (adjusted for the lengths of the vectors), then the vectors are considered to be
      * antiparallel (ie, negations of each other).

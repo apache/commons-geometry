@@ -28,10 +28,6 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  */
 public abstract class AbstractSegmentConnector
     extends AbstractPathConnector<AbstractSegmentConnector.ConnectableSegment> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190528L;
-
     /** Add a line segment to the connector, leaving it unconnected until a later call to
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param segment line segment to add
@@ -138,10 +134,6 @@ public abstract class AbstractSegmentConnector
     /** Internal class used to connect line segments together.
      */
     protected static class ConnectableSegment extends AbstractPathConnector.ConnectableElement<ConnectableSegment> {
-
-        /** Serializable UID. */
-        private static final long serialVersionUID = 20191107L;
-
         /** Segment start point. This will be used to connect to other path elements. */
         private final Vector2D start;
 

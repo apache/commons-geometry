@@ -31,10 +31,6 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
  * The boundaries of this area, if any, are composed of convex subplanes.
  */
 public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190811L;
-
     /** Instance representing the full 3D volume. */
     private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
 

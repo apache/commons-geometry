@@ -31,10 +31,6 @@ import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
 /** Internal base class for subline implementations.
  */
 abstract class AbstractSubLine extends AbstractEmbeddingSubHyperplane<Vector2D, Vector1D, Line> {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20190729L;
-
     /** The line defining this instance. */
     private final Line line;
 
