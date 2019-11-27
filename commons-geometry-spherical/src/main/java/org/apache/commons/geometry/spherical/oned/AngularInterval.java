@@ -73,7 +73,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     public double getMin() {
         return (minBoundary != null) ?
                 minBoundary.getAzimuth() :
-                Geometry.ZERO_PI;
+                0.0;
     }
 
     /** Get the minimum boundary for the interval, or null if the

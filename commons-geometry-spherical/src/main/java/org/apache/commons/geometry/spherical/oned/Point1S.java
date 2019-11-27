@@ -43,7 +43,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 public final class Point1S implements Point<Point1S> {
 
     /** A point with coordinates set to {@code 0*pi}. */
-    public static final Point1S ZERO = Point1S.of(Geometry.ZERO_PI);
+    public static final Point1S ZERO = Point1S.of(0.0);
 
     /** A point with coordinates set to {@code pi}. */
     public static final Point1S PI = Point1S.of(Geometry.PI);

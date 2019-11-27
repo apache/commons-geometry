@@ -137,7 +137,7 @@ public class RegionBSPTree1STest {
 
     @Test
     public void testFromInterval_nonFull() {
-        for (double theta = Geometry.ZERO_PI; theta <= Geometry.TWO_PI; theta += 0.2) {
+        for (double theta = 0.0; theta <= Geometry.TWO_PI; theta += 0.2) {
             // arrange
             double min = theta;
             double max = theta + Geometry.HALF_PI;
@@ -187,7 +187,7 @@ public class RegionBSPTree1STest {
                 Geometry.MINUS_HALF_PI, Geometry.HALF_PI,
                 Geometry.MINUS_HALF_PI - Geometry.TWO_PI, Geometry.HALF_PI + Geometry.TWO_PI);
         checkClassify(tree, RegionLocation.INSIDE,
-                Geometry.ZERO_PI, 0.5, -0.5,
+                0.0, 0.5, -0.5,
                 Geometry.TWO_PI, 0.5 + Geometry.TWO_PI, -0.5 - Geometry.TWO_PI);
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Geometry.PI, Geometry.PI + 0.5, Geometry.PI - 0.5,

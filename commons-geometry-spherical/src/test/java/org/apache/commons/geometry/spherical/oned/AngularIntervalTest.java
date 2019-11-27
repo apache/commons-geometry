@@ -297,7 +297,7 @@ public class AngularIntervalTest {
 
         // act/assert
         checkInterval(interval.transform(rotate), Geometry.PI, 1.5 * Geometry.PI);
-        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, Geometry.ZERO_PI);
+        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, 0.0);
     }
 
     @Test
@@ -334,7 +334,7 @@ public class AngularIntervalTest {
     @Test
     public void testToTree_intervalEqualToPi() {
         // arrange
-        AngularInterval interval = AngularInterval.of(Geometry.ZERO_PI, Geometry.PI, TEST_PRECISION);
+        AngularInterval interval = AngularInterval.of(0.0, Geometry.PI, TEST_PRECISION);
 
         // act
         RegionBSPTree1S tree = interval.toTree();
@@ -837,7 +837,7 @@ public class AngularIntervalTest {
 
         // act/assert
         checkInterval(interval.transform(rotate), Geometry.PI, 1.5 * Geometry.PI);
-        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, Geometry.ZERO_PI);
+        checkInterval(interval.transform(invert), -0.5 * Geometry.PI, 0.0);
     }
 
     private static void checkFull(AngularInterval interval) {

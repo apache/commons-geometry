@@ -316,7 +316,7 @@ public class AbstractSegmentConnectorTest {
         // arrange
         Vector2D p0 = Vector2D.of(1, 0);
 
-        Segment seg0 = Line.fromPointAndAngle(p0, Geometry.ZERO_PI, TEST_PRECISION).segment(p0, p0);
+        Segment seg0 = Line.fromPointAndAngle(p0, 0.0, TEST_PRECISION).segment(p0, p0);
         Segment seg1 = Line.fromPointAndAngle(p0, Geometry.HALF_PI, TEST_PRECISION).segment(p0, p0);
         Segment seg2 = Line.fromPointAndAngle(p0, Geometry.PI, TEST_PRECISION).segment(p0, p0);
         Segment seg3 = Line.fromPointAndAngle(p0, Geometry.MINUS_HALF_PI, TEST_PRECISION).segment(p0, p0);
@@ -343,7 +343,7 @@ public class AbstractSegmentConnectorTest {
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
 
-        Segment seg0 = Line.fromPointAndAngle(p1, Geometry.ZERO_PI, TEST_PRECISION).segment(p1, p1);
+        Segment seg0 = Line.fromPointAndAngle(p1, 0.0, TEST_PRECISION).segment(p1, p1);
         Segment seg1 = Line.fromPointAndAngle(p1, 0.25 * Geometry.PI, TEST_PRECISION).segment(p1, p1);
         Segment seg2 = Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0);
 

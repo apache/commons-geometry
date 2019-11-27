@@ -275,7 +275,7 @@ public class PolylineTest {
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
         Segment b = Segment.fromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
 
-        Segment c = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span();
+        Segment c = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
         Segment d = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).span();
 
         // act/assert
@@ -813,7 +813,7 @@ public class PolylineTest {
     @Test
     public void testSimplify_infiniteSegment() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         Builder builder = Polyline.builder(TEST_PRECISION);
         Polyline path = builder
@@ -839,7 +839,7 @@ public class PolylineTest {
     @Test
     public void testSimplify_combinedInfiniteSegment() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         Split<Segment> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
 
         Builder builder = Polyline.builder(TEST_PRECISION);
@@ -867,7 +867,7 @@ public class PolylineTest {
     @Test
     public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
         // arrange
-        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         Builder builder = Polyline.builder(TEST_PRECISION);
 
         Polyline path = builder
@@ -1070,7 +1070,7 @@ public class PolylineTest {
         Vector2D p = Vector2D.Unit.PLUS_X;
         Builder builder = Polyline.builder(TEST_PRECISION);
 
-        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION).span());
+        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span());
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1241,7 +1241,7 @@ public class PolylineTest {
         // arrange
         Builder builder = Polyline.builder(TEST_PRECISION);
 
-        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION)
+        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION)
                 .segment(Double.NEGATIVE_INFINITY, 1))
             .append(Vector2D.of(1, 1));
 

@@ -167,7 +167,7 @@ public class GreatArcTest {
         // arrange
         GreatArc arc = GreatArc.fromInterval(
                 GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.MINUS_I, TEST_PRECISION),
-                AngularInterval.Convex.of(Geometry.ZERO_PI, Geometry.PI, TEST_PRECISION));
+                AngularInterval.Convex.of(0.0, Geometry.PI, TEST_PRECISION));
 
         // act
         List<GreatArc> result = arc.toConvex();

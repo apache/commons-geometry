@@ -110,7 +110,7 @@ public class RegionBSPTree2DTest {
     public void testCopy() {
         // arrange
         RegionBSPTree2D tree = new RegionBSPTree2D(true);
-        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         // act
         RegionBSPTree2D copy = tree.copy();
@@ -246,7 +246,7 @@ public class RegionBSPTree2DTest {
     public void testToConvex_halfSpace() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         // act
         List<ConvexArea> result = tree.toConvex();
@@ -370,7 +370,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         RegionNode2D root = tree.getRoot();
-        root.cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        root.cut(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         RegionNode2D minus = root.getMinus();
         minus.cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
@@ -1059,7 +1059,7 @@ public class RegionBSPTree2DTest {
     public void testTransform_halfSpace() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION));
+        tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
 
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
                 .rotate(Geometry.HALF_PI)

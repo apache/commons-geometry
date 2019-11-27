@@ -58,7 +58,7 @@ public class ConvexAreaTest {
     public void testToTree() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 1), Geometry.PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.MINUS_HALF_PI, TEST_PRECISION)
@@ -217,7 +217,7 @@ public class ConvexAreaTest {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION)
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
                 );
 
         // act/assert
@@ -229,7 +229,7 @@ public class ConvexAreaTest {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION)
                 );
 
@@ -321,7 +321,7 @@ public class ConvexAreaTest {
     @Test
     public void testTrim_halfSpace() {
         // arrange
-        ConvexArea area = ConvexArea.fromBounds(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        ConvexArea area = ConvexArea.fromBounds(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
         Segment segment = Line.fromPoints(Vector2D.Unit.MINUS_Y, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span();
 
         // act
@@ -377,7 +377,7 @@ public class ConvexAreaTest {
         // arrange
         ConvexArea input = ConvexArea.full();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = input.split(splitter);
@@ -1141,9 +1141,9 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_duplicateLines_similarOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line b = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         ConvexArea area = ConvexArea.fromBounds(a, b, c);
@@ -1167,9 +1167,9 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_duplicateLines_differentOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line b = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1182,7 +1182,7 @@ public class ConvexAreaTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             ConvexArea.fromBounds(Arrays.asList(
-                        Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION),
+                        Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
                         Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.PI, TEST_PRECISION),
                         Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION)
                     ));

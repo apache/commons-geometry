@@ -44,15 +44,15 @@ public class CutAngleTest {
     @Test
     public void testFromAzimuthAndDirection() {
         // act/assert
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, true, TEST_PRECISION),
-                Geometry.ZERO_PI, true);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(0.0, true, TEST_PRECISION),
+                0.0, true);
         checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
         checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.ZERO_PI, false, TEST_PRECISION),
-                Geometry.ZERO_PI, false);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(0.0, false, TEST_PRECISION),
+                0.0, false);
         checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
         checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
@@ -66,14 +66,14 @@ public class CutAngleTest {
 
         // act/assert
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
-                Geometry.ZERO_PI, true);
+                0.0, true);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
                 Geometry.PI, true);
         checkCutAngle(CutAngle.fromPointAndDirection(pt, true, TEST_PRECISION),
                 Geometry.MINUS_HALF_PI, true);
 
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
-                Geometry.ZERO_PI, false);
+                0.0, false);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
                 Geometry.PI, false);
         checkCutAngle(CutAngle.fromPointAndDirection(pt, false, TEST_PRECISION),
@@ -84,7 +84,7 @@ public class CutAngleTest {
     public void testCreatePositiveFacing() {
         // act/assert
         checkCutAngle(CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
-                Geometry.ZERO_PI, true);
+                0.0, true);
         checkCutAngle(CutAngle.createPositiveFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, true);
         checkCutAngle(CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
@@ -95,7 +95,7 @@ public class CutAngleTest {
     public void testCreateNegativeFacing() {
         // act/assert
         checkCutAngle(CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
-                Geometry.ZERO_PI, false);
+                0.0, false);
         checkCutAngle(CutAngle.createNegativeFacing(Point1S.PI, TEST_PRECISION),
                 Geometry.PI, false);
         checkCutAngle(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
@@ -105,8 +105,8 @@ public class CutAngleTest {
     @Test
     public void testOffset() {
         // arrange
-        CutAngle zeroPos = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        CutAngle zeroNeg = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle zeroPos = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
+        CutAngle zeroNeg = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
         CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
 
         CutAngle piNeg = CutAngle.createNegativeFacing(Geometry.PI, TEST_PRECISION);
@@ -147,8 +147,8 @@ public class CutAngleTest {
     @Test
     public void testClassify() {
         // arrange
-        CutAngle zeroPos = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        CutAngle zeroNeg = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle zeroPos = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
+        CutAngle zeroNeg = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
         CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
 
         // act/assert
@@ -220,8 +220,8 @@ public class CutAngleTest {
     @Test
     public void testSimilarOrientation() {
         // arrange
-        CutAngle a = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
-        CutAngle b = CutAngle.createNegativeFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle a = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
+        CutAngle b = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
         CutAngle c = CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION);
 
         // act/assert
@@ -244,7 +244,7 @@ public class CutAngleTest {
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 Geometry.TWO_PI, true);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
-                Geometry.ZERO_PI, false);
+                0.0, false);
     }
 
     @Test
@@ -254,9 +254,9 @@ public class CutAngleTest {
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
-                Geometry.ZERO_PI, false);
+                0.0, false);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
-                Geometry.ZERO_PI, true);
+                0.0, true);
 
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
                 -1.5 * Geometry.PI, false);
@@ -355,7 +355,7 @@ public class CutAngleTest {
     @Test
     public void testToString() {
         // arrange
-        CutAngle pt = CutAngle.createPositiveFacing(Geometry.ZERO_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
 
         // act
         String str = pt.toString();

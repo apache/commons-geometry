@@ -117,7 +117,7 @@ public class InteriorAngleSegmentConnectorTest {
             segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
 
             Vector2D pt = Vector2D.of(0, 2);
-            Segment a = Line.fromPointAndAngle(pt, Geometry.ZERO_PI, TEST_PRECISION).segmentTo(pt);
+            Segment a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).segmentTo(pt);
             Segment b = Line.fromPointAndAngle(pt, Geometry.HALF_PI, TEST_PRECISION).segmentFrom(pt);
 
             segments.add(a);

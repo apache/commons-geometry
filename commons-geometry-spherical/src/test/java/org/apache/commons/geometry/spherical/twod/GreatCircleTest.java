@@ -145,7 +145,7 @@ public class GreatCircleTest {
 
         // poles
         Assert.assertEquals(Geometry.MINUS_HALF_PI, circle.offset(Point2S.of(Geometry.PI, Geometry.HALF_PI)), TEST_EPS);
-        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Point2S.of(Geometry.ZERO_PI, Geometry.HALF_PI)), TEST_EPS);
+        Assert.assertEquals(Geometry.HALF_PI, circle.offset(Point2S.of(0.0, Geometry.HALF_PI)), TEST_EPS);
     }
 
     @Test
@@ -188,18 +188,18 @@ public class GreatCircleTest {
 
         // on circle
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Point2S.from(Vector3D.of(0, 1, 0))), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Point2S.from(Vector3D.of(0, 0, 1))), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Point2S.from(Vector3D.of(0, 0, 1))), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(0, -1, 0))), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(0, 0, -1))), TEST_EPS);
 
         // +1/-1
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Point2S.from(Vector3D.of(-1, 1, 0))), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Point2S.from(Vector3D.of(-1, 0, 1))), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Point2S.from(Vector3D.of(-1, 0, 1))), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(-1, -1, 0))), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(-1, 0, -1))), TEST_EPS);
 
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Point2S.from(Vector3D.of(1, 1, 0))), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Point2S.from(Vector3D.of(1, 0, 1))), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Point2S.from(Vector3D.of(1, 0, 1))), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(1, -1, 0))), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Point2S.from(Vector3D.of(1, 0, -1))), TEST_EPS);
 
@@ -218,18 +218,18 @@ public class GreatCircleTest {
 
         // on circle
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Vector3D.of(0, 1, 0)), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Vector3D.of(0, 0, 1)), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Vector3D.of(0, 0, 1)), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Vector3D.of(0, -1, 0)), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Vector3D.of(0, 0, -1)), TEST_EPS);
 
         // +1/-1
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Vector3D.of(-1, 1, 0)), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Vector3D.of(-1, 0, 1)), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Vector3D.of(-1, 0, 1)), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Vector3D.of(-1, -1, 0)), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Vector3D.of(-1, 0, -1)), TEST_EPS);
 
         Assert.assertEquals(Geometry.HALF_PI, circle.azimuth(Vector3D.of(1, 1, 0)), TEST_EPS);
-        Assert.assertEquals(Geometry.ZERO_PI, circle.azimuth(Vector3D.of(1, 0, 1)), TEST_EPS);
+        Assert.assertEquals(0.0, circle.azimuth(Vector3D.of(1, 0, 1)), TEST_EPS);
         Assert.assertEquals(1.5 * Geometry.PI, circle.azimuth(Vector3D.of(1, -1, 0)), TEST_EPS);
         Assert.assertEquals(Geometry.PI, circle.azimuth(Vector3D.of(1, 0, -1)), TEST_EPS);
 
@@ -245,7 +245,7 @@ public class GreatCircleTest {
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
-        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Z, circle.vectorAt(Geometry.ZERO_PI), TEST_EPS);
+        SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Z, circle.vectorAt(0.0), TEST_EPS);
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Y, circle.vectorAt(Geometry.HALF_PI), TEST_EPS);
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_Z, circle.vectorAt(Geometry.PI), TEST_EPS);
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_Y, circle.vectorAt(Geometry.MINUS_HALF_PI), TEST_EPS);
@@ -283,9 +283,9 @@ public class GreatCircleTest {
                 Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
 
         // act
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.ZERO_PI, Geometry.ZERO_PI),
+        SphericalTestUtils.assertPointsEqual(Point2S.of(0.0, 0.0),
                 minusXCircle.project(Point2S.from(Vector3D.Unit.MINUS_X)), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.ZERO_PI, Geometry.ZERO_PI),
+        SphericalTestUtils.assertPointsEqual(Point2S.of(0.0, 0.0),
                 minusXCircle.project(Point2S.from(Vector3D.Unit.PLUS_X)), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(Point2S.of(1.5 * Geometry.PI, Geometry.HALF_PI),

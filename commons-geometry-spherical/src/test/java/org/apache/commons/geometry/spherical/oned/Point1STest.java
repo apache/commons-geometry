@@ -78,7 +78,7 @@ public class Point1STest {
     @Test
     public void testFrom_vector() {
         // act/assert
-        checkPoint(Point1S.from(Vector2D.of(2, 0)), Geometry.ZERO_PI);
+        checkPoint(Point1S.from(Vector2D.of(2, 0)), 0.0);
         checkPoint(Point1S.from(Vector2D.of(0, 0.1)), Geometry.HALF_PI);
         checkPoint(Point1S.from(Vector2D.of(-0.5, 0)), Geometry.PI);
         checkPoint(Point1S.from(Vector2D.of(0, -100)), 1.5 * Geometry.PI);
@@ -87,7 +87,7 @@ public class Point1STest {
     @Test
     public void testFrom_polar() {
         // act/assert
-        checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), Geometry.ZERO_PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), 0.0);
         checkPoint(Point1S.from(PolarCoordinates.of(1, Geometry.HALF_PI)), Geometry.HALF_PI);
         checkPoint(Point1S.from(PolarCoordinates.of(0.5, Geometry.PI)), Geometry.PI);
         checkPoint(Point1S.from(PolarCoordinates.of(1e-4, Geometry.MINUS_HALF_PI)), 1.5 * Geometry.PI);
@@ -331,7 +331,7 @@ public class Point1STest {
 
             // act
             Point1S piNorm = pt.normalize(Point1S.PI);
-            Point1S zeroNorm = pt.normalize(Geometry.ZERO_PI);
+            Point1S zeroNorm = pt.normalize(0.0);
 
             // assert
             Assert.assertEquals(expectedPiNorm, piNorm.getAzimuth(), TEST_EPS);
@@ -346,11 +346,11 @@ public class Point1STest {
     public void testNormalize_nonFinite() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.POSITIVE_INFINITY).normalize(Geometry.ZERO_PI);
+            Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Point1S.of(Double.NEGATIVE_INFINITY).normalize(Geometry.ZERO_PI);
+            Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0);
         }, GeometryValueException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -413,11 +413,11 @@ public class Point1STest {
         checkPoint(p4.below(p1), Geometry.MINUS_HALF_PI);
         checkPoint(p5.below(p1), -Geometry.TWO_PI);
 
-        checkPoint(p1.below(p3), Geometry.ZERO_PI);
+        checkPoint(p1.below(p3), 0.0);
         checkPoint(p2.below(p3), Geometry.HALF_PI);
         checkPoint(p3.below(p3), -Geometry.PI);
         checkPoint(p4.below(p3), Geometry.MINUS_HALF_PI);
-        checkPoint(p5.below(p3), Geometry.ZERO_PI);
+        checkPoint(p5.below(p3), 0.0);
     }
 
     @Test

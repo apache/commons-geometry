@@ -288,7 +288,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 min = min.reverse();
             }
         } else {
-            min = CutAngle.createNegativeFacing(Geometry.ZERO_PI, precision);
+            min = CutAngle.createNegativeFacing(0.0, precision);
         }
 
         if (max != null) {

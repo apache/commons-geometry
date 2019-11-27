@@ -222,7 +222,7 @@ public class ConvexSubPlaneTest {
         Plane plane = Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION)
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
                 ));
 
         // act
@@ -238,7 +238,7 @@ public class ConvexSubPlaneTest {
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION)
                 ));
 

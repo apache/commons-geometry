@@ -159,7 +159,7 @@ public class SubPlaneTest {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().getRoot().cut(
-                Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+                Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 

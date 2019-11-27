@@ -124,7 +124,7 @@ public class LineTest {
         Vector2D vec = Vector2D.of(-1, -2);
 
         // act/assert
-        Assert.assertEquals(0, Line.fromPointAndAngle(vec, Geometry.ZERO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(0, Line.fromPointAndAngle(vec, 0.0, TEST_PRECISION).getAngle(), TEST_EPS);
         Assert.assertEquals(Geometry.PI, Line.fromPointAndAngle(vec, Geometry.PI, TEST_PRECISION).getAngle(), TEST_EPS);
         Assert.assertEquals(0, Line.fromPointAndAngle(vec, Geometry.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
 
@@ -387,20 +387,20 @@ public class LineTest {
     @Test
     public void testAngle() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line a = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         Line b = Line.fromPointAndAngle(Vector2D.of(1, 4), Geometry.PI, TEST_PRECISION);
         Line c = Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(Geometry.ZERO_PI, a.angle(a), TEST_EPS);
+        Assert.assertEquals(0.0, a.angle(a), TEST_EPS);
         Assert.assertEquals(-Geometry.PI, a.angle(b), TEST_EPS);
         Assert.assertEquals(0.25 * Geometry.PI, a.angle(c), TEST_EPS);
 
-        Assert.assertEquals(Geometry.ZERO_PI, b.angle(b), TEST_EPS);
+        Assert.assertEquals(0.0, b.angle(b), TEST_EPS);
         Assert.assertEquals(-Geometry.PI, b.angle(a), TEST_EPS);
         Assert.assertEquals(-0.75 * Geometry.PI, b.angle(c), TEST_EPS);
 
-        Assert.assertEquals(Geometry.ZERO_PI, c.angle(c), TEST_EPS);
+        Assert.assertEquals(0.0, c.angle(c), TEST_EPS);
         Assert.assertEquals(-0.25 * Geometry.PI, c.angle(a), TEST_EPS);
         Assert.assertEquals(0.75 * Geometry.PI, c.angle(b), TEST_EPS);
     }
@@ -448,7 +448,7 @@ public class LineTest {
     @Test
     public void testSegment_interval() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Interval interval = Interval.of(1, 2, TEST_PRECISION);
 
         // act
@@ -462,7 +462,7 @@ public class LineTest {
     @Test
     public void testSegment_doubles() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(1, 2);
@@ -476,7 +476,7 @@ public class LineTest {
     @Test
     public void testSegment_pointsOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
@@ -490,7 +490,7 @@ public class LineTest {
     @Test
     public void testSegment_pointsProjectedOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
@@ -576,7 +576,7 @@ public class LineTest {
     @Test
     public void testSubline() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         SubLine subline = line.subline();
@@ -687,8 +687,8 @@ public class LineTest {
     @Test
     public void testSimilarOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(4, 5), Geometry.ZERO_PI, TEST_PRECISION);
+        Line a = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line b = Line.fromPointAndAngle(Vector2D.of(4, 5), 0.0, TEST_PRECISION);
         Line c = Line.fromPointAndAngle(Vector2D.of(-1, -3), 0.4 * Geometry.PI, TEST_PRECISION);
         Line d = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.4 * Geometry.PI, TEST_PRECISION);
 
@@ -871,17 +871,17 @@ public class LineTest {
 
         Vector2D p = Vector2D.of(1, 2);
 
-        Line line = Line.fromPointAndAngle(p, Geometry.ZERO_PI, precision);
+        Line line = Line.fromPointAndAngle(p, 0.0, precision);
 
         // act/assert
         Vector2D offset1 = Vector2D.of(0, 1e-4);
         Vector2D offset2 = Vector2D.of(0, 2e-3);
 
-        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.add(offset1), Geometry.ZERO_PI, precision)));
-        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.subtract(offset1), Geometry.ZERO_PI, precision)));
+        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.add(offset1), 0.0, precision)));
+        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.subtract(offset1), 0.0, precision)));
 
-        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.add(offset2), Geometry.ZERO_PI, precision)));
-        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.subtract(offset2), Geometry.ZERO_PI, precision)));
+        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.add(offset2), 0.0, precision)));
+        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.subtract(offset2), 0.0, precision)));
 
         Assert.assertTrue(line.contains(Line.fromPointAndAngle(p, 1e-4, precision)));
         Assert.assertFalse(line.contains(Line.fromPointAndAngle(p, 1e-2, precision)));
@@ -1004,7 +1004,7 @@ public class LineTest {
         Vector2D p1 = Vector2D.of(1, 2);
         Vector2D p2 = Vector2D.of(1, -2);
 
-        Line line = Line.fromPointAndAngle(p1, Geometry.ZERO_PI, precision);
+        Line line = Line.fromPointAndAngle(p1, 0.0, precision);
 
         // act/assert
         Assert.assertTrue(line.isParallel(Line.fromPointAndAngle(p2, 1e-4, precision)));

@@ -569,7 +569,7 @@ public class SegmentTest {
         Segment aSeg = Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(2, 0), TEST_PRECISION);
         Segment bSeg = Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
 
-        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         Line yAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION);
         Line angledLine = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION);
 

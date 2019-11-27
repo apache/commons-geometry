@@ -408,7 +408,7 @@ public final class QuaternionRotation implements Rotation3D {
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),
                 angle2,
-                Geometry.ZERO_PI
+                0.0
             };
         }
 
@@ -469,12 +469,12 @@ public final class QuaternionRotation implements Rotation3D {
             final double angle1TanY = vec2.dot(crossAxis);
             final double angle1TanX = vec2.dot(axis2);
 
-            final double angle2 = angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD ? Geometry.ZERO_PI : Geometry.PI;
+            final double angle2 = angle2Cos > AXIS_ANGLE_SINGULARITY_THRESHOLD ? 0.0 : Geometry.PI;
 
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),
                 angle2,
-                Geometry.ZERO_PI
+                0.0
             };
         }
 

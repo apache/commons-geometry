@@ -147,7 +147,7 @@ public class SubLineTest {
     @Test
     public void testAdd_lineSegment() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
 
         SubLine subline = new SubLine(line);
@@ -173,7 +173,7 @@ public class SubLineTest {
     @Test
     public void testAdd_subLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         SubLine a = new SubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
@@ -215,7 +215,7 @@ public class SubLineTest {
     @Test
     public void testAdd_argumentsFromDifferentLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
 
         SubLine subline = new SubLine(line);
@@ -237,7 +237,7 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
@@ -265,7 +265,7 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * Geometry.PI, TEST_PRECISION);
@@ -293,7 +293,7 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
@@ -315,7 +315,7 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * Geometry.PI, TEST_PRECISION);
@@ -337,10 +337,10 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -359,10 +359,10 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, -1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -381,10 +381,10 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -403,7 +403,7 @@ public class SubLineTest {
         subRegion.add(Interval.of(0,  2, TEST_PRECISION));
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.PI, TEST_PRECISION);
@@ -425,7 +425,7 @@ public class SubLineTest {
                 .createRotation(Vector2D.of(0, 1), Geometry.HALF_PI)
                 .scale(Vector2D.of(3, 2));
 
-        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.ZERO_PI, TEST_PRECISION));
+        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.min(3, TEST_PRECISION));
 
@@ -453,7 +453,7 @@ public class SubLineTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
 
-        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION));
+        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
 
         // act
@@ -474,7 +474,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_instanceMethod() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         SubLineBuilder builder = new SubLine(line).builder();
 
         // act
@@ -495,7 +495,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_createEmpty() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         SubLineBuilder builder = new SubLineBuilder(line);
 
@@ -513,7 +513,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_addConvex() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
 
         SubLineBuilder builder = new SubLineBuilder(line);
@@ -541,7 +541,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_addNonConvex() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         SubLine a = new SubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
@@ -585,7 +585,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_argumentsFromDifferentLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
 
         SubLineBuilder builder = new SubLineBuilder(line);
@@ -603,7 +603,7 @@ public class SubLineTest {
     @Test
     public void testBuilder_unknownSubLineType() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.ZERO_PI, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         AbstractSubLine unknownType = new AbstractSubLine(line) {
             @Override
