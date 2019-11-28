@@ -34,9 +34,8 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
  */
 public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, RegionBSPTree1D.RegionNode1D> {
     /** Comparator used to sort BoundaryPairs by ascending location.  */
-    private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
-        return Double.compare(a.getMinValue(), b.getMinValue());
-    };
+    private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR =
+        (a, b) -> Double.compare(a.getMinValue(), b.getMinValue());
 
     /** Create a new, empty region.
      */
@@ -176,10 +175,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
 
         final List<BoundaryPair> boundaryPairs = new ArrayList<>();
 
-        visitInsideIntervals((min, max) -> {
-            boundaryPairs.add(new BoundaryPair(min, max));
-        });
-
+        visitInsideIntervals((min, max) -> boundaryPairs.add(new BoundaryPair(min, max)));
         boundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
 
         final List<Interval> intervals = new ArrayList<>();

@@ -36,9 +36,8 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTree1S.RegionNode1S> {
     /** Comparator used to sort BoundaryPairs by ascending azimuth.  */
-    private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR = (BoundaryPair a, BoundaryPair b) -> {
-        return Double.compare(a.getMinValue(), b.getMinValue());
-    };
+    private static final Comparator<BoundaryPair> BOUNDARY_PAIR_COMPARATOR =
+        (a, b) -> Double.compare(a.getMinValue(), b.getMinValue());
 
     /** Create a new, empty instance.
      */
