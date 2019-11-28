@@ -339,7 +339,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
             if (onMinusSide || (onCut && cutBehavior == NodeCutRule.MINUS)) {
                 return findNode(start.getMinus(), pt, cutBehavior);
-            } else if (onPlusSide || (onCut && cutBehavior == NodeCutRule.PLUS)) {
+            } else if (onPlusSide || cutBehavior == NodeCutRule.PLUS) {
                 return findNode(start.getPlus(), pt, cutBehavior);
             }
         }
