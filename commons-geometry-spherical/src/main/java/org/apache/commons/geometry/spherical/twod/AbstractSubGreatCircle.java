@@ -46,7 +46,7 @@ abstract class AbstractSubGreatCircle
     /** {@inheritDoc} */
     @Override
     public GreatCircle getHyperplane() {
-        return circle;
+        return getCircle();
     }
 
     /** {@inheritDoc} */

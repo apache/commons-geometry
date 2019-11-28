@@ -56,7 +56,7 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
      */
     @Override
     public double getMaxZero() {
-        return epsilon;
+        return getEpsilon();
     }
 
     /** {@inheritDoc} **/

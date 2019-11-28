@@ -149,7 +149,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @see #getW()
      */
     public Vector3D getNormal() {
-        return w;
+        return getW();
     }
 
     /** {@inheritDoc} */
