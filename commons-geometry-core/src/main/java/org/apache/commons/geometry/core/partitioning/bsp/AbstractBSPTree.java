@@ -833,14 +833,12 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public int depth() {
-            if (depth == UNKNOWN_VALUE) {
-                // calculate our depth based on our parent's depth, if
-                // possible
-                if (parent != null) {
-                    final int parentDepth = parent.depth();
-                    if (parentDepth != UNKNOWN_VALUE) {
-                        depth = parentDepth + 1;
-                    }
+            // Calculate our depth based on our parent's depth, if possible.
+            if (depth == UNKNOWN_VALUE &&
+                parent != null) {
+                final int parentDepth = parent.depth();
+                if (parentDepth != UNKNOWN_VALUE) {
+                    depth = parentDepth + 1;
                 }
             }
             return depth;
