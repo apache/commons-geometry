@@ -881,7 +881,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public Iterator<N> iterator() {
-            return new NodeIterator<P, N>(getSelf());
+            return new NodeIterator<>(getSelf());
         }
 
         /** {@inheritDoc} */
