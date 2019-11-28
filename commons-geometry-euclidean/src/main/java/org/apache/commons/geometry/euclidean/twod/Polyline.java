@@ -172,7 +172,7 @@ public class Polyline implements Iterable<Segment> {
         if (!isEmpty()) {
             final List<Segment> transformed = segments.stream()
                     .map(s -> s.transform(transform))
-                    .collect(Collectors.toCollection(() -> new ArrayList<>()));
+                .collect(Collectors.toCollection(ArrayList::new));
 
             return new Polyline(transformed);
         }
@@ -188,8 +188,8 @@ public class Polyline implements Iterable<Segment> {
     public Polyline reverse() {
         if (!isEmpty()) {
             final List<Segment> reversed = segments.stream()
-                    .map(s -> s.reverse())
-                    .collect(Collectors.toCollection(() -> new ArrayList<>()));
+                .map(Segment::reverse)
+                .collect(Collectors.toCollection(ArrayList::new));
             Collections.reverse(reversed);
 
             return new Polyline(reversed);

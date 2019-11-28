@@ -258,8 +258,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      */
     public static ConvexArea2S fromPath(final GreatArcPath path) {
         final List<GreatCircle> bounds = path.getArcs().stream()
-                .map(a -> a.getCircle())
-                .collect(Collectors.toList());
+            .map(GreatArc::getCircle)
+            .collect(Collectors.toList());
 
         return fromBounds(bounds);
     }
