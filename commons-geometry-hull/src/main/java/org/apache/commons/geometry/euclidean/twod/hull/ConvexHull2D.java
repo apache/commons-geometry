@@ -42,7 +42,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D> {
      * Line segments of the hull.
      * The array is not serialized and will be created from the vertices on first access.
      */
-    private transient Segment[] lineSegments;
+    private Segment[] lineSegments;
 
     /**
      * Simple constructor.
