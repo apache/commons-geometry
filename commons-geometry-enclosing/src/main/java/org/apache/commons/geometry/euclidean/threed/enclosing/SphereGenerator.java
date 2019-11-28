@@ -32,14 +32,12 @@ import org.apache.commons.numbers.fraction.BigFraction;
 /** Class generating an enclosing ball from its support points.
  */
 public class SphereGenerator implements SupportBallGenerator<Vector3D> {
-
     /** Base epsilon value. */
     private static final double BASE_EPS = 1e-10;
 
     /** {@inheritDoc} */
     @Override
     public EnclosingBall<Vector3D> ballOnSupport(final List<Vector3D> support) {
-
         if (support.isEmpty()) {
             return new EnclosingBall<>(Vector3D.ZERO, Double.NEGATIVE_INFINITY);
         } else {
@@ -50,15 +48,15 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                 final Vector3D vB = support.get(1);
                 if (support.size() < 3) {
                     return new EnclosingBall<>(Vector3D.linearCombination(0.5, vA, 0.5, vB),
-                                                                    0.5 * vA.distance(vB),
-                                                                    vA, vB);
+                                               0.5 * vA.distance(vB),
+                                               vA, vB);
                 } else {
                     final Vector3D vC = support.get(2);
                     if (support.size() < 4) {
 
                         // delegate to 2D disk generator
                         final DoublePrecisionContext precision =
-                                new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
+                            new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
                         final Plane p = Plane.fromPoints(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubspace(vA),
@@ -112,22 +110,22 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                             c2[2].multiply(c2[2]).add(c3[2].multiply(c3[2])).add(c4[2].multiply(c4[2])),
                             c2[3].multiply(c2[3]).add(c3[3].multiply(c3[3])).add(c4[3].multiply(c4[3]))
                         };
-                        final BigFraction twoM11  = minor(c2, c3, c4).multiply(2);
-                        final BigFraction m12     = minor(c1, c3, c4);
-                        final BigFraction m13     = minor(c1, c2, c4);
-                        final BigFraction m14     = minor(c1, c2, c3);
+                        final BigFraction twoM11 = minor(c2, c3, c4).multiply(2);
+                        final BigFraction m12 = minor(c1, c3, c4);
+                        final BigFraction m13 = minor(c1, c2, c4);
+                        final BigFraction m14 = minor(c1, c2, c3);
                         final BigFraction centerX = m12.divide(twoM11);
                         final BigFraction centerY = m13.divide(twoM11).negate();
                         final BigFraction centerZ = m14.divide(twoM11);
-                        final BigFraction dx      = c2[0].subtract(centerX);
-                        final BigFraction dy      = c3[0].subtract(centerY);
-                        final BigFraction dz      = c4[0].subtract(centerZ);
-                        final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy)).add(dz.multiply(dz));
+                        final BigFraction dx = c2[0].subtract(centerX);
+                        final BigFraction dy = c3[0].subtract(centerY);
+                        final BigFraction dz = c4[0].subtract(centerZ);
+                        final BigFraction r2 = dx.multiply(dx).add(dy.multiply(dy)).add(dz.multiply(dz));
                         return new EnclosingBall<>(Vector3D.of(centerX.doubleValue(),
-                                                                                     centerY.doubleValue(),
-                                                                                     centerZ.doubleValue()),
-                                                                        Math.sqrt(r2.doubleValue()),
-                                                                        vA, vB, vC, vD);
+                                                               centerY.doubleValue(),
+                                                               centerZ.doubleValue()),
+                                                   Math.sqrt(r2.doubleValue()),
+                                                   vA, vB, vC, vD);
                     }
                 }
             }
@@ -141,18 +139,18 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
      * @return value of the minor computed has an exact fraction
      */
     private BigFraction minor(final BigFraction[] c1, final BigFraction[] c2, final BigFraction[] c3) {
-        return      c2[0].multiply(c3[1]).multiply(c1[2].subtract(c1[3])).
-                add(c2[0].multiply(c3[2]).multiply(c1[3].subtract(c1[1]))).
-                add(c2[0].multiply(c3[3]).multiply(c1[1].subtract(c1[2]))).
-                add(c2[1].multiply(c3[0]).multiply(c1[3].subtract(c1[2]))).
-                add(c2[1].multiply(c3[2]).multiply(c1[0].subtract(c1[3]))).
-                add(c2[1].multiply(c3[3]).multiply(c1[2].subtract(c1[0]))).
-                add(c2[2].multiply(c3[0]).multiply(c1[1].subtract(c1[3]))).
-                add(c2[2].multiply(c3[1]).multiply(c1[3].subtract(c1[0]))).
-                add(c2[2].multiply(c3[3]).multiply(c1[0].subtract(c1[1]))).
-                add(c2[3].multiply(c3[0]).multiply(c1[2].subtract(c1[1]))).
-                add(c2[3].multiply(c3[1]).multiply(c1[0].subtract(c1[2]))).
-                add(c2[3].multiply(c3[2]).multiply(c1[1].subtract(c1[0])));
+        return c2[0].multiply(c3[1]).multiply(c1[2].subtract(c1[3])).
+            add(c2[0].multiply(c3[2]).multiply(c1[3].subtract(c1[1]))).
+            add(c2[0].multiply(c3[3]).multiply(c1[1].subtract(c1[2]))).
+            add(c2[1].multiply(c3[0]).multiply(c1[3].subtract(c1[2]))).
+            add(c2[1].multiply(c3[2]).multiply(c1[0].subtract(c1[3]))).
+            add(c2[1].multiply(c3[3]).multiply(c1[2].subtract(c1[0]))).
+            add(c2[2].multiply(c3[0]).multiply(c1[1].subtract(c1[3]))).
+            add(c2[2].multiply(c3[1]).multiply(c1[3].subtract(c1[0]))).
+            add(c2[2].multiply(c3[3]).multiply(c1[0].subtract(c1[1]))).
+            add(c2[3].multiply(c3[0]).multiply(c1[2].subtract(c1[1]))).
+            add(c2[3].multiply(c3[1]).multiply(c1[0].subtract(c1[2]))).
+            add(c2[3].multiply(c3[2]).multiply(c1[1].subtract(c1[0])));
     }
 
     /** Compute the L<sub>1</sub> vector norm for the given set of coordinates.

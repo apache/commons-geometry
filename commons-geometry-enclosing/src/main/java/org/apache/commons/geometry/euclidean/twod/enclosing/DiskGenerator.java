@@ -26,11 +26,9 @@ import org.apache.commons.numbers.fraction.BigFraction;
 /** Class generating an enclosing ball from its support points.
  */
 public class DiskGenerator implements SupportBallGenerator<Vector2D> {
-
     /** {@inheritDoc} */
     @Override
     public EnclosingBall<Vector2D> ballOnSupport(final List<Vector2D> support) {
-
         if (support.isEmpty()) {
             return new EnclosingBall<>(Vector2D.ZERO, Double.NEGATIVE_INFINITY);
         } else {
@@ -41,8 +39,8 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
                 final Vector2D vB = support.get(1);
                 if (support.size() < 3) {
                     return new EnclosingBall<>(Vector2D.linearCombination(0.5, vA, 0.5, vB),
-                                                                    0.5 * vA.distance(vB),
-                                                                    vA, vB);
+                                               0.5 * vA.distance(vB),
+                                               vA, vB);
                 } else {
                     final Vector2D vC = support.get(2);
                     // a disk is 2D can be defined as:
@@ -70,25 +68,25 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
                         BigFraction.from(vA.getX()), BigFraction.from(vB.getX()), BigFraction.from(vC.getX())
                     };
                     final BigFraction[] c3 = new BigFraction[] {
-                            BigFraction.from(vA.getY()), BigFraction.from(vB.getY()), BigFraction.from(vC.getY())
+                        BigFraction.from(vA.getY()), BigFraction.from(vB.getY()), BigFraction.from(vC.getY())
                     };
                     final BigFraction[] c1 = new BigFraction[] {
                         c2[0].multiply(c2[0]).add(c3[0].multiply(c3[0])),
                         c2[1].multiply(c2[1]).add(c3[1].multiply(c3[1])),
                         c2[2].multiply(c2[2]).add(c3[2].multiply(c3[2]))
                     };
-                    final BigFraction twoM11  = minor(c2, c3).multiply(2);
-                    final BigFraction m12     = minor(c1, c3);
-                    final BigFraction m13     = minor(c1, c2);
+                    final BigFraction twoM11 = minor(c2, c3).multiply(2);
+                    final BigFraction m12 = minor(c1, c3);
+                    final BigFraction m13 = minor(c1, c2);
                     final BigFraction centerX = m12.divide(twoM11);
                     final BigFraction centerY = m13.divide(twoM11).negate();
-                    final BigFraction dx      = c2[0].subtract(centerX);
-                    final BigFraction dy      = c3[0].subtract(centerY);
-                    final BigFraction r2      = dx.multiply(dx).add(dy.multiply(dy));
+                    final BigFraction dx = c2[0].subtract(centerX);
+                    final BigFraction dy = c3[0].subtract(centerY);
+                    final BigFraction r2 = dx.multiply(dx).add(dy.multiply(dy));
                     return new EnclosingBall<>(Vector2D.of(centerX.doubleValue(),
-                                                                                 centerY.doubleValue()),
-                                                                    Math.sqrt(r2.doubleValue()),
-                                                                    vA, vB, vC);
+                                                           centerY.doubleValue()),
+                                               Math.sqrt(r2.doubleValue()),
+                                               vA, vB, vC);
                 }
             }
         }
@@ -100,9 +98,8 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
      * @return value of the minor computed has an exact fraction
      */
     private BigFraction minor(final BigFraction[] c1, final BigFraction[] c2) {
-        return      c2[0].multiply(c1[2].subtract(c1[1])).
-                add(c2[1].multiply(c1[0].subtract(c1[2]))).
-                add(c2[2].multiply(c1[1].subtract(c1[0])));
+        return c2[0].multiply(c1[2].subtract(c1[1])).
+            add(c2[1].multiply(c1[0].subtract(c1[2]))).
+            add(c2[2].multiply(c1[1].subtract(c1[0])));
     }
-
 }
