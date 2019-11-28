@@ -353,7 +353,7 @@ public final class Point1S implements Point<Point1S> {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1S parse(final String str) {
-        return SimpleTupleFormat.getDefault().parse(str, Point1S::of);
+        return SimpleTupleFormat.getDefault().parse(str, a -> of(a));
     }
 
     /** Compute the signed shortest distance (angular separation) between two points. The return
