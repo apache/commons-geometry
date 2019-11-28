@@ -82,8 +82,7 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
 
     /** {@inheritDoc} */
     @Override
-    public ConvexHull2D generate(final Collection<Vector2D> points)
-            throws IllegalStateException {
+    public ConvexHull2D generate(final Collection<Vector2D> points) {
         Collection<Vector2D> hullVertices = null;
         if (points.size() < 2) {
             hullVertices = points;

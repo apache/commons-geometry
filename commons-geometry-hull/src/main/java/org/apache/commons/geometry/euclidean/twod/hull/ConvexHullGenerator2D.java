@@ -28,6 +28,5 @@ public interface ConvexHullGenerator2D extends ConvexHullGenerator<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    ConvexHull2D generate(Collection<Vector2D> points) throws IllegalStateException;
-
+    ConvexHull2D generate(Collection<Vector2D> points);
 }

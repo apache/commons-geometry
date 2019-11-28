@@ -50,9 +50,7 @@ public class ConvexHull2D implements ConvexHull<Vector2D> {
      * @param precision precision context used to compare floating point numbers
      * @throws IllegalArgumentException if the vertices do not form a convex hull
      */
-    public ConvexHull2D(final Vector2D[] vertices, final DoublePrecisionContext precision)
-        throws IllegalArgumentException {
-
+    public ConvexHull2D(final Vector2D[] vertices, final DoublePrecisionContext precision) {
         this.precision = precision;
 
         if (!isConvex(vertices)) {

@@ -29,7 +29,6 @@ import org.apache.commons.geometry.core.Point;
  * @see <a href="http://mathworld.wolfram.com/ConvexHull.html">Convex Hull (MathWorld)</a>
  */
 public interface ConvexHullGenerator<P extends Point<P>> {
-
     /**
      * Builds the convex hull from the set of input points.
      *
@@ -38,5 +37,5 @@ public interface ConvexHullGenerator<P extends Point<P>> {
      * @throws IllegalStateException if generator fails to generate a convex hull for
      * the given set of input points
      */
-    ConvexHull<P> generate(Collection<P> points) throws IllegalStateException;
+    ConvexHull<P> generate(Collection<P> points);
 }

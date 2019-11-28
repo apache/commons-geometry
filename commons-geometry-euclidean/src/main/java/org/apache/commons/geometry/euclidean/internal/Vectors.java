@@ -44,7 +44,7 @@ public final class Vectors {
      * @throws IllegalNormException if the given norm value is NaN, infinite,
      *  or zero
      */
-    public static double checkedNorm(final double norm) throws IllegalNormException {
+    public static double checkedNorm(final double norm) {
         if (!isRealNonZero(norm)) {
             throw new IllegalNormException(norm);
         }
