@@ -21,7 +21,6 @@ import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a>
  * in 3 dimensional Euclidean space.

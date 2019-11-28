@@ -19,6 +19,7 @@ package org.apache.commons.geometry.spherical.oned;
 import java.util.Comparator;
 import java.util.Objects;
 
+import org.apache.commons.numbers.angle.PlaneAngle;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
@@ -26,8 +27,6 @@ import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.numbers.angle.PlaneAngle;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere, or in other words, an
  * azimuth angle on a circle. The value of the azimuth angle is not normalized
