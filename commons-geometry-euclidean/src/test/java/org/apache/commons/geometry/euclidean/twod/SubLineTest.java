@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
@@ -240,7 +240,7 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -268,7 +268,7 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -296,7 +296,7 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -318,7 +318,7 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -406,7 +406,7 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         SubLine subline = new SubLine(line, subRegion);
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<SubLine> split = subline.split(splitter);
@@ -422,7 +422,7 @@ public class SubLineTest {
     public void testTransform() {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D
-                .createRotation(Vector2D.of(0, 1), Geometry.HALF_PI)
+                .createRotation(Vector2D.of(0, 1), PlaneAngleRadians.PI_OVER_TWO)
                 .scale(Vector2D.of(3, 2));
 
         SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));

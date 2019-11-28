@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -1554,8 +1554,8 @@ public class RegionBSPTree3DTest {
         planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.Unit.MINUS_Z, TEST_PRECISION));
 
         // add the side planes
-        final double vDelta = Geometry.PI / stacks;
-        final double hDelta = Geometry.PI * 2 / slices;
+        final double vDelta = PlaneAngleRadians.PI / stacks;
+        final double hDelta = PlaneAngleRadians.PI * 2 / slices;
 
         final double adjustedRadius = (radius + (radius * Math.cos(vDelta * 0.5))) / 2.0;
 

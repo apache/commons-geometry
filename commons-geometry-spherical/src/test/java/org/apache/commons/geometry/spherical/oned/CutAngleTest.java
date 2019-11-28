@@ -18,7 +18,7 @@ package org.apache.commons.geometry.spherical.oned;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.exception.GeometryException;
@@ -46,38 +46,38 @@ public class CutAngleTest {
         // act/assert
         checkCutAngle(CutAngle.fromAzimuthAndDirection(0.0, true, TEST_PRECISION),
                 0.0, true);
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, true, TEST_PRECISION),
-                Geometry.PI, true);
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, true, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, true);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(PlaneAngleRadians.PI, true, TEST_PRECISION),
+                PlaneAngleRadians.PI, true);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(PlaneAngleRadians.MINUS_PI_OVER_TWO, true, TEST_PRECISION),
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, true);
 
         checkCutAngle(CutAngle.fromAzimuthAndDirection(0.0, false, TEST_PRECISION),
                 0.0, false);
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.PI, false, TEST_PRECISION),
-                Geometry.PI, false);
-        checkCutAngle(CutAngle.fromAzimuthAndDirection(Geometry.MINUS_HALF_PI, false, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, false);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(PlaneAngleRadians.PI, false, TEST_PRECISION),
+                PlaneAngleRadians.PI, false);
+        checkCutAngle(CutAngle.fromAzimuthAndDirection(PlaneAngleRadians.MINUS_PI_OVER_TWO, false, TEST_PRECISION),
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, false);
     }
 
     @Test
     public void testFromPointAndDirection() {
         // arrange
-        Point1S pt = Point1S.of(Geometry.MINUS_HALF_PI);
+        Point1S pt = Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO);
 
         // act/assert
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION),
                 0.0, true);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, true, TEST_PRECISION),
-                Geometry.PI, true);
+                PlaneAngleRadians.PI, true);
         checkCutAngle(CutAngle.fromPointAndDirection(pt, true, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, true);
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, true);
 
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION),
                 0.0, false);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.PI, false, TEST_PRECISION),
-                Geometry.PI, false);
+                PlaneAngleRadians.PI, false);
         checkCutAngle(CutAngle.fromPointAndDirection(pt, false, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, false);
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, false);
     }
 
     @Test
@@ -86,9 +86,9 @@ public class CutAngleTest {
         checkCutAngle(CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION),
                 0.0, true);
         checkCutAngle(CutAngle.createPositiveFacing(Point1S.PI, TEST_PRECISION),
-                Geometry.PI, true);
-        checkCutAngle(CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, true);
+                PlaneAngleRadians.PI, true);
+        checkCutAngle(CutAngle.createPositiveFacing(PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION),
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, true);
     }
 
     @Test
@@ -97,9 +97,9 @@ public class CutAngleTest {
         checkCutAngle(CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION),
                 0.0, false);
         checkCutAngle(CutAngle.createNegativeFacing(Point1S.PI, TEST_PRECISION),
-                Geometry.PI, false);
-        checkCutAngle(CutAngle.createNegativeFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION),
-                Geometry.MINUS_HALF_PI, false);
+                PlaneAngleRadians.PI, false);
+        checkCutAngle(CutAngle.createNegativeFacing(PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION),
+                PlaneAngleRadians.MINUS_PI_OVER_TWO, false);
     }
 
     @Test
@@ -107,41 +107,41 @@ public class CutAngleTest {
         // arrange
         CutAngle zeroPos = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
         CutAngle zeroNeg = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
-        CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
+        CutAngle negPiPos = CutAngle.createPositiveFacing(-PlaneAngleRadians.PI, TEST_PRECISION);
 
-        CutAngle piNeg = CutAngle.createNegativeFacing(Geometry.PI, TEST_PRECISION);
-        CutAngle twoAndAHalfPiPos = CutAngle.createPositiveFacing(2.5 * Geometry.PI, TEST_PRECISION);
+        CutAngle piNeg = CutAngle.createNegativeFacing(PlaneAngleRadians.PI, TEST_PRECISION);
+        CutAngle twoAndAHalfPiPos = CutAngle.createPositiveFacing(2.5 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act/assert
         checkOffset(zeroPos, 0, 0);
-        checkOffset(zeroPos, Geometry.TWO_PI, 0);
-        checkOffset(zeroPos, 2.5 * Geometry.PI, Geometry.HALF_PI);
-        checkOffset(zeroPos, Geometry.PI, Geometry.PI);
-        checkOffset(zeroPos, 3.5 * Geometry.PI, 1.5 * Geometry.PI);
+        checkOffset(zeroPos, PlaneAngleRadians.TWO_PI, 0);
+        checkOffset(zeroPos, 2.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
+        checkOffset(zeroPos, PlaneAngleRadians.PI, PlaneAngleRadians.PI);
+        checkOffset(zeroPos, 3.5 * PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI);
 
         checkOffset(zeroNeg, 0, 0);
-        checkOffset(zeroNeg, Geometry.TWO_PI, 0);
-        checkOffset(zeroNeg, 2.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
-        checkOffset(zeroNeg, Geometry.PI, -Geometry.PI);
-        checkOffset(zeroNeg, 3.5 * Geometry.PI, -1.5 * Geometry.PI);
+        checkOffset(zeroNeg, PlaneAngleRadians.TWO_PI, 0);
+        checkOffset(zeroNeg, 2.5 * PlaneAngleRadians.PI, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkOffset(zeroNeg, PlaneAngleRadians.PI, -PlaneAngleRadians.PI);
+        checkOffset(zeroNeg, 3.5 * PlaneAngleRadians.PI, -1.5 * PlaneAngleRadians.PI);
 
-        checkOffset(negPiPos, 0, -Geometry.PI);
-        checkOffset(negPiPos, Geometry.TWO_PI, -Geometry.PI);
-        checkOffset(negPiPos, 2.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
-        checkOffset(negPiPos, Geometry.PI, 0);
-        checkOffset(negPiPos, 3.5 * Geometry.PI, Geometry.HALF_PI);
+        checkOffset(negPiPos, 0, -PlaneAngleRadians.PI);
+        checkOffset(negPiPos, PlaneAngleRadians.TWO_PI, -PlaneAngleRadians.PI);
+        checkOffset(negPiPos, 2.5 * PlaneAngleRadians.PI, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkOffset(negPiPos, PlaneAngleRadians.PI, 0);
+        checkOffset(negPiPos, 3.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
 
-        checkOffset(piNeg, 0, Geometry.PI);
-        checkOffset(piNeg, Geometry.TWO_PI, Geometry.PI);
-        checkOffset(piNeg, 2.5 * Geometry.PI, Geometry.HALF_PI);
-        checkOffset(piNeg, Geometry.PI, 0);
-        checkOffset(piNeg, 3.5 * Geometry.PI, Geometry.MINUS_HALF_PI);
+        checkOffset(piNeg, 0, PlaneAngleRadians.PI);
+        checkOffset(piNeg, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.PI);
+        checkOffset(piNeg, 2.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
+        checkOffset(piNeg, PlaneAngleRadians.PI, 0);
+        checkOffset(piNeg, 3.5 * PlaneAngleRadians.PI, PlaneAngleRadians.MINUS_PI_OVER_TWO);
 
-        checkOffset(twoAndAHalfPiPos, 0, Geometry.MINUS_HALF_PI);
-        checkOffset(twoAndAHalfPiPos, Geometry.TWO_PI, Geometry.MINUS_HALF_PI);
-        checkOffset(twoAndAHalfPiPos, 2.5 * Geometry.PI, 0);
-        checkOffset(twoAndAHalfPiPos, Geometry.PI, Geometry.HALF_PI);
-        checkOffset(twoAndAHalfPiPos, 3.5 * Geometry.PI, Geometry.PI);
+        checkOffset(twoAndAHalfPiPos, 0, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkOffset(twoAndAHalfPiPos, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkOffset(twoAndAHalfPiPos, 2.5 * PlaneAngleRadians.PI, 0);
+        checkOffset(twoAndAHalfPiPos, PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO);
+        checkOffset(twoAndAHalfPiPos, 3.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI);
     }
 
     @Test
@@ -149,71 +149,71 @@ public class CutAngleTest {
         // arrange
         CutAngle zeroPos = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
         CutAngle zeroNeg = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
-        CutAngle negPiPos = CutAngle.createPositiveFacing(-Geometry.PI, TEST_PRECISION);
+        CutAngle negPiPos = CutAngle.createPositiveFacing(-PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act/assert
         checkClassify(zeroPos, HyperplaneLocation.ON,
                 0, 1e-16, -1e-16,
-                Geometry.TWO_PI - 1e-11, Geometry.TWO_PI + 1e-11);
+                PlaneAngleRadians.TWO_PI - 1e-11, PlaneAngleRadians.TWO_PI + 1e-11);
         checkClassify(zeroPos, HyperplaneLocation.PLUS,
-                0.5, 2.5 * Geometry.PI,
-                -0.5, Geometry.MINUS_HALF_PI);
+                0.5, 2.5 * PlaneAngleRadians.PI,
+                -0.5, PlaneAngleRadians.MINUS_PI_OVER_TWO);
 
         checkClassify(zeroNeg, HyperplaneLocation.ON,
                 0, 1e-16, -1e-16,
-                Geometry.TWO_PI - 1e-11, Geometry.TWO_PI + 1e-11);
+                PlaneAngleRadians.TWO_PI - 1e-11, PlaneAngleRadians.TWO_PI + 1e-11);
         checkClassify(zeroNeg, HyperplaneLocation.MINUS,
-                0.5, 2.5 * Geometry.PI,
-                -0.5, Geometry.MINUS_HALF_PI);
+                0.5, 2.5 * PlaneAngleRadians.PI,
+                -0.5, PlaneAngleRadians.MINUS_PI_OVER_TWO);
 
-        checkClassify(negPiPos, HyperplaneLocation.ON, Geometry.PI, Geometry.PI + 1e-11);
-        checkClassify(negPiPos, HyperplaneLocation.MINUS, 0.5, 2.5 * Geometry.PI,
-                0, 1e-11, Geometry.TWO_PI, Geometry.TWO_PI - 1e-11);
-        checkClassify(negPiPos, HyperplaneLocation.PLUS, -0.5, Geometry.MINUS_HALF_PI);
+        checkClassify(negPiPos, HyperplaneLocation.ON, PlaneAngleRadians.PI, PlaneAngleRadians.PI + 1e-11);
+        checkClassify(negPiPos, HyperplaneLocation.MINUS, 0.5, 2.5 * PlaneAngleRadians.PI,
+                0, 1e-11, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.TWO_PI - 1e-11);
+        checkClassify(negPiPos, HyperplaneLocation.PLUS, -0.5, PlaneAngleRadians.MINUS_PI_OVER_TWO);
     }
 
     @Test
     public void testContains() {
         // arrange
-        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
         Assert.assertFalse(pt.contains(Point1S.ZERO));
-        Assert.assertFalse(pt.contains(Point1S.of(Geometry.TWO_PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.TWO_PI)));
 
-        Assert.assertFalse(pt.contains(Point1S.of(Geometry.PI)));
-        Assert.assertFalse(pt.contains(Point1S.of(0.25 * Geometry.PI)));
-        Assert.assertFalse(pt.contains(Point1S.of(-0.25 * Geometry.PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(PlaneAngleRadians.PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(0.25 * PlaneAngleRadians.PI)));
+        Assert.assertFalse(pt.contains(Point1S.of(-0.25 * PlaneAngleRadians.PI)));
 
-        Assert.assertTrue(pt.contains(Point1S.of(Geometry.HALF_PI)));
-        Assert.assertTrue(pt.contains(Point1S.of(Geometry.HALF_PI + 1e-11)));
-        Assert.assertTrue(pt.contains(Point1S.of(2.5 * Geometry.PI)));
-        Assert.assertTrue(pt.contains(Point1S.of(-3.5 * Geometry.PI)));
+        Assert.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
+        Assert.assertTrue(pt.contains(Point1S.of(PlaneAngleRadians.PI_OVER_TWO + 1e-11)));
+        Assert.assertTrue(pt.contains(Point1S.of(2.5 * PlaneAngleRadians.PI)));
+        Assert.assertTrue(pt.contains(Point1S.of(-3.5 * PlaneAngleRadians.PI)));
     }
 
     @Test
     public void testReverse() {
         // arrange
-        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act
         CutAngle result = pt.reverse();
 
         // assert
-        checkCutAngle(result, Geometry.HALF_PI, true);
+        checkCutAngle(result, PlaneAngleRadians.PI_OVER_TWO, true);
         Assert.assertSame(TEST_PRECISION, result.getPrecision());
 
-        checkCutAngle(result.reverse(), Geometry.HALF_PI, false);
+        checkCutAngle(result.reverse(), PlaneAngleRadians.PI_OVER_TWO, false);
     }
 
     @Test
     public void testProject() {
         // arrange
-        CutAngle pt = CutAngle.createNegativeFacing(Geometry.HALF_PI, TEST_PRECISION);
+        CutAngle pt = CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
-        for (double az = -Geometry.TWO_PI; az <= Geometry.TWO_PI; az += 0.2) {
-            Assert.assertEquals(Geometry.HALF_PI, pt.project(Point1S.of(az)).getAzimuth(), TEST_EPS);
+        for (double az = -PlaneAngleRadians.TWO_PI; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
+            Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, pt.project(Point1S.of(az)).getAzimuth(), TEST_EPS);
         }
     }
 
@@ -222,7 +222,7 @@ public class CutAngleTest {
         // arrange
         CutAngle a = CutAngle.createPositiveFacing(0.0, TEST_PRECISION);
         CutAngle b = CutAngle.createNegativeFacing(0.0, TEST_PRECISION);
-        CutAngle c = CutAngle.createPositiveFacing(Geometry.MINUS_HALF_PI, TEST_PRECISION);
+        CutAngle c = CutAngle.createPositiveFacing(PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.similarOrientation(a));
@@ -233,17 +233,17 @@ public class CutAngleTest {
     @Test
     public void testTransform_rotate() {
         // arrange
-        Transform1S transform = Transform1S.createRotation(Geometry.HALF_PI);
+        Transform1S transform = Transform1S.createRotation(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION).transform(transform),
-                Geometry.HALF_PI, true);
+                PlaneAngleRadians.PI_OVER_TWO, true);
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
-                Geometry.HALF_PI, false);
+                PlaneAngleRadians.PI_OVER_TWO, false);
 
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
-                Geometry.TWO_PI, true);
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * PlaneAngleRadians.PI), true, TEST_PRECISION).transform(transform),
+                PlaneAngleRadians.TWO_PI, true);
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO), false, TEST_PRECISION).transform(transform),
                 0.0, false);
     }
 
@@ -258,10 +258,10 @@ public class CutAngleTest {
         checkCutAngle(CutAngle.fromPointAndDirection(Point1S.ZERO, false, TEST_PRECISION).transform(transform),
                 0.0, true);
 
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * Geometry.PI), true, TEST_PRECISION).transform(transform),
-                -1.5 * Geometry.PI, false);
-        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(Geometry.MINUS_HALF_PI), false, TEST_PRECISION).transform(transform),
-                Geometry.HALF_PI, true);
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(1.5 * PlaneAngleRadians.PI), true, TEST_PRECISION).transform(transform),
+                -1.5 * PlaneAngleRadians.PI, false);
+        checkCutAngle(CutAngle.fromPointAndDirection(Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO), false, TEST_PRECISION).transform(transform),
+                PlaneAngleRadians.PI_OVER_TWO, true);
     }
 
     @Test
@@ -288,7 +288,7 @@ public class CutAngleTest {
         CutAngle d = CutAngle.fromPointAndDirection(Point1S.ZERO, true, TEST_PRECISION);
 
         CutAngle e = CutAngle.fromPointAndDirection(Point1S.ZERO, true, precision);
-        CutAngle f = CutAngle.fromPointAndDirection(Point1S.of(Geometry.TWO_PI), true, precision);
+        CutAngle f = CutAngle.fromPointAndDirection(Point1S.of(PlaneAngleRadians.TWO_PI), true, precision);
         CutAngle g = CutAngle.fromPointAndDirection(Point1S.of(1e-4), true, precision);
         CutAngle h = CutAngle.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
 
@@ -460,24 +460,24 @@ public class CutAngleTest {
 
         // act/assert
         Assert.assertEquals(expected, sub.closest(Point1S.ZERO));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(Geometry.HALF_PI)));
+        Assert.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.PI_OVER_TWO)));
         Assert.assertEquals(expected, sub.closest(Point1S.PI));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(Geometry.MINUS_HALF_PI)));
-        Assert.assertEquals(expected, sub.closest(Point1S.of(Geometry.TWO_PI)));
+        Assert.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO)));
+        Assert.assertEquals(expected, sub.closest(Point1S.of(PlaneAngleRadians.TWO_PI)));
     }
 
     @Test
     public void testSubHyperplane_transform() {
         // arrange
-        CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(Geometry.HALF_PI), true, TEST_PRECISION);
+        CutAngle pt = CutAngle.fromPointAndDirection(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), true, TEST_PRECISION);
 
-        Transform1S transform = Transform1S.createNegation().rotate(Geometry.PI);
+        Transform1S transform = Transform1S.createNegation().rotate(PlaneAngleRadians.PI);
 
         // act
         SubCutAngle result = pt.span().transform(transform);
 
         // assert
-        checkCutAngle(result.getHyperplane(), Geometry.HALF_PI, false);
+        checkCutAngle(result.getHyperplane(), PlaneAngleRadians.PI_OVER_TWO, false);
     }
 
     @Test

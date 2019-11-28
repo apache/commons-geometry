@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Line segment connector that selects between multiple connection options
  * based on the resulting interior angle. An interior angle in this
@@ -45,7 +45,7 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
         ConnectableSegment selected = null;
 
         for (ConnectableSegment candidate : outgoing) {
-            double interiorAngle = Geometry.PI - segmentLine.angle(candidate.getSegment().getLine());
+            double interiorAngle = PlaneAngleRadians.PI - segmentLine.angle(candidate.getSegment().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
                 selectedInteriorAngle = interiorAngle;

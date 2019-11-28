@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -89,7 +89,7 @@ public class Line3DTest {
         Line3D line = Line3D.fromPointAndDirection(pt, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(pt,
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         Line3D result = line.transform(mat);
@@ -152,7 +152,7 @@ public class Line3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
                 .translate(0.5, 1, 0)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         Line3D.SubspaceTransform result = line.subspaceTransform(transform);

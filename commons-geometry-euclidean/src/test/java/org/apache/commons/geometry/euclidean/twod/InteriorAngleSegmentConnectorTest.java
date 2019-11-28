@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -118,7 +118,7 @@ public class InteriorAngleSegmentConnectorTest {
 
             Vector2D pt = Vector2D.of(0, 2);
             Segment a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).segmentTo(pt);
-            Segment b = Line.fromPointAndAngle(pt, Geometry.HALF_PI, TEST_PRECISION).segmentFrom(pt);
+            Segment b = Line.fromPointAndAngle(pt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segmentFrom(pt);
 
             segments.add(a);
             segments.add(b);

@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -385,23 +385,23 @@ public class Vector1DTest {
 
         // act/assert
         Assert.assertEquals(0.0, v1.angle(v1), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v1.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v1.angle(v2), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v1.angle(v3), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v1.angle(v4), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v1.angle(v4), TEST_TOLERANCE);
 
-        Assert.assertEquals(Geometry.PI, v2.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v2.angle(v1), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v2.angle(v2), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v2.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v2.angle(v3), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v2.angle(v4), TEST_TOLERANCE);
 
         Assert.assertEquals(0.0, v3.angle(v1), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v3.angle(v2), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v3.angle(v2), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v3.angle(v3), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v3.angle(v4), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v3.angle(v4), TEST_TOLERANCE);
 
-        Assert.assertEquals(Geometry.PI, v4.angle(v1), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v4.angle(v1), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v4.angle(v2), TEST_TOLERANCE);
-        Assert.assertEquals(Geometry.PI, v4.angle(v3), TEST_TOLERANCE);
+        Assert.assertEquals(PlaneAngleRadians.PI, v4.angle(v3), TEST_TOLERANCE);
         Assert.assertEquals(0.0, v4.angle(v4), TEST_TOLERANCE);
     }
 

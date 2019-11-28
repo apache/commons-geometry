@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
@@ -93,7 +93,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
     public double getMax() {
         return (maxBoundary != null) ?
                 maxBoundary.getAzimuth() :
-                Geometry.TWO_PI;
+                PlaneAngleRadians.TWO_PI;
     }
 
     /** Get the maximum point for the interval. This will be null if the
@@ -414,7 +414,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
         if (min != null && max != null) {
             final double dist = max.getAzimuth() - min.getAzimuth();
             final DoublePrecisionContext precision = min.getPrecision();
-            return precision.lte(dist, Geometry.PI);
+            return precision.lte(dist, PlaneAngleRadians.PI);
         }
 
         return true;
@@ -503,11 +503,11 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             final CutAngle minBoundary = getMinBoundary();
             final CutAngle maxBoundary = getMaxBoundary();
 
-            final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + Geometry.HALF_PI);
+            final Point1S posPole = Point1S.of(splitter.getPoint().getAzimuth() + PlaneAngleRadians.PI_OVER_TWO);
 
-            final int minLoc = minBoundary.getPrecision().compare(Geometry.HALF_PI,
+            final int minLoc = minBoundary.getPrecision().compare(PlaneAngleRadians.PI_OVER_TWO,
                     posPole.distance(minBoundary.getPoint()));
-            final int maxLoc = maxBoundary.getPrecision().compare(Geometry.HALF_PI,
+            final int maxLoc = maxBoundary.getPrecision().compare(PlaneAngleRadians.PI_OVER_TWO,
                     posPole.distance(maxBoundary.getPoint()));
 
             final boolean positiveFacingSplit = splitter.isPositiveFacing();
@@ -556,7 +556,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             } else {
                 // min is directly on the splitter; determine whether it was on the main split
                 // point or its antipodal point
-                if (splitter.getPoint().distance(minBoundary.getPoint()) < Geometry.HALF_PI) {
+                if (splitter.getPoint().distance(minBoundary.getPoint()) < PlaneAngleRadians.PI_OVER_TWO) {
                     // on main splitter; interval will be located on pos side of split
                     pos = this;
                 } else {

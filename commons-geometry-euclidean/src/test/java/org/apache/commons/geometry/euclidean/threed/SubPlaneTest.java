@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
@@ -345,7 +345,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(plane, RegionBSPTree2D.from(area));
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI))
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO))
                 .translate(Vector3D.of(1, 0, 0));
 
         // act

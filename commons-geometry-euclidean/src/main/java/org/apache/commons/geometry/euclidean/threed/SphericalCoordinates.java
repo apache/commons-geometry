@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Spatial;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -82,8 +82,8 @@ public final class SphericalCoordinates implements Spatial {
         if (radius < 0) {
             // negative radius; flip the angles
             radius = Math.abs(radius);
-            azimuth += Geometry.PI;
-            polar += Geometry.PI;
+            azimuth += PlaneAngleRadians.PI;
+            polar += PlaneAngleRadians.PI;
         }
 
         this.radius = radius;

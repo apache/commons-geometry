@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.junit.Assert;
@@ -28,11 +28,11 @@ public class Transform1STest {
 
     private static final Point1S ZERO = Point1S.ZERO;
 
-    private static final Point1S HALF_PI = Point1S.of(Geometry.HALF_PI);
+    private static final Point1S HALF_PI = Point1S.of(PlaneAngleRadians.PI_OVER_TWO);
 
-    private static final Point1S PI = Point1S.of(Geometry.PI);
+    private static final Point1S PI = Point1S.of(PlaneAngleRadians.PI);
 
-    private static final Point1S MINUS_HALF_PI = Point1S.of(Geometry.MINUS_HALF_PI);
+    private static final Point1S MINUS_HALF_PI = Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO);
 
     @Test
     public void testIdentity() {
@@ -55,16 +55,16 @@ public class Transform1STest {
     @Test
     public void testRotate_positive() {
         // arrange
-        Transform1S t = Transform1S.createRotation(Geometry.HALF_PI);
+        Transform1S t = Transform1S.createRotation(PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertTrue(t.preservesOrientation());
         Assert.assertFalse(t.isNegation());
-        Assert.assertEquals(Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(PI, t.apply(HALF_PI), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(1.5 * Geometry.PI), t.apply(PI), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(1.5 * PlaneAngleRadians.PI), t.apply(PI), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(Point1S.ZERO, t.apply(MINUS_HALF_PI), TEST_EPS);
 
         checkInverse(t);
@@ -73,17 +73,17 @@ public class Transform1STest {
     @Test
     public void testRotate_negative() {
         // arrange
-        Transform1S t = Transform1S.createRotation(-Geometry.HALF_PI);
+        Transform1S t = Transform1S.createRotation(-PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertTrue(t.preservesOrientation());
         Assert.assertFalse(t.isNegation());
-        Assert.assertEquals(-Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(-PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(MINUS_HALF_PI, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(HALF_PI), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(PI), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(-Geometry.PI), t.apply(MINUS_HALF_PI), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(-PlaneAngleRadians.PI), t.apply(MINUS_HALF_PI), TEST_EPS);
 
         checkInverse(t);
     }
@@ -100,7 +100,7 @@ public class Transform1STest {
 
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(MINUS_HALF_PI, t.apply(HALF_PI), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(-Geometry.PI), t.apply(PI), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(-PlaneAngleRadians.PI), t.apply(PI), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(MINUS_HALF_PI), TEST_EPS);
 
         checkInverse(t);
@@ -109,12 +109,12 @@ public class Transform1STest {
     @Test
     public void testNegateThenRotate() {
         // arrange
-        Transform1S t = Transform1S.createNegation().rotate(Geometry.HALF_PI);
+        Transform1S t = Transform1S.createNegation().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertFalse(t.preservesOrientation());
         Assert.assertTrue(t.isNegation());
-        Assert.assertEquals(Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(HALF_PI), TEST_EPS);
@@ -127,16 +127,16 @@ public class Transform1STest {
     @Test
     public void testRotateThenNegate() {
         // arrange
-        Transform1S t = Transform1S.createRotation(Geometry.HALF_PI).negate();
+        Transform1S t = Transform1S.createRotation(PlaneAngleRadians.PI_OVER_TWO).negate();
 
         // act/assert
         Assert.assertFalse(t.preservesOrientation());
         Assert.assertTrue(t.isNegation());
-        Assert.assertEquals(-Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(-PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(MINUS_HALF_PI, t.apply(ZERO), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(-Geometry.PI), t.apply(HALF_PI), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(-1.5 * Geometry.PI), t.apply(PI), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(-PlaneAngleRadians.PI), t.apply(HALF_PI), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(-1.5 * PlaneAngleRadians.PI), t.apply(PI), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(MINUS_HALF_PI), TEST_EPS);
 
         checkInverse(t);
@@ -146,7 +146,7 @@ public class Transform1STest {
     public void testMultiply() {
         // arrange
         Transform1S neg = Transform1S.identity().negate();
-        Transform1S rot = Transform1S.identity().rotate(Geometry.HALF_PI);
+        Transform1S rot = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         Transform1S t = rot.multiply(neg);
@@ -154,7 +154,7 @@ public class Transform1STest {
         // assert
         Assert.assertFalse(t.preservesOrientation());
         Assert.assertTrue(t.isNegation());
-        Assert.assertEquals(Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(HALF_PI), TEST_EPS);
@@ -168,7 +168,7 @@ public class Transform1STest {
     public void testPreultiply() {
         // arrange
         Transform1S neg = Transform1S.identity().negate();
-        Transform1S rot = Transform1S.identity().rotate(Geometry.HALF_PI);
+        Transform1S rot = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         Transform1S t = neg.premultiply(rot);
@@ -176,7 +176,7 @@ public class Transform1STest {
         // assert
         Assert.assertFalse(t.preservesOrientation());
         Assert.assertTrue(t.isNegation());
-        Assert.assertEquals(Geometry.HALF_PI, t.getRotation(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, t.getRotation(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEqual(HALF_PI, t.apply(ZERO), TEST_EPS);
         SphericalTestUtils.assertPointsEqual(ZERO, t.apply(HALF_PI), TEST_EPS);
@@ -189,10 +189,10 @@ public class Transform1STest {
     @Test
     public void testHashCode() {
         // arrange
-        Transform1S a = Transform1S.identity().negate().rotate(Geometry.HALF_PI);
-        Transform1S b = Transform1S.identity().rotate(Geometry.HALF_PI);
-        Transform1S c = Transform1S.identity().negate().rotate(-Geometry.HALF_PI);
-        Transform1S d = Transform1S.identity().negate().rotate(Geometry.HALF_PI);
+        Transform1S a = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S b = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S c = Transform1S.identity().negate().rotate(-PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertTrue(a.equals(a));
@@ -210,10 +210,10 @@ public class Transform1STest {
     @Test
     public void testEquals() {
         // arrange
-        Transform1S a = Transform1S.identity().negate().rotate(Geometry.HALF_PI);
-        Transform1S b = Transform1S.identity().rotate(Geometry.HALF_PI);
-        Transform1S c = Transform1S.identity().negate().rotate(-Geometry.HALF_PI);
-        Transform1S d = Transform1S.identity().negate().rotate(Geometry.HALF_PI);
+        Transform1S a = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S b = Transform1S.identity().rotate(PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S c = Transform1S.identity().negate().rotate(-PlaneAngleRadians.PI_OVER_TWO);
+        Transform1S d = Transform1S.identity().negate().rotate(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         int hash = a.hashCode();
@@ -244,7 +244,7 @@ public class Transform1STest {
     private static void checkInverse(Transform1S t) {
         Transform1S inv = t.inverse();
 
-        for (double x = -Geometry.TWO_PI; x <= 2 * Geometry.TWO_PI; x += 0.2) {
+        for (double x = -PlaneAngleRadians.TWO_PI; x <= 2 * PlaneAngleRadians.TWO_PI; x += 0.2) {
             Point1S pt = Point1S.of(x);
 
             SphericalTestUtils.assertPointsEqual(pt, inv.apply(t.apply(pt)), TEST_EPS);

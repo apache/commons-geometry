@@ -18,7 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Comparator;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -152,7 +152,7 @@ public final class Point2S implements Point<Point2S> {
      * @return the point exactly opposite this point on the sphere
      */
     public Point2S antipodal() {
-        return new Point2S(-azimuth, Geometry.PI - polar, vector.negate());
+        return new Point2S(-azimuth, PlaneAngleRadians.PI - polar, vector.negate());
     }
 
     /** {@inheritDoc} */

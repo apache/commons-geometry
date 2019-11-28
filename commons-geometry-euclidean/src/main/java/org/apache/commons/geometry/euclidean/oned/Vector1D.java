@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.Comparator;
 import java.util.function.UnaryOperator;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
@@ -224,7 +224,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
         final double sig2 = Math.signum(v.x);
 
         // the angle is 0 if the x value signs are the same and pi if not
-        return (sig1 == sig2) ? 0.0 : Geometry.PI;
+        return (sig1 == sig2) ? 0.0 : PlaneAngleRadians.PI;
     }
 
     /** Convenience method to apply a function to this vector. This

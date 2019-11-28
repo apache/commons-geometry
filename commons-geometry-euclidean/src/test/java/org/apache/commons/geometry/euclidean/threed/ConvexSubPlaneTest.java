@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -221,7 +221,7 @@ public class ConvexSubPlaneTest {
         // arrange
         Plane plane = Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
                 ));
 
@@ -237,9 +237,9 @@ public class ConvexSubPlaneTest {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
         ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), Geometry.PI, TEST_PRECISION),
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION)
+                    Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 ));
 
         // act
@@ -306,7 +306,7 @@ public class ConvexSubPlaneTest {
         ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI))
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO))
                 .translate(Vector3D.Unit.PLUS_Y);
 
         // act
@@ -327,7 +327,7 @@ public class ConvexSubPlaneTest {
                 ConvexArea.fromBounds(Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)));
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(Vector3D.Unit.PLUS_Z,
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         ConvexSubPlane transformed = sp.transform(transform);
@@ -346,7 +346,7 @@ public class ConvexSubPlaneTest {
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(2)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         ConvexSubPlane transformed = sp.transform(transform);

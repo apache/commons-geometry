@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -90,8 +90,8 @@ public class AbstractGreatArcPathConnectorTest {
         GreatCircle upperBound = GreatCircle.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
 
-        connector.add(XY_PLANE.arc(0, Geometry.PI));
-        connector.add(upperBound.arc(Geometry.PI, 0));
+        connector.add(XY_PLANE.arc(0, PlaneAngleRadians.PI));
+        connector.add(upperBound.arc(PlaneAngleRadians.PI, 0));
 
         // act
         List<GreatArcPath> paths = connector.connectAll();
@@ -111,8 +111,8 @@ public class AbstractGreatArcPathConnectorTest {
         GreatCircle upperBound = GreatCircle.fromPoleAndU(
                 Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
 
-        connector.add(XY_PLANE.arc(0, Geometry.PI));
-        connector.add(upperBound.arc(0, Geometry.PI));
+        connector.add(XY_PLANE.arc(0, PlaneAngleRadians.PI));
+        connector.add(upperBound.arc(0, PlaneAngleRadians.PI));
 
         // act
         List<GreatArcPath> paths = connector.connectAll();
@@ -156,23 +156,23 @@ public class AbstractGreatArcPathConnectorTest {
     public void testConnectAll_smallTriangleWithDisconnectedLuneAndArc() {
         // arrange
         Point2S p1 = Point2S.of(0, 0);
-        Point2S p2 = Point2S.of(0, 0.1 * Geometry.PI);
-        Point2S p3 = Point2S.of(0.1, 0.1 * Geometry.PI);
+        Point2S p2 = Point2S.of(0, 0.1 * PlaneAngleRadians.PI);
+        Point2S p3 = Point2S.of(0.1, 0.1 * PlaneAngleRadians.PI);
 
         GreatArc luneEdge1 = GreatCircle.fromPoints(
                     Point2S.PLUS_J,
                     Point2S.MINUS_I,
                     TEST_PRECISION)
-                .arc(0, Geometry.PI);
+                .arc(0, PlaneAngleRadians.PI);
         GreatArc luneEdge2 = GreatCircle.fromPoints(
                     Point2S.MINUS_J,
-                    Point2S.of(Geometry.HALF_PI, 0.4 * Geometry.PI),
+                    Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.4 * PlaneAngleRadians.PI),
                     TEST_PRECISION)
-                .arc(0, Geometry.PI);
+                .arc(0, PlaneAngleRadians.PI);
 
         GreatArc separateArc = GreatArc.fromPoints(
-                Point2S.of(Geometry.MINUS_HALF_PI, 0.7 * Geometry.PI),
-                Point2S.of(Geometry.MINUS_HALF_PI, 0.8 * Geometry.PI),
+                Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.7 * PlaneAngleRadians.PI),
+                Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.8 * PlaneAngleRadians.PI),
                 TEST_PRECISION);
 
         // act
@@ -208,9 +208,9 @@ public class AbstractGreatArcPathConnectorTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
 
         Point2S p1 = Point2S.PLUS_I;
-        Point2S p2 = Point2S.of(1, Geometry.HALF_PI);
-        Point2S p3 = Point2S.of(1.001, 0.491 * Geometry.PI);
-        Point2S p4 = Point2S.of(1.001, 0.502 * Geometry.PI);
+        Point2S p2 = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S p3 = Point2S.of(1.001, 0.491 * PlaneAngleRadians.PI);
+        Point2S p4 = Point2S.of(1.001, 0.502 * PlaneAngleRadians.PI);
 
         connector.add(GreatArc.fromPoints(p2, p3, TEST_PRECISION));
         connector.add(GreatArc.fromPoints(p2, p4, TEST_PRECISION));

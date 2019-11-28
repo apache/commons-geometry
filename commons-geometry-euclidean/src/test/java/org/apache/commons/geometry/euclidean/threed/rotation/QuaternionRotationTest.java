@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
@@ -55,7 +55,7 @@ public class QuaternionRotationTest {
     private static final Vector3D PLUS_DIAGONAL = Vector3D.of(1, 1, 1);
     private static final Vector3D MINUS_DIAGONAL = Vector3D.of(-1, -1, -1);
 
-    private static final double TWO_THIRDS_PI = 2.0 * Geometry.PI / 3.0;
+    private static final double TWO_THIRDS_PI = 2.0 * PlaneAngleRadians.PI / 3.0;
     private static final double MINUS_TWO_THIRDS_PI = -TWO_THIRDS_PI;
 
     @Test
@@ -161,11 +161,11 @@ public class QuaternionRotationTest {
 
             // positive angle results in the axis being the normalized input axis
             EuclideanTestUtils.assertCoordinatesEqual(norm,
-                    QuaternionRotation.fromAxisAngle(vec, Geometry.HALF_PI).getAxis(), EPS);
+                    QuaternionRotation.fromAxisAngle(vec, PlaneAngleRadians.PI_OVER_TWO).getAxis(), EPS);
 
             // negative angle results in the axis being the negated normalized input axis
             EuclideanTestUtils.assertCoordinatesEqual(norm,
-                    QuaternionRotation.fromAxisAngle(vec.negate(), Geometry.MINUS_HALF_PI).getAxis(), EPS);
+                    QuaternionRotation.fromAxisAngle(vec.negate(), PlaneAngleRadians.MINUS_PI_OVER_TWO).getAxis(), EPS);
         });
     }
 
@@ -175,17 +175,17 @@ public class QuaternionRotationTest {
         Assert.assertEquals(0.0, QuaternionRotation.of(1, 0, 0, 0).getAngle(), EPS);
         Assert.assertEquals(0.0, QuaternionRotation.of(-1, 0, 0, 0).getAngle(), EPS);
 
-        Assert.assertEquals(Geometry.HALF_PI, QuaternionRotation.of(1, 0, 0, 1).getAngle(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, QuaternionRotation.of(-1, 0, 0, -1).getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, QuaternionRotation.of(1, 0, 0, 1).getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, QuaternionRotation.of(-1, 0, 0, -1).getAngle(), EPS);
 
-        Assert.assertEquals(Geometry.PI  * 2.0 / 3.0, QuaternionRotation.of(1, 1, 1, 1).getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI  * 2.0 / 3.0, QuaternionRotation.of(1, 1, 1, 1).getAngle(), EPS);
 
-        Assert.assertEquals(Geometry.PI, QuaternionRotation.of(0, 0, 0, 1).getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, QuaternionRotation.of(0, 0, 0, 1).getAngle(), EPS);
     }
 
     @Test
     public void testGetAngle_matchesAxisAngleConstruction() {
-        for (double theta = -2 * Geometry.PI; theta <= 2 * Geometry.PI; theta += 0.1) {
+        for (double theta = -2 * PlaneAngleRadians.PI; theta <= 2 * PlaneAngleRadians.PI; theta += 0.1) {
             // arrange
             QuaternionRotation rot = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, theta);
 
@@ -195,7 +195,7 @@ public class QuaternionRotationTest {
             // assert
             // make sure that we're in the [0, pi] range
             Assert.assertTrue(angle >= 0.0);
-            Assert.assertTrue(angle <= Geometry.PI);
+            Assert.assertTrue(angle <= PlaneAngleRadians.PI);
 
             double expected = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(theta);
             if (PLUS_DIAGONAL.dot(rot.getAxis()) < 0) {
@@ -214,38 +214,38 @@ public class QuaternionRotationTest {
         // --- x axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, 0.0));
 
-        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.PI));
-        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.PI));
+        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI));
+        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI));
 
         // --- y axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, 0.0));
 
-        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.PI));
-        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.PI));
+        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI));
+        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI));
 
         // --- z axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, 0.0));
 
-        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.HALF_PI));
-        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.MINUS_HALF_PI));
+        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO));
+        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO));
 
-        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.PI));
-        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.PI));
+        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI));
+        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI));
 
         // --- diagonal
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, TWO_THIRDS_PI));
@@ -258,10 +258,10 @@ public class QuaternionRotationTest {
     @Test
     public void testFromAxisAngle_invalidAxisNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.ZERO, Geometry.HALF_PI), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NaN, Geometry.HALF_PI), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.POSITIVE_INFINITY, Geometry.HALF_PI), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NEGATIVE_INFINITY, Geometry.HALF_PI), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.ZERO, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NaN, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NEGATIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
     }
 
     @Test
@@ -278,7 +278,7 @@ public class QuaternionRotationTest {
     @Test
     public void testApplyVector() {
         // arrange
-        QuaternionRotation q = QuaternionRotation.fromAxisAngle(Vector3D.of(1, 1, 1), Geometry.HALF_PI);
+        QuaternionRotation q = QuaternionRotation.fromAxisAngle(Vector3D.of(1, 1, 1), PlaneAngleRadians.PI_OVER_TWO);
 
         EuclideanTestUtils.permute(-2, 2, 0.2, (x, y, z) -> {
             Vector3D input = Vector3D.of(x, y, z);
@@ -313,38 +313,38 @@ public class QuaternionRotationTest {
         // --- x axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, 0.0).inverse());
 
-        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.PI).inverse());
-        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.PI).inverse());
+        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI).inverse());
+        assertRotationEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI).inverse());
 
         // --- y axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, 0.0).inverse());
 
-        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.PI).inverse());
-        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.PI).inverse());
+        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI).inverse());
+        assertRotationEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI).inverse());
 
         // --- z axes
         assertRotationEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, 0.0).inverse());
 
-        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.MINUS_HALF_PI).inverse());
-        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.HALF_PI).inverse());
+        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).inverse());
+        assertRotationEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO).inverse());
 
-        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.PI).inverse());
-        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.PI).inverse());
+        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI).inverse());
+        assertRotationEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI).inverse());
 
         // --- diagonal
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, MINUS_TWO_THIRDS_PI).inverse());
@@ -360,7 +360,7 @@ public class QuaternionRotationTest {
             // arrange
             Vector3D vec = Vector3D.of(x, y, z);
 
-            QuaternionRotation rot = QuaternionRotation.fromAxisAngle(vec, 0.75 * Geometry.PI);
+            QuaternionRotation rot = QuaternionRotation.fromAxisAngle(vec, 0.75 * PlaneAngleRadians.PI);
             QuaternionRotation neg = rot.inverse();
 
             // act/assert
@@ -372,15 +372,15 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_sameAxis_simple() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.multiply(q2);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, result.getAxis(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, result);
     }
@@ -389,18 +389,18 @@ public class QuaternionRotationTest {
     public void testMultiply_sameAxis_multiple() {
         // arrange
         double oneThird = 1.0 / 3.0;
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * Geometry.PI);
-        QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * Geometry.PI);
-        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.1 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * PlaneAngleRadians.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * PlaneAngleRadians.PI);
+        QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * PlaneAngleRadians.PI);
+        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.multiply(q2).multiply(q3).multiply(q4).multiply(q5);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(PLUS_DIAGONAL.normalize(), result.getAxis(), EPS);
-        Assert.assertEquals(2.0 * Geometry.PI / 3.0, result.getAngle(), EPS);
+        Assert.assertEquals(2.0 * PlaneAngleRadians.PI / 3.0, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
     }
@@ -408,15 +408,15 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_differentAxes() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         QuaternionRotation result = q1.multiply(q2);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(PLUS_DIAGONAL.normalize(), result.getAxis(), EPS);
-        Assert.assertEquals(2.0 * Geometry.PI / 3.0, result.getAngle(), EPS);
+        Assert.assertEquals(2.0 * PlaneAngleRadians.PI / 3.0, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
 
@@ -429,9 +429,9 @@ public class QuaternionRotationTest {
     @Test
     public void testMultiply_orderOfOperations() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         QuaternionRotation result = q3.multiply(q2).multiply(q1);
@@ -448,7 +448,7 @@ public class QuaternionRotationTest {
     public void testMultiply_numericalStability() {
         // arrange
         int slices = 1024;
-        double delta = (8.0 * Geometry.PI / 3.0) / slices;
+        double delta = (8.0 * PlaneAngleRadians.PI / 3.0) / slices;
 
         QuaternionRotation q = QuaternionRotation.identity();
 
@@ -473,15 +473,15 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_sameAxis_simple() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.1 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.4 * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.premultiply(q2);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_X, result.getAxis(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_X_HALF_PI, result);
     }
@@ -490,18 +490,18 @@ public class QuaternionRotationTest {
     public void testPremultiply_sameAxis_multiple() {
         // arrange
         double oneThird = 1.0 / 3.0;
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.1 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * Geometry.PI);
-        QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * Geometry.PI);
-        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.1 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * PlaneAngleRadians.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * PlaneAngleRadians.PI);
+        QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * PlaneAngleRadians.PI);
+        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.premultiply(q2).premultiply(q3).premultiply(q4).premultiply(q5);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(PLUS_DIAGONAL.normalize(), result.getAxis(), EPS);
-        Assert.assertEquals(2.0 * Geometry.PI / 3.0, result.getAngle(), EPS);
+        Assert.assertEquals(2.0 * PlaneAngleRadians.PI / 3.0, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
     }
@@ -509,15 +509,15 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_differentAxes() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         QuaternionRotation result = q2.premultiply(q1);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(PLUS_DIAGONAL.normalize(), result.getAxis(), EPS);
-        Assert.assertEquals(2.0 * Geometry.PI / 3.0, result.getAngle(), EPS);
+        Assert.assertEquals(2.0 * PlaneAngleRadians.PI / 3.0, result.getAngle(), EPS);
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
 
@@ -530,9 +530,9 @@ public class QuaternionRotationTest {
     @Test
     public void testPremultiply_orderOfOperations() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI);
-        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI);
+        QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         QuaternionRotation result = q1.premultiply(q2).premultiply(q3);
@@ -549,7 +549,7 @@ public class QuaternionRotationTest {
     public void testSlerp_simple() {
         // arrange
         QuaternionRotation q0 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.0);
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI);
         final Slerp transform = q0.slerp(q1);
         Vector3D v = Vector3D.of(2, 0, 1);
 
@@ -568,28 +568,28 @@ public class QuaternionRotationTest {
         // arrange
         QuaternionRotation[] rotations = {
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI),
 
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_X, PlaneAngleRadians.PI),
 
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI),
 
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Y, PlaneAngleRadians.PI),
 
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, PlaneAngleRadians.PI),
 
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, 0.0),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.HALF_PI),
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, Geometry.PI),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, PlaneAngleRadians.PI_OVER_TWO),
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.MINUS_Z, PlaneAngleRadians.PI),
         };
 
         // act/assert
@@ -636,8 +636,8 @@ public class QuaternionRotationTest {
     @Test
     public void testSlerp_followsShortestPath() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, -0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, -0.75 * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = QuaternionRotation.of(q1.slerp(q2).apply(0.5));
@@ -648,7 +648,7 @@ public class QuaternionRotationTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X, result.apply(Vector3D.Unit.PLUS_X), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getAxis(), EPS);
-        Assert.assertEquals(Geometry.PI, result.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, result.getAngle(), EPS);
     }
 
     @Test
@@ -663,15 +663,15 @@ public class QuaternionRotationTest {
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, result.apply(Vector3D.Unit.PLUS_X), EPS);
 
-        Assert.assertEquals(Geometry.HALF_PI, result.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, result.getAngle(), EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getAxis(), EPS);
     }
 
     @Test
     public void testSlerp_outputQuaternionIsNormalizedForAllT() {
         // arrange
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * PlaneAngleRadians.PI);
 
         final int numSteps = 200;
         final double delta = 1d / numSteps;
@@ -691,8 +691,8 @@ public class QuaternionRotationTest {
         // arrange
         Vector3D vec = Vector3D.Unit.PLUS_X;
 
-        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Geometry.PI);
-        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * Geometry.PI);
+        QuaternionRotation q1 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * PlaneAngleRadians.PI);
+        QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.75 * PlaneAngleRadians.PI);
 
         // act/assert
         final Slerp slerp12 = q1.slerp(q2);
@@ -714,38 +714,38 @@ public class QuaternionRotationTest {
         // --- x axes
         assertTransformEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, 0.0).toMatrix());
 
-        assertTransformEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_X_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, Geometry.PI).toMatrix());
-        assertTransformEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, Geometry.PI).toMatrix());
+        assertTransformEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(PLUS_X_DIR, PlaneAngleRadians.PI).toMatrix());
+        assertTransformEquals(StandardRotations.X_PI, QuaternionRotation.fromAxisAngle(MINUS_X_DIR, PlaneAngleRadians.PI).toMatrix());
 
         // --- y axes
         assertTransformEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, 0.0).toMatrix());
 
-        assertTransformEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_Y_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, Geometry.PI).toMatrix());
-        assertTransformEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, Geometry.PI).toMatrix());
+        assertTransformEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(PLUS_Y_DIR, PlaneAngleRadians.PI).toMatrix());
+        assertTransformEquals(StandardRotations.Y_PI, QuaternionRotation.fromAxisAngle(MINUS_Y_DIR, PlaneAngleRadians.PI).toMatrix());
 
         // --- z axes
         assertTransformEquals(StandardRotations.IDENTITY, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, 0.0).toMatrix());
 
-        assertTransformEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.PLUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.HALF_PI).toMatrix());
-        assertTransformEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.MINUS_HALF_PI).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI_OVER_TWO).toMatrix());
+        assertTransformEquals(StandardRotations.MINUS_Z_HALF_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.MINUS_PI_OVER_TWO).toMatrix());
 
-        assertTransformEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, Geometry.PI).toMatrix());
-        assertTransformEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, Geometry.PI).toMatrix());
+        assertTransformEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(PLUS_Z_DIR, PlaneAngleRadians.PI).toMatrix());
+        assertTransformEquals(StandardRotations.Z_PI, QuaternionRotation.fromAxisAngle(MINUS_Z_DIR, PlaneAngleRadians.PI).toMatrix());
 
         // --- diagonal
         assertTransformEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, TWO_THIRDS_PI).toMatrix());
@@ -773,12 +773,12 @@ public class QuaternionRotationTest {
 
     private void checkAxisAngleSequenceToQuaternionRoundtrip(AxisReferenceFrame frame, AxisSequence axes) {
         double step = 0.3;
-        double angle2Start = axes.getType() == AxisSequenceType.EULER ? 0.0 + 0.1 : Geometry.MINUS_HALF_PI + 0.1;
-        double angle2Stop = angle2Start + Geometry.PI;
+        double angle2Start = axes.getType() == AxisSequenceType.EULER ? 0.0 + 0.1 : PlaneAngleRadians.MINUS_PI_OVER_TWO + 0.1;
+        double angle2Stop = angle2Start + PlaneAngleRadians.PI;
 
-        for (double angle1 = 0.0; angle1 <= Geometry.TWO_PI; angle1 += step) {
+        for (double angle1 = 0.0; angle1 <= PlaneAngleRadians.TWO_PI; angle1 += step) {
             for (double angle2 = angle2Start; angle2 < angle2Stop; angle2 += step) {
-                for (double angle3 = 0.0; angle3 <= Geometry.TWO_PI; angle3 += 0.3) {
+                for (double angle3 = 0.0; angle3 <= PlaneAngleRadians.TWO_PI; angle3 += 0.3) {
                     // arrange
                     AxisAngleSequence angles = new AxisAngleSequence(frame, axes, angle1, angle2, angle3);
 
@@ -804,7 +804,7 @@ public class QuaternionRotationTest {
         EuclideanTestUtils.permuteSkipZero(-1, 1, 0.5, (x, y, z) -> {
             Vector3D axis = Vector3D.of(x, y, z);
 
-            for (double angle = -Geometry.TWO_PI; angle <= Geometry.TWO_PI; angle += step) {
+            for (double angle = -PlaneAngleRadians.TWO_PI; angle <= PlaneAngleRadians.TWO_PI; angle += step) {
                 // arrange
                 QuaternionRotation q = QuaternionRotation.fromAxisAngle(axis, angle);
 
@@ -823,7 +823,7 @@ public class QuaternionRotationTest {
         // arrange
         double[] eulerSingularities = {
                 0.0,
-                Geometry.PI
+                PlaneAngleRadians.PI
         };
 
         double angle1 = 0.1;
@@ -860,7 +860,7 @@ public class QuaternionRotationTest {
         // arrange
         double[] eulerSingularities = {
                 0.0,
-                Geometry.PI
+                PlaneAngleRadians.PI
         };
 
         double angle1 = 0.1;
@@ -896,8 +896,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_relative_taitBryanSingularities() {
         // arrange
         double[] taitBryanSingularities = {
-                Geometry.MINUS_HALF_PI,
-                Geometry.HALF_PI
+                PlaneAngleRadians.MINUS_PI_OVER_TWO,
+                PlaneAngleRadians.PI_OVER_TWO
         };
 
         double angle1 = 0.1;
@@ -933,8 +933,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_absolute_taitBryanSingularities() {
         // arrange
         double[] taitBryanSingularities = {
-                Geometry.MINUS_HALF_PI,
-                Geometry.HALF_PI
+                PlaneAngleRadians.MINUS_PI_OVER_TWO,
+                PlaneAngleRadians.PI_OVER_TWO
         };
 
         double angle1 = 0.1;
@@ -993,8 +993,8 @@ public class QuaternionRotationTest {
         // assert
         Assert.assertEquals(AxisReferenceFrame.RELATIVE, seq.getReferenceFrame());
         Assert.assertEquals(AxisSequence.YZX, seq.getAxisSequence());
-        Assert.assertEquals(Geometry.HALF_PI, seq.getAngle1(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, seq.getAngle2(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, seq.getAngle1(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, seq.getAngle2(), EPS);
         Assert.assertEquals(0, seq.getAngle3(), EPS);
     }
 
@@ -1009,9 +1009,9 @@ public class QuaternionRotationTest {
         // assert
         Assert.assertEquals(AxisReferenceFrame.ABSOLUTE, seq.getReferenceFrame());
         Assert.assertEquals(AxisSequence.YZX, seq.getAxisSequence());
-        Assert.assertEquals(Geometry.HALF_PI, seq.getAngle1(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, seq.getAngle1(), EPS);
         Assert.assertEquals(0, seq.getAngle2(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, seq.getAngle3(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, seq.getAngle3(), EPS);
     }
 
     @Test
@@ -1078,7 +1078,7 @@ public class QuaternionRotationTest {
         checkQuaternion(q, val, 0, 0, val);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, q.getAxis(), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, q.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(u2, q.apply(u1), EPS);
         EuclideanTestUtils.assertCoordinatesEqual(u1, q.inverse().apply(u2), EPS);
@@ -1135,7 +1135,7 @@ public class QuaternionRotationTest {
         Vector3D axis = q.getAxis();
         Assert.assertEquals(0.0, axis.dot(u1), EPS);
         Assert.assertEquals(0.0, axis.dot(u2), EPS);
-        Assert.assertEquals(Geometry.PI, q.getAngle(), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, q.getAngle(), EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -2, 0), q.apply(u1), EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 3, 0), q.inverse().apply(u2), EPS);
@@ -1157,7 +1157,7 @@ public class QuaternionRotationTest {
 
             double angle = q.getAngle();
             Assert.assertTrue(angle >= 0.0);
-            Assert.assertTrue(angle <= Geometry.PI);
+            Assert.assertTrue(angle <= PlaneAngleRadians.PI);
         });
     }
 
@@ -1327,7 +1327,7 @@ public class QuaternionRotationTest {
 
             double angle = q.getAngle();
             Assert.assertTrue(angle >= 0.0);
-            Assert.assertTrue(angle <= Geometry.PI);
+            Assert.assertTrue(angle <= PlaneAngleRadians.PI);
 
             Vector3D transformedX = q.apply(Vector3D.Unit.PLUS_X);
             Vector3D transformedY = q.apply(Vector3D.Unit.PLUS_Y);
@@ -1381,12 +1381,12 @@ public class QuaternionRotationTest {
             assertRotationEquals(StandardRotations.IDENTITY,
                     QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createRelative(axes, 0, 0, 0)));
             assertRotationEquals(StandardRotations.IDENTITY,
-                    QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createRelative(axes, Geometry.TWO_PI, Geometry.TWO_PI, Geometry.TWO_PI)));
+                    QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createRelative(axes, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.TWO_PI)));
 
             assertRotationEquals(StandardRotations.IDENTITY,
                     QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createAbsolute(axes, 0, 0, 0)));
             assertRotationEquals(StandardRotations.IDENTITY,
-                    QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createAbsolute(axes, Geometry.TWO_PI, Geometry.TWO_PI, Geometry.TWO_PI)));
+                    QuaternionRotation.fromAxisAngleSequence(AxisAngleSequence.createAbsolute(axes, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.TWO_PI, PlaneAngleRadians.TWO_PI)));
         }
     }
 
@@ -1396,76 +1396,76 @@ public class QuaternionRotationTest {
         // --- act/assert
 
         // XYZ
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYZ, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYZ, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYZ, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // XZY
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZY, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZY, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZY, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZY, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // YXZ
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXZ, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXZ, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXZ, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXZ, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // YZX
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // ZXY
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // ZYX
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYX, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYX, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // XYX
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYX, Geometry.HALF_PI, Geometry.HALF_PI, Geometry.MINUS_HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYX, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // XZX
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZX, Geometry.MINUS_HALF_PI, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZX, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZX, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZX, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
 
         // YXY
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXY, Geometry.MINUS_HALF_PI, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXY, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXY, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXY, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
 
         // YZY
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZY, Geometry.MINUS_HALF_PI, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZY, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZY, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZY, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // ZXZ
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZXZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZXZ, Geometry.HALF_PI, Geometry.HALF_PI, Geometry.MINUS_HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZXZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZXZ, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZXZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZXZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZXZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZXZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // ZYZ
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYZ, Geometry.HALF_PI, Geometry.MINUS_HALF_PI, Geometry.MINUS_HALF_PI);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceRelative(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
     }
 
     /** Helper method for verifying that a {@link RelativeEulerAngles} instance constructed with the given arguments
@@ -1488,76 +1488,76 @@ public class QuaternionRotationTest {
         // --- act/assert
 
         // XYZ
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYZ, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYZ, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYZ, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYZ, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // XZY
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZY, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZY, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZY, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZY, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // YXZ
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXZ, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXZ, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXZ, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // YZX
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // ZXY
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, Geometry.HALF_PI, 0, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZX, PlaneAngleRadians.PI_OVER_TWO, 0, PlaneAngleRadians.PI_OVER_TWO);
 
         // ZYX
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYX, 0, 0, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYX, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYX, 0, 0, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // XYX
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYX, Geometry.HALF_PI, Geometry.MINUS_HALF_PI, Geometry.MINUS_HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYX, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XYX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XYX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XYX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XYX, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
 
         // XZX
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZX, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZX, Geometry.MINUS_HALF_PI, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZX, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZX, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.XZX, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.XZX, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.XZX, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.XZX, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // YXY
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXY, Geometry.MINUS_HALF_PI, Geometry.MINUS_HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXY, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YXY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YXY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YXY, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YXY, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
 
         // YZY
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZY, Geometry.MINUS_HALF_PI, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZY, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZY, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZY, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.YZY, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.YZY, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.YZY, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.YZY, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
 
         // ZXZ
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZXZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZXZ, Geometry.MINUS_HALF_PI, Geometry.HALF_PI, Geometry.HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZXZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZXZ, 0, Geometry.HALF_PI, Geometry.HALF_PI);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZXZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZXZ, PlaneAngleRadians.MINUS_PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZXZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZXZ, 0, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
 
         // ZYZ
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYZ, Geometry.HALF_PI, Geometry.HALF_PI, Geometry.MINUS_HALF_PI);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYZ, 0, Geometry.HALF_PI, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYZ, Geometry.HALF_PI, 0, 0);
-        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, Geometry.HALF_PI, Geometry.HALF_PI, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_X_HALF_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Y_HALF_PI, AxisSequence.ZYZ, 0, PlaneAngleRadians.PI_OVER_TWO, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_Z_HALF_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, 0, 0);
+        checkFromAxisAngleSequenceAbsolute(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, AxisSequence.ZYZ, PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, 0);
     }
 
     /** Helper method for verifying that an {@link AbsoluteEulerAngles} instance constructed with the given arguments

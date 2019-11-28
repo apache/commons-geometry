@@ -18,7 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
@@ -129,7 +129,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @return the offset (oriented distance) of a direction
      */
     public double offset(final Vector3D vec) {
-        return pole.angle(vec) - Geometry.HALF_PI;
+        return pole.angle(vec) - PlaneAngleRadians.PI_OVER_TWO;
     }
 
     /** Get the azimuth angle of a point relative to this great circle instance,
@@ -158,7 +158,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
 
         // adjust range
         if (az < 0) {
-            az += Geometry.TWO_PI;
+            az += PlaneAngleRadians.TWO_PI;
         }
 
         return az;
@@ -424,7 +424,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         final double dist = a.distance(b);
         if (precision.eqZero(dist)) {
             err = "equal";
-        } else if (precision.eq(dist, Geometry.PI)) {
+        } else if (precision.eq(dist, PlaneAngleRadians.PI)) {
             err = "antipodal";
         }
 

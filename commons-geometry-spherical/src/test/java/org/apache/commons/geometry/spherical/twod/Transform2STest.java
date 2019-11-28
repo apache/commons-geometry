@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -51,10 +51,10 @@ public class Transform2STest {
     @Test
     public void testRotation() {
         // arrange
-        Transform2S aroundPole = Transform2S.createRotation(Point2S.PLUS_K, Geometry.HALF_PI);
-        Transform2S aroundX = Transform2S.createRotation(Vector3D.Unit.PLUS_X, -Geometry.HALF_PI);
+        Transform2S aroundPole = Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO);
+        Transform2S aroundX = Transform2S.createRotation(Vector3D.Unit.PLUS_X, -PlaneAngleRadians.PI_OVER_TWO);
         Transform2S aroundY = Transform2S.createRotation(
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act/assert
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_J, aroundPole.apply(Point2S.PLUS_I), TEST_EPS);
@@ -77,9 +77,9 @@ public class Transform2STest {
     public void testMultipleRotations() {
         // act
         Transform2S t = Transform2S.identity()
-                .rotate(Point2S.PLUS_K, Geometry.HALF_PI)
-                .rotate(Vector3D.Unit.PLUS_X, -Geometry.HALF_PI)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO)
+                .rotate(Vector3D.Unit.PLUS_X, -PlaneAngleRadians.PI_OVER_TWO)
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // assert
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_I, t.apply(Point2S.PLUS_I), TEST_EPS);
@@ -93,8 +93,8 @@ public class Transform2STest {
     public void testMultiply() {
         // act
         Transform2S t = Transform2S.identity()
-                .multiply(Transform2S.createRotation(Point2S.PLUS_K, Geometry.HALF_PI))
-                .multiply(Transform2S.createRotation(Point2S.PLUS_J, Geometry.HALF_PI));
+                .multiply(Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO))
+                .multiply(Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO));
 
         // assert
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_K, t.apply(Point2S.PLUS_I), TEST_EPS);
@@ -108,8 +108,8 @@ public class Transform2STest {
     public void testPremultiply() {
         // act
         Transform2S t = Transform2S.identity()
-                .premultiply(Transform2S.createRotation(Point2S.PLUS_K, Geometry.HALF_PI))
-                .premultiply(Transform2S.createRotation(Point2S.PLUS_J, Geometry.HALF_PI));
+                .premultiply(Transform2S.createRotation(Point2S.PLUS_K, PlaneAngleRadians.PI_OVER_TWO))
+                .premultiply(Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO));
 
         // assert
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_J, t.apply(Point2S.PLUS_I), TEST_EPS);
@@ -125,8 +125,8 @@ public class Transform2STest {
         Point2S a = Point2S.of(1, 1);
         Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, Geometry.PI - 1);
-        Point2S d = Point2S.of(-1, Geometry.PI - 1);
+        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
         Transform2S t = Transform2S.createReflection(Point2S.PLUS_I);
@@ -138,11 +138,11 @@ public class Transform2STest {
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_J, t.apply(Point2S.PLUS_J), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, t.apply(Point2S.PLUS_K), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI - 1, 1), t.apply(a), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI + 1, 1), t.apply(b), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI - 1, 1), t.apply(a), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI + 1, 1), t.apply(b), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI - 1, Geometry.PI - 1), t.apply(c), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI + 1, Geometry.PI - 1), t.apply(d), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI - 1, PlaneAngleRadians.PI - 1), t.apply(c), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI + 1, PlaneAngleRadians.PI - 1), t.apply(d), TEST_EPS);
 
         checkInverse(t);
     }
@@ -153,8 +153,8 @@ public class Transform2STest {
         Point2S a = Point2S.of(1, 1);
         Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, Geometry.PI - 1);
-        Point2S d = Point2S.of(-1, Geometry.PI - 1);
+        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
         Transform2S t = Transform2S.createReflection(Vector3D.Unit.PLUS_Y);
@@ -181,8 +181,8 @@ public class Transform2STest {
         Point2S a = Point2S.of(1, 1);
         Point2S b = Point2S.of(-1, 1);
 
-        Point2S c = Point2S.of(1, Geometry.PI - 1);
-        Point2S d = Point2S.of(-1, Geometry.PI - 1);
+        Point2S c = Point2S.of(1, PlaneAngleRadians.PI - 1);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI - 1);
 
         // act
         Transform2S t = Transform2S.identity()
@@ -196,11 +196,11 @@ public class Transform2STest {
         SphericalTestUtils.assertPointsEqual(Point2S.MINUS_J, t.apply(Point2S.PLUS_J), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, t.apply(Point2S.PLUS_K), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI + 1, 1), t.apply(a), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI - 1, 1), t.apply(b), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI + 1, 1), t.apply(a), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI - 1, 1), t.apply(b), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI + 1, Geometry.PI - 1), t.apply(c), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point2S.of(Geometry.PI - 1,  Geometry.PI - 1), t.apply(d), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI + 1, PlaneAngleRadians.PI - 1), t.apply(c), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point2S.of(PlaneAngleRadians.PI - 1,  PlaneAngleRadians.PI - 1), t.apply(d), TEST_EPS);
 
         checkInverse(t);
     }
@@ -208,10 +208,10 @@ public class Transform2STest {
     @Test
     public void testHashcode() {
         // arrange
-        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI);
-        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, Geometry.HALF_PI);
-        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, Geometry.PI);
-        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI);
+        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
+        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
+        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         int hash = a.hashCode();
@@ -228,10 +228,10 @@ public class Transform2STest {
     @Test
     public void testEquals() {
         // arrange
-        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI);
-        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, Geometry.HALF_PI);
-        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, Geometry.PI);
-        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, Geometry.HALF_PI);
+        Transform2S a = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
+        Transform2S b = Transform2S.createRotation(Point2S.PLUS_J, PlaneAngleRadians.PI_OVER_TWO);
+        Transform2S c = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI);
+        Transform2S d = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         Assert.assertTrue(a.equals(a));
@@ -263,8 +263,8 @@ public class Transform2STest {
         Transform2S inv = t.inverse();
 
         // test non-pole points
-        for (double az = -Geometry.TWO_PI; az <= 2 * Geometry.TWO_PI; az += 0.2) {
-            for (double p = 0.1; p < Geometry.PI; p += 0.2) {
+        for (double az = -PlaneAngleRadians.TWO_PI; az <= 2 * PlaneAngleRadians.TWO_PI; az += 0.2) {
+            for (double p = 0.1; p < PlaneAngleRadians.PI; p += 0.2) {
 
                 Point2S pt = Point2S.of(az, p);
 
@@ -280,8 +280,8 @@ public class Transform2STest {
                 t.apply(inv.apply(Point2S.of(-1, 0))).getVector(), TEST_EPS);
 
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_Z,
-                inv.apply(t.apply(Point2S.of(1, Geometry.PI))).getVector(), TEST_EPS);
+                inv.apply(t.apply(Point2S.of(1, PlaneAngleRadians.PI))).getVector(), TEST_EPS);
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.MINUS_Z,
-                t.apply(inv.apply(Point2S.of(-1, Geometry.PI))).getVector(), TEST_EPS);
+                t.apply(inv.apply(Point2S.of(-1, PlaneAngleRadians.PI))).getVector(), TEST_EPS);
     }
 }

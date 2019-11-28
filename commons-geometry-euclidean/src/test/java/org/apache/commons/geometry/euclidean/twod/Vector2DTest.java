@@ -19,7 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -468,7 +468,7 @@ public class Vector2DTest {
 
     @Test
     public void testOrthogonal_fullCircle() {
-        for (double az = 0.0; az<=Geometry.TWO_PI; az += 0.25) {
+        for (double az = 0.0; az<=PlaneAngleRadians.TWO_PI; az += 0.25) {
             // arrange
             Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
 
@@ -547,12 +547,12 @@ public class Vector2DTest {
         // act/assert
         Assert.assertEquals(0, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_X), EPS);
 
-        Assert.assertEquals(Geometry.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
-        Assert.assertEquals(Geometry.HALF_PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_X), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.PLUS_Y), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, Vector2D.Unit.PLUS_X.angle(Vector2D.Unit.MINUS_Y), EPS);
 
-        Assert.assertEquals(Geometry.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
-        Assert.assertEquals(Geometry.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 1).angle(Vector2D.of(1, 0)), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI / 4, Vector2D.of(1, 0).angle(Vector2D.of(1, 1)), EPS);
 
         Assert.assertEquals(0.004999958333958323, Vector2D.of(20.0, 0.0).angle(Vector2D.of(20.0, 0.1)), EPS);
     }
@@ -597,11 +597,11 @@ public class Vector2DTest {
         Assert.assertEquals(1.0, a.signedArea(b), eps);
         Assert.assertEquals(-1.0, b.signedArea(a), eps);
 
-        double xAxisAndCArea = 2 * Math.cos(0.25 * Geometry.PI);
+        double xAxisAndCArea = 2 * Math.cos(0.25 * PlaneAngleRadians.PI);
         Assert.assertEquals(xAxisAndCArea, a.signedArea(c), eps);
         Assert.assertEquals(-xAxisAndCArea, c.signedArea(a), eps);
 
-        double xAxisAndDArea = 3 * Math.cos(0.25 * Geometry.PI);
+        double xAxisAndDArea = 3 * Math.cos(0.25 * PlaneAngleRadians.PI);
         Assert.assertEquals(xAxisAndDArea, a.signedArea(d), eps);
         Assert.assertEquals(-xAxisAndDArea, d.signedArea(a), eps);
 
@@ -716,7 +716,7 @@ public class Vector2DTest {
     }
 
     private void checkProjectAndRejectFullCircle(Vector2D vec, double baseMag, double eps) {
-        for (double theta = 0.0; theta <= Geometry.TWO_PI; theta += 0.5) {
+        for (double theta = 0.0; theta <= PlaneAngleRadians.TWO_PI; theta += 0.5) {
             Vector2D base = PolarCoordinates.toCartesian(baseMag, theta);
 
             Vector2D proj = vec.project(base);
@@ -730,18 +730,18 @@ public class Vector2DTest {
             // check the angle between the projection and the base; this will
             // be undefined when the angle between the original vector and the
             // base is pi/2 (which means that the projection is the zero vector)
-            if (angle < Geometry.HALF_PI) {
+            if (angle < PlaneAngleRadians.PI_OVER_TWO) {
                 Assert.assertEquals(0.0, proj.angle(base), eps);
             }
-            else if (angle > Geometry.HALF_PI) {
-                Assert.assertEquals(Geometry.PI, proj.angle(base), eps);
+            else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
+                Assert.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
             }
 
             // check the angle between the rejection and the base; this should
             // always be pi/2 except for when the angle between the original vector
             // and the base is 0 or pi, in which case the rejection is the zero vector.
-            if (angle > 0.0 && angle < Geometry.PI) {
-                Assert.assertEquals(Geometry.HALF_PI, rej.angle(base), eps);
+            if (angle > 0.0 && angle < PlaneAngleRadians.PI) {
+                Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, rej.angle(base), eps);
             }
         }
     }

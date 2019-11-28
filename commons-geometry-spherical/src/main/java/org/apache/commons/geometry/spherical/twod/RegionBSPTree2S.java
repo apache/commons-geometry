@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -32,7 +32,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  */
 public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTree2S.RegionNode2S> {
     /** Constant containing the area of the full spherical space. */
-    private static final double FULL_SIZE = 4 * Geometry.PI;
+    private static final double FULL_SIZE = 4 * PlaneAngleRadians.PI;
 
     /** List of great arc path comprising the region boundary. */
     private List<GreatArcPath> boundaryPaths;

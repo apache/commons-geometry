@@ -19,7 +19,7 @@ package org.apache.commons.geometry.spherical.oned;
 import java.util.Comparator;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
@@ -46,7 +46,7 @@ public final class Point1S implements Point<Point1S> {
     public static final Point1S ZERO = Point1S.of(0.0);
 
     /** A point with coordinates set to {@code pi}. */
-    public static final Point1S PI = Point1S.of(Geometry.PI);
+    public static final Point1S PI = Point1S.of(PlaneAngleRadians.PI);
 
     // CHECKSTYLE: stop ConstantName
     /** A point with all coordinates set to NaN. */
@@ -169,7 +169,7 @@ public final class Point1S implements Point<Point1S> {
      *      cannot be normalized
      */
     public Point1S above(final Point1S base) {
-        return normalize(base.getAzimuth() + Geometry.PI);
+        return normalize(base.getAzimuth() + PlaneAngleRadians.PI);
     }
 
     /** Return an equivalent point with an azimuth value strictly below the given base.
@@ -181,7 +181,7 @@ public final class Point1S implements Point<Point1S> {
      *      cannot be normalized
      */
     public Point1S below(final Point1S base) {
-        return normalize(base.getAzimuth() - Geometry.PI);
+        return normalize(base.getAzimuth() - PlaneAngleRadians.PI);
     }
 
     /** Normalize this point around the given center point. The azimuth value of
@@ -218,9 +218,9 @@ public final class Point1S implements Point<Point1S> {
      * @return the point exactly opposite this point on the circle
      */
     public Point1S antipodal() {
-        double az = normalizedAzimuth + Geometry.PI;
-        if (az >= Geometry.TWO_PI) {
-            az -= Geometry.TWO_PI;
+        double az = normalizedAzimuth + PlaneAngleRadians.PI;
+        if (az >= PlaneAngleRadians.TWO_PI) {
+            az -= PlaneAngleRadians.TWO_PI;
         }
 
         return Point1S.of(az);
@@ -366,11 +366,11 @@ public final class Point1S implements Point<Point1S> {
      */
     public static double signedDistance(final Point1S p1, final Point1S p2) {
         double dist = p2.normalizedAzimuth - p1.normalizedAzimuth;
-        if (dist < -Geometry.PI) {
-            dist += Geometry.TWO_PI;
+        if (dist < -PlaneAngleRadians.PI) {
+            dist += PlaneAngleRadians.TWO_PI;
         }
-        if (dist >= Geometry.PI) {
-            dist -= Geometry.TWO_PI;
+        if (dist >= PlaneAngleRadians.PI) {
+            dist -= PlaneAngleRadians.TWO_PI;
         }
         return dist;
     }

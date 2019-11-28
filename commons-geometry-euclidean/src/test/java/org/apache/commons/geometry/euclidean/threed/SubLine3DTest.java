@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -93,7 +93,7 @@ public class SubLine3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         SubLine3D result = sub.transform(transform);
@@ -123,7 +123,7 @@ public class SubLine3DTest {
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
                 .scale(Vector3D.of(2, 1, 1))
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         SubLine3D result = sub.transform(transform);

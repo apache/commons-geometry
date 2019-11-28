@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
@@ -411,7 +411,7 @@ public class SegmentTest {
         Segment segment = Segment.fromPoints(Vector2D.of(0, 1), Vector2D.of(2, 3), TEST_PRECISION);
 
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
         Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
@@ -429,7 +429,7 @@ public class SegmentTest {
                 Interval.point(0, TEST_PRECISION));
 
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
         Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
@@ -447,7 +447,7 @@ public class SegmentTest {
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
         Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
@@ -488,7 +488,7 @@ public class SegmentTest {
                 0.0, Double.POSITIVE_INFINITY);
 
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
         Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
@@ -529,7 +529,7 @@ public class SegmentTest {
                 Double.NEGATIVE_INFINITY, 0.0);
 
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
         Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
 
@@ -570,7 +570,7 @@ public class SegmentTest {
         Segment bSeg = Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION);
 
         Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Line yAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION);
+        Line yAxis = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         Line angledLine = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION);
 
         // act/assert

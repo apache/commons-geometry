@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
@@ -618,7 +618,7 @@ public class PlaneTest {
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION);
 
         AffineTransformMatrix3D mat = AffineTransformMatrix3D.createRotation(pt,
-                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         Plane result = plane.transform(mat);
@@ -711,7 +711,7 @@ public class PlaneTest {
                 Vector3D.of(0, 0, 5), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y,
                 Vector3D.of(2, 3, 5), Vector3D.of(3, 3, 5), Vector3D.of(2, 4, 5));
 
-        checkSubspaceTransform(plane.subspaceTransform(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI)),
+        checkSubspaceTransform(plane.subspaceTransform(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO)),
                 Vector3D.of(1, 0, 0), Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_Y,
                 Vector3D.of(1, 0, 0), Vector3D.of(1, 0, -1), Vector3D.of(1, 1, 0));
     }
@@ -738,7 +738,7 @@ public class PlaneTest {
         EuclideanTestUtils.permuteSkipZero(-2, 2, 0.5, (a, b, c) -> {
             // create a somewhat complicate transform to try to hit all of the edge cases
             AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.of(a, b, c))
-                    .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(b, c, a), Geometry.PI * c))
+                    .rotate(QuaternionRotation.fromAxisAngle(Vector3D.of(b, c, a), PlaneAngleRadians.PI * c))
                     .scale(0.1, 4, 8);
 
             // act

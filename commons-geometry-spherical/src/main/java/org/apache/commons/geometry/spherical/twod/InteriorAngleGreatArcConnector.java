@@ -19,7 +19,7 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Great arc connector that selects between multiple connection options
  * based on the resulting interior angle. An interior angle in this
@@ -46,7 +46,7 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
         ConnectableGreatArc selected = null;
 
         for (ConnectableGreatArc candidate : outgoing) {
-            double interiorAngle = Geometry.PI - circle.angle(candidate.getArc().getCircle(),
+            double interiorAngle = PlaneAngleRadians.PI - circle.angle(candidate.getArc().getCircle(),
                     incoming.getArc().getEndPoint());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {

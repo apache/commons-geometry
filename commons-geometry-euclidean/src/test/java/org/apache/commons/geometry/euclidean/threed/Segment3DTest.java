@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.exception.GeometryValueException;
@@ -294,7 +294,7 @@ public class Segment3DTest {
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         Segment3D transformed = segment.transform(transform);
@@ -312,7 +312,7 @@ public class Segment3DTest {
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, Geometry.HALF_PI));
+                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
         Segment3D transformed = segment.transform(transform);

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -40,10 +40,10 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     private static final ConvexArea2S FULL = new ConvexArea2S(Collections.emptyList());
 
     /** Constant containing the area of the full spherical space. */
-    private static final double FULL_SIZE = 4 * Geometry.PI;
+    private static final double FULL_SIZE = 4 * PlaneAngleRadians.PI;
 
     /** Constant containing the area of half of the spherical space. */
-    private static final double HALF_SIZE = Geometry.TWO_PI;
+    private static final double HALF_SIZE = PlaneAngleRadians.TWO_PI;
 
     /** Construct an instance from its boundaries. Callers are responsible for ensuring
      * that the given path represents the boundary of a convex area. No validation is
@@ -91,7 +91,7 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
             current = arcs.get(i);
             next = arcs.get((i + 1) % numSides);
 
-            angles[i] = Geometry.PI - current.getCircle()
+            angles[i] = PlaneAngleRadians.PI - current.getCircle()
                     .angle(next.getCircle(), current.getEndPoint());
         }
 
@@ -113,7 +113,7 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
             final double[] angles = getInteriorAngles();
             final double sum = Arrays.stream(angles).sum();
 
-            return sum - ((angles.length - 2) * Geometry.PI);
+            return sum - ((angles.length - 2) * PlaneAngleRadians.PI);
         }
     }
 

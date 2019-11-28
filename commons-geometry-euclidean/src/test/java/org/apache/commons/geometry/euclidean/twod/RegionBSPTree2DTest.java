@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -267,8 +267,8 @@ public class RegionBSPTree2DTest {
     public void testToConvex_quadrantComplement() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.PI, TEST_PRECISION))
-            .getPlus().cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION))
+            .getPlus().cut(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         tree.complement();
 
@@ -373,7 +373,7 @@ public class RegionBSPTree2DTest {
         root.cut(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         RegionNode2D minus = root.getMinus();
-        minus.cut(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+        minus.cut(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         Vector2D origin = Vector2D.ZERO;
 
@@ -401,7 +401,7 @@ public class RegionBSPTree2DTest {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.full();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -437,7 +437,7 @@ public class RegionBSPTree2DTest {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -456,7 +456,7 @@ public class RegionBSPTree2DTest {
                 .addRect(Vector2D.ZERO, 2, 1)
                 .build();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -482,7 +482,7 @@ public class RegionBSPTree2DTest {
                 .addRect(Vector2D.ZERO, 2, 1)
                 .build();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION);
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2D> split = tree.split(splitter);
@@ -505,7 +505,7 @@ public class RegionBSPTree2DTest {
                 .addRect(Vector2D.ZERO, 2, 1)
                 .build();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * Geometry.PI, TEST_PRECISION)
+        Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION)
                 .reverse();
 
         // act
@@ -960,7 +960,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBuilder_mixedArguments() {
         // arrange
-        Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, Geometry.MINUS_HALF_PI, TEST_PRECISION);
+        Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
 
         Polyline path = Polyline.builder(TEST_PRECISION)
             .append(Vector2D.Unit.PLUS_X)
@@ -1037,7 +1037,7 @@ public class RegionBSPTree2DTest {
                 .build();
 
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
-                .rotate(Geometry.HALF_PI)
+                .rotate(PlaneAngleRadians.PI_OVER_TWO)
                 .translate(Vector2D.of(0, -1));
 
         // act
@@ -1062,7 +1062,7 @@ public class RegionBSPTree2DTest {
         tree.getRoot().insertCut(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
 
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
-                .rotate(Geometry.HALF_PI)
+                .rotate(PlaneAngleRadians.PI_OVER_TWO)
                 .translate(Vector2D.of(1, 0));
 
         // act
@@ -1078,7 +1078,7 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
-        Line expectedLine = Line.fromPointAndAngle(Vector2D.of(-1, 0), Geometry.HALF_PI, TEST_PRECISION);
+        Line expectedLine = Line.fromPointAndAngle(Vector2D.of(-1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         Assert.assertTrue(expectedLine.eq(segment.getLine()));
     }
 
@@ -1088,7 +1088,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D full = RegionBSPTree2D.full();
         RegionBSPTree2D empty = RegionBSPTree2D.empty();
 
-        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(Geometry.HALF_PI);
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         full.transform(transform);

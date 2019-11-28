@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -184,7 +184,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApply_translate() {
         // arrange
-        Vector1D translation = Vector1D.of(-Geometry.PI);
+        Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
 
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -279,7 +279,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyVector_translate() {
         // arrange
-        Vector1D translation = Vector1D.of(-Geometry.PI);
+        Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
 
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -313,7 +313,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyVector_representsDisplacement() {
         // arrange
-        Vector1D p1 = Vector1D.of(Geometry.PI);
+        Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
 
         Vector1D translation = Vector1D.of(-2.0);
         Vector1D scale = Vector1D.of(5.0);
@@ -349,7 +349,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyDirection_translate() {
         // arrange
-        Vector1D translation = Vector1D.of(-Geometry.PI);
+        Vector1D translation = Vector1D.of(-PlaneAngleRadians.PI);
 
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity()
                 .translate(translation);
@@ -383,7 +383,7 @@ public class AffineTransformMatrix1DTest {
     @Test
     public void testApplyDirection_representsNormalizedDisplacement() {
         // arrange
-        Vector1D p1 = Vector1D.of(Geometry.PI);
+        Vector1D p1 = Vector1D.of(PlaneAngleRadians.PI);
 
         Vector1D translation = Vector1D.of(-2.0);
         Vector1D scale = Vector1D.of(5.0);

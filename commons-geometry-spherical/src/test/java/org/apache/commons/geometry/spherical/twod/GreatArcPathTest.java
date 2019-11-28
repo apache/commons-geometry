@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -140,7 +140,7 @@ public class GreatArcPathTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Point2S almostPlusI = Point2S.of(1e-4, Geometry.HALF_PI);
+        Point2S almostPlusI = Point2S.of(1e-4, PlaneAngleRadians.PI_OVER_TWO);
 
         List<Point2S> points = Arrays.asList(
                 Point2S.PLUS_I,
@@ -232,9 +232,9 @@ public class GreatArcPathTest {
     public void testFromArcs() {
         // arrange
         Point2S ptA = Point2S.PLUS_I;
-        Point2S ptB = Point2S.of(1, Geometry.HALF_PI);
-        Point2S ptC = Point2S.of(1, Geometry.HALF_PI - 1);
-        Point2S ptD = Point2S.of(2, Geometry.HALF_PI - 1);
+        Point2S ptB = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S ptC = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO - 1);
+        Point2S ptD = Point2S.of(2, PlaneAngleRadians.PI_OVER_TWO - 1);
 
         GreatArc a = GreatArc.fromPoints(ptA, ptB, TEST_PRECISION);
         GreatArc b = GreatArc.fromPoints(ptB, ptC, TEST_PRECISION);
@@ -327,7 +327,7 @@ public class GreatArcPathTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(Geometry.TWO_PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getBarycenter(), TEST_EPS);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.PLUS_K);
@@ -350,7 +350,7 @@ public class GreatArcPathTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(Geometry.HALF_PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
 
         Point2S bc = Point2S.from(Point2S.PLUS_I.getVector()
                 .add(Point2S.PLUS_J.getVector())
@@ -369,8 +369,8 @@ public class GreatArcPathTest {
         Point2S a = Point2S.PLUS_I;
         Point2S b = Point2S.PLUS_J;
         Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, Geometry.HALF_PI);
-        Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
@@ -405,8 +405,8 @@ public class GreatArcPathTest {
         Point2S a = Point2S.PLUS_I;
         Point2S b = Point2S.PLUS_J;
         Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, Geometry.HALF_PI);
-        Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
@@ -441,8 +441,8 @@ public class GreatArcPathTest {
         Point2S a = Point2S.PLUS_I;
         Point2S b = Point2S.PLUS_J;
         Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, Geometry.HALF_PI);
-        Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
@@ -477,8 +477,8 @@ public class GreatArcPathTest {
         Point2S a = Point2S.PLUS_I;
         Point2S b = Point2S.PLUS_J;
         Point2S c = Point2S.PLUS_K;
-        Point2S d = Point2S.of(-1, Geometry.HALF_PI);
-        Point2S e = Point2S.of(0, 0.6 * Geometry.PI);
+        Point2S d = Point2S.of(-1, PlaneAngleRadians.PI_OVER_TWO);
+        Point2S e = Point2S.of(0, 0.6 * PlaneAngleRadians.PI);
 
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 

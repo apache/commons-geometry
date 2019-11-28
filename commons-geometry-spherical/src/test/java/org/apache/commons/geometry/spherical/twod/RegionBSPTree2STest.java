@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -241,10 +241,10 @@ public class RegionBSPTree2STest {
     public void testToConvex_doubleLune() {
         // arrange
         RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
-                .append(EQUATOR.arc(0,  Geometry.PI))
-                .append(X_MERIDIAN.arc(Geometry.PI, 0))
-                .append(EQUATOR.reverse().arc(0, Geometry.PI))
-                .append(X_MERIDIAN.reverse().arc(Geometry.PI, 0))
+                .append(EQUATOR.arc(0,  PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.arc(PlaneAngleRadians.PI, 0))
+                .append(EQUATOR.reverse().arc(0, PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.reverse().arc(PlaneAngleRadians.PI, 0))
                 .build()
                 .toTree();
 
@@ -255,17 +255,17 @@ public class RegionBSPTree2STest {
         Assert.assertEquals(2, result.size());
 
         double size = result.stream().collect(Collectors.summingDouble(a -> a.getSize()));
-        Assert.assertEquals(Geometry.TWO_PI, size, TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.TWO_PI, size, TEST_EPS);
     }
 
     @Test
     public void testToConvex_doubleLune_comlement() {
         // arrange
         RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
-                .append(EQUATOR.arc(0,  Geometry.PI))
-                .append(X_MERIDIAN.arc(Geometry.PI, 0))
-                .append(EQUATOR.reverse().arc(0, Geometry.PI))
-                .append(X_MERIDIAN.reverse().arc(Geometry.PI, 0))
+                .append(EQUATOR.arc(0,  PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.arc(PlaneAngleRadians.PI, 0))
+                .append(EQUATOR.reverse().arc(0, PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.reverse().arc(PlaneAngleRadians.PI, 0))
                 .build()
                 .toTree();
 
@@ -276,26 +276,26 @@ public class RegionBSPTree2STest {
         Assert.assertEquals(2, result.size());
 
         double size = result.stream().collect(Collectors.summingDouble(a -> a.getSize()));
-        Assert.assertEquals(Geometry.TWO_PI, size, TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.TWO_PI, size, TEST_EPS);
     }
 
     @Test
     public void testProject() {
         // arrange
         RegionBSPTree2S tree = RegionBSPTree2S.empty();
-        tree.insert(EQUATOR.arc(0, Geometry.PI));
-        tree.insert(X_MERIDIAN.arc(Geometry.PI, 0));
+        tree.insert(EQUATOR.arc(0, PlaneAngleRadians.PI));
+        tree.insert(X_MERIDIAN.arc(PlaneAngleRadians.PI, 0));
 
         // act/assert
-        SphericalTestUtils.assertPointsEq(Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI),
-                tree.project(Point2S.of(Geometry.HALF_PI, Geometry.HALF_PI + 0.2)), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO),
+                tree.project(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO + 0.2)), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K,
-                tree.project(Point2S.of(Geometry.MINUS_HALF_PI, 0.2)), TEST_EPS);
+                tree.project(Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.2)), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I,
-                tree.project(Point2S.of(-0.5, Geometry.HALF_PI)), TEST_EPS);
+                tree.project(Point2S.of(-0.5, PlaneAngleRadians.PI_OVER_TWO)), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I,
-                tree.project(Point2S.of(Geometry.PI + 0.5, Geometry.HALF_PI)), TEST_EPS);
+                tree.project(Point2S.of(PlaneAngleRadians.PI + 0.5, PlaneAngleRadians.PI_OVER_TWO)), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.project(tree.getBarycenter()), TEST_EPS);
     }
@@ -313,7 +313,7 @@ public class RegionBSPTree2STest {
         RegionBSPTree2S tree = RegionBSPTree2S.full();
 
         // act/assert
-        Assert.assertEquals(4 * Geometry.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(4 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
         Assert.assertNull(tree.getBarycenter());
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
@@ -344,8 +344,8 @@ public class RegionBSPTree2STest {
         tree.getRoot().cut(EQUATOR);
 
         // act/assert
-        Assert.assertEquals(Geometry.TWO_PI, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(Geometry.TWO_PI, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getBoundarySize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getBarycenter(), TEST_EPS);
 
         checkBarycenterConsistency(tree);
@@ -370,16 +370,16 @@ public class RegionBSPTree2STest {
     public void testGeometricProperties_doubleLune() {
         // act
         RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
-                .append(EQUATOR.arc(0,  Geometry.PI))
-                .append(X_MERIDIAN.arc(Geometry.PI, 0))
-                .append(EQUATOR.reverse().arc(0, Geometry.PI))
-                .append(X_MERIDIAN.reverse().arc(Geometry.PI, 0))
+                .append(EQUATOR.arc(0,  PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.arc(PlaneAngleRadians.PI, 0))
+                .append(EQUATOR.reverse().arc(0, PlaneAngleRadians.PI))
+                .append(X_MERIDIAN.reverse().arc(PlaneAngleRadians.PI, 0))
                 .build()
                 .toTree();
 
         // assert
-        Assert.assertEquals(2 * Geometry.PI, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(4 * Geometry.PI, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(2 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(4 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
         Assert.assertNull(tree.getBarycenter());
 
         List<GreatArcPath> paths = tree.getBoundaryPaths();
@@ -389,12 +389,12 @@ public class RegionBSPTree2STest {
         assertPath(paths.get(1), Point2S.PLUS_I, Point2S.MINUS_I, Point2S.PLUS_I);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
-                Point2S.of(0.5 * Geometry.PI, 0.25 * Geometry.PI),
-                Point2S.of(1.5 * Geometry.PI, 0.75 * Geometry.PI));
+                Point2S.of(0.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI),
+                Point2S.of(1.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
-                Point2S.of(0.5 * Geometry.PI, 0.75 * Geometry.PI),
-                Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI));
+                Point2S.of(0.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI),
+                Point2S.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
     }
 
     @Test
@@ -406,8 +406,8 @@ public class RegionBSPTree2STest {
                 .toTree();
 
         // assert
-        Assert.assertEquals(0.5 * Geometry.PI, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(1.5 * Geometry.PI, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(0.5 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
 
         Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
                 .add(Point2S.PLUS_I.getVector())
@@ -422,7 +422,7 @@ public class RegionBSPTree2STest {
         assertPath(paths.get(0), Point2S.MINUS_J, Point2S.MINUS_K, Point2S.PLUS_I, Point2S.MINUS_J);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
-                Point2S.of(1.75 * Geometry.PI, 0.75 * Geometry.PI));
+                Point2S.of(1.75 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
                 Point2S.PLUS_J, Point2S.PLUS_K, Point2S.MINUS_I);
@@ -440,8 +440,8 @@ public class RegionBSPTree2STest {
         tree.complement();
 
         // assert
-        Assert.assertEquals(3.5 * Geometry.PI, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(1.5 * Geometry.PI, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(3.5 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
 
 //        Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
 //                .add(Point2S.PLUS_I.getVector())
@@ -456,7 +456,7 @@ public class RegionBSPTree2STest {
         assertPath(paths.get(0), Point2S.MINUS_J, Point2S.PLUS_I, Point2S.MINUS_K, Point2S.MINUS_J);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
-                Point2S.of(1.75 * Geometry.PI, 0.75 * Geometry.PI));
+                Point2S.of(1.75 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
                 Point2S.PLUS_J, Point2S.PLUS_K, Point2S.MINUS_I);
@@ -551,8 +551,8 @@ public class RegionBSPTree2STest {
         // assert
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
-        Assert.assertEquals(1.5 * Geometry.PI, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(Geometry.HALF_PI, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
 
         Point2S expectedBarycenter = triangleBarycenter(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
         SphericalTestUtils.assertPointsEq(expectedBarycenter, tree.getBarycenter(), TEST_EPS);
@@ -560,12 +560,12 @@ public class RegionBSPTree2STest {
         checkBarycenterConsistency(tree);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
-                Point2S.of(-0.25 * Geometry.PI, 0.25 * Geometry.PI));
+                Point2S.of(-0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.MINUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * Geometry.PI), Point2S.of(Geometry.MINUS_HALF_PI, 0.304 * Geometry.PI),
-                Point2S.of(-0.25 * Geometry.PI, Geometry.HALF_PI));
+                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
+                Point2S.of(-0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
                 Point2S.PLUS_J, Point2S.MINUS_I, Point2S.MINUS_K);
@@ -582,16 +582,16 @@ public class RegionBSPTree2STest {
 
         // act/assert
         ConvexArea2S rootRegion = root.getNodeRegion();
-        Assert.assertEquals(4 * Geometry.PI, rootRegion.getSize(), TEST_EPS);
+        Assert.assertEquals(4 * PlaneAngleRadians.PI, rootRegion.getSize(), TEST_EPS);
         Assert.assertNull(rootRegion.getBarycenter());
 
         ConvexArea2S minusRegion = minus.getNodeRegion();
-        Assert.assertEquals(2 * Geometry.PI, minusRegion.getSize(), TEST_EPS);
+        Assert.assertEquals(2 * PlaneAngleRadians.PI, minusRegion.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, minusRegion.getBarycenter(), TEST_EPS);
 
         ConvexArea2S minusPlusRegion = minusPlus.getNodeRegion();
-        Assert.assertEquals(Geometry.PI, minusPlusRegion.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(1.5 * Geometry.PI, 0.25 * Geometry.PI),
+        Assert.assertEquals(PlaneAngleRadians.PI, minusPlusRegion.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI),
                 minusPlusRegion.getBarycenter(), TEST_EPS);
     }
 
@@ -684,7 +684,7 @@ public class RegionBSPTree2STest {
         SphericalTestUtils.checkClassify(region, RegionLocation.INSIDE, barycenter);
 
         GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
-        for (double az = 0; az <= Geometry.TWO_PI; az += 0.2) {
+        for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
             GreatCircle splitter = GreatCircle.fromPoints(barycenter, pt, TEST_PRECISION);
 

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.geometry.core.Geometry;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -186,7 +186,7 @@ public class PolylineTest {
     public void testFromSegments_infiniteSegments() {
         // arrange
         Segment a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).segment(Double.NEGATIVE_INFINITY, 1.0);
-        Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
+        Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
 
         // act
         Polyline path = Polyline.fromSegments(Arrays.asList(a, b));
@@ -244,7 +244,7 @@ public class PolylineTest {
     public void testFromSegments_finiteAndInfiniteSegments_endInfinite() {
         // arrange
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
+        Segment b = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(0.0, Double.POSITIVE_INFINITY);
 
         // act
         Polyline path = Polyline.fromSegments(Arrays.asList(a, b));
@@ -276,7 +276,7 @@ public class PolylineTest {
         Segment b = Segment.fromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
 
         Segment c = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
-        Segment d = Line.fromPointAndAngle(Vector2D.of(1, 0), Geometry.HALF_PI, TEST_PRECISION).span();
+        Segment d = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -581,7 +581,7 @@ public class PolylineTest {
                 .close();
 
         AffineTransformMatrix2D t =
-                AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), Geometry.HALF_PI);
+                AffineTransformMatrix2D.createRotation(Vector2D.of(1, 1), PlaneAngleRadians.PI_OVER_TWO);
 
         // act
         Polyline result = path.transform(t);
@@ -840,7 +840,7 @@ public class PolylineTest {
     public void testSimplify_combinedInfiniteSegment() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Split<Segment> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, Geometry.HALF_PI, TEST_PRECISION));
+        Split<Segment> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         Builder builder = Polyline.builder(TEST_PRECISION);
         Polyline path = builder
@@ -1259,7 +1259,7 @@ public class PolylineTest {
         builder
             .append(Vector2D.ZERO)
             .append(Vector2D.Unit.PLUS_X)
-            .append(Line.fromPointAndAngle(Vector2D.Unit.PLUS_X, Geometry.HALF_PI, TEST_PRECISION)
+            .append(Line.fromPointAndAngle(Vector2D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .segment(0, Double.POSITIVE_INFINITY));
 
         // act/assert
