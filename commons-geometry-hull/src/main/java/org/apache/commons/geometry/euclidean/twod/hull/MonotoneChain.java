@@ -78,10 +78,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         final List<Vector2D> pointsSortedByXAxis = new ArrayList<>(points);
 
         // sort the points in increasing order on the x-axis
-        Collections.sort(pointsSortedByXAxis, new Comparator<Vector2D>() {
-            /** {@inheritDoc} */
-            @Override
-            public int compare(final Vector2D o1, final Vector2D o2) {
+        Collections.sort(pointsSortedByXAxis, (o1, o2) -> {
                 final DoublePrecisionContext precision = getPrecision();
                 // need to take the tolerance value into account, otherwise collinear points
                 // will not be handled correctly when building the upper/lower hull
@@ -91,8 +88,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
                 } else {
                     return diff;
                 }
-            }
-        });
+            });
 
         // build lower hull
         final List<Vector2D> lowerHull = new ArrayList<>();
