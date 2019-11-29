@@ -126,7 +126,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     @Override
     public Split<RegionBSPTree1S> split(final Hyperplane<Point1S> splitter) {
-        // Handle the special case where the cut is on the azimuth equivalent to zero;
+        // Handle the special case where the cut is on the azimuth equivalent to zero.
         // In this case, it is not possible for any points to lie between it and zero.
         if (!isEmpty() && splitter.classify(Point1S.ZERO) == HyperplaneLocation.ON) {
             CutAngle cut = (CutAngle) splitter;
