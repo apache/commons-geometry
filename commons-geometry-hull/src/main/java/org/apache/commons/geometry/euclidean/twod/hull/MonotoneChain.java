@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod.hull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
