@@ -67,14 +67,14 @@ public class Vector3DTest {
         GeometryTestUtils.assertThrows(() -> Vector3D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
 
-        Assert.assertSame(Vector3D.Unit.PLUS_X.normalize(), Vector3D.Unit.PLUS_X);
-        Assert.assertSame(Vector3D.Unit.MINUS_X.normalize(), Vector3D.Unit.MINUS_X);
+        Assert.assertSame(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X.normalize());
+        Assert.assertSame(Vector3D.Unit.MINUS_X, Vector3D.Unit.MINUS_X.normalize());
 
-        Assert.assertSame(Vector3D.Unit.PLUS_Y.normalize(), Vector3D.Unit.PLUS_Y);
-        Assert.assertSame(Vector3D.Unit.MINUS_Y.normalize(), Vector3D.Unit.MINUS_Y);
+        Assert.assertSame(Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y.normalize());
+        Assert.assertSame(Vector3D.Unit.MINUS_Y, Vector3D.Unit.MINUS_Y.normalize());
 
-        Assert.assertSame(Vector3D.Unit.PLUS_Z.normalize(), Vector3D.Unit.PLUS_Z);
-        Assert.assertSame(Vector3D.Unit.MINUS_Z.normalize(), Vector3D.Unit.MINUS_Z);
+        Assert.assertSame(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_Z.normalize());
+        Assert.assertSame(Vector3D.Unit.MINUS_Z, Vector3D.Unit.MINUS_Z.normalize());
     }
 
     @Test
