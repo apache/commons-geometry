@@ -351,49 +351,49 @@ public class SphericalCoordinatesTest {
     @Test
     public void testNormalizeAzimuth() {
         // act/assert
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(0), 0.0, EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(0), EPS);
 
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), PlaneAngleRadians.THREE_PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.MINUS_PI_OVER_TWO), PlaneAngleRadians.THREE_PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(PlaneAngleRadians.MINUS_PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.NaN), Double.NaN, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
+        Assert.assertEquals(Double.NaN, SphericalCoordinates.normalizeAzimuth(Double.NaN), EPS);
+        Assert.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
     }
 
     @Test
     public void testNormalizePolar() {
         // act/assert
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(0), 0.0, EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(0), EPS);
 
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI + PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.PI + PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(PlaneAngleRadians.MINUS_PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(-PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(PlaneAngleRadians.MINUS_PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, SphericalCoordinates.normalizePolar(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizePolar_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NaN), Double.NaN, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
-        Assert.assertEquals(SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
+        Assert.assertEquals(Double.NaN, SphericalCoordinates.normalizePolar(Double.NaN), EPS);
+        Assert.assertEquals(Double.NEGATIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.NEGATIVE_INFINITY), EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, SphericalCoordinates.normalizePolar(Double.POSITIVE_INFINITY), EPS);
     }
 
     private void checkSpherical(SphericalCoordinates c, double radius, double azimuth, double polar) {

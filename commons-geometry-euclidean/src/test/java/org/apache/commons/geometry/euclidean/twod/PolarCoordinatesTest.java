@@ -339,25 +339,25 @@ public class PolarCoordinatesTest {
     @Test
     public void testNormalizeAzimuth() {
         // act/assert
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(0), 0.0, EPS);
+        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(0), EPS);
 
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), PlaneAngleRadians.THREE_PI_OVER_TWO, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.MINUS_PI_OVER_TWO), PlaneAngleRadians.THREE_PI_OVER_TWO, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), PlaneAngleRadians.PI, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), PlaneAngleRadians.PI_OVER_TWO, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), 0.0, EPS);
+        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.MINUS_PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
+        Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);
     }
 
     @Test
     public void testNormalizeAzimuth_NaNAndInfinite() {
         // act/assert
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NaN), Double.NaN, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), Double.NEGATIVE_INFINITY, EPS);
-        Assert.assertEquals(PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), Double.POSITIVE_INFINITY, EPS);
+        Assert.assertEquals(Double.NaN, PolarCoordinates.normalizeAzimuth(Double.NaN), EPS);
+        Assert.assertEquals(Double.NEGATIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.NEGATIVE_INFINITY), EPS);
+        Assert.assertEquals(Double.POSITIVE_INFINITY, PolarCoordinates.normalizeAzimuth(Double.POSITIVE_INFINITY), EPS);
     }
 
     private void checkPolar(PolarCoordinates polar, double radius, double azimuth) {

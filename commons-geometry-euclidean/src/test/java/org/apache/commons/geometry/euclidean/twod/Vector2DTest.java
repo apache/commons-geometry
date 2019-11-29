@@ -58,11 +58,11 @@ public class Vector2DTest {
         GeometryTestUtils.assertThrows(() -> Vector2D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
 
-        Assert.assertSame(Vector2D.Unit.PLUS_X.normalize(), Vector2D.Unit.PLUS_X);
-        Assert.assertSame(Vector2D.Unit.MINUS_X.normalize(), Vector2D.Unit.MINUS_X);
+        Assert.assertSame(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X.normalize());
+        Assert.assertSame(Vector2D.Unit.MINUS_X, Vector2D.Unit.MINUS_X.normalize());
 
-        Assert.assertSame(Vector2D.Unit.PLUS_Y.normalize(), Vector2D.Unit.PLUS_Y);
-        Assert.assertSame(Vector2D.Unit.MINUS_Y.normalize(), Vector2D.Unit.MINUS_Y);
+        Assert.assertSame(Vector2D.Unit.PLUS_Y, Vector2D.Unit.PLUS_Y.normalize());
+        Assert.assertSame(Vector2D.Unit.MINUS_Y, Vector2D.Unit.MINUS_Y.normalize());
     }
 
     @Test

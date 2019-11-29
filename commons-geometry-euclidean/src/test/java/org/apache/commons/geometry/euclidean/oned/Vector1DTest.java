@@ -55,8 +55,8 @@ public class Vector1DTest {
         GeometryTestUtils.assertThrows(() -> Vector1D.NEGATIVE_INFINITY.normalize(),
                 IllegalNormException.class);
 
-        Assert.assertSame(Vector1D.Unit.PLUS.normalize(), Vector1D.Unit.PLUS);
-        Assert.assertSame(Vector1D.Unit.MINUS.normalize(), Vector1D.Unit.MINUS);
+        Assert.assertSame(Vector1D.Unit.PLUS, Vector1D.Unit.PLUS.normalize());
+        Assert.assertSame(Vector1D.Unit.MINUS, Vector1D.Unit.MINUS.normalize());
     }
 
     @Test
