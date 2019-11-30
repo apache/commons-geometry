@@ -61,7 +61,7 @@ public class ConvexAreaTest {
                     Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 1), PlaneAngleRadians.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION)
+                    Line.fromPointAndAngle(Vector2D.of(0, 1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 );
 
         // act

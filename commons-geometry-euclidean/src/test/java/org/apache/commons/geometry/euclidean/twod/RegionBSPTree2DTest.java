@@ -960,7 +960,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBuilder_mixedArguments() {
         // arrange
-        Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        Line minusYAxis = Line.fromPointAndAngle(Vector2D.ZERO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         Polyline path = Polyline.builder(TEST_PRECISION)
             .append(Vector2D.Unit.PLUS_X)

@@ -403,7 +403,7 @@ public final class QuaternionRotation implements Rotation3D {
 
             final double angle2 = angle2Sin > AXIS_ANGLE_SINGULARITY_THRESHOLD ?
                     PlaneAngleRadians.PI_OVER_TWO :
-                    PlaneAngleRadians.MINUS_PI_OVER_TWO;
+                    -PlaneAngleRadians.PI_OVER_TWO;
 
             return new double[] {
                 Math.atan2(angle1TanY, angle1TanX),

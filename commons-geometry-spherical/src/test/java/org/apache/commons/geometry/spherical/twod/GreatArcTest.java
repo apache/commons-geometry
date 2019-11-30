@@ -213,7 +213,7 @@ public class GreatArcTest {
     public void testTransform() {
         // arrange
         GreatArc arc = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION)
-                .arc(PlaneAngleRadians.PI, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+                .arc(PlaneAngleRadians.PI, -PlaneAngleRadians.PI_OVER_TWO);
 
         Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO)
                 .reflect(Point2S.of(-0.25 * PlaneAngleRadians.PI,  PlaneAngleRadians.PI_OVER_TWO));

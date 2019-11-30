@@ -141,7 +141,7 @@ public class SubGreatCircleTest {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
         RegionBSPTree1S region = RegionBSPTree1S.empty();
-        region.add(AngularInterval.of(PlaneAngleRadians.PI, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION));
+        region.add(AngularInterval.of(PlaneAngleRadians.PI, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
         region.add(AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO)

@@ -171,8 +171,8 @@ public class AbstractGreatArcPathConnectorTest {
                 .arc(0, PlaneAngleRadians.PI);
 
         GreatArc separateArc = GreatArc.fromPoints(
-                Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.7 * PlaneAngleRadians.PI),
-                Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.8 * PlaneAngleRadians.PI),
+                Point2S.of(-PlaneAngleRadians.PI_OVER_TWO, 0.7 * PlaneAngleRadians.PI),
+                Point2S.of(-PlaneAngleRadians.PI_OVER_TWO, 0.8 * PlaneAngleRadians.PI),
                 TEST_PRECISION);
 
         // act

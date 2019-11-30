@@ -66,7 +66,7 @@ public class Point1STest {
 
         checkPoint(Point1S.of(PlaneAngle.ofDegrees(90)), PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO);
         checkPoint(Point1S.of(PlaneAngle.ofTurns(0.5)), PlaneAngleRadians.PI, PlaneAngleRadians.PI);
-        checkPoint(Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO), PlaneAngleRadians.MINUS_PI_OVER_TWO, 1.5 * PlaneAngleRadians.PI);
+        checkPoint(Point1S.of(-PlaneAngleRadians.PI_OVER_TWO), -PlaneAngleRadians.PI_OVER_TWO, 1.5 * PlaneAngleRadians.PI);
 
         double base = PlaneAngleRadians.PI_OVER_TWO;
         for (int k = -3; k <= 3; ++k) {
@@ -90,7 +90,7 @@ public class Point1STest {
         checkPoint(Point1S.from(PolarCoordinates.of(100, 0)), 0.0);
         checkPoint(Point1S.from(PolarCoordinates.of(1, PlaneAngleRadians.PI_OVER_TWO)), PlaneAngleRadians.PI_OVER_TWO);
         checkPoint(Point1S.from(PolarCoordinates.of(0.5, PlaneAngleRadians.PI)), PlaneAngleRadians.PI);
-        checkPoint(Point1S.from(PolarCoordinates.of(1e-4, PlaneAngleRadians.MINUS_PI_OVER_TWO)), 1.5 * PlaneAngleRadians.PI);
+        checkPoint(Point1S.from(PolarCoordinates.of(1e-4, -PlaneAngleRadians.PI_OVER_TWO)), 1.5 * PlaneAngleRadians.PI);
     }
 
     @Test
@@ -410,13 +410,13 @@ public class Point1STest {
         checkPoint(p1.below(p1), -PlaneAngleRadians.TWO_PI);
         checkPoint(p2.below(p1), -1.5 * PlaneAngleRadians.PI);
         checkPoint(p3.below(p1), -PlaneAngleRadians.PI);
-        checkPoint(p4.below(p1), PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkPoint(p4.below(p1), -PlaneAngleRadians.PI_OVER_TWO);
         checkPoint(p5.below(p1), -PlaneAngleRadians.TWO_PI);
 
         checkPoint(p1.below(p3), 0.0);
         checkPoint(p2.below(p3), PlaneAngleRadians.PI_OVER_TWO);
         checkPoint(p3.below(p3), -PlaneAngleRadians.PI);
-        checkPoint(p4.below(p3), PlaneAngleRadians.MINUS_PI_OVER_TWO);
+        checkPoint(p4.below(p3), -PlaneAngleRadians.PI_OVER_TWO);
         checkPoint(p5.below(p3), 0.0);
     }
 

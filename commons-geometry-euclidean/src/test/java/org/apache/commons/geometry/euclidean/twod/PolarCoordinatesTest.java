@@ -34,7 +34,7 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.of(2, 0), 2, 0);
         checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.PI_OVER_TWO), 2, PlaneAngleRadians.PI_OVER_TWO);
         checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.PI), 2, PlaneAngleRadians.PI);
-        checkPolar(PolarCoordinates.of(2, PlaneAngleRadians.MINUS_PI_OVER_TWO), 2, PlaneAngleRadians.THREE_PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(2, -PlaneAngleRadians.PI_OVER_TWO), 2, PlaneAngleRadians.THREE_PI_OVER_TWO);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class PolarCoordinatesTest {
         checkPolar(PolarCoordinates.of(-1, 0), 1, PlaneAngleRadians.PI);
         checkPolar(PolarCoordinates.of(-1e-6, PlaneAngleRadians.PI_OVER_TWO), 1e-6, PlaneAngleRadians.THREE_PI_OVER_TWO);
         checkPolar(PolarCoordinates.of(-2, PlaneAngleRadians.PI), 2, 0);
-        checkPolar(PolarCoordinates.of(-3, PlaneAngleRadians.MINUS_PI_OVER_TWO), 3, PlaneAngleRadians.PI_OVER_TWO);
+        checkPolar(PolarCoordinates.of(-3, -PlaneAngleRadians.PI_OVER_TWO), 3, PlaneAngleRadians.PI_OVER_TWO);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class PolarCoordinatesTest {
         checkVector(PolarCoordinates.of(1, PlaneAngleRadians.PI).toCartesian(), -1, 0);
         checkVector(PolarCoordinates.of(sqrt2, -0.75 * PlaneAngleRadians.PI).toCartesian(), -1, -1);
 
-        checkVector(PolarCoordinates.of(1, PlaneAngleRadians.MINUS_PI_OVER_TWO).toCartesian(), 0, -1);
+        checkVector(PolarCoordinates.of(1, -PlaneAngleRadians.PI_OVER_TWO).toCartesian(), 0, -1);
         checkVector(PolarCoordinates.of(sqrt2, -0.25 * PlaneAngleRadians.PI).toCartesian(), 1, -1);
     }
 
@@ -289,7 +289,7 @@ public class PolarCoordinatesTest {
         checkPoint(PolarCoordinates.toCartesian(1, PlaneAngleRadians.PI), -1, 0);
         checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.75 * PlaneAngleRadians.PI), -1, -1);
 
-        checkPoint(PolarCoordinates.toCartesian(1, PlaneAngleRadians.MINUS_PI_OVER_TWO), 0, -1);
+        checkPoint(PolarCoordinates.toCartesian(1, -PlaneAngleRadians.PI_OVER_TWO), 0, -1);
         checkPoint(PolarCoordinates.toCartesian(sqrt2, -0.25 * PlaneAngleRadians.PI), 1, -1);
     }
 
@@ -346,7 +346,7 @@ public class PolarCoordinatesTest {
         Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.THREE_PI_OVER_TWO), EPS);
         Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.TWO_PI), EPS);
 
-        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(PlaneAngleRadians.MINUS_PI_OVER_TWO), EPS);
+        Assert.assertEquals(PlaneAngleRadians.THREE_PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI_OVER_TWO), EPS);
         Assert.assertEquals(PlaneAngleRadians.PI, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI), EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.PI - PlaneAngleRadians.PI_OVER_TWO), EPS);
         Assert.assertEquals(0.0, PolarCoordinates.normalizeAzimuth(-PlaneAngleRadians.TWO_PI), EPS);

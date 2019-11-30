@@ -219,15 +219,15 @@ public class AngularIntervalTest {
     @Test
     public void testClassify_halfPi() {
         // arrange
-        AngularInterval interval = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval interval = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act/assert
         checkClassify(interval, RegionLocation.OUTSIDE,
-                Point1S.ZERO, Point1S.of(PlaneAngleRadians.PI_OVER_TWO - 0.1), Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO + 0.1));
+                Point1S.ZERO, Point1S.of(PlaneAngleRadians.PI_OVER_TWO - 0.1), Point1S.of(-PlaneAngleRadians.PI_OVER_TWO + 0.1));
         checkClassify(interval, RegionLocation.BOUNDARY,
                 Point1S.of(PlaneAngleRadians.PI_OVER_TWO), Point1S.of(1.5 * PlaneAngleRadians.PI));
         checkClassify(interval, RegionLocation.INSIDE,
-                Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO + 0.1), Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO - 0.1));
+                Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO + 0.1), Point1S.of(-PlaneAngleRadians.PI_OVER_TWO - 0.1));
     }
 
     @Test
@@ -328,7 +328,7 @@ public class AngularIntervalTest {
 
         checkClassify(tree, RegionLocation.INSIDE,
                 Point1S.ZERO, Point1S.of(PlaneAngleRadians.PI_OVER_TWO),
-                Point1S.PI, Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO));
+                Point1S.PI, Point1S.of(-PlaneAngleRadians.PI_OVER_TWO));
     }
 
     @Test
@@ -472,7 +472,7 @@ public class AngularIntervalTest {
         RegionBSPTree1S minus = split.getMinus();
         checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(PlaneAngleRadians.PI_OVER_TWO));
         checkClassify(minus, RegionLocation.INSIDE,
-                Point1S.PI, Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO), Point1S.of(-0.25 * PlaneAngleRadians.PI));
+                Point1S.PI, Point1S.of(-PlaneAngleRadians.PI_OVER_TWO), Point1S.of(-0.25 * PlaneAngleRadians.PI));
         checkClassify(minus, RegionLocation.OUTSIDE,
                 Point1S.ZERO, Point1S.of(0.25 * PlaneAngleRadians.PI));
 
@@ -481,7 +481,7 @@ public class AngularIntervalTest {
         checkClassify(plus, RegionLocation.INSIDE,
                 Point1S.ZERO, Point1S.of(0.25 * PlaneAngleRadians.PI));
         checkClassify(plus, RegionLocation.OUTSIDE,
-                Point1S.PI, Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO), Point1S.of(-0.25 * PlaneAngleRadians.PI));
+                Point1S.PI, Point1S.of(-PlaneAngleRadians.PI_OVER_TWO), Point1S.of(-0.25 * PlaneAngleRadians.PI));
     }
 
     @Test
@@ -500,14 +500,14 @@ public class AngularIntervalTest {
         checkClassify(minus, RegionLocation.BOUNDARY, Point1S.of(PlaneAngleRadians.PI), cut.getPoint());
         checkClassify(minus, RegionLocation.INSIDE, Point1S.of(0.8 * PlaneAngleRadians.PI));
         checkClassify(minus, RegionLocation.OUTSIDE,
-                Point1S.ZERO, Point1S.of(PlaneAngleRadians.TWO_PI), Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO),
+                Point1S.ZERO, Point1S.of(PlaneAngleRadians.TWO_PI), Point1S.of(-PlaneAngleRadians.PI_OVER_TWO),
                 Point1S.of(0.7 * PlaneAngleRadians.PI));
 
         RegionBSPTree1S plus = split.getPlus();
         checkClassify(plus, RegionLocation.BOUNDARY, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), cut.getPoint());
         checkClassify(plus, RegionLocation.INSIDE, Point1S.of(0.6 * PlaneAngleRadians.PI));
         checkClassify(plus, RegionLocation.OUTSIDE,
-                Point1S.ZERO, Point1S.of(PlaneAngleRadians.TWO_PI), Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO),
+                Point1S.ZERO, Point1S.of(PlaneAngleRadians.TWO_PI), Point1S.of(-PlaneAngleRadians.PI_OVER_TWO),
                 Point1S.of(0.8 * PlaneAngleRadians.PI));
     }
 
@@ -551,7 +551,7 @@ public class AngularIntervalTest {
         }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO + 1, TEST_PRECISION);
+            AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO + 1, TEST_PRECISION);
         }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -589,7 +589,7 @@ public class AngularIntervalTest {
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(Point1S.of(PlaneAngleRadians.PI_OVER_TWO),
-                    Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO + 1), TEST_PRECISION);
+                    Point1S.of(-PlaneAngleRadians.PI_OVER_TWO + 1), TEST_PRECISION);
         }, GeometryException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -734,7 +734,7 @@ public class AngularIntervalTest {
     @Test
     public void testSplitDiameter_both_negativeFacingSplitter() {
         // arrange
-        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
 
         // act
@@ -750,7 +750,7 @@ public class AngularIntervalTest {
     @Test
     public void testSplitDiameter_both_positiveFacingSplitter() {
         // arrange
-        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         CutAngle splitter = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
 
         // act
@@ -766,7 +766,7 @@ public class AngularIntervalTest {
     @Test
     public void testSplitDiameter_both_antipodal_negativeFacingSplitter() {
         // arrange
-        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         CutAngle splitter = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
@@ -782,7 +782,7 @@ public class AngularIntervalTest {
     @Test
     public void testSplitDiameter_both_antipodal_positiveFacingSplitter() {
         // arrange
-        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         CutAngle splitter = CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
@@ -798,7 +798,7 @@ public class AngularIntervalTest {
     @Test
     public void testSplitDiameter_splitOnBoundary_negativeFacing() {
         // arrange
-        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION);
+        AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
         CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
         // act

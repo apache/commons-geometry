@@ -98,7 +98,7 @@ public class LineTest {
                 Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y);
         checkLine(Line.fromPointAndAngle(Vector2D.of(-1, -1), PlaneAngleRadians.PI, TEST_PRECISION),
                 Vector2D.of(0, -1), Vector2D.Unit.MINUS_X);
-        checkLine(Line.fromPointAndAngle(Vector2D.of(1, -1), PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION),
+        checkLine(Line.fromPointAndAngle(Vector2D.of(1, -1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
                 Vector2D.of(1, 0), Vector2D.Unit.MINUS_Y);
         checkLine(Line.fromPointAndAngle(Vector2D.of(-1, 1), PlaneAngleRadians.TWO_PI, TEST_PRECISION),
                 Vector2D.of(0, 1), Vector2D.Unit.PLUS_X);

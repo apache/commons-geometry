@@ -386,7 +386,7 @@ public class AffineTransformMatrix2DTest {
     public void testApply_rotate() {
         // arrange
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
-                .rotate(PlaneAngleRadians.MINUS_PI_OVER_TWO);
+                .rotate(-PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -403,7 +403,7 @@ public class AffineTransformMatrix2DTest {
         // arrange
         Vector2D center = Vector2D.of(1, 2);
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
-                .rotate(center, PlaneAngleRadians.MINUS_PI_OVER_TWO);
+                .rotate(center, -PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {
@@ -470,7 +470,7 @@ public class AffineTransformMatrix2DTest {
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.identity()
                 .scale(scale)
                 .translate(translation)
-                .rotate(PlaneAngleRadians.MINUS_PI_OVER_TWO);
+                .rotate(-PlaneAngleRadians.PI_OVER_TWO);
 
         // act/assert
         runWithCoordinates((x, y) -> {

@@ -32,7 +32,7 @@ public class Transform1STest {
 
     private static final Point1S PI = Point1S.of(PlaneAngleRadians.PI);
 
-    private static final Point1S MINUS_HALF_PI = Point1S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO);
+    private static final Point1S MINUS_HALF_PI = Point1S.of(-PlaneAngleRadians.PI_OVER_TWO);
 
     @Test
     public void testIdentity() {

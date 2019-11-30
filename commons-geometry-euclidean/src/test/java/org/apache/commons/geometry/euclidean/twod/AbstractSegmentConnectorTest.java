@@ -268,7 +268,7 @@ public class AbstractSegmentConnectorTest {
                 .append(Line.fromPointAndAngle(p1, -0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(almostP1, almostP1))
                 .append(p2)
                 .append(p0)
-                .append(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION)
+                .append(Line.fromPointAndAngle(Vector2D.ZERO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                         .segment(almostP0, almostP0))
                 .build();
 
@@ -293,7 +293,7 @@ public class AbstractSegmentConnectorTest {
         Segment seg0 = Segment.fromPoints(p0, p1, TEST_PRECISION);
         Segment seg1 = Segment.fromPoints(p1, p0, TEST_PRECISION);
         Segment seg2 = Line.fromPointAndAngle(p1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p1, p1);
-        Segment seg3 = Line.fromPointAndAngle(p0, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        Segment seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
         List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);
@@ -319,7 +319,7 @@ public class AbstractSegmentConnectorTest {
         Segment seg0 = Line.fromPointAndAngle(p0, 0.0, TEST_PRECISION).segment(p0, p0);
         Segment seg1 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
         Segment seg2 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
-        Segment seg3 = Line.fromPointAndAngle(p0, PlaneAngleRadians.MINUS_PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        Segment seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
         List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);

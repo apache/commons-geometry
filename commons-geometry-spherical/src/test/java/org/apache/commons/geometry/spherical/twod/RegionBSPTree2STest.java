@@ -290,7 +290,7 @@ public class RegionBSPTree2STest {
         SphericalTestUtils.assertPointsEq(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO),
                 tree.project(Point2S.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO + 0.2)), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_K,
-                tree.project(Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.2)), TEST_EPS);
+                tree.project(Point2S.of(-PlaneAngleRadians.PI_OVER_TWO, 0.2)), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.PLUS_I,
                 tree.project(Point2S.of(-0.5, PlaneAngleRadians.PI_OVER_TWO)), TEST_EPS);
@@ -564,7 +564,7 @@ public class RegionBSPTree2STest {
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.BOUNDARY,
                 Point2S.PLUS_I, Point2S.MINUS_J, Point2S.PLUS_K,
-                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(PlaneAngleRadians.MINUS_PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
+                Point2S.of(0, 0.25 * PlaneAngleRadians.PI), Point2S.of(-PlaneAngleRadians.PI_OVER_TWO, 0.304 * PlaneAngleRadians.PI),
                 Point2S.of(-0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
