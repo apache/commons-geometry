@@ -583,6 +583,7 @@
           <plugin>
             <groupId>org.eluder.coveralls</groupId>
             <artifactId>coveralls-maven-plugin</artifactId>
+            <version>${commons.coveralls.version}</version>
             <configuration>
               <timestampFormat>${commons.coveralls.timestampFormat}</timestampFormat>
             </configuration>
