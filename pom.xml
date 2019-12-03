@@ -79,13 +79,6 @@
     <geometry.jgit.buildnumber.version>1.2.10</geometry.jgit.buildnumber.version>
     <implementation.build>${git.revision}; ${maven.build.timestamp}</implementation.build>
 
-    <!-- Override default buildNumber timestamp format, needed for coveralls plugin 
-
-       Commented out for a test of coveralls. The format for the ${timestamp} property will be EpochMillis
-       and this is configured in the coveralls profile.
-    -->
-    <!--  <maven.buildNumber.timestampFormat>{0,date,yyyy-MM-dd HH:mm:ssZ}</maven.buildNumber.timestampFormat> -->
-
     <!--
         Override so that "mvn commons:download-page" will generates a web page
         referring to the files created by the "dist-archive" module.
