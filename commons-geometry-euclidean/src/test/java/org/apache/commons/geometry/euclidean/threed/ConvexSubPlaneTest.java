@@ -597,6 +597,22 @@ public class ConvexSubPlaneTest {
         Assert.assertSame(sp, split.getPlus());
     }
 
+    @Test
+    public void testToString() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.ZERO,
+                    Vector3D.Unit.PLUS_X,
+                    Vector3D.Unit.PLUS_Y
+                ), TEST_PRECISION);
+
+        // act
+        String str = sp.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("plane=") && str.contains("subspaceRegion="));
+    }
+
     private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {
         u = u.normalize();
         v = v.normalize();

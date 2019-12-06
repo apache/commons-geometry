@@ -394,6 +394,18 @@ public class SubPlaneTest {
     }
 
     @Test
+    public void testToString() {
+        // arrange
+        SubPlane sp = new SubPlane(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+
+        // act
+        String str = sp.toString();
+
+        // assert
+        Assert.assertTrue(str.contains("plane=") && str.contains("subspaceRegion="));
+    }
+
+    @Test
     public void testBuilder() {
         // arrange
         Plane mainPlane = Plane.fromPointAndPlaneVectors(
