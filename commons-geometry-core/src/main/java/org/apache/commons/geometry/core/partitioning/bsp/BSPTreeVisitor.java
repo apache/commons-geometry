@@ -28,7 +28,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
     /** Enum used to specify the order in which visitors should visit the nodes
      * in the tree.
      */
-    enum Order {
+    enum VisitOrder {
 
         /** Indicates that the visitor should first visit the plus sub-tree, then
          * the minus sub-tree and then the current node.
@@ -58,24 +58,43 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** Indicates that the visitor should first visit the current node, then the
          * minus sub-tree, and then the plus sub-tree.
          */
-        NODE_MINUS_PLUS;
+        NODE_MINUS_PLUS,
+
+        /** Indicates that the visitor should not visit any of the nodes in this subtree. */
+        NONE;
+    }
+
+    /** Enum representing the result of a BSP tree node visit operation.
+     */
+    enum VisitResult {
+
+        /** Indicates that the visit operation should continue with the remaining nodes in
+         * the BSP tree.
+         */
+        CONTINUE,
+
+        /** Indicates that the visit operation should terminate and not visit any further
+         * nodes in the tree.
+         */
+        TERMINATE
     }
 
     /** Visit a node in a BSP tree. This method is called for both internal nodes and
      * leaf nodes.
      * @param node the node being visited
+     * @return the result of the visit operation
      */
-    void visit(N node);
+    VisitResult visit(N node);
 
     /** Determine the visit order for the given internal node. This is called for each
-     * internal node before {@link #visit(BSPTree.Node)} is called. Returning null from
-     * this method skips the subtree rooted at the given node. This method is not called
-     * on leaf nodes.
+     * internal node before {@link #visit(BSPTree.Node)} is called. Returning null
+     * or {@link VisitOrder#NONE}from this method skips the subtree rooted at the given node.
+     * This method is not called on leaf nodes.
      * @param internalNode the internal node to determine the visit order for
      * @return the order that the subtree rooted at the given node should be visited
      */
-    default Order visitOrder(final N internalNode) {
-        return Order.NODE_MINUS_PLUS;
+    default VisitOrder visitOrder(final N internalNode) {
+        return VisitOrder.NODE_MINUS_PLUS;
     }
 
     /** Abstract class for {@link BSPTreeVisitor} implementations that base their visit
@@ -104,9 +123,9 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
     }
 
     /** {@link BSPTreeVisitor} base class that orders tree nodes so that nodes closest to the target point are
-     * visited first. This is done by choosing {@link Order#MINUS_NODE_PLUS}
-     * when the target point lies on the minus side of the node's cut hyperplane and {@link Order#PLUS_NODE_MINUS}
-     * when it lies on the plus side. The order {@link Order#MINUS_NODE_PLUS} order is used when
+     * visited first. This is done by choosing {@link VisitOrder#MINUS_NODE_PLUS}
+     * when the target point lies on the minus side of the node's cut hyperplane and {@link VisitOrder#PLUS_NODE_MINUS}
+     * when it lies on the plus side. The order {@link VisitOrder#MINUS_NODE_PLUS} order is used when
      * the target point lies directly on the node's cut hyerplane and no child node is closer than the other.
      * @param <P> Point implementation type
      * @param <N> BSP tree node implementation type
@@ -122,18 +141,18 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(N node) {
+        public VisitOrder visitOrder(N node) {
             if (node.getCutHyperplane().offset(getTarget()) > 0.0) {
-                return Order.PLUS_NODE_MINUS;
+                return VisitOrder.PLUS_NODE_MINUS;
             }
-            return Order.MINUS_NODE_PLUS;
+            return VisitOrder.MINUS_NODE_PLUS;
         }
     }
 
     /** {@link BSPTreeVisitor} base class that orders tree nodes so that nodes farthest from the target point
-     * are traversed first. This is done by choosing {@link Order#PLUS_NODE_MINUS}
-     * when the target point lies on the minus side of the node's cut hyperplane and {@link Order#MINUS_NODE_PLUS}
-     * when it lies on the plus side. The order {@link Order#MINUS_NODE_PLUS} order is used when
+     * are traversed first. This is done by choosing {@link VisitOrder#PLUS_NODE_MINUS}
+     * when the target point lies on the minus side of the node's cut hyperplane and {@link VisitOrder#MINUS_NODE_PLUS}
+     * when it lies on the plus side. The order {@link VisitOrder#MINUS_NODE_PLUS} order is used when
      * the target point lies directly on the node's cut hyerplane and no child node is closer than the other.
      * @param <P> Point implementation type
      * @param <N> BSP tree node implementation type
@@ -149,11 +168,11 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(N node) {
+        public VisitOrder visitOrder(N node) {
             if (node.getCutHyperplane().offset(getTarget()) < 0.0) {
-                return Order.PLUS_NODE_MINUS;
+                return VisitOrder.PLUS_NODE_MINUS;
             }
-            return Order.MINUS_NODE_PLUS;
+            return VisitOrder.MINUS_NODE_PLUS;
         }
     }
 }

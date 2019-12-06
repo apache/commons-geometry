@@ -56,7 +56,7 @@ final class BSPTreePrinter<P extends Point<P>, N extends Node<P, N>>
 
     /** {@inheritDoc} */
     @Override
-    public void visit(final N node) {
+    public VisitResult visit(final N node) {
         final int depth = node.depth();
 
         if (depth <= maxDepth) {
@@ -66,12 +66,17 @@ final class BSPTreePrinter<P extends Point<P>, N extends Node<P, N>>
             startLine(node);
             write(ELLIPSIS);
         }
+
+        return VisitResult.CONTINUE;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Order visitOrder(final N node) {
-        return Order.NODE_MINUS_PLUS;
+    public VisitOrder visitOrder(final N node) {
+        if (node.depth() > maxDepth + 1) {
+            return VisitOrder.NONE;
+        }
+        return VisitOrder.NODE_MINUS_PLUS;
     }
 
     /** Start a line for the given node.

@@ -18,12 +18,12 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.partition.test.TestBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestFirstVisitor;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.FarthestFirstVisitor;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.Order;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestFirstVisitor;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.FarthestFirstVisitor;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.VisitOrder;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.VisitResult;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,10 +32,10 @@ public class BSPTreeVisitorTest {
     @Test
     public void testDefaultVisitOrder() {
         // arrange
-        BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> {};
+        BSPTreeVisitor<TestPoint2D, TestNode> visitor = n -> VisitResult.CONTINUE;
 
         // act/assert
-        Assert.assertEquals(Order.NODE_MINUS_PLUS, visitor.visitOrder(null));
+        Assert.assertEquals(VisitOrder.NODE_MINUS_PLUS, visitor.visitOrder(null));
     }
 
     @Test
@@ -48,25 +48,25 @@ public class BSPTreeVisitorTest {
         root.getPlus().cut(TestLine.Y_AXIS);
 
         // act
-        checkClosestFirst(new TestPoint2D(1, 1), root, Order.MINUS_NODE_PLUS);
-        checkClosestFirst(new TestPoint2D(1, 1), root.getMinus(), Order.PLUS_NODE_MINUS);
-        checkClosestFirst(new TestPoint2D(1, 1), root.getPlus(), Order.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(1, 1), root, VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(1, 1), root.getMinus(), VisitOrder.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(1, 1), root.getPlus(), VisitOrder.PLUS_NODE_MINUS);
 
-        checkClosestFirst(new TestPoint2D(-1, 1), root, Order.MINUS_NODE_PLUS);
-        checkClosestFirst(new TestPoint2D(-1, 1), root.getMinus(), Order.MINUS_NODE_PLUS);
-        checkClosestFirst(new TestPoint2D(-1, 1), root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(-1, 1), root, VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(-1, 1), root.getMinus(), VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(-1, 1), root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
 
-        checkClosestFirst(new TestPoint2D(-1, -1), root, Order.PLUS_NODE_MINUS);
-        checkClosestFirst(new TestPoint2D(-1, -1), root.getMinus(), Order.MINUS_NODE_PLUS);
-        checkClosestFirst(new TestPoint2D(-1, -1), root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(-1, -1), root, VisitOrder.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(-1, -1), root.getMinus(), VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(new TestPoint2D(-1, -1), root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
 
-        checkClosestFirst(new TestPoint2D(1, -1), root, Order.PLUS_NODE_MINUS);
-        checkClosestFirst(new TestPoint2D(1, -1), root.getMinus(), Order.PLUS_NODE_MINUS);
-        checkClosestFirst(new TestPoint2D(1, -1), root.getPlus(), Order.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(1, -1), root, VisitOrder.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(1, -1), root.getMinus(), VisitOrder.PLUS_NODE_MINUS);
+        checkClosestFirst(new TestPoint2D(1, -1), root.getPlus(), VisitOrder.PLUS_NODE_MINUS);
 
-        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
-        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
-        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
+        checkClosestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
     }
 
     @Test
@@ -79,35 +79,35 @@ public class BSPTreeVisitorTest {
         root.getPlus().cut(TestLine.Y_AXIS);
 
         // act
-        checkFarthestFirst(new TestPoint2D(1, 1), root, Order.PLUS_NODE_MINUS);
-        checkFarthestFirst(new TestPoint2D(1, 1), root.getMinus(), Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(new TestPoint2D(1, 1), root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(1, 1), root, VisitOrder.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(1, 1), root.getMinus(), VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(1, 1), root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
 
-        checkFarthestFirst(new TestPoint2D(-1, 1), root, Order.PLUS_NODE_MINUS);
-        checkFarthestFirst(new TestPoint2D(-1, 1), root.getMinus(), Order.PLUS_NODE_MINUS);
-        checkFarthestFirst(new TestPoint2D(-1, 1), root.getPlus(), Order.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(-1, 1), root, VisitOrder.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(-1, 1), root.getMinus(), VisitOrder.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(-1, 1), root.getPlus(), VisitOrder.PLUS_NODE_MINUS);
 
-        checkFarthestFirst(new TestPoint2D(-1, -1), root, Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(new TestPoint2D(-1, -1), root.getMinus(), Order.PLUS_NODE_MINUS);
-        checkFarthestFirst(new TestPoint2D(-1, -1), root.getPlus(), Order.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(-1, -1), root, VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(-1, -1), root.getMinus(), VisitOrder.PLUS_NODE_MINUS);
+        checkFarthestFirst(new TestPoint2D(-1, -1), root.getPlus(), VisitOrder.PLUS_NODE_MINUS);
 
-        checkFarthestFirst(new TestPoint2D(1, -1), root, Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(new TestPoint2D(1, -1), root.getMinus(), Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(new TestPoint2D(1, -1), root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(1, -1), root, VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(1, -1), root.getMinus(), VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(new TestPoint2D(1, -1), root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
 
-        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
-        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), Order.MINUS_NODE_PLUS);
+        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
+        checkFarthestFirst(TestPoint2D.ZERO, root.getPlus(), VisitOrder.MINUS_NODE_PLUS);
     }
 
-    private static void checkClosestFirst(TestPoint2D target, TestNode node, Order order) {
+    private static void checkClosestFirst(TestPoint2D target, TestNode node, VisitOrder order) {
         ClosestFirstStubVisitor visitor = new ClosestFirstStubVisitor(target);
 
         Assert.assertSame(target, visitor.getTarget());
         Assert.assertEquals(order, visitor.visitOrder(node));
     }
 
-    private static void checkFarthestFirst(TestPoint2D target, TestNode node, Order order) {
+    private static void checkFarthestFirst(TestPoint2D target, TestNode node, VisitOrder order) {
         FarthestFirstStubVisitor visitor = new FarthestFirstStubVisitor(target);
 
         Assert.assertSame(target, visitor.getTarget());
@@ -116,27 +116,25 @@ public class BSPTreeVisitorTest {
 
     private static class ClosestFirstStubVisitor extends ClosestFirstVisitor<TestPoint2D, TestNode> {
 
-        private static final long serialVersionUID = 1L;
-
         public ClosestFirstStubVisitor(TestPoint2D target) {
             super(target);
         }
 
         @Override
-        public void visit(TestNode node) {
+        public VisitResult visit(TestNode node) {
+            return VisitResult.CONTINUE;
         }
     }
 
     private static class FarthestFirstStubVisitor extends FarthestFirstVisitor<TestPoint2D, TestNode> {
-
-        private static final long serialVersionUID = 1L;
 
         public FarthestFirstStubVisitor(TestPoint2D target) {
             super(target);
         }
 
         @Override
-        public void visit(TestNode node) {
+        public VisitResult visit(TestNode node) {
+            return VisitResult.CONTINUE;
         }
     }
 }
