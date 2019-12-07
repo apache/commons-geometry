@@ -549,14 +549,14 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
         /** {@inheritDoc} */
         @Override
-        public VisitResult visit(final RegionNode3D node) {
+        public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
                 RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
                 addFacetContribution(boundary.getOutsideFacing(), false);
                 addFacetContribution(boundary.getInsideFacing(), true);
             }
 
-            return VisitResult.CONTINUE;
+            return Result.CONTINUE;
         }
 
         /** Return the computed size properties for the visited region.
@@ -649,20 +649,20 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
         /** {@inheritDoc} */
         @Override
-        public VisitOrder visitOrder(final RegionNode3D internalNode) {
+        public Order visitOrder(final RegionNode3D internalNode) {
             final Plane cut = (Plane) internalNode.getCutHyperplane();
             final Line3D line = segment.getLine();
 
             final boolean plusIsNear = line.getDirection().dot(cut.getNormal()) < 0;
 
             return plusIsNear ?
-                    VisitOrder.PLUS_NODE_MINUS :
-                    VisitOrder.MINUS_NODE_PLUS;
+                    Order.PLUS_NODE_MINUS :
+                    Order.MINUS_NODE_PLUS;
         }
 
         /** {@inheritDoc} */
         @Override
-        public VisitResult visit(final RegionNode3D node) {
+        public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
                 // check if the line segment intersects the cut subhyperplane
                 final Line3D line = segment.getLine();
@@ -678,12 +678,12 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
                         intersectionCut = (ConvexSubPlane) node.getCut();
 
-                        return VisitResult.TERMINATE;
+                        return Result.TERMINATE;
                     }
                 }
             }
 
-            return VisitResult.CONTINUE;
+            return Result.CONTINUE;
         }
     }
 }

@@ -805,7 +805,7 @@ public abstract class AbstractRegionBSPTree<
 
         /** {@inheritDoc} */
         @Override
-        public VisitResult visit(final N node) {
+        public Result visit(final N node) {
             final P point = getTarget();
 
             if (node.isInternal() && (minDist < 0.0 || isPossibleClosestCut(node.getCut(), point, minDist))) {
@@ -825,7 +825,7 @@ public abstract class AbstractRegionBSPTree<
                 }
             }
 
-            return VisitResult.CONTINUE;
+            return Result.CONTINUE;
         }
 
         /** Return true if the given node cut subhyperplane is a possible candidate for containing the

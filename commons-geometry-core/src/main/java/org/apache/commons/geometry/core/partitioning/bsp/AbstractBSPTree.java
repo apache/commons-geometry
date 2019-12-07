@@ -29,8 +29,6 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.VisitOrder;
-import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.VisitResult;
 
 /** Abstract class for Binary Space Partitioning (BSP) tree implementations.
  * @param <P> Point implementation type
@@ -89,7 +87,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** {@inheritDoc} */
     @Override
     public void accept(final BSPTreeVisitor<P, N> visitor) {
-        acceptVisitor(getRoot(), visitor);
+        accept(getRoot(), visitor);
     }
 
     /** {@inheritDoc} */
@@ -351,8 +349,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param node the node to begin the visit process
      * @param visitor the visitor to pass nodes to
      */
-    protected void acceptVisitor(final N node, final BSPTreeVisitor<P, N> visitor) {
-        acceptVisitorRecursive(node, visitor);
+    protected void accept(final N node, final BSPTreeVisitor<P, N> visitor) {
+        acceptRecursive(node, visitor);
     }
 
     /** Recursively visit the nodes in the subtree rooted at the given node.
@@ -360,39 +358,39 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param visitor the visitor to pass nodes to
      * @return true if the visit operation should continue
      */
-    private boolean acceptVisitorRecursive(final N node, final BSPTreeVisitor<P, N> visitor) {
+    private boolean acceptRecursive(final N node, final BSPTreeVisitor<P, N> visitor) {
         if (node.isLeaf()) {
             return shouldContinueVisit(visitor.visit(node));
         } else {
-            final VisitOrder order = visitor.visitOrder(node);
+            final BSPTreeVisitor.Order order = visitor.visitOrder(node);
 
             if (order != null) {
 
                 switch (order) {
                 case PLUS_MINUS_NODE:
-                    return acceptVisitorRecursive(node.getPlus(), visitor) &&
-                            acceptVisitorRecursive(node.getMinus(), visitor) &&
+                    return acceptRecursive(node.getPlus(), visitor) &&
+                            acceptRecursive(node.getMinus(), visitor) &&
                             shouldContinueVisit(visitor.visit(node));
                 case PLUS_NODE_MINUS:
-                    return acceptVisitorRecursive(node.getPlus(), visitor) &&
+                    return acceptRecursive(node.getPlus(), visitor) &&
                             shouldContinueVisit(visitor.visit(node)) &&
-                            acceptVisitorRecursive(node.getMinus(), visitor);
+                            acceptRecursive(node.getMinus(), visitor);
                 case MINUS_PLUS_NODE:
-                    return acceptVisitorRecursive(node.getMinus(), visitor) &&
-                            acceptVisitorRecursive(node.getPlus(), visitor) &&
+                    return acceptRecursive(node.getMinus(), visitor) &&
+                            acceptRecursive(node.getPlus(), visitor) &&
                             shouldContinueVisit(visitor.visit(node));
                 case MINUS_NODE_PLUS:
-                    return acceptVisitorRecursive(node.getMinus(), visitor) &&
+                    return acceptRecursive(node.getMinus(), visitor) &&
                             shouldContinueVisit(visitor.visit(node)) &&
-                            acceptVisitorRecursive(node.getPlus(), visitor);
+                            acceptRecursive(node.getPlus(), visitor);
                 case NODE_PLUS_MINUS:
                     return shouldContinueVisit(visitor.visit(node)) &&
-                            acceptVisitorRecursive(node.getPlus(), visitor) &&
-                            acceptVisitorRecursive(node.getMinus(), visitor);
+                            acceptRecursive(node.getPlus(), visitor) &&
+                            acceptRecursive(node.getMinus(), visitor);
                 case  NODE_MINUS_PLUS:
                     return shouldContinueVisit(visitor.visit(node)) &&
-                            acceptVisitorRecursive(node.getMinus(), visitor) &&
-                            acceptVisitorRecursive(node.getPlus(), visitor);
+                            acceptRecursive(node.getMinus(), visitor) &&
+                            acceptRecursive(node.getPlus(), visitor);
                 default: // NONE
                     break;
                 }
@@ -408,8 +406,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @return true if the visit operation should continue with remaining nodes in the
      *      BSP tree
      */
-    private boolean shouldContinueVisit(final VisitResult result) {
-        return result == VisitResult.CONTINUE;
+    private boolean shouldContinueVisit(final BSPTreeVisitor.Result result) {
+        return result == BSPTreeVisitor.Result.CONTINUE;
     }
 
     /** Cut a node with a hyperplane. The algorithm proceeds as follows:
@@ -903,7 +901,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** {@inheritDoc} */
         @Override
         public void accept(final BSPTreeVisitor<P, N> visitor) {
-            tree.acceptVisitor(getSelf(), visitor);
+            tree.accept(getSelf(), visitor);
         }
 
         /** {@inheritDoc} */
