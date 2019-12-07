@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -595,6 +596,23 @@ public class ConvexSubPlaneTest {
 
         Assert.assertNull(split.getMinus());
         Assert.assertSame(sp, split.getPlus());
+    }
+
+    @Test
+    public void testToString() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Vector3D.ZERO,
+                    Vector3D.Unit.PLUS_X,
+                    Vector3D.Unit.PLUS_Y
+                ), TEST_PRECISION);
+
+        // act
+        String str = sp.toString();
+
+        // assert
+        GeometryTestUtils.assertContains("plane= Plane[", str);
+        GeometryTestUtils.assertContains("subspaceRegion= ConvexArea[", str);
     }
 
     private static void checkPlane(Plane plane, Vector3D origin, Vector3D u, Vector3D v) {

@@ -80,7 +80,8 @@ abstract class AbstractSubPlane<R extends HyperplaneBoundedRegion<Vector2D>>
             .append("[plane= ")
             .append(getPlane())
             .append(", subspaceRegion= ")
-            .append(getSubspaceRegion());
+            .append(getSubspaceRegion())
+            .append(']');
 
 
         return sb.toString();

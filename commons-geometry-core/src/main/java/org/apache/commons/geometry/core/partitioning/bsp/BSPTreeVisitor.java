@@ -58,19 +58,38 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
         /** Indicates that the visitor should first visit the current node, then the
          * minus sub-tree, and then the plus sub-tree.
          */
-        NODE_MINUS_PLUS;
+        NODE_MINUS_PLUS,
+
+        /** Indicates that the visitor should not visit any of the nodes in this subtree. */
+        NONE;
+    }
+
+    /** Enum representing the result of a BSP tree node visit operation.
+     */
+    enum Result {
+
+        /** Indicates that the visit operation should continue with the remaining nodes in
+         * the BSP tree.
+         */
+        CONTINUE,
+
+        /** Indicates that the visit operation should terminate and not visit any further
+         * nodes in the tree.
+         */
+        TERMINATE
     }
 
     /** Visit a node in a BSP tree. This method is called for both internal nodes and
      * leaf nodes.
      * @param node the node being visited
+     * @return the result of the visit operation
      */
-    void visit(N node);
+    Result visit(N node);
 
     /** Determine the visit order for the given internal node. This is called for each
-     * internal node before {@link #visit(BSPTree.Node)} is called. Returning null from
-     * this method skips the subtree rooted at the given node. This method is not called
-     * on leaf nodes.
+     * internal node before {@link #visit(BSPTree.Node)} is called. Returning null
+     * or {@link Order#NONE}from this method skips the subtree rooted at the given node.
+     * This method is not called on leaf nodes.
      * @param internalNode the internal node to determine the visit order for
      * @return the order that the subtree rooted at the given node should be visited
      */
@@ -122,7 +141,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(N node) {
+        public Order visitOrder(final N node) {
             if (node.getCutHyperplane().offset(getTarget()) > 0.0) {
                 return Order.PLUS_NODE_MINUS;
             }
@@ -149,7 +168,7 @@ public interface BSPTreeVisitor<P extends Point<P>, N extends BSPTree.Node<P, N>
 
         /** {@inheritDoc} */
         @Override
-        public Order visitOrder(N node) {
+        public Order visitOrder(final N node) {
             if (node.getCutHyperplane().offset(getTarget()) < 0.0) {
                 return Order.PLUS_NODE_MINUS;
             }

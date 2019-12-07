@@ -2201,8 +2201,6 @@ public class AbstractRegionBSPTreeTest {
 
     private static class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, TestRegionNode> {
 
-        private static final long serialVersionUID = 20190405L;
-
         TestRegionBSPTree() {
             this(true);
         }
@@ -2242,8 +2240,6 @@ public class AbstractRegionBSPTreeTest {
     }
 
     private static class TestRegionNode extends AbstractRegionNode<TestPoint2D, TestRegionNode> {
-
-        private static final long serialVersionUID = 20190405L;
 
         protected TestRegionNode(AbstractBSPTree<TestPoint2D, TestRegionNode> tree) {
             super(tree);

@@ -1177,7 +1177,7 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testNormalize_static() {
+    public void testUnitFrom_coordinates() {
         // arrange
         double invSqrt3 = 1.0 / Math.sqrt(3.0);
 
@@ -1187,7 +1187,19 @@ public class Vector3DTest {
     }
 
     @Test
-    public void testNormalize_static_illegalNorm() {
+    public void testUnitFrom_vector() {
+        // arrange
+        double invSqrt3 = 1.0 / Math.sqrt(3.0);
+        Vector3D vec = Vector3D.of(2.0, -2.0, 2.0);
+        Vector3D.Unit unitVec = Vector3D.Unit.from(2.0, -2.0, 2.0);
+
+        // act/assert
+        checkVector(Vector3D.Unit.from(vec), invSqrt3, -invSqrt3, invSqrt3);
+        Assert.assertSame(unitVec, Vector3D.Unit.from(unitVec));
+    }
+
+    @Test
+    public void testUnitFrom_static_illegalNorm() {
         GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(0.0, 0.0, 0.0),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(Double.NaN, 1.0, 1.0),
