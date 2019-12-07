@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
@@ -38,6 +37,7 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -402,7 +402,8 @@ public class SubPlaneTest {
         String str = sp.toString();
 
         // assert
-        Assert.assertTrue(str.contains("plane=") && str.contains("subspaceRegion="));
+        GeometryTestUtils.assertContains("plane= Plane[", str);
+        GeometryTestUtils.assertContains("subspaceRegion= RegionBSPTree2D[", str);
     }
 
     @Test

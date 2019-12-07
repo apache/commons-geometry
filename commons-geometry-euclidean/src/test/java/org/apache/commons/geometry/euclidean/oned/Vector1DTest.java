@@ -652,14 +652,25 @@ public class Vector1DTest {
     }
 
     @Test
-    public void testNormalize_static() {
+    public void testUnitFrom_coordinates() {
         // act/assert
         checkVector(Vector1D.Unit.from(2.0), 1);
         checkVector(Vector1D.Unit.from(-4.0), -1);
     }
 
     @Test
-    public void testNormalize_static_illegalNorm() {
+    public void testUnitFrom_vector() {
+        // arrange
+        Vector1D vec = Vector1D.of(2);
+        Vector1D unitVec = Vector1D.Unit.from(2);
+
+        // act/assert
+        checkVector(Vector1D.Unit.from(vec), 1);
+        Assert.assertSame(unitVec, Vector1D.Unit.from(unitVec));
+    }
+
+    @Test
+    public void testUnitFrom_illegalNorm() {
         GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(0.0),
                 IllegalNormException.class);
         GeometryTestUtils.assertThrows(() -> Vector1D.Unit.from(Double.NaN),
