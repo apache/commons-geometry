@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -65,7 +64,7 @@ public class IntervalTest {
     @Test
     public void testOf_doubles_invalidIntervals() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> Interval.of(1, Double.NaN, TEST_PRECISION), excType);
@@ -89,7 +88,7 @@ public class IntervalTest {
     @Test
     public void testOf_points_invalidIntervals() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
@@ -139,7 +138,7 @@ public class IntervalTest {
     @Test
     public void testOf_hyperplanes_invalidArgs() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
@@ -184,7 +183,7 @@ public class IntervalTest {
     @Test
     public void testPoint_invalidArgs() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
@@ -209,7 +208,7 @@ public class IntervalTest {
     @Test
     public void testMin_invalidArgs() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(
@@ -232,7 +231,7 @@ public class IntervalTest {
     @Test
     public void testMax_invalidArgs() {
         // arrange
-        Class<?> excType = GeometryException.class;
+        Class<?> excType = IllegalArgumentException.class;
 
         // act/assert
         GeometryTestUtils.assertThrows(

@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -490,13 +489,15 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
 
         /** Validate the given subhyperplane lies on the same hyperplane.
          * @param sub subhyperplane to validate
+         * @throws IllegalArgumentException if the argument is not on the same hyperplane
+         *      as the instance
          */
         private void validateHyperplane(final SubHyperplane<Point1S> sub) {
             final CutAngle baseHyper = base.getHyperplane();
             final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
-                throw new GeometryException("Argument is not on the same " +
+                throw new IllegalArgumentException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);
             }

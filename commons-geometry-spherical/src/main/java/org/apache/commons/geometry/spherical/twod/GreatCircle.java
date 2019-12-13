@@ -18,9 +18,7 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Objects;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -29,6 +27,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a great circle on the 2-sphere. A great circle is the
  * intersection of a sphere with a plane that passes through its center. It is
@@ -215,7 +214,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start point
      * @param end end point
      * @return an arc on this circle between the given points
-     * @throws GeometryException if the specified interval is not
+     * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final Point2S start, final Point2S end) {
@@ -226,7 +225,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start subspace point
      * @param end end subspace point
      * @return an arc on this circle between the given subspace points
-     * @throws GeometryException if the specified interval is not
+     * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final Point1S start, final Point1S end) {
@@ -237,7 +236,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param start start subspace azimuth
      * @param end end subspace azimuth
      * @return an arc on this circle between the given subspace azimuths
-     * @throws GeometryException if the specified interval is not
+     * @throws IllegalArgumentException if the specified interval is not
      *      convex (ie, the angle between the points is greater than {@code pi}
      */
     public GreatArc arc(final double start, final double end) {
@@ -409,14 +408,14 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param b second point on the great circle
      * @param precision precision context used to compare floating point values
      * @return great circle instance containing the given points
-     * @throws GeometryException if either of the given points is NaN or infinite, or if the given points are
+     * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given points are
      *      equal or antipodal as evaluated by the given precision context
      */
     public static GreatCircle fromPoints(final Point2S a, final Point2S b,
             final DoublePrecisionContext precision) {
 
         if (!a.isFinite() || !b.isFinite()) {
-            throw new GeometryException("Invalid points for great circle: " + a + ", " + b);
+            throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
         }
 
         String err = null;
@@ -429,7 +428,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         }
 
         if (err != null) {
-            throw new GeometryException("Cannot create great circle from points " + a + " and " + b +
+            throw new IllegalArgumentException("Cannot create great circle from points " + a + " and " + b +
                     ": points are " + err);
         }
 

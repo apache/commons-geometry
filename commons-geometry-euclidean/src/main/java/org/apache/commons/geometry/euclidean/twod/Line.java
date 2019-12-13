@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -509,7 +508,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param precision precision context used to compare floating point values
      * @return new line containing {@code p1} and {@code p2} and pointing in the direction
      *      from {@code p1} to {@code p2}
-     * @throws GeometryValueException If the vector between {@code p1} and {@code p2} has zero length,
+     * @throws IllegalArgumentException If the vector between {@code p1} and {@code p2} has zero length,
      *      as evaluated by the given precision context
      */
     public static Line fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
@@ -521,13 +520,13 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param dir the direction of the line
      * @param precision precision context used to compare floating point values
      * @return new line containing {@code pt} and pointing in direction {@code dir}
-     * @throws GeometryValueException If {@code dir} has zero length, as evaluated by the
+     * @throws IllegalArgumentException If {@code dir} has zero length, as evaluated by the
      *      given precision context
      */
     public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir,
             final DoublePrecisionContext precision) {
         if (dir.isZero(precision)) {
-            throw new GeometryValueException("Line direction cannot be zero");
+            throw new IllegalArgumentException("Line direction cannot be zero");
         }
 
         final Vector2D normalizedDir = dir.normalize();

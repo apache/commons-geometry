@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -376,7 +375,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param center center point of the square
          * @param size the size of the square
          * @return this builder instance
-         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         * @throws IllegalArgumentException if the width or height of the defined rectangle is zero
          *      as evaluated by the precision context.
          */
         public Builder addCenteredSquare(final Vector2D center, final double size) {
@@ -387,7 +386,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param corner point in the corner of the square
          * @param size the size of the square
          * @return this builder instance
-         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         * @throws IllegalArgumentException if the width or height of the defined rectangle is zero
          *      as evaluated by the precision context.
          */
         public Builder addSquare(final Vector2D corner, final double size) {
@@ -399,7 +398,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param xSize size along the x-axis
          * @param ySize size along the y-axis
          * @return this builder instance
-         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         * @throws IllegalArgumentException if the width or height of the defined rectangle is zero
          *      as evaluated by the precision context.
          */
         public Builder addCenteredRect(final Vector2D center, final double xSize, final double ySize) {
@@ -423,7 +422,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          *      rectangle; this value may be negative, in which case {@code pt} will lie
          *      on the top of the rectangle
          * @return this builder instance
-         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         * @throws IllegalArgumentException if the width or height of the defined rectangle is zero
          *      as evaluated by the precision context.
          */
         public Builder addRect(final Vector2D pt, final double xDelta, final double yDelta) {
@@ -437,7 +436,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @param a first corner point in the rectangle (opposite of {@code b})
          * @param b second corner point in the rectangle (opposite of {@code a})
          * @return this builder instance
-         * @throws GeometryValueException if the width or height of the defined rectangle is zero
+         * @throws IllegalArgumentException if the width or height of the defined rectangle is zero
          *      as evaluated by the precision context.
          */
         public Builder addRect(final Vector2D a, final Vector2D b) {
@@ -448,7 +447,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             final double maxY = Math.max(a.getY(), b.getY());
 
             if (precision.eq(minX, maxX) || precision.eq(minY, maxY)) {
-                throw new GeometryValueException("Rectangle has zero size: " + a + ", " + b + ".");
+                throw new IllegalArgumentException("Rectangle has zero size: " + a + ", " + b + ".");
             }
 
             final Vector2D lowerLeft = Vector2D.of(minX, minY);

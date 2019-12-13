@@ -18,8 +18,6 @@ package org.apache.commons.geometry.euclidean.oned;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
-import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.core.Precision;
 
 /** Class using a matrix to represent affine transformations in 1 dimensional Euclidean space.
@@ -209,15 +207,11 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
 
     /** Get a new transform representing the inverse of the current instance.
      * @return inverse transform
-     * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
+     * @throws IllegalStateException if the transform matrix cannot be inverted
      */
     public AffineTransformMatrix1D inverse() {
 
-        final double det = this.m00;
-
-        if (!Vectors.isRealNonZero(det)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; matrix determinant is " + det);
-        }
+        final double det = getDeterminantForInverse();
 
         validateElementForInverse(m01);
 
@@ -359,18 +353,5 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
         final double c01 = (a.m00 * b.m01) + a.m01;
 
         return new AffineTransformMatrix1D(c00, c01);
-    }
-
-    /** Checks that the given matrix element is valid for use in calculation of
-     * a matrix inverse. Throws a {@link NonInvertibleTransformException} if not.
-     * @param element matrix entry to check
-     * @throws NonInvertibleTransformException if the element is not valid for use
-     *  in calculating a matrix inverse, ie if it is NaN or infinite.
-     */
-    private static void validateElementForInverse(final double element) {
-        if (!Double.isFinite(element)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " +
-                    element);
-        }
     }
 }

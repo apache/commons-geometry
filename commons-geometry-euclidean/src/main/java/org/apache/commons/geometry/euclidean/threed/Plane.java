@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -585,8 +584,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param v v vector (on plane)
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
-     *      values is zero, NaN, or infinite.
+     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
     public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v,
             final DoublePrecisionContext precision) {
@@ -604,8 +602,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
-     *      values is zero, NaN, or infinite.
+     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
     public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
         return fromPointAndNormal(Vector3D.ZERO, normal, precision);
@@ -618,8 +615,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param normal    normal direction to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
-     *      values is zero, NaN, or infinite.
+     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
      */
     public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal,
             final DoublePrecisionContext precision) {
@@ -643,7 +639,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param p3        third point belonging to the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane
-     * @throws GeometryException if the points do not define a unique plane
+     * @throws IllegalArgumentException if the points do not define a unique plane
      */
     public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
             final DoublePrecisionContext precision) {
@@ -660,8 +656,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param pts collection of sequenced points lying on the plane
      * @param precision precision context used to compare floating point values
      * @return a new plane containing the given points
-     * @throws IllegalArgumentException if the given collection does not contain at least 3 points
-     * @throws GeometryException if the points do not define a unique plane
+     * @throws IllegalArgumentException if the given collection does not contain at least 3 points or the
+     *      points do not define a unique plane
      */
     public static Plane fromPoints(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
 
@@ -730,7 +726,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         }
 
         if (u == null || w == null || nonPlanar) {
-            throw new GeometryException("Points do not define a plane: " + pts);
+            throw new IllegalArgumentException("Points do not define a plane: " + pts);
         }
 
         if (w.dot(Vector3D.of(crossSumX, crossSumY, crossSumZ)) < 0) {

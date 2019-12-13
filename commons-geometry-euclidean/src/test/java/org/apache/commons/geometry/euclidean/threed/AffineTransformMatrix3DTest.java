@@ -16,14 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils.PermuteCallback3D;
-import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.rotation.StandardRotations;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -626,9 +624,9 @@ public class AffineTransformMatrix3DTest {
     public void testApplyDirection_illegalNorm() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(1, 0, 1).applyDirection(Vector3D.Unit.PLUS_Y),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix3D.createScale(2).applyDirection(Vector3D.ZERO),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
     }
 
     @Test
@@ -950,49 +948,49 @@ public class AffineTransformMatrix3DTest {
                     0, 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is 0.0");
+        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is 0.0");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, Double.NaN, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, Double.NEGATIVE_INFINITY, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     Double.POSITIVE_INFINITY, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, Double.NaN,
                     0, 1, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: NaN");
+        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, Double.POSITIVE_INFINITY,
                     0, 0, 1, 0).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: Infinity");
+        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, Double.NEGATIVE_INFINITY).inverse();
-        }, NonInvertibleTransformException.class, "Transform is not invertible; invalid matrix element: -Infinity");
+        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: -Infinity");
     }
 
     @Test

@@ -22,8 +22,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -282,13 +280,13 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      * @param direction the direction of the plus side of the hyperplane
      * @param precision precision context used to compare floating point values
      * @return a new instance oriented in the given direction
-     * @throws GeometryValueException if the direction is zero as evaluated by the
+     * @throws IllegalArgumentException if the direction is zero as evaluated by the
      *      given precision context
      */
     public static OrientedPoint fromPointAndDirection(final Vector1D point, final Vector1D direction,
             final DoublePrecisionContext precision) {
         if (direction.isZero(precision)) {
-            throw new GeometryValueException("Oriented point direction cannot be zero");
+            throw new IllegalArgumentException("Oriented point direction cannot be zero");
         }
 
         final boolean positiveFacing = direction.getX() > 0;
@@ -520,13 +518,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** Validate the given subhyperplane lies on the same hyperplane.
          * @param sub subhyperplane to validate
+         * @throws IllegalArgumentException if the argument does not lie on
+         *      the same hyperplane as this instance
          */
         private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
             final OrientedPoint baseHyper = base.getHyperplane();
             final OrientedPoint inputHyper = (OrientedPoint) sub.getHyperplane();
 
             if (!baseHyper.eq(inputHyper)) {
-                throw new GeometryException("Argument is not on the same " +
+                throw new IllegalArgumentException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);
             }

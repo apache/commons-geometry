@@ -16,15 +16,14 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,7 +58,7 @@ public class Line3DTest {
         Assert.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
-    @Test(expected = IllegalNormException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testFromPointAndDirection_illegalDirectionNorm() {
         // act/assert
         Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.ZERO, TEST_PRECISION);
@@ -76,7 +75,7 @@ public class Line3DTest {
         Assert.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
-    @Test(expected = IllegalNormException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testFromPoints_pointsTooClose() {
         // act/assert
         Line3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(1, 1, 1 + 1e-16), TEST_PRECISION);

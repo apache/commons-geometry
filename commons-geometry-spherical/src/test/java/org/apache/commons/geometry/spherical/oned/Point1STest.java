@@ -18,9 +18,7 @@ package org.apache.commons.geometry.spherical.oned;
 
 import java.util.Comparator;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
@@ -347,15 +345,15 @@ public class Point1STest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.POSITIVE_INFINITY).normalize(0.0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NEGATIVE_INFINITY).normalize(0.0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NaN).normalize(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -386,15 +384,15 @@ public class Point1STest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.POSITIVE_INFINITY).above(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NEGATIVE_INFINITY).above(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NaN).above(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -425,15 +423,15 @@ public class Point1STest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.POSITIVE_INFINITY).below(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NEGATIVE_INFINITY).below(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Point1S.of(Double.NaN).below(Point1S.ZERO);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

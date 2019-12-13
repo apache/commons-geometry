@@ -18,9 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
-import org.apache.commons.geometry.euclidean.exception.NonInvertibleTransformException;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
-import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
@@ -327,18 +325,14 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
 
     /** Get a new transform representing the inverse of the current instance.
      * @return inverse transform
-     * @throws NonInvertibleTransformException if the transform matrix cannot be inverted
+     * @throws IllegalStateException if the transform matrix cannot be inverted
      */
     public AffineTransformMatrix3D inverse() {
 
         // Our full matrix is 4x4 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 0 1].
 
-        final double det = determinant();
-
-        if (!Vectors.isRealNonZero(det)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; matrix determinant is " + det);
-        }
+        final double det = getDeterminantForInverse();
 
         // validate the remaining matrix elements that were not part of the determinant
         validateElementForInverse(m03);
@@ -647,18 +641,5 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
                     c10, c11, c12, c13,
                     c20, c21, c22, c23
                 );
-    }
-
-    /** Checks that the given matrix element is valid for use in calculation of
-     * a matrix inverse. Throws a {@link NonInvertibleTransformException} if not.
-     * @param element matrix entry to check
-     * @throws NonInvertibleTransformException if the element is not valid for use
-     *  in calculating a matrix inverse, ie if it is NaN or infinite.
-     */
-    private static void validateElementForInverse(final double element) {
-        if (!Double.isFinite(element)) {
-            throw new NonInvertibleTransformException("Transform is not invertible; invalid matrix element: " +
-                    element);
-        }
     }
 }

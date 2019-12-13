@@ -272,9 +272,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding great circles or an instance representing the full area if no
      *      circles are given
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding great
-     *      circles do not form a convex area, meaning that there is no region that is on the minus side of all
-     *      of the bounding circles.
+     * @throws IllegalArgumentException if the given set of bounding great circles do not form a convex area,
+     *      meaning that there is no region that is on the minus side of all of the bounding circles.
      */
     public static ConvexArea2S fromBounds(final GreatCircle... bounds) {
         return fromBounds(Arrays.asList(bounds));
@@ -288,9 +287,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      * @return a new convex area instance representing the area on the minus side of all
      *      of the bounding great circles or an instance representing the full area if no
      *      circles are given
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding great
-     *      circles do not form a convex area, meaning that there is no region that is on the minus side of all
-     *      of the bounding circles.
+     * @throws IllegalArgumentException if the given set of bounding great circles do not form a convex area,
+     *      meaning that there is no region that is on the minus side of all of the bounding circles.
      */
     public static ConvexArea2S fromBounds(final Iterable<GreatCircle> bounds) {
         final List<GreatArc> arcs = new ConvexRegionBoundaryBuilder<>(GreatArc.class).build(bounds);

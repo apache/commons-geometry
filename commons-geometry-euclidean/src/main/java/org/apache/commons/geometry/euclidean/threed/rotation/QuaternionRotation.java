@@ -18,13 +18,11 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import java.util.Objects;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
 import org.apache.commons.numbers.quaternion.Slerp;
@@ -84,13 +82,10 @@ public final class QuaternionRotation implements Rotation3D {
      */
     @Override
     public Vector3D getAxis() {
-        // the most straightforward way to check if we have a normalizable
-        // vector is to just try to normalize it and see if we fail
-        try {
-            return Vector3D.Unit.from(quat.getX(), quat.getY(), quat.getZ());
-        } catch (IllegalNormException exc) {
-            return Vector3D.Unit.PLUS_X;
-        }
+        final Vector3D axis = Vectors.tryNormalize(Vector3D.of(quat.getX(), quat.getY(), quat.getZ()));
+        return (axis != null) ?
+                axis :
+                Vector3D.Unit.PLUS_X;
     }
 
     /**
@@ -568,8 +563,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @param angle angle of rotation in radians
      * @return a new instance representing the defined rotation
      *
-     * @throws IllegalNormException if the given axis cannot be normalized
-     * @throws GeometryValueException if the angle is NaN or infinite
+     * @throws IllegalArgumentException if the given axis cannot be normalized or the angle is NaN or infinite
      */
     public static QuaternionRotation fromAxisAngle(final Vector3D axis, final double angle) {
         // reference formula:
@@ -577,7 +571,7 @@ public final class QuaternionRotation implements Rotation3D {
         final Vector3D normAxis = axis.normalize();
 
         if (!Double.isFinite(angle)) {
-            throw new GeometryValueException("Invalid angle: " + angle);
+            throw new IllegalArgumentException("Invalid angle: " + angle);
         }
 
         final double halfAngle = 0.5 * angle;
@@ -603,7 +597,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @param u origin vector
      * @param v target vector
      * @return a new instance that rotates {@code u} to point in the direction of {@code v}
-     * @throws IllegalNormException if either vector has a norm of zero, NaN, or infinity
+     * @throws IllegalArgumentException if either vector has a norm of zero, NaN, or infinity
      */
     public static QuaternionRotation createVectorRotation(final Vector3D u, final Vector3D v) {
 
@@ -666,7 +660,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @param v1 first vector of the target basis
      * @param v2 second vector of the target basis
      * @return an instance that rotates the source basis to the target basis
-     * @throws IllegalNormException if any of the input vectors cannot be normalized
+     * @throws IllegalArgumentException if any of the input vectors cannot be normalized
      *      or the vectors defining either basis are colinear
      */
     public static QuaternionRotation createBasisRotation(final Vector3D u1, final Vector3D u2,

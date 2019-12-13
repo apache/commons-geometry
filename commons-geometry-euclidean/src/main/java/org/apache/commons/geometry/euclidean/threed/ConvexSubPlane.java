@@ -114,8 +114,7 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     * @param pts collection of points defining the convex subplane
     * @param precision precision context used to compare floating point values
     * @return a new instance defined by the given sequence of vertices
-    * @throws IllegalArgumentException if fewer than 3 vertices are given
-    * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
+    * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
     *       unique plane
     * @see #fromVertices(Collection, DoublePrecisionContext)
     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
@@ -131,8 +130,7 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
      * @param pts collection of points defining the convex subplane
      * @param precision precision context used to compare floating point values
      * @return a new instance defined by the given sequence of vertices
-     * @throws IllegalArgumentException if fewer than 3 vertices are given
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the vertices do not define a
+     * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *      unique plane
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
@@ -151,6 +149,8 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
      *      the vertex sequence is taken as-is
      * @param precision precision context used to compare floating point values
      * @return a new convex subplane instance
+     * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
+     *      unique plane
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
      * @see #fromVertices(Collection, DoublePrecisionContext)
      * @see Plane#fromPoints(Collection, DoublePrecisionContext)
