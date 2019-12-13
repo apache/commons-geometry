@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
@@ -352,7 +353,7 @@ public final class Point1S implements Point<Point1S> {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1S parse(final String str) {
-        return SimpleTupleFormat.getDefault().parse(str, a -> of(a));
+        return SimpleTupleFormat.getDefault().parse(str, (DoubleFunction1N<Point1S>) Point1S::of);
     }
 
     /** Compute the signed shortest distance (angular separation) between two points. The return

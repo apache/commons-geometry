@@ -216,27 +216,6 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         return new RegionSizeProperties<>(size, barycenter);
     }
 
-    /** Compute the region represented by the given node.
-     * @param node the node to compute the region for
-     * @return the region represented by the given node
-     */
-    private ConvexArea computeNodeRegion(final RegionNode2D node) {
-        ConvexArea area = ConvexArea.full();
-
-        RegionNode2D child = node;
-        RegionNode2D parent;
-
-        while ((parent = child.getParent()) != null) {
-            Split<ConvexArea> split = area.split(parent.getCutHyperplane());
-
-            area = child.isMinus() ? split.getMinus() : split.getPlus();
-
-            child = parent;
-        }
-
-        return area;
-    }
-
     /** {@inheritDoc} */
     @Override
     protected void invalidate() {
@@ -302,7 +281,20 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
          * @return the region represented by this node
          */
         public ConvexArea getNodeRegion() {
-            return ((RegionBSPTree2D) getTree()).computeNodeRegion(this);
+            ConvexArea area = ConvexArea.full();
+
+            RegionNode2D child = this;
+            RegionNode2D parent;
+
+            while ((parent = child.getParent()) != null) {
+                Split<ConvexArea> split = area.split(parent.getCutHyperplane());
+
+                area = child.isMinus() ? split.getMinus() : split.getPlus();
+
+                child = parent;
+            }
+
+            return area;
         }
 
         /** {@inheritDoc} */

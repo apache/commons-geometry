@@ -159,27 +159,6 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return visitor.getRegionSizeProperties();
     }
 
-    /** Compute the region represented by the given node.
-     * @param node the node to compute the region for
-     * @return the region represented by the given node
-     */
-    private ConvexVolume computeNodeRegion(final RegionNode3D node) {
-        ConvexVolume volume = ConvexVolume.full();
-
-        RegionNode3D child = node;
-        RegionNode3D parent;
-
-        while ((parent = child.getParent()) != null) {
-            Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
-
-            volume = child.isMinus() ? split.getMinus() : split.getPlus();
-
-            child = parent;
-        }
-
-        return volume;
-    }
-
     /** {@inheritDoc} */
     @Override
     protected RegionNode3D createNode() {
@@ -236,7 +215,20 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @return the region represented by this node
          */
         public ConvexVolume getNodeRegion() {
-            return ((RegionBSPTree3D) getTree()).computeNodeRegion(this);
+            ConvexVolume volume = ConvexVolume.full();
+
+            RegionNode3D child = this;
+            RegionNode3D parent;
+
+            while ((parent = child.getParent()) != null) {
+                Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
+
+                volume = child.isMinus() ? split.getMinus() : split.getPlus();
+
+                child = parent;
+            }
+
+            return volume;
         }
 
         /** {@inheritDoc} */

@@ -157,13 +157,9 @@ public abstract class AbstractRegionBSPTree<
     protected <C extends ConvexSubHyperplane<P>> Iterable<C> createBoundaryIterable(
             final Function<ConvexSubHyperplane<P>, C> typeConverter) {
 
-        return new Iterable<C>() {
-
-            @Override
-            public Iterator<C> iterator() {
-                final NodeIterator<P, N> nodeIterator = new NodeIterator<>(getRoot());
-                return new RegionBoundaryIterator<>(nodeIterator, typeConverter);
-            }
+        return () -> {
+            final NodeIterator<P, N> nodeIterator = new NodeIterator<>(getRoot());
+            return new RegionBoundaryIterator<>(nodeIterator, typeConverter);
         };
     }
 
