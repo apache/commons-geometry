@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.core.precision;
 
+import java.io.Serializable;
+
 import org.apache.commons.numbers.core.Precision;
 
 /** Simple {@link DoublePrecisionContext} subclass that uses an absolute epsilon value to
@@ -28,7 +30,11 @@ import org.apache.commons.numbers.core.Precision;
  *
  * @see Precision#compareTo(double, double, double)
  */
-public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
+public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implements Serializable {
+
+    /** Serializable UID. */
+    private static final long serialVersionUID = 20191212L;
+
     /** Epsilon value. */
     private final double epsilon;
 
@@ -36,8 +42,12 @@ public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
      * @param eps Epsilon value. Numbers are considered equal if there is no
      *      floating point value strictly between them or if their difference is less
      *      than or equal to this value.
+     * @throws IllegalArgumentException if the given epsilon value is infinite, NaN, or negative
      */
     public EpsilonDoublePrecisionContext(final double eps) {
+        if (!Double.isFinite(eps) || eps < 0.0) {
+            throw new IllegalArgumentException("Invalid epsilon value: " + eps);
+        }
         this.epsilon = eps;
     }
 
