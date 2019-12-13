@@ -74,8 +74,6 @@ public class AbstractHyperplaneTest {
 
     public static class StubHyperplane extends AbstractHyperplane<TestPoint2D> {
 
-        private static final long serialVersionUID = 1L;
-
         public StubHyperplane(DoublePrecisionContext precision) {
             super(precision);
         }

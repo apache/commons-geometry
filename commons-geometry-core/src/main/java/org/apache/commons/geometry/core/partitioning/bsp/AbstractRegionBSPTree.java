@@ -446,91 +446,6 @@ public abstract class AbstractRegionBSPTree<
         dst.setLocation(src.getLocationValue());
     }
 
-    /** Compute the portion of the node's cut subhyperplane that lies on the boundary of
-     * the region.
-     * @param node the node to compute the cut subhyperplane boundary of
-     * @return object representing the portions of the node's cut subhyperplane that lie
-     *      on the region's boundary
-     */
-    private RegionCutBoundary<P> computeBoundary(final N node) {
-        if (node.isLeaf()) {
-            // no boundary for leaf nodes; they are either entirely in or
-            // entirely out
-            return null;
-        }
-
-        ConvexSubHyperplane<P> sub = node.getCut();
-
-        // find the portions of the node cut sub-hyperplane that touch inside and
-        // outside cells in the minus sub-tree
-        SubHyperplane.Builder<P> minusInBuilder = sub.builder();
-        SubHyperplane.Builder<P> minusOutBuilder = sub.builder();
-
-        characterizeSubHyperplane(sub, node.getMinus(), minusInBuilder, minusOutBuilder);
-
-        List<? extends ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
-        List<? extends ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
-
-        // create the result boundary builders
-        SubHyperplane.Builder<P> insideFacing = sub.builder();
-        SubHyperplane.Builder<P> outsideFacing = sub.builder();
-
-        if (!minusIn.isEmpty()) {
-            // Add to the boundary anything that touches an inside cell in the minus sub-tree
-            // and an outside cell in the plus sub-tree. These portions are oriented with their
-            // plus side pointing to the outside of the region.
-            for (ConvexSubHyperplane<P> minusInFragment : minusIn) {
-                characterizeSubHyperplane(minusInFragment, node.getPlus(), null, outsideFacing);
-            }
-        }
-
-        if (!minusOut.isEmpty()) {
-            // Add to the boundary anything that touches an outside cell in the minus sub-tree
-            // and an inside cell in the plus sub-tree. These portions are oriented with their
-            // plus side pointing to the inside of the region.
-            for (ConvexSubHyperplane<P> minusOutFragment : minusOut) {
-                characterizeSubHyperplane(minusOutFragment, node.getPlus(), insideFacing, null);
-            }
-        }
-
-        return new RegionCutBoundary<>(insideFacing.build(), outsideFacing.build());
-    }
-
-    /** Recursive method to characterize a convex subhyperplane with respect to the region's
-     * boundaries.
-     * @param sub the subhyperplane to characterize
-     * @param node the node to characterize the subhyperplane against
-     * @param in the builder that will receive the portions of the subhyperplane that lie in the inside
-     *      of the region; may be null
-     * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
-     *      of the region; may be null
-     */
-    private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final AbstractRegionNode<P, N> node,
-            final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
-
-        if (sub != null) {
-            if (node.isLeaf()) {
-                if (node.isInside() && in != null) {
-                    in.add(sub);
-                } else if (node.isOutside() && out != null) {
-                    out.add(sub);
-                }
-            } else {
-                final Split<? extends ConvexSubHyperplane<P>> split = sub.split(node.getCutHyperplane());
-
-                // Continue further on down the subtree with the same subhyperplane if the
-                // subhyperplane lies directly on the current node's cut
-                if (split.getLocation() == SplitLocation.NEITHER) {
-                    characterizeSubHyperplane(sub, node.getPlus(), in, out);
-                    characterizeSubHyperplane(sub, node.getMinus(), in, out);
-                } else {
-                    characterizeSubHyperplane(split.getPlus(), node.getPlus(), in, out);
-                    characterizeSubHyperplane(split.getMinus(), node.getMinus(), in, out);
-                }
-            }
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     protected void initChildNode(final N parent, final N child, final boolean isPlus) {
@@ -611,11 +526,89 @@ public abstract class AbstractRegionBSPTree<
                 checkValid();
 
                 if (cutBoundary == null) {
-                    cutBoundary = getTree().computeBoundary(getSelf());
+                    cutBoundary = computeBoundary();
                 }
             }
 
             return cutBoundary;
+        }
+
+        /** Compute the portion of the node's cut subhyperplane that lies on the boundary of
+         * the region. This method must only be called on internal nodes.
+         * @return object representing the portions of the node's cut subhyperplane that lie
+         *      on the region's boundary
+         */
+        private RegionCutBoundary<P> computeBoundary() {
+            ConvexSubHyperplane<P> sub = getCut();
+
+            // find the portions of the node cut sub-hyperplane that touch inside and
+            // outside cells in the minus sub-tree
+            SubHyperplane.Builder<P> minusInBuilder = sub.builder();
+            SubHyperplane.Builder<P> minusOutBuilder = sub.builder();
+
+            characterizeSubHyperplane(sub, getMinus(), minusInBuilder, minusOutBuilder);
+
+            List<? extends ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
+            List<? extends ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
+
+            // create the result boundary builders
+            SubHyperplane.Builder<P> insideFacing = sub.builder();
+            SubHyperplane.Builder<P> outsideFacing = sub.builder();
+
+            if (!minusIn.isEmpty()) {
+                // Add to the boundary anything that touches an inside cell in the minus sub-tree
+                // and an outside cell in the plus sub-tree. These portions are oriented with their
+                // plus side pointing to the outside of the region.
+                for (ConvexSubHyperplane<P> minusInFragment : minusIn) {
+                    characterizeSubHyperplane(minusInFragment, getPlus(), null, outsideFacing);
+                }
+            }
+
+            if (!minusOut.isEmpty()) {
+                // Add to the boundary anything that touches an outside cell in the minus sub-tree
+                // and an inside cell in the plus sub-tree. These portions are oriented with their
+                // plus side pointing to the inside of the region.
+                for (ConvexSubHyperplane<P> minusOutFragment : minusOut) {
+                    characterizeSubHyperplane(minusOutFragment, getPlus(), insideFacing, null);
+                }
+            }
+
+            return new RegionCutBoundary<>(insideFacing.build(), outsideFacing.build());
+        }
+
+        /** Recursive method to characterize a convex subhyperplane with respect to the region's
+         * boundaries.
+         * @param sub the subhyperplane to characterize
+         * @param node the node to characterize the subhyperplane against
+         * @param in the builder that will receive the portions of the subhyperplane that lie in the inside
+         *      of the region; may be null
+         * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
+         *      of the region; may be null
+         */
+        private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final AbstractRegionNode<P, N> node,
+                final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
+
+            if (sub != null) {
+                if (node.isLeaf()) {
+                    if (node.isInside() && in != null) {
+                        in.add(sub);
+                    } else if (node.isOutside() && out != null) {
+                        out.add(sub);
+                    }
+                } else {
+                    final Split<? extends ConvexSubHyperplane<P>> split = sub.split(node.getCutHyperplane());
+
+                    // Continue further on down the subtree with the same subhyperplane if the
+                    // subhyperplane lies directly on the current node's cut
+                    if (split.getLocation() == SplitLocation.NEITHER) {
+                        characterizeSubHyperplane(sub, node.getPlus(), in, out);
+                        characterizeSubHyperplane(sub, node.getMinus(), in, out);
+                    } else {
+                        characterizeSubHyperplane(split.getPlus(), node.getPlus(), in, out);
+                        characterizeSubHyperplane(split.getMinus(), node.getMinus(), in, out);
+                    }
+                }
+            }
         }
 
         /** {@inheritDoc} */

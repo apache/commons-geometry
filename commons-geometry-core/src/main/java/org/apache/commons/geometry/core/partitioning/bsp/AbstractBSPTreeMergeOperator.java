@@ -112,17 +112,6 @@ public abstract class AbstractBSPTreeMergeOperator<P extends Point<P>, N extends
         return outputTree.createNode();
     }
 
-    /** Create a new node in the output tree with the same non-structural properties as the given
-     * node. Non-structural properties are properties other than parent, children, or cut. The
-     * returned node is associated with the output tree but is not attached to a parent node.
-     * Note that this method only copies the given node and <strong>not</strong> any of its children.
-     * @param node the input node to copy properties from
-     * @return a new node in the output tree
-     */
-    protected N outputNode(final N node) {
-        return outputTree.copyNode(node);
-    }
-
     /** Place the subtree rooted at the given input node into the output tree. The subtree
      * is copied if needed.
      * @param node the root of the subtree to copy

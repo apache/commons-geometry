@@ -505,8 +505,6 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
 
     private static final class StubRegion extends AbstractConvexHyperplaneBoundedRegion<TestPoint2D, TestLineSegment>{
 
-        private static final long serialVersionUID = 1L;
-
         private static final StubRegion FULL = new StubRegion(Collections.emptyList());
 
         StubRegion(List<TestLineSegment> boundaries) {

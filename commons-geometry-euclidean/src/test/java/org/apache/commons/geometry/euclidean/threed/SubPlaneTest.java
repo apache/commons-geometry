@@ -479,8 +479,6 @@ public class SubPlaneTest {
 
     private static class StubSubPlane extends AbstractSubPlane<RegionBSPTree2D> implements SubHyperplane<Vector3D> {
 
-        private static final long serialVersionUID = 1L;
-
         StubSubPlane(Plane plane) {
             super(plane);
         }

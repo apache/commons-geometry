@@ -30,6 +30,7 @@ public abstract class AbstractEmbeddingSubHyperplane<
     P extends Point<P>,
     S extends Point<S>,
     H extends EmbeddingHyperplane<P, S>> implements SubHyperplane<P> {
+
     /** {@inheritDoc} */
     @Override
     public boolean isFull() {
@@ -51,7 +52,7 @@ public abstract class AbstractEmbeddingSubHyperplane<
     /** {@inheritDoc} */
     @Override
     public boolean isFinite() {
-        return !isInfinite();
+        return Double.isFinite(getSize());
     }
 
     /** {@inheritDoc} */

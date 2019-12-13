@@ -60,7 +60,7 @@ public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>
     protected double getDeterminantForInverse() {
         final double det = determinant();
         if (!Vectors.isRealNonZero(det)) {
-            nonInvertibleTransform("matrix determinant is " + det);
+            throw nonInvertibleTransform("matrix determinant is " + det);
         }
         return det;
     }
@@ -73,23 +73,16 @@ public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>
      */
     protected void validateElementForInverse(final double element) {
         if (!Double.isFinite(element)) {
-            nonInvertibleTransform("invalid matrix element: " + element);
+            throw nonInvertibleTransform("invalid matrix element: " + element);
         }
     }
 
-    /** Create an exception indicating that a transform matrix is not able
-     * to be inverted.
-     * @param msg message containing specific information for the failure
-     * @return an exception indicating that a transform matrix is not able
-     *      to be inverted
-     */
-
-    /** Throw an exception indicating that the instance is not able to be inverted.
+    /** Create an exception indicating that the instance is not able to be inverted.
      * @param msg message containing the specific reason that the matrix cannot
      *      be inverted
-     * @throws IllegalStateException containing the given error message
+     * @return IllegalStateException containing the given error message
      */
-    protected void nonInvertibleTransform(final String msg) {
-        throw new IllegalStateException("Transform is not invertible; " + msg);
+    protected IllegalStateException nonInvertibleTransform(final String msg) {
+        return new IllegalStateException("Transform is not invertible; " + msg);
     }
 }
