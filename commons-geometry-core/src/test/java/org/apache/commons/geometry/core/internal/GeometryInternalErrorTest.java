@@ -14,10 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- * <p>
- * This package contains specialized exception types used by this library.
- * </p>
- */
-package org.apache.commons.geometry.core.exception;
+package org.apache.commons.geometry.core.internal;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class GeometryInternalErrorTest {
+
+    @Test
+    public void testMessage() {
+        // act
+        GeometryInternalError err = new GeometryInternalError();
+
+        // assert
+        String msg = "An internal geometry error occurred. This most often indicates an " +
+                "error in the algorithm implementation than in the calling code or data. Please file a bug report " +
+                "with the developers.";
+
+        Assert.assertEquals(msg, err.getMessage());
+    }
+}

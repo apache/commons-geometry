@@ -18,11 +18,9 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -35,6 +33,7 @@ import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 import org.apache.commons.geometry.spherical.twod.SubGreatCircle.SubGreatCircleBuilder;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -333,7 +332,7 @@ public class SubGreatCircleTest {
         checkArc(arcs.get(0), Point2S.PLUS_J, Point2S.MINUS_J);
     }
 
-    @Test(expected = GeometryException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testAdd_arc_differentCircle() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
@@ -374,7 +373,7 @@ public class SubGreatCircleTest {
         checkArc(arcs.get(1), Point2S.PLUS_J, Point2S.MINUS_J);
     }
 
-    @Test(expected = GeometryException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testAdd_subGreatCircle_otherCircle() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
@@ -427,11 +426,11 @@ public class SubGreatCircleTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.add(otherCircle.span());
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new SubGreatCircle(otherCircle));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new UnknownSubHyperplane());

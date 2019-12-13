@@ -334,7 +334,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      *   Vector3D j = k.cross(i);
      * </code></pre>
      * @return a unit vector orthogonal to the instance
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the instance
+     * @throws IllegalArgumentException if the norm of the instance
      *      is zero, NaN, or infinite
      */
     @Override
@@ -453,7 +453,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      * @param <V> Vector implementation type
      * @return The projection or rejection of this instance relative to {@code base},
      *      depending on the value of {@code reject}.
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if {@code base} has a zero, NaN,
+     * @throws IllegalArgumentException if {@code base} has a zero, NaN,
      *      or infinite norm
      */
     private <V extends Vector3D> V getComponent(Vector3D base, boolean reject, DoubleFunction3N<V> factory) {
@@ -630,7 +630,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          * @param y Vector coordinate.
          * @param z Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value
+         * @throws IllegalArgumentException if the norm of the given value
          *      is zero, NaN, or infinite
          */
         public static Unit from(final double x, final double y, final double z) {
@@ -643,7 +643,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given
+         * @throws IllegalArgumentException if the norm of the given
          *      value is zero, NaN, or infinite
          */
         public static Unit from(final Vector3D v) {

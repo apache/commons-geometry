@@ -16,16 +16,15 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -64,19 +63,19 @@ public class Segment3DTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Segment3D.fromPoints(p0, p0, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment3D.fromPoints(p0, Vector3D.POSITIVE_INFINITY, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment3D.fromPoints(p0, Vector3D.NEGATIVE_INFINITY, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment3D.fromPoints(p0, Vector3D.NaN, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

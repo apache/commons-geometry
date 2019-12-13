@@ -22,17 +22,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.RegionNode3D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -1321,27 +1320,27 @@ public class RegionBSPTree3DTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1e-20, 1, 1);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1, 1e-20, 1);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 1, 1, 1e-20);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.ZERO, 0, 0, 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addRect(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3));
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addCenteredRect(Vector3D.of(1, 2, 3), 0, 0, 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -1369,15 +1368,15 @@ public class RegionBSPTree3DTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addCube(Vector3D.ZERO, 1e-20);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addCube(Vector3D.of(1, 2, 3), 1e-20);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             RegionBSPTree3D.builder(TEST_PRECISION).addCenteredCube(Vector3D.of(1, 2, 3), 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

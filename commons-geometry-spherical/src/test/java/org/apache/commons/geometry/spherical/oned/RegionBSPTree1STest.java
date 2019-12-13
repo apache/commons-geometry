@@ -18,7 +18,6 @@ package org.apache.commons.geometry.spherical.oned;
 
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;

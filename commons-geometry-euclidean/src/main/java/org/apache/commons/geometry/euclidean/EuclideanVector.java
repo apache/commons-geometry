@@ -45,7 +45,7 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
      * @param v the vector that the returned vector will be directed toward
      * @return unit vector representing the direction of displacement <em>from</em> this vector
      *      <em>to</em> the given vector
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the vector pointing
+     * @throws IllegalArgumentException if the norm of the vector pointing
      *      from this instance to {@code v} is zero, NaN, or infinite
      */
     public abstract V directionTo(V v);
@@ -91,12 +91,10 @@ public abstract class EuclideanVector<V extends EuclideanVector<V>>
         return eq(getZero(), precision);
     }
 
-    /** Return the vector norm value, throwing an
-     * {@link org.apache.commons.geometry.core.exception.IllegalNormException} if the value is not real
+    /** Return the vector norm value, throwing an {@link IllegalArgumentException} if the value is not real
      * (ie, NaN or infinite) or zero.
      * @return the vector norm value, guaranteed to be real and non-zero
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the vector norm is
-     *      zero, NaN, or infinite
+     * @throws IllegalArgumentException if the vector norm is zero, NaN, or infinite
      */
     protected double getCheckedNorm() {
         return Vectors.checkedNorm(this);

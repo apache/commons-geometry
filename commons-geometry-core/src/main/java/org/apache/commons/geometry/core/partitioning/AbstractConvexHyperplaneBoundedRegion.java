@@ -25,7 +25,6 @@ import java.util.function.Function;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 
 /** Base class for convex hyperplane-bounded regions. This class provides generic implementations of many
  * algorithms related to convex regions.
@@ -304,7 +303,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
          * bounded by the given collection of hyperplanes.
          * @param bounds hyperplanes defining the convex region
          * @return a list of convex subhyperplanes representing the boundaries of the convex region
-         * @throws GeometryException if the given hyperplanes do not form a convex region
+         * @throws IllegalArgumentException if the given hyperplanes do not form a convex region
          */
         public List<S> build(final Iterable<? extends Hyperplane<P>> bounds) {
 
@@ -365,7 +364,7 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             }
 
             if (notConvex || (outerIdx > 0 && boundaries.isEmpty())) {
-                throw new GeometryException("Bounding hyperplanes do not produce a convex region: " + bounds);
+                throw new IllegalArgumentException("Bounding hyperplanes do not produce a convex region: " + bounds);
             }
 
             return boundaries;

@@ -241,53 +241,9 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     private void visitInsideIntervals(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
         for (RegionNode1D node : this) {
             if (node.isInside()) {
-                visitNodeInterval(node, visitor);
+                node.visitNodeInterval(visitor);
             }
         }
-    }
-
-    /** Determine the min/max boundaries for the convex region represented by the given node and pass
-     * the values to the visitor function.
-     * @param node the node to compute the interval for
-     * @param visitor the object that will receive the min and max boundaries for the node's
-     *      convex region
-     */
-    private void visitNodeInterval(final RegionNode1D node, final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
-        OrientedPoint min = null;
-        OrientedPoint max = null;
-
-        OrientedPoint pt;
-        RegionNode1D child = node;
-        RegionNode1D parent;
-
-        while ((min == null || max == null) && (parent = child.getParent()) != null) {
-            pt = (OrientedPoint) parent.getCutHyperplane();
-
-            if ((pt.isPositiveFacing() && child.isMinus()) ||
-                    (!pt.isPositiveFacing() && child.isPlus())) {
-
-                if (max == null) {
-                    max = pt;
-                }
-            } else if (min == null) {
-                min = pt;
-            }
-
-            child = parent;
-        }
-
-        visitor.accept(min, max);
-    }
-
-    /** Compute the region represented by the given node.
-     * @param node the node to compute the region for
-     * @return the region represented by the given node
-     */
-    private Interval computeNodeRegion(final RegionNode1D node) {
-        final NodeRegionVisitor visitor = new NodeRegionVisitor();
-        visitNodeInterval(node, visitor);
-
-        return visitor.getInterval();
     }
 
     /** {@inheritDoc} */
@@ -403,7 +359,42 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          * @return the region represented by this node
          */
         public Interval getNodeRegion() {
-            return ((RegionBSPTree1D) getTree()).computeNodeRegion(this);
+            final NodeRegionVisitor visitor = new NodeRegionVisitor();
+            visitNodeInterval(visitor);
+
+            return visitor.getInterval();
+        }
+
+        /** Determine the min/max boundaries for the convex region represented by this node and pass
+         * the values to the visitor function.
+         * @param visitor the object that will receive the min and max boundaries for the node's
+         *      convex region
+         */
+        private void visitNodeInterval(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
+            OrientedPoint min = null;
+            OrientedPoint max = null;
+
+            OrientedPoint pt;
+            RegionNode1D child = this;
+            RegionNode1D parent;
+
+            while ((min == null || max == null) && (parent = child.getParent()) != null) {
+                pt = (OrientedPoint) parent.getCutHyperplane();
+
+                if ((pt.isPositiveFacing() && child.isMinus()) ||
+                        (!pt.isPositiveFacing() && child.isPlus())) {
+
+                    if (max == null) {
+                        max = pt;
+                    }
+                } else if (min == null) {
+                    min = pt;
+                }
+
+                child = parent;
+            }
+
+            visitor.accept(min, max);
         }
 
         /** {@inheritDoc} */

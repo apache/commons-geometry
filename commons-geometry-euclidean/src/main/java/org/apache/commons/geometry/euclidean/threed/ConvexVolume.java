@@ -156,9 +156,8 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a new convex volume instance representing the volume on the minus side of all
      *      of the bounding plane or an instance representing the full space if the collection
      *      is empty
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding
-     *      planes do not form a convex volume, meaning that there is no region that is on the minus side
-     *      of all of the bounding planes.
+     * @throws IllegalArgumentException if the given set of bounding planes do not form a convex volume,
+     *      meaning that there is no region that is on the minus side of all of the bounding planes.
      */
     public static ConvexVolume fromBounds(final Plane... planes) {
         return fromBounds(Arrays.asList(planes));
@@ -172,9 +171,8 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a new convex volume instance representing the volume on the minus side of all
      *      of the bounding plane or an instance representing the full space if the collection
      *      is empty
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if the given set of bounding planes
-     *      do not form a convex volume, meaning that there is no region that is on the minus side of all of
- *          the bounding planes.
+     * @throws IllegalArgumentException if the given set of bounding planes do not form a convex volume,
+     *      meaning that there is no region that is on the minus side of all of the bounding planes.
      */
     public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
         final List<ConvexSubPlane> subplanes = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class)

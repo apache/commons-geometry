@@ -420,8 +420,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          *
          * @param x Vector coordinate.
          * @return a vector whose norm is 1.
-         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value is
-         *      zero, NaN, or infinite
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
          */
         public static Unit from(double x) {
             Vectors.checkedNorm(Vectors.norm(x));
@@ -433,8 +432,7 @@ public class Vector1D extends EuclideanVector<Vector1D> {
          *
          * @param v Vector.
          * @return a vector whose norm is 1.
-         * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the given value is
-         *      zero, NaN, or infinite
+         * @throws IllegalArgumentException if the norm of the given value is zero, NaN, or infinite
          */
         public static Unit from(Vector1D v) {
             return v instanceof Unit ?

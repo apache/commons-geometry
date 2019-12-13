@@ -21,8 +21,6 @@ import java.util.List;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -119,7 +117,7 @@ public class OrientedPointTest {
         // act/assert
         GeometryTestUtils.assertThrows(
                 () -> pt.transform(zeroScale),
-                GeometryValueException.class, "Oriented point direction cannot be zero");
+                IllegalArgumentException.class, "Oriented point direction cannot be zero");
     }
 
     @Test
@@ -374,10 +372,10 @@ public class OrientedPointTest {
         // act/assert
         GeometryTestUtils.assertThrows(
                 () -> OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(0.09), precision),
-                GeometryValueException.class, "Oriented point direction cannot be zero");
+                IllegalArgumentException.class, "Oriented point direction cannot be zero");
         GeometryTestUtils.assertThrows(
                 () -> OrientedPoint.fromPointAndDirection(Vector1D.of(2.0), Vector1D.of(-0.09), precision),
-                GeometryValueException.class, "Oriented point direction cannot be zero");
+                IllegalArgumentException.class, "Oriented point direction cannot be zero");
     }
 
     @Test
@@ -588,14 +586,14 @@ public class OrientedPointTest {
         // act/assert
         GeometryTestUtils.assertThrows(
                 () -> builder.add(OrientedPoint.createPositiveFacing(2e-3, precision).span()),
-                GeometryException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(
                 () -> builder.add(OrientedPoint.createNegativeFacing(2e-3, precision).span()),
-                GeometryException.class);
+                IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(
                 () -> builder.add((SubHyperplane<Vector1D>) OrientedPoint.createPositiveFacing(2e-3, precision).span()),
-                GeometryException.class);
+                IllegalArgumentException.class);
     }
 
     @Test

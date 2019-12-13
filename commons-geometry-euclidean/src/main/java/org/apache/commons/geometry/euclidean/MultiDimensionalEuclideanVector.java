@@ -31,8 +31,7 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * </code>
      * @param base base vector
      * @return the vector projection of the instance onto {@code base}
-     * @exception org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the base vector is
-     *      zero, NaN, or infinite
+     * @exception IllegalArgumentException if the norm of the base vector is zero, NaN, or infinite
      * @see #reject(MultiDimensionalEuclideanVector)
      */
     public abstract V project(V base);
@@ -47,16 +46,14 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * </code>
      * @param base base vector
      * @return the vector rejection of the instance from {@code base}
-     * @exception org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the base vector is
-     *      zero, NaN, or infinite
+     * @exception IllegalArgumentException if the norm of the base vector is zero, NaN, or infinite
      * @see #project(MultiDimensionalEuclideanVector)
      */
     public abstract V reject(V base);
 
     /** Get a unit vector orthogonal to the instance.
      * @return a unit vector orthogonal to the current instance
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm of the current instance
-     *      is zero, NaN, or infinite
+     * @throws IllegalArgumentException if the norm of the current instance is zero, NaN, or infinite
      */
     public abstract V orthogonal();
 
@@ -66,8 +63,8 @@ public abstract class MultiDimensionalEuclideanVector<V extends MultiDimensional
      * @param dir the direction to use for generating the orthogonal vector
      * @return unit vector orthogonal to the current vector and pointing in the direction of
      *      {@code dir} that does not lie along the current vector
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if either vector norm is
-     *      zero, NaN or infinite, or the given vector is collinear with this vector.
+     * @throws IllegalArgumentException if either vector norm is zero, NaN or infinite, or the
+     *      given vector is collinear with this vector.
      */
     public abstract V orthogonal(V dir);
 }

@@ -197,8 +197,8 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
      * @param end end point point for the interval
      * @param precision precision context used to compare floating point numbers
      * @return an arc representing the shortest path between the given points
-     * @throws org.apache.commons.geometry.core.exception.GeometryException if either of the given points is
-     *      NaN or infinite, or if the given points are equal or antipodal as evaluated by the given precision context
+     * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given
+     *      points are equal or antipodal as evaluated by the given precision context
      * @see GreatCircle#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.DoublePrecisionContext)
      */
     public static GreatArc fromPoints(final Point2S start, final Point2S end, final DoublePrecisionContext precision) {

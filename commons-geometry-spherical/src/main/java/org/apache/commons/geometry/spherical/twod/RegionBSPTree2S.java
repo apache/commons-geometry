@@ -188,27 +188,6 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         boundaryPaths = null;
     }
 
-    /** Compute the region represented by the given node.
-     * @param node the node to compute the region for
-     * @return the region represented by the given node
-     */
-    private ConvexArea2S computeNodeRegion(final RegionNode2S node) {
-        ConvexArea2S area = ConvexArea2S.full();
-
-        RegionNode2S child = node;
-        RegionNode2S parent;
-
-        while ((parent = child.getParent()) != null) {
-            Split<ConvexArea2S> split = area.split(parent.getCutHyperplane());
-
-            area = child.isMinus() ? split.getMinus() : split.getPlus();
-
-            child = parent;
-        }
-
-        return area;
-    }
-
     /** Compute the great arc paths comprising the region boundary.
      * @return the great arc paths comprising the region boundary
      */
@@ -260,7 +239,20 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
          * @return the region represented by this node
          */
         public ConvexArea2S getNodeRegion() {
-            return ((RegionBSPTree2S) getTree()).computeNodeRegion(this);
+            ConvexArea2S area = ConvexArea2S.full();
+
+            RegionNode2S child = this;
+            RegionNode2S parent;
+
+            while ((parent = child.getParent()) != null) {
+                Split<ConvexArea2S> split = area.split(parent.getCutHyperplane());
+
+                area = child.isMinus() ? split.getMinus() : split.getPlus();
+
+                child = parent;
+            }
+
+            return area;
         }
 
         /** {@inheritDoc} */

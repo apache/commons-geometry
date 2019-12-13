@@ -18,10 +18,8 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
@@ -35,6 +33,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -223,11 +222,11 @@ public class SubLineTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             subline.add(Segment.fromInterval(otherLine, 0, 1));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             subline.add(new SubLine(otherLine));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -593,11 +592,11 @@ public class SubLineTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.add(Segment.fromInterval(otherLine, 0, 1));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.add(new SubLine(otherLine));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

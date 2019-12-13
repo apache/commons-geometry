@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.euclidean.internal;
 
 import org.apache.commons.geometry.core.Vector;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 
 /** This class consists exclusively of static vector utility methods.
  */
@@ -36,31 +35,45 @@ public final class Vectors {
         return Double.isFinite(value) && value != 0.0;
     }
 
-    /** Throws an {@link IllegalNormException} if the given norm value
+    /** Throws an {@link IllegalArgumentException} if the given norm value
      * is not real (ie, not NaN or infinite) or zero. The argument is returned
      * to allow this method to be called inline.
      * @param norm vector norm value
      * @return the validated norm value
-     * @throws IllegalNormException if the given norm value is NaN, infinite,
-     *  or zero
+     * @throws IllegalArgumentException if the given norm value is NaN, infinite,
+     *      or zero
      */
     public static double checkedNorm(final double norm) {
         if (!isRealNonZero(norm)) {
-            throw new IllegalNormException(norm);
+            throw new IllegalArgumentException("Illegal norm: " + norm);
         }
 
         return norm;
     }
 
-    /** Returns the vector's norm value, throwing an {@link IllegalNormException} if the value
+    /** Returns the vector's norm value, throwing an {@link IllegalArgumentException} if the value
      * is not real (ie, not NaN or infinite) or zero.
      * @param vec vector to obtain the real, non-zero norm of
      * @return the validated norm value
-     * @throws IllegalNormException if the vector norm value is NaN, infinite,
-     *  or zero
+     * @throws IllegalArgumentException if the vector norm value is NaN, infinite,
+     *      or zero
      */
     public static double checkedNorm(final Vector<?> vec) {
         return checkedNorm(vec.norm());
+    }
+
+    /** Attempt to normalize the given vector, returning null if the vector cannot be normalized
+     * due to the norm being NaN, infinite, or null.
+     * @param <V> Vector implementation type
+     * @param vec the vector to attempt to normalize
+     * @return the normalized vector if successful, otherwise null
+     */
+    public static <V extends Vector<V>> V tryNormalize(final V vec) {
+        final double norm = vec.norm();
+        if (isRealNonZero(norm)) {
+            return vec.normalize();
+        }
+        return null;
     }
 
     /** Get the L<sub>2</sub> norm (commonly known as the Euclidean norm) for the vector

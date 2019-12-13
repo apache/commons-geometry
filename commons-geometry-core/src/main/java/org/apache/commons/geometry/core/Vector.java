@@ -94,8 +94,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Get a normalized vector aligned with the instance. The returned
      * vector has a magnitude of 1.
      * @return a new normalized vector
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the norm is
-     *      zero, NaN, or infinite
+     * @throws IllegalArgumentException if the norm is zero, NaN, or infinite
      */
     V normalize();
 
@@ -130,8 +129,7 @@ public interface Vector<V extends Vector<V>> extends Spatial {
     /** Compute the angular separation between two vectors in radians.
      * @param v other vector
      * @return angular separation between this instance and v in radians
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if either
-     *      vector has a zero, NaN, or infinite norm
+     * @throws IllegalArgumentException if either vector has a zero, NaN, or infinite norm
      */
     double angle(V v);
 }

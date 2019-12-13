@@ -21,15 +21,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -777,7 +776,7 @@ public class ConvexAreaTest {
                             Vector2D.Unit.PLUS_X,
                             Vector2D.ZERO
                     ),TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -814,7 +813,7 @@ public class ConvexAreaTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             ConvexArea.fromVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -894,7 +893,7 @@ public class ConvexAreaTest {
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X
                     ),TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -956,7 +955,7 @@ public class ConvexAreaTest {
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X
                     ),TEST_PRECISION));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -1174,7 +1173,7 @@ public class ConvexAreaTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             ConvexArea.fromBounds(a, b, c);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -1186,7 +1185,7 @@ public class ConvexAreaTest {
                         Line.fromPointAndAngle(Vector2D.of(0, -1), PlaneAngleRadians.PI, TEST_PRECISION),
                         Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                     ));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     private static void checkRegion(ConvexArea area, RegionLocation loc, Vector2D ... pts) {

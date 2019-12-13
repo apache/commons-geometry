@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -116,7 +115,7 @@ public final class SubLine extends AbstractSubLine {
 
     /** Add a line segment to this instance..
      * @param segment line segment to add
-     * @throws GeometryException if the given line segment is not from
+     * @throws IllegalArgumentException if the given line segment is not from
      *      a line equivalent to this instance
      */
     public void add(final Segment segment) {
@@ -128,7 +127,7 @@ public final class SubLine extends AbstractSubLine {
     /** Add the region represented by the given subline to this instance.
      * The argument is not modified.
      * @param subline subline to add
-     * @throws GeometryException if the given subline is not from
+     * @throws IllegalArgumentException if the given subline is not from
      *      a line equivalent to this instance
      */
     public void add(final SubLine subline) {
@@ -159,14 +158,14 @@ public final class SubLine extends AbstractSubLine {
     /** Validate that the given line is equivalent to the line
      * defining this subline.
      * @param inputLine the line to validate
-     * @throws GeometryException if the given line is not equivalent
+     * @throws IllegalArgumentException if the given line is not equivalent
      *      to the line for this instance
      */
     private void validateLine(final Line inputLine) {
         final Line line = getLine();
 
         if (!line.eq(inputLine)) {
-            throw new GeometryException("Argument is not on the same " +
+            throw new IllegalArgumentException("Argument is not on the same " +
                     "line. Expected " + line + " but was " +
                     inputLine);
         }

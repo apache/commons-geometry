@@ -132,8 +132,6 @@ public class DoublePrecisionContextTest {
 
     private static class StubContext extends DoublePrecisionContext {
 
-        private static final long serialVersionUID = 1L;
-
         @Override
         public double getMaxZero() {
             return 0.0;

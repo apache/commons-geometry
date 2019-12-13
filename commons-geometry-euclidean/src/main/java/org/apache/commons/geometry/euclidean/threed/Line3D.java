@@ -361,8 +361,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param precision floating point precision context
      * @return a new line instance that contains both of the given point and that has
      *      a direction going from the first point to the second point
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the points lie too close to
-     *      create a non-zero direction vector
+     * @throws IllegalArgumentException if the points lie too close to reate a non-zero direction vector
      */
     public static Line3D fromPoints(final Vector3D p1, final Vector3D p2,
             final DoublePrecisionContext precision) {
@@ -375,7 +374,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param precision floating point precision context
      * @return a new line instance that contains the given point and points in the
      *      given direction
-     * @throws org.apache.commons.geometry.core.exception.IllegalNormException if the direction cannot be normalized
+     * @throws IllegalArgumentException if the direction cannot be normalized
      */
     public static Line3D fromPointAndDirection(final Vector3D pt, final Vector3D direction,
             final DoublePrecisionContext precision) {

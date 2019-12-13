@@ -32,12 +32,33 @@ public class AbstractEmbeddingSubHyperplaneTest {
     @Test
     public void testSimpleProperties() {
         // arrange
-        StubSubHyperplane sub = new StubSubHyperplane();
+        StubSubHyperplane sub = new StubSubHyperplane(1.0);
 
         // act/assert
         Assert.assertTrue(sub.isFull());
         Assert.assertTrue(sub.isEmpty());
         Assert.assertEquals(1.0, sub.getSize(), PartitionTestUtils.EPS);
+
+        Assert.assertTrue(sub.isFinite());
+        Assert.assertFalse(sub.isInfinite());
+    }
+
+    @Test
+    public void testFiniteAndInfinite() {
+        // arrange
+        StubSubHyperplane finite = new StubSubHyperplane(1.0);
+        StubSubHyperplane inf = new StubSubHyperplane(Double.POSITIVE_INFINITY);
+        StubSubHyperplane nan = new StubSubHyperplane(Double.NaN);
+
+        // act/assert
+        Assert.assertTrue(finite.isFinite());
+        Assert.assertFalse(finite.isInfinite());
+
+        Assert.assertFalse(inf.isFinite());
+        Assert.assertTrue(inf.isInfinite());
+
+        Assert.assertFalse(nan.isFinite());
+        Assert.assertFalse(nan.isInfinite());
     }
 
     @Test
@@ -82,16 +103,15 @@ public class AbstractEmbeddingSubHyperplaneTest {
     }
 
     private static class StubSubHyperplane extends AbstractEmbeddingSubHyperplane<TestPoint2D, TestPoint1D, TestLine> {
-        private StubRegion1D region = new StubRegion1D();
 
-        @Override
-        public boolean isInfinite() {
-            return false;
+        private final StubRegion1D region;
+
+        public StubSubHyperplane() {
+            this(0);
         }
 
-        @Override
-        public boolean isFinite() {
-            return true;
+        public StubSubHyperplane(final double size) {
+            this.region = new StubRegion1D(size);
         }
 
         @Override
@@ -132,6 +152,12 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         private TestPoint1D projected = new TestPoint1D(0);
 
+        private final double size;
+
+        public StubRegion1D(final double size) {
+            this.size = size;
+        }
+
         @Override
         public boolean isFull() {
             return true;
@@ -144,7 +170,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         @Override
         public double getSize() {
-            return 1;
+            return size;
         }
 
         @Override

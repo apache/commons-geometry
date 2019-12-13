@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.core.precision;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +34,26 @@ public class EpsilonDoublePrecisionContextTest {
         // assert
         Assert.assertEquals(ctx.getEpsilon(), eps, 0.0);
         Assert.assertEquals(ctx.getMaxZero(), eps, 0.0);
+    }
+
+    @Test
+    public void testInvalidEpsilonValues() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            new EpsilonDoublePrecisionContext(-1.0);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            new EpsilonDoublePrecisionContext(Double.NaN);
+        }, IllegalArgumentException.class, "Invalid epsilon value: NaN");
+
+        GeometryTestUtils.assertThrows(() -> {
+            new EpsilonDoublePrecisionContext(Double.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid epsilon value: Infinity");
+
+        GeometryTestUtils.assertThrows(() -> {
+            new EpsilonDoublePrecisionContext(Double.NEGATIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid epsilon value: -Infinity");
     }
 
     @Test

@@ -21,10 +21,7 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
@@ -258,21 +255,25 @@ public class QuaternionRotationTest {
     @Test
     public void testFromAxisAngle_invalidAxisNorm() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.ZERO, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NaN, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NEGATIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), IllegalNormException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.ZERO, PlaneAngleRadians.PI_OVER_TWO),
+                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NaN, PlaneAngleRadians.PI_OVER_TWO),
+                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO),
+                IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.NEGATIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO),
+                IllegalArgumentException.class);
     }
 
     @Test
     public void testFromAxisAngle_invalidAngle() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NaN), GeometryValueException.class,
-                "Invalid angle: NaN");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.POSITIVE_INFINITY), GeometryValueException.class,
-                "Invalid angle: Infinity");
-        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NEGATIVE_INFINITY), GeometryValueException.class,
-                "Invalid angle: -Infinity");
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NaN),
+                IllegalArgumentException.class, "Invalid angle: NaN");
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.POSITIVE_INFINITY),
+                IllegalArgumentException.class, "Invalid angle: Infinity");
+        GeometryTestUtils.assertThrows(() -> QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, Double.NEGATIVE_INFINITY),
+                IllegalArgumentException.class, "Invalid angle: -Infinity");
     }
 
     @Test
@@ -1165,16 +1166,16 @@ public class QuaternionRotationTest {
     public void testCreateVectorRotation_invalidArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.ZERO, Vector3D.Unit.PLUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.ZERO),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.NaN, Vector3D.Unit.PLUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.POSITIVE_INFINITY),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createVectorRotation(Vector3D.Unit.PLUS_X, Vector3D.NEGATIVE_INFINITY),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
     }
 
     @Test
@@ -1353,24 +1354,24 @@ public class QuaternionRotationTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.Unit.PLUS_X, Vector3D.NaN, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.POSITIVE_INFINITY, Vector3D.Unit.MINUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.NEGATIVE_INFINITY),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> QuaternionRotation.createBasisRotation(
                 Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y),
-                IllegalNormException.class);
+                IllegalArgumentException.class);
     }
 
     @Test

@@ -19,14 +19,14 @@ package org.apache.commons.geometry.spherical.oned;
 import java.util.Comparator;
 import java.util.Objects;
 
-import org.apache.commons.numbers.angle.PlaneAngle;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
+import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngle;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** This class represents a point on the 1-sphere, or in other words, an
  * azimuth angle on a circle. The value of the azimuth angle is not normalized
@@ -164,7 +164,7 @@ public final class Point1S implements Point<Point1S> {
      * @param base point to place this instance's azimuth value above
      * @return a point equivalent to the current instance but with an azimuth
      *      value in the range {@code [base, base + 2pi)}
-     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     * @throws IllegalArgumentException if the azimuth value is NaN or infinite and
      *      cannot be normalized
      */
     public Point1S above(final Point1S base) {
@@ -176,7 +176,7 @@ public final class Point1S implements Point<Point1S> {
      * @param base point to place this instance's azimuth value below
      * @return a point equivalent to the current instance but with an azimuth
      *      value in the range {@code [base - 2pi, base)}
-     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     * @throws IllegalArgumentException if the azimuth value is NaN or infinite and
      *      cannot be normalized
      */
     public Point1S below(final Point1S base) {
@@ -188,7 +188,7 @@ public final class Point1S implements Point<Point1S> {
      * @param center point to center this instance around
      * @return a point equivalent to this instance but with an azimuth value
      *      in the range {@code [center - pi, center + pi)}.
-     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     * @throws IllegalArgumentException if the azimuth value is NaN or infinite and
      *      cannot be normalized
      */
     public Point1S normalize(final Point1S center) {
@@ -201,7 +201,7 @@ public final class Point1S implements Point<Point1S> {
      * @param center angle to center this instance around
      * @return a point equivalent to this instance but with an azimuth value
      *      in the range {@code [center - pi, center + pi)}.
-     * @throws GeometryValueException if the azimuth value is NaN or infinite and
+     * @throws IllegalArgumentException if the azimuth value is NaN or infinite and
      *      cannot be normalized
      */
     public Point1S normalize(final double center) {
@@ -209,7 +209,7 @@ public final class Point1S implements Point<Point1S> {
             final double az = PlaneAngleRadians.normalize(azimuth, center);
             return new Point1S(az, normalizedAzimuth);
         }
-        throw new GeometryValueException("Cannot normalize azimuth value: " + azimuth);
+        throw new IllegalArgumentException("Cannot normalize azimuth value: " + azimuth);
     }
 
     /** Get the point exactly opposite this point on the circle, {@code pi} distance away.
@@ -353,7 +353,7 @@ public final class Point1S implements Point<Point1S> {
      * @throws IllegalArgumentException if the given string has an invalid format
      */
     public static Point1S parse(final String str) {
-        return SimpleTupleFormat.getDefault().parse(str, a -> of(a));
+        return SimpleTupleFormat.getDefault().parse(str, (DoubleFunction1N<Point1S>) Point1S::of);
     }
 
     /** Compute the signed shortest distance (angular separation) between two points. The return

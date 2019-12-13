@@ -19,8 +19,10 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
@@ -1127,6 +1129,24 @@ public class AbstractBSPTreeTest {
         Assert.assertSame(root.getPlus(), nodes.get(4));
         Assert.assertSame(root.getPlus().getMinus(), nodes.get(5));
         Assert.assertSame(root.getPlus().getPlus(), nodes.get(6));
+    }
+
+
+    @Test
+    public void testIterable_iteratorThrowsNoSuchElementExceptionAtEnd() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        Iterator<TestNode> it = tree.iterator();
+        it.next();
+
+        // act
+        try {
+            it.next();
+            Assert.fail("Operation should have thrown an exception");
+        } catch (NoSuchElementException exc) {
+            // expected
+        }
     }
 
     @Test

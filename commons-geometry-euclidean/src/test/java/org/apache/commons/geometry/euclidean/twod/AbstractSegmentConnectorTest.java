@@ -26,6 +26,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.AbstractSegmentConnector.ConnectableSegment;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -482,6 +483,46 @@ public class AbstractSegmentConnectorTest {
         assertFinitePath(paths.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(2, 0));
     }
 
+    @Test
+    public void testConnectableSegment_hashCode() {
+        // arrange
+        Segment segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+
+        ConnectableSegment a = new ConnectableSegment(segA);
+
+        // act
+        int hash = a.hashCode();
+
+        // assert
+        Assert.assertEquals(hash, a.hashCode());
+
+        Assert.assertNotEquals(hash, new ConnectableSegment(segB).hashCode());
+        Assert.assertNotEquals(hash, new ConnectableSegment(Vector2D.Unit.PLUS_X).hashCode());
+
+        Assert.assertEquals(hash, new ConnectableSegment(segA).hashCode());
+    }
+
+    @Test
+    public void testConnectableSegment_equals() {
+        // arrange
+        Segment segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+
+        ConnectableSegment a = new ConnectableSegment(segA);
+
+        // act/assert
+        Assert.assertTrue(a.equals(a));
+
+        Assert.assertFalse(a.equals(null));
+        Assert.assertFalse(a.equals(new Object()));
+
+        Assert.assertFalse(a.equals(new ConnectableSegment(segB)));
+        Assert.assertFalse(a.equals(new ConnectableSegment(Vector2D.Unit.PLUS_X)));
+
+        Assert.assertTrue(a.equals(new ConnectableSegment(segA)));
+    }
+
     private static List<Segment> shuffle(final List<Segment> segments) {
         return shuffle(segments, 1);
     }
@@ -513,8 +554,6 @@ public class AbstractSegmentConnectorTest {
     }
 
     private static class TestConnector extends AbstractSegmentConnector {
-
-        private static final long serialVersionUID = 1L;
 
         @Override
         protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {

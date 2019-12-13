@@ -22,11 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -34,6 +32,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -922,39 +921,39 @@ public class RegionBSPTree2DTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(1, 1), 0, 2);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(1, 1), 2, 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(2, 3), 0, 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(1, 1), Vector2D.of(1, 3));
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(1, 1), Vector2D.of(3, 1));
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addRect(Vector2D.of(2, 3), Vector2D.of(2, 3));
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addCenteredRect(Vector2D.of(2, 3), 0, 1e-20);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addSquare(Vector2D.of(2, 3), 1e-20);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             builder.addCenteredSquare(Vector2D.of(2, 3), 0);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

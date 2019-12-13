@@ -18,10 +18,8 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -29,6 +27,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -67,19 +66,19 @@ public class SegmentTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Segment.fromPoints(p0, p0, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment.fromPoints(p0, Vector2D.POSITIVE_INFINITY, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment.fromPoints(p0, Vector2D.NEGATIVE_INFINITY, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Segment.fromPoints(p0, Vector2D.NaN, TEST_PRECISION);
-        }, GeometryValueException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

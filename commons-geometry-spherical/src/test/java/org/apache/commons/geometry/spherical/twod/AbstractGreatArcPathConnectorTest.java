@@ -292,8 +292,6 @@ public class AbstractGreatArcPathConnectorTest {
 
     private static class TestConnector extends AbstractGreatArcConnector {
 
-        private static final long serialVersionUID = 1L;
-
         @Override
         protected ConnectableGreatArc selectConnection(ConnectableGreatArc incoming,
                 List<ConnectableGreatArc> outgoing) {

@@ -25,7 +25,6 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
@@ -475,14 +474,14 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             StubRegion.fromBounds(Arrays.asList(TestLine.X_AXIS, TestLine.X_AXIS.reverse()));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             StubRegion.fromBounds(Arrays.asList(
                     TestLine.X_AXIS,
                     TestLine.Y_AXIS,
                     new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1))));
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -505,8 +504,6 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
     }
 
     private static final class StubRegion extends AbstractConvexHyperplaneBoundedRegion<TestPoint2D, TestLineSegment>{
-
-        private static final long serialVersionUID = 1L;
 
         private static final StubRegion FULL = new StubRegion(Collections.emptyList());
 
@@ -539,7 +536,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         }
 
         public static StubRegion fromBounds(Iterable<TestLine> boundingLines) {
-            final List<TestLineSegment> segments = new ConvexRegionBoundaryBuilder<>(TestLineSegment.class).build(boundingLines);
+            final List<TestLineSegment> segments = new ConvexRegionBoundaryBuilder<>(TestLineSegment.class)
+                    .build(boundingLines);
             return segments.isEmpty() ? FULL : new StubRegion(segments);
         }
     }

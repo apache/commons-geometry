@@ -18,10 +18,8 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -29,6 +27,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -155,11 +154,11 @@ public class GreatArcTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             GreatArc.fromPoints(Point2S.PLUS_I, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             GreatArc.fromPoints(Point2S.PLUS_I, Point2S.MINUS_I, TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

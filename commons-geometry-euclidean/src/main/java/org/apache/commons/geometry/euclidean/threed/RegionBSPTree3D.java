@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -160,27 +159,6 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return visitor.getRegionSizeProperties();
     }
 
-    /** Compute the region represented by the given node.
-     * @param node the node to compute the region for
-     * @return the region represented by the given node
-     */
-    private ConvexVolume computeNodeRegion(final RegionNode3D node) {
-        ConvexVolume volume = ConvexVolume.full();
-
-        RegionNode3D child = node;
-        RegionNode3D parent;
-
-        while ((parent = child.getParent()) != null) {
-            Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
-
-            volume = child.isMinus() ? split.getMinus() : split.getPlus();
-
-            child = parent;
-        }
-
-        return volume;
-    }
-
     /** {@inheritDoc} */
     @Override
     protected RegionNode3D createNode() {
@@ -237,7 +215,20 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @return the region represented by this node
          */
         public ConvexVolume getNodeRegion() {
-            return ((RegionBSPTree3D) getTree()).computeNodeRegion(this);
+            ConvexVolume volume = ConvexVolume.full();
+
+            RegionNode3D child = this;
+            RegionNode3D parent;
+
+            while ((parent = child.getParent()) != null) {
+                Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
+
+                volume = child.isMinus() ? split.getMinus() : split.getPlus();
+
+                child = parent;
+            }
+
+            return volume;
         }
 
         /** {@inheritDoc} */
@@ -387,7 +378,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         * @param center the cube center point
         * @param size the size of the cube
         * @return this builder instance
-        * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+        * @throws IllegalArgumentException if the width, height, or depth of the defined region is zero
         *      as evaluated by the precision context.
         */
         public Builder addCenteredCube(final Vector3D center, final double size) {
@@ -398,7 +389,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param corner a corner of the cube
          * @param size the size of the cube
          * @return this builder instance
-         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         * @throws IllegalArgumentException if the width, height, or depth of the defined region is zero
          *      as evaluated by the precision context.
          */
         public Builder addCube(final Vector3D corner, final double size) {
@@ -412,7 +403,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param ySize size of the prism along the y-axis
          * @param zSize size of the prism along the z-axis
          * @return this builder instance
-         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         * @throws IllegalArgumentException if the width, height, or depth of the defined region is zero
          *      as evaluated by the precision context.
          */
         public Builder addCenteredRect(final Vector3D center, final double xSize, final double ySize,
@@ -436,7 +427,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param zDelta distance to move along the z axis to place the other points in the
          *      prism; this value may be negative.
          * @return this builder instance
-         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         * @throws IllegalArgumentException if the width, height, or depth of the defined region is zero
          *      as evaluated by the precision context.
          */
         public Builder addRect(final Vector3D pt, final double xDelta, final double yDelta, final double zDelta) {
@@ -451,7 +442,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param a first corner point in the rectangular prism (opposite of {@code b})
          * @param b second corner point in the rectangular prism (opposite of {@code a})
          * @return this builder instance
-         * @throws GeometryValueException if the width, height, or depth of the defined region is zero
+         * @throws IllegalArgumentException if the width, height, or depth of the defined region is zero
          *      as evaluated by the precision context.
          */
         public Builder addRect(final Vector3D a, final Vector3D b) {
@@ -465,7 +456,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             final double maxZ = Math.max(a.getZ(), b.getZ());
 
             if (precision.eq(minX, maxX) || precision.eq(minY, maxY) || precision.eq(minZ, maxZ)) {
-                throw new GeometryValueException("Rectangular prism has zero size: " + a + ", " + b + ".");
+                throw new IllegalArgumentException("Rectangular prism has zero size: " + a + ", " + b + ".");
             }
 
             final Vector3D[] vertices = {

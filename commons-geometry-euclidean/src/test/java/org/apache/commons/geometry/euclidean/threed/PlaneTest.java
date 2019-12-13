@@ -20,10 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.GeometryException;
-import org.apache.commons.geometry.core.exception.IllegalNormException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -31,6 +28,7 @@ import org.apache.commons.geometry.euclidean.threed.Plane.SubspaceTransform;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -65,7 +63,7 @@ public class PlaneTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromNormal(Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -90,7 +88,7 @@ public class PlaneTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPointAndNormal(pt, Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -119,22 +117,22 @@ public class PlaneTest {
         // identical vectors
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
 
         // zero vector
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.ZERO, TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
 
         // collinear vectors
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 2), TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
 
         // collinear vectors - reversed
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPointAndPlaneVectors(pt, Vector3D.of(0, 0, 1), Vector3D.of(0, 0, -2), TEST_PRECISION);
-        }, IllegalNormException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -177,19 +175,19 @@ public class PlaneTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, a, a, TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, a, b, TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(a, b, a, TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(b, a, a, TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -386,7 +384,7 @@ public class PlaneTest {
                         Vector3D.Unit.PLUS_X,
                         Vector3D.of(2, 0, 0)
                     ), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(Arrays.asList(
@@ -395,7 +393,7 @@ public class PlaneTest {
                         Vector3D.of(2, 0, 0),
                         Vector3D.of(3, 0, 0)
                     ), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -408,7 +406,7 @@ public class PlaneTest {
                         Vector3D.of(1e-12, 1e-12, 0),
                         Vector3D.Unit.PLUS_X
                     ), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
             Plane.fromPoints(Arrays.asList(
@@ -416,7 +414,7 @@ public class PlaneTest {
                         Vector3D.of(1e-12, 0, 0),
                         Vector3D.ZERO
                     ), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -429,7 +427,7 @@ public class PlaneTest {
                         Vector3D.Unit.PLUS_Y,
                         Vector3D.Unit.PLUS_Z
                     ), TEST_PRECISION);
-        }, GeometryException.class);
+        }, IllegalArgumentException.class);
     }
 
     @Test

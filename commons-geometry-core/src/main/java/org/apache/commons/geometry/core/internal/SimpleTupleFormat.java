@@ -299,8 +299,7 @@ public class SimpleTupleFormat {
 
             return value;
         } catch (NumberFormatException exc) {
-            fail(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
-            return 0.0; // for the compiler
+            throw parseFailure(String.format("unable to parse number from string \"%s\"", substr), str, pos, exc);
         }
     }
 
@@ -328,7 +327,7 @@ public class SimpleTupleFormat {
     private void endParse(String str, ParsePosition pos) {
         consumeWhitespace(str, pos);
         if (pos.getIndex() != str.length()) {
-            fail("unexpected content", str, pos);
+            throw parseFailure("unexpected content", str, pos);
         }
     }
 
@@ -395,33 +394,8 @@ public class SimpleTupleFormat {
             final int idx = pos.getIndex();
             final String actualSeq = str.substring(idx, Math.min(str.length(), idx + seq.length()));
 
-            fail(String.format("expected \"%s\" but found \"%s\"", seq, actualSeq), str, pos);
+            throw parseFailure(String.format("expected \"%s\" but found \"%s\"", seq, actualSeq), str, pos);
         }
-    }
-
-    /** Abort the current parsing operation by throwing an {@link IllegalArgumentException} with an informative
-     * error message.
-     * @param msg the error message
-     * @param str the string being parsed
-     * @param pos the current parse position
-     * @throws IllegalArgumentException the exception signaling a parse failure
-     */
-    private void fail(String msg, String str, ParsePosition pos) {
-        fail(msg, str, pos, null);
-    }
-
-    /** Abort the current parsing operation by throwing an {@link IllegalArgumentException} with an informative
-     * error message.
-     * @param msg the error message
-     * @param str the string being parsed
-     * @param pos the current parse position
-     * @param cause the original cause of the error
-     * @throws IllegalArgumentException the exception signaling a parse failure
-     */
-    private void fail(String msg, String str, ParsePosition pos, Throwable cause) {
-        final String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s", str, pos.getIndex(), msg);
-
-        throw new TupleParseException(fullMsg, cause);
     }
 
     /** Return an instance configured with default values. Tuples in this format
@@ -437,6 +411,30 @@ public class SimpleTupleFormat {
      */
     public static SimpleTupleFormat getDefault() {
         return DEFAULT_INSTANCE;
+    }
+
+    /** Return an {@link IllegalArgumentException} representing a parsing failure.
+     * @param msg the error message
+     * @param str the string being parsed
+     * @param pos the current parse position
+     * @return an exception signaling a parse failure
+     */
+    private static IllegalArgumentException parseFailure(String msg, String str, ParsePosition pos) {
+        return parseFailure(msg, str, pos, null);
+    }
+
+    /** Return an {@link IllegalArgumentException} representing a parsing failure.
+     * @param msg the error message
+     * @param str the string being parsed
+     * @param pos the current parse position
+     * @param cause the original cause of the error
+     * @return an exception signaling a parse failure
+     */
+    private static IllegalArgumentException parseFailure(String msg, String str, ParsePosition pos, Throwable cause) {
+        final String fullMsg = String.format("Failed to parse string \"%s\" at index %d: %s",
+                str, pos.getIndex(), msg);
+
+        return new TupleParseException(fullMsg, cause);
     }
 
     /** Exception class for errors occurring during tuple parsing.

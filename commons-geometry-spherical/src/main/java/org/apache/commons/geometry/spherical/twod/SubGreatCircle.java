@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.exception.GeometryException;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -129,7 +128,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
 
     /** Add an arc to this instance.
      * @param arc arc to add
-     * @throws GeometryException if the given arc is not from
+     * @throws IllegalArgumentException if the given arc is not from
      *      a great circle equivalent to this instance
      */
     public void add(final GreatArc arc) {
@@ -141,7 +140,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
     /** Add the region represented by the given subcircle to this instance.
      * The argument is not modified.
      * @param subcircle subcircle to add
-     * @throws GeometryException if the given subcircle is not from
+     * @throws IllegalArgumentException if the given subcircle is not from
      *      a great circle equivalent to this instance
      */
     public void add(final SubGreatCircle subcircle) {
@@ -168,14 +167,14 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
     /** Validate that the given great circle is equivalent to the circle
      * defining this instance.
      * @param inputCircle the great circle to validate
-     * @throws GeometryException if the argument is not equivalent
+     * @throws IllegalArgumentException if the argument is not equivalent
      *      to the great circle for this instance
      */
     private void validateGreatCircle(final GreatCircle inputCircle) {
         final GreatCircle circle = getCircle();
 
         if (!circle.eq(inputCircle)) {
-            throw new GeometryException("Argument is not on the same " +
+            throw new IllegalArgumentException("Argument is not on the same " +
                     "great circle. Expected " + circle + " but was " +
                     inputCircle);
         }

@@ -16,9 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.exception.GeometryValueException;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -59,9 +57,9 @@ public class LineTest {
     public void testFromPoints_pointsTooClose() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> Line.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
-                GeometryValueException.class, "Line direction cannot be zero");
+                IllegalArgumentException.class, "Line direction cannot be zero");
         GeometryTestUtils.assertThrows(() -> Line.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1 + 1e-11, 1e-11), TEST_PRECISION),
-                GeometryValueException.class, "Line direction cannot be zero");
+                IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
@@ -84,9 +82,9 @@ public class LineTest {
     public void testFromPointAndDirection_directionIsZero() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
-                GeometryValueException.class, "Line direction cannot be zero");
+                IllegalArgumentException.class, "Line direction cannot be zero");
         GeometryTestUtils.assertThrows(() -> Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(1e-11, -1e-12), TEST_PRECISION),
-                GeometryValueException.class, "Line direction cannot be zero");
+                IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
@@ -1060,7 +1058,7 @@ public class LineTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             line.transform(scaleCollapse);
-        }, GeometryValueException.class, "Line direction cannot be zero");
+        }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
