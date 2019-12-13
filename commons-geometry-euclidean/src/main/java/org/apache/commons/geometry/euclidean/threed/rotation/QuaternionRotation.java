@@ -355,13 +355,13 @@ public final class QuaternionRotation implements Rotation3D {
             if (sequenceType == AxisSequenceType.TAIT_BRYAN) {
                 return getRelativeTaitBryanAngles(axis1, axis2, axis3);
             } else if (sequenceType == AxisSequenceType.EULER) {
-                return getRelativeEulerAngles(axis1, axis2, axis3);
+                return getRelativeEulerAngles(axis1, axis2);
             }
         } else if (frame == AxisReferenceFrame.ABSOLUTE) {
             if (sequenceType == AxisSequenceType.TAIT_BRYAN) {
                 return getAbsoluteTaitBryanAngles(axis1, axis2, axis3);
             } else if (sequenceType == AxisSequenceType.EULER) {
-                return getAbsoluteEulerAngles(axis1, axis2, axis3);
+                return getAbsoluteEulerAngles(axis1, axis2);
             }
         }
 
@@ -437,14 +437,15 @@ public final class QuaternionRotation implements Rotation3D {
     }
 
     /** Get a sequence of angles around the given Euler axes that produce a rotation equivalent
-     * to this instance. The axes are interpreted as being relative to the rotated coordinate frame.
+     * to this instance. The axes are interpreted as being relative to the rotated coordinate frame. Only
+     * the first two axes are needed since, by definition, the first Euler angle axis is repeated as the
+     * third axis.
      * @param axis1 first Euler axis
      * @param axis2 second Euler axis
-     * @param axis3 third Euler axis
      * @return a sequence of rotation angles around the relative input axes that produce a rotation equivalent
      *      to this instance
      */
-    private double[] getRelativeEulerAngles(final Vector3D axis1, final Vector3D axis2, final Vector3D axis3) {
+    private double[] getRelativeEulerAngles(final Vector3D axis1, final Vector3D axis2) {
 
         // Use the same overall approach as with the Tait-Bryan angles: get the first two angles by looking
         // at the transformed rotation axes and the third by using the inverse.
@@ -488,16 +489,17 @@ public final class QuaternionRotation implements Rotation3D {
 
     /** Get a sequence of angles around the given Euler axes that produce a rotation equivalent
      * to this instance. The axes are interpreted as being part of an absolute (unmoving) coordinate frame.
+     * Only the first two axes are needed since, by definition, the first Euler angle axis is repeated as
+     * the third axis.
      * @param axis1 first Euler axis
      * @param axis2 second Euler axis
-     * @param axis3 third Euler axis
      * @return a sequence of rotation angles around the absolute input axes that produce a rotation equivalent
      *      to this instance
      */
-    private double[] getAbsoluteEulerAngles(final Vector3D axis1, final Vector3D axis2, final Vector3D axis3) {
+    private double[] getAbsoluteEulerAngles(final Vector3D axis1, final Vector3D axis2) {
         // A relative axis-angle rotation sequence is equivalent to an absolute one with the rotation
         // sequence reversed, meaning we can reuse our relative logic here.
-        return reverseArray(getRelativeEulerAngles(axis3, axis2, axis1));
+        return reverseArray(getRelativeEulerAngles(axis1, axis2));
     }
 
     /** Create a new instance from the given quaternion. The quaternion is normalized and
