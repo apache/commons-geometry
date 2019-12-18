@@ -253,7 +253,7 @@
           <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
           <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
-          <logViolationsToConsole>false</logViolationsToConsole>
+          <logViolationsToConsole>true</logViolationsToConsole>
           <failOnViolation>true</failOnViolation>
           <resourceExcludes>NOTICE.txt,LICENSE.txt,**/pom.properties,**/resolver-status.properties</resourceExcludes>
           <excludes>**/generated/**.java</excludes>
@@ -262,9 +262,9 @@
           <execution>
             <id>validate</id>
             <phase>validate</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
+            <goals>
+              <goal>check</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
