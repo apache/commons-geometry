@@ -57,12 +57,12 @@ public class MatricesTest {
         Assert.assertEquals(1, Matrices.determinant(
                 1, 0, 0,
                 0, 1, 0,
-                0 , 0, 1), EPS);
+                0, 0, 1), EPS);
 
         Assert.assertEquals(-1, Matrices.determinant(
                 -1, 0, 0,
                 0, -1, 0,
-                0 , 0, -1), EPS);
+                0, 0, -1), EPS);
 
         Assert.assertEquals(0, Matrices.determinant(
                 1, 2, 3,

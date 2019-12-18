@@ -86,7 +86,7 @@ public class RegionBSPTree1DTest {
 
         // act/assert
         checkClassify(tree, RegionLocation.OUTSIDE, Double.NEGATIVE_INFINITY);
-        checkClassify(tree, RegionLocation.OUTSIDE,-2.0);
+        checkClassify(tree, RegionLocation.OUTSIDE, -2.0);
         checkClassify(tree, RegionLocation.INSIDE, 0.0);
         checkClassify(tree, RegionLocation.BOUNDARY, 9.0 - 1e-16);
         checkClassify(tree, RegionLocation.BOUNDARY, 9.0 + 1e-16);
@@ -129,7 +129,7 @@ public class RegionBSPTree1DTest {
 
         // act/assert
         checkContains(tree, false, Double.NEGATIVE_INFINITY);
-        checkContains(tree, false,-2.0);
+        checkContains(tree, false, -2.0);
         checkContains(tree, true, 0.0);
         checkContains(tree, true, 9.0 - 1e-16);
         checkContains(tree, true, 9.0 + 1e-16);
@@ -1194,7 +1194,7 @@ public class RegionBSPTree1DTest {
         Assert.assertEquals(2, tree.toIntervals().size());
     }
 
-    private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double ... points) {
+    private static void checkClassify(RegionBSPTree1D tree, RegionLocation loc, double... points) {
         for (double x : points) {
             String msg = "Unexpected location for point " + x;
 
@@ -1203,7 +1203,7 @@ public class RegionBSPTree1DTest {
         }
     }
 
-    private static void checkContains(RegionBSPTree1D tree, boolean contains, double ... points) {
+    private static void checkContains(RegionBSPTree1D tree, boolean contains, double... points) {
         for (double x : points) {
             String msg = "Unexpected contains status for point " + x;
 

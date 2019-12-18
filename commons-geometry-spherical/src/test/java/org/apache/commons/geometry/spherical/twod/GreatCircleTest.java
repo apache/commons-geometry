@@ -640,7 +640,7 @@ public class GreatCircleTest {
                 new EpsilonDoublePrecisionContext(eps));
 
         // act/assert
-        Assert.assertTrue(a.eq(a));;
+        Assert.assertTrue(a.eq(a));
 
         Assert.assertFalse(a.eq(b));
         Assert.assertFalse(a.eq(c));

@@ -38,5 +38,6 @@
   <suppress checks="DesignForExtension" files=".*[/\\]test[/\\].*" />
   <suppress checks="LineLength" files=".*[/\\]test[/\\].*" />
   <suppress checks="IllegalCatch" files=".*[/\\]test[/\\].*" />
+  <suppress checks="MethodName" files=".*[/\\]test[/\\].*" />
   <suppress checks="MethodLength" files="" />
 </suppressions>

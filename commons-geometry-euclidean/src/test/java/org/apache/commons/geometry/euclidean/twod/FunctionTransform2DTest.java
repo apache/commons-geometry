@@ -135,25 +135,21 @@ public class FunctionTransform2DTest {
     public void testToMatrix() {
         // act/assert
         Assert.assertArrayEquals(new double[] {
-                    1, 0, 0,
-                    0, 1, 0
-                },
-                FunctionTransform2D.identity().toMatrix().toArray(), TEST_EPS);
+            1, 0, 0,
+            0, 1, 0
+        }, FunctionTransform2D.identity().toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    1, 0, 2,
-                    0, 1, 3
-                },
-                FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3))).toMatrix().toArray(), TEST_EPS);
+            1, 0, 2,
+            0, 1, 3
+        }, FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3))).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    3, 0, 0,
-                    0, 3, 0
-                },
-                FunctionTransform2D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
+            3, 0, 0,
+            0, 3, 0
+        }, FunctionTransform2D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    3, 0, 6,
-                    0, 3, 9
-                },
-                FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3)).multiply(3)).toMatrix().toArray(), TEST_EPS);
+            3, 0, 6,
+            0, 3, 9
+        }, FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 
     @Test

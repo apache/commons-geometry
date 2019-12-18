@@ -88,7 +88,7 @@ public class AbstractGreatArcPathConnectorTest {
     public void testConnectAll_singleLune() {
         // arrange
         GreatCircle upperBound = GreatCircle.fromPoleAndU(
-                Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
+                Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         connector.add(XY_PLANE.arc(0, PlaneAngleRadians.PI));
         connector.add(upperBound.arc(PlaneAngleRadians.PI, 0));
@@ -109,7 +109,7 @@ public class AbstractGreatArcPathConnectorTest {
     public void testConnectAll_singleLune_pathsNotOrientedCorrectly() {
         // arrange
         GreatCircle upperBound = GreatCircle.fromPoleAndU(
-                Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X , TEST_PRECISION);
+                Vector3D.of(0, 1, -1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         connector.add(XY_PLANE.arc(0, PlaneAngleRadians.PI));
         connector.add(upperBound.arc(0, PlaneAngleRadians.PI));
@@ -278,14 +278,14 @@ public class AbstractGreatArcPathConnectorTest {
         assertPathPoints(path2.get(0), Point2S.MINUS_I, Point2S.MINUS_J);
     }
 
-    private static void assertPathPoints(GreatArcPath path, Point2S ... points) {
+    private static void assertPathPoints(GreatArcPath path, Point2S... points) {
         List<Point2S> expectedPoints = Arrays.asList(points);
         List<Point2S> actualPoints = path.getVertices();
 
         String msg = "Expected path points to equal " + expectedPoints + " but was " + actualPoints;
         Assert.assertEquals(msg, expectedPoints.size(), actualPoints.size());
 
-        for (int i=0; i<expectedPoints.size(); ++i) {
+        for (int i = 0; i < expectedPoints.size(); ++i) {
             SphericalTestUtils.assertPointsEq(expectedPoints.get(i), actualPoints.get(i), TEST_EPS);
         }
     }

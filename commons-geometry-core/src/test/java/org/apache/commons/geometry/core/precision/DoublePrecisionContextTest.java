@@ -16,7 +16,6 @@
  */
 package org.apache.commons.geometry.core.precision;
 
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 

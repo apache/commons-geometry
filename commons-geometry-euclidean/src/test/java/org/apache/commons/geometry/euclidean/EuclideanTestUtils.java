@@ -26,17 +26,20 @@ import org.junit.Assert;
 /**
  * Class containing various euclidean-related test utilities.
  */
-public class EuclideanTestUtils {
+public final class EuclideanTestUtils {
+
+    // no instantiation
+    private EuclideanTestUtils() {}
 
     /** Callback interface for {@link #permute(double, double, double, PermuteCallback2D)}. */
     @FunctionalInterface
-    public static interface PermuteCallback2D {
+    public interface PermuteCallback2D {
         void accept(double x, double y);
     }
 
     /** Callback interface for {@link #permute(double, double, double, PermuteCallback3D)} */
     @FunctionalInterface
-    public static interface PermuteCallback3D {
+    public interface PermuteCallback3D {
         void accept(double x, double y, double z);
     }
 
@@ -198,7 +201,7 @@ public class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector1D> region, RegionLocation loc, Vector1D ... pts) {
+    public static void assertRegionLocation(Region<Vector1D> region, RegionLocation loc, Vector1D... pts) {
         for (Vector1D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }
@@ -210,7 +213,7 @@ public class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector2D> region, RegionLocation loc, Vector2D ... pts) {
+    public static void assertRegionLocation(Region<Vector2D> region, RegionLocation loc, Vector2D... pts) {
         for (Vector2D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }
@@ -222,7 +225,7 @@ public class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(Region<Vector3D> region, RegionLocation loc, Vector3D ... pts) {
+    public static void assertRegionLocation(Region<Vector3D> region, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
         }

@@ -88,7 +88,7 @@ public class WelzlEncloser2DTest {
 
     @Test
     public void testLargeSamples() {
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 0xa2a63cad12c01fb2l);
+        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 0xa2a63cad12c01fb2L);
         for (int k = 0; k < 100; ++k) {
             int nbPoints = random.nextInt(10000);
             List<Vector2D> points = new ArrayList<>();
@@ -112,11 +112,11 @@ public class WelzlEncloser2DTest {
         );
         double precision = 1;
         DoublePrecisionContext precisionContext = new EpsilonDoublePrecisionContext(precision);
-        WelzlEncloser< Vector2D> encloser = new WelzlEncloser<>(precisionContext, new DiskGenerator());
+        WelzlEncloser<Vector2D> encloser = new WelzlEncloser<>(precisionContext, new DiskGenerator());
         encloser.enclose(points);
     }
 
-    private List<Vector2D> buildList(final double ... coordinates) {
+    private List<Vector2D> buildList(final double... coordinates) {
         List<Vector2D> list = new ArrayList<>(coordinates.length / 2);
         for (int i = 0; i < coordinates.length; i += 2) {
             list.add(Vector2D.of(coordinates[i], coordinates[i + 1]));

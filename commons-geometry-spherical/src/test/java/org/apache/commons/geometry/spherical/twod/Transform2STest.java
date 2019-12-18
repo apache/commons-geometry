@@ -36,9 +36,9 @@ public class Transform2STest {
         // assert
         Assert.assertTrue(t.preservesOrientation());
         Assert.assertArrayEquals(new double[] {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
         }, t.getEuclideanTransform().toArray(), 0);
 
         SphericalTestUtils.assertPointsEqual(Point2S.PLUS_I, t.apply(Point2S.PLUS_I), TEST_EPS);

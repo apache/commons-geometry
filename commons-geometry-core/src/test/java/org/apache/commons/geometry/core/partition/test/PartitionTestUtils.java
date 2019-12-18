@@ -16,7 +16,12 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.Node;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -26,12 +31,15 @@ import org.junit.Assert;
 /** Class containing utility methods for tests related to the
  * partition package.
  */
-public class PartitionTestUtils {
+public final class PartitionTestUtils {
 
     public static final double EPS = 1e-6;
 
     public static final DoublePrecisionContext PRECISION =
             new EpsilonDoublePrecisionContext(EPS);
+
+
+    private PartitionTestUtils() {}
 
     /**
      * Asserts that corresponding values in the given points are equal.
@@ -44,6 +52,10 @@ public class PartitionTestUtils {
         Assert.assertEquals(msg, expected.getY(), actual.getY(), EPS);
     }
 
+    /** Assert that two line segemtns are equal using the default test epsilon.
+     * @param expected
+     * @param actual
+     */
     public static void assertSegmentsEqual(TestLineSegment expected, TestLineSegment actual) {
         String msg = "Expected line segment to equal " + expected + " but was " + actual;
 
@@ -58,6 +70,32 @@ public class PartitionTestUtils {
                 actual.getEndPoint().getY(), EPS);
     }
 
+    /** Assert that all given points lie in the expected location of the region.
+     * @param region region to test
+     * @param location expected location of all points
+     * @param points points to test
+     */
+    public static void assertPointLocations(final Region<TestPoint2D> region, final RegionLocation location,
+            final TestPoint2D... points) {
+        assertPointLocations(region, location, Arrays.asList(points));
+    }
+
+    /** Assert that all given points lie in the expected location of the region.
+     * @param region region to test
+     * @param location expected location of all points
+     * @param points points to test
+     */
+    public static void assertPointLocations(final Region<TestPoint2D> region, final RegionLocation location,
+            final List<TestPoint2D> points) {
+
+        for (TestPoint2D p : points) {
+            Assert.assertEquals("Unexpected location for point " + p, location, region.classify(p));
+        }
+    }
+
+    /** Assert that the given node is a consistent internal node.
+     * @param node
+     */
     public static void assertIsInternalNode(Node<?, ?> node) {
         Assert.assertNotNull(node.getCut());
         Assert.assertNotNull(node.getMinus());
@@ -67,6 +105,9 @@ public class PartitionTestUtils {
         Assert.assertFalse(node.isLeaf());
     }
 
+    /** Assert that the given node is a consistent leaf node.
+     * @param node
+     */
     public static void assertIsLeafNode(Node<?, ?> node) {
         Assert.assertNull(node.getCut());
         Assert.assertNull(node.getMinus());
@@ -101,8 +142,7 @@ public class PartitionTestUtils {
 
             Assert.assertNull(msg, node.getMinus());
             Assert.assertNull(msg, node.getPlus());
-        }
-        else {
+        } else {
             String msg = "Node with cut must have children";
 
             Assert.assertNotNull(msg, node.getMinus());

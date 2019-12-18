@@ -471,8 +471,7 @@ public class Point1STest {
         if (pt.isFinite()) {
             Assert.assertEquals(1, vec.norm(), TEST_EPS);
             Assert.assertEquals(normAz, PolarCoordinates.fromCartesian(vec).getAzimuth(), TEST_EPS);
-        }
-        else {
+        } else {
             Assert.assertNull(vec);
         }
     }

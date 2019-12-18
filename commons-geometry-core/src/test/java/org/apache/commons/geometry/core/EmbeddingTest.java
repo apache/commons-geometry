@@ -24,9 +24,8 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint1D;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.junit.Test;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 public class EmbeddingTest {
 

@@ -22,7 +22,6 @@ import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partitioning.bsp.AttributeBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AttributeBSPTree.AttributeNode;
 import org.junit.Assert;
 import org.junit.Test;

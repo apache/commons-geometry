@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -79,7 +78,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(0.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(0, 0, 0),
@@ -100,7 +99,7 @@ public class RegionBSPTree3DTest {
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(0, 0, 0),
@@ -165,11 +164,11 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertPositiveInfinity(tree.getBoundarySize());
         Assert.assertNull(tree.getBarycenter());
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100));
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector3D.of(0, 0, 0));
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.of(0, 0, 0));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
     }
@@ -200,9 +199,9 @@ public class RegionBSPTree3DTest {
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
         Assert.assertNull(tree.getBarycenter());
 
-        checkClassify(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0, 1));
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0, 0, -1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0, 1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0, 0, -1));
     }
 
     @Test
@@ -226,12 +225,12 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
                 Vector3D.of(0.5, -1, 0.5), Vector3D.of(0.5, 2, 0.5),
                 Vector3D.of(0.5, 0.5, -1), Vector3D.of(0.5, 0.5, 2));
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
     }
 
     @Test
@@ -437,12 +436,12 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
         Assert.assertNull(tree.getBarycenter());
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
                 Vector3D.of(-100, -100, -100),
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(0, 0, 0));
     }
 
@@ -461,7 +460,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, -1, 0),
@@ -478,7 +477,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(-1, -1, 1),
                 Vector3D.of(-1, -1, -1));
 
-        checkClassify(tree, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
                 Vector3D.of(0.5, 0, 0),
                 Vector3D.of(-0.5, 0, 0),
                 Vector3D.of(0, 0.5, 0),
@@ -495,7 +494,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(-0.5, -0.5, 0.5),
                 Vector3D.of(-0.5, -0.5, -0.5));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
 
                 Vector3D.of(0.4, 0.4, 0.4),
@@ -527,12 +526,12 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(3, 0, 0));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(2, 0, 0));
     }
@@ -556,11 +555,11 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(2, 0, 0));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 0, 0));
     }
@@ -588,11 +587,11 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.208e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(2, 0, 0));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 0, 0));
     }
@@ -617,13 +616,13 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), tree.getBarycenter(), TEST_EPS);
 
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, 1, 0),
                 Vector3D.of(2, 1, 0));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 1, 0));
     }
@@ -647,13 +646,13 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
                 Vector3D.of(1, 0, 0),
                 Vector3D.of(0, 1, 1),
                 Vector3D.of(2, 1, 1));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(1, 1, 1));
     }
@@ -680,14 +679,14 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_EPS);
 
         double third = 1.0 / 3.0;
-        checkClassify(tree, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
             vertex1, vertex2, vertex3, vertex4,
             Vector3D.linearCombination(third, vertex1, third, vertex2, third, vertex3),
             Vector3D.linearCombination(third, vertex2, third, vertex3, third, vertex4),
             Vector3D.linearCombination(third, vertex3, third, vertex4, third, vertex1),
             Vector3D.linearCombination(third, vertex4, third, vertex1, third, vertex2)
         );
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
             Vector3D.of(1, 2, 4),
             Vector3D.of(2, 2, 3),
             Vector3D.of(2, 3, 4),
@@ -713,7 +712,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(sphereSurface(radius), tree.getBoundarySize(), approximationTolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), tree.getBarycenter(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 2, 3),
                 Vector3D.of(2.1, 2, 3),
                 Vector3D.of(1, 0.9, 3),
@@ -722,7 +721,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(1, 2, 4.1),
                 Vector3D.of(1.6, 2.6, 3.6));
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(1, 2, 3),
                 Vector3D.of(0.1, 2, 3),
                 Vector3D.of(1.9, 2, 3),
@@ -792,7 +791,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, -0.1, 0.5),
@@ -800,7 +799,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 1.6));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.5, 0.5),
                 Vector3D.of(0.9, 0.5, 0.5),
                 Vector3D.of(0.5, 0.1, 0.5),
@@ -832,7 +831,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -840,7 +839,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0, 0, -1.1),
                 Vector3D.of(0, 0, 1.1));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(-0.9, 0, 0),
                 Vector3D.of(0.9, 0, 0),
                 Vector3D.of(0, -0.9, 0),
@@ -869,11 +868,11 @@ public class RegionBSPTree3DTest {
         Assert.assertFalse(result.isEmpty());
         Assert.assertFalse(result.isFull());
 
-        Assert.assertEquals((sphereVolume(radius) * 0.5), result.getSize(), tolerance);
+        Assert.assertEquals(sphereVolume(radius) * 0.5, result.getSize(), tolerance);
         Assert.assertEquals(circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 0.5, 1.0),
                 Vector3D.of(1.1, 0.5, 1.0),
                 Vector3D.of(0.5, -0.1, 1.0),
@@ -881,7 +880,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 0.5, 0.4),
                 Vector3D.of(0.5, 0.5, 1.1));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.5, 0.9),
                 Vector3D.of(0.9, 0.5, 0.9),
                 Vector3D.of(0.5, 0.1, 0.9),
@@ -912,7 +911,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -920,7 +919,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0, 0, -1.1),
                 Vector3D.of(0, 0, 1.1));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(-0.9, 0, 0),
                 Vector3D.of(0.9, 0, 0),
                 Vector3D.of(0, -0.9, 0),
@@ -952,18 +951,18 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals((2 * cubeVolume(size)) - (2 * cubeVolume(size * 0.5)), result.getSize(), TEST_EPS);
         Assert.assertEquals(2 * cubeSurface(size), result.getBoundarySize(), TEST_EPS);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, -0.1, -0.1),
                 Vector3D.of(0.75, 0.75, 0.75),
                 Vector3D.of(1.6, 1.6, 1.6));
 
-        checkClassify(result, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.BOUNDARY,
                 Vector3D.of(0, 0, 0),
                 Vector3D.of(0.5, 0.5, 0.5),
                 Vector3D.of(1, 1, 1),
                 Vector3D.of(1.5, 1.5, 1.5));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.1, 0.1),
                 Vector3D.of(0.4, 0.4, 0.4),
                 Vector3D.of(1.1, 1.1, 1.1),
@@ -993,7 +992,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(cubeSurface(size) + (sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, -0.1, 0.5),
@@ -1002,7 +1001,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 0.5, 1.6),
                 Vector3D.of(0.5, 0.5, 0.9));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.5, 0.5),
                 Vector3D.of(0.9, 0.5, 0.5),
                 Vector3D.of(0.5, 0.1, 0.5),
@@ -1032,7 +1031,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
         Assert.assertNull(result.getBarycenter());
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1071,7 +1070,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(cubeSurface(size) - circleSurface(radius) + (0.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 0.5, 1.0),
                 Vector3D.of(1.1, 0.5, 1.0),
                 Vector3D.of(0.5, -0.1, 1.0),
@@ -1079,7 +1078,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 0.6));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.5, 0.4),
                 Vector3D.of(0.9, 0.5, 0.4),
                 Vector3D.of(0.5, 0.1, 0.4),
@@ -1108,7 +1107,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
         Assert.assertNull(result.getBarycenter());
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
                 Vector3D.of(1.1, 0, 0),
                 Vector3D.of(0, -1.1, 0),
@@ -1152,7 +1151,7 @@ public class RegionBSPTree3DTest {
         Assert.assertEquals(cubeSurface(size) - (3.0 * circleSurface(radius)) + (1.5 * sphereSurface(radius)),
                 result.getBoundarySize(), tolerance);
 
-        checkClassify(result, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 0.5, 0.5),
                 Vector3D.of(1.1, 0.5, 0.5),
                 Vector3D.of(0.5, 0.4, 0.5),
@@ -1160,7 +1159,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0.5, 0.5, -0.1),
                 Vector3D.of(0.5, 0.5, 1.6));
 
-        checkClassify(result, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(result, RegionLocation.INSIDE,
                 Vector3D.of(0.1, 0.5, 0.1),
                 Vector3D.of(0.9, 0.5, 0.1),
                 Vector3D.of(0.5, 0.4, 0.1),
@@ -1297,7 +1296,7 @@ public class RegionBSPTree3DTest {
         // act
         Assert.assertEquals(2 + 2 + 6 + 6 + 24 + 24, tree.getSize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(1, 0.5, 0.5),
                 Vector3D.of(-0.5, -1, -1.5),
 
@@ -1307,7 +1306,7 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(0, 0, 15),
                 Vector3D.of(0, 0, 20));
 
-        checkClassify(tree, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
                 Vector3D.of(-1, -1.5, 13),
                 Vector3D.of(1, 1.5, 17),
 
@@ -1354,11 +1353,11 @@ public class RegionBSPTree3DTest {
         // assert
         Assert.assertEquals(8 + 27, tree.getSize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(2, 1, 1),
                 Vector3D.of(-2, -3, -4));
 
-        checkClassify(tree, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
                 Vector3D.of(-3.5, -4.5, -5.5),
                 Vector3D.of(-0.5, -1.5, -2.5));
     }
@@ -1382,36 +1381,36 @@ public class RegionBSPTree3DTest {
     @Test
     public void testBuilder_addIndexedFacets_triangles() {
         // arrange
-        Vector3D vertices[] = {
-                Vector3D.ZERO,
-                Vector3D.of(1, 0, 0),
-                Vector3D.of(1, 1, 0),
-                Vector3D.of(0, 1, 0),
+        Vector3D[] vertices = {
+            Vector3D.ZERO,
+            Vector3D.of(1, 0, 0),
+            Vector3D.of(1, 1, 0),
+            Vector3D.of(0, 1, 0),
 
-                Vector3D.of(0, 0, 1),
-                Vector3D.of(1, 0, 1),
-                Vector3D.of(1, 1, 1),
-                Vector3D.of(0, 1, 1)
+            Vector3D.of(0, 0, 1),
+            Vector3D.of(1, 0, 1),
+            Vector3D.of(1, 1, 1),
+            Vector3D.of(0, 1, 1)
         };
 
         int[][] facets = {
-                { 0, 3, 2 },
-                { 0, 2, 1 },
+            {0, 3, 2},
+            {0, 2, 1},
 
-                { 4, 5, 6 },
-                { 4, 6, 7 },
+            {4, 5, 6},
+            {4, 6, 7},
 
-                { 5, 1, 2 },
-                { 5, 2, 6 },
+            {5, 1, 2},
+            {5, 2, 6},
 
-                { 4, 7, 3 },
-                { 4, 3, 0 },
+            {4, 7, 3},
+            {4, 3, 0},
 
-                { 4, 0, 1 },
-                { 4, 1, 5 },
+            {4, 0, 1},
+            {4, 1, 5},
 
-                { 7, 6, 2 },
-                { 7, 2, 3 }
+            {7, 6, 2},
+            {7, 2, 3}
         };
 
         // act
@@ -1447,12 +1446,12 @@ public class RegionBSPTree3DTest {
         };
 
         int[][] facets = {
-                { 0, 2, 3, 1 },
-                { 4, 5, 3, 2 },
-                { 0, 1, 7, 6 },
-                { 4, 6, 7, 5 },
-                { 0, 6, 4, 2 },
-                { 1, 3, 5, 7 }
+                {0, 2, 3, 1},
+                {4, 5, 3, 2},
+                {0, 1, 7, 6},
+                {4, 6, 7, 5},
+                {0, 6, 4, 2},
+                {1, 3, 5, 7}
         };
 
         // act
@@ -1469,8 +1468,8 @@ public class RegionBSPTree3DTest {
         Assert.assertTrue(Double.isFinite(tree.getBoundarySize()));
         Assert.assertNotNull(tree.getBarycenter());
 
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0, 1.5, 0.5));
-        checkClassify(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0, 1.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0.5, 0.5));
     }
 
     @Test
@@ -1489,22 +1488,22 @@ public class RegionBSPTree3DTest {
                 .withVertexList(p0, p1, p2, p3)
                 .addIndexedFacet(0, 2, 1)
                 .addIndexedFacets(new int[][] {
-                        { 0, 1, 3 },
-                        { 0, 3, 2 }
+                        {0, 1, 3},
+                        {0, 3, 2}
                 })
                 .build();
 
         // assert
         Assert.assertEquals(0.5 / 3.0, tree.getSize(), TEST_EPS);
 
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(0.25, 0.25, 0.25));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0.25, 0.25, 0.25));
     }
 
     // GEOMETRY-59
     @Test
     public void testSlightlyConcavePrism() {
         // arrange
-        Vector3D vertices[] = {
+        Vector3D[] vertices = {
             Vector3D.of(0, 0, 0),
             Vector3D.of(2, 1e-7, 0),
             Vector3D.of(4, 0, 0),
@@ -1515,13 +1514,13 @@ public class RegionBSPTree3DTest {
             Vector3D.of(2, 2, 2)
         };
 
-        int facets[][] = {
-            { 4, 5, 6, 7 },
-            { 3, 2, 1, 0 },
-            { 0, 1, 5, 4 },
-            { 1, 2, 6, 5 },
-            { 2, 3, 7, 6 },
-            { 3, 0, 4, 7 }
+        int[][] facets = {
+            {4, 5, 6, 7},
+            {3, 2, 1, 0},
+            {0, 1, 5, 4},
+            {1, 2, 6, 5},
+            {2, 3, 7, 6},
+            {3, 0, 4, 7}
         };
 
         // act
@@ -1534,8 +1533,8 @@ public class RegionBSPTree3DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
-        checkClassify(tree, RegionLocation.INSIDE, Vector3D.of(2, 1, 1));
-        checkClassify(tree, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(2, 1, 1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(2, 1, 3), Vector3D.of(2, 1, -3),
                 Vector3D.of(2, -1, 1), Vector3D.of(2, 3, 1),
                 Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
@@ -1568,14 +1567,14 @@ public class RegionBSPTree3DTest {
         Vector3D norm;
 
         vAngle = -0.5 * vDelta;
-        for (int v=0; v<stacks; ++v) {
+        for (int v = 0; v < stacks; ++v) {
             vAngle += vDelta;
 
             stackRadius = Math.sin(vAngle) * adjustedRadius;
             stackHeight = Math.cos(vAngle) * adjustedRadius;
 
             hAngle = -0.5 * hDelta;
-            for (int h=0; h<slices; ++h) {
+            for (int h = 0; h < slices; ++h) {
                 hAngle += hDelta;
 
                 x = Math.cos(hAngle) * stackRadius;
@@ -1602,31 +1601,23 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(expectedNormal, sub.getPlane().getNormal(), TEST_EPS);
     }
 
-    private static void checkClassify(Region<Vector3D> region, RegionLocation loc, Vector3D ... points) {
-        for (Vector3D point : points) {
-            String msg = "Unexpected location for point " + point;
-
-            Assert.assertEquals(msg, loc, region.classify(point));
-        }
-    }
-
-    private double cubeVolume(double size) {
+    private static double cubeVolume(double size) {
         return size * size * size;
     }
 
-    private double cubeSurface(double size) {
+    private static double cubeSurface(double size) {
         return 6.0 * size * size;
     }
 
-    private double sphereVolume(double radius) {
+    private static double sphereVolume(double radius) {
         return 4.0 * Math.PI * radius * radius * radius / 3.0;
     }
 
-    private double sphereSurface(double radius) {
+    private static double sphereSurface(double radius) {
         return 4.0 * Math.PI * radius * radius;
     }
 
-    private double circleSurface(double radius) {
+    private static double circleSurface(double radius) {
         return Math.PI * radius * radius;
     }
 }

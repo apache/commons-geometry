@@ -467,7 +467,7 @@ public class Vector2DTest {
 
     @Test
     public void testOrthogonal_fullCircle() {
-        for (double az = 0.0; az<=PlaneAngleRadians.TWO_PI; az += 0.25) {
+        for (double az = 0.0; az <= PlaneAngleRadians.TWO_PI; az += 0.25) {
             // arrange
             Vector2D v = PolarCoordinates.toCartesian(Math.PI, az);
 
@@ -680,7 +680,7 @@ public class Vector2DTest {
         checkVector(v1.reject(Vector2D.Unit.PLUS_Y), 3.0, 0.0);
         checkVector(v1.reject(Vector2D.Unit.MINUS_Y), 3.0, 0.0);
 
-        checkVector(v2.reject(v1), (-32.0 / 25.0), (6.0 / 25.0) * 4.0);
+        checkVector(v2.reject(v1), -32.0 / 25.0, (6.0 / 25.0) * 4.0);
     }
 
     @Test
@@ -731,8 +731,7 @@ public class Vector2DTest {
             // base is pi/2 (which means that the projection is the zero vector)
             if (angle < PlaneAngleRadians.PI_OVER_TWO) {
                 Assert.assertEquals(0.0, proj.angle(base), eps);
-            }
-            else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
+            } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
                 Assert.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
             }
 
@@ -975,16 +974,16 @@ public class Vector2DTest {
     @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector2D.of(new double[] { 0, 1 }), 0, 1);
-        checkVector(Vector2D.of(new double[] { -1, -2 }), -1, -2);
-        checkVector(Vector2D.of(new double[] { Math.PI, Double.NaN }), Math.PI, Double.NaN);
-        checkVector(Vector2D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY }), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        checkVector(Vector2D.of(new double[] {0, 1}), 0, 1);
+        checkVector(Vector2D.of(new double[] {-1, -2}), -1, -2);
+        checkVector(Vector2D.of(new double[] {Math.PI, Double.NaN}), Math.PI, Double.NaN);
+        checkVector(Vector2D.of(new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector2D.of(new double[] {0.0 });
+        Vector2D.of(new double[] {0.0});
     }
 
     @Test

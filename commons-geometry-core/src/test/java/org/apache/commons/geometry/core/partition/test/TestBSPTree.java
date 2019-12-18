@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 /** BSP Tree implementation class for testing purposes.
  */
 public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> {
+
     /** {@inheritDoc} */
     @Override
     protected TestNode createNode() {
@@ -42,7 +43,7 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
 
     /** BSP Tree node class for {@link TestBSPTree}.
      */
-    public static class TestNode extends AbstractBSPTree.AbstractNode<TestPoint2D,TestNode> {
+    public static class TestNode extends AbstractBSPTree.AbstractNode<TestPoint2D, TestNode> {
         public TestNode(AbstractBSPTree<TestPoint2D, TestNode> tree) {
             super(tree);
         }

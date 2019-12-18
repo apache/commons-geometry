@@ -147,8 +147,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
             if (dirXCmp == 0) {
                 // vertical line
                 x = getOrigin().getX();
-            }
-            else {
+            } else {
                 x = (dirXCmp < 0 ^ abscissa < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
 
@@ -156,8 +155,7 @@ public class TestLine implements EmbeddingHyperplane<TestPoint2D, TestPoint1D> {
             if (dirYCmp == 0) {
                 // horizontal line
                 y = getOrigin().getY();
-            }
-            else {
+            } else {
                 y = (dirYCmp < 0 ^ abscissa < 0) ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
 

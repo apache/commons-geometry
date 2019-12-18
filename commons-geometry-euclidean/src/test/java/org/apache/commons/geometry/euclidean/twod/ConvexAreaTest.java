@@ -141,9 +141,9 @@ public class ConvexAreaTest {
         Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 3), transformed.getBarycenter(), TEST_EPS);
 
-        checkRegion(transformed, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
                 Vector2D.of(1, 2), Vector2D.of(2, 2), Vector2D.of(2, 4), Vector2D.of(1, 4));
-        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
     }
 
     @Test
@@ -169,9 +169,9 @@ public class ConvexAreaTest {
         Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, 3), transformed.getBarycenter(), TEST_EPS);
 
-        checkRegion(transformed, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
                 Vector2D.of(-1, 2), Vector2D.of(-2, 2), Vector2D.of(-2, 4), Vector2D.of(-1, 4));
-        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
     }
 
     @Test
@@ -197,9 +197,9 @@ public class ConvexAreaTest {
         Assert.assertEquals(6, transformed.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1.5, -3), transformed.getBarycenter(), TEST_EPS);
 
-        checkRegion(transformed, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.BOUNDARY,
                 Vector2D.of(-1, -2), Vector2D.of(-2, -2), Vector2D.of(-2, -4), Vector2D.of(-1, -4));
-        checkRegion(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
+        EuclideanTestUtils.assertRegionLocation(transformed, RegionLocation.INSIDE, transformed.getBarycenter());
     }
 
     @Test
@@ -393,7 +393,7 @@ public class ConvexAreaTest {
         Assert.assertNull(minus.getBarycenter());
 
         List<Segment> minusSegments = minus.getBoundaries();
-        Assert.assertEquals(1,minusSegments.size());
+        Assert.assertEquals(1, minusSegments.size());
         Assert.assertEquals(splitter, minusSegments.get(0).getLine());
 
         ConvexArea plus = split.getPlus();
@@ -775,7 +775,7 @@ public class ConvexAreaTest {
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X,
                             Vector2D.ZERO
-                    ),TEST_PRECISION);
+                    ), TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 
@@ -892,7 +892,7 @@ public class ConvexAreaTest {
                             Vector2D.Unit.PLUS_Y,
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X
-                    ),TEST_PRECISION);
+                    ), TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 
@@ -909,7 +909,7 @@ public class ConvexAreaTest {
     public void testFromPath_infinite() {
         // act
         ConvexArea area = ConvexArea.fromPath(Polyline.fromVertices(
-                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X),TEST_PRECISION));
+                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION));
 
         // assert
         Assert.assertFalse(area.isFull());
@@ -919,9 +919,9 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.Unit.PLUS_Y);
-        checkRegion(area, RegionLocation.BOUNDARY, Vector2D.ZERO);
-        checkRegion(area, RegionLocation.OUTSIDE, Vector2D.Unit.MINUS_Y);
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.Unit.PLUS_Y);
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.ZERO);
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE, Vector2D.Unit.MINUS_Y);
     }
 
     @Test
@@ -933,7 +933,7 @@ public class ConvexAreaTest {
                         Vector2D.Unit.PLUS_X,
                         Vector2D.of(1, 1),
                         Vector2D.Unit.PLUS_Y
-                ),TEST_PRECISION));
+                ), TEST_PRECISION));
 
         // assert
         Assert.assertFalse(area.isFull());
@@ -954,7 +954,7 @@ public class ConvexAreaTest {
                             Vector2D.Unit.PLUS_Y,
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X
-                    ),TEST_PRECISION));
+                    ), TEST_PRECISION));
         }, IllegalArgumentException.class);
     }
 
@@ -987,9 +987,9 @@ public class ConvexAreaTest {
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(-1, 1), Vector2D.of(0, 2));
-        checkRegion(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(2, 5));
-        checkRegion(area, RegionLocation.OUTSIDE, Vector2D.ZERO, Vector2D.of(2, 3));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-1, 1), Vector2D.of(0, 2));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(2, 5));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE, Vector2D.ZERO, Vector2D.of(2, 3));
     }
 
     @Test
@@ -1012,10 +1012,10 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(2, segments.size());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(-1, -1));
-        checkRegion(area, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-1, -1));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
                 Vector2D.ZERO, Vector2D.of(-1, 0), Vector2D.of(0, -1));
-        checkRegion(area, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE,
                 Vector2D.of(-1, 1), Vector2D.of(1, 1), Vector2D.of(1, -1));
     }
 
@@ -1040,10 +1040,10 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(3, segments.size());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(-0.5, -0.5));
-        checkRegion(area, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-0.5, -0.5));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
                 Vector2D.ZERO, Vector2D.of(-1, 0), Vector2D.of(0, -1));
-        checkRegion(area, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE,
                 Vector2D.of(-1, 1), Vector2D.of(1, 1), Vector2D.of(1, -1), Vector2D.of(-2, -2));
     }
 
@@ -1066,12 +1066,12 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
-        checkRegion(area, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
                 Vector2D.ZERO, Vector2D.of(1, 1),
                 Vector2D.of(0.5, 0), Vector2D.of(0.5, 1),
                 Vector2D.of(0, 0.5), Vector2D.of(1, 0.5));
-        checkRegion(area, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE,
                 Vector2D.of(-1, -1), Vector2D.of(2, 2));
     }
 
@@ -1098,12 +1098,12 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
-        checkRegion(area, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
                 Vector2D.ZERO, Vector2D.of(1, 1),
                 Vector2D.of(0.5, 0), Vector2D.of(0.5, 1),
                 Vector2D.of(0, 0.5), Vector2D.of(1, 0.5));
-        checkRegion(area, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE,
                 Vector2D.of(-1, -1), Vector2D.of(2, 2));
     }
 
@@ -1128,12 +1128,12 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
-        checkRegion(area, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY,
                 Vector2D.ZERO, Vector2D.of(1, 1),
                 Vector2D.of(0.5, 0), Vector2D.of(0.5, 1),
                 Vector2D.of(0, 0.5), Vector2D.of(1, 0.5));
-        checkRegion(area, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE,
                 Vector2D.of(-1, -1), Vector2D.of(2, 2));
     }
 
@@ -1158,9 +1158,9 @@ public class ConvexAreaTest {
         List<Segment> segments = area.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
-        checkRegion(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(1, 1), Vector2D.of(-1, 1));
-        checkRegion(area, RegionLocation.INSIDE, Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(-1, 2));
-        checkRegion(area, RegionLocation.OUTSIDE, Vector2D.of(0, 0), Vector2D.of(1, 0), Vector2D.of(-1, 0));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(1, 1), Vector2D.of(-1, 1));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(-1, 2));
+        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE, Vector2D.of(0, 0), Vector2D.of(1, 0), Vector2D.of(-1, 0));
     }
 
     @Test
@@ -1186,12 +1186,6 @@ public class ConvexAreaTest {
                         Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                     ));
         }, IllegalArgumentException.class);
-    }
-
-    private static void checkRegion(ConvexArea area, RegionLocation loc, Vector2D ... pts) {
-        for (Vector2D pt : pts) {
-            Assert.assertEquals("Unexpected region location for point " + pt, loc, area.classify(pt));
-        }
     }
 
     private static List<Line> createSquareBoundingLines(final Vector2D lowerLeft, final double width, final double height) {

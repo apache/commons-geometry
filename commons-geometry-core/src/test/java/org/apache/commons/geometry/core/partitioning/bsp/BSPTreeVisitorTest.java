@@ -114,7 +114,7 @@ public class BSPTreeVisitorTest {
 
     private static class ClosestFirstStubVisitor extends ClosestFirstVisitor<TestPoint2D, TestNode> {
 
-        public ClosestFirstStubVisitor(TestPoint2D target) {
+        ClosestFirstStubVisitor(TestPoint2D target) {
             super(target);
         }
 
@@ -126,7 +126,7 @@ public class BSPTreeVisitorTest {
 
     private static class FarthestFirstStubVisitor extends FarthestFirstVisitor<TestPoint2D, TestNode> {
 
-        public FarthestFirstStubVisitor(TestPoint2D target) {
+        FarthestFirstStubVisitor(TestPoint2D target) {
             super(target);
         }
 

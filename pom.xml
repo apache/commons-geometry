@@ -253,21 +253,20 @@
           <headerLocation>${geometry.parent.dir}/src/main/resources/checkstyle/license-header.txt</headerLocation>
           <suppressionsLocation>${geometry.parent.dir}/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
           <enableRulesSummary>false</enableRulesSummary>
-          <logViolationsToConsole>false</logViolationsToConsole>
+          <logViolationsToConsole>true</logViolationsToConsole>
           <failOnViolation>true</failOnViolation>
-          <resourceExcludes>NOTICE.txt,LICENSE.txt,**/maven-archiver/pom.properties,**/resolver-status.properties</resourceExcludes>
+          <resourceExcludes>NOTICE.txt,LICENSE.txt,**/pom.properties,**/resolver-status.properties</resourceExcludes>
           <excludes>**/generated/**.java</excludes>
         </configuration>
-        <!-- Uncommenting the lines below currently results in a failed build (see report). -->
-        <!-- <executions> -->
-        <!--   <execution> -->
-        <!--     <id>validate</id> -->
-        <!--     <phase>validate</phase> -->
-        <!--     <goals> -->
-        <!--       <goal>check</goal> -->
-        <!--     </goals> -->
-        <!--   </execution> -->
-        <!-- </executions> -->
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>

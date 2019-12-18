@@ -44,7 +44,7 @@ public class AxisSequenceTest {
         Assert.assertEquals(a2, axes.getAxis2());
         Assert.assertEquals(a3, axes.getAxis3());
 
-        Assert.assertArrayEquals(new Vector3D[] { a1, a2, a3 }, axes.toArray());
+        Assert.assertArrayEquals(new Vector3D[] {a1, a2, a3}, axes.toArray());
     }
 
     private Vector3D getAxisForName(String name) {

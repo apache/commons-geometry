@@ -101,7 +101,7 @@ public class DiskGeneratorTest {
     @Test
     public void testRandom() {
         final UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A,
-                                                                 0x12faa818373ffe90l);
+                                                                 0x12faa818373ffe90L);
         final UnitSphereSampler sr = new UnitSphereSampler(2, random);
         for (int i = 0; i < 500; ++i) {
             double d = 25 * random.nextDouble();

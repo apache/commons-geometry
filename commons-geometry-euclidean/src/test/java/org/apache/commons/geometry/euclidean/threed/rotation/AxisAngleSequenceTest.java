@@ -43,7 +43,7 @@ public class AxisAngleSequenceTest {
         double[] angles = seq.getAngles();
 
         // assert
-        Assert.assertArrayEquals(new double[] { 1, 2, 3 }, angles, 0.0);
+        Assert.assertArrayEquals(new double[] {1, 2, 3}, angles, 0.0);
     }
 
     @Test

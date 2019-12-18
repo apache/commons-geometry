@@ -533,22 +533,21 @@ public class AbstractSegmentConnectorTest {
         return segments;
     }
 
-    private static void assertFinitePath(Polyline path, Vector2D ... vertices)
-    {
+    private static void assertFinitePath(Polyline path, Vector2D... vertices) {
         Assert.assertFalse(path.isInfinite());
         Assert.assertTrue(path.isFinite());
 
         assertPathVertices(path, vertices);
     }
 
-    private static void assertPathVertices(Polyline path, Vector2D ... vertices) {
+    private static void assertPathVertices(Polyline path, Vector2D... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
         List<Vector2D> actualVertices = path.getVertices();
 
         String msg = "Expected path vertices to equal " + expectedVertices + " but was " + actualVertices;
         Assert.assertEquals(msg, expectedVertices.size(), actualVertices.size());
 
-        for (int i=0; i<expectedVertices.size(); ++i) {
+        for (int i = 0; i < expectedVertices.size(); ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedVertices.get(i), actualVertices.get(i), TEST_EPS);
         }
     }

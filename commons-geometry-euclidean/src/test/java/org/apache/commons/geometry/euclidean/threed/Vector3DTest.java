@@ -287,8 +287,7 @@ public class Vector3DTest {
         checkVector(Vector3D.Unit.MINUS_Y.withNorm(3.14), 0.0, -3.14, 0.0);
         checkVector(Vector3D.Unit.PLUS_Z.withNorm(-1.1), 0.0, 0.0, -1.1);
 
-        for (double mag = -10.0; mag <= 10.0; ++mag)
-        {
+        for (double mag = -10.0; mag <= 10.0; ++mag) {
             Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), EPS);
         }
     }
@@ -576,7 +575,7 @@ public class Vector3DTest {
         checkVector(Vector3D.of(2, 1, -4).cross(Vector3D.of(3, 1, -1)), 3, -10, -1);
 
         double invSqrt6 = 1 / Math.sqrt(6);
-        checkVector(Vector3D.of(1, 1, 1).cross(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, - 2 * invSqrt6, invSqrt6);
+        checkVector(Vector3D.of(1, 1, 1).cross(Vector3D.of(-1, 0, 1)).normalize(), invSqrt6, -2 * invSqrt6, invSqrt6);
     }
 
     @Test
@@ -588,15 +587,15 @@ public class Vector3DTest {
         // instead of the correct [0.0006913, -0.0001254, -0.0007909]
 
         // arrange
-        final Vector3D u1 = Vector3D.of(-1321008684645961.0 /   268435456.0,
-                                         -5774608829631843.0 /   268435456.0,
-                                         -7645843051051357.0 /  8589934592.0);
-        final Vector3D u2 = Vector3D.of( 1796571811118507.0 /  2147483648.0,
-                                          7853468008299307.0 /  2147483648.0,
+        final Vector3D u1 = Vector3D.of(-1321008684645961.0 / 268435456.0,
+                                         -5774608829631843.0 / 268435456.0,
+                                         -7645843051051357.0 / 8589934592.0);
+        final Vector3D u2 = Vector3D.of(1796571811118507.0 / 2147483648.0,
+                                          7853468008299307.0 / 2147483648.0,
                                           2599586637357461.0 / 17179869184.0);
         final Vector3D u3 = Vector3D.of(12753243807587107.0 / 18446744073709551616.0,
                                          -2313766922703915.0 / 18446744073709551616.0,
-                                          -227970081415313.0 /   288230376151711744.0);
+                                          -227970081415313.0 / 288230376151711744.0);
 
         // act
         Vector3D cNaive = Vector3D.of(u1.getY() * u2.getZ() - u1.getZ() * u2.getY(),
@@ -613,7 +612,7 @@ public class Vector3DTest {
     public void testCrossProduct_accuracy() {
         // we compare accurate versus naive cross product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 885362227452043215l);
+        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 885362227452043215L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
             double ux = 10000 * random.nextDouble();
@@ -703,7 +702,7 @@ public class Vector3DTest {
 
         Assert.assertEquals(132, v1.distanceSq(v3), EPS);
         Assert.assertEquals(132, v3.distanceSq(v1), EPS);
-  }
+    }
 
     @Test
     public void testDotProduct() {
@@ -749,7 +748,7 @@ public class Vector3DTest {
     public void testDotProduct_accuracy() {
         // we compare accurate versus naive dot product implementations
         // on regular vectors (i.e. not extreme cases like in the previous test)
-        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237l);
+        UniformRandomProvider random = RandomSource.create(RandomSource.WELL_1024_A, 553267312521321237L);
         for (int i = 0; i < 10000; ++i) {
             // arrange
             double ux = 10000 * random.nextDouble();
@@ -895,8 +894,7 @@ public class Vector3DTest {
                 // base is pi/2 (which means that the projection is the zero vector)
                 if (angle < PlaneAngleRadians.PI_OVER_TWO) {
                     Assert.assertEquals(0.0, proj.angle(base), eps);
-                }
-                else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
+                } else if (angle > PlaneAngleRadians.PI_OVER_TWO) {
                     Assert.assertEquals(PlaneAngleRadians.PI, proj.angle(base), eps);
                 }
 
@@ -1161,18 +1159,18 @@ public class Vector3DTest {
     @Test
     public void testOf_arrayArg() {
         // act/assert
-        checkVector(Vector3D.of(new double[] { 1, 2, 3 }), 1, 2, 3);
-        checkVector(Vector3D.of(new double[] { -1, -2, -3 }), -1, -2, -3);
-        checkVector(Vector3D.of(new double[] { Math.PI, Double.NaN, Double.POSITIVE_INFINITY }),
+        checkVector(Vector3D.of(new double[] {1, 2, 3}), 1, 2, 3);
+        checkVector(Vector3D.of(new double[] {-1, -2, -3}), -1, -2, -3);
+        checkVector(Vector3D.of(new double[] {Math.PI, Double.NaN, Double.POSITIVE_INFINITY}),
                 Math.PI, Double.NaN, Double.POSITIVE_INFINITY);
-        checkVector(Vector3D.of(new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
+        checkVector(Vector3D.of(new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E}),
                 Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Math.E);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOf_arrayArg_invalidDimensions() {
         // act/assert
-        Vector3D.of(new double[] { 0.0, 0.0 });
+        Vector3D.of(new double[] {0.0, 0.0});
     }
 
     @Test
