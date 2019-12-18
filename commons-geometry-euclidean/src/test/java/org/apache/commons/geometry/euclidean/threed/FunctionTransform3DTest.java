@@ -138,29 +138,25 @@ public class FunctionTransform3DTest {
     public void testToMatrix() {
         // act/assert
         Assert.assertArrayEquals(new double[] {
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0
-                },
-                FunctionTransform3D.identity().toMatrix().toArray(), TEST_EPS);
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
+        }, FunctionTransform3D.identity().toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    1, 0, 0, 2,
-                    0, 1, 0, 3,
-                    0, 0, 1, -4
-                },
-                FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toMatrix().toArray(), TEST_EPS);
+            1, 0, 0, 2,
+            0, 1, 0, 3,
+            0, 0, 1, -4
+        }, FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    3, 0, 0, 0,
-                    0, 3, 0, 0,
-                    0, 0, 3, 0
-                },
-                FunctionTransform3D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
+            3, 0, 0, 0,
+            0, 3, 0, 0,
+            0, 0, 3, 0
+        }, FunctionTransform3D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
-                    3, 0, 0, 6,
-                    0, 3, 0, 9,
-                    0, 0, 3, 12
-                },
-                FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toMatrix().toArray(), TEST_EPS);
+            3, 0, 0, 6,
+            0, 3, 0, 9,
+            0, 0, 3, 12
+        }, FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 
     @Test

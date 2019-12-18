@@ -744,7 +744,7 @@ public class ConvexArea2STest {
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
     }
 
-    private static void assertPath(GreatArcPath path, Point2S ... expectedVertices) {
+    private static void assertPath(GreatArcPath path, Point2S... expectedVertices) {
         List<Point2S> vertices = path.getVertices();
 
         Assert.assertEquals(expectedVertices.length, vertices.size());

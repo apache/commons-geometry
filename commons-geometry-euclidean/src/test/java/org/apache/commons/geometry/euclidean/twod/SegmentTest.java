@@ -412,7 +412,7 @@ public class SegmentTest {
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(1, 4));
@@ -430,7 +430,7 @@ public class SegmentTest {
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(-1, 2));
@@ -448,7 +448,7 @@ public class SegmentTest {
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -489,7 +489,7 @@ public class SegmentTest {
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -530,7 +530,7 @@ public class SegmentTest {
         Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
         Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
         Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from((pt) -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -837,7 +837,7 @@ public class SegmentTest {
         Assert.assertEquals(0, path.getSegments().size());
     }
 
-    private static void checkClassify(Segment segment, RegionLocation loc, Vector2D ... points) {
+    private static void checkClassify(Segment segment, RegionLocation loc, Vector2D... points) {
         for (Vector2D pt : points) {
             String msg = "Unexpected location for point " + pt;
 
@@ -879,16 +879,14 @@ public class SegmentTest {
 
         if (start == null) {
             Assert.assertNull(segment.getStartPoint());
-        }
-        else {
+        } else {
             EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
             Assert.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
         }
 
         if (end == null) {
             Assert.assertNull(segment.getEndPoint());
-        }
-        else {
+        } else {
             EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
             Assert.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
         }

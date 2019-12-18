@@ -354,7 +354,7 @@ public class GreatArcTest {
         GeometryTestUtils.assertContains("end= (", str);
     }
 
-    private static void checkClassify(GreatArc arc, RegionLocation loc, Point2S ... pts) {
+    private static void checkClassify(GreatArc arc, RegionLocation loc, Point2S... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, arc.classify(pt));
         }

@@ -81,7 +81,7 @@ public class SphericalCoordinatesTest {
     }
 
     private void checkOfWithAngleWrapAround(double radius, double azimuth, double polar) {
-        for (int i=-4; i<=4; ++i) {
+        for (int i = -4; i <= 4; ++i) {
             checkSpherical(
                     SphericalCoordinates.of(radius, azimuth + (i * PlaneAngleRadians.TWO_PI), polar + (-i * PlaneAngleRadians.TWO_PI)),
                     radius, azimuth, polar);
@@ -327,7 +327,7 @@ public class SphericalCoordinatesTest {
         Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}, 3.{0,2}\\)");
 
         // act
-        String str = sph.toString();;
+        String str = sph.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,

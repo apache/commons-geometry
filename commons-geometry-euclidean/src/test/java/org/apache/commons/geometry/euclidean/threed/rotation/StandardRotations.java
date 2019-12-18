@@ -24,43 +24,46 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
  * A collection of standard vector rotation operators implemented as
  * {@link UnaryOperator}s. These can be used to test rotation algorithms.
  */
-public class StandardRotations {
+public final class StandardRotations {
 
     /** The identity rotation; the input vector is returned unchanged. */
-    public static UnaryOperator<Vector3D> IDENTITY = (v) -> v;
+    public static final UnaryOperator<Vector3D> IDENTITY = v -> v;
 
     /** Rotates {@code pi/2} around the {@code +x} axis */
-    public static UnaryOperator<Vector3D> PLUS_X_HALF_PI = (v) -> Vector3D.of(v.getX(), -v.getZ(), v.getY());
+    public static final UnaryOperator<Vector3D> PLUS_X_HALF_PI = v -> Vector3D.of(v.getX(), -v.getZ(), v.getY());
 
     /** Rotates {@code pi/2} around the {@code -x} axis */
-    public static UnaryOperator<Vector3D> MINUS_X_HALF_PI = (v) -> Vector3D.of(v.getX(), v.getZ(), -v.getY());
+    public static final UnaryOperator<Vector3D> MINUS_X_HALF_PI = v -> Vector3D.of(v.getX(), v.getZ(), -v.getY());
 
     /** Rotates {@code pi} around the {@code x} axis (+x and -x are the same) */
-    public static UnaryOperator<Vector3D> X_PI = (v) -> Vector3D.of(v.getX(), -v.getY(), -v.getZ());
+    public static final UnaryOperator<Vector3D> X_PI = v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ());
 
     /** Rotates {@code pi/2} around the {@code +y} axis */
-    public static UnaryOperator<Vector3D> PLUS_Y_HALF_PI = (v) -> Vector3D.of(v.getZ(), v.getY(), -v.getX());
+    public static final UnaryOperator<Vector3D> PLUS_Y_HALF_PI = v -> Vector3D.of(v.getZ(), v.getY(), -v.getX());
 
     /** Rotates {@code pi/2} around the {@code -y} axis */
-    public static UnaryOperator<Vector3D> MINUS_Y_HALF_PI = (v) -> Vector3D.of(-v.getZ(), v.getY(), v.getX());
+    public static final UnaryOperator<Vector3D> MINUS_Y_HALF_PI = v -> Vector3D.of(-v.getZ(), v.getY(), v.getX());
 
     /** Rotates {@code pi} around the {@code y} axis (+y and -y are the same) */
-    public static UnaryOperator<Vector3D> Y_PI = (v) -> Vector3D.of(-v.getX(), v.getY(), -v.getZ());
+    public static final UnaryOperator<Vector3D> Y_PI = v -> Vector3D.of(-v.getX(), v.getY(), -v.getZ());
 
     /** Rotates {@code pi/2} around the {@code -y} axis */
-    public static UnaryOperator<Vector3D> PLUS_Z_HALF_PI = (v) -> Vector3D.of(-v.getY(), v.getX(), v.getZ());
+    public static final UnaryOperator<Vector3D> PLUS_Z_HALF_PI = v -> Vector3D.of(-v.getY(), v.getX(), v.getZ());
 
     /** Rotates {@code pi/2} around the {@code -y} axis */
-    public static UnaryOperator<Vector3D> MINUS_Z_HALF_PI = (v) -> Vector3D.of(v.getY(), -v.getX(), v.getZ());
+    public static final UnaryOperator<Vector3D> MINUS_Z_HALF_PI = v -> Vector3D.of(v.getY(), -v.getX(), v.getZ());
 
     /** Rotates {@code pi} around the {@code y} axis (+y and -y are the same) */
-    public static UnaryOperator<Vector3D> Z_PI = (v) -> Vector3D.of(-v.getX(), -v.getY(), v.getZ());
+    public static final UnaryOperator<Vector3D> Z_PI = v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ());
 
     /** Rotates {@code 2pi/3} around the {@code (1, 1, 1)} axis */
-    public static UnaryOperator<Vector3D> PLUS_DIAGONAL_TWO_THIRDS_PI = (v) ->
+    public static final UnaryOperator<Vector3D> PLUS_DIAGONAL_TWO_THIRDS_PI = v ->
         Vector3D.of(v.getZ(), v.getX(), v.getY());
 
     /** Rotates {@code 2pi/3} around the {@code (-1, -1, -1)} axis */
-    public static UnaryOperator<Vector3D> MINUS_DIAGONAL_TWO_THIRDS_PI = (v) ->
+    public static final UnaryOperator<Vector3D> MINUS_DIAGONAL_TWO_THIRDS_PI = v ->
         Vector3D.of(v.getY(), v.getZ(), v.getX());
+
+    /** Private constructor. */
+    private StandardRotations() {}
 }

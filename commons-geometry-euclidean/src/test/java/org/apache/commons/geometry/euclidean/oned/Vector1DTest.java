@@ -203,8 +203,7 @@ public class Vector1DTest {
         checkVector(Vector1D.Unit.PLUS.withNorm(2.5), 2.5);
         checkVector(Vector1D.Unit.MINUS.withNorm(3.14), -3.14);
 
-        for (double mag = -10.0; mag <= 10.0; ++mag)
-        {
+        for (double mag = -10.0; mag <= 10.0; ++mag) {
             Assert.assertEquals(Math.abs(mag), v.withNorm(mag).norm(), TEST_TOLERANCE);
         }
     }
@@ -695,7 +694,7 @@ public class Vector1DTest {
                 5, Vector1D.of(7)), 41);
         checkVector(Vector1D.linearCombination(
                 2, Vector1D.of(3),
-                -5, Vector1D.of(7)),-29);
+                -5, Vector1D.of(7)), -29);
     }
 
     @Test

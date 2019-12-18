@@ -542,15 +542,15 @@ public class CutAngleTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(
-                () -> builder.add(CutAngle.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+            () -> builder.add(CutAngle.createPositiveFacing(2e-3, precision).span()),
+            IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(
-                () -> builder.add(CutAngle.createNegativeFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+            () -> builder.add(CutAngle.createNegativeFacing(2e-3, precision).span()),
+            IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(
-                () -> builder.add((SubHyperplane<Point1S>) CutAngle.createPositiveFacing(2e-3, precision).span()),
-                IllegalArgumentException.class);
+            () -> builder.add((SubHyperplane<Point1S>) CutAngle.createPositiveFacing(2e-3, precision).span()),
+            IllegalArgumentException.class);
     }
 
     @Test
@@ -586,7 +586,7 @@ public class CutAngleTest {
         Assert.assertEquals(offset, pt.offset(Point1S.of(az)), TEST_EPS);
     }
 
-    private static void checkClassify(CutAngle pt, HyperplaneLocation loc, double ... azimuths) {
+    private static void checkClassify(CutAngle pt, HyperplaneLocation loc, double... azimuths) {
         for (double az : azimuths) {
             Assert.assertEquals("Unexpected location for azimuth " + az, loc, pt.classify(Point1S.of(az)));
         }

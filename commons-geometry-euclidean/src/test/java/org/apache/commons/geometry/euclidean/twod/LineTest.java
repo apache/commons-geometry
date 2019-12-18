@@ -258,8 +258,8 @@ public class LineTest {
         Line line = Line.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(-3,  4)), TEST_EPS);
-        Assert.assertEquals(0.0, line.abscissa(Vector2D.of( 3, -4)), TEST_EPS);
+        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(-3, 4)), TEST_EPS);
+        Assert.assertEquals(0.0, line.abscissa(Vector2D.of(3, -4)), TEST_EPS);
         Assert.assertEquals(5.0, line.abscissa(Vector2D.of(7, -1)), TEST_EPS);
         Assert.assertEquals(-5.0, line.abscissa(Vector2D.of(-1, -7)), TEST_EPS);
     }
@@ -270,8 +270,8 @@ public class LineTest {
         Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
-        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(-3,  4)).getX(), TEST_EPS);
-        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of( 3, -4)).getX(), TEST_EPS);
+        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(-3, 4)).getX(), TEST_EPS);
+        Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(3, -4)).getX(), TEST_EPS);
         Assert.assertEquals(-5.0, line.toSubspace(Vector2D.of(7, -1)).getX(), TEST_EPS);
         Assert.assertEquals(5.0, line.toSubspace(Vector2D.of(-1, -7)).getX(), TEST_EPS);
     }
@@ -287,7 +287,7 @@ public class LineTest {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, line.toSpace(Vector1D.of(0)), TEST_EPS);
 
-        for (int i=0; i<100; ++i) {
+        for (int i = 0; i < 100; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(dir.multiply(i), line.toSpace(Vector1D.of(i)), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(dir.multiply(-i), line.toSpace(Vector1D.of(-i)), TEST_EPS);
         }
@@ -314,7 +314,7 @@ public class LineTest {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(origin, line.toSpace(Vector1D.of(0)), TEST_EPS);
 
-        for (int i=0; i<100; ++i) {
+        for (int i = 0; i < 100; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(origin.add(dir.multiply(i)), line.toSpace(Vector1D.of(i)), TEST_EPS);
             EuclideanTestUtils.assertCoordinatesEqual(origin.add(dir.multiply(-i)), line.toSpace(Vector1D.of(-i)), TEST_EPS);
         }
@@ -902,7 +902,7 @@ public class LineTest {
         Vector2D offset1 = Vector2D.of(0.1, 0);
         Vector2D offset2 = Vector2D.of(0, -0.1);
         Vector2D v;
-        for (double t=-2; t<=2; t+=0.1) {
+        for (double t = -2; t <= 2; t += 0.1) {
             v = p1.lerp(p2, t);
 
             Assert.assertTrue(line.contains(v));
@@ -1106,14 +1106,14 @@ public class LineTest {
             SubspaceTransform st = line.subspaceTransform(transform);
 
             // assert
-            for (double x=-5.0; x<=5.0; x+=1) {
+            for (double x = -5.0; x <= 5.0; x += 1) {
                 Vector1D subPt = Vector1D.of(x);
                 Vector2D expected = transform.apply(line.toSpace(subPt));
                 Vector2D actual = st.getLine().toSpace(
                         st.getTransform().apply(subPt));
 
                 EuclideanTestUtils.assertCoordinatesEqual(expected, actual, TEST_EPS);
-            };
+            }
         });
     }
 

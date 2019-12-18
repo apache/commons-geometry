@@ -35,7 +35,7 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     // ------------------------------------------------------------------------------
 
-    @Test(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testConvergenceException() {
         final Collection<Vector2D> points = new ArrayList<>();
 

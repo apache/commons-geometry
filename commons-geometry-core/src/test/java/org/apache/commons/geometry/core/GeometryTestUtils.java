@@ -26,7 +26,9 @@ import org.junit.Assert;
 
 /** Class containing various geometry-related test utilities.
  */
-public class GeometryTestUtils {
+public final class GeometryTestUtils {
+
+    private GeometryTestUtils() {}
 
     /** Asserts that the given value is positive infinity.
      * @param value
@@ -65,8 +67,7 @@ public class GeometryTestUtils {
         try {
             r.run();
             Assert.fail("Operation should have thrown an exception");
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Class<?> actualType = exc.getClass();
 
             Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),
@@ -89,8 +90,7 @@ public class GeometryTestUtils {
         try {
             r.run();
             Assert.fail("Operation should have thrown an exception");
-        }
-        catch (Exception exc) {
+        } catch (Exception exc) {
             Class<?> actualType = exc.getClass();
 
             Assert.assertTrue("Expected exception of type " + exceptionType.getName() + " but was " + actualType.getName(),

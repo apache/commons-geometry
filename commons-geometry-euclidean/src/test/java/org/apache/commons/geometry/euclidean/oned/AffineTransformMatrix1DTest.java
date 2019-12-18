@@ -35,7 +35,7 @@ public class AffineTransformMatrix1DTest {
         Assert.assertTrue(transform.preservesOrientation());
 
         double[] result = transform.toArray();
-        Assert.assertArrayEquals(new double[] { 1, 2 }, result, 0.0);
+        Assert.assertArrayEquals(new double[] {1, 2}, result, 0.0);
     }
 
 
@@ -54,7 +54,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(transform.preservesOrientation());
 
-        double[] expected = { 1, 0 };
+        double[] expected = {1, 0};
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
 
@@ -66,7 +66,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(transform.preservesOrientation());
 
-        double[] expected = { 1, 2 };
+        double[] expected = {1, 2};
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
 
@@ -78,7 +78,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(transform.preservesOrientation());
 
-        double[] expected = { 1, 5 };
+        double[] expected = {1, 5};
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
 
@@ -93,7 +93,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(result.preservesOrientation());
 
-        double[] expected = { 2, 14 };
+        double[] expected = {2, 14};
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
 
@@ -108,7 +108,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(result.preservesOrientation());
 
-        double[] expected = { 2, 17 };
+        double[] expected = {2, 17};
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
 
@@ -120,7 +120,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(transform.preservesOrientation());
 
-        double[] expected = { 4, 0 };
+        double[] expected = {4, 0};
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
 
@@ -132,7 +132,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(transform.preservesOrientation());
 
-        double[] expected = { 7, 0 };
+        double[] expected = {7, 0};
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
 
@@ -147,7 +147,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(result.preservesOrientation());
 
-        double[] expected = { 8, 40 };
+        double[] expected = {8, 40};
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
 
@@ -162,7 +162,7 @@ public class AffineTransformMatrix1DTest {
         // assert
         Assert.assertTrue(result.preservesOrientation());
 
-        double[] expected = { 14, 70 };
+        double[] expected = {14, 70};
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
 
@@ -172,7 +172,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D v = Vector1D.of(x);
 
             EuclideanTestUtils.assertCoordinatesEqual(v, transform.apply(v), EPS);
@@ -188,7 +188,7 @@ public class AffineTransformMatrix1DTest {
                 .translate(translation);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = vec.add(translation);
@@ -206,7 +206,7 @@ public class AffineTransformMatrix1DTest {
                 .scale(factor);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = Vector1D.of(factor.getX() * x);
@@ -228,7 +228,7 @@ public class AffineTransformMatrix1DTest {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-5), transform.apply(Vector1D.of(1)), EPS);
 
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = Vector1D.of(
@@ -250,7 +250,7 @@ public class AffineTransformMatrix1DTest {
                 .translate(translation);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = Vector1D.of(
@@ -267,7 +267,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D v = Vector1D.of(x);
 
             EuclideanTestUtils.assertCoordinatesEqual(v, transform.applyVector(v), EPS);
@@ -283,7 +283,7 @@ public class AffineTransformMatrix1DTest {
                 .translate(translation);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             EuclideanTestUtils.assertCoordinatesEqual(vec, transform.applyVector(vec), EPS);
@@ -299,7 +299,7 @@ public class AffineTransformMatrix1DTest {
                 .scale(factor);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = Vector1D.of(factor.getX() * x);
@@ -321,7 +321,7 @@ public class AffineTransformMatrix1DTest {
                 .scale(scale);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D p2 = Vector1D.of(x);
             Vector1D input = p1.subtract(p2);
 
@@ -337,7 +337,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = AffineTransformMatrix1D.identity();
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D v = Vector1D.of(x);
 
             EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), transform.applyDirection(v), EPS);
@@ -353,7 +353,7 @@ public class AffineTransformMatrix1DTest {
                 .translate(translation);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             EuclideanTestUtils.assertCoordinatesEqual(vec.normalize(), transform.applyDirection(vec), EPS);
@@ -369,7 +369,7 @@ public class AffineTransformMatrix1DTest {
                 .scale(factor);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = Vector1D.of(factor.getX() * x).normalize();
@@ -391,7 +391,7 @@ public class AffineTransformMatrix1DTest {
                 .scale(scale);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D p2 = Vector1D.of(x);
             Vector1D input = p1.subtract(p2);
 
@@ -446,7 +446,7 @@ public class AffineTransformMatrix1DTest {
 
         // assert
         double[] arr = result.toArray();
-        Assert.assertArrayEquals(new double[] { 26, 31 }, arr, EPS);
+        Assert.assertArrayEquals(new double[] {26, 31}, arr, EPS);
     }
 
     @Test
@@ -465,7 +465,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = d.multiply(c).multiply(b).multiply(a);
 
         // assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = vec
@@ -488,7 +488,7 @@ public class AffineTransformMatrix1DTest {
 
         // assert
         double[] arr = result.toArray();
-        Assert.assertArrayEquals(new double[] { 26, 31 }, arr, EPS);
+        Assert.assertArrayEquals(new double[] {26, 31}, arr, EPS);
     }
 
     @Test
@@ -507,7 +507,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D transform = a.premultiply(b).premultiply(c).premultiply(d);
 
         // assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             Vector1D vec = Vector1D.of(x);
 
             Vector1D expectedVec = vec
@@ -525,7 +525,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D inverse = AffineTransformMatrix1D.identity().inverse();
 
         // assert
-        double[] expected = { 1, 0 };
+        double[] expected = {1, 0};
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
 
@@ -540,7 +540,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D result = inv.multiply(a);
 
         // assert
-        double[] expected = { 1, 0 };
+        double[] expected = {1, 0};
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
 
@@ -553,7 +553,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D inverse = transform.inverse();
 
         // assert
-        double[] expected = { 1, -3 };
+        double[] expected = {1, -3};
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
 
@@ -566,7 +566,7 @@ public class AffineTransformMatrix1DTest {
         AffineTransformMatrix1D inverse = transform.inverse();
 
         // assert
-        double[] expected = { 0.1, 0 };
+        double[] expected = {0.1, 0};
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
 
@@ -579,7 +579,7 @@ public class AffineTransformMatrix1DTest {
         Vector1D v4 = Vector1D.of(-2);
 
         // act/assert
-        runWithCoordinates((x) -> {
+        runWithCoordinates(x -> {
             AffineTransformMatrix1D transform = AffineTransformMatrix1D
                         .createTranslation(x)
                         .scale(2)
@@ -667,7 +667,7 @@ public class AffineTransformMatrix1DTest {
     }
 
     @FunctionalInterface
-    private static interface Coordinate1DTest {
+    private interface Coordinate1DTest {
 
         void run(double x);
     }
@@ -681,8 +681,7 @@ public class AffineTransformMatrix1DTest {
         runWithCoordinates(test, -1e2, 1e2, 5, skipZero);
     }
 
-    private static void runWithCoordinates(Coordinate1DTest test, double min, double max, double step, boolean skipZero)
-    {
+    private static void runWithCoordinates(Coordinate1DTest test, double min, double max, double step, boolean skipZero) {
         for (double x = min; x <= max; x += step) {
             if (!skipZero || x != 0.0) {
                 test.run(x);

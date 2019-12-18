@@ -26,7 +26,10 @@ import org.junit.Assert;
 
 /** Class containing various test utilities for spherical space.
  */
-public class SphericalTestUtils {
+public final class SphericalTestUtils {
+
+    /** Private constructor. */
+    private SphericalTestUtils() {}
 
     /** Assert that the given points are equal, using the specified tolerance value.
      * @param expected
@@ -76,7 +79,7 @@ public class SphericalTestUtils {
      * @param loc expected location of the given points
      * @param pts points to test
      */
-    public static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S ... pts) {
+    public static void checkClassify(Region<Point2S> region, RegionLocation loc, Point2S... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }

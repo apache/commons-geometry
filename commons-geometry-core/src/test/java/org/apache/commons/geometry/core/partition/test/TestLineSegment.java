@@ -150,8 +150,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
 
             if (startCmp == 0 || endCmp == 0) {
                 return RegionLocation.BOUNDARY;
-            }
-            else if (startCmp > 0 && endCmp < 0) {
+            } else if (startCmp > 0 && endCmp < 0) {
                 return RegionLocation.INSIDE;
             }
         }
@@ -252,13 +251,11 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
             final int sign = PartitionTestUtils.PRECISION.sign(originOffset);
             if (sign < 0) {
                 return new Split<TestLineSegment>(this, null);
-            }
-            else if (sign > 0) {
+            } else if (sign > 0) {
                 return new Split<TestLineSegment>(null, this);
             }
             return new Split<TestLineSegment>(null, null);
-        }
-        else {
+        } else {
             // the lines intersect
             final double intersectionAbscissa = line.toSubspaceValue(intersection);
 
@@ -275,7 +272,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
             final double startOffset = splitter.offset(line.toSpace(intersectionAbscissa - 1));
             final double startCmp = PartitionTestUtils.PRECISION.sign(startOffset);
 
-            final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+            final TestLineSegment minus = (startCmp > 0) ? endSegment : startSegment;
             final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
             return new Split<TestLineSegment>(minus, plus);
@@ -310,12 +307,10 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
         if (startCmp == 0 && endCmp == 0) {
             // the entire line segment is directly on the splitter line
             return new Split<TestLineSegment>(null, null);
-        }
-        else if (startCmp < 1 && endCmp < 1) {
+        } else if (startCmp < 1 && endCmp < 1) {
             // the entire line segment is on the minus side
             return new Split<TestLineSegment>(this, null);
-        }
-        else if (startCmp > -1 && endCmp > -1) {
+        } else if (startCmp > -1 && endCmp > -1) {
             // the entire line segment is on the plus side
             return new Split<TestLineSegment>(null, this);
         }
@@ -327,7 +322,7 @@ public class TestLineSegment implements ConvexSubHyperplane<TestPoint2D> {
         final TestLineSegment startSegment = new TestLineSegment(start, intersectionAbscissa, line);
         final TestLineSegment endSegment = new TestLineSegment(intersectionAbscissa, end, line);
 
-        final TestLineSegment minus = (startCmp > 0) ? endSegment: startSegment;
+        final TestLineSegment minus = (startCmp > 0) ? endSegment : startSegment;
         final TestLineSegment plus = (startCmp > 0) ? startSegment : endSegment;
 
         return new Split<TestLineSegment>(minus, plus);

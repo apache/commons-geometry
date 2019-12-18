@@ -33,9 +33,9 @@ public class AffineTransformMatrix3DTest {
     public void testOf() {
         // arrange
         double[] arr = {
-                1, 2, 3, 4,
-                5, 6, 7, 8,
-                9, 10, 11, 12
+            1, 2, 3, 4,
+            5, 6, 7, 8,
+            9, 10, 11, 12
         };
 
         // act
@@ -66,9 +66,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         Assert.assertArrayEquals(new double[] {
-                1, 4, 7, 0,
-                2, 5, 8, 0,
-                3, 6, 9, 0
+            1, 4, 7, 0,
+            2, 5, 8, 0,
+            3, 6, 9, 0
         }, transform.toArray(), 0.0);
     }
 
@@ -85,9 +85,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         Assert.assertArrayEquals(new double[] {
-                1, 4, 7, 10,
-                2, 5, 8, 11,
-                3, 6, 9, 12
+            1, 4, 7, 10,
+            2, 5, 8, 11,
+            3, 6, 9, 12
         }, transform.toArray(), 0.0);
     }
 
@@ -98,9 +98,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -112,9 +112,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, 2,
-                0, 1, 0, 3,
-                0, 0, 1, 4
+            1, 0, 0, 2,
+            0, 1, 0, 3,
+            0, 0, 1, 4
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -126,9 +126,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, 5,
-                0, 1, 0, 6,
-                0, 0, 1, 7
+            1, 0, 0, 5,
+            0, 1, 0, 6,
+            0, 0, 1, 7
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -140,9 +140,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                2, 0, 0, 0,
-                0, 3, 0, 0,
-                0, 0, 4, 0
+            2, 0, 0, 0,
+            0, 3, 0, 0,
+            0, 0, 4, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -161,9 +161,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                2, 0, 0, 14,
-                0, 3, 0, 16,
-                0, 0, 4, 18
+            2, 0, 0, 14,
+            0, 3, 0, 16,
+            0, 0, 4, 18
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -182,9 +182,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                2, 0, 0, 17,
-                0, 3, 0, 19,
-                0, 0, 4, 21
+            2, 0, 0, 17,
+            0, 3, 0, 19,
+            0, 0, 4, 21
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -196,9 +196,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                4, 0, 0, 0,
-                0, 5, 0, 0,
-                0, 0, 6, 0
+            4, 0, 0, 0,
+            0, 5, 0, 0,
+            0, 0, 6, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -210,9 +210,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                7, 0, 0, 0,
-                0, 7, 0, 0,
-                0, 0, 7, 0
+            7, 0, 0, 0,
+            0, 7, 0, 0,
+            0, 0, 7, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -231,9 +231,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                8, 0, 0, 40,
-                0, 15, 0, 55,
-                0, 0, 24, 72
+            8, 0, 0, 40,
+            0, 15, 0, 55,
+            0, 0, 24, 72
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -252,9 +252,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                14, 0, 0, 70,
-                0, 24, 0, 88,
-                0, 0, 36, 108
+            14, 0, 0, 70,
+            0, 24, 0, 88,
+            0, 0, 36, 108
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -273,9 +273,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                20, 0, 0, 100,
-                0, 30, 0, 110,
-                0, 0, 40, 120
+            20, 0, 0, 100,
+            0, 30, 0, 110,
+            0, 0, 40, 120
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -291,9 +291,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                0, -1, 0, 3,
-                1, 0, 0, 1,
-                0, 0, 1, 0
+            0, -1, 0, 3,
+            1, 0, 0, 1,
+            0, 0, 1, 0
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -314,9 +314,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                -5, -6, -7, -8,
-                1, 2, 3, 4,
-                9, 10, 11, 12
+            -5, -6, -7, -8,
+            1, 2, 3, 4,
+            9, 10, 11, 12
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -338,9 +338,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                -5, -6, -7, -5,
-                1, 2, 3, 5,
-                9, 10, 11, 12
+            -5, -6, -7, -5,
+            1, 2, 3, 5,
+            9, 10, 11, 12
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -649,9 +649,9 @@ public class AffineTransformMatrix3DTest {
         // assert
         double[] arr = result.toArray();
         Assert.assertArrayEquals(new double[] {
-                110, 116, 122, 132,
-                314, 332, 350, 376,
-                518, 548, 578, 620
+            110, 116, 122, 132,
+            314, 332, 350, 376,
+            518, 548, 578, 620
         }, arr, EPS);
     }
 
@@ -787,9 +787,9 @@ public class AffineTransformMatrix3DTest {
         // assert
         double[] arr = result.toArray();
         Assert.assertArrayEquals(new double[] {
-                110, 116, 122, 132,
-                314, 332, 350, 376,
-                518, 548, 578, 620
+            110, 116, 122, 132,
+            314, 332, 350, 376,
+            518, 548, 578, 620
         }, arr, EPS);
     }
 
@@ -828,9 +828,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -851,9 +851,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -868,9 +868,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0, -1,
-                0, 1, 0, 2,
-                0, 0, 1, -4
+            1, 0, 0, -1,
+            0, 1, 0, 2,
+            0, 0, 1, -4
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -885,9 +885,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                0.1, 0, 0, 0,
-                0, -0.5, 0, 0,
-                0, 0, 0.25, 0
+            0.1, 0, 0, 0,
+            0, -0.5, 0, 0,
+            0, 0, 0.25, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -905,9 +905,9 @@ public class AffineTransformMatrix3DTest {
 
         // assert
         double[] expected = {
-                0, 1, 0, -1,
-                -1, 0, 0, 3,
-                0, 0, 1, 0
+            0, 1, 0, -1,
+            -1, 0, 0, 3,
+            0, 0, 1, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), EPS);
     }
@@ -1009,13 +1009,13 @@ public class AffineTransformMatrix3DTest {
         Assert.assertEquals(orig, same);
 
         double[] temp;
-        for (int i=0; i<values.length; ++i) {
-           temp = values.clone();
-           temp[i] = 0;
+        for (int i = 0; i < values.length; ++i) {
+            temp = values.clone();
+            temp[i] = 0;
 
-           int modified = AffineTransformMatrix3D.of(temp).hashCode();
+            int modified = AffineTransformMatrix3D.of(temp).hashCode();
 
-           Assert.assertNotEquals(orig, modified);
+            Assert.assertNotEquals(orig, modified);
         }
     }
 
@@ -1037,13 +1037,13 @@ public class AffineTransformMatrix3DTest {
         Assert.assertFalse(a.equals(new Object()));
 
         double[] temp;
-        for (int i=0; i<values.length; ++i) {
-           temp = values.clone();
-           temp[i] = 0;
+        for (int i = 0; i < values.length; ++i) {
+            temp = values.clone();
+            temp[i] = 0;
 
-           AffineTransformMatrix3D modified = AffineTransformMatrix3D.of(temp);
+            AffineTransformMatrix3D modified = AffineTransformMatrix3D.of(temp);
 
-           Assert.assertFalse(a.equals(modified));
+            Assert.assertFalse(a.equals(modified));
         }
     }
 
@@ -1060,9 +1060,10 @@ public class AffineTransformMatrix3DTest {
         String result = a.toString();
 
         // assert
-        Assert.assertEquals("[ 1.0, 2.0, 3.0, 4.0; "
-                + "5.0, 6.0, 7.0, 8.0; "
-                + "9.0, 10.0, 11.0, 12.0 ]", result);
+        Assert.assertEquals(
+                "[ 1.0, 2.0, 3.0, 4.0; " +
+                "5.0, 6.0, 7.0, 8.0; " +
+                "9.0, 10.0, 11.0, 12.0 ]", result);
     }
 
     /**

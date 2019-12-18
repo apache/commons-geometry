@@ -304,8 +304,8 @@ public class AngularIntervalTest {
         // act/assert
         Assert.assertFalse(AngularInterval.full().wrapsZero());
         Assert.assertFalse(AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).wrapsZero());
-        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI , TEST_PRECISION).wrapsZero());
-        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI , TEST_PRECISION).wrapsZero());
+        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
+        Assert.assertFalse(AngularInterval.of(PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI, TEST_PRECISION).wrapsZero());
         Assert.assertFalse(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI - 1e-5, TEST_PRECISION).wrapsZero());
 
         Assert.assertTrue(AngularInterval.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI, TEST_PRECISION).wrapsZero());
@@ -885,7 +885,7 @@ public class AngularIntervalTest {
         checkClassify(interval, RegionLocation.OUTSIDE, Point1S.of(interval.getMidPoint().getAzimuth() + PlaneAngleRadians.PI));
     }
 
-    private static void checkClassify(Region<Point1S> region, RegionLocation loc, Point1S ... pts) {
+    private static void checkClassify(Region<Point1S> region, RegionLocation loc, Point1S... pts) {
         for (Point1S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }

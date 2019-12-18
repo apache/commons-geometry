@@ -315,7 +315,7 @@ public class PolarCoordinatesTest {
         Pattern pattern = Pattern.compile("\\(1.{0,2}, 2.{0,2}\\)");
 
         // act
-        String str = polar.toString();;
+        String str = polar.toString();
 
         // assert
         Assert.assertTrue("Expected string " + str + " to match regex " + pattern,

@@ -452,7 +452,7 @@ public class SubGreatCircleTest {
         GeometryTestUtils.assertContains("region= RegionBSPTree1S[", str);
     }
 
-    private static void checkClassify(SubHyperplane<Point2S> sub, RegionLocation loc, Point2S ... pts) {
+    private static void checkClassify(SubHyperplane<Point2S> sub, RegionLocation loc, Point2S... pts) {
         for (Point2S pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, sub.classify(pt));
         }

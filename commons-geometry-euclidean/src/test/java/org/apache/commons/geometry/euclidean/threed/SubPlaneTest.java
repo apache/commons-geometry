@@ -471,7 +471,7 @@ public class SubPlaneTest {
         }, IllegalArgumentException.class);
     }
 
-    private static void checkPoints(SubPlane sp, RegionLocation loc, Vector3D ... pts) {
+    private static void checkPoints(SubPlane sp, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected subplane location for point " + pt, loc, sp.classify(pt));
         }

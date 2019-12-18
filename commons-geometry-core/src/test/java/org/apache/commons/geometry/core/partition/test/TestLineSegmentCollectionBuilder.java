@@ -63,19 +63,17 @@ public class TestLineSegmentCollectionBuilder implements SubHyperplane.Builder<T
     private void addSegment(final double start, final double end) {
         if (intervals.isEmpty()) {
             intervals.add(new SegmentInterval(start, end));
-        }
-        else {
+        } else {
             boolean added = false;
             SegmentInterval current;
-            for (int i=0; i<intervals.size() && !added; ++i) {
+            for (int i = 0; i < intervals.size() && !added; ++i) {
                 current = intervals.get(i);
 
                 if (end < current.start) {
                     intervals.add(i, new SegmentInterval(start, end));
 
                     added = true;
-                }
-                else if (start <= current.end) {
+                } else if (start <= current.end) {
                     current.start = Math.min(current.start, start);
                     current.end = Math.max(current.end, end);
 
@@ -90,8 +88,8 @@ public class TestLineSegmentCollectionBuilder implements SubHyperplane.Builder<T
     }
 
     private static class SegmentInterval {
-        public double start;
-        public double end;
+        private double start;
+        private double end;
 
         SegmentInterval(final double start, final double end) {
             this.start = start;

@@ -44,7 +44,7 @@ public class RegionBSPTree2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     private static final Comparator<Segment> SEGMENT_COMPARATOR =
-            (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint());
+        (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint());
 
     private static final Line X_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -1187,15 +1187,13 @@ public class RegionBSPTree2DTest {
 
         if (expectedStart != null) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedStart, actual.getStartPoint(), TEST_EPS);
-        }
-        else {
+        } else {
             Assert.assertNull(actual.getStartPoint());
         }
 
         if (expectedEnd != null) {
             EuclideanTestUtils.assertCoordinatesEqual(expectedEnd, actual.getEndPoint(), TEST_EPS);
-        }
-        else {
+        } else {
             Assert.assertNull(actual.getEndPoint());
         }
     }
@@ -1205,7 +1203,7 @@ public class RegionBSPTree2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }
 
-    private static void checkClassify(Region<Vector2D> region, RegionLocation loc, Vector2D ... points) {
+    private static void checkClassify(Region<Vector2D> region, RegionLocation loc, Vector2D... points) {
         for (Vector2D point : points) {
             String msg = "Unexpected location for point " + point;
 
@@ -1222,14 +1220,14 @@ public class RegionBSPTree2DTest {
      * @param path
      * @param vertices
      */
-    private static void checkVertices(Polyline path, Vector2D ... vertices) {
+    private static void checkVertices(Polyline path, Vector2D... vertices) {
         Assert.assertTrue("Line segment path is not finite", path.isFinite());
 
         List<Vector2D> actual = path.getVertices();
 
         Assert.assertEquals("Vertex lists have different lengths", vertices.length, actual.size());
 
-        for (int i=0; i<vertices.length; ++i) {
+        for (int i  = 0; i < vertices.length; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(vertices[i], actual.get(i), TEST_EPS);
         }
     }

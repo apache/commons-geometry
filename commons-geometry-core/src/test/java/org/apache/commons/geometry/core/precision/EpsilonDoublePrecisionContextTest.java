@@ -17,7 +17,6 @@
 package org.apache.commons.geometry.core.precision;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -231,7 +230,7 @@ public class EpsilonDoublePrecisionContextTest {
      */
     private static double nextUp(double n, int count) {
         double result = n;
-        for (int i=0; i<count; ++i) {
+        for (int i = 0; i < count; ++i) {
             result = Math.nextUp(result);
         }
 
@@ -247,7 +246,7 @@ public class EpsilonDoublePrecisionContextTest {
      */
     private static double nextDown(double n, int count) {
         double result = n;
-        for (int i=0; i<count; ++i) {
+        for (int i = 0; i < count; ++i) {
             result = Math.nextDown(result);
         }
 

@@ -1087,8 +1087,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree)
-        {
+        for (TestNode node : tree) {
             nodes.add(node);
         }
 
@@ -1113,8 +1112,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree)
-        {
+        for (TestNode node : tree) {
             nodes.add(node);
         }
 
@@ -1202,8 +1200,7 @@ public class AbstractBSPTreeTest {
 
         List<TestNode> nodes = new ArrayList<>();
         // act
-        for (TestNode n : node)
-        {
+        for (TestNode n : node) {
             nodes.add(n);
         }
 
@@ -1222,8 +1219,7 @@ public class AbstractBSPTreeTest {
 
         List<TestNode> nodes = new ArrayList<>();
         // act
-        for (TestNode n : node)
-        {
+        for (TestNode n : node) {
             nodes.add(n);
         }
 
@@ -1520,7 +1516,7 @@ public class AbstractBSPTreeTest {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), p.getY() + 2));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1536,7 +1532,7 @@ public class AbstractBSPTreeTest {
         TestBSPTree tree = new TestBSPTree();
         tree.getRoot().insertCut(TestLine.X_AXIS);
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), p.getY() + 2));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1563,7 +1559,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(3, 1), new TestPoint2D(3, 2))
                 ));
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(0.5 * p.getX(), p.getY() + 2));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(0.5 * p.getX(), p.getY() + 2));
 
         // act
         tree.transform(t);
@@ -1601,7 +1597,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(-p.getX(), p.getY()));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(-p.getX(), p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 
@@ -1625,7 +1621,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(p.getX(), -p.getY()));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(p.getX(), -p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 
@@ -1649,7 +1645,7 @@ public class AbstractBSPTreeTest {
                     new TestLineSegment(new TestPoint2D(0, 3), new TestPoint2D(3, 0))
                 ));
 
-        Transform<TestPoint2D> t = new TestTransform2D((p) -> new TestPoint2D(-p.getX(), -p.getY()));
+        Transform<TestPoint2D> t = new TestTransform2D(p -> new TestPoint2D(-p.getX(), -p.getY()));
 
         Map<TestPoint2D, TestNode> pointNodeMap = createPointNodeMap(tree, -5, 5);
 
@@ -1897,15 +1893,13 @@ public class AbstractBSPTreeTest {
 
         Assert.assertEquals(orig.getCut(), copy.getCut());
 
-        if (!orig.isLeaf())
-        {
+        if (!orig.isLeaf()) {
             Assert.assertNotSame(orig.getMinus(), copy.getMinus());
             Assert.assertNotSame(orig.getPlus(), copy.getPlus());
 
             assertNodesCopiedRecursive(orig.getMinus(), copy.getMinus());
             assertNodesCopiedRecursive(orig.getPlus(), copy.getPlus());
-        }
-        else {
+        } else {
             Assert.assertNull(copy.getMinus());
             Assert.assertNull(copy.getPlus());
         }
@@ -1965,12 +1959,12 @@ public class AbstractBSPTreeTest {
 
         private final List<TestNode> visited = new ArrayList<>();
 
-        public TestVisitor(Order order) {
+        TestVisitor(Order order) {
             this.order = order;
         }
 
-        public TestVisitor withTerminationNode(TestNode terminationNode) {
-            this.terminationNode = terminationNode;
+        public TestVisitor withTerminationNode(TestNode newTerminationNode) {
+            this.terminationNode = newTerminationNode;
 
             return this;
         }

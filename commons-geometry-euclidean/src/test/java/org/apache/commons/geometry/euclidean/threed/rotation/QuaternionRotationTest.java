@@ -125,8 +125,7 @@ public class QuaternionRotationTest {
     }
 
     @Test
-    public void testGetAxis()
-    {
+    public void testGetAxis() {
         // act/assert
         checkVector(QuaternionRotation.of(0, 1, 0, 0).getAxis(), 1, 0, 0);
         checkVector(QuaternionRotation.of(0, -1, 0, 0).getAxis(), -1, 0, 0);
@@ -394,7 +393,7 @@ public class QuaternionRotationTest {
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * PlaneAngleRadians.PI);
         QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * PlaneAngleRadians.PI);
         QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * PlaneAngleRadians.PI);
-        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * PlaneAngleRadians.PI);
+        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, -oneThird * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.multiply(q2).multiply(q3).multiply(q4).multiply(q5);
@@ -421,7 +420,7 @@ public class QuaternionRotationTest {
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
 
-        assertRotationEquals((v) -> {
+        assertRotationEquals(v -> {
             Vector3D temp = StandardRotations.PLUS_Y_HALF_PI.apply(v);
             return StandardRotations.PLUS_X_HALF_PI.apply(temp);
         }, result);
@@ -438,7 +437,7 @@ public class QuaternionRotationTest {
         QuaternionRotation result = q3.multiply(q2).multiply(q1);
 
         // assert
-        assertRotationEquals((v) -> {
+        assertRotationEquals(v -> {
             Vector3D temp = StandardRotations.PLUS_X_HALF_PI.apply(v);
             temp = StandardRotations.Y_PI.apply(temp);
             return StandardRotations.MINUS_Z_HALF_PI.apply(temp);
@@ -456,7 +455,7 @@ public class QuaternionRotationTest {
         UniformRandomProvider rand = RandomSource.create(RandomSource.JDK, 2L);
 
         // act
-        for (int i=0; i<slices; ++i) {
+        for (int i = 0; i < slices; ++i) {
             double angle = rand.nextDouble();
             QuaternionRotation forward = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, angle);
             QuaternionRotation backward = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, delta - angle);
@@ -495,7 +494,7 @@ public class QuaternionRotationTest {
         QuaternionRotation q2 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, oneThird * PlaneAngleRadians.PI);
         QuaternionRotation q3 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, 0.4 * PlaneAngleRadians.PI);
         QuaternionRotation q4 = QuaternionRotation.fromAxisAngle(PLUS_DIAGONAL, 0.3 * PlaneAngleRadians.PI);
-        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, - oneThird * PlaneAngleRadians.PI);
+        QuaternionRotation q5 = QuaternionRotation.fromAxisAngle(MINUS_DIAGONAL, -oneThird * PlaneAngleRadians.PI);
 
         // act
         QuaternionRotation result = q1.premultiply(q2).premultiply(q3).premultiply(q4).premultiply(q5);
@@ -522,7 +521,7 @@ public class QuaternionRotationTest {
 
         assertRotationEquals(StandardRotations.PLUS_DIAGONAL_TWO_THIRDS_PI, result);
 
-        assertRotationEquals((v) -> {
+        assertRotationEquals(v -> {
             Vector3D temp = StandardRotations.PLUS_Y_HALF_PI.apply(v);
             return StandardRotations.PLUS_X_HALF_PI.apply(temp);
         }, result);
@@ -539,7 +538,7 @@ public class QuaternionRotationTest {
         QuaternionRotation result = q1.premultiply(q2).premultiply(q3);
 
         // assert
-        assertRotationEquals((v) -> {
+        assertRotationEquals(v -> {
             Vector3D temp = StandardRotations.PLUS_X_HALF_PI.apply(v);
             temp = StandardRotations.Y_PI.apply(temp);
             return StandardRotations.MINUS_Z_HALF_PI.apply(temp);
@@ -595,8 +594,8 @@ public class QuaternionRotationTest {
 
         // act/assert
         // test each rotation against all of the others (including itself)
-        for (int i=0; i<rotations.length; ++i) {
-            for (int j=0; j<rotations.length; ++j) {
+        for (int i = 0; i < rotations.length; ++i) {
+            for (int j = 0; j < rotations.length; ++j) {
                 checkSlerpCombination(rotations[i], rotations[j]);
             }
         }
@@ -823,8 +822,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_relative_eulerSingularities() {
         // arrange
         double[] eulerSingularities = {
-                0.0,
-                PlaneAngleRadians.PI
+            0.0,
+            PlaneAngleRadians.PI
         };
 
         double angle1 = 0.1;
@@ -833,7 +832,7 @@ public class QuaternionRotationTest {
         AxisReferenceFrame frame = AxisReferenceFrame.RELATIVE;
 
         for (AxisSequence axes : getAxes(AxisSequenceType.EULER)) {
-            for (int i=0; i<eulerSingularities.length; ++i) {
+            for (int i = 0; i < eulerSingularities.length; ++i) {
 
                 double singularityAngle = eulerSingularities[i];
 
@@ -860,8 +859,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_absolute_eulerSingularities() {
         // arrange
         double[] eulerSingularities = {
-                0.0,
-                PlaneAngleRadians.PI
+            0.0,
+            PlaneAngleRadians.PI
         };
 
         double angle1 = 0.1;
@@ -870,7 +869,7 @@ public class QuaternionRotationTest {
         AxisReferenceFrame frame = AxisReferenceFrame.ABSOLUTE;
 
         for (AxisSequence axes : getAxes(AxisSequenceType.EULER)) {
-            for (int i=0; i<eulerSingularities.length; ++i) {
+            for (int i = 0; i < eulerSingularities.length; ++i) {
 
                 double singularityAngle = eulerSingularities[i];
 
@@ -897,8 +896,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_relative_taitBryanSingularities() {
         // arrange
         double[] taitBryanSingularities = {
-                -PlaneAngleRadians.PI_OVER_TWO,
-                PlaneAngleRadians.PI_OVER_TWO
+            -PlaneAngleRadians.PI_OVER_TWO,
+            PlaneAngleRadians.PI_OVER_TWO
         };
 
         double angle1 = 0.1;
@@ -907,7 +906,7 @@ public class QuaternionRotationTest {
         AxisReferenceFrame frame = AxisReferenceFrame.RELATIVE;
 
         for (AxisSequence axes : getAxes(AxisSequenceType.TAIT_BRYAN)) {
-            for (int i=0; i<taitBryanSingularities.length; ++i) {
+            for (int i = 0; i < taitBryanSingularities.length; ++i) {
 
                 double singularityAngle = taitBryanSingularities[i];
 
@@ -934,8 +933,8 @@ public class QuaternionRotationTest {
     public void testAxisAngleSequenceConversion_absolute_taitBryanSingularities() {
         // arrange
         double[] taitBryanSingularities = {
-                -PlaneAngleRadians.PI_OVER_TWO,
-                PlaneAngleRadians.PI_OVER_TWO
+            -PlaneAngleRadians.PI_OVER_TWO,
+            PlaneAngleRadians.PI_OVER_TWO
         };
 
         double angle1 = 0.1;
@@ -944,7 +943,7 @@ public class QuaternionRotationTest {
         AxisReferenceFrame frame = AxisReferenceFrame.ABSOLUTE;
 
         for (AxisSequence axes : getAxes(AxisSequenceType.TAIT_BRYAN)) {
-            for (int i=0; i<taitBryanSingularities.length; ++i) {
+            for (int i = 0; i < taitBryanSingularities.length; ++i) {
 
                 double singularityAngle = taitBryanSingularities[i];
 
@@ -1576,8 +1575,8 @@ public class QuaternionRotationTest {
     }
 
     private static void checkQuaternion(QuaternionRotation qrot, double w, double x, double y, double z) {
-        String msg = "Expected"
-                + " quaternion to equal " + SimpleTupleFormat.getDefault().format(w, x, y, z) + " but was " + qrot;
+        String msg = "Expected" +
+                " quaternion to equal " + SimpleTupleFormat.getDefault().format(w, x, y, z) + " but was " + qrot;
 
         Assert.assertEquals(msg, w, qrot.getQuaternion().getW(), EPS);
         Assert.assertEquals(msg, x, qrot.getQuaternion().getX(), EPS);

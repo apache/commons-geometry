@@ -228,7 +228,7 @@ public class Line3DTest {
         Vector3D u = l.getDirection().orthogonal();
         Vector3D v = l.getDirection().cross(u);
         for (double alpha = 0; alpha < 2 * Math.PI; alpha += 0.3) {
-            Assert.assertTrue(! l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
+            Assert.assertTrue(!l.contains(p1.add(Vector3D.linearCombination(Math.cos(alpha), u,
                                                                Math.sin(alpha), v))));
         }
     }

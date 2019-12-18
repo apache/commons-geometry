@@ -30,8 +30,8 @@ public class AffineTransformMatrix2DTest {
     public void testOf() {
         // arrange
         double[] arr = {
-                1, 2, 3,
-                4, 5, 6
+            1, 2, 3,
+            4, 5, 6
         };
 
         // act
@@ -61,8 +61,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         Assert.assertArrayEquals(new double[] {
-                1, 3, 0,
-                2, 4, 0
+            1, 3, 0,
+            2, 4, 0
         }, transform.toArray(), 0.0);
     }
 
@@ -78,8 +78,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         Assert.assertArrayEquals(new double[] {
-                1, 3, 5,
-                2, 4, 6
+            1, 3, 5,
+            2, 4, 6
         }, transform.toArray(), 0.0);
     }
 
@@ -90,8 +90,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0,
-                0, 1, 0
+            1, 0, 0,
+            0, 1, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -103,8 +103,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, 2,
-                0, 1, 3
+            1, 0, 2,
+            0, 1, 3
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -116,8 +116,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, 5,
-                0, 1, 6
+            1, 0, 5,
+            0, 1, 6
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -129,8 +129,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                2, 0, 0,
-                0, 3, 0
+            2, 0, 0,
+            0, 3, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -148,8 +148,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                2, 0, 14,
-                0, 3, 16
+            2, 0, 14,
+            0, 3, 16
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -167,8 +167,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                2, 0, 17,
-                0, 3, 19
+            2, 0, 17,
+            0, 3, 19
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -180,8 +180,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                4, 0, 0,
-                0, 5, 0
+            4, 0, 0,
+            0, 5, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -193,8 +193,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                7, 0, 0,
-                0, 7, 0
+            7, 0, 0,
+            0, 7, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
     }
@@ -212,8 +212,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                8, 0, 40,
-                0, 15, 55
+            8, 0, 40,
+            0, 15, 55
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -231,8 +231,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                14, 0, 70,
-                0, 24, 88
+            14, 0, 70,
+            0, 24, 88
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -250,8 +250,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                20, 0, 100,
-                0, 30, 110
+            20, 0, 100,
+            0, 30, 110
         };
         Assert.assertArrayEquals(expected, result.toArray(), 0.0);
     }
@@ -267,8 +267,8 @@ public class AffineTransformMatrix2DTest {
         double cos = Math.cos(angle);
 
         double[] expected = {
-                cos, -sin, 0,
-                sin, cos, 0
+            cos, -sin, 0,
+            sin, cos, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), EPS);
     }
@@ -285,8 +285,8 @@ public class AffineTransformMatrix2DTest {
         double cos = Math.cos(angle);
 
         double[] expected = {
-                cos, -sin, -cos + 2*sin + 1,
-                sin, cos, -sin - 2*cos + 2
+            cos, -sin, -cos + (2 * sin) + 1,
+            sin, cos, -sin - (2 * cos) + 2
         };
         Assert.assertArrayEquals(expected, transform.toArray(), EPS);
     }
@@ -304,8 +304,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                -4, -5, -6,
-                1, 2, 3
+            -4, -5, -6,
+            1, 2, 3
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -325,8 +325,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                -4, -5, -3,
-                1, 2, 4
+            -4, -5, -3,
+            1, 2, 4
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -701,8 +701,8 @@ public class AffineTransformMatrix2DTest {
         // assert
         double[] arr = result.toArray();
         Assert.assertArrayEquals(new double[] {
-                47, 50, 56,
-                167, 178, 196
+            47, 50, 56,
+            167, 178, 196
         }, arr, EPS);
     }
 
@@ -752,8 +752,8 @@ public class AffineTransformMatrix2DTest {
         // assert
         double[] arr = result.toArray();
         Assert.assertArrayEquals(new double[] {
-                47, 50, 56,
-                167, 178, 196
+            47, 50, 56,
+            167, 178, 196
         }, arr, EPS);
     }
 
@@ -792,8 +792,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0,
-                0, 1, 0
+            1, 0, 0,
+            0, 1, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -813,8 +813,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, 0,
-                0, 1, 0
+            1, 0, 0,
+            0, 1, 0
         };
         Assert.assertArrayEquals(expected, result.toArray(), EPS);
     }
@@ -829,8 +829,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                1, 0, -1,
-                0, 1, 2
+            1, 0, -1,
+            0, 1, 2
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -845,8 +845,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                0.1, 0, 0,
-                0, -0.5, 0
+            0.1, 0, 0,
+            0, -0.5, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), 0.0);
     }
@@ -861,8 +861,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                0, 1, 0,
-                -1, 0, 0
+            0, 1, 0,
+            -1, 0, 0
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), EPS);
     }
@@ -878,8 +878,8 @@ public class AffineTransformMatrix2DTest {
 
         // assert
         double[] expected = {
-                0, 1, -1,
-                -1, 0, 3
+            0, 1, -1,
+            -1, 0, 3
         };
         Assert.assertArrayEquals(expected, inverse.toArray(), EPS);
     }
@@ -973,13 +973,13 @@ public class AffineTransformMatrix2DTest {
         Assert.assertEquals(orig, same);
 
         double[] temp;
-        for (int i=0; i<values.length; ++i) {
-           temp = values.clone();
-           temp[i] = 0;
+        for (int i = 0; i < values.length; ++i) {
+            temp = values.clone();
+            temp[i] = 0;
 
-           int modified = AffineTransformMatrix2D.of(temp).hashCode();
+            int modified = AffineTransformMatrix2D.of(temp).hashCode();
 
-           Assert.assertNotEquals(orig, modified);
+            Assert.assertNotEquals(orig, modified);
         }
     }
 
@@ -1000,13 +1000,13 @@ public class AffineTransformMatrix2DTest {
         Assert.assertFalse(a.equals(new Object()));
 
         double[] temp;
-        for (int i=0; i<values.length; ++i) {
-           temp = values.clone();
-           temp[i] = 0;
+        for (int i = 0; i < values.length; ++i) {
+            temp = values.clone();
+            temp[i] = 0;
 
-           AffineTransformMatrix2D modified = AffineTransformMatrix2D.of(temp);
+            AffineTransformMatrix2D modified = AffineTransformMatrix2D.of(temp);
 
-           Assert.assertFalse(a.equals(modified));
+            Assert.assertFalse(a.equals(modified));
         }
     }
 
@@ -1022,12 +1022,13 @@ public class AffineTransformMatrix2DTest {
         String result = a.toString();
 
         // assert
-        Assert.assertEquals("[ 1.0, 2.0, 3.0; "
-                + "5.0, 6.0, 7.0 ]", result);
+        Assert.assertEquals(
+                "[ 1.0, 2.0, 3.0; " +
+                "5.0, 6.0, 7.0 ]", result);
     }
 
     @FunctionalInterface
-    private static interface Coordinate2DTest {
+    private interface Coordinate2DTest {
 
         void run(double x, double y);
     }
@@ -1037,8 +1038,7 @@ public class AffineTransformMatrix2DTest {
         runWithCoordinates(test, -1e2, 1e2, 5);
     }
 
-    private static void runWithCoordinates(Coordinate2DTest test, double min, double max, double step)
-    {
+    private static void runWithCoordinates(Coordinate2DTest test, double min, double max, double step) {
         for (double x = min; x <= max; x += step) {
             for (double y = min; y <= max; y += step) {
                 test.run(x, y);

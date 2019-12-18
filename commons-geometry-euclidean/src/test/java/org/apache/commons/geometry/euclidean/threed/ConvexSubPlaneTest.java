@@ -640,19 +640,19 @@ public class ConvexSubPlaneTest {
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
     }
 
-    private static void checkPoints(ConvexSubPlane sp, RegionLocation loc, Vector3D ... pts) {
+    private static void checkPoints(ConvexSubPlane sp, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected subplane location for point " + pt, loc, sp.classify(pt));
         }
     }
 
-    private static void checkVertices(ConvexSubPlane sp, Vector3D ... pts) {
+    private static void checkVertices(ConvexSubPlane sp, Vector3D... pts) {
         List<Vector3D> actual = sp.getPlane().toSpace(
                 sp.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
 
         Assert.assertEquals(pts.length, actual.size());
 
-        for (int i=0; i<pts.length; ++i) {
+        for (int i = 0; i < pts.length; ++i) {
             EuclideanTestUtils.assertCoordinatesEqual(pts[i], actual.get(i), TEST_EPS);
         }
     }

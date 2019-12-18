@@ -44,15 +44,16 @@ public class SubLineTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private Line line = Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+    private static final Line DEFAULT_TEST_LINE =
+            Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
     @Test
     public void testCtor_lineOnly() {
         // act
-        SubLine sub = new SubLine(line);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
         Assert.assertSame(TEST_PRECISION, sub.getPrecision());
 
         Assert.assertFalse(sub.isFull());
@@ -64,10 +65,10 @@ public class SubLineTest {
     @Test
     public void testCtor_lineAndBoolean() {
         // act
-        SubLine sub = new SubLine(line, true);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE, true);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
         Assert.assertSame(TEST_PRECISION, sub.getPrecision());
 
         Assert.assertTrue(sub.isFull());
@@ -82,10 +83,10 @@ public class SubLineTest {
         RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         // act
-        SubLine sub = new SubLine(line, tree);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE, tree);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
         Assert.assertSame(tree, sub.getSubspaceRegion());
         Assert.assertSame(TEST_PRECISION, sub.getPrecision());
 
@@ -98,7 +99,7 @@ public class SubLineTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        SubLine sub = new SubLine(line, true);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE, true);
 
         // act
         List<Segment> segments = sub.toConvex();
@@ -113,7 +114,7 @@ public class SubLineTest {
     @Test
     public void testToConvex_empty() {
         // arrange
-        SubLine sub = new SubLine(line, false);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE, false);
 
         // act
         List<Segment> segments = sub.toConvex();
@@ -125,7 +126,7 @@ public class SubLineTest {
     @Test
     public void testToConvex_finiteAndInfiniteSegments() {
         // arrange
-        SubLine sub = new SubLine(line, false);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE, false);
         RegionBSPTree1D tree = sub.getSubspaceRegion();
         tree.add(Interval.max(-2.0, TEST_PRECISION));
         tree.add(Interval.of(-1, 2, TEST_PRECISION));
@@ -647,7 +648,7 @@ public class SubLineTest {
     @Test
     public void testToString() {
         // arrange
-        SubLine sub = new SubLine(line);
+        SubLine sub = new SubLine(DEFAULT_TEST_LINE);
 
         // act
         String str = sub.toString();

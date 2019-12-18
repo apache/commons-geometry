@@ -26,7 +26,7 @@ public class SimpleTupleFormatTest {
     private static final String OPEN_PAREN = "(";
     private static final String CLOSE_PAREN = ")";
 
-    private static DoubleFunction1N<Stub1D> FACTORY_1D = new DoubleFunction1N<Stub1D>() {
+    private static final DoubleFunction1N<Stub1D> FACTORY_1D = new DoubleFunction1N<Stub1D>() {
 
         @Override
         public Stub1D apply(double v) {
@@ -37,7 +37,7 @@ public class SimpleTupleFormatTest {
         }
     };
 
-    private static DoubleFunction2N<Stub2D> FACTORY_2D = new DoubleFunction2N<Stub2D>() {
+    private static final DoubleFunction2N<Stub2D> FACTORY_2D = new DoubleFunction2N<Stub2D>() {
 
         @Override
         public Stub2D apply(double v1, double v2) {
@@ -49,7 +49,7 @@ public class SimpleTupleFormatTest {
         }
     };
 
-    private static DoubleFunction3N<Stub3D> FACTORY_3D = new DoubleFunction3N<Stub3D>() {
+    private static final DoubleFunction3N<Stub3D> FACTORY_3D = new DoubleFunction3N<Stub3D>() {
 
         @Override
         public Stub3D apply(double v1, double v2, double v3) {
@@ -423,8 +423,7 @@ public class SimpleTupleFormatTest {
         try {
             formatter.parse(str, FACTORY_1D);
             Assert.fail("Operation should have failed");
-        }
-        catch (IllegalArgumentException exc) {
+        } catch (IllegalArgumentException exc) {
             String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
@@ -442,8 +441,7 @@ public class SimpleTupleFormatTest {
         try {
             formatter.parse(str, FACTORY_2D);
             Assert.fail("Operation should have failed");
-        }
-        catch (IllegalArgumentException exc) {
+        } catch (IllegalArgumentException exc) {
             String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
@@ -462,8 +460,7 @@ public class SimpleTupleFormatTest {
         try {
             formatter.parse(str, FACTORY_3D);
             Assert.fail("Operation should have failed");
-        }
-        catch (IllegalArgumentException exc) {
+        } catch (IllegalArgumentException exc) {
             String excMsg = exc.getMessage();
             Assert.assertTrue("Expected message to contain [" + msgSubstr + "] but was [" + excMsg + "]",
                     excMsg.contains(msgSubstr));
@@ -471,17 +468,17 @@ public class SimpleTupleFormatTest {
     }
 
     private static class Stub1D {
-        public double v;
+        private double v;
     }
 
     private static class Stub2D {
-        public double v1;
-        public double v2;
+        private double v1;
+        private double v2;
     }
 
     private static class Stub3D {
-        public double v1;
-        public double v2;
-        public double v3;
+        private double v1;
+        private double v2;
+        private double v3;
     }
 }

@@ -106,11 +106,11 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         private final StubRegion1D region;
 
-        public StubSubHyperplane() {
+        StubSubHyperplane() {
             this(0);
         }
 
-        public StubSubHyperplane(final double size) {
+        StubSubHyperplane(final double size) {
             this.region = new StubRegion1D(size);
         }
 
@@ -154,7 +154,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
         private final double size;
 
-        public StubRegion1D(final double size) {
+        StubRegion1D(final double size) {
             this.size = size;
         }
 
@@ -189,8 +189,7 @@ public class AbstractEmbeddingSubHyperplaneTest {
 
             if (sign < 0) {
                 return RegionLocation.INSIDE;
-            }
-            else if (sign == 0) {
+            } else if (sign == 0) {
                 return RegionLocation.BOUNDARY;
             }
             return RegionLocation.OUTSIDE;

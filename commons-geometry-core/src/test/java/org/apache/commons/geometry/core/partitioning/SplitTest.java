@@ -16,10 +16,8 @@
  */
 package org.apache.commons.geometry.core.partitioning;
 
-import org.junit.Test;
-import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class SplitTest {
 

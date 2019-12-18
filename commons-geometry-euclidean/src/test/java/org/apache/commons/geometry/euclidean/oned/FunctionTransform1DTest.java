@@ -133,13 +133,13 @@ public class FunctionTransform1DTest {
     @Test
     public void testToMatrix() {
         // act/assert
-        Assert.assertArrayEquals(new double[] { 1, 0 },
+        Assert.assertArrayEquals(new double[] {1, 0},
                 FunctionTransform1D.identity().toMatrix().toArray(), TEST_EPS);
-        Assert.assertArrayEquals(new double[] { 1, 2 },
+        Assert.assertArrayEquals(new double[] {1, 2},
                 FunctionTransform1D.from(v -> v.add(Vector1D.of(2))).toMatrix().toArray(), TEST_EPS);
-        Assert.assertArrayEquals(new double[] { 3, 0 },
+        Assert.assertArrayEquals(new double[] {3, 0},
                 FunctionTransform1D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
-        Assert.assertArrayEquals(new double[] { 3, 6 },
+        Assert.assertArrayEquals(new double[] {3, 6},
                 FunctionTransform1D.from(v -> v.add(Vector1D.of(2)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 

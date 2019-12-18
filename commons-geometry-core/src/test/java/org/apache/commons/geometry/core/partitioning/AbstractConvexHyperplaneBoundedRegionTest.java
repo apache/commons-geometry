@@ -497,13 +497,13 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         Assert.assertTrue(str.contains("boundaries= "));
     }
 
-    private static void checkClassify(Region<TestPoint2D> region, RegionLocation loc, TestPoint2D ... pts) {
+    private static void checkClassify(Region<TestPoint2D> region, RegionLocation loc, TestPoint2D... pts) {
         for (TestPoint2D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, region.classify(pt));
         }
     }
 
-    private static final class StubRegion extends AbstractConvexHyperplaneBoundedRegion<TestPoint2D, TestLineSegment>{
+    private static final class StubRegion extends AbstractConvexHyperplaneBoundedRegion<TestPoint2D, TestLineSegment> {
 
         private static final StubRegion FULL = new StubRegion(Collections.emptyList());
 

@@ -59,9 +59,9 @@ public class IteratorTransformTest {
         return result;
     }
 
-    private static class EvenCharIterator extends IteratorTransform<Integer, String>{
+    private static class EvenCharIterator extends IteratorTransform<Integer, String> {
 
-        public EvenCharIterator(final Iterator<Integer> inputIterator) {
+        EvenCharIterator(final Iterator<Integer> inputIterator) {
             super(inputIterator);
         }
 
@@ -80,8 +80,7 @@ public class IteratorTransformTest {
                     }
 
                     addAllOutput(strs);
-                }
-                else if (chars.length == 1) {
+                } else if (chars.length == 1) {
                     addOutput(chars[0] + "");
                 }
             }

@@ -471,7 +471,7 @@ public class PlaneTest {
         Vector3D p1 = Vector3D.of(1.2, 3.4, -5.8);
         Vector3D p2 = Vector3D.of(3.4, -5.8, 1.2);
         Vector3D p3 = Vector3D.of(-2.0, 4.3, 0.7);
-        Plane planeA  = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
+        Plane planeA = Plane.fromPoints(p1, p2, p3, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(planeA.contains(planeA));
@@ -537,7 +537,8 @@ public class PlaneTest {
         Plane parallelPlane = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Plane parallelPlane2 = Plane.fromPointAndNormal(Vector3D.of(0, 0, 2), Vector3D.of(0, 0, 1), TEST_PRECISION);
         Plane parallelPlane3 = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_PRECISION).reverse();
-        Plane nonParallelPlane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.of(1, 1.5, 1), Vector3D.of(0,1,1), TEST_PRECISION);
+        Plane nonParallelPlane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1),
+                Vector3D.of(1, 1.5, 1), Vector3D.of(0, 1, 1), TEST_PRECISION);
         Plane reversedPlane = plane.reverse();
 
         // act/assert
@@ -567,7 +568,7 @@ public class PlaneTest {
         Line3D projected = plane.project(line);
 
         // assert
-        Line3D expectedProjection = Line3D.fromPoints(Vector3D.of(1, 0, 1),Vector3D.of(2, 0, 1), TEST_PRECISION);
+        Line3D expectedProjection = Line3D.fromPoints(Vector3D.of(1, 0, 1), Vector3D.of(2, 0, 1), TEST_PRECISION);
         Assert.assertEquals(expectedProjection, projected);
 
         Assert.assertTrue(plane.contains(projected));
@@ -1112,7 +1113,7 @@ public class PlaneTest {
 
         List<T> result = new ArrayList<>(size);
 
-        for (int i=0; i<size; ++i) {
+        for (int i = 0; i < size; ++i) {
             result.add(list.get((i + shift) % size));
         }
 
