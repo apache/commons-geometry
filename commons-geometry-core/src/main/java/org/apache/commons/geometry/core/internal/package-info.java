@@ -17,7 +17,7 @@
 /**
  *
  * <p>
- * This package contains geometry utilities intended for internal use only.
+ * This package contains utilities intended for internal use only.
  * No guarantees are made for the stability of the contained APIs.
  * </p>
  */

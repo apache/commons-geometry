@@ -1,41 +1,968 @@
 <?xml version="1.0"?>
 
-<!--
-   Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+  license agreements. See the NOTICE file distributed with this work for additional 
+  information regarding copyright ownership. The ASF licenses this file to 
+  You under the Apache License, Version 2.0 (the "License"); you may not use 
+  this file except in compliance with the License. You may obtain a copy of 
+  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+  by applicable law or agreed to in writing, software distributed under the 
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+  OF ANY KIND, either express or implied. See the License for the specific 
+  language governing permissions and limitations under the License. -->
 
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-  -->
-  
 <?xml-stylesheet type="text/xsl" href="./xdoc.xsl"?>
 <document url="index.html">
   <properties>
-    <title>The Commons Geometry User Guide - Table of Contents</title>
+    <title>User Guide</title>
   </properties>
 
   <body>
-    <section name="Table of Contents" href="toc">
-        
+    <h1>Commons Geometry User Guide</h1>
+    
+    <section name="Contents" href="toc">
       <ul>
-
         <li>
-          <a href="geometry.html#a1._Purpose">
-          1. Purpose of the library</a>
+          <a href="#overview">Overview</a>
+        </li>
+        <li>
+          <a href="#concepts">Concepts</a>
+          <ul>
+            <li>
+              <a href="#floating_point">Floating Point Math</a>
+            </li>
+            <li>
+              <a href="#transforms">Transforms</a>
+            </li>
+            <li>
+              <a href="#hyperplanes">Hyperplanes</a>
+            </li>
+            <li>
+              <a href="#bsp_trees">BSP Trees</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#interfaces">Core Interfaces</a>
+        </li>
+        <li>
+          <a href="#euclidean">Euclidean Space</a>
+          <ul>
+            <li>
+              <a href="#euclidean_1d">Euclidean 1D</a>
+            </li>
+            <li>
+              <a href="#euclidean_2d">Euclidean 2D</a>
+            </li>
+            <li>
+              <a href="#euclidean_3d">Euclidean 3D</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#euclidean">Spherical Space</a>
+          <ul>
+            <li>
+              <a href="#spherical_1d">Spherical 1D</a>
+            </li>
+            <li>
+              <a href="#spherical_2d">Spherical 2D</a>
+            </li>
+          </ul>
         </li>
       </ul>
+    </section>
 
+    <section name="Overview" id="overview">
+      <p>
+        <em>Commons Geometry</em> provides types and utilities for geometric processing. The code originated in the 
+        <span class="code">org.apache.commons.math3.geometry</span> package of the 
+        <a class="code" href="https://commons.apache.org/proper/commons-math/">commons-math</a> project 
+        but was pulled out into a separate project for better maintainability. It has since undergone numerous 
+        improvements, including a major refactor of the core interfaces and classes.
+      </p>
+      
+      <p>
+        <em>Commons Geometry</em> is divided into 5 submodules.
+      </p>
+      <ul>
+        <li>
+          <a class="code" href="../commons-geometry-core/index.html">commons-geometry-core</a> - Provides core interfaces
+          and classes.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-euclidean/index.html">commons-geometry-euclidean</a> - Provides
+          classes for Euclidean space in 1D, 2D, and 3D.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-spherical/index.html">commons-geometry-spherical</a> - Provides
+          classes for Spherical space in 1D and 2D.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-hull/index.html">commons-geometry-hull</a> - Provides implementations
+          of convex hull algorithms.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-enclosing/index.html">commons-geometry-enclosing</a> - Provides implementations
+          of enclosing ball algorithms.
+        </li>
+      </ul>
+    </section>
+    
+    <section name="Concepts" id="concepts">
+      <subsection name="Floating Point Math" id="floating_point">
+        <p>
+          All floating point numbers in <em>Commons Geometry</em> are represented using 
+          <span class="code">double</span>s. 
+        </p>
+        <p>
+          The concept of a <em>precision context</em> is used in order to avoid issues with floating point errors 
+          in computations. A precision context is an object that encapsulates floating point comparisons, 
+          allowing numbers that may not be exactly equal to be considered equal for the 
+          purposes of a computation. This idea is represented in code with the 
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
+          >DoublePrecisionContext</a> interface. The example below uses an epsilon (tolerance) value to compare 
+          numbers for equality.
+        </p>
+        <source>
+// create a precision context with an epsilon (aka, tolerance) value of 1e-3
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+// test for equality
+precision.eq(1.0009, 1.0); // true; difference is less than epsilon
+precision.eq(1.002, 1.0); // false; difference is greater than epsilon
+
+// compare
+precision.compare(1.0009, 1.0); // 0
+precision.compare(1.002, 1.0); // 1
+        </source>
+      </subsection>
+
+      <subsection name="Transforms" id="transforms">
+        <p>
+          A geometric transform is simply a function that maps points from one set to another. Transforms 
+          in <em>Commons Geometry</em> are represented with the 
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Transform.html">Transform</a>
+          interface. Useful implementations of this interface exist for each supported space
+          and dimension, so users should not need to implement their own. However, it is important to know that
+          all implementations (and instances) of this interface <em>must</em> meet the following requirements:
+        </p>
+        <ol>
+          <li>
+            The transform must be <strong><a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a></strong>. 
+            In basic terms, this means that the transform must retain the "straightness" and "parallelness" of
+            lines and planes (or whatever is an equivalent concept for the space). For example, a translation or 
+            rotation in Euclidean 3D space meets this requirement because all lines that are parallel before the 
+            transform remain parallel afterwards. However, a projective transform that causes previously parallel 
+            lines to meet at a single point does not. 
+          </li>
+          <li>
+            The transform must be <strong>inversible</strong>. An inverse transform must exist that will return 
+            the original point if given the transformed point. In other words, for a transform <var>t</var>, there 
+            must exist an inverse <var>inv</var> such that <var>inv.apply(t.apply(pt))</var> returns a point equal to 
+            the input point <var>pt</var>. 
+          </li> 
+        </ol>
+        <p>
+          Transforms that do not meet these requirements cannot be expected to produce correct results in
+          algorithms that use this interface.
+        </p>
+      </subsection>
+      
+      <subsection name="Hyperplanes" id="hyperplanes">
+        <p>
+          A <em>hyperplane</em> is a subspace of dimension one less than its surrounding space. For example,
+          the hyperplanes in Euclidean 3D space are 2 dimensional planes. Similarly, the hyperplanes in Euclidean
+          2D space are 1 dimensional lines. Hyperplanes have the property that they partition their surrounding 
+          space into 3 distinct sets:
+        </p>
+        <ul>
+          <li>points on one side of the hyperplane,</li>
+          <li>points on the opposite side of the hyperplane, and</li>
+          <li>points lying directly on the hyperplane.</li>
+        </ul>
+        <p>
+          To differentiate between the two sides of a hyperplane, one side is labeled as the <em>plus</em> side
+          and the other as the <em>minus</em> side. The <em>offset</em> of a point relative to a hyperplane is the
+          distance from the point to the closest point on the hyperplane, with the sign of the distance being positive
+          if the point lies on the plus side of the hyperplane and minus otherwise. Points lying directly on the
+          hyperplane have an offset of zero. 
+         </p>
+         <p>
+          A subset of the points in a hyperplane is called a <em>subhyperplane</em>.
+          A triangular facet of a polyhedron in Euclidean 3D space, for example, is a subhyperplane because its
+          interior represents a subset of the plane defined by the three points. Any subset of the points in a 
+          hyperplane is a subhyperplane; the region does not need to be contiguous or even finite. In fact, a 
+          subhyperplane can contain the entire hyperplane itself.
+        </p>
+        <p>
+          Hyperplanes place a key role in <em>Commons Geometry</em> not only because of their importance geometrically but also
+          because they form the basis for the region classes and algorithms, such as <a href="#bsp_trees">BSP trees</a>.
+          Hyperplanes are represented in code with the 
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a>
+          interface, with each space and dimension contains its own custom implementation. Users are not intended to 
+          implement this interface.
+        </p>
+      </subsection>
+      
+      <subsection name="BSP Trees" id="bsp_trees">
+        <p>
+          Binary Space Partitioning (BSP) trees are an efficient way to represent spatial partitionings. They provide a very
+          flexible and powerful geometric data structure that can represent everything from an entire, infinite space 
+          to simple, convex regions. Numerous algorithms also exist to perform operations on BSP trees, such as 
+          classifying points, computing the size of a represented region, and performing boolean operations on 
+          polytopes (union, intersection, difference, xor, complement).
+        </p>
+        <p>
+          The main principle in BSP trees is the recursive subdivision of space using 
+          <a href="#hyperplanes">hyperplanes</a>. The easiest way to understand the data structure is to follow
+          the steps for creating a tree. When initially created, BSP trees contain a single node: the root node.
+          This node is a leaf node and represents the entire space. If one "inserts" a 
+          hyperplane into the tree at that node, then the hyperplane partitions the node's space into a plus side 
+          and a minus side. The root node is now "cut", and two new leaf nodes are created for it as children: a plus 
+          node and a minus node. The plus node represents the half-space on the plus side of the cutting hyperplane 
+          and the minus side represents the half-space on the minus side of the cutting hyperplane. These new child
+          nodes can themselves be cut by other hyperplanes, generating new child leaf nodes, and so on. In this way,
+          BSP trees can be created to represent any hyperplane-based spatial partitioning.
+        </p>
+        <p>
+          In their most basic form, BSP trees do not represents polytopes. In order to represent polytopes, 
+          additional information must be stored with each leaf node, namely whether or not that leaf node lies on the 
+          inside or outside of the shape. By convention, when a BSP tree node is cut, the child node that lies on the 
+          minus side of the cutting hyperplane is considered to be inside of the shape, while the child node on the plus
+          side is considered to be on the outside. For example, in Euclidean 3D space, plane normals point toward the plus
+          side of the plane. Thus, when splitting a BSP tree node with a plane, the plane normal points outward from
+          the shape, as one might expect.
+        </p>
+        <p>
+          One of the main sources for the development of the BSP tree code in this project and the original 
+          <span class="code">commons-math</span> project was Bruce
+          Naylor, John Amanatides and William Thibault's paper <a href="http://www.cs.yorku.ca/~amana/research/bsptSetOp.pdf">Merging
+          BSP Trees Yields Polyhedral Set Operations</a> Proc. Siggraph '90,
+          Computer Graphics 24(4), August 1990, pp 115-124, published by the
+          Association for Computing Machinery (ACM).
+        </p>
+        <p>
+          BSP tree data structures in <em>Commons Geometry</em> are represented with the 
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/BSPTree.html">BSPTree</a>
+          interface. Implementations of this interface representing regions/polytopes exist for each supported space and dimension.
+        </p>
+        
+        <h4>Examples</h4>
+        
+        <h5>Manual BSP Tree Region Creation</h5>
+        <p>
+          The example below manually creates a BSP tree representing a right triangle at the origin. This is not the
+          recommended way to construct such a tree, but is included here to demonstrate the BSP tree API.
+        </p>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a tree representing an empty space (nothing "inside")
+RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+// get the root node
+RegionBSPTree2D.RegionNode2D currentNode = tree.getRoot();
+
+// cut each minus node with the next hyperplane in the shape
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
+currentNode = currentNode.getMinus();
+
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(-1, 1), precision));
+currentNode = currentNode.getMinus();
+
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_Y, Vector2D.Unit.MINUS_Y, precision));
+currentNode = currentNode.getMinus();
+
+currentNode.isInside(); // true (node is inside)
+currentNode.getParent().getPlus().isInside(); // false (sibling node is outside)
+tree.getSize(); // size of the region = 0.5
+tree.count(); // number of nodes in the tree = 7
+        </source>
+
+        <h5>Standard BSP Tree Region Creation</h5>
+        <p>
+          The example below uses the recommended approach to building BSP tree regions by inserting subhyperplanes
+          into the tree. The shape is the same as the example above.
+        </p>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a tree representing an empty space (nothing "inside")
+RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+// insert the subhyperplanes
+tree.insert(Arrays.asList(
+            Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision),
+            Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, precision),
+            Segment.fromPoints(Vector2D.Unit.PLUS_Y, Vector2D.ZERO, precision)
+        ));
+
+tree.getSize(); // size of the region = 0.5
+tree.count(); // number of nodes in the tree = 7
+        </source>
+        
+      </subsection>
+      
+    </section>
+    <section name="Core Interfaces" id="interfaces">
+      
+      <p>
+        <em>Commons Geometry</em> contains a number of core interfaces that appear throughout the library, generally
+        following the same implementation patterns. For each space and dimension, there are interfaces that are always 
+        implemented with a single class, some that may have more than one implementation, and some that are optional. 
+        See the summary below for details.
+      </p>
+      
+      <h5>Each supported space and dimension contains...</h5>
+      <ul>
+        <li>
+          <strong>A <em>single</em> implementation of...</strong>
+          <ul>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Point.html">Point</a> -
+              Represents locations in the space and serves to define the space in the API.
+            </li>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a> -
+              Geometric primitive; serves to partition the space.
+            </li>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/ConvexSubHyperplane.html">ConvexSubHyperplane</a> -
+              Represents convex regions embedded in hyperplanes. This interface is frequently used to define the boundaries
+              of regions, such as the facets of polyhedrons in Euclidean 3D space.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong><em>At most one</em> implementation of...</strong>
+          <ul>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Vector.html">Vector</a> -
+              General vector interface.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong><em>One or more</em> implementations of...</strong>
+          <ul>
+            <li>
+                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/SubHyperplane.html">SubHyperplane</a> -
+                Represents an arbitrary region embedded in a hyperplane, such as a 2D polygon on a 3D plane in Euclidean space.
+                This is a base interface of
+                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/ConvexSubHyperplane.html">ConvexSubHyperplane</a>,
+                but does not require that the represented subhyperplane be convex. Thus, non-convex and disjoint regions
+                can be represented.
+            </li>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Region.html">Region</a> -
+              Represents a region in the space. For example, in Euclidean space, this will be a length in 1D, an
+              area in 2D, and a volume in 3D. Many regions are implemented using <a href="#bsp_trees">BSP trees</a>.
+            </li>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Transform.html">Transform</a> -
+              Represents a mapping between points. Instances are used to transform points and other geometric primitives.
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section name="Euclidean Space" id="euclidean">
+      <p>
+        Euclidean space is the space commonly thought of when people think of geometry. It corresponds with the 
+        common notion of "flat" space or the space that we usually experience in the physical world. 
+        Distances between points in this space are given by the formula \( \sqrt{(A - B)^2} \), 
+        which is also known as the <em>Euclidean norm</em>.
+      </p>
+      
+      <h4>Points and Vectors</h4>
+      <p>
+        Mathematically, points and vectors are separate, distinct entities. Points represent specific
+        locations in space while vectors represent displacements between vectors. However, since the use of these 
+        types is so closely related and the data structures are so similar, they have been merged into a single set 
+        of Euclidean <em>"VectorXD"</em> classes that implement both interfaces using Cartesian coordinates:
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/Vector1D.html">Vector1D</a>,
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Vector2D.html">Vector2D</a>, and
+        <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Vector3D.html">Vector3D</a>.
+        It is up to users to determine when instances of these classes are representing points and when they are
+        representing vectors.
+      </p>
+    
+      <subsection name="Euclidean 1D" id="euclidean_1d">
+        <h4>Primary Classes</h4>
+        <ul>
+          <li>
+            Point/Vector -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/Vector1D.html">Vector1D</a>
+          </li>
+          <li>
+            Hyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoint.html">OrientedPoint</a>
+          </li>
+          <li>
+            ConvexSubHyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoint.SubOrientedPoint.html">SubOrientedPoint</a>
+            (Stub implementation since no subspace exists.)
+          </li>
+          <li>
+            Region
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/RegionBSPTree1D.html">RegionBSPTree1D</a> -
+                Represents arbitrary 1D regions using BSP trees.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/Interval.html">Interval</a> - 
+                Represents a single (possibly infinite), convex interval.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Transform
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/AffineTransformMatrix1D.html">AffineTransformMatrix1D</a> -
+                Represents transforms using a 2x2 matrix.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/FunctionTransform1D.html">FunctionTransform1D</a> -
+                Adapter class that allows simple JDK <span class="code">Function</span>'s to be used as transforms.
+                Callers are responsible for ensuring that given functions meet the <a href="#transforms">requirements for transforms</a>.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <h4>Examples</h4>
+        
+        <h5>Interval creation</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a closed interval and a half-open interval with a min but no max
+Interval closed = Interval.of(1, 2, precision);
+Interval halfOpen = Interval.min(1, precision);
+
+// classify some points against the intervals
+closed.contains(0.0); // false
+halfOpen.contains(Vector1D.ZERO); // false
+
+RegionLocation closedOneLoc = closed.classify(Vector1D.of(1)); // RegionLocation.BOUNDARY
+RegionLocation halfOpenOneLoc = halfOpen.classify(Vector1D.of(1)); // RegionLocation.BOUNDARY
+
+RegionLocation closedThreeLoc = closed.classify(3.0); // RegionLocation.OUTSIDE
+RegionLocation halfOpenThreeLoc = halfOpen.classify(3.0); // RegionLocation.INSIDE
+        </source>
+        
+        <h5>BSP tree from intervals</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// build a bsp tree from the union of several intervals
+RegionBSPTree1D tree = RegionBSPTree1D.empty();
+
+tree.add(Interval.of(1, 2, precision));
+tree.add(Interval.of(1.5, 3, precision));
+tree.add(Interval.of(-1, -2, precision));
+
+// compute the size;
+tree.getSize(); // 3
+
+// convert back to intervals
+List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
+        </source>
+      </subsection>
+      
+      <subsection name="Euclidean 2D" id="euclidean_2d">
+        <h4>Primary Classes</h4>
+        <ul>
+          <li>
+            Point/Vector -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Vector2D.html">Vector2D</a>
+          </li>
+          <li>
+            Hyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html">Line</a>
+          </li>
+          <li>
+            SubHyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/SubLine.html">SubLine</a>
+          </li>
+          <li>
+            ConvexSubHyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>
+          </li>
+          <li>
+            Region
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/RegionBSPTree2D.html">RegionBSPTree2D</a> -
+                Represents arbitrary areas using BSP trees.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ConvexArea.html">ConvexArea</a> - 
+                Represents a single (possibly infinite), convex area.
+              </li>
+            </ul>
+            
+          </li>
+          <li>
+            Transform
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/AffineTransformMatrix2D.html">AffineTransformMatrix2D</a> -
+                Represents transforms using a 3x3 matrix.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/FunctionTransform2D.html">FunctionTransform2D</a> -
+                Adapter class that allows simple JDK <span class="code">Function</span>'s to be used as transforms.
+                Callers are responsible for ensuring that given functions meet the <a href="#transforms">requirements for transforms</a> .
+              </li>
+            </ul>
+          </li>
+          <li>
+            Additional
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Polyline.html">Polyline</a> - 
+                  Represents a connected sequence of line segments.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <h4>Examples</h4>
+        
+        <h5>Line intersection</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create some lines
+Line a = Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
+Line b = Line.fromPointAndDirection(Vector2D.of(1, -1), Vector2D.Unit.PLUS_Y, precision);
+
+// compute the intersection and angles
+Vector2D intersection = a.intersection(b); // (1, 1)
+double angleAtoB = a.angle(b); // pi/4
+double angleBtoA = b.angle(a); // -pi/4
+        </source>
+        
+        <h5>Line segment intersection</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create some line segments
+Segment closedPosX = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1) , precision);
+Segment closedNegX = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
+Segment halfOpen = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision)
+        .segmentFrom(Vector2D.of(2, 0));
+
+// compute some intersections
+Vector2D posXIntersection = closedPosX.intersection(halfOpen); // (3, 0)
+Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no intersection
+        </source>
+        
+        <h5>BSP tree union</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a connected sequence of line segments forming the unit square
+Polyline path = Polyline.builder(precision)
+        .append(Vector2D.ZERO)
+        .append(Vector2D.Unit.PLUS_X)
+        .append(Vector2D.of(1, 1))
+        .append(Vector2D.Unit.PLUS_Y)
+        .build(true); // build the path, ending it with the starting point
+
+// convert to a tree
+RegionBSPTree2D tree = path.toTree();
+
+// copy the tree
+RegionBSPTree2D copy = tree.copy();
+
+// translate the copy
+Vector2D translation = Vector2D.of(0.5, 0.5);
+copy.transform(FunctionTransform2D.from(v -> v.add(translation)));
+
+// compute the union of the regions, storing the result back into the
+// first tree
+tree.union(copy);
+
+// compute some properties
+double size = tree.getSize(); // 1.75
+Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
+
+// get a polyline representing the boundary; a list is returned since trees
+// can represent disjoint regions
+List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
+        </source>
+      </subsection>
+      
+      <subsection name="Euclidean 3D" id="euclidean_3d">
+        <h4>Primary Classes</h4>
+        <ul>
+          <li>
+            Point/Vector -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Vector3D.html">Vector3D</a>
+          </li>
+          <li>
+            Hyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Plane.html">Plane</a>
+          </li>
+          <li>
+            SubHyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/SubPlane.html">SubPlane</a>
+          </li>
+          <li>
+            ConvexSubHyperplane -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexSubPlane.html">ConvexSubPlane</a>
+          </li>
+          <li>
+            Region
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/RegionBSPTree3D.html">RegionBSPTree3D</a> -
+                Represents arbitrary volumes using BSP trees.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexVolume.html">ConvexVolume</a> - 
+                Represents a single (possibly infinite), convex volume.
+              </li>
+            </ul>
+            
+          </li>
+          <li>
+            Transform
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/AffineTransformMatrix3D.html">AffineTransformMatrix3D</a> -
+                Represents transforms using a 4x4 matrix.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/FunctionTransform3D.html">FunctionTransform3D</a> -
+                Adapter class that allows simple JDK <span class="code">Function</span>'s to be used as transforms.
+                Callers are responsible for ensuring that given functions meet the <a href="#transforms">requirements for transforms</a>.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/QuaternionRotation.html">QuaternionRotation</a> -
+                Represents 3D rotations using quaternions. Instances can be converted back and forth between
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/AxisAngleSequence.html">AxisAngleSequence</a>s, 
+                which are used to represent rotations as Euler and/or Tait-Bryan angles.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Additional
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Line3D.html">Line3D</a> - 
+                Represents a line in 3D space.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Segment3D.html">Segment3D</a> - 
+                Represents a line segment in 3D space. Since the segment can extend to infinity in either direction, this
+                class can also be used to represent rays.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <h4>Examples</h4>
+        
+        <h5>Plane intersection</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create two planes
+Plane a = Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
+Plane b = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
+        Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, precision);
+
+// compute the intersection
+Line3D line = a.intersection(b);
+
+Vector3D dir = line.getDirection(); // (0, 1, 0)
+        </source>
+        
+        <h5>Transforms</h5>
+        <source>
+List&lt;Vector3D&gt; inputPts = Arrays.asList(
+        Vector3D.ZERO,
+        Vector3D.Unit.PLUS_X,
+        Vector3D.Unit.PLUS_Y,
+        Vector3D.Unit.PLUS_Z);
+
+// create a 4x4 transform matrix and quaternion rotation
+AffineTransformMatrix3D mat = AffineTransformMatrix3D.createScale(2)
+        .translate(Vector3D.of(1, 2, 3));
+
+QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z,
+        PlaneAngleRadians.PI_OVER_TWO);
+
+// transform the input points
+List&lt;Vector3D&gt; matOutput = inputPts.stream()
+        .map(mat)
+        .collect(Collectors.toList()); // [(1, 2, 3), (3, 2, 3), (1, 4, 3), (1, 2, 5)]
+
+List&lt;Vector3D&gt; rotOutput = inputPts.stream()
+        .map(rot)
+        .collect(Collectors.toList()); // [(0, 0, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1)]
+        </source>
+        
+        <h5>BSP tree from boundaries</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create the faces of a pyrmaid with a square base and its apex pointing along the
+// positive z axis
+Vector3D a1 = Vector3D.Unit.PLUS_Z;
+Vector3D b1 = Vector3D.of(0.5, 0.5, 0.0);
+Vector3D b2 = Vector3D.of(0.5, -0.5, 0.0);
+Vector3D b3 = Vector3D.of(-0.5, -0.5, 0.0);
+Vector3D b4 = Vector3D.of(-0.5, 0.5, 0.0);
+
+Vector3D[][] faces = {
+    {b1, a1, b2},
+    {b2, a1, b3},
+    {b3, a1, b4},
+    {b4, a1, b1},
+    {b1, b2, b3, b4}
+};
+
+// convert the faces to convex sub planes and insert into a bsp tree
+RegionBSPTree3D tree = RegionBSPTree3D.empty();
+Arrays.stream(faces)
+    .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
+    .forEach(tree::insert);
+
+// split the region through its barycenter along a diagonal of the base
+Plane cutter = Plane.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
+Split&lt;RegionBSPTree3D&gt; split = tree.split(cutter);
+
+// compute some properties for the minus side of the split and convert back to subhyperplanes
+// (ie, facets)
+RegionBSPTree3D minus = split.getMinus();
+
+double minusSize = minus.getSize(); // 1/6
+List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
+        </source>
+      </subsection>
+      
+    </section>
+    
+    <section name="Spherical Space" id="spherical">
+    
+      <p>
+        Spherical space is the space present on the surface of a circle (1D) or sphere (2D). This space is an example
+        of a non-Euclidean geometry.
+      </p>
+      <p>
+        One of the key features of spherical space is that it wraps around on itself: if a line is drawn from
+        a point and continues in a single direction, it will eventually return to its starting point. This feature has
+        several consequences, one of which is that points are not unique in terms of their coordinates. For example,
+        in 1D space, the point \(0\) is equivalent to the point \(2\pi\) and any other point of the form
+        \(2n\pi\). The point classes in this space address this issue by providing two representations of the location
+        of points: one representation containing the coordinates given by the user and another, "normalized" representation
+        that uniquely identifies the location of the point. In 1D, the normalized form is the azimuth angle in the
+        range \([0, 2\pi)\) (see
+        <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/Point1S.html#getNormalizedAzimuth--">Point1S.getNormalizedAzimuth()</a> 
+        ). In 2D, the normalized form is a 3D Euclidean vector indicating the point's location on the unit sphere (see
+        <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/Point2S.html#getVector--">Point2S.getVector()</a>
+        ).
+      </p>
+      <p>
+        Another consequence of the wrap-around feature of spherical space is that the concept of "convexity" must be
+        defined more carefully than in Euclidean space. In Euclidean space, when a region is convex, it simply means
+        that a line drawn between any two points in the region also lies in the region. In spherical space, we must be
+        more careful because there are always at least two lines that can be drawn between any two points: one going "the
+        short way" around the space and the other going "the long way". We therefore define a convex region to be one
+        where the <em>shortest</em> path between any two points lies entirely within the region. (In cases where
+        the distances are equal, we also define the region to be convex.) In the 1D case, this means that convex intervals
+        must either be completely full or have a size less than or equal to \(\pi\) (see
+        <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/AngularInterval.Convex.html">AngularInterval.Convex</a> 
+        ), which implies the same for
+        <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArc.html">GreatArc</a>
+        instances in 2D.
+      </p>
+      
+      <subsection name="Spherical 1D" id="spherical_1d">
+        <h4>Primary Classes</h4>
+        <ul>
+          <li>
+            Point -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/Point1S.html">Point1S</a>
+          </li>
+          <li>
+            Hyperplane -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngle.html">CutAngle</a>
+          </li>
+          <li>
+            ConvexSubHyperplane -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngle.SubCutAngle.html">SubCutAngle</a> - 
+            (Stub implementation since no subspace exists.)
+          </li>
+          <li>
+            Region
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/RegionBSPTree1S.html">RegionBSPTree1S</a> -
+                Represents arbitrary 1D regions using BSP trees.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/AngularInterval.html">AngularInterval</a> - 
+                Represents a single interval, possibly non-convex.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/AngularInterval.Convex.html">AngularInterval.Convex</a> - 
+                Represents a single, convex interval.
+              </li>
+            </ul>
+            
+          </li>
+          <li>
+            Transform
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/Transform1S.html">Transform1S</a> -
+                Transform supporting rotation and reflection.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <h4>Examples</h4>
+        
+        <h5>AngularInterval creation</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create angular intervals of different sizes, one of size pi/2 and one of size 3pi/2
+AngularInterval a = AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, precision);
+AngularInterval b = AngularInterval.of(Point1S.PI, Point1S.of(PlaneAngleRadians.PI_OVER_TWO), precision);
+
+// test some points
+a.contains(Point1S.of(0.25 * Math.PI)); // true
+b.contains(Point1S.of(0.25 * Math.PI)); // true
+
+RegionLocation aLocZero = a.classify(Point1S.ZERO); // RegionLocation.BOUNDARY
+RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
+        </source>
+        
+        <h5>BSP tree from intervals</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a region from the union of multiple angular intervals
+RegionBSPTree1S tree = RegionBSPTree1S.empty();
+tree.add(AngularInterval.of(0, 0.25 * Math.PI, precision));
+tree.add(AngularInterval.of(0.5 * Math.PI, Math.PI, precision));
+tree.add(AngularInterval.of(0.75 * Math.PI, 1.5 * Math.PI, precision));
+
+// compute the region size in radians
+double size = tree.getSize(); // 1.25pi
+
+// convert back to intervals
+List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
+        </source>
+      </subsection>
+      
+      <subsection name="Spherical 2D" id="spherical_2d">
+        <h4>Primary Classes</h4>
+        <ul>
+          <li>
+            Point -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/Point2S.html">Point2S</a>
+          </li>
+          <li>
+            Hyperplane -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatCircle.html">GreatCircle</a>
+          </li>
+          <li>
+            SubHyperplane -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/SubGreatCircle.html">SubGreatCircle</a>
+          </li>
+          <li>
+            ConvexSubHyperplane -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArc.html">GreatArc</a>
+          </li>
+          <li>
+            Region
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/RegionBSPTree2S.html">RegionBSPTree2S</a> -
+                Represents arbitrary areas using BSP trees.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/ConvexArea2S.html">ConvexArea2S</a> - 
+                Represents a single, convex area.
+              </li>
+            </ul>
+            
+          </li>
+          <li>
+            Transform
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/Transform2S.html">Transform2S</a> -
+                Transform supporting rotation and reflection.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Additional
+            <ul>
+              <li>
+                <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArcPath.html">GreatArcPath</a> -
+                Represents a connected sequences of great arcs; useful for defining the boundaries of regions.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        
+        <h4>Examples</h4>
+        
+        <h5>GreatCircle intersection</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create two non-parallel great arcs
+GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
+GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
+
+// find the two intersection points of the great circles
+Point2S ptA = a.intersection(b); //(pi, pi/2)
+Point2S ptB = ptA.antipodal(); // (0, pi/2)
+        </source>
+        
+        <h5>BSP tree from boundaries</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+// create a path outlining a quadrant triangle
+GreatArcPath path = GreatArcPath.builder(precision)
+        .append(Point2S.PLUS_I)
+        .append(Point2S.PLUS_J)
+        .append(Point2S.PLUS_K)
+        .build(true); // close the path with the starting path
+
+// convert to a region
+RegionBSPTree2S tree = path.toTree();
+
+// split in two through the barycenter
+GreatCircle splitter = GreatCircle.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
+Split&lt;RegionBSPTree2S&gt; split = tree.split(splitter);
+
+// compute some properties for the minus side
+RegionBSPTree2S minus = split.getMinus();
+
+double minusSize = minus.getSize(); // pi/4
+List&lt;GreatArcPath&gt; minusPaths = minus.getBoundaryPaths(); // size = 1
+        </source>
+      </subsection>
+    
     </section>
     
   </body>
-  
+
 </document>

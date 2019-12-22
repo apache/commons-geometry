@@ -17,8 +17,9 @@
 /**
  *
  * <p>
- * This package is the top level package for geometry. It provides only a few interfaces
- * related to vectorial/affine spaces that are implemented in sub-packages.
+ * This package contains the core interfaces and classes for <em>commons-geometry</em>.
+ * The majority of the interfaces here are intended for internal implementation
+ * only.
  * </p>
  *
  */

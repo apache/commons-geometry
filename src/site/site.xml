@@ -31,9 +31,29 @@
   <body>
     <!-- Custom <head> tag with injected XHTML is supported. -->
     <head>
-      <![CDATA[<script type="text/javascript" id="MathJax-script" async
-               src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-               </script>]]>
+      <![CDATA[
+        <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+      ]]>
+
+     <!-- 
+        Workaround to get styles for inline code elements. The current version
+        of the site plugin strips "code" tags out of the content. The following
+        style rules are a copy of the Bootstrap rules for "code" elements but 
+        applied to span elements with the class "code".
+     -->
+       <![CDATA[
+          <style type="text/css">
+              .code {
+                font-family: Menlo, Monaco, "Courier New", monospace;
+                color: #d14;
+                padding: 3px 4px;
+                background-color: #f7f7f9;
+                border: 1px solid #e1e1e8;
+                border-radius: 3px;
+              }
+          </style>
+       ]]>
     </head>
 
     <menu name="Geometry">
@@ -50,6 +70,11 @@
 
     <menu name="User Guide">
       <item name="Contents" href="/userguide/index.html"/>
+      <item name="Overview" href="/userguide/index.html#overview"/>
+      <item name="Concepts" href="/userguide/index.html#concepts"/>
+      <item name="Core Interfaces" href="/userguide/index.html#interfaces"/>
+      <item name="Euclidean Space" href="/userguide/index.html#euclidean"/>
+      <item name="Spherical Space" href="/userguide/index.html#spherical"/>
     </menu>
   </body>
 
@@ -72,7 +97,7 @@
           <div class="source"><pre> to <div class="source"><pre
           class="prettyprint">
       -->
-      <prettyPrintSourcePreTags>false</prettyPrintSourcePreTags>
+      <prettyPrintSourcePreTags>true</prettyPrintSourcePreTags>
 
       <!-- Add the "linenums" class to the prettyprint enabled source
            tags -->

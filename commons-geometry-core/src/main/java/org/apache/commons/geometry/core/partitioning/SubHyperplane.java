@@ -22,10 +22,19 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 
-/** Interface representing subhyperplanes, which are regions
- * embedded in a hyperplane.
-
+/** Interface representing subhyperplanes.
+ *
+ * <p>
+ * A subhyperplane is a portion of a hyperplane. For example, the triangular
+ * facet of a polyhedron in Euclidean 3D space is a subhyperplane because
+ * its interior represents a subset of the plane defined by the three points.
+ * While hyperplanes always extend through the entire space that surrounds
+ * them, subhyperplanes have no such restriction: they can represent a single,
+ * small portion of the hyperplane (as in the example above); multiple, disjoint
+ * regions; or the entire hyperplane.
+ *
  * @param <P> Point implementation type
+ * @see Hyperplane
  */
 public interface SubHyperplane<P extends Point<P>> extends Splittable<P, SubHyperplane<P>> {
 
