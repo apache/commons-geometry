@@ -18,7 +18,7 @@ package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Interface representing objects that can be split by hyperplanes.
+/** Interface representing objects that can be split by {@link Hyperplane}s.
  * @param <P> Point implementation type
  * @param <S> Split type
  */

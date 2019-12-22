@@ -27,10 +27,11 @@ import java.util.function.UnaryOperator;
  * requirements outlined above. These are:
  * <ol>
  *      <li>The transform must be <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a>.
- *      This means that points and parallel lines must be preserved by the transformation. For example,
- *      a translation or rotation in Euclidean 3D space meets this requirement because a mapping exists for
- *      all points and lines that are parallel before the transform remain parallel afterwards.
- *      However, a projective transform that causes parallel lines to meet at a point in infinity does not.
+ *      In basic terms, this means that the transform must retain the "straightness" and "parallelness" of
+ *      lines and planes (or whatever is an equivalent concept for the space). For example, a translation or
+ *      rotation in Euclidean 3D space meets this requirement because all lines that are parallel before the
+ *      transform remain parallel afterwards. However, a projective transform that causes previously parallel
+ *      lines to meet at a single point does not.
  *      </li>
  *      <li>The transform must be <em>inversible</em>. An inverse transform must exist that will return
  *      the original point if given the transformed point. In other words, for a transform {@code t}, there

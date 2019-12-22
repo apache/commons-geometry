@@ -19,9 +19,24 @@ package org.apache.commons.geometry.core.partitioning;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 
-/** Interface representing a hyperplane, which is a subspace of degree
- * one less than the space it is embedded in.
+/** Interface representing a hyperplane, which is a subspace of dimension
+ * one less than its surrounding space. (A hyperplane in Euclidean 3D space,
+ * for example, is a 2 dimensional plane.)
+ *
+ * <p>
+ * Hyperplanes partition their surrounding space into 3 distinct sets: (1) points
+ * lying on one side of the hyperplane, (2) points lying on the opposite side, and
+ * (3) points lying on the hyperplane itself. One side of the hyperplane is labeled
+ * as the <em>plus</em> side and the other as the <em>minus</em> side. The
+ * {@link #offset(Point) offset} of a point in relation to a hyperplane is the distance
+ * from the point to the hyperplane combined with the sign of the side that the point
+ * lies on: points lying on the plus side of the hyperplane have a positive offsets,
+ * those on the minus side have a negative offset, and those lying directly on the
+ * hyperplane have an offset of zero.
+ *
  * @param <P> Point implementation type
+ * @see HyperplaneLocation
+ * @see SubHyperplane
  */
 public interface Hyperplane<P extends Point<P>> {
 

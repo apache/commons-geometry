@@ -19,5 +19,17 @@
  * <p>
  * This package contains code related to partitioning of spaces by hyperplanes.
  * </p>
+ *
+ * <p>
+ * A hyperplane is a subspace of dimension one less than its surrounding space.
+ * In Euclidean 3D space, the hyperplanes are 2-dimensional planes, while in
+ * Euclidean 2D space, the hyperplanes are 1-dimensional lines. Hyperplanes have
+ * the property that they partition the entire surrounding space into 3 distinct sets
+ * of points: (1) points lying on one side of the hyperplane, (2) points lying on the
+ * opposite side, and (3) points lying directly on the hyperplane itself. In order
+ * to differentiate between the two sides of the hyperplane, one side is labeled
+ * as the <em>plus</em> side and the other as the <em>minus</em> side. The plus side
+ * of a Euclidean plane, for example, lies in the direction of the plane normal.
+ * </p>
  */
 package org.apache.commons.geometry.core.partitioning;

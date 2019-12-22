@@ -26,7 +26,7 @@
  * space is an <a href="https://en.wikipedia.org/wiki/Affine_space">affine
  * space</a>, meaning that it consists of points and displacement vectors
  * representing translations between points. Distances between points are given
- * by the formula <code>&radic;(A - B)<sup>2</sup></code>, which is also known
+ * by the formula \( \sqrt{(A - B)^2} \), which is also known
  * as the <em>Euclidean norm</em>.
  * </p>
  *
