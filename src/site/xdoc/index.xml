@@ -16,7 +16,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
   -->
-  
+
 <document>
 
   <properties>
@@ -37,7 +37,7 @@
         <li>Single external dependency (<a href="https://commons.apache.org/proper/commons-numbers/"
             >commons-numbers</a>)</li>
       </ul>
-      
+
       <p>The code below gives a small sample of the API by computing the intersection of cube with a rotated
         version of itself. See the <a href="userguide/index.html">user guide</a> for more details.
       </p>

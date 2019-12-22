@@ -1,15 +1,21 @@
 <?xml version="1.0"?>
 
-<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
-  license agreements. See the NOTICE file distributed with this work for additional 
-  information regarding copyright ownership. The ASF licenses this file to 
-  You under the Apache License, Version 2.0 (the "License"); you may not use 
-  this file except in compliance with the License. You may obtain a copy of 
-  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
-  by applicable law or agreed to in writing, software distributed under the 
-  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
-  OF ANY KIND, either express or implied. See the License for the specific 
-  language governing permissions and limitations under the License. -->
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
 
 <?xml-stylesheet type="text/xsl" href="./xdoc.xsl"?>
 <document url="index.html">
@@ -19,7 +25,7 @@
 
   <body>
     <h1>Commons Geometry User Guide</h1>
-    
+
     <section name="Contents" href="toc">
       <ul>
         <li>
@@ -81,7 +87,7 @@
         but was pulled out into a separate project for better maintainability. It has since undergone numerous 
         improvements, including a major refactor of the core interfaces and classes.
       </p>
-      
+
       <p>
         <em>Commons Geometry</em> is divided into 5 submodules.
       </p>
@@ -108,7 +114,7 @@
         </li>
       </ul>
     </section>
-    
+
     <section name="Concepts" id="concepts">
       <subsection name="Floating Point Math" id="floating_point">
         <p>
@@ -168,7 +174,7 @@ precision.compare(1.002, 1.0); // 1
           algorithms that use this interface.
         </p>
       </subsection>
-      
+
       <subsection name="Hyperplanes" id="hyperplanes">
         <p>
           A <em>hyperplane</em> is a subspace of dimension one less than its surrounding space. For example,
@@ -204,7 +210,7 @@ precision.compare(1.002, 1.0); // 1
           implement this interface.
         </p>
       </subsection>
-      
+
       <subsection name="BSP Trees" id="bsp_trees">
         <p>
           Binary Space Partitioning (BSP) trees are an efficient way to represent spatial partitionings. They provide a very
@@ -247,9 +253,9 @@ precision.compare(1.002, 1.0); // 1
           <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/BSPTree.html">BSPTree</a>
           interface. Implementations of this interface representing regions/polytopes exist for each supported space and dimension.
         </p>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>Manual BSP Tree Region Creation</h5>
         <p>
           The example below manually creates a BSP tree representing a right triangle at the origin. This is not the
@@ -301,19 +307,19 @@ tree.insert(Arrays.asList(
 tree.getSize(); // size of the region = 0.5
 tree.count(); // number of nodes in the tree = 7
         </source>
-        
+
       </subsection>
-      
+
     </section>
     <section name="Core Interfaces" id="interfaces">
-      
+
       <p>
         <em>Commons Geometry</em> contains a number of core interfaces that appear throughout the library, generally
         following the same implementation patterns. For each space and dimension, there are interfaces that are always 
         implemented with a single class, some that may have more than one implementation, and some that are optional. 
         See the summary below for details.
       </p>
-      
+
       <h5>Each supported space and dimension contains...</h5>
       <ul>
         <li>
@@ -375,7 +381,7 @@ tree.count(); // number of nodes in the tree = 7
         Distances between points in this space are given by the formula \( \sqrt{(A - B)^2} \), 
         which is also known as the <em>Euclidean norm</em>.
       </p>
-      
+
       <h4>Points and Vectors</h4>
       <p>
         Mathematically, points and vectors are separate, distinct entities. Points represent specific
@@ -388,7 +394,7 @@ tree.count(); // number of nodes in the tree = 7
         It is up to users to determine when instances of these classes are representing points and when they are
         representing vectors.
       </p>
-    
+
       <subsection name="Euclidean 1D" id="euclidean_1d">
         <h4>Primary Classes</h4>
         <ul>
@@ -433,9 +439,9 @@ tree.count(); // number of nodes in the tree = 7
             </ul>
           </li>
         </ul>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>Interval creation</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -454,7 +460,7 @@ RegionLocation halfOpenOneLoc = halfOpen.classify(Vector1D.of(1)); // RegionLoca
 RegionLocation closedThreeLoc = closed.classify(3.0); // RegionLocation.OUTSIDE
 RegionLocation halfOpenThreeLoc = halfOpen.classify(3.0); // RegionLocation.INSIDE
         </source>
-        
+
         <h5>BSP tree from intervals</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -473,7 +479,7 @@ tree.getSize(); // 3
 List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
         </source>
       </subsection>
-      
+
       <subsection name="Euclidean 2D" id="euclidean_2d">
         <h4>Primary Classes</h4>
         <ul>
@@ -505,7 +511,7 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
                 Represents a single (possibly infinite), convex area.
               </li>
             </ul>
-            
+
           </li>
           <li>
             Transform
@@ -531,9 +537,9 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             </ul>
           </li>
         </ul>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>Line intersection</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -547,7 +553,7 @@ Vector2D intersection = a.intersection(b); // (1, 1)
 double angleAtoB = a.angle(b); // pi/4
 double angleBtoA = b.angle(a); // -pi/4
         </source>
-        
+
         <h5>Line segment intersection</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -562,7 +568,7 @@ Segment halfOpen = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precisio
 Vector2D posXIntersection = closedPosX.intersection(halfOpen); // (3, 0)
 Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no intersection
         </source>
-        
+
         <h5>BSP tree union</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -598,7 +604,7 @@ Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
 List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
         </source>
       </subsection>
-      
+
       <subsection name="Euclidean 3D" id="euclidean_3d">
         <h4>Primary Classes</h4>
         <ul>
@@ -630,7 +636,7 @@ List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
                 Represents a single (possibly infinite), convex volume.
               </li>
             </ul>
-            
+
           </li>
           <li>
             Transform
@@ -667,9 +673,9 @@ List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
             </ul>
           </li>
         </ul>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>Plane intersection</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -684,7 +690,7 @@ Line3D line = a.intersection(b);
 
 Vector3D dir = line.getDirection(); // (0, 1, 0)
         </source>
-        
+
         <h5>Transforms</h5>
         <source>
 List&lt;Vector3D&gt; inputPts = Arrays.asList(
@@ -709,7 +715,7 @@ List&lt;Vector3D&gt; rotOutput = inputPts.stream()
         .map(rot)
         .collect(Collectors.toList()); // [(0, 0, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1)]
         </source>
-        
+
         <h5>BSP tree from boundaries</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -748,11 +754,11 @@ double minusSize = minus.getSize(); // 1/6
 List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
         </source>
       </subsection>
-      
+
     </section>
-    
+
     <section name="Spherical Space" id="spherical">
-    
+
       <p>
         Spherical space is the space present on the surface of a circle (1D) or sphere (2D). This space is an example
         of a non-Euclidean geometry.
@@ -785,7 +791,7 @@ List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
         <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArc.html">GreatArc</a>
         instances in 2D.
       </p>
-      
+
       <subsection name="Spherical 1D" id="spherical_1d">
         <h4>Primary Classes</h4>
         <ul>
@@ -818,7 +824,7 @@ List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
                 Represents a single, convex interval.
               </li>
             </ul>
-            
+
           </li>
           <li>
             Transform
@@ -830,9 +836,9 @@ List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
             </ul>
           </li>
         </ul>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>AngularInterval creation</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -848,7 +854,7 @@ b.contains(Point1S.of(0.25 * Math.PI)); // true
 RegionLocation aLocZero = a.classify(Point1S.ZERO); // RegionLocation.BOUNDARY
 RegionLocation bLocZero = b.classify(Point1S.ZERO); // RegionLocation.INSIDE
         </source>
-        
+
         <h5>BSP tree from intervals</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -866,7 +872,7 @@ double size = tree.getSize(); // 1.25pi
 List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
         </source>
       </subsection>
-      
+
       <subsection name="Spherical 2D" id="spherical_2d">
         <h4>Primary Classes</h4>
         <ul>
@@ -898,7 +904,7 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
                 Represents a single, convex area.
               </li>
             </ul>
-            
+
           </li>
           <li>
             Transform
@@ -919,9 +925,9 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
             </ul>
           </li>
         </ul>
-        
+
         <h4>Examples</h4>
-        
+
         <h5>GreatCircle intersection</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -934,7 +940,7 @@ GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
 Point2S ptA = a.intersection(b); //(pi, pi/2)
 Point2S ptB = ptA.antipodal(); // (0, pi/2)
         </source>
-        
+
         <h5>BSP tree from boundaries</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -960,9 +966,9 @@ double minusSize = minus.getSize(); // pi/4
 List&lt;GreatArcPath&gt; minusPaths = minus.getBoundaryPaths(); // size = 1
         </source>
       </subsection>
-    
+
     </section>
-    
+
   </body>
 
 </document>
