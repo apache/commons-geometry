@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.enclosing.euclidean.twod.DiskGenerator;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
 import org.junit.Assert;

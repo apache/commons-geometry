@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod.enclosing;
+package org.apache.commons.geometry.enclosing.euclidean.twod;
 
 import java.util.List;
 

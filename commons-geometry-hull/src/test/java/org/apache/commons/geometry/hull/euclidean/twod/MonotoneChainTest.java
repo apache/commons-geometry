@@ -14,25 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod.hull;
+package org.apache.commons.geometry.hull.euclidean.twod;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.junit.Test;
 
 /**
- * Test class for AklToussaintHeuristic.
+ * Test class for MonotoneChain.
  */
-public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
+public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
     protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
         return new MonotoneChain(includeCollinearPoints);
     }
 
-    @Override
-    protected Collection<Vector2D> reducePoints(Collection<Vector2D> points) {
-        return AklToussaintHeuristic.reducePoints(points);
+    // ------------------------------------------------------------------------------
+
+    @Test(expected = IllegalStateException.class)
+    public void testConvergenceException() {
+        final Collection<Vector2D> points = new ArrayList<>();
+
+        points.add(Vector2D.of(1, 1));
+        points.add(Vector2D.of(1, 5));
+        points.add(Vector2D.of(0, 7));
+        points.add(Vector2D.of(1, 10));
+        points.add(Vector2D.of(1, 20));
+        points.add(Vector2D.of(20, 20));
+        points.add(Vector2D.of(20, 40));
+        points.add(Vector2D.of(40, 1));
+
+        @SuppressWarnings("unused")
+        final ConvexHull2D hull = new MonotoneChain(true, new EpsilonDoublePrecisionContext(1)).generate(points);
     }
 
 }

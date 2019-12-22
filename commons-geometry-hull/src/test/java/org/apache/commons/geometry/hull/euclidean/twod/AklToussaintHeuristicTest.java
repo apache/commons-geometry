@@ -14,11 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.commons.geometry.hull.euclidean.twod;
+
+import java.util.Collection;
+
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
+
 /**
- *
- * <p>
- * This package provides classes related to the smallest enclosing ball problem in three dimensions.
- * </p>
- *
+ * Test class for AklToussaintHeuristic.
  */
-package org.apache.commons.geometry.euclidean.threed.enclosing;
+public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest {
+
+    @Override
+    protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
+        return new MonotoneChain(includeCollinearPoints);
+    }
+
+    @Override
+    protected Collection<Vector2D> reducePoints(Collection<Vector2D> points) {
+        return AklToussaintHeuristic.reducePoints(points);
+    }
+
+}

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod.hull;
+package org.apache.commons.geometry.hull.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.Collection;
