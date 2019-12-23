@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed.enclosing;
+package org.apache.commons.geometry.enclosing.euclidean.threed;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +23,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
+import org.apache.commons.geometry.enclosing.euclidean.twod.DiskGenerator;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
-import org.apache.commons.geometry.euclidean.twod.enclosing.DiskGenerator;
 import org.apache.commons.numbers.fraction.BigFraction;
 
 /** Class generating an enclosing ball from its support points.

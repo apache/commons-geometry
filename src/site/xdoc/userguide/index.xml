@@ -24,73 +24,9 @@
   </properties>
 
   <body>
-    <h1>Commons Geometry User Guide</h1>
 
-    <section name="Contents" href="toc">
-      <ul>
-        <li>
-          <a href="#overview">Overview</a>
-        </li>
-        <li>
-          <a href="#concepts">Concepts</a>
-          <ul>
-            <li>
-              <a href="#floating_point">Floating Point Math</a>
-            </li>
-            <li>
-              <a href="#transforms">Transforms</a>
-            </li>
-            <li>
-              <a href="#hyperplanes">Hyperplanes</a>
-            </li>
-            <li>
-              <a href="#bsp_trees">BSP Trees</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#interfaces">Core Interfaces</a>
-        </li>
-        <li>
-          <a href="#euclidean">Euclidean Space</a>
-          <ul>
-            <li>
-              <a href="#euclidean_1d">Euclidean 1D</a>
-            </li>
-            <li>
-              <a href="#euclidean_2d">Euclidean 2D</a>
-            </li>
-            <li>
-              <a href="#euclidean_3d">Euclidean 3D</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#euclidean">Spherical Space</a>
-          <ul>
-            <li>
-              <a href="#spherical_1d">Spherical 1D</a>
-            </li>
-            <li>
-              <a href="#spherical_2d">Spherical 2D</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </section>
+    <section name="Table of Contents" href="toc">
 
-    <section name="Overview" id="overview">
-      <p>
-        <em>Commons Geometry</em> provides types and utilities for geometric processing. The code originated in the 
-        <span class="code">org.apache.commons.math3.geometry</span> package of the 
-        <a class="code" href="https://commons.apache.org/proper/commons-math/">commons-math</a> project 
-        but was pulled out into a separate project for better maintainability. It has since undergone numerous 
-        improvements, including a major refactor of the core interfaces and classes.
-      </p>
-
-      <p>
-        <em>Commons Geometry</em> is divided into 5 submodules.
-      </p>
       <ul>
         <li>
           <a class="code" href="../commons-geometry-core/index.html">commons-geometry-core</a> - Provides core interfaces

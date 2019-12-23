@@ -17,8 +17,8 @@
 /**
  *
  * <p>
- * This package provides classes related to the smallest enclosing ball problem in two dimensions.
+ * This package provides classes related to the smallest enclosing ball problem in three dimensions.
  * </p>
  *
  */
-package org.apache.commons.geometry.euclidean.twod.enclosing;
+package org.apache.commons.geometry.enclosing.euclidean.threed;

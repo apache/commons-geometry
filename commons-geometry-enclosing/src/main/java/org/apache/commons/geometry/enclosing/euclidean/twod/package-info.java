@@ -17,9 +17,8 @@
 /**
  *
  * <p>
- * This package provides algorithms to generate the convex hull
- * for a set of points in an two-dimensional Euclidean space.
+ * This package provides classes related to the smallest enclosing ball problem in two dimensions.
  * </p>
  *
  */
-package org.apache.commons.geometry.euclidean.twod.hull;
+package org.apache.commons.geometry.enclosing.euclidean.twod;
