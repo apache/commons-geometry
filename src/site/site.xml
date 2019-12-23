@@ -36,10 +36,10 @@
         </script>
       ]]>
 
-     <!-- 
+     <!--
         Workaround to get styles for inline code elements. The current version
         of the site plugin strips "code" tags out of the content. The following
-        style rules are a copy of the Bootstrap rules for "code" elements but 
+        style rules are a copy of the Bootstrap rules for "code" elements but
         applied to span elements with the class "code".
      -->
        <![CDATA[
@@ -69,7 +69,7 @@
     </menu>
 
     <menu name="User Guide">
-      <item name="Contents" href="/userguide/index.html"/>
+      <item name="Contents" href="/userguide/index.html#toc"/>
       <item name="Overview" href="/userguide/index.html#overview"/>
       <item name="Concepts" href="/userguide/index.html#concepts"/>
       <item name="Core Interfaces" href="/userguide/index.html#interfaces"/>
