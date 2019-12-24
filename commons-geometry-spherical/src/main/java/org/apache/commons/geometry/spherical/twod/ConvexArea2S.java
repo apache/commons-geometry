@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
@@ -35,7 +36,8 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 /** Class representing a convex area in 2D spherical space. The boundaries of this
  * area, if any, are composed of convex great circle arcs.
  */
-public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Point2S, GreatArc> {
+public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Point2S, GreatArc>
+    implements BoundarySource2S {
     /** Instance representing the full spherical area. */
     private static final ConvexArea2S FULL = new ConvexArea2S(Collections.emptyList());
 
@@ -52,6 +54,12 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
      */
     private ConvexArea2S(final List<GreatArc> boundaries) {
         super(boundaries);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<GreatArc> boundaryStream() {
+        return getBoundaries().stream();
     }
 
     /** Get a path instance representing the boundary of the area. The path is oriented
@@ -164,13 +172,6 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     @Override
     public GreatArc trim(final ConvexSubHyperplane<Point2S> convexSubHyperplane) {
         return (GreatArc) super.trim(convexSubHyperplane);
-    }
-
-    /** Return a BSP tree instance representing the same region as the current instance.
-     * @return a BSP tree instance representing the same region as the current instance
-     */
-    public RegionBSPTree2S toTree() {
-        return RegionBSPTree2S.from(this);
     }
 
     /** Return an instance representing the full spherical 2D space.

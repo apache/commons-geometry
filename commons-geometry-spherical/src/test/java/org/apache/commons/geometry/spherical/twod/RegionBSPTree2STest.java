@@ -111,7 +111,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testFromConvexArea() {
+    public void testFromBoundarySource() {
         // arrange
         ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
                     Point2S.of(0.1, 0.1), Point2S.of(0, 0.5),
@@ -128,6 +128,18 @@ public class RegionBSPTree2STest {
 
         Assert.assertEquals(area.getSize(), tree.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(area.getBarycenter(), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testFromBoundarySource_noBoundaries() {
+        // arrange
+        BoundarySource2S src = () -> new ArrayList<GreatArc>().stream();
+
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.from(src);
+
+        // assert
+        Assert.assertTrue(tree.isFull());
     }
 
     @Test
@@ -169,6 +181,45 @@ public class RegionBSPTree2STest {
 
         // assert
         Assert.assertEquals(3, arcs.size());
+    }
+
+    @Test
+    public void testBoundaryStream() {
+        // arrange
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        insertPositiveQuadrant(tree);
+
+        // act
+        List<GreatArc> arcs = tree.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(3, arcs.size());
+    }
+
+    @Test
+    public void testBoundaryStream_noBoundaries() {
+        // arrange
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+
+        // act
+        List<GreatArc> arcs = tree.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, arcs.size());
+    }
+
+    @Test
+    public void testToTree_returnsNewInstance() {
+        // arrange
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        insertPositiveQuadrant(tree);
+
+        // act
+        RegionBSPTree2S result = tree.toTree();
+
+        // assert
+        Assert.assertNotSame(tree, result);
+        Assert.assertEquals(3, result.getBoundaries().size());
     }
 
     @Test

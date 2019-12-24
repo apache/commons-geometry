@@ -157,11 +157,11 @@ public class AttributeBSPTreeTest {
         root.getMinus().attr("A");
         root.getPlus().attr("B");
 
-        root.getMinus().getMinus().forEach(n -> n.attr("a"));
-        root.getMinus().getPlus().forEach(n -> n.attr("b"));
+        root.getMinus().getMinus().nodes().forEach(n -> n.attr("a"));
+        root.getMinus().getPlus().nodes().forEach(n -> n.attr("b"));
 
-        root.getPlus().getPlus().forEach(n -> n.attr("c"));
-        root.getPlus().getMinus().forEach(n -> n.attr("d"));
+        root.getPlus().getPlus().nodes().forEach(n -> n.attr("c"));
+        root.getPlus().getMinus().nodes().forEach(n -> n.attr("d"));
 
         AttributeBSPTree<TestPoint2D, String> result = new AttributeBSPTree<>();
 

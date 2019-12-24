@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -55,7 +56,36 @@ public class ConvexVolumeTest {
     }
 
     @Test
-    public void testTOTree() {
+    public void testBoundaryStream() {
+        // arrange
+        Plane plane = Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        ConvexVolume volume = ConvexVolume.fromBounds(plane);
+
+        // act
+        List<ConvexSubPlane> boundaries = volume.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(1, boundaries.size());
+
+        ConvexSubPlane sp = boundaries.get(0);
+        Assert.assertEquals(0, sp.getSubspaceRegion().getBoundaries().size());
+        Assert.assertSame(plane, sp.getPlane());
+    }
+
+    @Test
+    public void testBoundaryStream_noBoundaries() {
+        // arrange
+        ConvexVolume volume = ConvexVolume.full();
+
+        // act
+        List<ConvexSubPlane> boundaries = volume.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, boundaries.size());
+    }
+
+    @Test
+    public void testToTree() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(
                     Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),

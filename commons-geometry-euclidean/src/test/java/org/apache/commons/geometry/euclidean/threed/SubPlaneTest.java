@@ -32,6 +32,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.Boundaries2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
@@ -181,7 +182,7 @@ public class SubPlaneTest {
     public void testSplit_both() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
@@ -208,7 +209,7 @@ public class SubPlaneTest {
     public void testSplit_intersects_plusOnly() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0.1, 0, 1), TEST_PRECISION);
 
@@ -226,7 +227,7 @@ public class SubPlaneTest {
     public void testSplit_intersects_minusOnly() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0.1, 0, -1), TEST_PRECISION);
 
@@ -244,7 +245,7 @@ public class SubPlaneTest {
     public void testSplit_parallel_plusOnly() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
@@ -262,7 +263,7 @@ public class SubPlaneTest {
     public void testSplit_parallel_minusOnly() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
@@ -280,7 +281,7 @@ public class SubPlaneTest {
     public void testSplit_coincident() {
         // arrange
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.getSubspaceRegion().union(RegionBSPTree2D.builder(TEST_PRECISION).addRect(Vector2D.of(-1, -1), Vector2D.of(1, 1)).build());
+        sp.getSubspaceRegion().union(Boundaries2D.rect(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         // act
         Split<SubPlane> split = sp.split(sp.getPlane());

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -537,6 +538,32 @@ public class ConvexArea2STest {
 
         // assert
         Assert.assertSame(ConvexArea2S.full(), area);
+    }
+
+    @Test
+    public void testBoundaryStream() {
+        // arrange
+        GreatCircle circle = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexArea2S area = ConvexArea2S.fromBounds(circle);
+
+        // act
+        List<GreatArc> arcs = area.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(1, arcs.size());
+        Assert.assertSame(circle, arcs.get(0).getCircle());
+    }
+
+    @Test
+    public void testBoundaryStream_noBoundaries() {
+        // arrange
+        ConvexArea2S area = ConvexArea2S.full();
+
+        // act
+        List<GreatArc> arcs = area.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, arcs.size());
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -102,6 +103,12 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      *      to insert into the tree
      */
     void insert(Iterable<? extends ConvexSubHyperplane<P>> convexSubs);
+
+    /** Insert all convex subhyperplanes from the given source into the tree.
+     * @param boundarySrc source of boundary convex subhyperplanes to insert
+     *      into the tree
+     */
+    void insert(BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc);
 
     /** Make the current instance a deep copy of the argument.
      * @param src the tree to copy

@@ -46,9 +46,9 @@ DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create a binary space partitioning tree representing the unit cube
 // centered on the origin
-RegionBSPTree3D region = RegionBSPTree3D.builder(precision)
-        .addRect(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5))
-        .build();
+RegionBSPTree3D region = Boundaries3D.rect(
+        Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision)
+        .toTree();
 
 // create a rotated copy of the region
 Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);

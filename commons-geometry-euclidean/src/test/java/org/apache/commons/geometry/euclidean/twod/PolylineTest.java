@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -544,21 +545,29 @@ public class PolylineTest {
     }
 
     @Test
-    public void testIterable() {
+    public void testBoundaryStream() {
         // arrange
-        Polyline path = Polyline.builder(TEST_PRECISION)
-                .appendVertices(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1)).build();
+        Segment seg = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Polyline path = Polyline.fromSegments(Arrays.asList(seg));
 
         // act
-        List<Segment> segments = new ArrayList<>();
-        for (Segment segment : path) {
-            segments.add(segment);
-        }
+        List<Segment> segments = path.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(2, segments.size());
-        assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_X);
-        assertFiniteSegment(segments.get(1), Vector2D.Unit.PLUS_X, Vector2D.of(1, 1));
+        Assert.assertEquals(1, segments.size());
+        Assert.assertSame(seg, segments.get(0));
+    }
+
+    @Test
+    public void testBoundaryStream_empty() {
+        // arrange
+        Polyline path = Polyline.empty();
+
+        // act
+        List<Segment> segments = path.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, segments.size());
     }
 
     @Test

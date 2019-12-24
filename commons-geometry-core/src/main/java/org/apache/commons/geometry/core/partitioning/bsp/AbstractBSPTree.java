@@ -20,9 +20,11 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -117,10 +119,18 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Return an iterator over the nodes in the tree. */
+    /** {@inheritDoc} */
     @Override
-    public Iterator<N> iterator() {
-        return new NodeIterator<>(getRoot());
+    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc) {
+        try (Stream<? extends ConvexSubHyperplane<P>> stream = boundarySrc.boundaryStream()) {
+            stream.forEach(this::insert);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<N> nodes() {
+        return () -> new NodeIterator<>(getRoot());
     }
 
     /** {@inheritDoc} */
@@ -894,8 +904,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
-        public Iterator<N> iterator() {
-            return new NodeIterator<>(getSelf());
+        public Iterable<N> nodes() {
+            return () -> new NodeIterator<>(getSelf());
         }
 
         /** {@inheritDoc} */
@@ -1075,7 +1085,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param <P> Point implementation type
      * @param <N> Node implementation type
      */
-    public static class NodeIterator<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
+    private static final class NodeIterator<P extends Point<P>, N extends AbstractNode<P, N>> implements Iterator<N> {
 
         /** The current node stack. */
         private final Deque<N> stack = new LinkedList<>();
@@ -1083,7 +1093,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** Create a new instance for iterating over the nodes in the given subtree.
          * @param subtreeRoot the root node of the subtree to iterate
          */
-        public NodeIterator(final N subtreeRoot) {
+        NodeIterator(final N subtreeRoot) {
             stack.push(subtreeRoot);
         }
 

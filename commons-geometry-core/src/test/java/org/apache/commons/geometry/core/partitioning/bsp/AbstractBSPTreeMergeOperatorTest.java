@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
+import java.util.stream.StreamSupport;
+
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
 import org.apache.commons.geometry.core.partition.test.TestLine;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
@@ -550,7 +552,9 @@ public class AbstractBSPTreeMergeOperatorTest {
             String attr = leaf.getAttribute();
 
             AttributeNode<TestPoint2D, String> output = outputSubtree(subtree);
-            output.stream().filter(BSPTree.Node::isLeaf).forEach(n -> n.setAttribute(attr + n.getAttribute()));
+            StreamSupport.stream(output.nodes().spliterator(), false)
+                .filter(BSPTree.Node::isLeaf)
+                .forEach(n -> n.setAttribute(attr + n.getAttribute()));
 
             return output;
         }
