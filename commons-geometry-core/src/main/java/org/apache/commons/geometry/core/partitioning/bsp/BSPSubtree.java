@@ -16,9 +16,6 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.apache.commons.geometry.core.Point;
 
 /** Interface for types that form the root of BSP subtrees. This includes trees
@@ -26,7 +23,7 @@ import org.apache.commons.geometry.core.Point;
  * @param <P> Point implementation type
  * @param <N> Node implementation type
  */
-public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> extends Iterable<N> {
+public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 
     /** Return the total number of nodes in the subtree.
      * @return the total number of nodes in the subtree.
@@ -44,10 +41,10 @@ public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> ex
      */
     void accept(BSPTreeVisitor<P, N> visitor);
 
-    /** Create a stream over the nodes in this subtree.
-     * @return a stream for accessing the nodes in this subtree
+    /** Get an iterable for accessing the nodes in this subtree. This provides a simple
+     * alternative to {@link #accept(BSPTreeVisitor)} for accessing tree nodes but is not
+     * as powerful or flexible since the node iteration order is fixed.
+     * @return an iterable for accessing the nodes in this subtree
      */
-    default Stream<N> stream() {
-        return StreamSupport.stream(spliterator(), false);
-    }
+    Iterable<N> nodes();
 }

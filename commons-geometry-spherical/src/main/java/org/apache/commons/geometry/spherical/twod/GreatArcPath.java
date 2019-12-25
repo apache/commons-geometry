@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a connected sequence of {@link GreatArc} instances.
  */
-public final class GreatArcPath implements Iterable<GreatArc> {
+public final class GreatArcPath implements BoundarySource2S {
     /** Instance containing no arcs. */
     private static final GreatArcPath EMPTY = new GreatArcPath(Collections.emptyList());
 
@@ -40,6 +40,12 @@ public final class GreatArcPath implements Iterable<GreatArc> {
      */
     private GreatArcPath(final List<GreatArc> arcs) {
         this.arcs = Collections.unmodifiableList(arcs);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<GreatArc> boundaryStream() {
+        return getArcs().stream();
     }
 
     /** Get the arcs in path.
@@ -138,22 +144,6 @@ public final class GreatArcPath implements Iterable<GreatArc> {
         }
 
         return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Iterator<GreatArc> iterator() {
-        return arcs.iterator();
-    }
-
-    /** Construct a {@link RegionBSPTree2S} from the arcs in this instance.
-     * @return a bsp tree constructed from the arcs in this instance
-     */
-    public RegionBSPTree2S toTree() {
-        RegionBSPTree2S tree = RegionBSPTree2S.empty();
-        tree.insert(this);
-
-        return tree;
     }
 
     /** Return a string representation of this arc path instance.

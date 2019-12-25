@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class Polyline implements Iterable<Segment> {
+public class Polyline implements BoundarySource2D {
     /** Polyline instance containing no segments. */
     private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
@@ -48,6 +48,12 @@ public class Polyline implements Iterable<Segment> {
      */
     private Polyline(final List<Segment> segments) {
         this.segments = Collections.unmodifiableList(segments);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<Segment> boundaryStream() {
+        return getSegments().stream();
     }
 
     /** Get the line segments comprising the polyline.
@@ -198,16 +204,6 @@ public class Polyline implements Iterable<Segment> {
         return this;
     }
 
-    /** Construct a {@link RegionBSPTree2D} from the line segments in this instance.
-     * @return a bsp tree constructed from the line segments in this instance
-     */
-    public RegionBSPTree2D toTree() {
-        RegionBSPTree2D tree = RegionBSPTree2D.empty();
-        tree.insert(this);
-
-        return tree;
-    }
-
     /** Simplify this polyline, if possible, by combining adjacent segments that lie on the
      * same line (as determined by {@link Line#equals(Object)}).
      * @return a simplified instance
@@ -259,12 +255,6 @@ public class Polyline implements Iterable<Segment> {
         }
 
         return new SimplifiedPolyline(simplified);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Iterator<Segment> iterator() {
-        return segments.iterator();
     }
 
     /** Return a string representation of the segment polyline.

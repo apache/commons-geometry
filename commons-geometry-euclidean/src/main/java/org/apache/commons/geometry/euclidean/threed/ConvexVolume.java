@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
@@ -30,7 +31,9 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
  * The boundaries of this area, if any, are composed of convex subplanes.
  */
-public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane> {
+public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
+    implements BoundarySource3D {
+
     /** Instance representing the full 3D volume. */
     private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
 
@@ -40,6 +43,12 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      */
     private ConvexVolume(final List<ConvexSubPlane> boundaries) {
         super(boundaries);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<ConvexSubPlane> boundaryStream() {
+        return getBoundaries().stream();
     }
 
     /** {@inheritDoc} */
@@ -132,13 +141,6 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      */
     public ConvexVolume transform(final Transform<Vector3D> transform) {
         return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
-    }
-
-    /** Return a BSP tree instance representing the same region as the current instance.
-     * @return a BSP tree instance representing the same region as the current instance
-     */
-    public RegionBSPTree3D toTree() {
-        return RegionBSPTree3D.from(this);
     }
 
     /** Return an instance representing the full 3D volume.

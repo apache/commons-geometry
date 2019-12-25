@@ -239,7 +239,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      *      insides node's convex region
      */
     private void visitInsideIntervals(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
-        for (RegionNode1D node : this) {
+        for (RegionNode1D node : nodes()) {
             if (node.isInside()) {
                 node.visitNodeInterval(visitor);
             }

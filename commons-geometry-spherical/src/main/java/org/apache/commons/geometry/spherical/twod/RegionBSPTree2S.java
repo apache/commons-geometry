@@ -19,18 +19,22 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** BSP tree representing regions in 2D spherical space.
  */
-public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTree2S.RegionNode2S> {
+public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTree2S.RegionNode2S>
+    implements BoundarySource2S {
     /** Constant containing the area of the full spherical space. */
     private static final double FULL_SIZE = 4 * PlaneAngleRadians.PI;
 
@@ -67,6 +71,12 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     @Override
     public Iterable<GreatArc> boundaries() {
         return createBoundaryIterable(b -> (GreatArc) b);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<GreatArc> boundaryStream() {
+        return StreamSupport.stream(boundaries().spliterator(), false);
     }
 
     /** {@inheritDoc} */
@@ -211,14 +221,15 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         return new RegionBSPTree2S(true);
     }
 
-    /** Construct a tree from a convex area.
-     * @param area the area to construct a tree from
-     * @return tree instance representing the same area as the given
-     *      convex area
+    /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
+     * are present in the given source, their the returned tree contains the full space.
+     * @param boundarySrc boundary source to construct a tree from
+     * @return a new tree instance constructed from the boundaries in the
+     *      given source
      */
-    public static RegionBSPTree2S from(final ConvexArea2S area) {
+    public static RegionBSPTree2S from(final BoundarySource<GreatArc> boundarySrc) {
         final RegionBSPTree2S tree = RegionBSPTree2S.full();
-        tree.insert(area.getBoundaries());
+        tree.insert(boundarySrc);
 
         return tree;
     }

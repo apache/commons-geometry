@@ -123,7 +123,7 @@ public abstract class AbstractRegionBSPTree<
             double sum = 0.0;
 
             RegionCutBoundary<P> boundary;
-            for (final AbstractRegionNode<P, N> node : this) {
+            for (final AbstractRegionNode<P, N> node : nodes()) {
                 boundary = node.getCutBoundary();
                 if (boundary != null) {
                     sum += boundary.getInsideFacing().getSize();
@@ -157,10 +157,9 @@ public abstract class AbstractRegionBSPTree<
     protected <C extends ConvexSubHyperplane<P>> Iterable<C> createBoundaryIterable(
             final Function<ConvexSubHyperplane<P>, C> typeConverter) {
 
-        return () -> {
-            final NodeIterator<P, N> nodeIterator = new NodeIterator<>(getRoot());
-            return new RegionBoundaryIterator<>(nodeIterator, typeConverter);
-        };
+        return () -> new RegionBoundaryIterator<>(
+                getRoot().nodes().iterator(),
+                typeConverter);
     }
 
     /** Return a list containing the boundaries of the region. Each boundary is oriented such
@@ -183,7 +182,7 @@ public abstract class AbstractRegionBSPTree<
 
         final List<C> result = new ArrayList<>();
 
-        final RegionBoundaryIterator<P, C, N> it = new RegionBoundaryIterator<>(iterator(), typeConverter);
+        final RegionBoundaryIterator<P, C, N> it = new RegionBoundaryIterator<>(nodes().iterator(), typeConverter);
         it.forEachRemaining(result::add);
 
         return result;
@@ -646,133 +645,6 @@ public abstract class AbstractRegionBSPTree<
         }
     }
 
-    /** Class containing the basic algorithm for merging region BSP trees.
-     * @param <P> Point implementation type
-     * @param <N> BSP tree node implementation type
-     */
-    public abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        extends AbstractBSPTreeMergeOperator<P, N> {
-
-        /** Merge two input trees, storing the output in the third. The output tree can be one of the
-         * input trees. The output tree is condensed before the method returns.
-         * @param inputTree1 first input tree
-         * @param inputTree2 second input tree
-         * @param outputTree the tree that will contain the result of the merge; may be one
-         *      of the input trees
-         */
-        public void apply(final AbstractRegionBSPTree<P, N> inputTree1, final AbstractRegionBSPTree<P, N> inputTree2,
-                final AbstractRegionBSPTree<P, N> outputTree) {
-
-            this.performMerge(inputTree1, inputTree2, outputTree);
-
-            outputTree.condense();
-        }
-    }
-
-    /** Class for performing boolean union operations on region trees.
-     * @param <P> Point implementation type
-     * @param <N> BSP tree node implementation type
-     */
-    public static class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        extends RegionMergeOperator<P, N> {
-
-        /** {@inheritDoc} */
-        @Override
-        protected N mergeLeaf(final N node1, final N node2) {
-            if (node1.isLeaf()) {
-                return node1.isInside() ? node1 : node2;
-            }
-
-            // call again with flipped arguments
-            return mergeLeaf(node2, node1);
-        }
-    }
-
-    /** Class for performing boolean intersection operations on region trees.
-     * @param <P> Point implementation type
-     * @param <N> BSP tree node implementation type
-     */
-    public static class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        extends RegionMergeOperator<P, N> {
-
-        /** {@inheritDoc} */
-        @Override
-        protected N mergeLeaf(final N node1, final N node2) {
-            if (node1.isLeaf()) {
-                return node1.isInside() ? node2 : node1;
-            }
-
-            // call again with flipped arguments
-            return mergeLeaf(node2, node1);
-        }
-    }
-
-    /** Class for performing boolean difference operations on region trees.
-     * @param <P> Point implementation type
-     * @param <N> BSP tree node implementation type
-     */
-    public static class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        extends RegionMergeOperator<P, N> {
-
-        /** {@inheritDoc} */
-        @Override
-        protected N mergeLeaf(final N node1, final N node2) {
-            // a region is included if it belongs in tree1 and is not in tree2
-
-            if (node1.isInside()) {
-                // this region is inside of tree1, so only include subregions that are
-                // not in tree2, ie include everything in node2's complement
-                final N output = outputSubtree(node2);
-                output.getTree().complementRecursive(output);
-
-                return output;
-            } else if (node2.isInside()) {
-                // this region is inside of tree2 and so cannot be in the result region
-                final N output = outputNode();
-                output.setLocation(RegionLocation.OUTSIDE);
-
-                return output;
-            }
-
-            // this region is not in tree2, so we can include everything in tree1
-            return node1;
-        }
-    }
-
-    /** Class for performing boolean symmetric difference (xor) operations on region trees.
-     * @param <P> Point implementation type
-     * @param <N> BSP tree node implementation type
-     */
-    public static class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
-        extends RegionMergeOperator<P, N> {
-
-        /** {@inheritDoc} */
-        @Override
-        protected N mergeLeaf(final N node1, final N node2) {
-            // a region is included if it belongs in tree1 and is not in tree2 OR
-            // it belongs in tree2 and is not in tree1
-
-            if (node1.isLeaf()) {
-                if (node1.isInside()) {
-                    // this region is inside node1, so only include subregions that are
-                    // not in node2, ie include everything in node2's complement
-                    final N output = outputSubtree(node2);
-                    output.getTree().complementRecursive(output);
-
-                    return output;
-                } else {
-                    // this region is not in node1, so only include subregions that
-                    // in node2
-                    return node2;
-                }
-            }
-
-            // the operation is symmetric, so perform the same operation but with the
-            // nodes flipped
-            return mergeLeaf(node2, node1);
-        }
-    }
-
     /** Class used to compute the point on the region's boundary that is closest to a target point.
      * @param <P> Point implementation type
      * @param <N> BSP tree node implementation type
@@ -887,12 +759,139 @@ public abstract class AbstractRegionBSPTree<
         }
     }
 
+    /** Class containing the basic algorithm for merging region BSP trees.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private abstract static class RegionMergeOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends AbstractBSPTreeMergeOperator<P, N> {
+
+        /** Merge two input trees, storing the output in the third. The output tree can be one of the
+         * input trees. The output tree is condensed before the method returns.
+         * @param inputTree1 first input tree
+         * @param inputTree2 second input tree
+         * @param outputTree the tree that will contain the result of the merge; may be one
+         *      of the input trees
+         */
+        public void apply(final AbstractRegionBSPTree<P, N> inputTree1, final AbstractRegionBSPTree<P, N> inputTree2,
+                final AbstractRegionBSPTree<P, N> outputTree) {
+
+            this.performMerge(inputTree1, inputTree2, outputTree);
+
+            outputTree.condense();
+        }
+    }
+
+    /** Class for performing boolean union operations on region trees.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private static final class UnionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected N mergeLeaf(final N node1, final N node2) {
+            if (node1.isLeaf()) {
+                return node1.isInside() ? node1 : node2;
+            }
+
+            // call again with flipped arguments
+            return mergeLeaf(node2, node1);
+        }
+    }
+
+    /** Class for performing boolean intersection operations on region trees.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private static final class IntersectionOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected N mergeLeaf(final N node1, final N node2) {
+            if (node1.isLeaf()) {
+                return node1.isInside() ? node2 : node1;
+            }
+
+            // call again with flipped arguments
+            return mergeLeaf(node2, node1);
+        }
+    }
+
+    /** Class for performing boolean difference operations on region trees.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private static final class DifferenceOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected N mergeLeaf(final N node1, final N node2) {
+            // a region is included if it belongs in tree1 and is not in tree2
+
+            if (node1.isInside()) {
+                // this region is inside of tree1, so only include subregions that are
+                // not in tree2, ie include everything in node2's complement
+                final N output = outputSubtree(node2);
+                output.getTree().complementRecursive(output);
+
+                return output;
+            } else if (node2.isInside()) {
+                // this region is inside of tree2 and so cannot be in the result region
+                final N output = outputNode();
+                output.setLocation(RegionLocation.OUTSIDE);
+
+                return output;
+            }
+
+            // this region is not in tree2, so we can include everything in tree1
+            return node1;
+        }
+    }
+
+    /** Class for performing boolean symmetric difference (xor) operations on region trees.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private static final class XorOperator<P extends Point<P>, N extends AbstractRegionNode<P, N>>
+        extends RegionMergeOperator<P, N> {
+
+        /** {@inheritDoc} */
+        @Override
+        protected N mergeLeaf(final N node1, final N node2) {
+            // a region is included if it belongs in tree1 and is not in tree2 OR
+            // it belongs in tree2 and is not in tree1
+
+            if (node1.isLeaf()) {
+                if (node1.isInside()) {
+                    // this region is inside node1, so only include subregions that are
+                    // not in node2, ie include everything in node2's complement
+                    final N output = outputSubtree(node2);
+                    output.getTree().complementRecursive(output);
+
+                    return output;
+                } else {
+                    // this region is not in node1, so only include subregions that
+                    // in node2
+                    return node2;
+                }
+            }
+
+            // the operation is symmetric, so perform the same operation but with the
+            // nodes flipped
+            return mergeLeaf(node2, node1);
+        }
+    }
+
     /** Class that iterates over the boundary convex subhyperplanes from a set of region nodes.
      * @param <P> Point implementation type
      * @param <C> Boundary convex subhyperplane implementation type
      * @param <N> BSP tree node implementation type
      */
-    protected static final class RegionBoundaryIterator<
+    private static final class RegionBoundaryIterator<
             P extends Point<P>,
             C extends ConvexSubHyperplane<P>,
             N extends AbstractRegionNode<P, N>>
@@ -905,7 +904,7 @@ public abstract class AbstractRegionBSPTree<
          * @param inputIterator iterator that will provide all nodes in the tree
          * @param typeConverter function that converts from the convex subhyperplane type to the output type
          */
-        private RegionBoundaryIterator(final Iterator<N> inputIterator,
+        RegionBoundaryIterator(final Iterator<N> inputIterator,
                 final Function<ConvexSubHyperplane<P>, C> typeConverter) {
             super(inputIterator);
 

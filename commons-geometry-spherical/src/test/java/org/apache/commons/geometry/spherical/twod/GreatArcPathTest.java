@@ -16,21 +16,21 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -284,22 +284,29 @@ public class GreatArcPathTest {
     }
 
     @Test
-    public void testIterator() {
+    public void testBoundaryStream() {
         // arrange
-        GreatArc a = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatArc b = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
-
-        GreatArcPath path = GreatArcPath.fromArcs(Arrays.asList(a, b));
-
-        List<GreatArc> arcs = new ArrayList<>();
+        GreatArc fullArc = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+        GreatArcPath path = GreatArcPath.fromArcs(fullArc);
 
         // act
-        for (GreatArc arc : path) {
-            arcs.add(arc);
-        }
+        List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
 
         // assert
-        Assert.assertEquals(arcs, Arrays.asList(a, b));
+        Assert.assertEquals(1, arcs.size());
+        Assert.assertSame(fullArc, arcs.get(0));
+    }
+
+    @Test
+    public void testBoundaryStream_noBoundaries() {
+        // arrange
+        GreatArcPath path = GreatArcPath.empty();
+
+        // act
+        List<GreatArc> arcs = path.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, arcs.size());
     }
 
     @Test
@@ -308,8 +315,8 @@ public class GreatArcPathTest {
         RegionBSPTree2S tree = GreatArcPath.empty().toTree();
 
         // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertTrue(tree.isEmpty());
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
     }
 
     @Test

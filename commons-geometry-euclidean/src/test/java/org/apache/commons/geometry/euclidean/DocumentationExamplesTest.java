@@ -28,6 +28,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
+import org.apache.commons.geometry.euclidean.threed.Boundaries3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -59,9 +60,9 @@ public class DocumentationExamplesTest {
 
         // create a binary space partitioning tree representing the unit cube
         // centered on the origin
-        RegionBSPTree3D region = RegionBSPTree3D.builder(precision)
-                .addRect(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5))
-                .build();
+        RegionBSPTree3D region = Boundaries3D.rect(
+                Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision)
+                .toTree();
 
         // create a rotated copy of the region
         Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);

@@ -1036,10 +1036,10 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertEquals(tree.count(), copy.count());
 
         List<RegionLocation> origLocations = new ArrayList<>();
-        tree.forEach(n -> origLocations.add(n.getLocationValue()));
+        tree.nodes().forEach(n -> origLocations.add(n.getLocationValue()));
 
         List<RegionLocation> copyLocations = new ArrayList<>();
-        copy.forEach(n -> copyLocations.add(n.getLocationValue()));
+        copy.nodes().forEach(n -> copyLocations.add(n.getLocationValue()));
 
         Assert.assertEquals(origLocations, copyLocations);
     }

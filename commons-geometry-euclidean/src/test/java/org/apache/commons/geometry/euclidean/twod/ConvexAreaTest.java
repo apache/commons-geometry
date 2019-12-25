@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
@@ -51,6 +52,35 @@ public class ConvexAreaTest {
         Assert.assertEquals(0.0, area.getBoundarySize(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
+    }
+
+    @Test
+    public void testBoundaryStream() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        ConvexArea area = ConvexArea.fromBounds(line);
+
+        // act
+        List<Segment> segments = area.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(1, segments.size());
+        Segment segment = segments.get(0);
+        Assert.assertNull(segment.getStartPoint());
+        Assert.assertNull(segment.getEndPoint());
+        Assert.assertSame(line, segment.getLine());
+    }
+
+    @Test
+    public void testBoundaryStream_full() {
+        // arrange
+        ConvexArea area = ConvexArea.full();
+
+        // act
+        List<Segment> segments = area.boundaryStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(0, segments.size());
     }
 
     @Test

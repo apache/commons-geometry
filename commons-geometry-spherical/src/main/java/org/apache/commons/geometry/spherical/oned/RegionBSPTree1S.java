@@ -203,7 +203,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         }
 
         final List<BoundaryPair> insideBoundaryPairs = new ArrayList<>();
-        for (RegionNode1S node : this) {
+        for (RegionNode1S node : nodes()) {
             if (node.isInside()) {
                 insideBoundaryPairs.add(getNodeBoundaryPair(node));
             }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -34,6 +35,7 @@ import org.apache.commons.geometry.core.partition.test.TestLineSegment;
 import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
 import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.apache.commons.geometry.core.partition.test.TestTransform2D;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.NodeCutRule;
 import org.junit.Assert;
 import org.junit.Test;
@@ -713,6 +715,59 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
+    public void testInsert_boundarySource() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        TestLineSegment a = new TestLineSegment(-1, -1, 1, -1);
+        TestLineSegment b = new TestLineSegment(1, -1, 0, 0);
+        TestLineSegment c = new TestLineSegment(0, 0, 1, 1);
+        TestLineSegment d = new TestLineSegment(1, 1, -1, 1);
+        TestLineSegment e = new TestLineSegment(-1, 1, -1, -1);
+
+        BoundarySource<TestLineSegment> src = () -> Arrays.asList(a, b, c, d, e).stream();
+
+        // act
+        tree.insert(src);
+
+        // assert
+        List<TestLineSegment> segments = getLineSegments(tree);
+
+        Assert.assertEquals(5, segments.size());
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, new TestLine(-1, -1, 1, -1)),
+                segments.get(0));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-Math.sqrt(2), Double.POSITIVE_INFINITY, new TestLine(1, -1, 0, 0)),
+                segments.get(1));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(-1, 1, -1, -1),
+                segments.get(2));
+
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(0, Double.POSITIVE_INFINITY, new TestLine(0, 0, 1, 1)),
+                segments.get(3));
+        PartitionTestUtils.assertSegmentsEqual(
+                new TestLineSegment(1, 1, -1, 1),
+                segments.get(4));
+    }
+
+    @Test
+    public void testInsert_boundarySource_emptySource() {
+        // arrange
+        TestBSPTree tree = new TestBSPTree();
+
+        BoundarySource<TestLineSegment> src = () -> new ArrayList<TestLineSegment>().stream();
+
+        // act
+        tree.insert(src);
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
     public void testCount() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
@@ -1081,13 +1136,13 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testIterable_emptyTree() {
+    public void testNodesIterable_emptyTree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree) {
+        for (TestNode node : tree.nodes()) {
             nodes.add(node);
         }
 
@@ -1097,7 +1152,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testIterable_multipleNodes() {
+    public void testNodesIterable_multipleNodes() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
@@ -1112,7 +1167,7 @@ public class AbstractBSPTreeTest {
         List<TestNode> nodes = new ArrayList<>();
 
         // act
-        for (TestNode node : tree) {
+        for (TestNode node : tree.nodes()) {
             nodes.add(node);
         }
 
@@ -1131,11 +1186,11 @@ public class AbstractBSPTreeTest {
 
 
     @Test
-    public void testIterable_iteratorThrowsNoSuchElementExceptionAtEnd() {
+    public void testNodesIterable_iteratorThrowsNoSuchElementExceptionAtEnd() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 
-        Iterator<TestNode> it = tree.iterator();
+        Iterator<TestNode> it = tree.nodes().iterator();
         it.next();
 
         // act
@@ -1148,49 +1203,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testStream_emptyTree() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-
-        // act
-        List<TestNode> nodes = tree.stream().collect(Collectors.toList());
-
-        // assert
-        Assert.assertEquals(1, nodes.size());
-        Assert.assertSame(tree.getRoot(), nodes.get(0));
-    }
-
-    @Test
-    public void testStream_multipleNodes() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-
-        TestNode root = tree.getRoot();
-        root.cut(TestLine.X_AXIS)
-                .getMinus()
-                    .cut(TestLine.Y_AXIS)
-                 .getParent()
-                 .getPlus()
-                     .cut(TestLine.Y_AXIS);
-
-        // act
-        List<TestNode> nodes = tree.stream().collect(Collectors.toList());
-
-        // assert
-        Assert.assertEquals(7, nodes.size());
-        Assert.assertSame(root, nodes.get(0));
-
-        Assert.assertSame(root.getMinus(), nodes.get(1));
-        Assert.assertSame(root.getMinus().getMinus(), nodes.get(2));
-        Assert.assertSame(root.getMinus().getPlus(), nodes.get(3));
-
-        Assert.assertSame(root.getPlus(), nodes.get(4));
-        Assert.assertSame(root.getPlus().getMinus(), nodes.get(5));
-        Assert.assertSame(root.getPlus().getPlus(), nodes.get(6));
-    }
-
-    @Test
-    public void testNodeIterable_singleNodeSubtree() {
+    public void testSubtreeNodesIterable_singleNodeSubtree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
         TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
@@ -1200,7 +1213,7 @@ public class AbstractBSPTreeTest {
 
         List<TestNode> nodes = new ArrayList<>();
         // act
-        for (TestNode n : node) {
+        for (TestNode n : node.nodes()) {
             nodes.add(n);
         }
 
@@ -1210,7 +1223,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testNodeIterable_multipleNodeSubtree() {
+    public void testSubtreeNodesIterable_multipleNodeSubtree() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
         TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
@@ -1219,44 +1232,9 @@ public class AbstractBSPTreeTest {
 
         List<TestNode> nodes = new ArrayList<>();
         // act
-        for (TestNode n : node) {
+        for (TestNode n : node.nodes()) {
             nodes.add(n);
         }
-
-        // assert
-        Assert.assertEquals(3, nodes.size());
-        Assert.assertSame(node, nodes.get(0));
-        Assert.assertSame(node.getMinus(), nodes.get(1));
-        Assert.assertSame(node.getPlus(), nodes.get(2));
-    }
-
-    @Test
-    public void testNodeStream_singleNodeSubtree() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
-            .getMinus()
-                .cut(TestLine.Y_AXIS)
-                .getMinus();
-
-        // act
-        List<TestNode> nodes = node.stream().collect(Collectors.toList());
-
-        // assert
-        Assert.assertEquals(1, nodes.size());
-        Assert.assertSame(node, nodes.get(0));
-    }
-
-    @Test
-    public void testNodeStream_multipleNodeSubtree() {
-        // arrange
-        TestBSPTree tree = new TestBSPTree();
-        TestNode node = tree.getRoot().cut(TestLine.X_AXIS)
-            .getMinus()
-                .cut(TestLine.Y_AXIS);
-
-        // act
-        List<TestNode> nodes = node.stream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(3, nodes.size());
@@ -1909,7 +1887,7 @@ public class AbstractBSPTreeTest {
     }
 
     private static List<TestLineSegment> getLineSegments(TestBSPTree tree) {
-        return tree.stream()
+        return StreamSupport.stream(tree.nodes().spliterator(), false)
             .filter(BSPTree.Node::isInternal)
             .map(n -> (TestLineSegment) n.getCut())
             .collect(Collectors.toList());

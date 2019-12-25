@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
@@ -32,7 +34,9 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
  * The boundaries of this area, if any, are composed of line segments.
  */
-public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment> {
+public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment>
+    implements BoundarySource2D {
+
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
 
@@ -42,6 +46,12 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      */
     private ConvexArea(final List<Segment> boundaries) {
         super(boundaries);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Stream<Segment> boundaryStream() {
+        return getBoundaries().stream();
     }
 
     /** Get the connected line segment paths comprising the boundary of the area. The
@@ -155,13 +165,6 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         return splitInternal(splitter, this, Segment.class, ConvexArea::new);
     }
 
-    /** Return a BSP tree instance representing the same region as the current instance.
-     * @return a BSP tree instance representing the same region as the current instance
-     */
-    public RegionBSPTree2D toTree() {
-        return RegionBSPTree2D.from(this);
-    }
-
     /** Return an instance representing the full 2D area.
      * @return an instance representing the full 2D area.
      */
@@ -247,10 +250,9 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * @return a convex area constructed from the lines in the given path
      */
     public static ConvexArea fromPath(final Polyline path) {
-        final List<Line> lines = new ArrayList<>();
-        for (Segment segment : path) {
-            lines.add(segment.getLine());
-        }
+        final List<Line> lines = path.boundaryStream()
+                .map(Segment::getLine)
+                .collect(Collectors.toList());
 
         return fromBounds(lines);
     }
