@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 
 /** Class that wraps a {@link UnaryOperator} with the {@link Transform1D} interface.
  */
-public final class FunctionTransform1D implements Transform1D {
+final class FunctionTransform1D implements Transform1D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform1D IDENTITY =
@@ -76,7 +76,7 @@ public final class FunctionTransform1D implements Transform1D {
     /** Return an instance representing the identity transform.
      * @return an instance representing the identity transform
      */
-    public static FunctionTransform1D identity() {
+    static FunctionTransform1D identity() {
         return IDENTITY;
     }
 
@@ -84,7 +84,7 @@ public final class FunctionTransform1D implements Transform1D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform1D from(final UnaryOperator<Vector1D> fn) {
+    static FunctionTransform1D from(final UnaryOperator<Vector1D> fn) {
         final Vector1D tOne = fn.apply(Vector1D.Unit.PLUS);
         final Vector1D tZero = fn.apply(Vector1D.ZERO);
 

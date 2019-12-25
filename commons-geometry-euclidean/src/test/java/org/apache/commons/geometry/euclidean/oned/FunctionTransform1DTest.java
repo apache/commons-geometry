@@ -34,7 +34,7 @@ public class FunctionTransform1DTest {
         Vector1D p2 = Vector1D.of(-1);
 
         // act
-        Transform1D t = FunctionTransform1D.identity();
+        Transform1D t = Transform1D.identity();
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -52,7 +52,7 @@ public class FunctionTransform1DTest {
         Vector1D p2 = Vector1D.of(-1);
 
         // act
-        Transform1D t = FunctionTransform1D.from(UnaryOperator.identity());
+        Transform1D t = Transform1D.from(UnaryOperator.identity());
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -70,7 +70,7 @@ public class FunctionTransform1DTest {
         Vector1D p2 = Vector1D.of(-1);
 
         // act
-        Transform1D t = FunctionTransform1D.from(v -> Vector1D.of((v.getX() + 2) * 3));
+        Transform1D t = Transform1D.from(v -> Vector1D.of((v.getX() + 2) * 3));
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -88,7 +88,7 @@ public class FunctionTransform1DTest {
         Vector1D p2 = Vector1D.of(-1);
 
         // act
-        Transform1D t = FunctionTransform1D.from(Vector1D::negate);
+        Transform1D t = Transform1D.from(Vector1D::negate);
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -101,7 +101,7 @@ public class FunctionTransform1DTest {
     @Test
     public void testApply() {
         // arrange
-        Transform1D t = FunctionTransform1D.from(v -> {
+        Transform1D t = Transform1D.from(v -> {
             double x = v.getX();
             return Vector1D.of((-2 * x) + 1);
         });
@@ -117,7 +117,7 @@ public class FunctionTransform1DTest {
     @Test
     public void testApplyVector() {
         // arrange
-        Transform1D t = FunctionTransform1D.from(v -> {
+        Transform1D t = Transform1D.from(v -> {
             double x = v.getX();
             return Vector1D.of((-2 * x) + 1);
         });
@@ -134,13 +134,13 @@ public class FunctionTransform1DTest {
     public void testToMatrix() {
         // act/assert
         Assert.assertArrayEquals(new double[] {1, 0},
-                FunctionTransform1D.identity().toMatrix().toArray(), TEST_EPS);
+                Transform1D.identity().toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {1, 2},
-                FunctionTransform1D.from(v -> v.add(Vector1D.of(2))).toMatrix().toArray(), TEST_EPS);
+                Transform1D.from(v -> v.add(Vector1D.of(2))).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {3, 0},
-                FunctionTransform1D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
+                Transform1D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {3, 6},
-                FunctionTransform1D.from(v -> v.add(Vector1D.of(2)).multiply(3)).toMatrix().toArray(), TEST_EPS);
+                Transform1D.from(v -> v.add(Vector1D.of(2)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 
     @Test
@@ -155,7 +155,7 @@ public class FunctionTransform1DTest {
 
         EuclideanTestUtils.permuteSkipZero(-2, 2, delta, (translate, scale) -> {
 
-            FunctionTransform1D t = FunctionTransform1D.from(v -> {
+            Transform1D t = Transform1D.from(v -> {
                 return v.multiply(scale * 0.5)
                     .add(Vector1D.of(translate))
                     .multiply(scale * 1.5);

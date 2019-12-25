@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partitioning.bsp;
+package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** Simple {@link BSPTree} implementation allowing arbitrary values to be
  * associated with each node.

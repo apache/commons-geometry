@@ -34,7 +34,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -1);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.identity();
+        Transform2D t = Transform2D.identity();
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -52,7 +52,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -1);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.from(UnaryOperator.identity());
+        Transform2D t = Transform2D.from(UnaryOperator.identity());
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -70,7 +70,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -2);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.from(v -> v.multiply(2).add(Vector2D.of(1, -1)));
+        Transform2D t = Transform2D.from(v -> v.multiply(2).add(Vector2D.of(1, -1)));
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -88,7 +88,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -2);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
+        Transform2D t = Transform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -106,7 +106,7 @@ public class FunctionTransform2DTest {
         Vector2D p2 = Vector2D.of(-1, -2);
 
         // act
-        FunctionTransform2D t = FunctionTransform2D.from(Vector2D::negate);
+        Transform2D t = Transform2D.from(Vector2D::negate);
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -119,7 +119,7 @@ public class FunctionTransform2DTest {
     @Test
     public void testApplyVector() {
         // arrange
-        Transform2D t = FunctionTransform2D.from(v -> {
+        Transform2D t = Transform2D.from(v -> {
             return v.multiply(-2).add(Vector2D.of(4, 5));
         });
 
@@ -137,19 +137,19 @@ public class FunctionTransform2DTest {
         Assert.assertArrayEquals(new double[] {
             1, 0, 0,
             0, 1, 0
-        }, FunctionTransform2D.identity().toMatrix().toArray(), TEST_EPS);
+        }, Transform2D.identity().toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             1, 0, 2,
             0, 1, 3
-        }, FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3))).toMatrix().toArray(), TEST_EPS);
+        }, Transform2D.from(v -> v.add(Vector2D.of(2, 3))).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             3, 0, 0,
             0, 3, 0
-        }, FunctionTransform2D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
+        }, Transform2D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             3, 0, 6,
             0, 3, 9
-        }, FunctionTransform2D.from(v -> v.add(Vector2D.of(2, 3)).multiply(3)).toMatrix().toArray(), TEST_EPS);
+        }, Transform2D.from(v -> v.add(Vector2D.of(2, 3)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class FunctionTransform2DTest {
 
         EuclideanTestUtils.permuteSkipZero(-2, 2, delta, (translate, scale) -> {
 
-            FunctionTransform2D t = FunctionTransform2D.from(v -> {
+            Transform2D t = Transform2D.from(v -> {
                 return v.multiply(scale * 0.5)
                     .add(Vector2D.of(translate, 0.5 * translate))
                     .multiply(scale * 1.5);

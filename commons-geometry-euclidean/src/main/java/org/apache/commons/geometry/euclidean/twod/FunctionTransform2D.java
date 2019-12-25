@@ -22,7 +22,7 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 
 /** Class that wraps a {@link UnaryOperator} with the {@link Transform2D} interface.
  */
-public final class FunctionTransform2D implements Transform2D {
+final class FunctionTransform2D implements Transform2D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform2D IDENTITY =
@@ -79,7 +79,7 @@ public final class FunctionTransform2D implements Transform2D {
     /** Return an instance representing the identity transform.
      * @return an instance representing the identity transform
      */
-    public static FunctionTransform2D identity() {
+    static FunctionTransform2D identity() {
         return IDENTITY;
     }
 
@@ -87,7 +87,7 @@ public final class FunctionTransform2D implements Transform2D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform2D from(final UnaryOperator<Vector2D> fn) {
+    static FunctionTransform2D from(final UnaryOperator<Vector2D> fn) {
         final Vector2D tPlusX = fn.apply(Vector2D.Unit.PLUS_X);
         final Vector2D tPlusY = fn.apply(Vector2D.Unit.PLUS_Y);
         final Vector2D tZero = fn.apply(Vector2D.ZERO);
