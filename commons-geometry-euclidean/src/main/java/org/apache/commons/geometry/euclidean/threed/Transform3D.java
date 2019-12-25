@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.euclidean.EuclideanTransform;
 
 /** Extension of the {@link EuclideanTransform} interface for 3D points.
@@ -28,4 +30,21 @@ public interface Transform3D extends EuclideanTransform<Vector3D> {
      *      as this instance
      */
     AffineTransformMatrix3D toMatrix();
+
+    /** Return a transform representing the identity transform.
+     * @return a transform representing the identity transform
+     */
+    static Transform3D identity() {
+        return FunctionTransform3D.identity();
+    }
+
+    /** Construct a transform instance from the given function. Callers are responsible for
+     * ensuring that the given function meets all the requirements for
+     * {@link org.apache.commons.geometry.core.Transform Transform} instances.
+     * @param fn the function to use for the transform
+     * @return a new transform instance using the given function
+     */
+    static Transform3D from(final UnaryOperator<Vector3D> fn) {
+        return FunctionTransform3D.from(fn);
+    }
 }

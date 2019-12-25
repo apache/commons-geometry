@@ -22,7 +22,7 @@ import org.apache.commons.geometry.euclidean.internal.Matrices;
 
 /** Class that wraps a {@link UnaryOperator} with the {@link Transform3D} interface.
  */
-public final class FunctionTransform3D implements Transform3D {
+final class FunctionTransform3D implements Transform3D {
 
     /** Static instance representing the identity transform. */
     private static final FunctionTransform3D IDENTITY =
@@ -80,7 +80,7 @@ public final class FunctionTransform3D implements Transform3D {
     /** Return an instance representing the identity transform.
      * @return an instance representing the identity transform
      */
-    public static FunctionTransform3D identity() {
+    static FunctionTransform3D identity() {
         return IDENTITY;
     }
 
@@ -88,7 +88,7 @@ public final class FunctionTransform3D implements Transform3D {
      * @param fn the function to use for the transform
      * @return a new transform instance using the given function
      */
-    public static FunctionTransform3D from(final UnaryOperator<Vector3D> fn) {
+    static FunctionTransform3D from(final UnaryOperator<Vector3D> fn) {
         final Vector3D tPlusX = fn.apply(Vector3D.Unit.PLUS_X);
         final Vector3D tPlusY = fn.apply(Vector3D.Unit.PLUS_Y);
         final Vector3D tPlusZ = fn.apply(Vector3D.Unit.PLUS_Z);

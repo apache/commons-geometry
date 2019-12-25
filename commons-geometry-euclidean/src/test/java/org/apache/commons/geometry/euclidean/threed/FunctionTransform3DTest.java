@@ -34,7 +34,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -1, -1);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.identity();
+        Transform3D t = Transform3D.identity();
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -52,7 +52,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -1, -1);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(UnaryOperator.identity());
+        Transform3D t = Transform3D.from(UnaryOperator.identity());
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -70,7 +70,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -2, -3);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(v -> v.multiply(2).add(Vector3D.of(1, -1, 2)));
+        Transform3D t = Transform3D.from(v -> v.multiply(2).add(Vector3D.of(1, -1, 2)));
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -88,7 +88,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -2, -3);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
+        Transform3D t = Transform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -106,7 +106,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -2, -3);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
+        Transform3D t = Transform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
 
         // assert
         Assert.assertTrue(t.preservesOrientation());
@@ -124,7 +124,7 @@ public class FunctionTransform3DTest {
         Vector3D p2 = Vector3D.of(-1, -2, -3);
 
         // act
-        FunctionTransform3D t = FunctionTransform3D.from(Vector3D::negate);
+        Transform3D t = Transform3D.from(Vector3D::negate);
 
         // assert
         Assert.assertFalse(t.preservesOrientation());
@@ -141,22 +141,22 @@ public class FunctionTransform3DTest {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0
-        }, FunctionTransform3D.identity().toMatrix().toArray(), TEST_EPS);
+        }, Transform3D.identity().toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             1, 0, 0, 2,
             0, 1, 0, 3,
             0, 0, 1, -4
-        }, FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toMatrix().toArray(), TEST_EPS);
+        }, Transform3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             3, 0, 0, 0,
             0, 3, 0, 0,
             0, 0, 3, 0
-        }, FunctionTransform3D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
+        }, Transform3D.from(v -> v.multiply(3)).toMatrix().toArray(), TEST_EPS);
         Assert.assertArrayEquals(new double[] {
             3, 0, 0, 6,
             0, 3, 0, 9,
             0, 0, 3, 12
-        }, FunctionTransform3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toMatrix().toArray(), TEST_EPS);
+        }, Transform3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toMatrix().toArray(), TEST_EPS);
     }
 
     @Test
@@ -171,7 +171,7 @@ public class FunctionTransform3DTest {
 
         EuclideanTestUtils.permuteSkipZero(-2, 2, delta, (translate, scale) -> {
 
-            FunctionTransform3D t = FunctionTransform3D.from(v -> {
+            Transform3D t = Transform3D.from(v -> {
                 return v.multiply(scale * 0.5)
                     .add(Vector3D.of(translate, 0.5 * translate, 0.25 * translate))
                     .multiply(scale * 1.5);

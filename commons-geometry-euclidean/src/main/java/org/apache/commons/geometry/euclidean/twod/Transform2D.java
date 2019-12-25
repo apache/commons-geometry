@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.euclidean.EuclideanTransform;
 
 /** Extension of the {@link EuclideanTransform} interface for 2D space.
@@ -28,4 +30,21 @@ public interface Transform2D extends EuclideanTransform<Vector2D> {
      *      as this instance
      */
     AffineTransformMatrix2D toMatrix();
+
+    /** Return a transform representing the identity transform.
+     * @return a transform representing the identity transform
+     */
+    static Transform2D identity() {
+        return FunctionTransform2D.identity();
+    }
+
+    /** Construct a transform instance from the given function. Callers are responsible for
+     * ensuring that the given function meets all the requirements for
+     * {@link org.apache.commons.geometry.core.Transform Transform} instances.
+     * @param fn the function to use for the transform
+     * @return a new transform instance using the given function
+     */
+    static Transform2D from(final UnaryOperator<Vector2D> fn) {
+        return FunctionTransform2D.from(fn);
+    }
 }

@@ -36,11 +36,11 @@ import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.euclidean.twod.FunctionTransform2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
+import org.apache.commons.geometry.euclidean.twod.Transform2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -267,7 +267,7 @@ public class DocumentationExamplesTest {
 
         // translate the copy
         Vector2D translation = Vector2D.of(0.5, 0.5);
-        copy.transform(FunctionTransform2D.from(v -> v.add(translation)));
+        copy.transform(Transform2D.from(v -> v.add(translation)));
 
         // compute the union of the regions, storing the result back into the
         // first tree
