@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.core.precision;
 
-import java.io.Serializable;
-
 import org.apache.commons.numbers.core.Precision;
 
 /** Simple {@link DoublePrecisionContext} subclass that uses an absolute epsilon value to
@@ -30,11 +28,7 @@ import org.apache.commons.numbers.core.Precision;
  *
  * @see Precision#compareTo(double, double, double)
  */
-public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implements Serializable {
-
-    /** Serializable UID. */
-    private static final long serialVersionUID = 20191212L;
-
+public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
     /** Epsilon value. */
     private final double epsilon;
 
