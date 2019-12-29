@@ -606,6 +606,19 @@ Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
 // can represent disjoint regions
 List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
         </source>
+
+        <h5>Linecast</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), precision).toTree();
+
+LinecastPoint2D pt = tree.linecastFirst(
+        Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+
+Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
+Vector2D normal = pt.getNormal(); // (1.0, 0.0)
+        </source>
       </subsection>
 
       <subsection name="Euclidean 3D" id="euclidean_3d">
@@ -756,6 +769,20 @@ RegionBSPTree3D minus = split.getMinus();
 
 double minusSize = minus.getSize(); // 1/6
 List&lt;ConvexSubPlane&gt; minusFacets = minus.getBoundaries(); // size = 4
+        </source>
+
+        <h5>Linecast</h5>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+RegionBSPTree3D tree = Boundaries3D.rect(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision).toTree();
+
+List&lt;LinecastPoint3D&gt; pts = tree.linecast(
+        Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+
+int intersectionCount = pts.size(); // intersectionCount = 2
+Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
+Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
         </source>
       </subsection>
 

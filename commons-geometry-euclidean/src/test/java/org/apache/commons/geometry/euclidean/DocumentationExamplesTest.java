@@ -31,12 +31,15 @@ import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
 import org.apache.commons.geometry.euclidean.threed.Boundaries3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
+import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.twod.Boundaries2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
@@ -288,6 +291,23 @@ public class DocumentationExamplesTest {
     }
 
     @Test
+    public void testLinecast2DExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), precision).toTree();
+
+        LinecastPoint2D pt = tree.linecastFirst(
+                Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+
+        Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
+        Vector2D normal = pt.getNormal(); // (1.0, 0.0)
+
+        // ----------------
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 0.5), intersection, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), normal, TEST_EPS);
+    }
+
+    @Test
     public void testPlaneIntersectionExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
@@ -381,5 +401,25 @@ public class DocumentationExamplesTest {
         // ---------------------
         Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
         Assert.assertEquals(4, minusFacets.size());
+    }
+
+    @Test
+    public void testLinecast3DExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        RegionBSPTree3D tree = Boundaries3D.rect(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision).toTree();
+
+        List<LinecastPoint3D> pts = tree.linecast(
+                Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+
+        int intersectionCount = pts.size(); // intersectionCount = 2
+        Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
+        Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
+
+        // ----------------
+        Assert.assertEquals(2, intersectionCount);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), intersection, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), normal, TEST_EPS);
     }
 }
