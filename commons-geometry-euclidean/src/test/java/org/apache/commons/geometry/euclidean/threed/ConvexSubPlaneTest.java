@@ -599,6 +599,48 @@ public class ConvexSubPlaneTest {
     }
 
     @Test
+    public void testIntersection_line() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),
+                TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 2),
+                sp.intersection(Line3D.fromPoints(Vector3D.of(0.5, 0.5, 2), Vector3D.ZERO, TEST_PRECISION)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2),
+                sp.intersection(Line3D.fromPoints(Vector3D.of(1, 1, 2), Vector3D.of(1, 1, 0), TEST_PRECISION)), TEST_EPS);
+
+        Assert.assertNull(sp.intersection(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
+        Assert.assertNull(sp.intersection(Line3D.fromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
+
+        Assert.assertNull(sp.intersection(Line3D.fromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
+    }
+
+    @Test
+    public void testIntersection_segment() {
+        // arrange
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),
+                TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 2),
+                sp.intersection(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 2), Vector3D.ZERO, TEST_PRECISION)), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2),
+                sp.intersection(Segment3D.fromPoints(Vector3D.of(1, 1, 2), Vector3D.of(1, 1, 0), TEST_PRECISION)), TEST_EPS);
+
+        Assert.assertNull(sp.intersection(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 4), Vector3D.of(0.5, 0.5, 3), TEST_PRECISION)));
+
+        Assert.assertNull(sp.intersection(Segment3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)));
+        Assert.assertNull(sp.intersection(Segment3D.fromPoints(Vector3D.of(0, 0, 2), Vector3D.of(1, 1, 2), TEST_PRECISION)));
+
+        Assert.assertNull(sp.intersection(Segment3D.fromPoints(Vector3D.of(4, 4, 2), Vector3D.of(4, 4, 0), TEST_PRECISION)));
+    }
+
+    @Test
     public void testToString() {
         // arrange
         ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(

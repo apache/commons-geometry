@@ -28,12 +28,14 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
  * Euclidean space.
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D>
-    implements BoundarySource2D {
+    implements BoundarySource2D, Linecastable2D {
 
     /** List of line segment paths comprising the region boundary. */
     private List<Polyline> boundaryPaths;
@@ -153,6 +155,24 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         accept(projector);
 
         return projector.getProjected();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint2D> linecast(final Segment segment) {
+        final LinecastVisitor visitor = new LinecastVisitor(segment);
+        accept(visitor);
+
+        return visitor.getResults();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint2D linecastFirst(final Segment segment) {
+        final LinecastFirstVisitor visitor = new LinecastFirstVisitor(segment);
+        accept(visitor);
+
+        return visitor.getResult();
     }
 
     /** Compute the line segment paths comprising the region boundary.
@@ -322,6 +342,176 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             // return the point with the smallest coordinate values
             final int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(a, b);
             return cmp < 0 ? a : b;
+        }
+    }
+
+    /** Base class for BSP tree visitors that perform linecast operations.
+     */
+    private abstract static class AbstractLinecastVisitor implements BSPTreeVisitor<Vector2D, RegionNode2D> {
+
+        /** The line segment to intersect with the boundaries of the BSP tree. */
+        private final Segment linecastSegment;
+
+        /** Create a new instance with the given intersecting line segment.
+         * @param linecastSegment segment to intersect with the BSP tree region boundary
+         */
+        AbstractLinecastVisitor(final Segment linecastSegment) {
+            this.linecastSegment = linecastSegment;
+        }
+
+        /** Get the intersecting segment for the linecast operation.
+         * @return the intersecting segment for the linecast operation
+         */
+        protected Segment getLinecastSegment() {
+            return linecastSegment;
+        }
+
+        /** Compute the linecast point for the given intersection point and tree node, returning null
+         * if the point does not actually lie on the region boundary.
+         * @param pt intersection point
+         * @param node node containing the cut subhyperplane that the linecast line
+         *      intersected with
+         * @return a new linecast point instance or null if the intersection point does not lie
+         *      on the region boundary
+         */
+        protected LinecastPoint2D computeLinecastPoint(final Vector2D pt, final RegionNode2D node) {
+            final Line cut = (Line) node.getCutHyperplane();
+            final RegionCutBoundary<Vector2D> boundary = node.getCutBoundary();
+
+            boolean onBoundary = false;
+            boolean negateNormal = false;
+
+            if (boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(pt)) {
+                // on inside-facing boundary
+                onBoundary = true;
+                negateNormal = true;
+            } else  if (boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(pt)) {
+                // on outside-facing boundary
+                onBoundary = true;
+            }
+
+            if (onBoundary) {
+                Vector2D normal = cut.getOffsetDirection();
+                if (negateNormal) {
+                    normal = normal.negate();
+                }
+
+                return new LinecastPoint2D(pt, normal, getLinecastSegment().getLine());
+            }
+
+            return null;
+        }
+    }
+
+    /** BSP tree visitor that performs a linecast operation against the boundaries of the visited tree, returning
+     * all computed boundary intersections, in order of their abscissa position along the intersecting line.
+     */
+    private static final class LinecastVisitor extends AbstractLinecastVisitor {
+
+        /** Results of the linecast operation. */
+        private final List<LinecastPoint2D> results = new ArrayList<>();
+
+        /** Create a new instance with the given intersecting line segment.
+         * @param linecastSegment segment to intersect with the BSP tree region boundary
+         */
+        LinecastVisitor(final Segment linecastSegment) {
+            super(linecastSegment);
+        }
+
+        /** Get the ordered results of the linecast operation.
+         * @return the ordered results of the linecast operation
+         */
+        public List<LinecastPoint2D> getResults() {
+            // sort the results before returning
+            Collections.sort(results, LinecastPoint2D.ABSCISSA_ORDER);
+
+            return results;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Result visit(final RegionNode2D node) {
+            if (node.isInternal()) {
+                // check if the line segment intersects the cut subhyperplane
+                final Segment segment = getLinecastSegment();
+                final Line line = segment.getLine();
+                final Vector2D pt = ((Line) node.getCutHyperplane()).intersection(line);
+
+                if (pt != null && segment.contains(pt)) {
+                    final LinecastPoint2D resultPoint = computeLinecastPoint(pt, node);
+                    if (resultPoint != null) {
+                        results.add(resultPoint);
+                    }
+                }
+            }
+
+            return Result.CONTINUE;
+        }
+    }
+
+    /** BSP tree visitor that performs a linecast operation against the boundaries of the visited tree, returning
+     * only the intersection closest to the start of the line segment.
+     */
+    private static final class LinecastFirstVisitor extends AbstractLinecastVisitor {
+
+        /** The result of the linecast operation. */
+        private LinecastPoint2D result;
+
+        /** Create a new instance with the given intersecting line segment.
+         * @param linecastSegment segment to intersect with the BSP tree region boundary
+         */
+        LinecastFirstVisitor(final Segment linecastSegment) {
+            super(linecastSegment);
+        }
+
+        /** Get the {@link LinecastPoint2D} resulting from the linecast operation.
+         * @return the linecast result point
+         */
+        public LinecastPoint2D getResult() {
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Order visitOrder(final RegionNode2D internalNode) {
+            final Line cut = (Line) internalNode.getCutHyperplane();
+            final Line line = getLinecastSegment().getLine();
+
+            final boolean plusIsNear = line.getDirection().dot(cut.getOffsetDirection()) < 0;
+
+            return plusIsNear ?
+                    Order.PLUS_NODE_MINUS :
+                    Order.MINUS_NODE_PLUS;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Result visit(final RegionNode2D node) {
+            if (node.isInternal()) {
+                // check if the line segment intersects the cut subhyperplane
+                final Segment segment = getLinecastSegment();
+                final Line line = segment.getLine();
+                final Vector2D pt = ((Line) node.getCutHyperplane()).intersection(line);
+
+                if (pt != null) {
+                    if (result != null && line.getPrecision()
+                        .compare(result.getAbscissa(), line.abscissa(pt)) < 0) {
+                        // we have a result and we are now sure that no other intersection points will be
+                        // found that are closer or at the same position on the intersecting line.
+                        return Result.TERMINATE;
+                    } else if (segment.contains(pt)) {
+                        // we've potentially found a new linecast point; it just needs to lie on
+                        // the boundary and be closer than any current result
+                        LinecastPoint2D potentialResult = computeLinecastPoint(pt, node);
+                        if (potentialResult != null && (result == null ||
+                                LinecastPoint2D.ABSCISSA_ORDER.compare(potentialResult, result) < 0)) {
+                            result = potentialResult;
+                        }
+                    }
+                }
+            }
+
+            return Result.CONTINUE;
         }
     }
 }
