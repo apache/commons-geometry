@@ -439,7 +439,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     * <p>Instances are considered equivalent if they
     * <ul>
     *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-    *   <li>have equivalent locations (as evaluated by the precision context), and</li>
+    *   <li>have equivalent origin locations (as evaluated by the precision context), and</li>
     *   <li>point in the same direction (as evaluated by the precision context)</li>
     * </ul>
     * @param other the point to compare with

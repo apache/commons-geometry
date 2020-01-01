@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,69 @@ public class Boundaries3DTest {
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testFrom_varargs_empty() {
+        // act
+        BoundarySource3D src = Boundaries3D.from();
+
+        // assert
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(0, segments.size());
+    }
+
+    @Test
+    public void testFrom_varargs() {
+        // act
+        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
+        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
+
+        BoundarySource3D src = Boundaries3D.from(a, b);
+
+        // assert
+        List<ConvexSubPlane> boundaries = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(2, boundaries.size());
+
+        Assert.assertSame(a, boundaries.get(0));
+        Assert.assertSame(b, boundaries.get(1));
+    }
+
+    @Test
+    public void testFrom_list_empty() {
+        // arrange
+        List<ConvexSubPlane> input = new ArrayList<>();
+
+        // act
+        BoundarySource3D src = Boundaries3D.from(input);
+
+        // assert
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(0, segments.size());
+    }
+
+    @Test
+    public void testFrom_list() {
+        // act
+        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
+        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
+
+        List<ConvexSubPlane> input = new ArrayList<>();
+        input.add(a);
+        input.add(b);
+
+        BoundarySource3D src = Boundaries3D.from(input);
+
+        // assert
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(2, segments.size());
+
+        Assert.assertSame(a, segments.get(0));
+        Assert.assertSame(b, segments.get(1));
+    }
 
     @Test
     public void testRect_minFirst() {

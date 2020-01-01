@@ -89,6 +89,21 @@ public class BoundarySourceLinecastWrapper2DTest {
     }
 
     @Test
+    public void testLinecast_line_removesDuplicatePoints() {
+        // arrange
+        BoundarySource2D src = Boundaries2D.from(
+                    Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),
+                    Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+                );
+        BoundarySourceLinecastWrapper2D wrapper = new BoundarySourceLinecastWrapper2D(src);
+
+        // act/assert
+        LinecastChecker2D.with(wrapper)
+            .returns(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
+            .whenGiven(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+    }
+
+    @Test
     public void testLinecast_segment_simple() {
         // arrange
         BoundarySourceLinecastWrapper2D wrapper = new BoundarySourceLinecastWrapper2D(UNIT_SQUARE);
@@ -199,6 +214,21 @@ public class BoundarySourceLinecastWrapper2DTest {
             .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0, 2), Vector2D.of(1, 1), TEST_PRECISION));
+    }
+
+    @Test
+    public void testLinecast_segment_removesDuplicatePoints() {
+        // arrange
+        BoundarySource2D src = Boundaries2D.from(
+                    Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),
+                    Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+                );
+        BoundarySourceLinecastWrapper2D wrapper = new BoundarySourceLinecastWrapper2D(src);
+
+        // act/assert
+        LinecastChecker2D.with(wrapper)
+            .returns(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
+            .whenGiven(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 }
 

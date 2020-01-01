@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,65 @@ public class Boundaries2DTest {
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testFrom_varargs_empty() {
+        // act
+        BoundarySource2D src = Boundaries2D.from();
+
+        // assert
+        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(0, segments.size());
+    }
+
+    @Test
+    public void testFrom_varargs() {
+        // act
+        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+
+        BoundarySource2D src = Boundaries2D.from(a, b);
+
+        // assert
+        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(2, segments.size());
+
+        Assert.assertSame(a, segments.get(0));
+        Assert.assertSame(b, segments.get(1));
+    }
+
+    @Test
+    public void testFrom_list_empty() {
+        // arrange
+        List<Segment> input = new ArrayList<>();
+
+        // act
+        BoundarySource2D src = Boundaries2D.from(input);
+
+        // assert
+        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(0, segments.size());
+    }
+
+    @Test
+    public void testFrom_list() {
+        // act
+        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+
+        List<Segment> input = new ArrayList<>();
+        input.add(a);
+        input.add(b);
+
+        BoundarySource2D src = Boundaries2D.from(input);
+
+        // assert
+        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        Assert.assertEquals(2, segments.size());
+
+        Assert.assertSame(a, segments.get(0));
+        Assert.assertSame(b, segments.get(1));
+    }
 
     @Test
     public void testRect_minFirst() {

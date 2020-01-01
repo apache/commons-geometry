@@ -393,6 +393,23 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
+    public void testLinecast_removesDuplicatePoints() {
+        // arrange
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.insert(Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span());
+        tree.insert(Plane.fromNormal(Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
+
+        // act/assert
+        LinecastChecker3D.with(tree)
+            .returns(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
+            .whenGiven(Line3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
+
+        LinecastChecker3D.with(tree)
+        .returns(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
+            .whenGiven(Segment3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
+    }
+
+    @Test
     public void testLinecastFirst_multipleDirections() {
         // arrange
         RegionBSPTree3D tree = Boundaries3D.rect(Vector3D.of(-1, -1, -1), Vector3D.of(1, 1, 1), TEST_PRECISION)

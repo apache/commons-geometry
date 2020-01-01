@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -29,7 +30,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Line3D implements Embedding<Vector3D, Vector1D> {
+public final class Line3D implements Embedding<Vector3D, Vector1D>, Equivalency<Line3D> {
     /** Line point closest to the origin. */
     private final Vector3D origin;
 
@@ -317,6 +318,30 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      */
     public SubLine3D subline() {
         return new SubLine3D(this);
+    }
+
+    /**{@inheritDoc}
+     *
+     * <p>Instances are considered equivalent if they</p>
+     * <ul>
+     *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
+     *   <li>have equivalent origin locations (as evaluated by the precision context), and</li>
+     *   <li>point in the same direction (as evaluated by the precision context)</li>
+     * </ul>
+     * @param other the point to compare with
+     * @return true if this instance should be considered equivalent to the argument
+     */
+    @Override
+    public boolean eq(final Line3D other) {
+        if (this == other) {
+            return true;
+        }
+
+        final DoublePrecisionContext testPrecision = getPrecision();
+
+        return testPrecision.equals(other.getPrecision()) &&
+                getOrigin().eq(other.getOrigin(), precision) &&
+                getDirection().eq(other.getDirection(), precision);
     }
 
     /** {@inheritDoc} */

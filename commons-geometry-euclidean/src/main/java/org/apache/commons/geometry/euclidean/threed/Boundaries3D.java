@@ -17,17 +17,33 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Utility class for constructing {@link BoundarySource3D} objects to produce common
- * shapes.
+/** Utility class for constructing {@link BoundarySource3D} instances.
  */
 public final class Boundaries3D {
 
     /** Private constructor. */
     private Boundaries3D() {
+    }
+
+    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes.
+     * @param boundaries convex subplanes to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    public static BoundarySource3D from(final ConvexSubPlane... boundaries) {
+        return from(Arrays.asList(boundaries));
+    }
+
+    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes. The given
+     * collection is used directly as the source of the subplanes; no copy is made.
+     * @param boundaries convex subplanes to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    public static BoundarySource3D from(final Collection<ConvexSubPlane> boundaries) {
+        return () -> boundaries.stream();
     }
 
     /** Return a {@link BoundarySource3D} instance defining an axis-aligned rectangular prism. The points {@code a}
@@ -67,7 +83,7 @@ public final class Boundaries3D {
             Vector3D.of(minX, maxY, maxZ)
         };
 
-        List<ConvexSubPlane> facets = Arrays.asList(
+        return from(
             // -z and +z sides
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[3], vertices[2], vertices[1]), precision),
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[4], vertices[5], vertices[6], vertices[7]), precision),
@@ -80,7 +96,5 @@ public final class Boundaries3D {
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[1], vertices[5], vertices[4]), precision),
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[3], vertices[7], vertices[6], vertices[2]), precision)
         );
-
-        return () -> facets.stream();
     }
 }

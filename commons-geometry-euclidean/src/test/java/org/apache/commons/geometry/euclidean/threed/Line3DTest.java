@@ -397,6 +397,41 @@ public class Line3DTest {
     }
 
     @Test
+    public void testEq() {
+        // arrange
+        DoublePrecisionContext precision1 = new EpsilonDoublePrecisionContext(1e-3);
+        DoublePrecisionContext precision2 = new EpsilonDoublePrecisionContext(1e-2);
+
+        Vector3D p = Vector3D.of(1, 2, 3);
+        Vector3D dir = Vector3D.of(1, 0, 0);
+
+        Line3D a = Line3D.fromPointAndDirection(p, dir, precision1);
+        Line3D b = Line3D.fromPointAndDirection(Vector3D.ZERO, dir, precision1);
+        Line3D c = Line3D.fromPointAndDirection(p, Vector3D.of(1, 1, 0), precision1);
+        Line3D d = Line3D.fromPointAndDirection(p, dir, precision2);
+
+        Line3D e = Line3D.fromPointAndDirection(p, dir, precision1);
+        Line3D f = Line3D.fromPointAndDirection(p.add(Vector3D.of(1e-4, 1e-4, 1e-4)), dir, precision1);
+        Line3D g = Line3D.fromPointAndDirection(p, Vector3D.of(1 + 1e-4, 1e-4, 1e-4), precision1);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a));
+
+        Assert.assertTrue(a.eq(e));
+        Assert.assertTrue(e.eq(a));
+
+        Assert.assertTrue(a.eq(f));
+        Assert.assertTrue(f.eq(a));
+
+        Assert.assertTrue(a.eq(g));
+        Assert.assertTrue(g.eq(a));
+
+        Assert.assertFalse(a.eq(b));
+        Assert.assertFalse(a.eq(c));
+        Assert.assertFalse(a.eq(d));
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Line3D a = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);

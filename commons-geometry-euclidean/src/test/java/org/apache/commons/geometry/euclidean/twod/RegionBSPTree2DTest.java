@@ -847,7 +847,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testFrom_boundarySource_noBoundaries() {
         // arrange
-        BoundarySource2D src = () -> new ArrayList<Segment>().stream();
+        BoundarySource2D src = Boundaries2D.from();
 
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.from(src);
@@ -1081,6 +1081,23 @@ public class RegionBSPTree2DTest {
             .returns(Vector2D.of(1.5, 1.5), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1.5, 1.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0.25, 0.25), Vector2D.of(2, 2), TEST_PRECISION));
+    }
+
+    @Test
+    public void testLinecast_removesDuplicatePoints() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
+        tree.insert(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span());
+
+        // act/assert
+        LinecastChecker2D.with(tree)
+            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
+            .whenGiven(Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(-1, -1), TEST_PRECISION));
+
+        LinecastChecker2D.with(tree)
+            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
+            .whenGiven(Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(-1, -1), TEST_PRECISION));
     }
 
     @Test

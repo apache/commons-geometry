@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Arrays;
+
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Test;
@@ -91,6 +93,21 @@ public class BoundarySourceLinecastWrapper3DTest {
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION));
+    }
+
+    @Test
+    public void testLinecast_line_removesDuplicatePoints() {
+        // arrange
+        BoundarySource3D src = Boundaries3D.from(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
+                );
+        BoundarySourceLinecastWrapper3D wrapper = new BoundarySourceLinecastWrapper3D(src);
+
+        // act/assert
+        LinecastChecker3D.with(wrapper)
+            .returns(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
+            .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(-1, 0.5, 1), Vector3D.of(1, 0, -1), TEST_PRECISION));
     }
 
     @Test
@@ -209,5 +226,20 @@ public class BoundarySourceLinecastWrapper3DTest {
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0, 2, 2), corner, TEST_PRECISION));
+    }
+
+    @Test
+    public void testLinecast_segment_removesDuplicatePoints() {
+        // arrange
+        BoundarySource3D src = Boundaries3D.from(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
+                );
+        BoundarySourceLinecastWrapper3D wrapper = new BoundarySourceLinecastWrapper3D(src);
+
+        // act/assert
+        LinecastChecker3D.with(wrapper)
+            .returns(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
+            .whenGiven(Segment3D.fromPoints(Vector3D.of(-1, 0.5, 1), Vector3D.of(1, 0.5, -1), TEST_PRECISION));
     }
 }

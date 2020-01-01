@@ -17,12 +17,11 @@
 package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Utility class for creating {@link BoundarySource2D} instances for generating common
- * shapes.
+/** Utility class for constructing {@link BoundarySource2D} instances.
  */
 public final class Boundaries2D {
 
@@ -30,7 +29,24 @@ public final class Boundaries2D {
     private Boundaries2D() {
     }
 
-    /** Create a {@link BoundarySource2D} defining an axis-aligned rectangular region. The points {@code a}
+    /** Return a {@link BoundarySource2D} instance containing the given segments.
+     * @param boundaries segments to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    public static BoundarySource2D from(final Segment... boundaries) {
+        return from(Arrays.asList(boundaries));
+    }
+
+    /** Return a {@link BoundarySource2D} instance containing the given segments. The given
+     * collection is used directly as the source of the segments; no copy is made.
+     * @param boundaries segments to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    public static BoundarySource2D from(final Collection<Segment> boundaries) {
+        return () -> boundaries.stream();
+    }
+
+    /** Return a {@link BoundarySource2D} instance defining an axis-aligned rectangular region. The points {@code a}
      * and {@code b} are taken to represent opposite corner points in the rectangle and may be specified in
      * any order.
      * @param a first corner point in the rectangle (opposite of {@code b})
@@ -59,13 +75,11 @@ public final class Boundaries2D {
         final Vector2D upperRight = Vector2D.of(maxX, maxY);
         final Vector2D lowerRight = Vector2D.of(maxX, minY);
 
-        List<Segment> segments = Arrays.asList(
+        return from(
                 Segment.fromPoints(lowerLeft, lowerRight, precision),
                 Segment.fromPoints(upperRight, upperLeft, precision),
                 Segment.fromPoints(lowerRight, upperRight, precision),
                 Segment.fromPoints(upperLeft, lowerLeft, precision)
             );
-
-        return () -> segments.stream();
     }
 }

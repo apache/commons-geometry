@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,9 +41,12 @@ final class BoundarySourceLinecastWrapper3D implements Linecastable3D {
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint3D> linecast(final Segment3D segment) {
-        return getIntersectionStream(segment)
-                .sorted(LinecastPoint3D.ABSCISSA_ORDER)
-                .collect(Collectors.toList());
+        final List<LinecastPoint3D> results =  getIntersectionStream(segment)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        LinecastPoint3D.sortAndFilter(results);
+
+        return results;
     }
 
     /** {@inheritDoc} */

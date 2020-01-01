@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,9 +41,12 @@ final class BoundarySourceLinecastWrapper2D implements Linecastable2D {
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint2D> linecast(final Segment segment) {
-        return getIntersectionStream(segment)
-                .sorted(LinecastPoint2D.ABSCISSA_ORDER)
-                .collect(Collectors.toList());
+        final List<LinecastPoint2D> results = getIntersectionStream(segment)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        LinecastPoint2D.sortAndFilter(results);
+
+        return results;
     }
 
     /** {@inheritDoc} */
