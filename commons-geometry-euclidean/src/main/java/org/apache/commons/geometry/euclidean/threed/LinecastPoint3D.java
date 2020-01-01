@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.geometry.core.internal.Equivalency;
+import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractLinecastPoint;
 

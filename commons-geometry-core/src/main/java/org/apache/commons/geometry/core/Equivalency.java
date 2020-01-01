@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.internal;
+package org.apache.commons.geometry.core;
 
 /** Interface for determining equivalency, not exact equality, between
  * two objects. This is performs a function similar to {@link Object#equals(Object)}

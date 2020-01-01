@@ -19,8 +19,8 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
+import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
 import org.apache.commons.geometry.euclidean.oned.Interval;

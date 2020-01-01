@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
