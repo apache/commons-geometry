@@ -1120,36 +1120,33 @@ public class LineTest {
     @Test
     public void testEq() {
         // arrange
-        DoublePrecisionContext precision1 = new EpsilonDoublePrecisionContext(1e-3);
-        DoublePrecisionContext precision2 = new EpsilonDoublePrecisionContext(1e-2);
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
         Vector2D p = Vector2D.of(1, 2);
         double angle = 1.0;
 
-        Line a = Line.fromPointAndAngle(p, angle, precision1);
-        Line b = Line.fromPointAndAngle(Vector2D.ZERO, angle, precision1);
-        Line c = Line.fromPointAndAngle(p, angle + 1.0, precision1);
-        Line d = Line.fromPointAndAngle(p, angle, precision2);
+        Line a = Line.fromPointAndAngle(p, angle, precision);
+        Line b = Line.fromPointAndAngle(Vector2D.ZERO, angle, precision);
+        Line c = Line.fromPointAndAngle(p, angle + 1.0, precision);
 
-        Line e = Line.fromPointAndAngle(p, angle, precision1);
-        Line f = Line.fromPointAndAngle(p.add(Vector2D.of(1e-4, 1e-4)), angle, precision1);
-        Line g = Line.fromPointAndAngle(p, angle + 1e-4, precision1);
+        Line d = Line.fromPointAndAngle(p, angle, precision);
+        Line e = Line.fromPointAndAngle(p.add(Vector2D.of(1e-4, 1e-4)), angle, precision);
+        Line f = Line.fromPointAndAngle(p, angle + 1e-4, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
 
-        Assert.assertTrue(a.eq(e));
-        Assert.assertTrue(e.eq(a));
+        Assert.assertTrue(a.eq(d, precision));
+        Assert.assertTrue(d.eq(a, precision));
 
-        Assert.assertTrue(a.eq(f));
-        Assert.assertTrue(f.eq(a));
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(e.eq(a, precision));
 
-        Assert.assertTrue(a.eq(g));
-        Assert.assertTrue(g.eq(a));
+        Assert.assertTrue(a.eq(f, precision));
+        Assert.assertTrue(f.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
-        Assert.assertFalse(a.eq(d));
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
     }
 
     @Test

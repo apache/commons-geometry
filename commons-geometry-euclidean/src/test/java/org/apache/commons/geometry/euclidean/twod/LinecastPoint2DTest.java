@@ -134,13 +134,13 @@ public class LinecastPoint2DTest {
                 Vector2D.of(1 + 1e-3, 1 + 1e-3), Vector2D.Unit.from(1 + 1e-3, 1e-3), otherLine);
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
 
-        Assert.assertTrue(a.eq(d));
-        Assert.assertTrue(a.eq(e));
+        Assert.assertTrue(a.eq(d, precision));
+        Assert.assertTrue(a.eq(e, precision));
     }
 
     @Test

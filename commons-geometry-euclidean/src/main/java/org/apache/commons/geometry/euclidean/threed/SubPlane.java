@@ -143,7 +143,7 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
     private void validatePlane(final Plane inputPlane) {
         final Plane plane = getPlane();
 
-        if (!plane.eq(inputPlane)) {
+        if (!plane.eq(inputPlane, plane.getPrecision())) {
             throw new IllegalArgumentException("Argument is not on the same " +
                     "plane. Expected " + plane + " but was " +
                     inputPlane);

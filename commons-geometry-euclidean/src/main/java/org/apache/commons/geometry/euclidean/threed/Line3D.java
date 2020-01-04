@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
-import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
@@ -30,7 +29,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class Line3D implements Embedding<Vector3D, Vector1D>, Equivalency<Line3D> {
+public final class Line3D implements Embedding<Vector3D, Vector1D> {
     /** Line point closest to the origin. */
     private final Vector3D origin;
 
@@ -320,28 +319,17 @@ public final class Line3D implements Embedding<Vector3D, Vector1D>, Equivalency<
         return new SubLine3D(this);
     }
 
-    /**{@inheritDoc}
-     *
-     * <p>Instances are considered equivalent if they</p>
-     * <ul>
-     *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-     *   <li>have equivalent origin locations (as evaluated by the precision context), and</li>
-     *   <li>point in the same direction (as evaluated by the precision context)</li>
-     * </ul>
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if they have
+     * equivalent {@code origin}s and {@code direction}s.
      * @param other the point to compare with
+     * @param ctx precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
+     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
      */
-    @Override
-    public boolean eq(final Line3D other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext testPrecision = getPrecision();
-
-        return testPrecision.equals(other.getPrecision()) &&
-                getOrigin().eq(other.getOrigin(), precision) &&
-                getDirection().eq(other.getDirection(), precision);
+    public boolean eq(final Line3D other, final DoublePrecisionContext ctx) {
+        return getOrigin().eq(other.getOrigin(), ctx) &&
+                getDirection().eq(other.getDirection(), ctx);
     }
 
     /** {@inheritDoc} */

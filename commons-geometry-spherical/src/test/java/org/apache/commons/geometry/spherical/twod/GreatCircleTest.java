@@ -640,20 +640,20 @@ public class GreatCircleTest {
                 new EpsilonDoublePrecisionContext(eps));
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
-        Assert.assertFalse(a.eq(d));
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
 
-        Assert.assertTrue(a.eq(e));
-        Assert.assertTrue(e.eq(a));
+        Assert.assertTrue(a.eq(d, precision));
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(e.eq(a, precision));
 
-        Assert.assertTrue(a.eq(f));
-        Assert.assertTrue(f.eq(a));
+        Assert.assertTrue(a.eq(f, precision));
+        Assert.assertTrue(f.eq(a, precision));
 
-        Assert.assertTrue(g.eq(e));
-        Assert.assertTrue(e.eq(g));
+        Assert.assertTrue(g.eq(e, precision));
+        Assert.assertTrue(e.eq(g, precision));
     }
 
     @Test

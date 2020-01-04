@@ -251,22 +251,21 @@ public class OrientedPointTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
         OrientedPoint a = OrientedPoint.createPositiveFacing(0, precision);
-
         OrientedPoint b = OrientedPoint.createPositiveFacing(0, TEST_PRECISION);
-        OrientedPoint c = OrientedPoint.createNegativeFacing(0, precision);
-        OrientedPoint d = OrientedPoint.createPositiveFacing(2e-3, precision);
 
+        OrientedPoint c = OrientedPoint.createPositiveFacing(2e-3, precision);
+        OrientedPoint d = OrientedPoint.createNegativeFacing(0, precision);
         OrientedPoint e = OrientedPoint.createPositiveFacing(1e-4, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
+        Assert.assertTrue(a.eq(b, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
-        Assert.assertFalse(a.eq(d));
+        Assert.assertFalse(a.eq(c, precision));
+        Assert.assertFalse(a.eq(d, precision));
 
-        Assert.assertTrue(a.eq(e));
-        Assert.assertTrue(e.eq(a));
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(e.eq(a, precision));
     }
 
     @Test

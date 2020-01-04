@@ -1149,7 +1149,7 @@ public class RegionBSPTree2DTest {
         Assert.assertNull(segment.getEndPoint());
 
         Line expectedLine = Line.fromPointAndAngle(Vector2D.of(-1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        Assert.assertTrue(expectedLine.eq(segment.getLine()));
+        Assert.assertTrue(expectedLine.eq(segment.getLine(), expectedLine.getPrecision()));
     }
 
     @Test

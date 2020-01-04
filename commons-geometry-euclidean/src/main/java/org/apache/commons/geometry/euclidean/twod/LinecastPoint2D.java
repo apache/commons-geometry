@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractLinecastPoint;
 
@@ -31,8 +30,7 @@ import org.apache.commons.geometry.euclidean.AbstractLinecastPoint;
  * of the target at the point of intersection.
  * @see Linecastable2D
  */
-public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Unit, Line>
-    implements Equivalency<LinecastPoint2D> {
+public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Unit, Line> {
 
     /** Comparator that sorts intersection instances by increasing abscissa order. If two abscissa
      * values are equal, the comparison uses {@link Vector2D#COORDINATE_ASCENDING_ORDER} with the
@@ -55,27 +53,20 @@ public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Un
         super(point, normal.normalize(), line);
     }
 
-    /** {@inheritDoc}
-     *
-     * <p>
-     * Instances are considered equivalent if they have equivalent points, normals, and lines.
-     * </p>
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if they have equivalent
+     * points, normals, and lines.
+     * @param other point to compare with
+     * @param precision precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
      */
-    @Override
-    public boolean eq(final LinecastPoint2D other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getLine().getPrecision();
-
-        return getLine().eq(other.getLine()) &&
-                getPoint().eq(other.getPoint(), precision) &&
+    public boolean eq(final LinecastPoint2D other, final DoublePrecisionContext precision) {
+        return getPoint().eq(other.getPoint(), precision) &&
                 getNormal().eq(other.getNormal(), precision);
     }
 
-    /** Sort the given list of linecast points by increasing abscissa value and filter
-     * to remove duplicate entries (as determined by the {@link #eq(LinecastPoint2D)} method).
+    /** Sort the given list of linecast points by increasing abscissa value and filter to remove
+     * duplicate entries (as determined by the {@link #eq(LinecastPoint2D, DoublePrecisionContext)} method).
      * The argument is modified.
      * @param pts list of points to sort and filter
      */
@@ -111,8 +102,10 @@ public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Un
      * @return true if the given linecast point is equivalent to any of those in the given list
      */
     private static boolean containsEq(final LinecastPoint2D pt, final List<LinecastPoint2D> list) {
+        final DoublePrecisionContext precision = pt.getLine().getPrecision();
+
         for (LinecastPoint2D listPt : list) {
-            if (listPt.eq(pt)) {
+            if (listPt.eq(pt, precision)) {
                 return true;
             }
         }

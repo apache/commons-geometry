@@ -164,7 +164,7 @@ public final class SubLine extends AbstractSubLine {
     private void validateLine(final Line inputLine) {
         final Line line = getLine();
 
-        if (!line.eq(inputLine)) {
+        if (!line.eq(inputLine, line.getPrecision())) {
             throw new IllegalArgumentException("Argument is not on the same " +
                     "line. Expected " + line + " but was " +
                     inputLine);

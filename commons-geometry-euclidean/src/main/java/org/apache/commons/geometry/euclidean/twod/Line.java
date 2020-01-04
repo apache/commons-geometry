@@ -18,7 +18,6 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -57,7 +56,7 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * points with positive offsets.</p>
  */
 public final class Line extends AbstractHyperplane<Vector2D>
-    implements EmbeddingHyperplane<Vector2D, Vector1D>, Equivalency<Line> {
+    implements EmbeddingHyperplane<Vector2D, Vector1D> {
     /** The direction of the line as a normalized vector. */
     private final Vector2D direction;
 
@@ -434,27 +433,16 @@ public final class Line extends AbstractHyperplane<Vector2D>
         return getPrecision().eqZero(area);
     }
 
-    /** {@inheritDoc}
-    *
-    * <p>Instances are considered equivalent if they
-    * <ul>
-    *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-    *   <li>have equivalent origin locations (as evaluated by the precision context), and</li>
-    *   <li>point in the same direction (as evaluated by the precision context)</li>
-    * </ul>
-    * @param other the point to compare with
-    * @return true if this instance should be considered equivalent to the argument
-    */
-    @Override
-    public boolean eq(final Line other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        return precision.equals(other.getPrecision()) &&
-                getOrigin().eq(other.getOrigin(), precision) &&
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if they have
+     * equivalent {@code origin} points and make similar angles with the x-axis.
+     * @param other the point to compare with
+     * @param precision precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
+     * @see Vector2D#eq(Vector2D, DoublePrecisionContext)
+     */
+    public boolean eq(final Line other, final DoublePrecisionContext precision) {
+        return getOrigin().eq(other.getOrigin(), precision) &&
                 precision.eq(getAngle(), other.getAngle());
     }
 

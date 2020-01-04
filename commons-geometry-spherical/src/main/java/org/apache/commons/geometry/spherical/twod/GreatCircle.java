@@ -18,7 +18,6 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -38,7 +37,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class GreatCircle extends AbstractHyperplane<Point2S>
-    implements EmbeddingHyperplane<Point2S, Point1S>, Equivalency<GreatCircle> {
+    implements EmbeddingHyperplane<Point2S, Point1S> {
     /** Pole or circle center. */
     private final Vector3D.Unit pole;
 
@@ -318,17 +317,16 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         return Point2S.from(vectorAt(point.getAzimuth()));
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean eq(final GreatCircle other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        return precision.equals(other.getPrecision()) &&
-                pole.eq(other.pole, precision) &&
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if have equivalent
+     * {@code pole}, {@code u}, and {@code v} vectors.
+     * @param other great circle to compare with
+     * @param precision precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
+     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     */
+    public boolean eq(final GreatCircle other, final DoublePrecisionContext precision) {
+        return pole.eq(other.pole, precision) &&
                 u.eq(other.u, precision) &&
                 v.eq(other.v, precision);
     }

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.Equivalency;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
@@ -36,7 +35,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /** Class representing a plane in 3 dimensional Euclidean space.
  */
 public final class Plane extends AbstractHyperplane<Vector3D>
-    implements EmbeddingHyperplane<Vector3D, Vector2D>, Equivalency<Plane> {
+    implements EmbeddingHyperplane<Vector3D, Vector2D> {
     /** First normalized vector of the plane frame (in plane). */
     private final Vector3D u;
 
@@ -510,27 +509,16 @@ public final class Plane extends AbstractHyperplane<Vector3D>
     }
 
 
-    /** {@inheritDoc}
-    *
-    * <p>Instances are considered equivalent if they
-    * <ul>
-    *   <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-    *   <li>have equivalent origins (as evaluated by the precision context), and</li>
-    *   <li>have equivalent {@code u} and {@code v} vectors (as evaluated by the precision context)</li>
-    * </ul>
-    * @param other the point to compare with
-    * @return true if this instance should be considered equivalent to the argument
-    */
-    @Override
-    public boolean eq(Plane other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        return precision.equals(other.getPrecision()) &&
-                getOrigin().eq(other.getOrigin(), precision) &&
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if they
+     * have equivalent {@code origin} points and {@code u} and {@code v} vectors.
+     * @param other the point to compare with
+     * @param precision precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
+     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     */
+    public boolean eq(final Plane other, final DoublePrecisionContext precision) {
+        return getOrigin().eq(other.getOrigin(), precision) &&
                 u.eq(other.u, precision) &&
                 v.eq(other.v, precision);
     }
