@@ -32,6 +32,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D.RegionNode2D;
+import org.apache.commons.geometry.euclidean.twod.shapes.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaries() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
@@ -136,7 +137,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGetBoundaries() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
@@ -149,7 +150,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act
@@ -313,7 +314,7 @@ public class RegionBSPTree2DTest {
     public void testToConvex_square() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.from(
-                Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
+                Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
 
         // act
         List<ConvexArea> result = tree.toConvex();
@@ -473,7 +474,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_bothSides() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
@@ -498,7 +499,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_plusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
@@ -520,7 +521,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testSplit_minusSideOnly() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION)
                 .toTree();
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.25 * PlaneAngleRadians.PI, TEST_PRECISION)
@@ -767,9 +768,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_regionWithHole() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
-        RegionBSPTree2D inner = Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
+        RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
                 .toTree();
 
         tree.difference(inner);
@@ -806,9 +807,9 @@ public class RegionBSPTree2DTest {
     @Test
     public void testGeometricProperties_complementedRegionWithHole() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION)
                 .toTree();
-        RegionBSPTree2D inner = Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
+        RegionBSPTree2D inner = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION)
                 .toTree();
 
         tree.difference(inner);
@@ -845,9 +846,38 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
+    public void testFrom_boundaries_noBoundaries() {
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList());
+
+        // assert
+        Assert.assertNull(tree.getBarycenter());
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
+    public void testFrom_boundaries() {
+        // act
+        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
+                    Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
+                    Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
+                        .segmentFrom(Vector2D.ZERO)
+                ));
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(-1, 1));
+        checkClassify(tree, RegionLocation.OUTSIDE,
+                Vector2D.of(1, 1), Vector2D.of(1, -1), Vector2D.of(-1, -1));
+    }
+
+    @Test
     public void testFrom_boundarySource_noBoundaries() {
         // arrange
-        BoundarySource2D src = Boundaries2D.from();
+        BoundarySource2D src = BoundarySource2D.from();
 
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.from(src);
@@ -855,6 +885,7 @@ public class RegionBSPTree2DTest {
         // assert
         Assert.assertNull(tree.getBarycenter());
         Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
     }
 
     @Test
@@ -915,7 +946,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToTree_returnsNewTree() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
 
         // act
         RegionBSPTree2D result = tree.toTree();
@@ -951,7 +982,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testProject_rect() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(
+        RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
         // act/assert
@@ -1005,7 +1036,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         // act/assert
@@ -1029,7 +1060,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testLinecast_complementedTree() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 .toTree();
 
         tree.complement();
@@ -1103,7 +1134,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION)
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 2), TEST_PRECISION)
                 .toTree();
 
         AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(0.5, 2)
@@ -1172,7 +1203,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
         Transform2D transform = FunctionTransform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
@@ -1194,7 +1225,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testTransform_doubleReflection() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(
+        RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
         Transform2D transform = FunctionTransform2D.from(Vector2D::negate);
@@ -1217,18 +1248,18 @@ public class RegionBSPTree2DTest {
     @Test
     public void testBooleanOperations() {
         // arrange
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION).toTree();
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(3, 3), TEST_PRECISION).toTree();
         RegionBSPTree2D temp;
 
         // act
-        temp = Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
+        temp = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
         temp.complement();
         tree.intersection(temp);
 
-        temp = Boundaries2D.rect(Vector2D.of(3, 0), Vector2D.of(6, 3), TEST_PRECISION).toTree();
+        temp = Parallelogram.axisAligned(Vector2D.of(3, 0), Vector2D.of(6, 3), TEST_PRECISION).toTree();
         tree.union(temp);
 
-        temp = Boundaries2D.rect(Vector2D.of(2, 1), Vector2D.of(5, 2), TEST_PRECISION).toTree();
+        temp = Parallelogram.axisAligned(Vector2D.of(2, 1), Vector2D.of(5, 2), TEST_PRECISION).toTree();
         tree.difference(temp);
 
         temp.setFull();

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.shapes.Parallelogram;
 import org.junit.Test;
 
 public class BoundarySourceLinecastWrapper2DTest {
@@ -28,7 +29,7 @@ public class BoundarySourceLinecastWrapper2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     private static final BoundarySource2D UNIT_SQUARE =
-            Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+            Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
     @Test
     public void testLinecast_line_simple() {
@@ -91,7 +92,7 @@ public class BoundarySourceLinecastWrapper2DTest {
     @Test
     public void testLinecast_line_removesDuplicatePoints() {
         // arrange
-        BoundarySource2D src = Boundaries2D.from(
+        BoundarySource2D src = BoundarySource2D.from(
                     Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),
                     Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 );
@@ -219,7 +220,7 @@ public class BoundarySourceLinecastWrapper2DTest {
     @Test
     public void testLinecast_segment_removesDuplicatePoints() {
         // arrange
-        BoundarySource2D src = Boundaries2D.from(
+        BoundarySource2D src = BoundarySource2D.from(
                     Segment.fromPoints(Vector2D.of(-1, -1), Vector2D.ZERO, TEST_PRECISION),
                     Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION)
                 );

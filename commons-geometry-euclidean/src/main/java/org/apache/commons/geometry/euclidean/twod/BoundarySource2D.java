@@ -16,6 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 2D
@@ -31,5 +34,22 @@ public interface BoundarySource2D extends BoundarySource<Segment> {
      */
     default RegionBSPTree2D toTree() {
         return RegionBSPTree2D.from(this);
+    }
+
+    /** Return a {@link BoundarySource2D} instance containing the given segments.
+     * @param boundaries segments to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    static BoundarySource2D from(final Segment... boundaries) {
+        return from(Arrays.asList(boundaries));
+    }
+
+    /** Return a {@link BoundarySource2D} instance containing the given segments. The given
+     * collection is used directly as the source of the segments; no copy is made.
+     * @param boundaries segments to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    static BoundarySource2D from(final Collection<Segment> boundaries) {
+        return () -> boundaries.stream();
     }
 }

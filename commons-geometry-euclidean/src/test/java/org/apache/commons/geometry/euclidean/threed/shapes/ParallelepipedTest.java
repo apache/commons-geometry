@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.euclidean.threed.shapes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Boundaries3DTest {
+public class ParallelepipedTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -36,74 +37,10 @@ public class Boundaries3DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testFrom_varargs_empty() {
+    public void testAxisAligned_minFirst() {
         // act
-        BoundarySource3D src = Boundaries3D.from();
-
-        // assert
-        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(0, segments.size());
-    }
-
-    @Test
-    public void testFrom_varargs() {
-        // act
-        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
-                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
-                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
-
-        BoundarySource3D src = Boundaries3D.from(a, b);
-
-        // assert
-        List<ConvexSubPlane> boundaries = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(2, boundaries.size());
-
-        Assert.assertSame(a, boundaries.get(0));
-        Assert.assertSame(b, boundaries.get(1));
-    }
-
-    @Test
-    public void testFrom_list_empty() {
-        // arrange
-        List<ConvexSubPlane> input = new ArrayList<>();
-
-        // act
-        BoundarySource3D src = Boundaries3D.from(input);
-
-        // assert
-        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(0, segments.size());
-    }
-
-    @Test
-    public void testFrom_list() {
-        // act
-        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
-                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
-                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
-
-        List<ConvexSubPlane> input = new ArrayList<>();
-        input.add(a);
-        input.add(b);
-
-        BoundarySource3D src = Boundaries3D.from(input);
-
-        // assert
-        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
-        Assert.assertEquals(2, segments.size());
-
-        Assert.assertSame(a, segments.get(0));
-        Assert.assertSame(b, segments.get(1));
-    }
-
-    @Test
-    public void testRect_minFirst() {
-        // act
-        List<ConvexSubPlane> boundaries = Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries =
+                Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // assert
         Assert.assertEquals(6, boundaries.size());
@@ -129,11 +66,10 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_maxFirst() {
+    public void testAxisAligned_maxFirst() {
         // act
-        List<ConvexSubPlane> boundaries = Boundaries3D.rect(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries =
+                Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
         // assert
         Assert.assertEquals(6, boundaries.size());
@@ -159,9 +95,10 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_toTree() {
+    public void testAxisAligned_toTree() {
         // arrange
-        BoundarySource3D src = Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        BoundarySource3D src = BoundarySource3D.from(
+                Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION));
 
         // act
         RegionBSPTree3D tree = src.toTree();
@@ -172,18 +109,18 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_illegalArgs() {
+    public void testAxisAligned_illegalArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 

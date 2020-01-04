@@ -28,7 +28,6 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.Boundaries3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
@@ -37,7 +36,7 @@ import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.geometry.euclidean.twod.Boundaries2D;
+import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
@@ -45,6 +44,7 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Transform2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.shapes.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,9 +63,8 @@ public class DocumentationExamplesTest {
 
         // create a binary space partitioning tree representing the unit cube
         // centered on the origin
-        RegionBSPTree3D region = Boundaries3D.rect(
-                Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision)
-                .toTree();
+        RegionBSPTree3D region = RegionBSPTree3D.from(
+                Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
 
         // create a rotated copy of the region
         Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);
@@ -294,9 +293,9 @@ public class DocumentationExamplesTest {
     public void testLinecast2DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(2, 1), precision).toTree();
+        Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
-        LinecastPoint2D pt = tree.linecastFirst(
+        LinecastPoint2D pt = path.linecastFirst(
                 Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
         Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
@@ -407,7 +406,8 @@ public class DocumentationExamplesTest {
     public void testLinecast3DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        RegionBSPTree3D tree = Boundaries3D.rect(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision).toTree();
+        RegionBSPTree3D tree = RegionBSPTree3D.from(
+                Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision));
 
         List<LinecastPoint3D> pts = tree.linecast(
                 Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));

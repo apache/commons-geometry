@@ -16,6 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 
 /** Extension of the {@link BoundarySource} interface for Euclidean 3D
@@ -31,5 +34,22 @@ public interface BoundarySource3D extends BoundarySource<ConvexSubPlane> {
      */
     default RegionBSPTree3D toTree() {
         return RegionBSPTree3D.from(this);
+    }
+
+    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes.
+     * @param boundaries convex subplanes to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    static BoundarySource3D from(final ConvexSubPlane... boundaries) {
+        return from(Arrays.asList(boundaries));
+    }
+
+    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes. The given
+     * collection is used directly as the source of the subplanes; no copy is made.
+     * @param boundaries convex subplanes to include in the boundary source
+     * @return a boundary source containing the given boundaries
+     */
+    static BoundarySource3D from(final Collection<ConvexSubPlane> boundaries) {
+        return () -> boundaries.stream();
     }
 }

@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
 import org.junit.Test;
 
 public class BoundarySourceLinecastWrapper3DTest {
@@ -30,7 +31,7 @@ public class BoundarySourceLinecastWrapper3DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     private static final BoundarySource3D UNIT_CUBE =
-            Boundaries3D.rect(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+            BoundarySource3D.from(Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION));
 
     @Test
     public void testLinecast_line_simple() {
@@ -98,7 +99,7 @@ public class BoundarySourceLinecastWrapper3DTest {
     @Test
     public void testLinecast_line_removesDuplicatePoints() {
         // arrange
-        BoundarySource3D src = Boundaries3D.from(
+        BoundarySource3D src = BoundarySource3D.from(
                     ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
                     ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );
@@ -231,7 +232,7 @@ public class BoundarySourceLinecastWrapper3DTest {
     @Test
     public void testLinecast_segment_removesDuplicatePoints() {
         // arrange
-        BoundarySource3D src = Boundaries3D.from(
+        BoundarySource3D src = BoundarySource3D.from(
                     ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
                     ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );

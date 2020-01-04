@@ -221,6 +221,18 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         return new RegionBSPTree2S(true);
     }
 
+    /** Construct a new tree from the given boundaries. If no boundaries
+     * are present, the returned tree contains the full space.
+     * @param boundaries boundaries to construct the tree from
+     * @return a new tree instance constructed from the given boundaries
+     */
+    public static RegionBSPTree2S from(final Iterable<GreatArc> boundaries) {
+        RegionBSPTree2S tree = RegionBSPTree2S.full();
+        tree.insert(boundaries);
+
+        return tree;
+    }
+
     /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
      * are present in the given source, their the returned tree contains the full space.
      * @param boundarySrc boundary source to construct a tree from
