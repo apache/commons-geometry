@@ -37,6 +37,7 @@ import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
@@ -90,7 +91,7 @@ public class DocumentationExamplesTest {
         // create a precision context with an epsilon (aka, tolerance) value of 1e-3
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        // test for equality
+        // test for equality using the eq() method
         precision.eq(1.0009, 1.0); // true; difference is less than epsilon
         precision.eq(1.002, 1.0); // false; difference is greater than epsilon
 
@@ -104,6 +105,27 @@ public class DocumentationExamplesTest {
 
         Assert.assertEquals(0, precision.compare(1.0009, 1.0));
         Assert.assertEquals(1, precision.compare(1.002, 1.0));
+    }
+
+    @Test
+    public void testEqualsVsEqExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
+        Vector2D v2 = Vector2D.parse("(1, 1)"); // (1.0, 1.0)
+
+        Vector2D v3 = Vector2D.of(Math.sqrt(2), 0).transform(
+                AffineTransformMatrix2D.createRotation(0.25 * Math.PI)); // (1.0000000000000002, 1.0)
+
+        v1.equals(v2); // true - exactly equal
+        v1.equals(v3); // false - not exactly equal
+
+        v1.eq(v3, precision); // true - approximately equal according to the given precision context
+
+        // ---------------------
+        Assert.assertTrue(v1.equals(v2));
+        Assert.assertFalse(v1.equals(v3));
+        Assert.assertTrue(v1.eq(v3, precision));
     }
 
     @Test

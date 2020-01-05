@@ -134,13 +134,48 @@
 // create a precision context with an epsilon (aka, tolerance) value of 1e-3
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-// test for equality
+// test for equality using the eq() method
 precision.eq(1.0009, 1.0); // true; difference is less than epsilon
 precision.eq(1.002, 1.0); // false; difference is greater than epsilon
 
 // compare
 precision.compare(1.0009, 1.0); // 0
 precision.compare(1.002, 1.0); // 1
+        </source>
+
+        <h4><span class="code">equals()</span> vs <span class="code">eq()</span></h4>
+        <p>
+          Many objects in <em>Commons Geometry</em> provide both a standard Java <span class="code">equals()</span>
+          method as well as an <span class="code">eq()</span> method. The <span class="code">equals()</span> method
+          always tests for <em>strict</em> equality between objects. In general, any floating point values in the two
+          objects must be exactly equal in order for the <span class="code">equals()</span> method to return true (see
+          the documentation on individual classes for details). This strictness is enforced so that
+          <span class="code">equals()</span> can behave as expected by the JDK, fulfilling properties such as
+          transitivity and the relationship to <span class="code">hashCode()</span>.
+        </p>
+        <p>
+          In contrast, the <span class="code">eq()</span> method is used to test for <em>approximate</em> equality
+          between objects, with floating point values being evaluated by a provided
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/precision/DoublePrecisionContext.html"
+          >DoublePrecisionContext</a>. Because of this approximate nature, this method cannot be guaranteed to
+          be transitive or have any meaningful relationship to <span class="code">hashCode</span>. The
+          <span class="code">eq()</span> should be used to test for object equality in cases where floating-point
+          errors in a computation may have introduced small discrepancies in values. The example below demonstrates
+          the differences between <span class="code">equals()</span> and <span class="code">eq()</span>.
+        </p>
+        <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
+Vector2D v2 = Vector2D.parse("(1, 1)"); // (1.0, 1.0)
+
+Vector2D v3 = Vector2D.of(Math.sqrt(2), 0).transform(
+        AffineTransformMatrix2D.createRotation(0.25 * Math.PI)); // (1.0000000000000002, 1.0)
+
+v1.equals(v2); // true - exactly equal
+v1.equals(v3); // false - not exactly equal
+
+v1.eq(v3, precision); // true - approximately equal according to the given precision context
         </source>
       </subsection>
 
