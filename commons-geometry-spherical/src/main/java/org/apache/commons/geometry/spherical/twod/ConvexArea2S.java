@@ -128,29 +128,35 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     /** {@inheritDoc} */
     @Override
     public Point2S getBarycenter() {
-        List<GreatArc> arcs = getBoundaries();
-        int numSides = arcs.size();
+        Vector3D weighted = getWeightedBarycenter();
+        return weighted == null ? null : Point2S.from(weighted);
+    }
 
-        if (numSides == 0) {
+    /**
+     * Returns the weighted vector for barycenter.
+     *
+     * @return Weighted barycenter
+     */
+    Vector3D getWeightedBarycenter() {
+        List<GreatArc> arcs = getBoundaries();
+        switch (arcs.size()) {
+        case 0:
             // full space; no barycenter
             return null;
-        } else if (numSides == 1) {
+        case 1:
             // hemisphere; barycenter is the pole of the hemisphere
-            return arcs.get(0).getCircle().getPolePoint();
-        } else {
+            GreatArc singleArc = arcs.get(0);
+            return singleArc.getCircle().getPole().withNorm(singleArc.getSize());
+        default:
             // 2 or more sides; use an extension of the approach outlined here:
             // https://archive.org/details/centroidinertiat00broc
             // In short, the barycenter is the sum of the pole vectors of each side
             // multiplied by their arc lengths.
             Vector3D barycenter = Vector3D.ZERO;
-
             for (GreatArc arc : getBoundaries()) {
-                barycenter = Vector3D.linearCombination(
-                        1, barycenter,
-                        arc.getSize(), arc.getCircle().getPole());
+                barycenter = barycenter.add(arc.getCircle().getPole().withNorm(arc.getSize()));
             }
-
-            return Point2S.from(barycenter);
+            return barycenter;
         }
     }
 
