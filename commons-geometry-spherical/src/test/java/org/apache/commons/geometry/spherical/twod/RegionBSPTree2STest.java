@@ -706,6 +706,54 @@ public class RegionBSPTree2STest {
         checkBarycenterConsistency(france);
     }
 
+    @Test
+    public void testCircleToPolygonBarycenter() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // counterclockwise
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        SphericalTestUtils.assertPointsEq(center, ccw.getBarycenter(), BARYCENTER_EPS);
+
+        // clockwise; barycenter should just be antipodal for the circle center
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        SphericalTestUtils.assertPointsEq(center.antipodal(), cw.getBarycenter(), BARYCENTER_EPS);
+    }
+
+    @Test
+    public void testCircleToPolygonSize() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // https://en.wikipedia.org/wiki/Spherical_cap
+        double ccwArea = 4.0 * PlaneAngleRadians.PI * Math.pow(Math.sin(radius / 2.0), 2.0);
+        double cwArea = 4.0 * PlaneAngleRadians.PI - ccwArea;
+
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        Assert.assertEquals("Counterclockwise size", ccwArea, ccw.getSize(), TEST_EPS);
+
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        Assert.assertEquals("Clockwise size", cwArea, cw.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testCircleToPolygonBoundarySize() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // boundary size is independent from winding
+        double boundary = PlaneAngleRadians.TWO_PI * Math.sin(radius);
+
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        Assert.assertEquals("Counterclockwise boundary size", boundary, ccw.getBoundarySize(), 1.0e-7);
+
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        Assert.assertEquals("Clockwise boundary size", boundary, cw.getBoundarySize(), 1.0e-7);
+    }
+
     /**
      * Insert convex subhyperplanes defining the positive quadrant area.
      * @param tree
@@ -790,5 +838,23 @@ public class RegionBSPTree2STest {
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
             SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, BARYCENTER_EPS);
         }
+    }
+
+    private static RegionBSPTree2S circleToPolygon(Point2S center, double radius, int numPts, boolean clockwise) {
+        List<Point2S> pts = new ArrayList<>(numPts);
+
+        // get an arbitrary point on the circle boundary
+        pts.add(Transform2S.createRotation(center.getVector().orthogonal(), radius).apply(center));
+
+        // create the list of boundary points by rotating the previous point around the circle center
+        double span = PlaneAngleRadians.TWO_PI / numPts;
+
+        // negate the span for clockwise winding
+        Transform2S rotate = Transform2S.createRotation(center, clockwise ? -span : span);
+        for (int i = 1; i < numPts; ++i) {
+            pts.add(rotate.apply(pts.get(i - 1)));
+        }
+
+        return GreatArcPath.fromVertexLoop(pts, TEST_PRECISION).toTree();
     }
 }

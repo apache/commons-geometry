@@ -169,12 +169,8 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
 
         double size;
         for (ConvexArea2S area : areas) {
-            size = area.getSize();
-
-            sizeSum += size;
-            barycenterVector = Vector3D.linearCombination(
-                    1, barycenterVector,
-                    size, area.getBarycenter().getVector());
+            sizeSum += area.getSize();
+            barycenterVector = barycenterVector.add(area.getWeightedBarycenter());
         }
 
         Point2S barycenter = barycenterVector.eq(Vector3D.ZERO, precision) ?
