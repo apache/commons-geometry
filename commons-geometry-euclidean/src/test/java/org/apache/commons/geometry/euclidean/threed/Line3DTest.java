@@ -397,6 +397,38 @@ public class Line3DTest {
     }
 
     @Test
+    public void testEq() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
+
+        Vector3D p = Vector3D.of(1, 2, 3);
+        Vector3D dir = Vector3D.of(1, 0, 0);
+
+        Line3D a = Line3D.fromPointAndDirection(p, dir, precision);
+        Line3D b = Line3D.fromPointAndDirection(Vector3D.ZERO, dir, precision);
+        Line3D c = Line3D.fromPointAndDirection(p, Vector3D.of(1, 1, 0), precision);
+
+        Line3D d = Line3D.fromPointAndDirection(p, dir, precision);
+        Line3D e = Line3D.fromPointAndDirection(p.add(Vector3D.of(1e-4, 1e-4, 1e-4)), dir, precision);
+        Line3D f = Line3D.fromPointAndDirection(p, Vector3D.of(1 + 1e-4, 1e-4, 1e-4), precision);
+
+        // act/assert
+        Assert.assertTrue(a.eq(a, precision));
+
+        Assert.assertTrue(a.eq(d, precision));
+        Assert.assertTrue(d.eq(a, precision));
+
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(e.eq(a, precision));
+
+        Assert.assertTrue(a.eq(f, precision));
+        Assert.assertTrue(f.eq(a, precision));
+
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
+    }
+
+    @Test
     public void testHashCode() {
         // arrange
         Line3D a = Line3D.fromPointAndDirection(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);

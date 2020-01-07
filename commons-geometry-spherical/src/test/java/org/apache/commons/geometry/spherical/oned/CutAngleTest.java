@@ -291,16 +291,16 @@ public class CutAngleTest {
         CutAngle h = CutAngle.fromPointAndDirection(Point1S.of(-1e-4), true, precision);
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
-        Assert.assertFalse(a.eq(d));
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
 
-        Assert.assertTrue(a.eq(e));
-        Assert.assertTrue(a.eq(f));
-        Assert.assertTrue(a.eq(g));
-        Assert.assertTrue(a.eq(h));
+        Assert.assertTrue(a.eq(d, precision));
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(a.eq(f, precision));
+        Assert.assertTrue(a.eq(g, precision));
+        Assert.assertTrue(a.eq(h, precision));
     }
 
     @Test

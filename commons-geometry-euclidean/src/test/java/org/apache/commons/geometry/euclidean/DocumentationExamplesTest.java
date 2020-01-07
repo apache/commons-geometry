@@ -28,20 +28,24 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.Boundaries3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
+import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
+import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Transform2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.shapes.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,9 +64,8 @@ public class DocumentationExamplesTest {
 
         // create a binary space partitioning tree representing the unit cube
         // centered on the origin
-        RegionBSPTree3D region = Boundaries3D.rect(
-                Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision)
-                .toTree();
+        RegionBSPTree3D region = RegionBSPTree3D.from(
+                Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
 
         // create a rotated copy of the region
         Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);
@@ -88,7 +91,7 @@ public class DocumentationExamplesTest {
         // create a precision context with an epsilon (aka, tolerance) value of 1e-3
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        // test for equality
+        // test for equality using the eq() method
         precision.eq(1.0009, 1.0); // true; difference is less than epsilon
         precision.eq(1.002, 1.0); // false; difference is greater than epsilon
 
@@ -102,6 +105,27 @@ public class DocumentationExamplesTest {
 
         Assert.assertEquals(0, precision.compare(1.0009, 1.0));
         Assert.assertEquals(1, precision.compare(1.002, 1.0));
+    }
+
+    @Test
+    public void testEqualsVsEqExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        Vector2D v1 = Vector2D.of(1, 1); // (1.0, 1.0)
+        Vector2D v2 = Vector2D.parse("(1, 1)"); // (1.0, 1.0)
+
+        Vector2D v3 = Vector2D.of(Math.sqrt(2), 0).transform(
+                AffineTransformMatrix2D.createRotation(0.25 * Math.PI)); // (1.0000000000000002, 1.0)
+
+        v1.equals(v2); // true - exactly equal
+        v1.equals(v3); // false - not exactly equal
+
+        v1.eq(v3, precision); // true - approximately equal according to the given precision context
+
+        // ---------------------
+        Assert.assertTrue(v1.equals(v2));
+        Assert.assertFalse(v1.equals(v3));
+        Assert.assertTrue(v1.eq(v3, precision));
     }
 
     @Test
@@ -288,6 +312,23 @@ public class DocumentationExamplesTest {
     }
 
     @Test
+    public void testLinecast2DExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
+
+        LinecastPoint2D pt = path.linecastFirst(
+                Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+
+        Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
+        Vector2D normal = pt.getNormal(); // (1.0, 0.0)
+
+        // ----------------
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 0.5), intersection, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), normal, TEST_EPS);
+    }
+
+    @Test
     public void testPlaneIntersectionExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
@@ -381,5 +422,26 @@ public class DocumentationExamplesTest {
         // ---------------------
         Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
         Assert.assertEquals(4, minusFacets.size());
+    }
+
+    @Test
+    public void testLinecast3DExample() {
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
+
+        RegionBSPTree3D tree = RegionBSPTree3D.from(
+                Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision));
+
+        List<LinecastPoint3D> pts = tree.linecast(
+                Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+
+        int intersectionCount = pts.size(); // intersectionCount = 2
+        Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
+        Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
+
+        // ----------------
+        Assert.assertEquals(2, intersectionCount);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), intersection, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1), normal, TEST_EPS);
     }
 }

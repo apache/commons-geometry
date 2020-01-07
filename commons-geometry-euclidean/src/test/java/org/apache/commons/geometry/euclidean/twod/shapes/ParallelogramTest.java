@@ -14,19 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.shapes;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.Polyline;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
+import org.apache.commons.geometry.euclidean.twod.Segment;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Boundaries2DTest {
+public class ParallelogramTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,41 +37,40 @@ public class Boundaries2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testRect_minFirst() {
+    public void testAxisAligned_minFirst() {
         // act
-        List<Segment> segments = Boundaries2D.rect(Vector2D.of(1, 2), Vector2D.of(3, 4), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        Polyline path = Parallelogram.axisAligned(Vector2D.of(1, 2), Vector2D.of(3, 4), TEST_PRECISION);
 
         // assert
+        List<Segment> segments = path.getSegments();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(1, 2), Vector2D.of(3, 2));
-        assertSegment(segments.get(1), Vector2D.of(3, 4), Vector2D.of(1, 4));
-        assertSegment(segments.get(2), Vector2D.of(3, 2), Vector2D.of(3, 4));
+        assertSegment(segments.get(1), Vector2D.of(3, 2), Vector2D.of(3, 4));
+        assertSegment(segments.get(2), Vector2D.of(3, 4), Vector2D.of(1, 4));
         assertSegment(segments.get(3), Vector2D.of(1, 4), Vector2D.of(1, 2));
     }
 
     @Test
-    public void testRect_maxFirst() {
+    public void testAxisAligned_maxFirst() {
         // act
-        List<Segment> segments = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(-1, -2), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(-1, -2), TEST_PRECISION);
 
         // assert
+        List<Segment> segments = path.getSegments();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(-1, -2), Vector2D.of(0, -2));
-        assertSegment(segments.get(1), Vector2D.ZERO, Vector2D.of(-1, 0));
-        assertSegment(segments.get(2), Vector2D.of(0, -2), Vector2D.ZERO);
+        assertSegment(segments.get(1), Vector2D.of(0, -2), Vector2D.ZERO);
+        assertSegment(segments.get(2), Vector2D.ZERO, Vector2D.of(-1, 0));
         assertSegment(segments.get(3), Vector2D.of(-1, 0), Vector2D.of(-1, -2));
     }
 
     @Test
-    public void testRect_toTree() {
+    public void testAxisAligned_toTree() {
         // act
-        RegionBSPTree2D tree = Boundaries2D.rect(Vector2D.ZERO, Vector2D.of(1, 4), TEST_PRECISION).toTree();
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 4), TEST_PRECISION)
+                .toTree();
 
         // assert
         Assert.assertFalse(tree.isFull());
@@ -79,18 +81,18 @@ public class Boundaries2DTest {
     }
 
     @Test
-    public void testRect_illegalArgs() {
+    public void testAxisAligned_illegalArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
+            Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(1, 3), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries2D.rect(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+            Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries2D.rect(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
+            Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 

@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -39,7 +38,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class OrientedPoint extends AbstractHyperplane<Vector1D>
-    implements Hyperplane<Vector1D>, Equivalency<OrientedPoint> {
+    implements Hyperplane<Vector1D> {
     /** Hyperplane location as a point. */
     private final Vector1D point;
 
@@ -184,27 +183,20 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return new SubOrientedPoint(this);
     }
 
-    /** {@inheritDoc}
-     *
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison.
      * <p>Instances are considered equivalent if they
-     * <ul>
-     *  <li>contain equal {@link DoublePrecisionContext precision contexts},</li>
-     *  <li>have equivalent locations as evaluated by the precision context, and</li>
-     *  <li>point in the same direction</li>
-     * </ul>
+     * <ol>
+     *      <li>have equivalent locations and</li>
+     *      <li>point in the same direction.</li>
+     * </ol>
      * @param other the point to compare with
+     * @param precision precision context to use for the comparison
      * @return true if this instance should be considered equivalent to the argument
+     * @see Vector1D#eq(Vector1D, DoublePrecisionContext)
      */
-    @Override
-    public boolean eq(final OrientedPoint other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        return precision.equals(other.getPrecision()) &&
-                point.eq(other.point, precision) &&
+    public boolean eq(final OrientedPoint other, final DoublePrecisionContext precision) {
+        return point.eq(other.point, precision) &&
                 positiveFacing == other.positiveFacing;
     }
 
@@ -525,7 +517,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             final OrientedPoint baseHyper = base.getHyperplane();
             final OrientedPoint inputHyper = (OrientedPoint) sub.getHyperplane();
 
-            if (!baseHyper.eq(inputHyper)) {
+            if (!baseHyper.eq(inputHyper, baseHyper.getPrecision())) {
                 throw new IllegalArgumentException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);

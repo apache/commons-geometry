@@ -1000,15 +1000,15 @@ public class PlaneTest {
         Plane f = Plane.fromPointAndPlaneVectors(ptPrime, uPrime, vPrime, new EpsilonDoublePrecisionContext(eps));
 
         // act/assert
-        Assert.assertTrue(a.eq(a));
+        Assert.assertTrue(a.eq(a, precision));
 
-        Assert.assertFalse(a.eq(b));
-        Assert.assertFalse(a.eq(c));
-        Assert.assertFalse(a.eq(d));
-        Assert.assertFalse(a.eq(e));
+        Assert.assertFalse(a.eq(b, precision));
+        Assert.assertFalse(a.eq(c, precision));
+        Assert.assertFalse(a.eq(d, precision));
 
-        Assert.assertTrue(a.eq(f));
-        Assert.assertTrue(f.eq(a));
+        Assert.assertTrue(a.eq(e, precision));
+        Assert.assertTrue(a.eq(f, precision));
+        Assert.assertTrue(f.eq(a, precision));
     }
 
     @Test

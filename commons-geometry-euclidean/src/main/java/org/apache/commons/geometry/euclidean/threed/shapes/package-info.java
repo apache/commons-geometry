@@ -14,20 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.internal;
-
-/** Interface for determining equivalency, not exact equality, between
- * two objects. This is performs a function similar to {@link Object#equals(Object)}
- * but allows fuzzy comparisons to occur instead of strict equality. This is
- * especially useful when comparing objects with floating point values that
- * may not be exact but are operationally equivalent.
- * @param <T> The type being compared
+/**
+ * This package provides utilities for constructing basic 3D shapes.
  */
-public interface Equivalency<T> {
-
-    /** Determine if this object is equivalent (effectively equal) to the argument.
-     * @param other the object to compare for equivalency
-     * @return true if this object is equivalent to the argument; false otherwise
-     */
-    boolean eq(T other);
-}
+package org.apache.commons.geometry.euclidean.threed.shapes;

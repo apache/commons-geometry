@@ -32,7 +32,7 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
  * The boundaries of this area, if any, are composed of convex subplanes.
  */
 public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
-    implements BoundarySource3D {
+    implements BoundarySource3D, Linecastable3D {
 
     /** Instance representing the full 3D volume. */
     private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
@@ -127,6 +127,18 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
     @Override
     public Split<ConvexVolume> split(final Hyperplane<Vector3D> splitter) {
         return splitInternal(splitter, this, ConvexSubPlane.class, ConvexVolume::new);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint3D> linecast(final Segment3D segment) {
+        return new BoundarySourceLinecastWrapper3D(this).linecast(segment);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint3D linecastFirst(final Segment3D segment) {
+        return new BoundarySourceLinecastWrapper3D(this).linecastFirst(segment);
     }
 
     /** {@inheritDoc} */

@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * The boundaries of this area, if any, are composed of line segments.
  */
 public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment>
-    implements BoundarySource2D {
+    implements BoundarySource2D, Linecastable2D {
 
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
@@ -163,6 +163,18 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     @Override
     public Split<ConvexArea> split(final Hyperplane<Vector2D> splitter) {
         return splitInternal(splitter, this, Segment.class, ConvexArea::new);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint2D> linecast(final Segment segment) {
+        return new BoundarySourceLinecastWrapper2D(this).linecast(segment);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint2D linecastFirst(final Segment segment) {
+        return new BoundarySourceLinecastWrapper2D(this).linecastFirst(segment);
     }
 
     /** Return an instance representing the full 2D area.

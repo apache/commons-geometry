@@ -22,7 +22,6 @@ import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.internal.Equivalency;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -56,8 +55,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
-public final class CutAngle extends AbstractHyperplane<Point1S>
-    implements Equivalency<CutAngle> {
+public final class CutAngle extends AbstractHyperplane<Point1S> {
     /** Hyperplane location as a point. */
     private final Point1S point;
 
@@ -117,27 +115,21 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
         return positiveFacing;
     }
 
-    /** {@inheritDoc}
-     *
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison.
      * <p>The instances are considered equivalent if they
      * <ol>
-     *    <li>have equal precision contexts,</li>
-     *    <li>have equivalent point locations as evaluated by the precision
-     *          context (points separated by multiples of 2pi are considered equivalent), and
+     *    <li>have equivalent point locations (points separated by multiples of 2pi are
+     *      considered equivalent) and
      *    <li>point in the same direction.</li>
      * </ol>
+     * @param other point to compare with
+     * @param precision precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
      * @see Point1S#eq(Point1S, DoublePrecisionContext)
      */
-    @Override
-    public boolean eq(final CutAngle other) {
-        if (this == other) {
-            return true;
-        }
-
-        final DoublePrecisionContext precision = getPrecision();
-
-        return precision.equals(other.getPrecision()) &&
-                point.eq(other.point, precision) &&
+    public boolean eq(final CutAngle other, final DoublePrecisionContext precision) {
+        return point.eq(other.point, precision) &&
                 positiveFacing == other.positiveFacing;
     }
 
@@ -496,7 +488,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S>
             final CutAngle baseHyper = base.getHyperplane();
             final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 
-            if (!baseHyper.eq(inputHyper)) {
+            if (!baseHyper.eq(inputHyper, baseHyper.getPrecision())) {
                 throw new IllegalArgumentException("Argument is not on the same " +
                         "hyperplane. Expected " + baseHyper + " but was " +
                         inputHyper);

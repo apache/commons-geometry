@@ -319,6 +319,19 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
         return new SubLine3D(this);
     }
 
+    /** Return true if this instance should be considered equivalent to the argument, using the
+     * given precision context for comparison. Instances are considered equivalent if they have
+     * equivalent {@code origin}s and {@code direction}s.
+     * @param other the point to compare with
+     * @param ctx precision context to use for the comparison
+     * @return true if this instance should be considered equivalent to the argument
+     * @see Vector3D#eq(Vector3D, DoublePrecisionContext)
+     */
+    public boolean eq(final Line3D other, final DoublePrecisionContext ctx) {
+        return getOrigin().eq(other.getOrigin(), ctx) &&
+                getDirection().eq(other.getDirection(), ctx);
+    }
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {

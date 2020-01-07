@@ -173,7 +173,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
     private void validateGreatCircle(final GreatCircle inputCircle) {
         final GreatCircle circle = getCircle();
 
-        if (!circle.eq(inputCircle)) {
+        if (!circle.eq(inputCircle, circle.getPrecision())) {
             throw new IllegalArgumentException("Argument is not on the same " +
                     "great circle. Expected " + circle + " but was " +
                     inputCircle);

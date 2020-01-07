@@ -90,6 +90,33 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
         return splitInternal(splitter, this, (p, r) -> new ConvexSubPlane(p, (ConvexArea) r));
     }
 
+    /** Get the unique intersection of this subplane with the given line. Null is
+     * returned if no unique intersection point exists (ie, the line and plane are
+     * parallel or coincident) or the line does not intersect the subplane.
+     * @param line line to intersect with this subplane
+     * @return the unique intersection point between the line and this subplane
+     *      or null if no such point exists.
+     * @see Plane#intersection(Line3D)
+     */
+    public Vector3D intersection(final Line3D line) {
+        final Vector3D pt = getPlane().intersection(line);
+        return (pt != null && contains(pt)) ? pt : null;
+    }
+
+    /** Get the unique intersection of this subplane with the given segment. Null
+     * is returned if the underlying line and plane do not have a unique intersection
+     * point (ie, they are parallel or coincident) or the intersection point is unique
+     * but in not contained in both the segment and subplane.
+     * @param segment segment to intersect with
+     * @return the unique intersection point between this subplane and the argument or
+     *      null if no such point exists.
+     * @see Plane#intersection(Line3D)
+     */
+    public Vector3D intersection(final Segment3D segment) {
+        final Vector3D pt = intersection(segment.getLine());
+        return (pt != null && segment.contains(pt)) ? pt : null;
+    }
+
     /** Get the vertices for the subplane. The vertices lie at the intersections of the
      * 2D area bounding lines.
      * @return the vertices for the subplane

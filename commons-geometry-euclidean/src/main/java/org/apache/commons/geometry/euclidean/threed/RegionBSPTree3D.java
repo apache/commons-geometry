@@ -36,7 +36,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * Euclidean space.
  */
 public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D>
-    implements BoundarySource3D {
+    implements BoundarySource3D, Linecastable3D {
 
     /** Create a new, empty region. */
     public RegionBSPTree3D() {
@@ -136,18 +136,22 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return projector.getProjected();
     }
 
-    /** Find the first intersection of the given ray/line segment with the boundary of
-     * the region. The return value is the cut subhyperplane of the node containing the
-     * intersection. Null is returned if no intersection exists.
-     * @param ray ray to intersect with the region
-     * @return the node cut subhyperplane containing the intersection or null if no
-     *      intersection exists
-     */
-    public ConvexSubPlane raycastFirst(final Segment3D ray) {
-        final RaycastIntersectionVisitor visitor = new RaycastIntersectionVisitor(ray);
-        getRoot().accept(visitor);
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint3D> linecast(final Segment3D segment) {
+        final LinecastVisitor visitor = new LinecastVisitor(segment, false);
+        accept(visitor);
 
-        return visitor.getIntersectionCut();
+        return visitor.getResults();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint3D linecastFirst(final Segment3D segment) {
+        final LinecastVisitor visitor = new LinecastVisitor(segment, true);
+        accept(visitor);
+
+        return visitor.getFirstResult();
     }
 
     /** {@inheritDoc} */
@@ -184,6 +188,18 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      */
     public static RegionBSPTree3D empty() {
         return new RegionBSPTree3D(false);
+    }
+
+    /** Construct a new tree from the given boundaries. If no boundaries
+     * are present, the returned tree contains the full space.
+     * @param boundaries boundaries to construct the tree from
+     * @return a new tree instance constructed from the given boundaries
+     */
+    public static RegionBSPTree3D from(final Iterable<ConvexSubPlane> boundaries) {
+        RegionBSPTree3D tree = RegionBSPTree3D.full();
+        tree.insert(boundaries);
+
+        return tree;
     }
 
     /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
@@ -357,39 +373,60 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         }
     }
 
-    /** BSP tree visitor that locates the node cut subhyperplane for the first intersection between a
-     * given line segment and BSP tree region boundary.
+    /** BSP tree visitor that performs a linecast operation against the boundaries of the visited tree.
      */
-    private static final class RaycastIntersectionVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
+    private static final class LinecastVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
 
-        /** The line segment to intersect with the BSP tree. */
-        private final Segment3D segment;
+        /** The line segment to intersect with the boundaries of the BSP tree. */
+        private final Segment3D linecastSegment;
 
-        /** The node cut subhyperplane containing the first boundary intersection. */
-        private ConvexSubPlane intersectionCut;
-
-        /** Create a new instance that locates the first boundary intersection between the given line segment and
-         * the visited BSP tree.
-         * @param segment segment to intersect with the BSP tree region boundary
+        /** If true, the visitor will stop visiting the tree once the first linecast
+         * point is determined.
          */
-        RaycastIntersectionVisitor(final Segment3D segment) {
-            this.segment = segment;
+        private final boolean firstOnly;
+
+        /** The minimum abscissa found during the search. */
+        private double minAbscissa = Double.POSITIVE_INFINITY;
+
+        /** List of results from the linecast operation. */
+        private final List<LinecastPoint3D> results = new ArrayList<>();
+
+        /** Create a new instance with the given intersecting line segment.
+         * @param linecastSegment segment to intersect with the BSP tree region boundary
+         * @param firstOnly if true, the visitor will stop visiting the tree once the first
+         *      linecast point is determined
+         */
+        LinecastVisitor(final Segment3D linecastSegment, final boolean firstOnly) {
+            this.linecastSegment = linecastSegment;
+            this.firstOnly = firstOnly;
         }
 
-        /** Get the node cut subhyperplane containing the first intersection between the configured line segment
-         * and the BSP tree region boundary. This must be called after the tree nodes have been visited.
-         * @return the node cut subhyperplane containing the first intersection between the configured line segment
-         *      and the BSP tree region boundary or null if no such intersection was found
+        /** Get the first {@link LinecastPoint2D} resulting from the linecast operation.
+         * @return the first linecast result point
          */
-        public ConvexSubPlane getIntersectionCut() {
-            return intersectionCut;
+        public LinecastPoint3D getFirstResult() {
+            final List<LinecastPoint3D> sortedResults = getResults();
+
+            return sortedResults.isEmpty() ?
+                    null :
+                    sortedResults.get(0);
+        }
+
+        /** Get a list containing the results of the linecast operation. The list is
+         * sorted and filtered.
+         * @return list of sorted and filtered results from the linecast operation
+         */
+        public List<LinecastPoint3D> getResults() {
+            LinecastPoint3D.sortAndFilter(results);
+
+            return results;
         }
 
         /** {@inheritDoc} */
         @Override
         public Order visitOrder(final RegionNode3D internalNode) {
             final Plane cut = (Plane) internalNode.getCutHyperplane();
-            final Line3D line = segment.getLine();
+            final Line3D line = linecastSegment.getLine();
 
             final boolean plusIsNear = line.getDirection().dot(cut.getNormal()) < 0;
 
@@ -403,25 +440,66 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
                 // check if the line segment intersects the cut subhyperplane
-                final Line3D line = segment.getLine();
-                final Vector3D intersection = ((Plane) node.getCutHyperplane()).intersection(line);
+                final Line3D line = linecastSegment.getLine();
+                final Vector3D pt = ((Plane) node.getCutHyperplane()).intersection(line);
 
-                if (intersection != null && segment.contains(intersection)) {
-
-                    final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
-
-                    // check if the intersection point lies on the region boundary
-                    if ((boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(intersection)) ||
-                            boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(intersection)) {
-
-                        intersectionCut = (ConvexSubPlane) node.getCut();
-
+                if (pt != null) {
+                    if (firstOnly && !results.isEmpty() &&
+                            line.getPrecision().compare(minAbscissa, line.abscissa(pt)) < 0) {
+                        // we have results and we are now sure that no other intersection points will be
+                        // found that are closer or at the same position on the intersecting line.
                         return Result.TERMINATE;
+                    } else if (linecastSegment.contains(pt)) {
+                        // we've potentially found a new linecast point; add it to the list of potential
+                        // results
+                        LinecastPoint3D potentialResult = computeLinecastPoint(pt, node);
+                        if (potentialResult != null) {
+                            results.add(potentialResult);
+
+                            // update the min abscissa
+                            minAbscissa = Math.min(minAbscissa, potentialResult.getAbscissa());
+                        }
                     }
                 }
             }
 
             return Result.CONTINUE;
+        }
+
+        /** Compute the linecast point for the given intersection point and tree node, returning null
+         * if the point does not actually lie on the region boundary.
+         * @param pt intersection point
+         * @param node node containing the cut subhyperplane that the linecast line
+         *      intersected with
+         * @return a new linecast point instance or null if the intersection point does not lie
+         *      on the region boundary
+         */
+        private LinecastPoint3D computeLinecastPoint(final Vector3D pt, final RegionNode3D node) {
+            final Plane cut = (Plane) node.getCutHyperplane();
+            final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
+
+            boolean onBoundary = false;
+            boolean negateNormal = false;
+
+            if (boundary.getInsideFacing() != null && boundary.getInsideFacing().contains(pt)) {
+                // on inside-facing boundary
+                onBoundary = true;
+                negateNormal = true;
+            } else  if (boundary.getOutsideFacing() != null && boundary.getOutsideFacing().contains(pt)) {
+                // on outside-facing boundary
+                onBoundary = true;
+            }
+
+            if (onBoundary) {
+                Vector3D normal = cut.getNormal();
+                if (negateNormal) {
+                    normal = normal.negate();
+                }
+
+                return new LinecastPoint3D(pt, normal, linecastSegment.getLine());
+            }
+
+            return null;
         }
     }
 }

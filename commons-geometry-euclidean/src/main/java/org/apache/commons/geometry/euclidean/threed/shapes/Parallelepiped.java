@@ -14,33 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.euclidean.threed.shapes;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
-/** Utility class for constructing {@link BoundarySource3D} objects to produce common
- * shapes.
+/** Class containing utility methods for constructing parallelepipeds. Parallelepipeds
+ * are 3 dimensional figures formed by six parallelograms. For example, cubes and rectangular
+ * prisms are parallelepipeds.
+ * @see <a href="https://en.wikipedia.org/wiki/Parallelepiped">Parallelepiped</a>
  */
-public final class Boundaries3D {
+public final class Parallelepiped {
 
-    /** Private constructor. */
-    private Boundaries3D() {
+    /** Utility class; no instantiation.
+     */
+    private Parallelepiped() {
     }
 
-    /** Return a {@link BoundarySource3D} instance defining an axis-aligned rectangular prism. The points {@code a}
-     * and {@code b} are taken to represent opposite corner points in the prism and may be specified in
-     * any order.
+    /** Return a list of {@link ConvexSubPlane}s defining an axis-aligned parallelepiped, ie, a rectangular prism.
+     * The points {@code a} and {@code b} are taken to represent opposite corner points in the prism and may be
+     * specified in any order.
      * @param a first corner point in the prism (opposite of {@code b})
      * @param b second corner point in the prism (opposite of {@code a})
-     * @param precision precision context used to construct boundary instances
-     * @return a boundary source defining the boundaries of the rectangular prism
+     * @param precision precision context used to construct convex subplane instances
+     * @return a list containing the boundaries of the rectangular prism
      * @throws IllegalArgumentException if the width, height, or depth of the defined prism is zero
      *      as evaluated by the precision context.
      */
-    public static BoundarySource3D rect(final Vector3D a, final Vector3D b, final DoublePrecisionContext precision) {
+    public static List<ConvexSubPlane> axisAligned(final Vector3D a, final Vector3D b,
+            final DoublePrecisionContext precision) {
 
         final double minX = Math.min(a.getX(), b.getX());
         final double maxX = Math.max(a.getX(), b.getX());
@@ -67,7 +73,7 @@ public final class Boundaries3D {
             Vector3D.of(minX, maxY, maxZ)
         };
 
-        List<ConvexSubPlane> facets = Arrays.asList(
+        return Arrays.asList(
             // -z and +z sides
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[3], vertices[2], vertices[1]), precision),
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[4], vertices[5], vertices[6], vertices[7]), precision),
@@ -80,7 +86,5 @@ public final class Boundaries3D {
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[1], vertices[5], vertices[4]), precision),
             ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[3], vertices[7], vertices[6], vertices[2]), precision)
         );
-
-        return () -> facets.stream();
     }
 }

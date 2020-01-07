@@ -14,19 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.threed;
+package org.apache.commons.geometry.euclidean.threed.shapes;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Boundaries3DTest {
+public class ParallelepipedTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -34,11 +37,10 @@ public class Boundaries3DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testRect_minFirst() {
+    public void testAxisAligned_minFirst() {
         // act
-        List<ConvexSubPlane> boundaries = Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries =
+                Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // assert
         Assert.assertEquals(6, boundaries.size());
@@ -64,11 +66,10 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_maxFirst() {
+    public void testAxisAligned_maxFirst() {
         // act
-        List<ConvexSubPlane> boundaries = Boundaries3D.rect(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION)
-                .boundaryStream()
-                .collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries =
+                Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
         // assert
         Assert.assertEquals(6, boundaries.size());
@@ -94,9 +95,10 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_toTree() {
+    public void testAxisAligned_toTree() {
         // arrange
-        BoundarySource3D src = Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
+        BoundarySource3D src = BoundarySource3D.from(
+                Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION));
 
         // act
         RegionBSPTree3D tree = src.toTree();
@@ -107,18 +109,18 @@ public class Boundaries3DTest {
     }
 
     @Test
-    public void testRect_illegalArgs() {
+    public void testAxisAligned_illegalArgs() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 6), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 2, 6), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Boundaries3D.rect(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION);
+            Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 

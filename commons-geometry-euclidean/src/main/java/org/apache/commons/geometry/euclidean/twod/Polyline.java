@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class Polyline implements BoundarySource2D {
+public class Polyline implements BoundarySource2D, Linecastable2D {
     /** Polyline instance containing no segments. */
     private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
@@ -255,6 +255,18 @@ public class Polyline implements BoundarySource2D {
         }
 
         return new SimplifiedPolyline(simplified);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<LinecastPoint2D> linecast(final Segment segment) {
+        return new BoundarySourceLinecastWrapper2D(this).linecast(segment);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public LinecastPoint2D linecastFirst(final Segment segment) {
+        return new BoundarySourceLinecastWrapper2D(this).linecastFirst(segment);
     }
 
     /** Return a string representation of the segment polyline.

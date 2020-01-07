@@ -216,6 +216,47 @@ public class ConvexVolumeTest {
     }
 
     @Test
+    public void testLinecast_full() {
+        // arrange
+        ConvexVolume volume = ConvexVolume.full();
+
+        // act/assert
+        LinecastChecker3D.with(volume)
+            .returnsNothing()
+            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+
+        LinecastChecker3D.with(volume)
+            .returnsNothing()
+            .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+    }
+
+    @Test
+    public void testLinecast() {
+        // arrange
+        ConvexVolume volume = rect(Vector3D.of(0.5, 0.5, 0.5), 0.5, 0.5, 0.5);
+
+        // act/assert
+        LinecastChecker3D.with(volume)
+            .returnsNothing()
+            .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 5, 5), TEST_PRECISION));
+
+        LinecastChecker3D.with(volume)
+            .returns(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
+            .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
+            .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Z)
+            .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
+            .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y)
+            .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X)
+            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION));
+
+        LinecastChecker3D.with(volume)
+            .returns(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
+            .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y)
+            .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X)
+            .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1, 1, 1), TEST_PRECISION));
+    }
+
+    @Test
     public void testTransform() {
         // arrange
         ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);

@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -32,6 +31,7 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.twod.RegionBSPTree2S.RegionNode2S;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -108,6 +108,35 @@ public class RegionBSPTree2STest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
         Assert.assertEquals(1, tree.count());
+    }
+
+    @Test
+    public void testFrom_boundaries_noBoundaries() {
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList());
+
+        // assert
+        Assert.assertNull(tree.getBarycenter());
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
+    public void testFrom_boundaries() {
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList(
+                    EQUATOR.arc(Point2S.PLUS_I, Point2S.PLUS_J),
+                    X_MERIDIAN.arc(Point2S.PLUS_K, Point2S.PLUS_I),
+                    Y_MERIDIAN.arc(Point2S.PLUS_J, Point2S.PLUS_K)
+                ));
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.of(1, 0.5));
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
+                Point2S.of(-1, 0.5), Point2S.of(Math.PI, 0.5 * Math.PI));
     }
 
     @Test
