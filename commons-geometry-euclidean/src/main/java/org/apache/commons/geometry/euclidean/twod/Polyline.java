@@ -260,13 +260,13 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint2D> linecast(final Segment segment) {
-        return new BoundarySourceLinecastWrapper2D(this).linecast(segment);
+        return new BoundarySourceLinecaster2D(this).linecast(segment);
     }
 
     /** {@inheritDoc} */
     @Override
     public LinecastPoint2D linecastFirst(final Segment segment) {
-        return new BoundarySourceLinecastWrapper2D(this).linecastFirst(segment);
+        return new BoundarySourceLinecaster2D(this).linecastFirst(segment);
     }
 
     /** Return a string representation of the segment polyline.

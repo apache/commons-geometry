@@ -168,13 +168,13 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint2D> linecast(final Segment segment) {
-        return new BoundarySourceLinecastWrapper2D(this).linecast(segment);
+        return new BoundarySourceLinecaster2D(this).linecast(segment);
     }
 
     /** {@inheritDoc} */
     @Override
     public LinecastPoint2D linecastFirst(final Segment segment) {
-        return new BoundarySourceLinecastWrapper2D(this).linecastFirst(segment);
+        return new BoundarySourceLinecaster2D(this).linecastFirst(segment);
     }
 
     /** Return an instance representing the full 2D area.
