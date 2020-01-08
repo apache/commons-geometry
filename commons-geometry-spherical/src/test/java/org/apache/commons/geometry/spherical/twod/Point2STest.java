@@ -228,6 +228,20 @@ public class Point2STest {
     }
 
     @Test
+    public void testAntipodal_numericalStability() {
+        // arrange
+        double eps = 1e-16;
+        Point2S pt = Point2S.of(1, 2);
+
+        // act
+        Point2S result = pt.antipodal().antipodal();
+
+        // assert
+        Assert.assertEquals(1.0, result.getAzimuth(), eps);
+        Assert.assertEquals(2.0, result.getPolar(), eps);
+    }
+
+    @Test
     public void testDimension() {
         // arrange
         Point2S pt = Point2S.of(1, 2);
