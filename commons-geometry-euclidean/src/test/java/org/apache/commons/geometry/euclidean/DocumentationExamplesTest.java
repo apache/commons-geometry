@@ -28,7 +28,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.Facet;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -394,7 +394,7 @@ public class DocumentationExamplesTest {
         Vector3D b3 = Vector3D.of(-0.5, -0.5, 0.0);
         Vector3D b4 = Vector3D.of(-0.5, 0.5, 0.0);
 
-        Vector3D[][] faces = {
+        Vector3D[][] faceIndices = {
             {b1, a1, b2},
             {b2, a1, b3},
             {b3, a1, b4},
@@ -402,10 +402,10 @@ public class DocumentationExamplesTest {
             {b1, b2, b3, b4}
         };
 
-        // convert the faces to convex sub planes and insert into a bsp tree
+        // convert the vertices to facets and insert into a bsp tree
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        Arrays.stream(faces)
-            .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
+        Arrays.stream(faceIndices)
+            .map(vertices -> Facet.fromVertexLoop(Arrays.asList(vertices), precision))
             .forEach(tree::insert);
 
         // split the region through its barycenter along a diagonal of the base
@@ -417,7 +417,7 @@ public class DocumentationExamplesTest {
         RegionBSPTree3D minus = split.getMinus();
 
         double minusSize = minus.getSize(); // 1/6
-        List<ConvexSubPlane> minusFacets = minus.getBoundaries(); // size = 4
+        List<Facet> minusFacets = minus.getBoundaries(); // size = 4
 
         // ---------------------
         Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);

@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 /** Extension of the {@link BoundarySource} interface for Euclidean 3D
  * space.
  */
-public interface BoundarySource3D extends BoundarySource<ConvexSubPlane> {
+public interface BoundarySource3D extends BoundarySource<Facet> {
 
     /** Construct a new BSP tree from the boundaries contained in this
      * instance.
@@ -36,20 +36,20 @@ public interface BoundarySource3D extends BoundarySource<ConvexSubPlane> {
         return RegionBSPTree3D.from(this);
     }
 
-    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes.
-     * @param boundaries convex subplanes to include in the boundary source
+    /** Return a {@link BoundarySource3D} instance containing the given boundaries.
+     * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource3D from(final ConvexSubPlane... boundaries) {
+    static BoundarySource3D from(final Facet... boundaries) {
         return from(Arrays.asList(boundaries));
     }
 
-    /** Return a {@link BoundarySource3D} instance containing the given convex subplanes. The given
+    /** Return a {@link BoundarySource3D} instance containing the given boundaries. The given
      * collection is used directly as the source of the subplanes; no copy is made.
-     * @param boundaries convex subplanes to include in the boundary source
+     * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource3D from(final Collection<ConvexSubPlane> boundaries) {
+    static BoundarySource3D from(final Collection<Facet> boundaries) {
         return () -> boundaries.stream();
     }
 }

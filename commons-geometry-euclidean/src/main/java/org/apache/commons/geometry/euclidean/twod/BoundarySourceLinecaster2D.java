@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Class that wraps a {@link BoundarySource2D} instance with the {@link Linecastable2D}
- * interface. This class performs a brute-force computation of the intersections of the
+/** Class that performs linecast operations against arbitrary {@link BoundarySource2D}
+ * instances. This class performs a brute-force computation of the intersections of the
  * line or line segment against all boundaries. Some data structures may support more
  * efficient algorithms and should therefore prefer those instead.
  */
-final class BoundarySourceLinecastWrapper2D implements Linecastable2D {
+final class BoundarySourceLinecaster2D implements Linecastable2D {
 
     /** The boundary source instance providing boundaries for the linecast operation. */
     private final BoundarySource2D boundarySrc;
@@ -34,7 +34,7 @@ final class BoundarySourceLinecastWrapper2D implements Linecastable2D {
     /** Construct a new instance for linecasting against the given boundary source.
      * @param boundarySrc boundary source to linecast against.
      */
-    BoundarySourceLinecastWrapper2D(final BoundarySource2D boundarySrc) {
+    BoundarySourceLinecaster2D(final BoundarySource2D boundarySrc) {
         this.boundarySrc = boundarySrc;
     }
 

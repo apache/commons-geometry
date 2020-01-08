@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.Facet;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class containing utility methods for constructing parallelepipeds. Parallelepipeds
@@ -35,17 +35,17 @@ public final class Parallelepiped {
     private Parallelepiped() {
     }
 
-    /** Return a list of {@link ConvexSubPlane}s defining an axis-aligned parallelepiped, ie, a rectangular prism.
+    /** Return a list of {@link Facet}s defining an axis-aligned parallelepiped, ie, a rectangular prism.
      * The points {@code a} and {@code b} are taken to represent opposite corner points in the prism and may be
      * specified in any order.
      * @param a first corner point in the prism (opposite of {@code b})
      * @param b second corner point in the prism (opposite of {@code a})
-     * @param precision precision context used to construct convex subplane instances
+     * @param precision precision context used to construct facet instances
      * @return a list containing the boundaries of the rectangular prism
      * @throws IllegalArgumentException if the width, height, or depth of the defined prism is zero
      *      as evaluated by the precision context.
      */
-    public static List<ConvexSubPlane> axisAligned(final Vector3D a, final Vector3D b,
+    public static List<Facet> axisAligned(final Vector3D a, final Vector3D b,
             final DoublePrecisionContext precision) {
 
         final double minX = Math.min(a.getX(), b.getX());
@@ -75,16 +75,16 @@ public final class Parallelepiped {
 
         return Arrays.asList(
             // -z and +z sides
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[3], vertices[2], vertices[1]), precision),
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[4], vertices[5], vertices[6], vertices[7]), precision),
+            Facet.fromVertexLoop(Arrays.asList(vertices[0], vertices[3], vertices[2], vertices[1]), precision),
+            Facet.fromVertexLoop(Arrays.asList(vertices[4], vertices[5], vertices[6], vertices[7]), precision),
 
             // -x and +x sides
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[4], vertices[7], vertices[3]), precision),
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[5], vertices[1], vertices[2], vertices[6]), precision),
+            Facet.fromVertexLoop(Arrays.asList(vertices[0], vertices[4], vertices[7], vertices[3]), precision),
+            Facet.fromVertexLoop(Arrays.asList(vertices[5], vertices[1], vertices[2], vertices[6]), precision),
 
             // -y and +y sides
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[0], vertices[1], vertices[5], vertices[4]), precision),
-            ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices[3], vertices[7], vertices[6], vertices[2]), precision)
+            Facet.fromVertexLoop(Arrays.asList(vertices[0], vertices[1], vertices[5], vertices[4]), precision),
+            Facet.fromVertexLoop(Arrays.asList(vertices[3], vertices[7], vertices[6], vertices[2]), precision)
         );
     }
 }

@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Class that wraps a {@link BoundarySource3D} instance with the {@link Linecastable3D}
- * interface. This class performs a brute-force computation of the intersections of the
+/** Class that performs linecast operations against arbitrary {@link BoundarySource3D}
+ * instances. This class performs a brute-force computation of the intersections of the
  * line or line segment against all boundaries. Some data structures may support more
  * efficient algorithms and should therefore prefer those instead.
  */
-final class BoundarySourceLinecastWrapper3D implements Linecastable3D {
+final class BoundarySourceLinecaster3D implements Linecastable3D {
 
     /** The boundary source instance providing boundaries for the linecast operation. */
     private final BoundarySource3D boundarySrc;
@@ -34,7 +34,7 @@ final class BoundarySourceLinecastWrapper3D implements Linecastable3D {
     /** Construct a new instance for linecasting against the given boundary source.
      * @param boundarySrc boundary source to linecast against.
      */
-    BoundarySourceLinecastWrapper3D(final BoundarySource3D boundarySrc) {
+    BoundarySourceLinecaster3D(final BoundarySource3D boundarySrc) {
         this.boundarySrc = boundarySrc;
     }
 
@@ -68,18 +68,18 @@ final class BoundarySourceLinecastWrapper3D implements Linecastable3D {
                 .filter(intersection -> intersection != null);
     }
 
-    /** Compute the intersection between a boundary subplane and linecast intersecting segment. Null is
+    /** Compute the intersection between a boundary facet and linecast intersecting segment. Null is
      * returned if no intersection is discovered.
-     * @param boundary boundary from the boundary source
+     * @param facet facet from the boundary source
      * @param segment linecast segment to intersect with
      * @return the linecast intersection between the two arguments or null if there is no such
      *      intersection
      */
-    private LinecastPoint3D computeIntersection(final ConvexSubPlane boundary, final Segment3D segment) {
-        final Vector3D intersectionPt = boundary.intersection(segment);
+    private LinecastPoint3D computeIntersection(final Facet facet, final Segment3D segment) {
+        final Vector3D intersectionPt = facet.intersection(segment);
 
         if (intersectionPt != null) {
-            final Vector3D normal = boundary.getPlane().getNormal();
+            final Vector3D normal = facet.getPlane().getNormal();
 
             return new LinecastPoint3D(intersectionPt, normal, segment.getLine());
         }

@@ -90,7 +90,7 @@ public final class SubGreatCircle extends AbstractSubGreatCircle {
      * <p>In all cases, the current instance is not modified. However, In order to avoid
      * unnecessary copying, this method will use the current instance as the split value when
      * the instance lies entirely on the plus or minus side of the splitter. For example, if
-     * this instance lies entirely on the minus side of the splitter, the subplane
+     * this instance lies entirely on the minus side of the splitter, the sub great circle
      * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
      * will return the current instance if it lies entirely on the plus side. Callers need to make
      * special note of this, since this class is mutable.</p>
