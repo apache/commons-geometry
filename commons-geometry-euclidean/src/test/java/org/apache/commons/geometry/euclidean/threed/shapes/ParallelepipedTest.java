@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.Facet;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.junit.Assert;
@@ -39,7 +39,7 @@ public class ParallelepipedTest {
     @Test
     public void testAxisAligned_minFirst() {
         // act
-        List<ConvexSubPlane> boundaries =
+        List<Facet> boundaries =
                 Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // assert
@@ -68,7 +68,7 @@ public class ParallelepipedTest {
     @Test
     public void testAxisAligned_maxFirst() {
         // act
-        List<ConvexSubPlane> boundaries =
+        List<Facet> boundaries =
                 Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
         // assert
@@ -124,9 +124,9 @@ public class ParallelepipedTest {
         }, IllegalArgumentException.class);
     }
 
-    private static void checkVertices(ConvexSubPlane sp, Vector3D... pts) {
-        List<Vector3D> actual = sp.getPlane().toSpace(
-                sp.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
+    private static void checkVertices(Facet facet, Vector3D... pts) {
+        List<Vector3D> actual = facet.getPlane().toSpace(
+                facet.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
 
         Assert.assertEquals(pts.length, actual.size());
 

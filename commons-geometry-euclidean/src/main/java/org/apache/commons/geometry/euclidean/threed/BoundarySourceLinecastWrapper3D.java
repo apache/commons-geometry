@@ -68,18 +68,18 @@ final class BoundarySourceLinecastWrapper3D implements Linecastable3D {
                 .filter(intersection -> intersection != null);
     }
 
-    /** Compute the intersection between a boundary subplane and linecast intersecting segment. Null is
+    /** Compute the intersection between a boundary facet and linecast intersecting segment. Null is
      * returned if no intersection is discovered.
-     * @param boundary boundary from the boundary source
+     * @param facet facet from the boundary source
      * @param segment linecast segment to intersect with
      * @return the linecast intersection between the two arguments or null if there is no such
      *      intersection
      */
-    private LinecastPoint3D computeIntersection(final ConvexSubPlane boundary, final Segment3D segment) {
-        final Vector3D intersectionPt = boundary.intersection(segment);
+    private LinecastPoint3D computeIntersection(final Facet facet, final Segment3D segment) {
+        final Vector3D intersectionPt = facet.intersection(segment);
 
         if (intersectionPt != null) {
-            final Vector3D normal = boundary.getPlane().getNormal();
+            final Vector3D normal = facet.getPlane().getNormal();
 
             return new LinecastPoint3D(intersectionPt, normal, segment.getLine());
         }

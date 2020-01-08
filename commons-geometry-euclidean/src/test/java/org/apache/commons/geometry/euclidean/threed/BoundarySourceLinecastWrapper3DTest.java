@@ -100,8 +100,8 @@ public class BoundarySourceLinecastWrapper3DTest {
     public void testLinecast_line_removesDuplicatePoints() {
         // arrange
         BoundarySource3D src = BoundarySource3D.from(
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
+                    Facet.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
+                    Facet.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );
         BoundarySourceLinecastWrapper3D wrapper = new BoundarySourceLinecastWrapper3D(src);
 
@@ -233,8 +233,8 @@ public class BoundarySourceLinecastWrapper3DTest {
     public void testLinecast_segment_removesDuplicatePoints() {
         // arrange
         BoundarySource3D src = BoundarySource3D.from(
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
+                    Facet.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
+                    Facet.fromVertexLoop(Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X), TEST_PRECISION)
                 );
         BoundarySourceLinecastWrapper3D wrapper = new BoundarySourceLinecastWrapper3D(src);
 

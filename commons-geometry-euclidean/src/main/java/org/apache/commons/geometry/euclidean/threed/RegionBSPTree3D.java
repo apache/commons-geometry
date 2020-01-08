@@ -65,20 +65,20 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public Iterable<ConvexSubPlane> boundaries() {
-        return createBoundaryIterable(b -> (ConvexSubPlane) b);
+    public Iterable<Facet> boundaries() {
+        return createBoundaryIterable(b -> (Facet) b);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<ConvexSubPlane> boundaryStream() {
+    public Stream<Facet> boundaryStream() {
         return StreamSupport.stream(boundaries().spliterator(), false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<ConvexSubPlane> getBoundaries() {
-        return createBoundaryList(b -> (ConvexSubPlane) b);
+    public List<Facet> getBoundaries() {
+        return createBoundaryList(b -> (Facet) b);
     }
 
     /** Return a list of {@link ConvexVolume}s representing the same region
@@ -195,7 +195,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @param boundaries boundaries to construct the tree from
      * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree3D from(final Iterable<ConvexSubPlane> boundaries) {
+    public static RegionBSPTree3D from(final Iterable<Facet> boundaries) {
         RegionBSPTree3D tree = RegionBSPTree3D.full();
         tree.insert(boundaries);
 
@@ -208,7 +208,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @return a new tree instance constructed from the boundaries in the
      *      given source
      */
-    public static RegionBSPTree3D from(final BoundarySource<ConvexSubPlane> boundarySrc) {
+    public static RegionBSPTree3D from(final BoundarySource<Facet> boundarySrc) {
         RegionBSPTree3D tree = RegionBSPTree3D.full();
         tree.insert(boundarySrc);
 

@@ -66,17 +66,17 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
 
     /** {@inheritDoc} */
     @Override
-    public List<ConvexSubPlane> toConvex() {
+    public List<Facet> toConvex() {
         final List<ConvexArea> areas = region.toConvex();
 
         final Plane plane = getPlane();
-        final List<ConvexSubPlane> subplanes = new ArrayList<>(areas.size());
+        final List<Facet> facets = new ArrayList<>(areas.size());
 
         for (final ConvexArea area : areas) {
-            subplanes.add(ConvexSubPlane.fromConvexArea(plane, area));
+            facets.add(Facet.fromConvexArea(plane, area));
         }
 
-        return subplanes;
+        return facets;
     }
 
     /** {@inheritDoc}
@@ -112,20 +112,20 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
         return new SubPlane(subTransform.getPlane(), tRegion);
     }
 
-    /** Add a convex subplane to this instance.
-     * @param subplane convex subplane to add
-     * @throws IllegalArgumentException if the given convex subplane is not from
+    /** Add a facet (convex subplane) to this instance.
+     * @param facet facet to add
+     * @throws IllegalArgumentException if the given facet is not from
      *      a plane equivalent to this instance
      */
-    public void add(final ConvexSubPlane subplane) {
-        validatePlane(subplane.getPlane());
+    public void add(final Facet facet) {
+        validatePlane(facet.getPlane());
 
-        region.add(subplane.getSubspaceRegion());
+        region.add(facet.getSubspaceRegion());
     }
 
     /** Add a subplane to this instance.
      * @param subplane subplane to add
-     * @throws IllegalArgumentException if the given convex subplane is not from
+     * @throws IllegalArgumentException if the given subplane is not from
      *      a plane equivalent to this instance
      */
     public void add(final SubPlane subplane) {
@@ -186,8 +186,8 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
          * @param sub the subhyperplane to add; either convex or non-convex
          */
         private void addInternal(final SubHyperplane<Vector3D> sub) {
-            if (sub instanceof ConvexSubPlane) {
-                subplane.add((ConvexSubPlane) sub);
+            if (sub instanceof Facet) {
+                subplane.add((Facet) sub);
             } else if (sub instanceof SubPlane) {
                 subplane.add((SubPlane) sub);
             } else {

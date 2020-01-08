@@ -948,7 +948,7 @@ public class PlaneTest {
         Plane plane = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        ConvexSubPlane sub = plane.span();
+        Facet sub = plane.span();
 
         // assert
         Assert.assertSame(plane, sub.getPlane());
