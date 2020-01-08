@@ -19,11 +19,11 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Comparator;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -215,9 +215,30 @@ public class Point2STest {
 
                 // assert
                 Assert.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
+
+                // check that the azimuth and polar components of the point are correct by creating a
+                // new point and checking the distance
+                Assert.assertEquals(PlaneAngleRadians.PI,
+                        Point2S.of(result.getAzimuth(), result.getPolar()).distance(pt), TEST_EPS);
+
+                // check that the vectors point in opposite directions
                 Assert.assertEquals(-1, pt.getVector().dot(result.getVector()), TEST_EPS);
             }
         }
+    }
+
+    @Test
+    public void testAntipodal_numericalStability() {
+        // arrange
+        double eps = 1e-16;
+        Point2S pt = Point2S.of(1, 2);
+
+        // act
+        Point2S result = pt.antipodal().antipodal();
+
+        // assert
+        Assert.assertEquals(1.0, result.getAzimuth(), eps);
+        Assert.assertEquals(2.0, result.getPolar(), eps);
     }
 
     @Test
