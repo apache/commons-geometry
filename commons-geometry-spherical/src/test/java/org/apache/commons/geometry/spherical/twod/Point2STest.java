@@ -19,11 +19,11 @@ package org.apache.commons.geometry.spherical.twod;
 
 import java.util.Comparator;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -215,6 +215,13 @@ public class Point2STest {
 
                 // assert
                 Assert.assertEquals(PlaneAngleRadians.PI, pt.distance(result), TEST_EPS);
+
+                // check that the azimuth and polar components of the point are correct by creating a
+                // new point and checking the distance
+                Assert.assertEquals(PlaneAngleRadians.PI,
+                        Point2S.of(result.getAzimuth(), result.getPolar()).distance(pt), TEST_EPS);
+
+                // check that the vectors point in opposite directions
                 Assert.assertEquals(-1, pt.getVector().dot(result.getVector()), TEST_EPS);
             }
         }
