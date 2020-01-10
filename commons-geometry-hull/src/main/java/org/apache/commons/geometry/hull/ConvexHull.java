@@ -16,27 +16,29 @@
  */
 package org.apache.commons.geometry.hull;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
 
 /**
  * This class represents a convex hull.
  *
- * @param <P> Point type.
+ * @param <P> Point implementation type.
  */
 public interface ConvexHull<P extends Point<P>> {
 
-    /**
-     * Get the vertices of the convex hull.
+    /** Get the vertices of the convex hull.
      * @return vertices of the convex hull
      */
-    P[] getVertices();
+    List<P> getVertices();
 
-    /**
-     * Returns a new region that is enclosed by the convex hull.
-     * @return the region enclosed by the convex hull
-     * @throws IllegalStateException if the number of vertices is not enough to
-     * build a region in the respective space
+    /** Return the region representing the convex hull. This will return
+     * null in cases where the hull does not define a region with non-zero
+     * size, such as when only a single unique point exists or when all points
+     * are collinear.
+     * @return the region representing by the convex hull or null if the
+     *      convex hull does not define a region of non-zero size
      */
-    Region<P> createRegion();
+    Region<P> getRegion();
 }

@@ -17,13 +17,15 @@
 package org.apache.commons.geometry.hull.euclidean.twod;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
@@ -35,11 +37,16 @@ import org.junit.Test;
 
 /**
  * Abstract base test class for 2D convex hull generators.
- *
  */
 public abstract class ConvexHullGenerator2DAbstractTest {
 
+    protected static final double TEST_EPS = 1e-10;
+
+    protected static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(TEST_EPS);
+
     protected ConvexHullGenerator2D generator;
+
     protected UniformRandomProvider random;
 
     protected abstract ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints);
@@ -60,37 +67,59 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     @Test
     public void testEmpty() {
-        ConvexHull2D hull = generator.generate(Collections.<Vector2D>emptyList());
-        Assert.assertTrue(hull.getVertices().length == 0);
-        Assert.assertTrue(hull.getLineSegments().length == 0);
+        // act
+        ConvexHull2D hull = generator.generate(Collections.emptyList());
+
+        // assert
+        Assert.assertEquals(0, hull.getVertices().size());
+        Assert.assertEquals(0, hull.getPath().getSegments().size());
+        Assert.assertNull(hull.getRegion());
     }
 
     @Test
     public void testOnePoint() {
+        // arrange
         List<Vector2D> points = createRandomPoints(1);
+
+        // act
         ConvexHull2D hull = generator.generate(points);
-        Assert.assertTrue(hull.getVertices().length == 1);
-        Assert.assertTrue(hull.getLineSegments().length == 0);
+
+        // assert
+        Assert.assertEquals(1, hull.getVertices().size());
+        Assert.assertEquals(0, hull.getPath().getSegments().size());
+        Assert.assertNull(hull.getRegion());
     }
 
     @Test
     public void testTwoPoints() {
+        // arrange
         List<Vector2D> points = createRandomPoints(2);
+
+        // act
         ConvexHull2D hull = generator.generate(points);
-        Assert.assertTrue(hull.getVertices().length == 2);
-        Assert.assertTrue(hull.getLineSegments().length == 1);
+
+        // assert
+        Assert.assertEquals(2, hull.getVertices().size());
+        Assert.assertEquals(1, hull.getPath().getSegments().size());
+        Assert.assertNull(hull.getRegion());
     }
 
     @Test
     public void testAllIdentical() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(1, 1));
 
+        // act
         final ConvexHull2D hull = generator.generate(points);
-        Assert.assertTrue(hull.getVertices().length == 1);
+
+        // assert
+        Assert.assertEquals(1, hull.getVertices().size());
+        Assert.assertEquals(0, hull.getPath().getSegments().size());
+        Assert.assertNull(hull.getRegion());
     }
 
     @Test
@@ -101,13 +130,18 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             int size = (int) Math.floor(random.nextDouble() * 96.0 + 4.0);
 
             List<Vector2D> points = createRandomPoints(size);
+
+            // act
             ConvexHull2D hull = generator.generate(reducePoints(points));
+
+            // assert
             checkConvexHull(points, hull);
         }
     }
 
     @Test
     public void testCollinearPoints() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -115,12 +149,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4, 1));
         points.add(Vector2D.of(10, 1));
 
+        // act
         final ConvexHull2D hull = generator.generate(points);
+
+        // assert
         checkConvexHull(points, hull);
     }
 
     @Test
     public void testCollinearPointsReverse() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -128,12 +166,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(10, 1));
         points.add(Vector2D.of(4, 1));
 
+        // act
         final ConvexHull2D hull = generator.generate(points);
+
+        // assert
         checkConvexHull(points, hull);
     }
 
     @Test
     public void testCollinearPointsIncluded() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -141,12 +183,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4, 1));
         points.add(Vector2D.of(10, 1));
 
+        // act
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
+
+        // assert
         checkConvexHull(points, hull, true);
     }
 
     @Test
     public void testCollinearPointsIncludedReverse() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -154,12 +200,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(10, 1));
         points.add(Vector2D.of(4, 1));
 
+        // act
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
+
+        // assert
         checkConvexHull(points, hull, true);
     }
 
     @Test
     public void testIdenticalPoints() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -167,12 +217,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4, 1));
         points.add(Vector2D.of(1, 1));
 
+        // act
         final ConvexHull2D hull = generator.generate(points);
+
+        // assert
         checkConvexHull(points, hull);
     }
 
     @Test
     public void testIdenticalPoints2() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -180,12 +234,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4, 1));
         points.add(Vector2D.of(1, 1));
 
+        // act
         final ConvexHull2D hull = createConvexHullGenerator(true).generate(points);
+
+        // assert
         checkConvexHull(points, hull, true);
     }
 
     @Test
     public void testClosePoints() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(1, 1));
         points.add(Vector2D.of(2, 2));
@@ -193,12 +251,16 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4, 1));
         points.add(Vector2D.of(1.00001, 1));
 
+        // act
         final ConvexHull2D hull = generator.generate(points);
+
+        // assert
         checkConvexHull(points, hull);
     }
 
     @Test
     public void testCollinearPointOnExistingBoundary() {
+        // --- arrange
         // MATH-1135: check that collinear points on the hull are handled correctly
         //            when only a minimal hull shall be constructed
         final Collection<Vector2D> points = new ArrayList<>();
@@ -213,33 +275,42 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(7.315199999999996, 34.1376));
         points.add(Vector2D.of(7.3152, 30.48));
 
+        // --- act
         final ConvexHull2D hull = createConvexHullGenerator(false).generate(points);
+
+        // --- assert
         checkConvexHull(points, hull);
     }
 
     @Test
-    public void testCollinearPointsInAnyOrder() {
+    public void testCollinearPointsInAnyOrder_threeCollinearPoints() {
+        // --- arrange
         // MATH-1148: collinear points on the hull might be in any order
         //            make sure that they are processed in the proper order
         //            for each algorithm.
 
         List<Vector2D> points = new ArrayList<>();
-
-        // first case: 3 points are collinear
         points.add(Vector2D.of(16.078200000000184, -36.52519999989808));
         points.add(Vector2D.of(19.164300000000186, -36.52519999989808));
         points.add(Vector2D.of(19.1643, -25.28136477910407));
         points.add(Vector2D.of(19.1643, -17.678400000004157));
 
+        // --- act/assert
         ConvexHull2D hull = createConvexHullGenerator(false).generate(points);
         checkConvexHull(points, hull);
 
         hull = createConvexHullGenerator(true).generate(points);
         checkConvexHull(points, hull, true);
+    }
 
-        points.clear();
+    @Test
+    public void testCollinearPointsInAnyOrder_multipleCollinearPoints() {
+        // --- arrange
+        // MATH-1148: collinear points on the hull might be in any order
+        //            make sure that they are processed in the proper order
+        //            for each algorithm.
 
-        // second case: multiple points are collinear
+        List<Vector2D> points = new ArrayList<>();
         points.add(Vector2D.of(0, -29.959696875));
         points.add(Vector2D.of(0, -31.621809375));
         points.add(Vector2D.of(0, -28.435696875));
@@ -250,7 +321,8 @@ public abstract class ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(4.572, -33.145809375));
         points.add(Vector2D.of(4.572, -28.435696875));
 
-        hull = createConvexHullGenerator(false).generate(points);
+        // --- act/assert
+        ConvexHull2D hull = createConvexHullGenerator(false).generate(points);
         checkConvexHull(points, hull);
 
         hull = createConvexHullGenerator(true).generate(points);
@@ -259,7 +331,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     @Test
     public void testIssue1123() {
-
+        // arrange
         List<Vector2D> points = new ArrayList<>();
 
         int[][] data = new int[][] {
@@ -338,9 +410,11 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             Vector2D.of(-11.0, 1.0),
         };
 
+        // act
         ConvexHull2D convHull = generator.generate(points);
-        Region<Vector2D> hullRegion = convHull.createRegion();
+        Region<Vector2D> hullRegion = convHull.getRegion();
 
+        // assert
         Assert.assertEquals(274.0, hullRegion.getSize(), 1.0e-12);
         double perimeter = 0;
         for (int i = 0; i < referenceHull.length; ++i) {
@@ -373,27 +447,22 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
     protected final void checkConvexHull(final Collection<Vector2D> points, final ConvexHull2D hull,
                                          final boolean includesCollinearPoints) {
-        checkConvexHull(points, hull, includesCollinearPoints, 1e-10);
-    }
-
-    protected final void checkConvexHull(final Collection<Vector2D> points, final ConvexHull2D hull,
-                                         final boolean includesCollinearPoints, final double tolerance) {
         Assert.assertNotNull(hull);
-        Assert.assertTrue(isConvex(hull, includesCollinearPoints, tolerance));
+        Assert.assertTrue(isConvex(hull, includesCollinearPoints));
         checkPointsInsideHullRegion(points, hull, includesCollinearPoints);
     }
 
     // verify that the constructed hull is really convex
-    protected final boolean isConvex(final ConvexHull2D hull, final boolean includesCollinearPoints,
-                                     final double tolerance) {
+    protected final boolean isConvex(final ConvexHull2D hull, final boolean includesCollinearPoints) {
 
-        final Vector2D[] points = hull.getVertices();
+        final List<Vector2D> points = hull.getVertices();
         int sign = 0;
+        int size = points.size();
 
-        for (int i = 0; i < points.length; i++) {
-            Vector2D p1 = points[i == 0 ? points.length - 1 : i - 1];
-            Vector2D p2 = points[i];
-            Vector2D p3 = points[i == points.length - 1 ? 0 : i + 1];
+        for (int i = 0; i < size; i++) {
+            Vector2D p1 = points.get(i == 0 ? size - 1 : i - 1);
+            Vector2D p2 = points.get(i);
+            Vector2D p3 = points.get(i == size - 1 ? 0 : i + 1);
 
             Vector2D d1 = p2.subtract(p1);
             Vector2D d2 = p3.subtract(p2);
@@ -402,7 +471,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
             Assert.assertTrue(d2.norm() > 1e-10);
 
             final double cross = LinearCombination.value(d1.getX(), d2.getY(), -d1.getY(), d2.getX());
-            final int cmp = Precision.compareTo(cross, 0.0, tolerance);
+            final int cmp = Precision.compareTo(cross, 0.0, TEST_EPS);
 
             if (sign != 0 && cmp != sign) {
                 if (!includesCollinearPoints || cmp != 0) {
@@ -422,12 +491,12 @@ public abstract class ConvexHullGenerator2DAbstractTest {
                                                      final ConvexHull2D hull,
                                                      final boolean includesCollinearPoints) {
 
-        final Collection<Vector2D> hullVertices = Arrays.asList(hull.getVertices());
-        final Region<Vector2D> region = hull.createRegion();
+        final Collection<Vector2D> hullVertices = hull.getVertices();
+        final ConvexArea region = hull.getRegion();
 
         for (final Vector2D p : points) {
             RegionLocation location = region.classify(p);
-            Assert.assertTrue(location != RegionLocation.OUTSIDE);
+            Assert.assertNotEquals(RegionLocation.OUTSIDE, location);
 
             if (location == RegionLocation.BOUNDARY && includesCollinearPoints) {
                 Assert.assertTrue(hullVertices.contains(p));

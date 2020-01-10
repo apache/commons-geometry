@@ -30,12 +30,12 @@ import org.apache.commons.geometry.core.Point;
  */
 public interface ConvexHullGenerator<P extends Point<P>> {
     /**
-     * Builds the convex hull from the set of input points.
+     * Build a convex hull from the set of input points.
      *
      * @param points the set of input points
      * @return the convex hull
      * @throws IllegalStateException if generator fails to generate a convex hull for
-     * the given set of input points
+     *      the given set of input points
      */
     ConvexHull<P> generate(Collection<P> points);
 }
