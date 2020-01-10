@@ -50,6 +50,6 @@ public interface BoundarySource3D extends BoundarySource<Facet> {
      * @return a boundary source containing the given boundaries
      */
     static BoundarySource3D from(final Collection<Facet> boundaries) {
-        return () -> boundaries.stream();
+        return boundaries::stream;
     }
 }

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,7 +66,7 @@ final class BoundarySourceLinecaster2D implements Linecastable2D {
     private Stream<LinecastPoint2D> getIntersectionStream(final Segment segment) {
         return boundarySrc.boundaryStream()
                 .map(boundary -> computeIntersection(boundary, segment))
-                .filter(intersection -> intersection != null);
+                .filter(Objects::nonNull);
     }
 
     /** Compute the intersection between a boundary segment and linecast intersecting segment. Null is
