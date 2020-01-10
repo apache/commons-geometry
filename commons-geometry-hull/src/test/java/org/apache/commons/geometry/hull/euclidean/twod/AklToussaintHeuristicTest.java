@@ -27,7 +27,7 @@ public class AklToussaintHeuristicTest extends ConvexHullGenerator2DAbstractTest
 
     @Override
     protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
-        return new MonotoneChain(includeCollinearPoints);
+        return new MonotoneChain(includeCollinearPoints, TEST_PRECISION);
     }
 
     @Override

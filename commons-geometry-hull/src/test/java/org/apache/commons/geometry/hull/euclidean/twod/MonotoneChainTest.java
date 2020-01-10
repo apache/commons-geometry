@@ -30,13 +30,14 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
 
     @Override
     protected ConvexHullGenerator2D createConvexHullGenerator(boolean includeCollinearPoints) {
-        return new MonotoneChain(includeCollinearPoints);
+        return new MonotoneChain(includeCollinearPoints, TEST_PRECISION);
     }
 
     // ------------------------------------------------------------------------------
 
     @Test(expected = IllegalStateException.class)
     public void testConvergenceException() {
+        // arrange
         final Collection<Vector2D> points = new ArrayList<>();
 
         points.add(Vector2D.of(1, 1));
@@ -48,8 +49,7 @@ public class MonotoneChainTest extends ConvexHullGenerator2DAbstractTest {
         points.add(Vector2D.of(20, 40));
         points.add(Vector2D.of(40, 1));
 
-        @SuppressWarnings("unused")
-        final ConvexHull2D hull = new MonotoneChain(true, new EpsilonDoublePrecisionContext(1)).generate(points);
+        // act/assert
+        new MonotoneChain(true, new EpsilonDoublePrecisionContext(1)).generate(points);
     }
-
 }
