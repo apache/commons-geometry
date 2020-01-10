@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,7 +66,7 @@ final class BoundarySourceLinecaster3D implements Linecastable3D {
     private Stream<LinecastPoint3D> getIntersectionStream(final Segment3D segment) {
         return boundarySrc.boundaryStream()
                 .map(boundary -> computeIntersection(boundary, segment))
-                .filter(intersection -> intersection != null);
+                .filter(Objects::nonNull);
     }
 
     /** Compute the intersection between a boundary facet and linecast intersecting segment. Null is
