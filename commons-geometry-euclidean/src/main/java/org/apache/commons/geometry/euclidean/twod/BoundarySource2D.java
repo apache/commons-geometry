@@ -50,6 +50,6 @@ public interface BoundarySource2D extends BoundarySource<Segment> {
      * @return a boundary source containing the given boundaries
      */
     static BoundarySource2D from(final Collection<Segment> boundaries) {
-        return () -> boundaries.stream();
+        return boundaries::stream;
     }
 }

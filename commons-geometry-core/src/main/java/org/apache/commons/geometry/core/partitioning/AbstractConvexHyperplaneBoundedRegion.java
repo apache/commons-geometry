@@ -255,29 +255,44 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             final List<S> minusBoundaries = new ArrayList<>();
             final List<S> plusBoundaries = new ArrayList<>();
 
-            Split<? extends ConvexSubHyperplane<P>> split;
-            ConvexSubHyperplane<P> minusBoundary;
-            ConvexSubHyperplane<P> plusBoundary;
-
-            for (final S boundary : boundaries) {
-                split = boundary.split(splitter);
-
-                minusBoundary = split.getMinus();
-                plusBoundary = split.getPlus();
-
-                if (minusBoundary != null) {
-                    minusBoundaries.add(subhpType.cast(minusBoundary));
-                }
-
-                if (plusBoundary != null) {
-                    plusBoundaries.add(subhpType.cast(plusBoundary));
-                }
-            }
+            splitBoundaries(splitter, subhpType, minusBoundaries, plusBoundaries);
 
             minusBoundaries.add(subhpType.cast(trimmedSplitter));
             plusBoundaries.add(subhpType.cast(trimmedSplitter.reverse()));
 
             return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
+        }
+    }
+
+    /** Split the boundaries of the region by the given hyperplane, adding the split parts into the
+     * corresponding lists.
+     * @param splitter splitting hyperplane
+     * @param subhpType the type used for the boundary subhyperplanes
+     * @param minusBoundaries list that will contain the portions of the boundaries on the minus side
+     *      of the splitting hyperplane
+     * @param plusBoundaries list that will contain the portions of the boundaries on the plus side of
+     *      the splitting hyperplane
+     */
+    private void splitBoundaries(final Hyperplane<P> splitter, final Class<S> subhpType,
+            final List<S> minusBoundaries, final List<S> plusBoundaries) {
+
+        Split<? extends ConvexSubHyperplane<P>> split;
+        ConvexSubHyperplane<P> minusBoundary;
+        ConvexSubHyperplane<P> plusBoundary;
+
+        for (final S boundary : boundaries) {
+            split = boundary.split(splitter);
+
+            minusBoundary = split.getMinus();
+            plusBoundary = split.getPlus();
+
+            if (minusBoundary != null) {
+                minusBoundaries.add(subhpType.cast(minusBoundary));
+            }
+
+            if (plusBoundary != null) {
+                plusBoundaries.add(subhpType.cast(plusBoundary));
+            }
         }
     }
 
