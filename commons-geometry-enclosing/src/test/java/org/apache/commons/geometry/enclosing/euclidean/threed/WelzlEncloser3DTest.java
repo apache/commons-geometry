@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
@@ -40,23 +41,18 @@ public class WelzlEncloser3DTest {
     private WelzlEncloser3D encloser = new WelzlEncloser3D(TEST_PRECISION);
 
     @Test
-    public void testNullList() {
-        // act
-        EnclosingBall<Vector3D> ball = encloser.enclose(null);
-
-        // assert
-        Assert.assertTrue(ball.getRadius() < 0);
-    }
-
-    @Test
     public void testNoPoints() {
-        // act
-        EnclosingBall<Vector3D> ball = encloser.enclose(new ArrayList<Vector3D>());
+        // arrange
+        String msg = "Unable to generate enclosing ball: no points given";
 
-        // assert
-        Assert.assertTrue(ball.getRadius() < 0);
-        Assert.assertEquals(0, ball.getSupportSize());
-        Assert.assertEquals(0, ball.getSupport().size());
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            encloser.enclose(null);
+        }, IllegalArgumentException.class, msg);
+
+        GeometryTestUtils.assertThrows(() -> {
+            encloser.enclose(new ArrayList<Vector3D>());
+        }, IllegalArgumentException.class, msg);
     }
 
     @Test

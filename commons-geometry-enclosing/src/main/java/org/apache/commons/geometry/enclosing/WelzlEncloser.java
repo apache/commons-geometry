@@ -60,8 +60,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
     public EnclosingBall<P> enclose(final Iterable<P> points) {
 
         if (points == null || !points.iterator().hasNext()) {
-            // return an empty ball
-            return generator.ballOnSupport(new ArrayList<P>());
+            throw new IllegalArgumentException("Unable to generate enclosing ball: no points given");
         }
 
         // Emo Welzl algorithm with Bernd Gärtner and Linus Källberg improvements
