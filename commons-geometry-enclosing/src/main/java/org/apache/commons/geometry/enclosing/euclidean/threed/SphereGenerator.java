@@ -17,10 +17,10 @@
 package org.apache.commons.geometry.enclosing.euclidean.threed;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
 import org.apache.commons.geometry.enclosing.euclidean.twod.DiskGenerator;
@@ -29,34 +29,38 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.fraction.BigFraction;
 
-/** Class generating an enclosing ball from its support points.
+/** Class generating a sphere from its support points.
  */
 public class SphereGenerator implements SupportBallGenerator<Vector3D> {
-    /** Base epsilon value. */
-    private static final double BASE_EPS = 1e-10;
+
+    /** Precision context used to compare floating point numbers. */
+    private final DoublePrecisionContext precision;
+
+    /** Construct a new instance with the given precision context.
+     * @param precision precision context used to compare floating point numbers
+     */
+    public SphereGenerator(final DoublePrecisionContext precision) {
+        this.precision = precision;
+    }
 
     /** {@inheritDoc} */
     @Override
     public EnclosingBall<Vector3D> ballOnSupport(final List<Vector3D> support) {
         if (support.isEmpty()) {
-            return new EnclosingBall<>(Vector3D.ZERO, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Vector3D.ZERO, Double.NEGATIVE_INFINITY, Collections.emptyList());
         } else {
             final Vector3D vA = support.get(0);
             if (support.size() < 2) {
-                return new EnclosingBall<>(vA, 0, vA);
+                return new EnclosingBall<>(vA, 0, Arrays.asList(vA));
             } else {
                 final Vector3D vB = support.get(1);
                 if (support.size() < 3) {
                     return new EnclosingBall<>(Vector3D.linearCombination(0.5, vA, 0.5, vB),
                                                0.5 * vA.distance(vB),
-                                               vA, vB);
+                                               Arrays.asList(vA, vB));
                 } else {
                     final Vector3D vC = support.get(2);
                     if (support.size() < 4) {
-
-                        // delegate to 2D disk generator
-                        final DoublePrecisionContext precision =
-                            new EpsilonDoublePrecisionContext(BASE_EPS * (norm1(vA) + norm1(vB) + norm1(vC)));
                         final Plane p = Plane.fromPoints(vA, vB, vC, precision);
                         final EnclosingBall<Vector2D> disk =
                                 new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubspace(vA),
@@ -65,7 +69,8 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
 
                         // convert back to 3D
                         return new EnclosingBall<>(p.toSpace(disk.getCenter()),
-                                                                        disk.getRadius(), vA, vB, vC);
+                                                                        disk.getRadius(),
+                                                                        Arrays.asList(vA, vB, vC));
 
                     } else {
                         final Vector3D vD = support.get(3);
@@ -125,7 +130,7 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
                                                                centerY.doubleValue(),
                                                                centerZ.doubleValue()),
                                                    Math.sqrt(r2.doubleValue()),
-                                                   vA, vB, vC, vD);
+                                                   Arrays.asList(vA, vB, vC, vD));
                     }
                 }
             }
@@ -151,15 +156,5 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
             add(c2[3].multiply(c3[0]).multiply(c1[2].subtract(c1[1]))).
             add(c2[3].multiply(c3[1]).multiply(c1[0].subtract(c1[2]))).
             add(c2[3].multiply(c3[2]).multiply(c1[1].subtract(c1[0])));
-    }
-
-    /** Compute the L<sub>1</sub> vector norm for the given set of coordinates.
-     * This is defined as the sum of the absolute values of all components.
-     * @param coord set of coordinates
-     * @return L<sub>1</sub> vector norm for the given set of coordinates
-     * @see <a href="http://mathworld.wolfram.com/L1-Norm.html">L1 Norm</a>
-     */
-    private double norm1(final Vector3D coord) {
-        return Math.abs(coord.getX()) + Math.abs(coord.getY()) + Math.abs(coord.getZ());
     }
 }
