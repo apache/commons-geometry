@@ -16,7 +16,13 @@
  */
 package org.apache.commons.geometry.enclosing;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a ball enclosing some points.
  * @param <P> Point type.
@@ -31,18 +37,18 @@ public class EnclosingBall<P extends Point<P>> {
     private final double radius;
 
     /** Support points used to define the ball. */
-    private final P[] support;
+    private final List<P> support;
 
-    /** Simple constructor.
+    /** Construct an enclosing ball defined by a collection of support points. Callers are responsible
+     * for ensuring that the given points lie inside the ball. No validation is performed.
      * @param center center of the ball
      * @param radius radius of the ball
      * @param support support points used to define the ball
      */
-    @SafeVarargs
-    public EnclosingBall(final P center, final double radius, final P... support) {
+    public EnclosingBall(final P center, final double radius, final Collection<P> support) {
         this.center  = center;
         this.radius  = radius;
-        this.support = support.clone();
+        this.support = Collections.unmodifiableList(new ArrayList<>(support));
     }
 
     /** Get the center of the ball.
@@ -62,33 +68,51 @@ public class EnclosingBall<P extends Point<P>> {
     /** Get the support points used to define the ball.
      * @return support points used to define the ball
      */
-    public P[] getSupport() {
-        return support.clone();
+    public List<P> getSupport() {
+        return support;
     }
 
     /** Get the number of support points used to define the ball.
      * @return number of support points used to define the ball
      */
     public int getSupportSize() {
-        return support.length;
+        return support.size();
     }
 
-    /** Check if a point is within the ball or at boundary.
+    /** Check if a point is within the ball or on the boundary. True is returned if the
+     * distance from the center of the ball to the given point is strictly less than
+     * or equal to the ball radius.
      * @param point point to test
-     * @return true if the point is within the ball or at boundary
+     * @return true if the point is within the ball or on the boundary
      */
     public boolean contains(final P point) {
         return point.distance(center) <= radius;
     }
 
-    /** Check if a point is within an enlarged ball or at boundary.
+    /** Check if a point is within the ball or on the boundary, using the given precision
+     * context for floating point comparison. True is returned if the distance from the
+     * center of the ball to the given point is less than or equal to the ball radius
+     * as evaluated by the precision context.
      * @param point point to test
-     * @param margin margin to consider
-     * @return true if the point is within the ball enlarged
-     * by the margin or at boundary
+     * @param precision precision context to use for floating point comparisons
+     * @return true if the point is within the ball or on the boundary as evaluated by
+     *      the precision context
      */
-    public boolean contains(final P point, final double margin) {
-        return point.distance(center) <= radius + margin;
+    public boolean contains(final P point, final DoublePrecisionContext precision) {
+        return precision.lte(point.distance(center), radius);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[center= ")
+            .append(getCenter())
+            .append(", radius= ")
+            .append(getRadius())
+            .append(']');
+
+        return sb.toString();
+    }
 }

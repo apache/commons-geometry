@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.enclosing.euclidean.twod;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.enclosing.EnclosingBall;
@@ -23,24 +25,25 @@ import org.apache.commons.geometry.enclosing.SupportBallGenerator;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.fraction.BigFraction;
 
-/** Class generating an enclosing ball from its support points.
+/** Class generating a disk from its support points.
  */
 public class DiskGenerator implements SupportBallGenerator<Vector2D> {
+
     /** {@inheritDoc} */
     @Override
     public EnclosingBall<Vector2D> ballOnSupport(final List<Vector2D> support) {
         if (support.isEmpty()) {
-            return new EnclosingBall<>(Vector2D.ZERO, Double.NEGATIVE_INFINITY);
+            return new EnclosingBall<>(Vector2D.ZERO, Double.NEGATIVE_INFINITY, Collections.emptyList());
         } else {
             final Vector2D vA = support.get(0);
             if (support.size() < 2) {
-                return new EnclosingBall<>(vA, 0, vA);
+                return new EnclosingBall<>(vA, 0, Arrays.asList(vA));
             } else {
                 final Vector2D vB = support.get(1);
                 if (support.size() < 3) {
                     return new EnclosingBall<>(Vector2D.linearCombination(0.5, vA, 0.5, vB),
                                                0.5 * vA.distance(vB),
-                                               vA, vB);
+                                               Arrays.asList(vA, vB));
                 } else {
                     final Vector2D vC = support.get(2);
                     // a disk is 2D can be defined as:
@@ -86,7 +89,7 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
                     return new EnclosingBall<>(Vector2D.of(centerX.doubleValue(),
                                                            centerY.doubleValue()),
                                                Math.sqrt(r2.doubleValue()),
-                                               vA, vB, vC);
+                                               Arrays.asList(vA, vB, vC));
                 }
             }
         }

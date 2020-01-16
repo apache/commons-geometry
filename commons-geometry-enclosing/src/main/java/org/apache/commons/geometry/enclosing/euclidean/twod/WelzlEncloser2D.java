@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.enclosing;
+package org.apache.commons.geometry.enclosing.euclidean.twod;
 
-import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.enclosing.WelzlEncloser;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** Interface for algorithms computing enclosing balls.
- * @param <P> Point type.
- * @see EnclosingBall
+/** Extension of the {@link WelzlEncloser} class for Euclidean 2D space. This is
+ * primarily a convenience class to simplify instantiation.
  */
-public interface Encloser<P extends Point<P>> {
+public class WelzlEncloser2D extends WelzlEncloser<Vector2D> {
 
-    /** Find a ball enclosing a list of points.
-     * @param points points to enclose
-     * @return enclosing ball
-     * @throws IllegalArgumentException if the argument does not contain any points
+    /** Construct a new instance with the given precision context. A new {@link DiskGenerator}
+     * instance is used as the support ball generator.
+     * @param precision precision context to use for floating point comparisons.
      */
-    EnclosingBall<P> enclose(Iterable<P> points);
-
+    public WelzlEncloser2D(final DoublePrecisionContext precision) {
+        super(new DiskGenerator(), precision);
+    }
 }
