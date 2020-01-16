@@ -84,6 +84,9 @@
             </li>
           </ul>
         </li>
+        <li>
+          <a href="#enclosing">Enclosing</a>
+        </li>
       </ul>
     </section>
 
@@ -1108,6 +1111,60 @@ ConvexArea region = hull.getRegion();
 boolean containsAll = pts.stream().allMatch(region::contains); // true - region contains all input points
         </source>
       </subsection>
+    </section>
+
+    <section name="Enclosing" id="enclosing">
+      <p>
+      The <a href="https://en.wikipedia.org/wiki/Bounding_sphere">smallest enclosing ball problem</a> is the
+      mathematical problem of locating the n-sphere with the smallest radius that encloses a given set of points.
+      This module contains implementations of algorithms for solving this problem.
+      </p>
+
+      <h4>Primary Classes</h4>
+      <ul>
+        <li>
+          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/Encloser.html">Encloser</a> -
+          Interface for classes that solve the smallest enclosing ball problem.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/EnclosingBall.html">EnclosingBall</a> -
+          Class containing the result of smallest enclosing ball computation.
+        </li>
+        <li>
+          <a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/WelzlEncloser.html">WelzlEncloser</a> -
+          Class implementing a space-independent version of
+          <a href="http://www.inf.ethz.ch/personal/emo/PublFiles/SmallEnclDisk_LNCS555_91.pdf">Emo Welzl's algorithm</a>
+          for computing the smallest enclosing ball of a set of points. Specialized classes exist for Euclidean 2D space
+          (<a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/euclidean/twod/WelzlEncloser2D.html">WelzlEncloser2D</a>)
+          and Euclidean 3D space
+          (<a class="code" href="../commons-geometry-enclosing/apidocs/org/apache/commons/geometry/enclosing/euclidean/threed/WelzlEncloser3D.html">WelzlEncloser3D</a>).
+        </li>
+      </ul>
+
+      <h4>Examples</h4>
+
+      <h5>WelzlEncloser3D</h5>
+      <source>
+DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
+
+List&lt;Vector3D&gt; points = Arrays.asList(
+            Vector3D.of(0, 0, 1),
+            Vector3D.of(0.75, 0, 1),
+            Vector3D.of(2, 0, 1),
+            Vector3D.of(1, 0, 2)
+        );
+
+// compute the enclosing ball
+WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
+
+EnclosingBall&lt;Vector3D&gt; sphere = encloser.enclose(points);
+
+// check the generated ball
+Vector3D center = sphere.getCenter(); // (1, 0, 1)
+double radius = sphere.getRadius(); // 1.0
+boolean containsCenter = sphere.contains(center); // true
+boolean containsOrigin = sphere.contains(Vector3D.ZERO); // false
+      </source>
     </section>
 
   </body>

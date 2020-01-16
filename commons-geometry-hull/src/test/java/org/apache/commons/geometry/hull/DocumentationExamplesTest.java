@@ -29,6 +29,9 @@ import org.apache.commons.geometry.hull.euclidean.twod.MonotoneChain;
 import org.junit.Assert;
 import org.junit.Test;
 
+/** This class contains code listed as examples in the user guide and other documentation.
+ * If any portion of this code changes, the corresponding examples in the documentation <em>must</em> be updated.
+ */
 public class DocumentationExamplesTest {
 
     private static final double TEST_EPS = 1e-15;
