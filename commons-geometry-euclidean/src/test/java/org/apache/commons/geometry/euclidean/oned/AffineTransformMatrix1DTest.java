@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -38,12 +40,32 @@ public class AffineTransformMatrix1DTest {
         Assert.assertArrayEquals(new double[] {1, 2}, result, 0.0);
     }
 
-
     @Test
     public void testOf_invalidDimensions() {
         // act/assert
         GeometryTestUtils.assertThrows(() -> AffineTransformMatrix1D.of(1),
                 IllegalArgumentException.class, "Dimension mismatch: 1 != 2");
+    }
+
+    @Test
+    public void testFrom() {
+        // act/assert
+        Assert.assertArrayEquals(new double[] {1, 0},
+                AffineTransformMatrix1D.from(UnaryOperator.identity()).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {1, 2},
+                AffineTransformMatrix1D.from(v -> v.add(Vector1D.of(2))).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {3, 0},
+                AffineTransformMatrix1D.from(v -> v.multiply(3)).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {3, 6},
+                AffineTransformMatrix1D.from(v -> v.add(Vector1D.of(2)).multiply(3)).toArray(), EPS);
+    }
+
+    @Test
+    public void testFrom_invalidFunction() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix1D.from(v -> v.multiply(0));
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -424,15 +446,6 @@ public class AffineTransformMatrix1DTest {
         Assert.assertFalse(AffineTransformMatrix1D.of(0, 1).preservesOrientation());
         Assert.assertTrue(AffineTransformMatrix1D.of(1, 0).preservesOrientation());
         Assert.assertFalse(AffineTransformMatrix1D.of(-1, 2).preservesOrientation());
-    }
-
-    @Test
-    public void testToMatrix() {
-        // arrange
-        AffineTransformMatrix1D t = AffineTransformMatrix1D.of(1, 1);
-
-        // act/assert
-        Assert.assertSame(t, t.toMatrix());
     }
 
     @Test

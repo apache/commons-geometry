@@ -413,7 +413,8 @@ tree.count(); // number of nodes in the tree = 7
             </li>
             <li>
               <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Transform.html">Transform</a> -
-              Represents a mapping between points. Instances are used to transform points and other geometric primitives.
+              Represents an inversible mapping between points that preserves parallelism. Instances are used to transform
+              points and other geometric primitives.
             </li>
           </ul>
         </li>
@@ -474,14 +475,8 @@ tree.count(); // number of nodes in the tree = 7
             Transform
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/Transform1D.html">Transform1D</a> -
-                Primary interface for 1D transforms. A utility method is also provided to construct transform instances
-                from JDK <span class="code">Function</span>'s. Callers are responsible for ensuring that given functions
-                meet the <a href="#transforms">requirements for transforms</a>.
-              </li>
-              <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/AffineTransformMatrix1D.html">AffineTransformMatrix1D</a> -
-                Represents transforms using a 2x2 matrix.
+                Represents affine transforms using a 2x2 matrix.
               </li>
 
             </ul>
@@ -565,14 +560,8 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             Transform
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Transform2D.html">Transform2D</a> -
-                Primary interface for 2D transforms. A utility method is also provided to construct transform instances
-                from JDK <span class="code">Function</span>'s. Callers are responsible for ensuring that given functions
-                meet the <a href="#transforms">requirements for transforms</a>.
-              </li>
-              <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/AffineTransformMatrix2D.html">AffineTransformMatrix2D</a> -
-                Represents transforms using a 3x3 matrix.
+                Represents affine transforms using a 3x3 matrix.
               </li>
             </ul>
           </li>
@@ -637,8 +626,7 @@ RegionBSPTree2D tree = path.toTree();
 RegionBSPTree2D copy = tree.copy();
 
 // translate the copy
-Vector2D translation = Vector2D.of(0.5, 0.5);
-copy.transform(Transform2D.from(v -> v.add(translation)));
+copy.transform(AffineTransformMatrix2D.createTranslation(Vector2D.of(0.5, 0.5)));
 
 // compute the union of the regions, storing the result back into the
 // first tree
@@ -704,14 +692,8 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
             Transform
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Transform3D.html">Transform3D</a> -
-                Primary interface for 3D transforms. A utility method is also provided to construct transform instances
-                from JDK <span class="code">Function</span>'s. Callers are responsible for ensuring that given functions
-                meet the <a href="#transforms">requirements for transforms</a>.
-              </li>
-              <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/AffineTransformMatrix3D.html">AffineTransformMatrix3D</a> -
-                Represents transforms using a 4x4 matrix.
+                Represents affine transforms using a 4x4 matrix.
               </li>
               <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/rotation/QuaternionRotation.html">QuaternionRotation</a> -

@@ -18,13 +18,12 @@ package org.apache.commons.geometry.core;
 
 import java.util.function.UnaryOperator;
 
-/** This interface represents an <em>inversible affine transform</em> in a space.
- * Common examples of this type of transform in Euclidean space include
- * scalings, translations, and rotations.
+/** This interface represents <em>inversible affine transforms</em> in a space. Common examples of this type of
+ * transform in Euclidean space include scalings, translations, and rotations.
  *
  * <h2>Implementation Note</h2>
  * <p>Implementations are responsible for ensuring that they meet the geometric
- * requirements outlined above. These are:
+ * requirements for this interface. These requirements are:
  * <ol>
  *      <li>The transform must be <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a>.
  *      In basic terms, this means that the transform must retain the "straightness" and "parallelness" of
@@ -43,9 +42,14 @@ import java.util.function.UnaryOperator;
  * algorithms that use this interface.
  *
  * @param <P> Point implementation type
- * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Space</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Transformation</a>
  */
 public interface Transform<P extends Point<P>> extends UnaryOperator<P> {
+
+    /** Get an instance representing the inverse transform.
+     * @return an instance representing the inverse transform
+     */
+    Transform<P> inverse();
 
     /** Return true if the transform preserves the orientation of the space.
      * For example, in Euclidean 2D space, this will be true for translations,

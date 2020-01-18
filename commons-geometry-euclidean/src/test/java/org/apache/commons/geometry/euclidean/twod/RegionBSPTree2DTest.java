@@ -1205,7 +1205,7 @@ public class RegionBSPTree2DTest {
         // arrange
         RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
-        Transform2D transform = FunctionTransform2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(v -> Vector2D.of(-v.getX(), v.getY()));
 
         // act
         tree.transform(transform);
@@ -1228,7 +1228,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = Parallelogram.axisAligned(
                     Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).toTree();
 
-        Transform2D transform = FunctionTransform2D.from(Vector2D::negate);
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.from(Vector2D::negate);
 
         // act
         tree.transform(transform);

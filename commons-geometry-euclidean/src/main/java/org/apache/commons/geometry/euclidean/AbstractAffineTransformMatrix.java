@@ -23,7 +23,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
  * @param <V> Vector/point implementation type defining the space.
  */
 public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>>
-    implements EuclideanTransform<V> {
+    implements AffineTransform<V> {
 
     /** Apply this transform to the given vector, ignoring translations and normalizing the
      * result. This is equivalent to {@code transform.applyVector(vec).normalize()} but without

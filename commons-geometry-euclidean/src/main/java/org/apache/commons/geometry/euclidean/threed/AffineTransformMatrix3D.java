@@ -16,9 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
@@ -31,8 +34,7 @@ import org.apache.commons.numbers.core.Precision;
  * use arrays containing 12 elements, instead of 16.
  * </p>
  */
-public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D>
-    implements Transform3D {
+public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 12;
 
@@ -204,15 +206,6 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
             );
     }
 
-    /** {@inheritDoc}
-    *
-    * <p>This simply returns the current instance.</p>
-    */
-    @Override
-    public AffineTransformMatrix3D toMatrix() {
-        return this;
-    }
-
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -323,10 +316,11 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
         return multiply(m, this);
     }
 
-    /** Get a new transform representing the inverse of the current instance.
-     * @return inverse transform
-     * @throws IllegalStateException if the transform matrix cannot be inverted
-     */
+    /** {@inheritDoc}
+    *
+    * @throws IllegalStateException if the transform matrix cannot be inverted
+    */
+    @Override
     public AffineTransformMatrix3D inverse() {
 
         // Our full matrix is 4x4 but we can significantly reduce the amount of computations
@@ -503,6 +497,33 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
                     arr[4], arr[5], arr[6], arr[7],
                     arr[8], arr[9], arr[10], arr[11]
                 );
+    }
+
+    /** Construct a new transform representing the given function. The function is sampled at
+     * the origin and along each axis and a matrix is created to perform the transformation.
+     * @param fn function to create a transform matrix from
+     * @return a transform matrix representing the given function
+     * @throws IllegalArgumentException if the given function does not represent a valid
+     *      affine transform
+     */
+    public static AffineTransformMatrix3D from(final UnaryOperator<Vector3D> fn) {
+        final Vector3D tPlusX = fn.apply(Vector3D.Unit.PLUS_X);
+        final Vector3D tPlusY = fn.apply(Vector3D.Unit.PLUS_Y);
+        final Vector3D tPlusZ = fn.apply(Vector3D.Unit.PLUS_Z);
+        final Vector3D tZero = fn.apply(Vector3D.ZERO);
+
+        final Vector3D u = tPlusX.subtract(tZero);
+        final Vector3D v = tPlusY.subtract(tZero);
+        final Vector3D w = tPlusZ.subtract(tZero);
+
+        final AffineTransformMatrix3D mat =  AffineTransformMatrix3D.fromColumnVectors(u, v, w, tZero);
+
+        final double det = mat.determinant();
+        if (!Vectors.isRealNonZero(det)) {
+            throw new IllegalArgumentException("Transform function is invalid: matrix determinant is " + det);
+        }
+
+        return mat;
     }
 
     /** Get a new transform create from the given column vectors. The returned transform

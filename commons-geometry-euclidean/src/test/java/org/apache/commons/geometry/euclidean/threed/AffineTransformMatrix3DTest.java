@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils.PermuteCallback3D;
@@ -89,6 +91,39 @@ public class AffineTransformMatrix3DTest {
             2, 5, 8, 11,
             3, 6, 9, 12
         }, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testFrom() {
+        // act/assert
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
+        }, AffineTransformMatrix3D.from(UnaryOperator.identity()).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 0, 2,
+            0, 1, 0, 3,
+            0, 0, 1, -4
+        }, AffineTransformMatrix3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 0, 0,
+            0, 3, 0, 0,
+            0, 0, 3, 0
+        }, AffineTransformMatrix3D.from(v -> v.multiply(3)).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 0, 6,
+            0, 3, 0, 9,
+            0, 0, 3, 12
+        }, AffineTransformMatrix3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toArray(), EPS);
+    }
+
+    @Test
+    public void testFrom_invalidFunction() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix3D.from(v -> v.multiply(0));
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -728,15 +763,6 @@ public class AffineTransformMatrix3DTest {
                 4, 5, 6, 0,
                 7, 8, 9, 0
             ).preservesOrientation());
-    }
-
-    @Test
-    public void testToMatrix() {
-        // arrange
-        AffineTransformMatrix3D m = AffineTransformMatrix3D.createScale(3);
-
-        // act/assert
-        Assert.assertSame(m, m.toMatrix());
     }
 
     @Test

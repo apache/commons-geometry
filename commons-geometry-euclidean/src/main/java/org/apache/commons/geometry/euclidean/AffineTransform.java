@@ -18,12 +18,14 @@ package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.Transform;
 
-/** Extension transform interface for Euclidean space. This interface provides an additional method
- * for transforming vectors as opposed to points.
+/** Interface representing affine transforms in Euclidean space. An affine transform is one that preserves
+ * points, straight lines, and planes. Common affine transforms include translations, rotations, scalings,
+ * reflections and any compositions of the above.
  *
  * @param <V> Vector implementation type
+ * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Transformation</a>
  */
-public interface EuclideanTransform<V extends EuclideanVector<V>> extends Transform<V> {
+public interface AffineTransform<V extends EuclideanVector<V>> extends Transform<V> {
 
     /** Apply this transform to the given vector, ignoring translations.
     *

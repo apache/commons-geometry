@@ -16,9 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -30,8 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 6 elements, instead of 9.
 * </p>
 */
-public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D>
-    implements Transform2D {
+public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 6;
 
@@ -168,15 +170,6 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
             );
     }
 
-    /** {@inheritDoc}
-    *
-    * <p>This simply returns the current instance.</p>
-    */
-    @Override
-    public AffineTransformMatrix2D toMatrix() {
-        return this;
-    }
-
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -282,10 +275,11 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         return multiply(m, this);
     }
 
-    /** Get a new transform representing the inverse of the current instance.
-     * @return inverse transform
-     * @throws IllegalStateException if the transform matrix cannot be inverted
-     */
+    /** {@inheritDoc}
+    *
+    * @throws IllegalStateException if the transform matrix cannot be inverted
+    */
+    @Override
     public AffineTransformMatrix2D inverse() {
 
         // Our full matrix is 3x3 but we can significantly reduce the amount of computations
@@ -414,6 +408,31 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
                     arr[0], arr[1], arr[2],
                     arr[3], arr[4], arr[5]
                 );
+    }
+
+    /** Construct a new transform representing the given function. The function is sampled at
+     * the origin and along each axis and a matrix is created to perform the transformation.
+     * @param fn function to create a transform matrix from
+     * @return a transform matrix representing the given function
+     * @throws IllegalArgumentException if the given function does not represent a valid
+     *      affine transform
+     */
+    public static AffineTransformMatrix2D from(final UnaryOperator<Vector2D> fn) {
+        final Vector2D tPlusX = fn.apply(Vector2D.Unit.PLUS_X);
+        final Vector2D tPlusY = fn.apply(Vector2D.Unit.PLUS_Y);
+        final Vector2D tZero = fn.apply(Vector2D.ZERO);
+
+        final Vector2D u = tPlusX.subtract(tZero);
+        final Vector2D v = tPlusY.subtract(tZero);
+
+        final AffineTransformMatrix2D mat =  AffineTransformMatrix2D.fromColumnVectors(u, v, tZero);
+
+        final double det = mat.determinant();
+        if (!Vectors.isRealNonZero(det)) {
+            throw new IllegalArgumentException("Transform function is invalid: matrix determinant is " + det);
+        }
+
+        return mat;
     }
 
     /** Get a new transform create from the given column vectors. The returned transform

@@ -627,7 +627,7 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.full();
 
-        Transform1D transform = AffineTransformMatrix1D.createScale(2);
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(2);
 
         // act
         tree.transform(transform);
@@ -644,7 +644,7 @@ public class RegionBSPTree1DTest {
                     Interval.min(3, TEST_PRECISION)
                 );
 
-        Transform1D transform = AffineTransformMatrix1D.createScale(2)
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(2)
                 .translate(3);
 
         // act
@@ -666,7 +666,7 @@ public class RegionBSPTree1DTest {
                     Interval.min(3, TEST_PRECISION)
                 );
 
-        Transform1D transform = AffineTransformMatrix1D.createScale(-2)
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(-2)
                 .translate(3);
 
         // act
@@ -688,7 +688,7 @@ public class RegionBSPTree1DTest {
                     Interval.min(3, TEST_PRECISION)
                 );
 
-        Transform1D transform = FunctionTransform1D.from(Vector1D::negate);
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.from(Vector1D::negate);
 
         // act
         tree.transform(transform);

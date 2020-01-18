@@ -57,4 +57,10 @@ public class TestTransform2D implements Transform<TestPoint2D> {
     public boolean preservesOrientation() {
         return preservesHandedness;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public Transform<TestPoint2D> inverse() {
+        throw new UnsupportedOperationException();
+    }
 }

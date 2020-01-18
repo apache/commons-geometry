@@ -16,9 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
-import org.apache.commons.numbers.core.Precision;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 
 /** Class using a matrix to represent affine transformations in 1 dimensional Euclidean space.
 *
@@ -28,8 +30,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D>
-    implements Transform1D {
+public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 2;
 
@@ -108,15 +109,6 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
     @Override
     public double determinant() {
         return m00;
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>This simply returns the current instance.</p>
-     */
-    @Override
-    public AffineTransformMatrix1D toMatrix() {
-        return this;
     }
 
     /** Get a new transform containing the result of applying a translation logically after
@@ -205,10 +197,11 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
         return multiply(m, this);
     }
 
-    /** Get a new transform representing the inverse of the current instance.
-     * @return inverse transform
+    /** {@inheritDoc}
+     *
      * @throws IllegalStateException if the transform matrix cannot be inverted
      */
+    @Override
     public AffineTransformMatrix1D inverse() {
 
         final double det = getDeterminantForInverse();
@@ -251,8 +244,8 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
         }
         final AffineTransformMatrix1D other = (AffineTransformMatrix1D) obj;
 
-        return Precision.equals(this.m00, other.m00) &&
-                Precision.equals(this.m01, other.m01);
+        return Double.compare(this.m00, other.m00) == 0 &&
+                Double.compare(this.m01, other.m01) == 0;
     }
 
     /** {@inheritDoc} */
@@ -298,6 +291,30 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
         }
 
         return new AffineTransformMatrix1D(arr[0], arr[1]);
+    }
+
+    /** Construct a new transform representing the given function. The function is sampled at
+     * the points zero and one and a matrix is created to perform the transformation.
+     * @param fn function to create a transform matrix from
+     * @return a transform matrix representing the given function
+     * @throws IllegalArgumentException if the given function does not represent a valid
+     *      affine transform
+     */
+    public static AffineTransformMatrix1D from(final UnaryOperator<Vector1D> fn) {
+        final Vector1D tOne = fn.apply(Vector1D.Unit.PLUS);
+        final Vector1D tZero = fn.apply(Vector1D.ZERO);
+
+        final double scale = tOne.subtract(tZero).getX();
+        final double translate = tZero.getX();
+
+        final AffineTransformMatrix1D mat =  AffineTransformMatrix1D.of(scale, translate);
+
+        final double det = mat.determinant();
+        if (!Vectors.isRealNonZero(det)) {
+            throw new IllegalArgumentException("Transform function is invalid: matrix determinant is " + det);
+        }
+
+        return mat;
     }
 
     /** Get the transform representing the identity matrix. This transform does not

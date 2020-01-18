@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -94,6 +96,35 @@ public class AffineTransformMatrix2DTest {
             0, 1, 0
         };
         Assert.assertArrayEquals(expected, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testFrom() {
+        // act/assert
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 0,
+            0, 1, 0
+        }, AffineTransformMatrix2D.from(UnaryOperator.identity()).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 2,
+            0, 1, 3
+        }, AffineTransformMatrix2D.from(v -> v.add(Vector2D.of(2, 3))).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 0,
+            0, 3, 0
+        }, AffineTransformMatrix2D.from(v -> v.multiply(3)).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 6,
+            0, 3, 9
+        }, AffineTransformMatrix2D.from(v -> v.add(Vector2D.of(2, 3)).multiply(3)).toArray(), EPS);
+    }
+
+    @Test
+    public void testFrom_invalidFunction() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix2D.from(v -> v.multiply(0));
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -672,15 +703,6 @@ public class AffineTransformMatrix2DTest {
                 0, 0, 1,
                 0, 0, 2
             ).preservesOrientation());
-    }
-
-    @Test
-    public void testToMatrix() {
-        // arrange
-        AffineTransformMatrix2D t = AffineTransformMatrix2D.createScale(2.0);
-
-        // act/assert
-        Assert.assertSame(t, t.toMatrix());
     }
 
     @Test

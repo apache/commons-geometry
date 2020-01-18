@@ -165,8 +165,10 @@ public final class QuaternionRotation implements Rotation3D {
         return true;
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Return an {@link AffineTransformMatrix3D} representing the same rotation as this
+     * instance.
+     * @return a transform matrix representing the same rotation as this instance
+     */
     public AffineTransformMatrix3D toMatrix() {
 
         final double qw = quat.getW();
