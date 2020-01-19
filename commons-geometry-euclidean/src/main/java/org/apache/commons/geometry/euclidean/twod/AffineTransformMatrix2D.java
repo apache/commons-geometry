@@ -285,11 +285,11 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
         // Our full matrix is 3x3 but we can significantly reduce the amount of computations
         // needed here since we know that our last row is [0 0 1].
 
-        final double det = getDeterminantForInverse();
+        final double det = Matrices.checkDeterminantForInverse(determinant());
 
         // validate the remaining matrix elements that were not part of the determinant
-        validateElementForInverse(m02);
-        validateElementForInverse(m12);
+        Matrices.checkElementForInverse(m02);
+        Matrices.checkElementForInverse(m12);
 
         // compute the necessary elements of the cofactor matrix
         // (we need all but the last column)

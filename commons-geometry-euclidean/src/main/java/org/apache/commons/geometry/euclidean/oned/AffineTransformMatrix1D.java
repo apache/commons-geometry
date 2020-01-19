@@ -20,6 +20,7 @@ import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction1N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
+import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
 
 /** Class using a matrix to represent affine transformations in 1 dimensional Euclidean space.
@@ -204,9 +205,9 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
     @Override
     public AffineTransformMatrix1D inverse() {
 
-        final double det = getDeterminantForInverse();
+        final double det = Matrices.checkDeterminantForInverse(determinant());
 
-        validateElementForInverse(m01);
+        Matrices.checkElementForInverse(m01);
 
         final double invDet = 1.0 / det;
 
