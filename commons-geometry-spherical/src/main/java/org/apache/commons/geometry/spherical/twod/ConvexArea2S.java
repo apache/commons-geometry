@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
@@ -32,6 +31,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a convex area in 2D spherical space. The boundaries of this
  * area, if any, are composed of convex great circle arcs.
@@ -128,16 +128,19 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
     /** {@inheritDoc} */
     @Override
     public Point2S getBarycenter() {
-        Vector3D weighted = getWeightedBarycenter();
+        Vector3D weighted = getWeightedBarycenterVector();
         return weighted == null ? null : Point2S.from(weighted);
     }
 
-    /**
-     * Returns the weighted vector for barycenter.
-     *
-     * @return Weighted barycenter
+    /** Returns the weighted vector for the barycenter. This vector is computed by scaling the
+     * pole vector of the great circle of each boundary arc by the size of the arc and summing
+     * the results. By combining the weighted barycenter vectors of multiple areas, a single
+     * barycenter can be computed for the whole group.
+     * @return weighted barycenter vector.
+     * @see <a href="https://archive.org/details/centroidinertiat00broc">
+     *  <em>The Centroid and Inertia Tensor for a Spherical Triangle</em> - John E. Brock</a>
      */
-    Vector3D getWeightedBarycenter() {
+    Vector3D getWeightedBarycenterVector() {
         List<GreatArc> arcs = getBoundaries();
         switch (arcs.size()) {
         case 0:

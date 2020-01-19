@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
@@ -31,6 +30,8 @@ import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** BSP tree representing regions in 1D spherical space.
  */
@@ -337,10 +338,12 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
     protected RegionSizeProperties<Point1S> computeRegionSizeProperties() {
         if (isFull()) {
             return new RegionSizeProperties<>(PlaneAngleRadians.TWO_PI, null);
+        } else if (isEmpty()) {
+            return new RegionSizeProperties<>(0, null);
         }
 
         double size = 0;
-        double scaledBarycenterSum = 0;
+        Vector2D scaledBarycenterSum = Vector2D.ZERO;
 
         double intervalSize;
 
@@ -348,12 +351,14 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             intervalSize = interval.getSize();
 
             size += intervalSize;
-            scaledBarycenterSum += intervalSize * interval.getBarycenter().getNormalizedAzimuth();
+            scaledBarycenterSum = scaledBarycenterSum.add(interval.getBarycenter().getVector().withNorm(intervalSize));
         }
 
-        final Point1S barycenter = size > 0 ?
-                Point1S.of(scaledBarycenterSum / size) :
-                null;
+        final DoublePrecisionContext precision = ((CutAngle) getRoot().getCutHyperplane()).getPrecision();
+
+        final Point1S barycenter = scaledBarycenterSum.eq(Vector2D.ZERO, precision) ?
+                 null :
+                 Point1S.from(scaledBarycenterSum);
 
         return new RegionSizeProperties<>(size, barycenter);
     }
