@@ -42,10 +42,6 @@ public class ConvexArea2STest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    // epsilon value for use when comparing computed barycenter locations;
-    // this must currently be set much higher than the other epsilon
-    private static final double BARYCENTER_EPS = 1e-2;
-
     @Test
     public void testFull() {
         // act
@@ -257,7 +253,7 @@ public class ConvexArea2STest {
         Assert.assertEquals(size, area.getSize(), TEST_EPS);
 
         Point2S expectedBarycenter = triangleBarycenter(p1, p2, p3);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), BARYCENTER_EPS);
+        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
 
         checkBarycenterConsistency(area);
 
@@ -759,11 +755,18 @@ public class ConvexArea2STest {
     }
 
     private static Point2S triangleBarycenter(Point2S p1, Point2S p2, Point2S p3) {
-        // compute the barycenter using intersection mid point arcs
-        GreatCircle c1 = GreatCircle.fromPoints(p1, p2.slerp(p3, 0.5), TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPoints(p2, p1.slerp(p3, 0.5), TEST_PRECISION);
+        // compute the barycenter as the sum of the cross product of each point pair weighted by
+        // the angle between the points
+        Vector3D v1 = p1.getVector();
+        Vector3D v2 = p2.getVector();
+        Vector3D v3 = p3.getVector();
 
-        return c1.intersection(c2);
+        Vector3D sum = Vector3D.ZERO;
+        sum = sum.add(v1.cross(v2).withNorm(v1.angle(v2)));
+        sum = sum.add(v2.cross(v3).withNorm(v2.angle(v3)));
+        sum = sum.add(v3.cross(v1).withNorm(v3.angle(v1)));
+
+        return Point2S.from(sum);
     }
 
     private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
@@ -802,21 +805,15 @@ public class ConvexArea2STest {
 
             ConvexArea2S minus = split.getMinus();
             double minusSize = minus.getSize();
-            Point2S minusBc = minus.getBarycenter();
-
-            Vector3D weightedMinus = minusBc.getVector()
-                    .multiply(minus.getSize());
 
             ConvexArea2S plus = split.getPlus();
             double plusSize = plus.getSize();
-            Point2S plusBc = plus.getBarycenter();
 
-            Vector3D weightedPlus = plusBc.getVector()
-                    .multiply(plus.getSize());
-            Point2S computedBarycenter = Point2S.from(weightedMinus.add(weightedPlus));
+            Point2S computedBarycenter = Point2S.from(minus.getWeightedBarycenterVector()
+                    .add(plus.getWeightedBarycenterVector()));
 
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
-            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, BARYCENTER_EPS);
+            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, TEST_EPS);
         }
     }
 }
