@@ -51,10 +51,8 @@ RegionBSPTree3D region = RegionBSPTree3D.from(
         Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
 
 // create a rotated copy of the region
-Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);
-
 RegionBSPTree3D copy = region.copy();
-copy.transform(rotation);
+copy.transform(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI));
 
 // compute the intersection of the regions, storing the result back into the caller
 // (the result could also have been placed into a third region)

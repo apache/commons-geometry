@@ -65,10 +65,8 @@ public final class Transform2S implements Transform<Point2S> {
         return euclideanTransform.preservesOrientation();
     }
 
-    /** Return a new instance representing the inverse transform operation
-     * of this instance.
-     * @return a transform representing the inverse of this instance
-     */
+    /** {@inheritDoc} */
+    @Override
     public Transform2S inverse() {
         return new Transform2S(euclideanTransform.inverse());
     }

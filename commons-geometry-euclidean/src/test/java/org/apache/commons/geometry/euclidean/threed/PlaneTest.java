@@ -657,7 +657,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(v -> Vector3D.of(-v.getX(), v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -672,7 +672,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(v -> Vector3D.of(-v.getX(), -v.getY(), v.getZ()));
 
         // act
         Plane result = plane.transform(transform);
@@ -687,7 +687,7 @@ public class PlaneTest {
         Vector3D pt = Vector3D.of(0, 0, 1);
         Plane plane = Plane.fromPointAndPlaneVectors(pt, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(Vector3D::negate);
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(Vector3D::negate);
 
         // act
         Plane result = plane.transform(transform);

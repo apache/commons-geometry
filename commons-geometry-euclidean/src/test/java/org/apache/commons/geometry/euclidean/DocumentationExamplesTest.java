@@ -33,7 +33,6 @@ import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
-import org.apache.commons.geometry.euclidean.threed.Transform3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
@@ -43,7 +42,6 @@ import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
-import org.apache.commons.geometry.euclidean.twod.Transform2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shapes.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -68,10 +66,8 @@ public class DocumentationExamplesTest {
                 Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
 
         // create a rotated copy of the region
-        Transform3D rotation = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI);
-
         RegionBSPTree3D copy = region.copy();
-        copy.transform(rotation);
+        copy.transform(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z, 0.25 * Math.PI));
 
         // compute the intersection of the regions, storing the result back into the caller
         // (the result could also have been placed into a third region)
@@ -290,8 +286,7 @@ public class DocumentationExamplesTest {
         RegionBSPTree2D copy = tree.copy();
 
         // translate the copy
-        Vector2D translation = Vector2D.of(0.5, 0.5);
-        copy.transform(Transform2D.from(v -> v.add(translation)));
+        copy.transform(AffineTransformMatrix2D.createTranslation(Vector2D.of(0.5, 0.5)));
 
         // compute the union of the regions, storing the result back into the
         // first tree

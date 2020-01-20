@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Maximize;
 import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Minimize;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 

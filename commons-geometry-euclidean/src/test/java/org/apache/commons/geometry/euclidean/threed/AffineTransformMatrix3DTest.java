@@ -16,6 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils.PermuteCallback3D;
@@ -89,6 +91,39 @@ public class AffineTransformMatrix3DTest {
             2, 5, 8, 11,
             3, 6, 9, 12
         }, transform.toArray(), 0.0);
+    }
+
+    @Test
+    public void testFrom() {
+        // act/assert
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0
+        }, AffineTransformMatrix3D.from(UnaryOperator.identity()).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            1, 0, 0, 2,
+            0, 1, 0, 3,
+            0, 0, 1, -4
+        }, AffineTransformMatrix3D.from(v -> v.add(Vector3D.of(2, 3, -4))).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 0, 0,
+            0, 3, 0, 0,
+            0, 0, 3, 0
+        }, AffineTransformMatrix3D.from(v -> v.multiply(3)).toArray(), EPS);
+        Assert.assertArrayEquals(new double[] {
+            3, 0, 0, 6,
+            0, 3, 0, 9,
+            0, 0, 3, 12
+        }, AffineTransformMatrix3D.from(v -> v.add(Vector3D.of(2, 3, 4)).multiply(3)).toArray(), EPS);
+    }
+
+    @Test
+    public void testFrom_invalidFunction() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix3D.from(v -> v.multiply(0));
+        }, IllegalArgumentException.class);
     }
 
     @Test
@@ -731,15 +766,6 @@ public class AffineTransformMatrix3DTest {
     }
 
     @Test
-    public void testToMatrix() {
-        // arrange
-        AffineTransformMatrix3D m = AffineTransformMatrix3D.createScale(3);
-
-        // act/assert
-        Assert.assertSame(m, m.toMatrix());
-    }
-
-    @Test
     public void testMultiply_combinesTransformOperations() {
         // arrange
         Vector3D translation1 = Vector3D.of(1, 2, 3);
@@ -948,49 +974,49 @@ public class AffineTransformMatrix3DTest {
                     0, 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is 0.0");
+        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is 0.0");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, Double.NaN, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, Double.NEGATIVE_INFINITY, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     Double.POSITIVE_INFINITY, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; matrix determinant is NaN");
+        }, IllegalStateException.class, "Matrix is not invertible; matrix determinant is NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, Double.NaN,
                     0, 1, 0, 0,
                     0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: NaN");
+        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, Double.POSITIVE_INFINITY,
                     0, 0, 1, 0).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: Infinity");
+        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
             AffineTransformMatrix3D.of(
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, Double.NEGATIVE_INFINITY).inverse();
-        }, IllegalStateException.class, "Transform is not invertible; invalid matrix element: -Infinity");
+        }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: -Infinity");
     }
 
     @Test
