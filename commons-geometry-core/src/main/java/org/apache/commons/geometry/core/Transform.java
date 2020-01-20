@@ -18,31 +18,40 @@ package org.apache.commons.geometry.core;
 
 import java.util.function.UnaryOperator;
 
-/** This interface represents <em>inversible affine transforms</em> in a space. Common examples of this type of
- * transform in Euclidean space include scalings, translations, and rotations.
+/** Interface representing geometric transforms in a space, i.e. mappings from points to points.
+ * Implementations <em>must</em> fulfill a set of requirements, listed below, that preserve the
+ * consistency of partitionings on the space. Transforms that do not meet these requirements, while
+ * potentially valid mathematically, cannot be expected to produce correct results with algorithms
+ * that use this interface.
  *
- * <h2>Implementation Note</h2>
- * <p>Implementations are responsible for ensuring that they meet the geometric
- * requirements for this interface. These requirements are:
  * <ol>
- *      <li>The transform must be <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a>.
- *      In basic terms, this means that the transform must retain the "straightness" and "parallelness" of
- *      lines and planes (or whatever is an equivalent concept for the space). For example, a translation or
- *      rotation in Euclidean 3D space meets this requirement because all lines that are parallel before the
- *      transform remain parallel afterwards. However, a projective transform that causes previously parallel
- *      lines to meet at a single point does not.
- *      </li>
- *      <li>The transform must be <em>inversible</em>. An inverse transform must exist that will return
- *      the original point if given the transformed point. In other words, for a transform {@code t}, there
- *      must exist an inverse {@code inv} such that {@code inv.apply(t.apply(pt))} returns a point equal to
- *      the input point {@code pt}.
+ *      <li>Transforms must represent functions that are <em>one-to-one</em> and <em>onto</em> (i.e.
+ *      <a href="https://en.wikipedia.org/wiki/Bijection">bijections</a>). This means that every point
+ *      in the space must be mapped to exactly one other point in the space. This also implies that the
+ *      function is invertible.</li>
+ *      <li>Transforms must preserve <a href="https://en.wikipedia.org/wiki/Collinearity">collinearity</a>.
+ *      This means that if a set of points lie on a common hyperplane before the transform, then they must
+ *      also lie on a common hyperplane after the transform. For example, if the Euclidean 2D points {@code a},
+ *      {@code b}, and {@code c} lie on line {@code L}, then the transformed points {@code a'}, {@code b'}, and
+ *      {@code c'} must lie on line {@code L'}, where {@code L'} is the transformed form of the line.</li>
+ *      <li>Transforms must preserve the concept of
+ *      <a href="https://en.wikipedia.org/wiki/Parallel_(geometry)">parallelism</a> defined for the space.
+ *      This means that hyperplanes that are parallel before the transformation must remain parallel afterwards,
+ *      and hyperplanes that intersect must also intersect afterwards. For example, a transform that causes parallel
+ *      lines to converge to a single point in Euclidean space (such as the projective transforms used to create
+ *      perspective viewpoints in 3D graphics) would not meet this requirement. However, a transform that turns
+ *      a square into a rhombus with no right angles would fulfill the requirement, since the two pairs of parallel
+ *      lines forming the square remain parallel after the transformation.
  *      </li>
  * </ol>
- * Implementations that do not meet these requirements cannot be expected to produce correct results in
- * algorithms that use this interface.
+ *
+ * <p>Transforms that meet the above requirements in Euclidean space (and other affine spaces) are known as
+ * <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine transforms</a>. Common affine transforms
+ * include translation, scaling, rotation, reflection, and any compositions thereof.
+ * </p>
  *
  * @param <P> Point implementation type
- * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Transformation</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Geometric_transformation">Geometric Transformation</a>
  */
 public interface Transform<P extends Point<P>> extends UnaryOperator<P> {
 

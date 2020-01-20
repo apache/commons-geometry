@@ -19,8 +19,8 @@ package org.apache.commons.geometry.euclidean;
 import org.apache.commons.geometry.core.Transform;
 
 /** Interface representing affine transforms in Euclidean space. An affine transform is one that preserves
- * points, straight lines, and planes. Common affine transforms include translations, rotations, scalings,
- * reflections and any compositions of the above.
+ * points, straight lines, planes, and sets of parallel lines. Common affine transforms include translation,
+ * rotation, scaling, reflection and any compositions thereof.
  *
  * @param <V> Vector implementation type
  * @see <a href="https://en.wikipedia.org/wiki/Affine_transformation">Affine Transformation</a>

@@ -197,27 +197,40 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Transform.html">Transform</a>
           interface. Useful implementations of this interface exist for each supported space
           and dimension, so users should not need to implement their own. However, it is important to know that
-          all implementations (and instances) of this interface <em>must</em> meet the following requirements:
+          all implementations of this interface <em>must</em> meet the requirements listed below. Transforms that do
+          not meet these requirements cannot be expected to produce correct results in algorithms that use this
+          interface.
         </p>
         <ol>
           <li>
-            The transform must be <strong><a href="https://en.wikipedia.org/wiki/Affine_transformation">affine</a></strong>.
-            In basic terms, this means that the transform must retain the "straightness" and "parallelness" of
-            lines and planes (or whatever is an equivalent concept for the space). For example, a translation or
-            rotation in Euclidean 3D space meets this requirement because all lines that are parallel before the
-            transform remain parallel afterwards. However, a projective transform that causes previously parallel
-            lines to meet at a single point does not.
+            Transforms must represent functions that are <em>one-to-one</em> and <em>onto</em>
+            (i.e. <a href="https://en.wikipedia.org/wiki/Bijection">bijections</a>). This means that every point
+            in the space must be mapped to exactly one other point in the space. This also implies that the function
+            is invertible.
           </li>
           <li>
-            The transform must be <strong>inversible</strong>. An inverse transform must exist that will return
-            the original point if given the transformed point. In other words, for a transform <var>t</var>, there
-            must exist an inverse <var>inv</var> such that <var>inv.apply(t.apply(pt))</var> returns a point equal to
-            the input point <var>pt</var>.
+            Transforms must preserve <a href="https://en.wikipedia.org/wiki/Collinearity">collinearity</a>. This
+            means that if a set of points lie on a common hyperplane before the transform, then they must also lie
+            on a common hyperplane after the transform. For example, if the Euclidean 2D points <var>a</var>,
+            <var>b</var>, and <var>c</var> lie on line <var>L</var>, then the transformed points <var>a'</var>,
+            <var>b'</var>, and <var>c'</var> must lie on line <var>L'</var>, where <var>L'</var> is the transformed
+            form of the line.
+          </li>
+          <li>
+            Transforms must preserve the concept of
+            <a href="https://en.wikipedia.org/wiki/Parallel_(geometry)">parallelism</a> defined for the space.
+            This means that hyperplanes that are parallel before the transformation must remain parallel afterwards,
+            and hyperplanes that intersect must also intersect afterwards. For example, a transform that causes
+            parallel lines to converge to a single point in Euclidean space (such as the projective transforms used to
+            create perspective viewpoints in 3D graphics) would not meet this requirement. However, a transform that
+            turns a square into a rhombus with no right angles would fulfill the requirement, since the two pairs of
+            parallel lines forming the square remain parallel after the transformation.
           </li>
         </ol>
         <p>
-          Transforms that do not meet these requirements cannot be expected to produce correct results in
-          algorithms that use this interface.
+          Transforms that meet the above requirements in Euclidean space (and other affine spaces) are known as
+          <a href="https://en.wikipedia.org/wiki/Affine_transformation">affine transforms</a> and include such common
+          operations as translation, rotation, reflection, scaling, and any combinations thereof.
         </p>
       </subsection>
 
