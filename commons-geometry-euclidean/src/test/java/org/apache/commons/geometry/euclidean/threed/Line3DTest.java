@@ -103,7 +103,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(v.getX(), v.getY(), -v.getZ()));
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(v -> Vector3D.of(v.getX(), v.getY(), -v.getZ()));
 
         // act
         Line3D result = line.transform(transform);
@@ -118,7 +118,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ()));
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(v -> Vector3D.of(v.getX(), -v.getY(), -v.getZ()));
 
         // act
         Line3D result = line.transform(transform);
@@ -133,7 +133,7 @@ public class Line3DTest {
         // arrange
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION);
 
-        Transform3D transform = FunctionTransform3D.from(Vector3D::negate);
+        AffineTransformMatrix3D transform = AffineTransformMatrix3D.from(Vector3D::negate);
 
         // act
         Line3D result = line.transform(transform);

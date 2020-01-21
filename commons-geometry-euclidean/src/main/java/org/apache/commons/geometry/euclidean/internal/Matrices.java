@@ -59,4 +59,43 @@ public final class Matrices {
         return ((a00 * a11 * a22) + (a01 * a12 * a20) + (a02 * a10 * a21)) -
                 ((a00 * a12 * a21) + (a01 * a10 * a22) + (a02 * a11 * a20));
     }
+
+    /** Check that the given determinant is valid for use in calculating a matrix
+     * inverse. An {@link IllegalStateException} is thrown if the determinant is
+     * NaN, infinite, or zero.
+     * @param det the determinant to check
+     * @return the checked determinant
+     * @throws IllegalStateException if the matrix determinant value is NaN, infinite,
+     *      or zero
+     */
+    public static double checkDeterminantForInverse(double det) {
+        if (!Vectors.isRealNonZero(det)) {
+            throw nonInvertibleTransform("matrix determinant is " + det);
+        }
+        return det;
+    }
+
+    /** Check that the given matrix element is valid for use in calculation of
+     * a matrix inverse, throwing an {@link IllegalStateException} if not.
+     * @param element matrix entry to check
+     * @return the checked element
+     * @throws IllegalStateException if the element is not valid for use
+     *      in calculating a matrix inverse, ie if it is NaN or infinite.
+     */
+    public static double checkElementForInverse(final double element) {
+        if (!Double.isFinite(element)) {
+            throw nonInvertibleTransform("invalid matrix element: " + element);
+        }
+
+        return element;
+    }
+
+    /** Create an exception indicating that a matrix is not able to be inverted.
+     * @param msg message containing the specific reason that the matrix cannot
+     *      be inverted
+     * @return IllegalStateException containing the given error message
+     */
+    private static IllegalStateException nonInvertibleTransform(final String msg) {
+        return new IllegalStateException("Matrix is not invertible; " + msg);
+    }
 }

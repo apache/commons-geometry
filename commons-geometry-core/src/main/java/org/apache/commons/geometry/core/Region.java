@@ -49,8 +49,9 @@ public interface Region<P extends Point<P>> {
      */
     double getBoundarySize();
 
-    /** Get the barycenter of the region or null if no single, unique barycenter exists.
-     * A barycenter will not exist for empty or infinite regions.
+    /** Get the barycenter of the region or null if no barycenter exists or
+     * one exists but is not unique. A barycenter will not exist for empty or
+     * infinite regions.
      * @return the barycenter of the region or null if none exists
      */
     P getBarycenter();

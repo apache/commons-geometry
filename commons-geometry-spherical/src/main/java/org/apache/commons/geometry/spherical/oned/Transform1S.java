@@ -130,10 +130,8 @@ public final class Transform1S implements Transform<Point1S> {
         return multiply(other, this);
     }
 
-    /** Return a transform that is the inverse of the current instance. The returned transform
-     * will undo changes applied by this instance.
-     * @return a transform that is the inverse of the current instance
-     */
+    /** {@inheritDoc} */
+    @Override
     public Transform1S inverse() {
         final double invScale = 1.0 / scale;
 

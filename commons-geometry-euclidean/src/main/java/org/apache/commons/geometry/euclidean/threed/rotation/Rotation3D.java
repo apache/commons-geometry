@@ -16,13 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
-import org.apache.commons.geometry.euclidean.threed.Transform3D;
+import org.apache.commons.geometry.euclidean.EuclideanTransform;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Interface representing a generic rotation in 3-dimensional Euclidean
  * space.
  */
-public interface Rotation3D extends Transform3D {
+public interface Rotation3D extends EuclideanTransform<Vector3D> {
 
     /** Apply this rotation to the given argument. Since rotations do
      * not affect vector magnitudes, this method can be applied to
@@ -32,6 +32,12 @@ public interface Rotation3D extends Transform3D {
      */
     @Override
     Vector3D apply(Vector3D vec);
+
+    /** Get the inverse rotation.
+     * @return the inverse rotation.
+     */
+    @Override
+    Rotation3D inverse();
 
     /** Get the axis of rotation as a normalized {@link Vector3D}.
      *
@@ -53,9 +59,4 @@ public interface Rotation3D extends Transform3D {
      * @see #getAxis()
      */
     double getAngle();
-
-    /** Get the inverse rotation.
-     * @return the inverse rotation.
-     */
-    Rotation3D inverse();
 }

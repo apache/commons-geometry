@@ -104,7 +104,7 @@ public class ConvexAreaTest {
     @Test
     public void testTransform_full() {
         // arrange
-        Transform2D transform = FunctionTransform2D.from(v -> v.multiply(3));
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createScale(3);
         ConvexArea area = ConvexArea.full();
 
         // act
