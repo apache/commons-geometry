@@ -42,17 +42,17 @@ public class BoundarySourceLinecaster3DTest {
 
         // no intersections
         LinecastChecker3D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0, 4, 4), Vector3D.Unit.MINUS_X, TEST_PRECISION));
 
         // through center; two directions
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
             .and(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .and(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.MINUS_X, TEST_PRECISION));
     }
@@ -64,7 +64,7 @@ public class BoundarySourceLinecaster3DTest {
 
         // act/assert
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
+            .expect(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Z)
             .and(Vector3D.of(0, 1, 1), Vector3D.Unit.PLUS_Z)
             .and(Vector3D.of(0, 1, 1), Vector3D.Unit.PLUS_Y)
@@ -80,14 +80,14 @@ public class BoundarySourceLinecaster3DTest {
 
         // through single corner vertex
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
+            .expect(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.of(1, -1, -1), TEST_PRECISION));
 
         // through two corner vertices
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Z)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
@@ -107,7 +107,7 @@ public class BoundarySourceLinecaster3DTest {
 
         // act/assert
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
+            .expect(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(-1, 0.5, 1), Vector3D.of(1, 0, -1), TEST_PRECISION));
     }
 
@@ -120,25 +120,25 @@ public class BoundarySourceLinecaster3DTest {
 
         // no intersections; underlying line does not intersect
         LinecastChecker3D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0, 4, 4), Vector3D.Unit.MINUS_X, TEST_PRECISION)
                     .segment(-10, 10));
 
         // no intersections; underlying line does intersect
         LinecastChecker3D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION)
                     .segment(2, 10));
 
         // no boundaries excluded; two directions
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
             .and(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION)
                     .segment(-10, 10));
 
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .and(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
             .whenGiven(Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.MINUS_X, TEST_PRECISION)
                     .segment(-10, 10));
@@ -152,12 +152,12 @@ public class BoundarySourceLinecaster3DTest {
         // act/assert
         Vector3D center = Vector3D.of(0.5, 0.5, 0.5);
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(center, Vector3D.Unit.PLUS_X, TEST_PRECISION)
                     .segmentFrom(center));
 
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(center, Vector3D.Unit.MINUS_X, TEST_PRECISION)
                     .segmentTo(center));
     }
@@ -169,7 +169,7 @@ public class BoundarySourceLinecaster3DTest {
 
         // act/assert
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .and(Vector3D.of(0, 0.5, 0.5), Vector3D.Unit.MINUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(1, 0.5, 0.5), Vector3D.of(0, 0.5, 0.5), TEST_PRECISION));
     }
@@ -183,18 +183,18 @@ public class BoundarySourceLinecaster3DTest {
 
         // includes two intersecting boundaries
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(0, 1, 0), Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.of(0, 1, 0), Vector3D.Unit.MINUS_X)
             .and(Vector3D.of(1, 1, 0), Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(-1, 1, 0), Vector3D.of(2, 1, 0), TEST_PRECISION));
 
         // one intersecting boundary
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(1, 1, 0), Vector3D.Unit.PLUS_X)
+            .expect(Vector3D.of(1, 1, 0), Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.25, 1, 0), Vector3D.of(2, 1, 0), TEST_PRECISION));
 
         // no intersecting boundary
         LinecastChecker3D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.25, 1, 0), Vector3D.of(0.75, 1, 0), TEST_PRECISION));
     }
 
@@ -209,21 +209,21 @@ public class BoundarySourceLinecaster3DTest {
 
         // through corner
         LinecastChecker3D.with(linecaster)
-            .returns(corner, Vector3D.Unit.PLUS_Z)
+            .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(2, 2, 2), TEST_PRECISION));
 
         // starts on corner
         LinecastChecker3D.with(linecaster)
-            .returns(corner, Vector3D.Unit.PLUS_Z)
+            .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(corner, Vector3D.of(2, 0, 2), TEST_PRECISION));
 
         // ends on corner
         LinecastChecker3D.with(linecaster)
-            .returns(corner, Vector3D.Unit.PLUS_Z)
+            .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0, 2, 2), corner, TEST_PRECISION));
@@ -240,7 +240,7 @@ public class BoundarySourceLinecaster3DTest {
 
         // act/assert
         LinecastChecker3D.with(linecaster)
-            .returns(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
+            .expect(Vector3D.of(0, 0.5, 0), Vector3D.Unit.PLUS_Z)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(-1, 0.5, 1), Vector3D.of(1, 0.5, -1), TEST_PRECISION));
     }
 }

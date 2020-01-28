@@ -308,11 +308,11 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -323,11 +323,11 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -338,13 +338,13 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
 
         Vector3D corner = Vector3D.of(1, 1, 1);
 
         LinecastChecker3D.with(tree)
-            .returns(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Z)
@@ -353,7 +353,7 @@ public class RegionBSPTree3DTest {
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
-            .returns(corner, Vector3D.Unit.PLUS_Z)
+            .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
@@ -368,13 +368,13 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastChecker3D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
 
         Vector3D corner = Vector3D.of(1, 1, 1);
 
         LinecastChecker3D.with(tree)
-            .returns(Vector3D.ZERO, Vector3D.Unit.PLUS_Z)
+            .expect(Vector3D.ZERO, Vector3D.Unit.PLUS_Z)
             .and(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
             .and(Vector3D.ZERO, Vector3D.Unit.PLUS_X)
             .and(corner, Vector3D.Unit.MINUS_X)
@@ -383,7 +383,7 @@ public class RegionBSPTree3DTest {
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
-            .returns(corner, Vector3D.Unit.MINUS_X)
+            .expect(corner, Vector3D.Unit.MINUS_X)
             .and(corner, Vector3D.Unit.MINUS_Y)
             .and(corner, Vector3D.Unit.MINUS_Z)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
@@ -414,7 +414,7 @@ public class RegionBSPTree3DTest {
         Vector3D corner = Vector3D.of(1.5, 1.5, 1.5);
 
         LinecastChecker3D.with(tree)
-            .returns(corner, Vector3D.Unit.PLUS_Z)
+            .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.25, 0.25, 0.25), Vector3D.of(2, 2, 2), TEST_PRECISION));
@@ -429,11 +429,11 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         LinecastChecker3D.with(tree)
-            .returns(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
+            .expect(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
             .whenGiven(Line3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
-        .returns(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
+        .expect(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
     }
 

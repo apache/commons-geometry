@@ -222,11 +222,11 @@ public class ConvexVolumeTest {
 
         // act/assert
         LinecastChecker3D.with(volume)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(volume)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -237,11 +237,11 @@ public class ConvexVolumeTest {
 
         // act/assert
         LinecastChecker3D.with(volume)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 5, 5), TEST_PRECISION));
 
         LinecastChecker3D.with(volume)
-            .returns(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
+            .expect(Vector3D.ZERO, Vector3D.Unit.MINUS_X)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Y)
             .and(Vector3D.ZERO, Vector3D.Unit.MINUS_Z)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
@@ -250,7 +250,7 @@ public class ConvexVolumeTest {
             .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION));
 
         LinecastChecker3D.with(volume)
-            .returns(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
+            .expect(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y)
             .and(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X)
             .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1, 1, 1), TEST_PRECISION));

@@ -51,7 +51,7 @@ class LinecastChecker3D {
      * or {@link #whenGiven(Segment)}.
      * @return
      */
-    public LinecastChecker3D returnsNothing() {
+    public LinecastChecker3D expectNothing() {
         expectedResults.clear();
 
         return this;
@@ -64,7 +64,7 @@ class LinecastChecker3D {
      * @param normal
      * @return
      */
-    public LinecastChecker3D returns(final Vector3D point, final Vector3D normal) {
+    public LinecastChecker3D expect(final Vector3D point, final Vector3D normal) {
         expectedResults.add(new ExpectedResult(point, normal));
 
         return this;
@@ -76,7 +76,7 @@ class LinecastChecker3D {
      * @return
      */
     public LinecastChecker3D and(final Vector3D point, final Vector3D normal) {
-        return returns(point, normal);
+        return expect(point, normal);
     }
 
     /** Perform {@link Linecastable2D#linecast(Line)} and {@link Linecastable2D#linecastFirst(Line)}

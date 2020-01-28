@@ -1010,11 +1010,11 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment.fromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -1025,11 +1025,11 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment.fromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -1041,18 +1041,18 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
             .and(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
     }
@@ -1067,18 +1067,18 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.ZERO, Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.ZERO, Vector2D.Unit.PLUS_Y)
             .and(Vector2D.ZERO, Vector2D.Unit.PLUS_X)
             .and(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 1), Vector2D.Unit.MINUS_Y)
             .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 1), Vector2D.Unit.MINUS_Y)
             .whenGiven(Segment.fromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
     }
@@ -1109,7 +1109,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.of(1.5, 1.5), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1.5, 1.5), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1.5, 1.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0.25, 0.25), Vector2D.of(2, 2), TEST_PRECISION));
     }
@@ -1123,11 +1123,11 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
+            .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .whenGiven(Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(-1, -1), TEST_PRECISION));
 
         LinecastChecker2D.with(tree)
-            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
+            .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .whenGiven(Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(-1, -1), TEST_PRECISION));
     }
 

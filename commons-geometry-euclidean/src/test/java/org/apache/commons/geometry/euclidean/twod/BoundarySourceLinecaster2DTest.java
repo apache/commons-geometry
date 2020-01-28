@@ -40,17 +40,17 @@ public class BoundarySourceLinecaster2DTest {
 
         // no intersections
         LinecastChecker2D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0, 4), Vector2D.Unit.MINUS_X, TEST_PRECISION));
 
         // through center; two directions
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0.5, 0.5), Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .and(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0.5, 0.5), Vector2D.Unit.MINUS_X, TEST_PRECISION));
     }
@@ -62,7 +62,7 @@ public class BoundarySourceLinecaster2DTest {
 
         // act/assert
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(0, 1), Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.of(0, 1), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
@@ -76,13 +76,13 @@ public class BoundarySourceLinecaster2DTest {
 
         // through single corner vertex
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(1, -1), TEST_PRECISION));
 
         // through two corner vertices
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
             .and(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
@@ -100,7 +100,7 @@ public class BoundarySourceLinecaster2DTest {
 
         // act/assert
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
+            .expect(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
             .whenGiven(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 
@@ -113,25 +113,25 @@ public class BoundarySourceLinecaster2DTest {
 
         // no intersections; underlying line does not intersect
         LinecastChecker2D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0, 4), Vector2D.Unit.MINUS_X, TEST_PRECISION)
                     .segment(-10, 10));
 
         // no intersections; underlying line does intersect
         LinecastChecker2D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0.5, 0.5), Vector2D.Unit.PLUS_X, TEST_PRECISION)
                     .segment(2, 10));
 
         // no boundaries excluded; two directions
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0.5, 0.5), Vector2D.Unit.PLUS_X, TEST_PRECISION)
                     .segment(-10, 10));
 
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .and(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
             .whenGiven(Line.fromPointAndDirection(Vector2D.of(0.5, 0.5), Vector2D.Unit.MINUS_X, TEST_PRECISION)
                     .segment(-10, 10));
@@ -145,12 +145,12 @@ public class BoundarySourceLinecaster2DTest {
         // act/assert
         Vector2D center = Vector2D.of(0.5, 0.5);
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(center, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                     .segmentFrom(center));
 
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(center, Vector2D.Unit.MINUS_X, TEST_PRECISION)
                     .segmentTo(center));
     }
@@ -162,7 +162,7 @@ public class BoundarySourceLinecaster2DTest {
 
         // act/assert
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .and(Vector2D.of(0, 0.5), Vector2D.Unit.MINUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(0, 0.5), TEST_PRECISION));
     }
@@ -176,18 +176,18 @@ public class BoundarySourceLinecaster2DTest {
 
         // includes two intersecting boundaries
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(0, 1), Vector2D.Unit.MINUS_X)
+            .expect(Vector2D.of(0, 1), Vector2D.Unit.MINUS_X)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(-1, 1), Vector2D.of(2, 1), TEST_PRECISION));
 
         // one intersecting boundary
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0.25, 1), Vector2D.of(2, 1), TEST_PRECISION));
 
         // no intersecting boundary
         LinecastChecker2D.with(linecaster)
-            .returnsNothing()
+            .expectNothing()
             .whenGiven(Segment.fromPoints(Vector2D.of(0.25, 1), Vector2D.of(0.75, 1), TEST_PRECISION));
     }
 
@@ -200,19 +200,19 @@ public class BoundarySourceLinecaster2DTest {
 
         // through corner
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION));
 
         // starts on corner
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 0), TEST_PRECISION));
 
         // ends on corner
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
+            .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
             .whenGiven(Segment.fromPoints(Vector2D.of(0, 2), Vector2D.of(1, 1), TEST_PRECISION));
     }
@@ -228,7 +228,7 @@ public class BoundarySourceLinecaster2DTest {
 
         // act/assert
         LinecastChecker2D.with(linecaster)
-            .returns(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
+            .expect(Vector2D.ZERO, Vector2D.Unit.from(1, -1))
             .whenGiven(Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 }
