@@ -23,7 +23,7 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
+/** Class implementing Emo Welzl's algorithm to find the smallest enclosing ball in linear time.
  * <p>
  * The class implements the algorithm described in paper <a
  * href="http://www.inf.ethz.ch/personal/emo/PublFiles/SmallEnclDisk_LNCS555_91.pdf">Smallest
@@ -43,16 +43,16 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
 
-    /** Generator for balls on support. */
+    /** Object used to generate balls from support points. */
     private final SupportBallGenerator<P> generator;
 
     /** Simple constructor.
-     * @param precision precision context used to compare floating point values
      * @param generator generator for balls on support
+     * @param precision precision context used to compare floating point values
      */
-    public WelzlEncloser(final DoublePrecisionContext precision, final SupportBallGenerator<P> generator) {
-        this.precision = precision;
+    public WelzlEncloser(final SupportBallGenerator<P> generator, final DoublePrecisionContext precision) {
         this.generator = generator;
+        this.precision = precision;
     }
 
     /** {@inheritDoc} */
@@ -60,13 +60,11 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
     public EnclosingBall<P> enclose(final Iterable<P> points) {
 
         if (points == null || !points.iterator().hasNext()) {
-            // return an empty ball
-            return generator.ballOnSupport(new ArrayList<P>());
+            throw new IllegalArgumentException("Unable to generate enclosing ball: no points given");
         }
 
         // Emo Welzl algorithm with Bernd Gärtner and Linus Källberg improvements
         return pivotingBall(points);
-
     }
 
     /** Compute enclosing ball using Gärtner's pivoting heuristic.
@@ -88,7 +86,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             // select the point farthest to current ball
             final P farthest = selectFarthest(points, ball);
 
-            if (ball.contains(farthest, precision.getMaxZero())) {
+            if (ball.contains(farthest, precision)) {
                 // we have found a ball containing all points
                 return ball;
             }
@@ -98,7 +96,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             support.add(farthest);
             EnclosingBall<P> savedBall = ball;
             ball = moveToFrontBall(extreme, extreme.size(), support);
-            if (this.precision.lt(ball.getRadius(), savedBall.getRadius())) {
+            if (precision.lt(ball.getRadius(), savedBall.getRadius())) {
                 // this should never happen
                 throw new GeometryInternalError();
             }
@@ -109,8 +107,6 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
             // prune the least interesting points
             extreme.subList(ball.getSupportSize(), extreme.size()).clear();
-
-
         }
     }
 
@@ -122,7 +118,6 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
      */
     private EnclosingBall<P> moveToFrontBall(final List<P> extreme, final int nbExtreme,
                                                 final List<P> support) {
-
         // create a new ball on the prescribed support
         EnclosingBall<P> ball = generator.ballOnSupport(support);
 
@@ -130,7 +125,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
 
             for (int i = 0; i < nbExtreme; ++i) {
                 final P pi = extreme.get(i);
-                if (!ball.contains(pi, precision.getMaxZero())) {
+                if (!ball.contains(pi, precision)) {
 
                     // we have found an outside point,
                     // enlarge the ball by adding it to the support
@@ -144,14 +139,11 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
                         extreme.set(j, extreme.get(j - 1));
                     }
                     extreme.set(0, pi);
-
                 }
             }
-
         }
 
         return ball;
-
     }
 
     /** Select the point farthest to the current ball.
@@ -159,7 +151,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
      * @param ball current ball
      * @return farthest point
      */
-    public P selectFarthest(final Iterable<P> points, final EnclosingBall<P> ball) {
+    private P selectFarthest(final Iterable<P> points, final EnclosingBall<P> ball) {
 
         final P center = ball.getCenter();
         P farthest   = null;
@@ -174,7 +166,5 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
         }
 
         return farthest;
-
     }
-
 }

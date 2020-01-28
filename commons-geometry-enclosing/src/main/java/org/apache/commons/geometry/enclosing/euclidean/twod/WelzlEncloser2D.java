@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.hull;
+package org.apache.commons.geometry.enclosing.euclidean.twod;
 
-import java.util.Collection;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.enclosing.WelzlEncloser;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-import org.apache.commons.geometry.core.Point;
-
-/**
- * Interface for convex hull generators.
- *
- * @param <P> Type of the {@link Point}
- *
- * @see <a href="http://en.wikipedia.org/wiki/Convex_hull">Convex Hull (Wikipedia)</a>
- * @see <a href="http://mathworld.wolfram.com/ConvexHull.html">Convex Hull (MathWorld)</a>
+/** Extension of the {@link WelzlEncloser} class for Euclidean 2D space. This is
+ * primarily a convenience class to simplify instantiation.
  */
-public interface ConvexHullGenerator<P extends Point<P>> {
-    /**
-     * Build a convex hull from the set of input points.
-     *
-     * @param points the set of input points
-     * @return the convex hull
-     * @throws IllegalStateException if generator fails to generate a convex hull for
-     *      the given set of input points
+public class WelzlEncloser2D extends WelzlEncloser<Vector2D> {
+
+    /** Construct a new instance with the given precision context. A new {@link DiskGenerator}
+     * instance is used as the support ball generator.
+     * @param precision precision context to use for floating point comparisons.
      */
-    ConvexHull<P> generate(Collection<P> points);
+    public WelzlEncloser2D(final DoublePrecisionContext precision) {
+        super(new DiskGenerator(), precision);
+    }
 }

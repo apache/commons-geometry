@@ -16,144 +16,91 @@
  */
 package org.apache.commons.geometry.hull.euclidean.twod;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.Line;
-import org.apache.commons.geometry.euclidean.twod.Segment;
+import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.hull.ConvexHull;
-import org.apache.commons.numbers.arrays.LinearCombination;
 
 /**
- * This class represents a convex hull in an two-dimensional Euclidean space.
+ * This class represents a convex hull in two-dimensional Euclidean space.
  */
-public class ConvexHull2D implements ConvexHull<Vector2D> {
-    /** Vertices of the hull. */
-    private final Vector2D[] vertices;
+public final class ConvexHull2D implements ConvexHull<Vector2D> {
 
-    /** Precision context used to compare floating point numbers. */
-    private final DoublePrecisionContext precision;
+    /** Vertices for the convex hull, in order. */
+    private final List<Vector2D> vertices;
 
-    /**
-     * Line segments of the hull.
-     * The array is not serialized and will be created from the vertices on first access.
-     */
-    private Segment[] lineSegments;
+    /** Polyline path for the convex hull. */
+    private final Polyline path;
 
-    /**
-     * Simple constructor.
-     * @param vertices the vertices of the convex hull, must be ordered
+    /** Simple constructor; no validation is performed.
+     * @param vertices the vertices of the convex hull; callers are responsible for ensuring that
+     *      the given vertices are in order, unique, and define a convex hull.
      * @param precision precision context used to compare floating point numbers
-     * @throws IllegalArgumentException if the vertices do not form a convex hull
      */
-    public ConvexHull2D(final Vector2D[] vertices, final DoublePrecisionContext precision) {
-        this.precision = precision;
-
-        if (!isConvex(vertices)) {
-            throw new IllegalArgumentException("Vertices do not form a convex hull in CCW winding");
-        }
-
-        this.vertices = vertices.clone();
-    }
-
-    /**
-     * Checks whether the given hull vertices form a convex hull.
-     * @param hullVertices the hull vertices
-     * @return {@code true} if the vertices form a convex hull, {@code false} otherwise
-     */
-    private boolean isConvex(final Vector2D[] hullVertices) {
-        if (hullVertices.length < 3) {
-            return true;
-        }
-
-        int sign = 0;
-        for (int i = 0; i < hullVertices.length; i++) {
-            final Vector2D p1 = hullVertices[i == 0 ? hullVertices.length - 1 : i - 1];
-            final Vector2D p2 = hullVertices[i];
-            final Vector2D p3 = hullVertices[i == hullVertices.length - 1 ? 0 : i + 1];
-
-            final Vector2D d1 = p2.subtract(p1);
-            final Vector2D d2 = p3.subtract(p2);
-
-            final double crossProduct = LinearCombination.value(d1.getX(), d2.getY(), -d1.getY(), d2.getX());
-            final int cmp = precision.compare(crossProduct, 0.0);
-            // in case of collinear points the cross product will be zero
-            if (cmp != 0.0) {
-                if (sign != 0.0 && cmp != sign) {
-                    return false;
-                }
-                sign = cmp;
-            }
-        }
-
-        return true;
+    ConvexHull2D(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+        this.vertices = Collections.unmodifiableList(new ArrayList<>(vertices));
+        this.path = buildHullPath(vertices, precision);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D[] getVertices() {
-        return vertices.clone();
+    public List<Vector2D> getVertices() {
+        return vertices;
     }
 
-    /**
-     * Get the line segments of the convex hull, ordered.
-     * @return the line segments of the convex hull
+    /** Get a path defining the convex hull. The path will contain
+     * <ul>
+     *      <li>zero segments if the hull consists of only a single point,</li>
+     *      <li>one segment if the hull consists of two points,</li>
+     *      <li>three or more segments defining a closed loop if the hull consists of more than
+     *          two non-collinear points.</li>
+     * </ul>
+     * @return polyline path defining the convex hull
      */
-    public Segment[] getLineSegments() {
-        return retrieveLineSegments().clone();
-    }
-
-    /**
-     * Retrieve the line segments from the cached array or create them if needed.
-     *
-     * @return the array of line segments
-     */
-    private Segment[] retrieveLineSegments() {
-        if (lineSegments == null) {
-            // construct the line segments - handle special cases of 1 or 2 points
-            final int size = vertices.length;
-            if (size <= 1) {
-                this.lineSegments = new Segment[0];
-            } else if (size == 2) {
-                this.lineSegments = new Segment[1];
-                final Vector2D p1 = vertices[0];
-                final Vector2D p2 = vertices[1];
-                this.lineSegments[0] = Segment.fromPoints(p1, p2, precision);
-            } else {
-                this.lineSegments = new Segment[size];
-                Vector2D firstPoint = null;
-                Vector2D lastPoint = null;
-                int index = 0;
-                for (Vector2D point : vertices) {
-                    if (lastPoint == null) {
-                        firstPoint = point;
-                        lastPoint = point;
-                    } else {
-                        this.lineSegments[index++] = Segment.fromPoints(lastPoint, point, precision);
-                        lastPoint = point;
-                    }
-                }
-                this.lineSegments[index] = Segment.fromPoints(lastPoint, firstPoint, precision);
-            }
-        }
-        return lineSegments;
+    public Polyline getPath() {
+        return path;
     }
 
     /** {@inheritDoc} */
     @Override
-    public ConvexArea createRegion() {
-        if (vertices.length < 3) {
-            throw new IllegalStateException("Region generation requires at least 3 vertices but found only " +
-                    vertices.length);
+    public ConvexArea getRegion() {
+        return path.isClosed() ?
+                ConvexArea.fromPath(path) :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[vertices= ")
+            .append(getVertices())
+            .append(']');
+
+        return sb.toString();
+    }
+
+    /** Build a polyline representing the path for a convex hull.
+     * @param vertices convex hull vertices
+     * @param precision precision context used to compare floating point values
+     * @return path for the convex hull defined by the given vertices
+     */
+    private static Polyline buildHullPath(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+        if (vertices.size() < 2) {
+            return Polyline.empty();
         }
 
-        List<Line> bounds = Arrays.asList(retrieveLineSegments()).stream()
-            .map(Segment::getLine).collect(Collectors.toList());
+        final boolean closeLoop = vertices.size() > 2;
 
-        return ConvexArea.fromBounds(bounds);
+        return Polyline.builder(precision)
+                .appendVertices(vertices)
+                .build(closeLoop);
     }
 }

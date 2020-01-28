@@ -38,31 +38,20 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * otherwise only the extreme points will be present. By default, collinear points are not added
  * as hull vertices.
  * <p>
- * The {@code tolerance} parameter (default: 1e-10) is used as epsilon criteria to determine
- * identical and collinear points.
  *
  * @see <a href="http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain">
  * Andrew's monotone chain algorithm (Wikibooks)</a>
  */
 public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
-    /**
-     * Create a new MonotoneChain instance.
+    /** Create a new instance that only includes extreme points as hull vertices.
+     * @param precision precision context used to compare floating point numbers
      */
-    public MonotoneChain() {
-        this(false);
+    public MonotoneChain(final DoublePrecisionContext precision) {
+        this(false, precision);
     }
 
-    /**
-     * Create a new MonotoneChain instance.
-     * @param includeCollinearPoints whether collinear points shall be added as hull vertices
-     */
-    public MonotoneChain(final boolean includeCollinearPoints) {
-        super(includeCollinearPoints);
-    }
-
-    /**
-     * Create a new MonotoneChain instance.
+    /** Create a new instance with the given parameters.
      * @param includeCollinearPoints whether collinear points shall be added as hull vertices
      * @param precision precision context used to compare floating point numbers
      */
@@ -81,11 +70,11 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
             final DoublePrecisionContext precision = getPrecision();
             // need to take the tolerance value into account, otherwise collinear points
             // will not be handled correctly when building the upper/lower hull
-            final int diff = precision.compare(o1.getX(), o2.getX());
-            if (diff == 0) {
+            final int cmp = precision.compare(o1.getX(), o2.getX());
+            if (cmp == 0) {
                 return precision.compare(o1.getY(), o2.getY());
             } else {
-                return diff;
+                return cmp;
             }
         });
 
@@ -132,7 +121,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         if (hull.size() == 1) {
             // ensure that we do not add an identical point
             final Vector2D p1 = hull.get(0);
-            if (precision.eqZero(p1.distance(point))) {
+            if (p1.eq(point, precision)) {
                 return;
             }
         }
@@ -171,5 +160,4 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
         }
         hull.add(point);
     }
-
 }

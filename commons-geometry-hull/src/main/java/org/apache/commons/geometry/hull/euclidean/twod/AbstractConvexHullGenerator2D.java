@@ -17,18 +17,15 @@
 package org.apache.commons.geometry.hull.euclidean.twod;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /**
  * Abstract base class for convex hull generators in the two-dimensional Euclidean space.
  */
 abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
-
-    /** Default epsilon value. */
-    private static final double DEFAULT_EPSILON = 1e-10;
 
     /** Precision context used to compare floating point numbers. */
     private final DoublePrecisionContext precision;
@@ -38,18 +35,6 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      * If {@code false}, only the extreme points are added to the hull.
      */
     private final boolean includeCollinearPoints;
-
-    /**
-     * Simple constructor.
-     * <p>
-     * The default epsilon (1e-10) will be used to determine identical points.
-     *
-     * @param includeCollinearPoints indicates if collinear points on the hull shall be
-     * added as hull vertices
-     */
-    protected AbstractConvexHullGenerator2D(final boolean includeCollinearPoints) {
-        this(includeCollinearPoints, new EpsilonDoublePrecisionContext(DEFAULT_EPSILON));
-    }
 
     /**
      * Simple constructor.
@@ -90,13 +75,11 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
             hullVertices = findHullVertices(points);
         }
 
-        try {
-            return new ConvexHull2D(hullVertices.toArray(new Vector2D[hullVertices.size()]),
-                                    precision);
-        } catch (IllegalArgumentException e) {
-            // the hull vertices may not form a convex hull if the tolerance value is to large
-            throw new IllegalStateException("Convex hull algorithm failed to generate solution", e);
+        if (!isConvex(hullVertices)) {
+            throw new IllegalStateException("Convex hull algorithm failed to generate solution");
         }
+
+        return new ConvexHull2D(hullVertices, precision);
     }
 
     /**
@@ -106,4 +89,42 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      */
     protected abstract Collection<Vector2D> findHullVertices(Collection<Vector2D> points);
 
+    /** Return true if the given vertices define a convex hull.
+     * @param vertices the hull vertices
+     * @return {@code true} if the vertices form a convex hull, {@code false} otherwise
+     */
+    private boolean isConvex(final Collection<Vector2D> vertices) {
+        int size = vertices.size();
+
+        if (size < 3) {
+            // 1 or 2 points always define a convex set
+            return true;
+        }
+
+        Iterator<Vector2D> it = vertices.iterator();
+
+        Vector2D p1 = it.next();
+        Vector2D p2 = it.next();
+        Vector2D p3;
+
+        Vector2D v1;
+        Vector2D v2;
+
+        while (it.hasNext()) {
+            p3 = it.next();
+
+            v1 = p1.vectorTo(p2);
+            v2 = p2.vectorTo(p3);
+
+            // negative signed areas mean a clockwise winding
+            if (precision.compare(v1.signedArea(v2), 0.0) < 0) {
+                return false;
+            }
+
+            p1 = p2;
+            p2 = p3;
+        }
+
+        return true;
+    }
 }

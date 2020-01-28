@@ -27,6 +27,7 @@ public interface Encloser<P extends Point<P>> {
     /** Find a ball enclosing a list of points.
      * @param points points to enclose
      * @return enclosing ball
+     * @throws IllegalArgumentException if the argument does not contain any points
      */
     EnclosingBall<P> enclose(Iterable<P> points);
 

@@ -161,23 +161,18 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
             return new RegionSizeProperties<>(0, null);
         }
 
-        List<ConvexArea2S> areas = toConvex();
-        DoublePrecisionContext precision = ((GreatArc) getRoot().getCut()).getPrecision();
+        final List<ConvexArea2S> areas = toConvex();
+        final DoublePrecisionContext precision = ((GreatArc) getRoot().getCut()).getPrecision();
 
         double sizeSum = 0;
         Vector3D barycenterVector = Vector3D.ZERO;
 
-        double size;
         for (ConvexArea2S area : areas) {
-            size = area.getSize();
-
-            sizeSum += size;
-            barycenterVector = Vector3D.linearCombination(
-                    1, barycenterVector,
-                    size, area.getBarycenter().getVector());
+            sizeSum += area.getSize();
+            barycenterVector = barycenterVector.add(area.getWeightedBarycenterVector());
         }
 
-        Point2S barycenter = barycenterVector.eq(Vector3D.ZERO, precision) ?
+        final Point2S barycenter = barycenterVector.eq(Vector3D.ZERO, precision) ?
                 null :
                 Point2S.from(barycenterVector);
 

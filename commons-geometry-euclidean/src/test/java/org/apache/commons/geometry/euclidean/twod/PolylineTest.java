@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -29,6 +28,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Polyline.Builder;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -574,7 +574,7 @@ public class PolylineTest {
     public void testTransform_empty() {
         // arrange
         Polyline path = Polyline.empty();
-        FunctionTransform2D t = FunctionTransform2D.from(v -> v.add(Vector2D.Unit.PLUS_X));
+        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
 
         // act/assert
         Assert.assertSame(path, path.transform(t));
@@ -614,7 +614,7 @@ public class PolylineTest {
         Polyline path = Polyline.fromSegments(
                 Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
 
-        FunctionTransform2D t = FunctionTransform2D.from(v -> v.add(Vector2D.Unit.PLUS_X));
+        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
 
         // act
         Polyline result = path.transform(t);

@@ -19,11 +19,11 @@ package org.apache.commons.geometry.euclidean.oned;
 import java.util.Comparator;
 import java.util.function.UnaryOperator;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.internal.SimpleTupleFormat;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanVector;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 
 /** This class represents vectors and points in one-dimensional Euclidean space.

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -409,10 +410,10 @@ public class SegmentTest {
         // arrange
         Segment segment = Segment.fromPoints(Vector2D.of(0, 1), Vector2D.of(2, 3), TEST_PRECISION);
 
-        Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
-        Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = AffineTransformMatrix2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(1, 4));
@@ -427,10 +428,10 @@ public class SegmentTest {
         Segment segment = Segment.fromInterval(Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 1), TEST_PRECISION),
                 Interval.point(0, TEST_PRECISION));
 
-        Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
-        Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = AffineTransformMatrix2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         checkFiniteSegment(segment.transform(translation), Vector2D.of(-1, 2), Vector2D.of(-1, 2));
@@ -445,10 +446,10 @@ public class SegmentTest {
         Segment segment = Segment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
-        Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
-        Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = AffineTransformMatrix2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -486,10 +487,10 @@ public class SegmentTest {
         Segment segment = Segment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
                 0.0, Double.POSITIVE_INFINITY);
 
-        Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
-        Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = AffineTransformMatrix2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);
@@ -527,10 +528,10 @@ public class SegmentTest {
         Segment segment = Segment.fromInterval(Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 1), TEST_PRECISION),
                 Double.NEGATIVE_INFINITY, 0.0);
 
-        Transform2D translation = AffineTransformMatrix2D.createTranslation(-1, 1);
-        Transform2D rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
-        Transform2D scale = AffineTransformMatrix2D.createScale(2, 3);
-        Transform2D reflect = FunctionTransform2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
+        Transform<Vector2D> translation = AffineTransformMatrix2D.createTranslation(-1, 1);
+        Transform<Vector2D> rotation = AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO);
+        Transform<Vector2D> scale = AffineTransformMatrix2D.createScale(2, 3);
+        Transform<Vector2D> reflect = AffineTransformMatrix2D.from(pt -> Vector2D.of(pt.getX(), -pt.getY()));
 
         // act/assert
         Segment translated = segment.transform(translation);

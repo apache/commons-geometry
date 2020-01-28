@@ -621,7 +621,7 @@ public class IntervalTest {
     @Test
     public void testTransform() {
         // arrange
-        Transform1D transform = FunctionTransform1D.from(p -> Vector1D.of(2.0 * p.getX()));
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(2);
 
         // act/assert
         checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 4);
@@ -639,7 +639,7 @@ public class IntervalTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        Transform1D transform = FunctionTransform1D.from(Vector1D::negate);
+        AffineTransformMatrix1D transform = AffineTransformMatrix1D.createScale(-1);
 
         // act/assert
         checkInterval(Interval.of(-1, 2, TEST_PRECISION).transform(transform), -2, 1);

@@ -39,12 +39,12 @@ public class RegionBSPTree2STest {
 
     private static final double TEST_EPS = 1e-10;
 
+    // alternative epsilon value for checking the barycenters of complex
+    // or very small regions
+    private static final double BARYCENTER_EPS = 1e-5;
+
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
-
-    // epsilon value for use when comparing computed barycenter locations;
-    // this must currently be set much higher than the other epsilon
-    private static final double BARYCENTER_EPS = 1e-2;
 
     private static final GreatCircle EQUATOR = GreatCircle.fromPoleAndU(
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
@@ -339,7 +339,7 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToConvex_doubleLune_comlement() {
+    public void testToConvex_doubleLune_complement() {
         // arrange
         RegionBSPTree2S tree = GreatArcPath.builder(TEST_PRECISION)
                 .append(EQUATOR.arc(0,  PlaneAngleRadians.PI))
@@ -523,12 +523,12 @@ public class RegionBSPTree2STest {
         Assert.assertEquals(3.5 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
 
-//        Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
-//                .add(Point2S.PLUS_I.getVector())
-//                .add(Point2S.MINUS_J.getVector()));
-//        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getBarycenter(), TEST_EPS);
-//
-//        checkBarycenterConsistency(tree);
+        Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
+                .add(Point2S.PLUS_I.getVector())
+                .add(Point2S.MINUS_J.getVector()));
+        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getBarycenter(), TEST_EPS);
+
+        checkBarycenterConsistency(tree);
 
         List<GreatArcPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
@@ -540,6 +540,105 @@ public class RegionBSPTree2STest {
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
                 Point2S.PLUS_J, Point2S.PLUS_K, Point2S.MINUS_I);
+    }
+
+    @Test
+    public void testGeometricProperties_polygonWithHole() {
+        // arrange
+        Point2S center = Point2S.of(0.5, 2);
+
+        double outerRadius = 1;
+        double innerRadius = 0.5;
+
+        RegionBSPTree2S outer = buildDiamond(center, outerRadius);
+        RegionBSPTree2S inner = buildDiamond(center, innerRadius);
+
+        // rotate the inner diamond a quarter turn to become a square
+        inner.transform(Transform2S.createRotation(center, 0.25 * Math.PI));
+
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.difference(outer, inner);
+
+        // assert
+        double area = 4 * (rightTriangleArea(outerRadius, outerRadius) - rightTriangleArea(innerRadius, innerRadius));
+        Assert.assertEquals(area, tree.getSize(), TEST_EPS);
+
+        double outerSideLength = sphericalHypot(outerRadius, outerRadius);
+        double innerSideLength = sphericalHypot(innerRadius, innerRadius);
+        double boundarySize = 4 * (outerSideLength + innerSideLength);
+        Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(center, tree.getBarycenter(), TEST_EPS);
+        checkBarycenterConsistency(tree);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
+    }
+
+    @Test
+    public void testGeometricProperties_polygonWithHole_complex() {
+        // arrange
+        Point2S center = Point2S.of(0.5, 2);
+
+        double outerRadius = 2;
+        double midRadius = 1;
+        double innerRadius = 0.5;
+
+        RegionBSPTree2S outer = buildDiamond(center, outerRadius);
+        RegionBSPTree2S mid = buildDiamond(center, midRadius);
+        RegionBSPTree2S inner = buildDiamond(center, innerRadius);
+
+        // rotate the middle diamond a quarter turn to become a square
+        mid.transform(Transform2S.createRotation(center, 0.25 * Math.PI));
+
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.difference(outer, mid);
+        tree.union(inner);
+        tree.complement();
+
+        // assert
+        // compute the area, adjusting the first computation for the fact that the triangles comprising the
+        // outer diamond have lengths greater than pi/2
+        double nonComplementedArea = 4 * ((PlaneAngleRadians.PI - rightTriangleArea(outerRadius, outerRadius) -
+                rightTriangleArea(midRadius, midRadius) + rightTriangleArea(innerRadius, innerRadius)));
+        double area = (4 * PlaneAngleRadians.PI) - nonComplementedArea;
+        Assert.assertEquals(area, tree.getSize(), TEST_EPS);
+
+        double outerSideLength = sphericalHypot(outerRadius, outerRadius);
+        double midSideLength = sphericalHypot(midRadius, midRadius);
+        double innerSideLength = sphericalHypot(innerRadius, innerRadius);
+        double boundarySize = 4 * (outerSideLength + midSideLength + innerSideLength);
+        Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
+
+        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getBarycenter(), TEST_EPS);
+        checkBarycenterConsistency(tree);
+
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
+    }
+
+    @Test
+    public void testGeometricProperties_equalAndOppositeRegions() {
+        // arrange
+        Point2S center = Point2S.PLUS_I;
+        double radius = 0.25 * Math.PI;
+
+        RegionBSPTree2S a = buildDiamond(center, radius);
+        RegionBSPTree2S b = buildDiamond(center.antipodal(), radius);
+
+        // act
+        RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.union(a, b);
+
+        // assert
+        double area = 8 * rightTriangleArea(radius, radius);
+        Assert.assertEquals(area, tree.getSize(), TEST_EPS);
+
+        double boundarySize = 8 * sphericalHypot(radius, radius);
+        Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
+
+        // should be null since no unique barycenter exists
+        Assert.assertNull(tree.getBarycenter());
     }
 
     @Test
@@ -700,10 +799,59 @@ public class RegionBSPTree2STest {
         // assert
         Assert.assertEquals(0.6316801448267251, france.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(0.013964220234478741, france.getSize(), TEST_EPS);
+
         SphericalTestUtils.assertPointsEq(Point2S.of(0.04368552749392928, 0.7590839905197961),
                 france.getBarycenter(), BARYCENTER_EPS);
 
         checkBarycenterConsistency(france);
+    }
+
+    @Test
+    public void testCircleToPolygonBarycenter() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // counterclockwise
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        SphericalTestUtils.assertPointsEq(center, ccw.getBarycenter(), BARYCENTER_EPS);
+
+        // clockwise; barycenter should just be antipodal for the circle center
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        SphericalTestUtils.assertPointsEq(center.antipodal(), cw.getBarycenter(), BARYCENTER_EPS);
+    }
+
+    @Test
+    public void testCircleToPolygonSize() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // https://en.wikipedia.org/wiki/Spherical_cap
+        double ccwArea = 4.0 * PlaneAngleRadians.PI * Math.pow(Math.sin(radius / 2.0), 2.0);
+        double cwArea = 4.0 * PlaneAngleRadians.PI - ccwArea;
+
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        Assert.assertEquals("Counterclockwise size", ccwArea, ccw.getSize(), TEST_EPS);
+
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        Assert.assertEquals("Clockwise size", cwArea, cw.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testCircleToPolygonBoundarySize() {
+        double radius = 0.0001;
+        Point2S center = Point2S.of(1.0, 1.0);
+        int numPts = 200;
+
+        // boundary size is independent from winding
+        double boundary = PlaneAngleRadians.TWO_PI * Math.sin(radius);
+
+        RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
+        Assert.assertEquals("Counterclockwise boundary size", boundary, ccw.getBoundarySize(), 1.0e-7);
+
+        RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
+        Assert.assertEquals("Clockwise boundary size", boundary, cw.getBoundarySize(), 1.0e-7);
     }
 
     /**
@@ -761,8 +909,6 @@ public class RegionBSPTree2STest {
         Point2S barycenter = region.getBarycenter();
         double size = region.getSize();
 
-        SphericalTestUtils.checkClassify(region, RegionLocation.INSIDE, barycenter);
-
         GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
@@ -774,21 +920,92 @@ public class RegionBSPTree2STest {
 
             RegionBSPTree2S minus = split.getMinus();
             double minusSize = minus.getSize();
-            Point2S minusBc = minus.getBarycenter();
-
-            Vector3D weightedMinus = minusBc.getVector()
-                    .multiply(minus.getSize());
 
             RegionBSPTree2S plus = split.getPlus();
             double plusSize = plus.getSize();
-            Point2S plusBc = plus.getBarycenter();
 
-            Vector3D weightedPlus = plusBc.getVector()
-                    .multiply(plus.getSize());
-            Point2S computedBarycenter = Point2S.from(weightedMinus.add(weightedPlus));
+            Point2S computedBarycenter = Point2S.from(weightedBarycenterVector(minus)
+                    .add(weightedBarycenterVector(plus)));
 
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
-            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, BARYCENTER_EPS);
+            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, TEST_EPS);
         }
+    }
+
+    private static Vector3D weightedBarycenterVector(RegionBSPTree2S tree) {
+        Vector3D sum = Vector3D.ZERO;
+        for (ConvexArea2S convex : tree.toConvex()) {
+            sum = sum.add(convex.getWeightedBarycenterVector());
+        }
+
+        return sum;
+    }
+
+    private static RegionBSPTree2S buildDiamond(Point2S center, double radius) {
+        Vector3D u = center.getVector();
+        Vector3D w = u.orthogonal(Vector3D.Unit.PLUS_Z);
+        Vector3D v = w.cross(u);
+
+        Transform2S rotV = Transform2S.createRotation(v, radius);
+        Transform2S rotW = Transform2S.createRotation(w, radius);
+
+        Point2S top = rotV.inverse().apply(center);
+        Point2S bottom = rotV.apply(center);
+
+        Point2S right = rotW.apply(center);
+        Point2S left = rotW.inverse().apply(center);
+
+        return GreatArcPath.fromVertexLoop(Arrays.asList(top, left, bottom, right), TEST_PRECISION)
+                .toTree();
+    }
+
+    /** Solve for the hypotenuse of a spherical right triangle, given the lengths of the
+     * other two side. The sides must have lengths less than pi/2.
+     * @param a first side; must be less than pi/2
+     * @param b second side; must be less than pi/2
+     * @return the hypotenuse of the spherical right triangle with sides of the given lengths
+     */
+    private static double sphericalHypot(double a, double b) {
+        // use the spherical law of cosines and the fact that cos(pi/2) = 0
+        // https://en.wikipedia.org/wiki/Spherical_trigonometry#Cosine_rules
+        return Math.acos(Math.cos(a) * Math.cos(b));
+    }
+
+    /**
+     * Compute the area of the spherical right triangle with the given sides. The sides must have lengths
+     * less than pi/2.
+     * @param a first side; must be less than pi/2
+     * @param b second side; must be less than pi/2
+     * @return the area of the spherical right triangle
+     */
+    private static double rightTriangleArea(double a, double b) {
+        double c = sphericalHypot(a, b);
+
+        // use the spherical law of sines to determine the interior angles
+        // https://en.wikipedia.org/wiki/Spherical_trigonometry#Sine_rules
+        double sinC = Math.sin(c);
+        double angleA = Math.asin(Math.sin(a) / sinC);
+        double angleB = Math.asin(Math.sin(b) / sinC);
+
+        // use Girard's theorem
+        return angleA + angleB  - (0.5 * PlaneAngleRadians.PI);
+    }
+
+    private static RegionBSPTree2S circleToPolygon(Point2S center, double radius, int numPts, boolean clockwise) {
+        List<Point2S> pts = new ArrayList<>(numPts);
+
+        // get an arbitrary point on the circle boundary
+        pts.add(Transform2S.createRotation(center.getVector().orthogonal(), radius).apply(center));
+
+        // create the list of boundary points by rotating the previous point around the circle center
+        double span = PlaneAngleRadians.TWO_PI / numPts;
+
+        // negate the span for clockwise winding
+        Transform2S rotate = Transform2S.createRotation(center, clockwise ? -span : span);
+        for (int i = 1; i < numPts; ++i) {
+            pts.add(rotate.apply(pts.get(i - 1)));
+        }
+
+        return GreatArcPath.fromVertexLoop(pts, TEST_PRECISION).toTree();
     }
 }

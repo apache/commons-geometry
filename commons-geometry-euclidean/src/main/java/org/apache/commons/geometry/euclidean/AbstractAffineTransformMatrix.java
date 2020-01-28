@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean;
 
-import org.apache.commons.geometry.euclidean.internal.Vectors;
-
 /** Base class for affine transform matrices in Euclidean space.
  *
  * @param <V> Vector/point implementation type defining the space.
@@ -48,41 +46,5 @@ public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>
     @Override
     public boolean preservesOrientation() {
         return determinant() > 0.0;
-    }
-
-    /** Get the determinant of the instance for use in calculating the matrix
-     * inverse. An {@link IllegalStateException} is thrown if the determinant is
-     * NaN, infinite, or zero.
-     * @return the determinant of the matrix
-     * @throws IllegalStateException if the matrix determinant value is NaN, infinite,
-     *      or zero
-     */
-    protected double getDeterminantForInverse() {
-        final double det = determinant();
-        if (!Vectors.isRealNonZero(det)) {
-            throw nonInvertibleTransform("matrix determinant is " + det);
-        }
-        return det;
-    }
-
-    /** Check that the given matrix element is valid for use in calculation of
-     * a matrix inverse, throwing an {@link IllegalStateException} if not.
-     * @param element matrix entry to check
-     * @throws IllegalStateException if the element is not valid for use
-     *      in calculating a matrix inverse, ie if it is NaN or infinite.
-     */
-    protected void validateElementForInverse(final double element) {
-        if (!Double.isFinite(element)) {
-            throw nonInvertibleTransform("invalid matrix element: " + element);
-        }
-    }
-
-    /** Create an exception indicating that the instance is not able to be inverted.
-     * @param msg message containing the specific reason that the matrix cannot
-     *      be inverted
-     * @return IllegalStateException containing the given error message
-     */
-    protected IllegalStateException nonInvertibleTransform(final String msg) {
-        return new IllegalStateException("Transform is not invertible; " + msg);
     }
 }

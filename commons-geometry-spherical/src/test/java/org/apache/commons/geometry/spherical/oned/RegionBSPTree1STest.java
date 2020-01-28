@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -713,7 +714,23 @@ public class RegionBSPTree1STest {
         // act/assert
         Assert.assertEquals(0.6, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(2.2 / 6, tree.getBarycenter().getAzimuth(), TEST_EPS);
+
+        Vector2D barycenterVector = Point1S.of(0.1).getVector().withNorm(0.2)
+                .add(Point1S.of(0.5).getVector().withNorm(0.4));
+        Assert.assertEquals(Point1S.from(barycenterVector).getAzimuth(), tree.getBarycenter().getAzimuth(), TEST_EPS);
+    }
+
+    @Test
+    public void testRegionProperties_equalAndOppositeIntervals() {
+        // arrange
+        RegionBSPTree1S tree = RegionBSPTree1S.empty();
+        tree.add(AngularInterval.of(-1, 1, TEST_PRECISION));
+        tree.add(AngularInterval.of(Math.PI - 1, Math.PI + 1, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertEquals(4, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
+        Assert.assertNull(tree.getBarycenter()); // no unique barycenter exists
     }
 
     @Test
