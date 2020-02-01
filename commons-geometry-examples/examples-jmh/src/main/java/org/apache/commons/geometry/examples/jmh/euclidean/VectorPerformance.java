@@ -28,6 +28,8 @@ import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.rng.sampling.distribution.ZigguratNormalizedGaussianSampler;
+import org.apache.commons.rng.simple.RandomSource;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -104,7 +106,7 @@ public class VectorPerformance {
 
             for (int i = 0; i < size; ++i) {
                 for (int j = 0; j < dimension; ++j) {
-                    values[j] = randomDouble(type);
+                    values[j] = getRandomDouble(type);
                 }
                 vectors.add(createVector(values));
             }
@@ -127,6 +129,59 @@ public class VectorPerformance {
          * @return the new vector
          */
         public abstract V createVector(double[] arr);
+
+        /** Get a random double of the given type.
+         * @param type of double to get
+         * @return a random double value of the given type.
+         */
+        protected double getRandomDouble(final String type) {
+            Random rng = getRandom();
+
+            switch (type) {
+            case RANDOM:
+                return createRandomDouble(rng);
+            case EDGE:
+                return EDGE_NUMBERS[rng.nextInt(EDGE_NUMBERS.length)];
+            default:
+                throw new IllegalStateException("Invalid number type for input: " + type);
+            }
+        }
+    }
+
+    /** Base class for vector inputs with a type of {@link VectorPerformance#NORMALIZABLE}.
+     * @param <V> Vector implementation type
+     */
+    @State(Scope.Thread)
+    public abstract static class NormalizableVectorInputBase<V extends Vector<V>> extends VectorInputBase<V> {
+
+        /** Sampler used to create random double values. */
+        private final ZigguratNormalizedGaussianSampler sampler;
+
+        /** Create a new instance with the vector dimension.
+         * @param dimension vector dimension
+         */
+        NormalizableVectorInputBase(int dimension) {
+            super(dimension);
+
+            this.sampler = ZigguratNormalizedGaussianSampler.of(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getType() {
+            return NORMALIZABLE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected double getRandomDouble(final String type) {
+            double num = sampler.sample();
+            if (Math.abs(num) == 0.0) {
+                // simply add an offset if exactly zero
+                num += 0.1;
+            }
+            return num;
+        }
     }
 
     /** Vector input class producing {@link Vector1D} instances with random
@@ -160,17 +215,11 @@ public class VectorPerformance {
     /** Vector input class producing {@link Vector1D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput1D extends VectorInputBase<Vector1D> {
+    public static class NormalizableVectorInput1D extends NormalizableVectorInputBase<Vector1D> {
 
         /** Default constructor. */
         public NormalizableVectorInput1D() {
             super(1);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getType() {
-            return NORMALIZABLE;
         }
 
         /** {@inheritDoc} */
@@ -211,17 +260,11 @@ public class VectorPerformance {
     /** Vector input class producing {@link Vector2D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput2D extends VectorInputBase<Vector2D> {
+    public static class NormalizableVectorInput2D extends NormalizableVectorInputBase<Vector2D> {
 
         /** Default constructor. */
         public NormalizableVectorInput2D() {
             super(2);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getType() {
-            return NORMALIZABLE;
         }
 
         /** {@inheritDoc} */
@@ -262,7 +305,7 @@ public class VectorPerformance {
     /** Vector input class producing {@link Vector3D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput3D extends VectorInputBase<Vector3D> {
+    public static class NormalizableVectorInput3D extends NormalizableVectorInputBase<Vector3D> {
 
         /** Default constructor. */
         public NormalizableVectorInput3D() {
@@ -271,33 +314,8 @@ public class VectorPerformance {
 
         /** {@inheritDoc} */
         @Override
-        public String getType() {
-            return NORMALIZABLE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public Vector3D createVector(double[] arr) {
             return Vector3D.of(arr);
-        }
-    }
-
-    /** Create a random double value of the given type.
-     * @param type type of value to produce
-     * @return a random double value of the given type
-     */
-    private static double randomDouble(final String type) {
-        Random rng = getRandom();
-
-        switch (type) {
-        case RANDOM:
-            return createRandomDouble(rng);
-        case NORMALIZABLE:
-            return createRandomNonZeroDouble(rng);
-        case EDGE:
-            return EDGE_NUMBERS[rng.nextInt(EDGE_NUMBERS.length)];
-        default:
-            throw new IllegalStateException("Invalid number type: " + type);
         }
     }
 
@@ -322,19 +340,6 @@ public class VectorPerformance {
         // The exponent must be unsigned so + 1023 to the signed exponent
         final long exp = rng.nextInt(129) - 64 + 1023;
         return Double.longBitsToDouble(bits | (exp << 52));
-    }
-
-    /** Create a random double that is guaranteed to not equal zero.
-     * @param rng random number generator
-     * @return the random, non-zero number
-     */
-    private static double createRandomNonZeroDouble(final Random rng) {
-        double num = createRandomDouble(rng);
-        if (Math.abs(num) == 0.0) {
-            // simply add an offset if exactly zero
-            num += 0.1;
-        }
-        return num;
     }
 
     /** Run a benchmark test on a function that produces a double.
