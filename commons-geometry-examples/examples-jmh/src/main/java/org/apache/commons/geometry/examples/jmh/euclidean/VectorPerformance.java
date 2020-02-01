@@ -16,9 +16,13 @@
  */
 package org.apache.commons.geometry.examples.jmh.euclidean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -27,6 +31,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -35,6 +40,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.infra.Blackhole;
 
 /**
  * Benchmarks for the Euclidean vector classes.
@@ -67,13 +73,18 @@ public class VectorPerformance {
     /** Base class for vector inputs.
      * @param <V> Vector implementation type
      */
+    @State(Scope.Thread)
     public abstract static class VectorInputBase<V extends Vector<V>> {
 
         /** The dimension of the vector. */
         private final int dimension;
 
+        /** The number of vectors in the input list. */
+        @Param({"1000"})
+        private int size;
+
         /** The vector for the instance. */
-        private V vector;
+        private List<V> vectors;
 
         /** Create a new instance with the vector dimension.
          * @param dimension vector dimension
@@ -84,23 +95,26 @@ public class VectorPerformance {
 
         /** Set up the instance for the benchmark.
          */
-        @Setup
+        @Setup(Level.Iteration)
         public void setup() {
+            vectors = new ArrayList<>(size);
+
+            final double[] values = new double[dimension];
             final String type = getType();
 
-            double[] values = new double[dimension];
-            for (int i = 0; i < dimension; ++i) {
-                values[i] = randomDouble(type);
+            for (int i = 0; i < size; ++i) {
+                for (int j = 0; j < dimension; ++j) {
+                    values[j] = randomDouble(type);
+                }
+                vectors.add(createVector(values));
             }
-
-            vector = createVector(values);
         }
 
-        /** Get the vector for the instance.
-         * @return the vector for the instance
+        /** Get the input vectors for the instance.
+         * @return the input vectors for the instance
          */
-        public V getVector() {
-            return vector;
+        public List<V> getVectors() {
+            return vectors;
         }
 
         /** Get the type of double values to use in the creation of the vector.
@@ -323,60 +337,95 @@ public class VectorPerformance {
         return num;
     }
 
-    /** Benchmark testing the performance of the {@link Vector1D#norm()} method.
+    /** Run a benchmark test on a function that produces a double.
+     * @param <V> Vector implementation type
+     * @param input vector input
+     * @param bh jmh blackhole for consuming output
+     * @param fn function to call
+     */
+    private static <V extends Vector<V>> void testToDouble(final VectorInputBase<V> input, final Blackhole bh,
+            final ToDoubleFunction<V> fn) {
+        for (final V vec : input.getVectors()) {
+            bh.consume(fn.applyAsDouble(vec));
+        }
+    }
+
+    /** Run a benchmark test on a function that produces a vector.
+     * @param <V> Vector implementation type
+     * @param input vector input
+     * @param bh jmh blackhole for consuming output
+     * @param fn function to call
+     */
+    private static <V extends Vector<V>> void testUnary(final VectorInputBase<V> input, final Blackhole bh,
+            final UnaryOperator<V> fn) {
+        for (final V vec : input.getVectors()) {
+            bh.consume(fn.apply(vec));
+        }
+    }
+
+    /** Benchmark testing just the overhead of the benchmark harness.
      * @param input benchmark state input
-     * @return vector norm
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public double norm1D(final VectorInput1D input) {
-        return input.getVector().norm();
+    public void baseline(final VectorInput1D input, final Blackhole bh) {
+        testUnary(input, bh, UnaryOperator.identity());
+    }
+
+    /** Benchmark testing the performance of the {@link Vector1D#norm()} method.
+     * @param input benchmark state input
+     * @param bh jmh blackhole for consuming output
+     */
+    @Benchmark
+    public void norm1D(final VectorInput1D input, final Blackhole bh) {
+        testToDouble(input, bh, Vector1D::norm);
     }
 
     /** Benchmark testing the performance of the {@link Vector2D#norm()} method.
      * @param input benchmark state input
-     * @return vector norm
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public double norm2D(final VectorInput2D input) {
-        return input.getVector().norm();
+    public void norm2D(final VectorInput2D input, final Blackhole bh) {
+        testToDouble(input, bh, Vector2D::norm);
     }
 
     /** Benchmark testing the performance of the {@link Vector3D#norm()} method.
      * @param input benchmark state input
-     * @return vector norm
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public double norm3D(final VectorInput3D input) {
-        return input.getVector().norm();
+    public void norm3D(final VectorInput3D input, final Blackhole bh) {
+        testToDouble(input, bh, Vector3D::norm);
     }
 
     /** Benchmark testing the performance of the {@link Vector1D#normalize()} method.
      * @param input benchmark state input
-     * @return normalized vector
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public Vector1D normalize1D(final NormalizableVectorInput1D input) {
-        return input.getVector().normalize();
+    public void normalize1D(final NormalizableVectorInput1D input, final Blackhole bh) {
+        testUnary(input, bh, Vector1D::normalize);
     }
 
 
     /** Benchmark testing the performance of the {@link Vector2D#normalize()}
      * method.
      * @param input benchmark state input
-     * @return normalized vector
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public Vector2D normalize2D(final NormalizableVectorInput2D input) {
-        return input.getVector().normalize();
+    public void normalize2D(final NormalizableVectorInput2D input, final Blackhole bh) {
+        testUnary(input, bh, Vector2D::normalize);
     }
 
     /** Benchmark testing the performance of the {@link Vector3D#normalize()}
      * method.
      * @param input benchmark state input
-     * @return normalized vector
+     * @param bh jmh blackhole for consuming output
      */
     @Benchmark
-    public Vector3D normalize3D(final NormalizableVectorInput3D input) {
-        return input.getVector().normalize();
+    public void normalize3D(final NormalizableVectorInput3D input, final Blackhole bh) {
+        testUnary(input, bh, Vector3D::normalize);
     }
 }
