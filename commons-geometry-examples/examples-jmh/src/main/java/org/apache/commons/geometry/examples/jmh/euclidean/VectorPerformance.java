@@ -18,9 +18,9 @@ package org.apache.commons.geometry.examples.jmh.euclidean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.function.UnaryOperator;
 
@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.Vector;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.sampling.distribution.ZigguratNormalizedGaussianSampler;
 import org.apache.commons.rng.simple.RandomSource;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -81,6 +82,9 @@ public class VectorPerformance {
         /** The dimension of the vector. */
         private final int dimension;
 
+        /** Factory function used to create vectors from arrays of doubles. */
+        private final Function<double[], V> vectorFactory;
+
         /** The number of vectors in the input list. */
         @Param({"1000"})
         private int size;
@@ -90,9 +94,11 @@ public class VectorPerformance {
 
         /** Create a new instance with the vector dimension.
          * @param dimension vector dimension
+         * @param vectorFactory function for creating vectors from double arrays
          */
-        VectorInputBase(final int dimension) {
+        VectorInputBase(final int dimension, final Function<double[], V> vectorFactory) {
             this.dimension = dimension;
+            this.vectorFactory = vectorFactory;
         }
 
         /** Set up the instance for the benchmark.
@@ -102,13 +108,15 @@ public class VectorPerformance {
             vectors = new ArrayList<>(size);
 
             final double[] values = new double[dimension];
-            final String type = getType();
+            final DoubleSupplier doubleSupplier = createDoubleSupplier(getType(),
+                    RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
 
             for (int i = 0; i < size; ++i) {
                 for (int j = 0; j < dimension; ++j) {
-                    values[j] = getRandomDouble(type);
+                    values[j] = doubleSupplier.getAsDouble();
                 }
-                vectors.add(createVector(values));
+
+                vectors.add(vectorFactory.apply(values));
             }
         }
 
@@ -119,68 +127,31 @@ public class VectorPerformance {
             return vectors;
         }
 
-        /** Get the type of double values to use in the creation of the vector.
-         * @return the type of double values to use in the creation of the vector
+        /** Get the type of double values to use in the creation of input vectors.
+         * @return the type of double values to use in the creation of input vectors
          */
         public abstract String getType();
 
-        /** Create a vector from an array of values.
-         * @param arr array of values to place in the vector
-         * @return the new vector
+        /** Create a supplier that produces doubles of the given type.
+         * @param type type of doubles to produce
+         * @param rng random provider
+         * @return a supplier that produces doubles of the given type
          */
-        public abstract V createVector(double[] arr);
-
-        /** Get a random double of the given type.
-         * @param type of double to get
-         * @return a random double value of the given type.
-         */
-        protected double getRandomDouble(final String type) {
-            Random rng = getRandom();
-
+        private DoubleSupplier createDoubleSupplier(final String type, final UniformRandomProvider rng) {
             switch (type) {
             case RANDOM:
-                return createRandomDouble(rng);
+                return () -> createRandomDouble(rng);
+            case NORMALIZABLE:
+                final ZigguratNormalizedGaussianSampler sampler = ZigguratNormalizedGaussianSampler.of(rng);
+                return () -> {
+                    double n = sampler.sample();
+                    return Math.abs(n) == 0 ? 0.1 : n; // do not return exactly zero
+                };
             case EDGE:
-                return EDGE_NUMBERS[rng.nextInt(EDGE_NUMBERS.length)];
+                return () -> EDGE_NUMBERS[rng.nextInt(EDGE_NUMBERS.length)];
             default:
-                throw new IllegalStateException("Invalid number type for input: " + type);
+                throw new IllegalStateException("Invalid input type: " + type);
             }
-        }
-    }
-
-    /** Base class for vector inputs with a type of {@link VectorPerformance#NORMALIZABLE}.
-     * @param <V> Vector implementation type
-     */
-    @State(Scope.Thread)
-    public abstract static class NormalizableVectorInputBase<V extends Vector<V>> extends VectorInputBase<V> {
-
-        /** Sampler used to create random double values. */
-        private final ZigguratNormalizedGaussianSampler sampler;
-
-        /** Create a new instance with the vector dimension.
-         * @param dimension vector dimension
-         */
-        NormalizableVectorInputBase(int dimension) {
-            super(dimension);
-
-            this.sampler = ZigguratNormalizedGaussianSampler.of(RandomSource.create(RandomSource.XO_RO_SHI_RO_128_PP));
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String getType() {
-            return NORMALIZABLE;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected double getRandomDouble(final String type) {
-            double num = sampler.sample();
-            if (Math.abs(num) == 0.0) {
-                // simply add an offset if exactly zero
-                num += 0.1;
-            }
-            return num;
         }
     }
 
@@ -196,7 +167,7 @@ public class VectorPerformance {
 
         /** Default constructor. */
         public VectorInput1D() {
-            super(1);
+            super(1, arr -> Vector1D.of(arr[0]));
         }
 
         /** {@inheritDoc} */
@@ -204,28 +175,22 @@ public class VectorPerformance {
         public String getType() {
             return type;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector1D createVector(double[] arr) {
-            return Vector1D.of(arr[0]);
-        }
     }
 
     /** Vector input class producing {@link Vector1D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput1D extends NormalizableVectorInputBase<Vector1D> {
+    public static class NormalizableVectorInput1D extends VectorInputBase<Vector1D> {
 
         /** Default constructor. */
         public NormalizableVectorInput1D() {
-            super(1);
+            super(1, arr -> Vector1D.of(arr[0]));
         }
 
         /** {@inheritDoc} */
         @Override
-        public Vector1D createVector(double[] arr) {
-            return Vector1D.of(arr[0]);
+        public String getType() {
+            return NORMALIZABLE;
         }
     }
 
@@ -241,7 +206,7 @@ public class VectorPerformance {
 
         /** Default constructor. */
         public VectorInput2D() {
-            super(2);
+            super(2, Vector2D::of);
         }
 
         /** {@inheritDoc} */
@@ -249,28 +214,22 @@ public class VectorPerformance {
         public String getType() {
             return type;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector2D createVector(double[] arr) {
-            return Vector2D.of(arr);
-        }
     }
 
     /** Vector input class producing {@link Vector2D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput2D extends NormalizableVectorInputBase<Vector2D> {
+    public static class NormalizableVectorInput2D extends VectorInputBase<Vector2D> {
 
         /** Default constructor. */
         public NormalizableVectorInput2D() {
-            super(2);
+            super(2, Vector2D::of);
         }
 
         /** {@inheritDoc} */
         @Override
-        public Vector2D createVector(double[] arr) {
-            return Vector2D.of(arr);
+        public String getType() {
+            return NORMALIZABLE;
         }
     }
 
@@ -286,7 +245,7 @@ public class VectorPerformance {
 
         /** Default constructor. */
         public VectorInput3D() {
-            super(3);
+            super(3, Vector3D::of);
         }
 
         /** {@inheritDoc} */
@@ -294,36 +253,23 @@ public class VectorPerformance {
         public String getType() {
             return type;
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Vector3D createVector(double[] arr) {
-            return Vector3D.of(arr);
-        }
     }
 
     /** Vector input class producing {@link Vector3D} instances capable of being normalized.
      */
     @State(Scope.Thread)
-    public static class NormalizableVectorInput3D extends NormalizableVectorInputBase<Vector3D> {
+    public static class NormalizableVectorInput3D extends VectorInputBase<Vector3D> {
 
         /** Default constructor. */
         public NormalizableVectorInput3D() {
-            super(3);
+            super(3, Vector3D::of);
         }
 
         /** {@inheritDoc} */
         @Override
-        public Vector3D createVector(double[] arr) {
-            return Vector3D.of(arr);
+        public String getType() {
+            return NORMALIZABLE;
         }
-    }
-
-    /** Get a {@link Random} instance for use in the benchmark.
-     * @return a Random instance suitable for use in the benchmark
-     */
-    private static Random getRandom() {
-        return ThreadLocalRandom.current();
     }
 
     /** Creates a random double number with a random sign and mantissa and a large range for
@@ -331,7 +277,7 @@ public class VectorPerformance {
      * @param rng random number generator
      * @return the random number
      */
-    private static double createRandomDouble(final Random rng) {
+    private static double createRandomDouble(final UniformRandomProvider rng) {
         // Create random doubles using random bits in the sign bit and the mantissa.
         // Then create an exponent in the range -64 to 64. Thus the sum product
         // of 4 max or min values will not over or underflow.
