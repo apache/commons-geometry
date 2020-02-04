@@ -64,13 +64,17 @@ public class VectorPerformance {
         -Double.MAX_VALUE, Double.MIN_VALUE, -Double.MIN_VALUE, 0.0, -0.0, Double.NaN
     };
 
-    /** String constant used to request random double values. */
+    /** String constant used to request random double values, excluding NaN and infinity. */
     private static final String RANDOM = "random";
 
-    /** String constant used to request a set of double values capable of normalization. */
+    /** String constant used to request a set of double values capable of vector normalization. These
+     * values are similar to those in the {@link #RANDOM} type but specifically exclude 0.
+     */
     private static final String NORMALIZABLE = "normalizable";
 
-    /** String constant used to request edge-case double values. */
+    /** String constant used to request edge-case double values, which includes NaN, infinity, zero,
+     * and the double min and max values.
+     */
     private static final String EDGE = "edge";
 
     /** Base class for vector inputs.
@@ -86,7 +90,7 @@ public class VectorPerformance {
         private final Function<double[], V> vectorFactory;
 
         /** The number of vectors in the input list. */
-        @Param({"1000"})
+        @Param({"100", "10000"})
         private int size;
 
         /** The vector for the instance. */
@@ -145,7 +149,7 @@ public class VectorPerformance {
                 final ZigguratNormalizedGaussianSampler sampler = ZigguratNormalizedGaussianSampler.of(rng);
                 return () -> {
                     double n = sampler.sample();
-                    return Math.abs(n) == 0 ? 0.1 : n; // do not return exactly zero
+                    return n == 0 ? 0.1 : n; // do not return exactly zero
                 };
             case EDGE:
                 return () -> EDGE_NUMBERS[rng.nextInt(EDGE_NUMBERS.length)];
@@ -358,7 +362,6 @@ public class VectorPerformance {
     public void normalize1D(final NormalizableVectorInput1D input, final Blackhole bh) {
         testUnary(input, bh, Vector1D::normalize);
     }
-
 
     /** Benchmark testing the performance of the {@link Vector2D#normalize()}
      * method.
