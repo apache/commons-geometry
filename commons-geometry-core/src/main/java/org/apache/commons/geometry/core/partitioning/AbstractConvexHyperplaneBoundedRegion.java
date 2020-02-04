@@ -324,65 +324,90 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
             final List<S> boundaries = new ArrayList<>();
 
-            // cut each hyperplane by every other hyperplane in order to get the subplane boundaries
-            boolean notConvex = false;
-            int outerIdx = 0;
-            ConvexSubHyperplane<P> subhp;
+            // cut each hyperplane by every other hyperplane in order to get the region boundaries
+            int boundIdx = 0;
+            ConvexSubHyperplane<P> boundary;
 
-            for (final Hyperplane<P> hp : bounds) {
-                ++outerIdx;
-                subhp = hp.span();
+            for (final Hyperplane<P> currentBound : bounds) {
+                ++boundIdx;
 
-                int innerIdx = 0;
-                for (final Hyperplane<P> splitter : bounds) {
-                    ++innerIdx;
-
-                    if (hp != splitter) {
-                        final Split<? extends ConvexSubHyperplane<P>> split = subhp.split(splitter);
-
-                        if (split.getLocation() == SplitLocation.NEITHER) {
-                            if (hp.similarOrientation(splitter)) {
-                                // two or more splitters are the equivalent; only
-                                // use the segment from the first one
-                                if (outerIdx > innerIdx) {
-                                    subhp = null;
-                                }
-                            } else {
-                                // two or more splitters are coincident and have opposite
-                                // orientations, meaning that no area is on the minus side
-                                // of both
-                                notConvex = true;
-                                break;
-                            }
-                        } else {
-                            subhp = subhp.split(splitter).getMinus();
-                        }
-
-                        if (subhp == null) {
-                            break;
-                        }
-                    } else if (outerIdx > innerIdx) {
-                        // this hyperplane is duplicated in the list; skip all but the
-                        // first insertion of its subhyperplane
-                        subhp = null;
-                        break;
-                    }
-                }
-
-                if (notConvex) {
-                    break;
-                }
-
-                if (subhp != null) {
-                    boundaries.add(subhyperplaneType.cast(subhp));
+                boundary = splitBound(currentBound, bounds, boundIdx);
+                if (boundary != null) {
+                    boundaries.add(subhyperplaneType.cast(boundary));
                 }
             }
 
-            if (notConvex || (outerIdx > 0 && boundaries.isEmpty())) {
-                throw new IllegalArgumentException("Bounding hyperplanes do not produce a convex region: " + bounds);
+            if (boundIdx > 0 && boundaries.isEmpty()) {
+                // nothing was added
+                throw nonConvexException(bounds);
             }
 
             return boundaries;
+        }
+
+        /** Split the given bounding hyperplane by all of the other hyperplanes in the given collection, returning the
+         * remaining subhyperplane.
+         * @param currentBound the bound to split; this value is assumed to have come from {@code bounds}
+         * @param bounds collection of bounds to use to split {@code currentBound}
+         * @param currentBoundIdx the index of {@code currentBound} in {@code bounds}
+         * @return the part of {@code currentBound}'s subhyperplane that lies on the minus side of all of the
+         *      splitting hyperplanes
+         * @throws IllegalArgumentException if the hyperplanes do not form a convex region
+         */
+        private ConvexSubHyperplane<P> splitBound(final Hyperplane<P> currentBound,
+                final Iterable<? extends Hyperplane<P>> bounds, final int currentBoundIdx) {
+
+            ConvexSubHyperplane<P> boundary = currentBound.span();
+
+            int splitterIdx = 0;
+            for (final Hyperplane<P> splitter : bounds) {
+                ++splitterIdx;
+
+                if (currentBound == splitter) {
+                    // do not split the bound with itself
+
+                    if (currentBoundIdx > splitterIdx) {
+                        // this hyperplane is duplicated in the list; skip all but the
+                        // first insertion of its subhyperplane
+                        return null;
+                    }
+                } else {
+                    // split the subhyperplane
+                    final Split<? extends ConvexSubHyperplane<P>> split = boundary.split(splitter);
+
+                    if (split.getLocation() == SplitLocation.NEITHER) {
+                        // the subhyperplane lies directly on the splitter
+
+                        if (!currentBound.similarOrientation(splitter)) {
+                            // two or more splitters are coincident and have opposite
+                            // orientations, meaning that no area is on the minus side
+                            // of both
+                            throw nonConvexException(bounds);
+                        } else if (currentBoundIdx > splitterIdx) {
+                         // two or more hyperplanes are equivalent; only use the boundary
+                            // from the first one and return null for this one
+                            return null;
+                        }
+                    } else {
+                        // retain the minus portion of the split
+                        boundary = split.getMinus();
+                    }
+                }
+
+                if (boundary == null) {
+                    break;
+                }
+            }
+
+            return boundary;
+        }
+
+        /** Return an exception indicating that the given collection of hyperplanes do not produce a convex region.
+         * @param bounds collection of hyperplanes
+         * @return an exception indicating that the given collection of hyperplanes do not produce a convex region
+         */
+        private IllegalArgumentException nonConvexException(final Iterable<? extends Hyperplane<P>> bounds) {
+            return new IllegalArgumentException("Bounding hyperplanes do not produce a convex region: " + bounds);
         }
     }
 }
