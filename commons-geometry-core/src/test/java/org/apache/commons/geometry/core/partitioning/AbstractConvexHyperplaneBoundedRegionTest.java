@@ -480,7 +480,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
             StubRegion.fromBounds(Arrays.asList(
                     TestLine.X_AXIS,
                     TestLine.Y_AXIS,
-                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1))));
+                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -1)),
+                    new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, -2))));
         }, IllegalArgumentException.class);
     }
 

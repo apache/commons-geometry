@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.enclosing.EnclosingBall;
+import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
@@ -130,7 +131,12 @@ public class WelzlEncloser2DTest {
         WelzlEncloser2D customPrecisionEncloser = new WelzlEncloser2D(precisionContext);
 
         // act
-        customPrecisionEncloser.enclose(points);
+        EnclosingBall<Vector2D> result = customPrecisionEncloser.enclose(points);
+
+        // assert
+        Assert.assertEquals(27.099954200964234, result.getRadius(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(296.0056977503686, 53.469890753441945),
+                result.getCenter(), TEST_EPS);
     }
 
     private List<Vector2D> buildList(final double... coordinates) {
