@@ -19,8 +19,10 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
@@ -31,6 +33,7 @@ import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree.TestRegionNode;
 import org.apache.commons.geometry.core.partition.test.TestTransform2D;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -106,6 +109,106 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
+    public void testInsert_subhyperplanes_mixedCutRules() {
+        // act/assert
+        checkMixedCutRuleInsertion(segs -> {
+            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[0])), RegionCutRule.PLUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[1]))); // default rule
+            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[2])), RegionCutRule.PLUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[3])), RegionCutRule.MINUS_INSIDE);
+            tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[4])), RegionCutRule.INHERIT);
+        });
+
+    }
+
+    @Test
+    public void testInsert_convexSubhyperplanes_mixedCutRules() {
+        // act/assert
+        checkMixedCutRuleInsertion(segs -> {
+            tree.insert(segs[0], RegionCutRule.PLUS_INSIDE);
+            tree.insert(segs[1]); // default rule
+            tree.insert(segs[2], RegionCutRule.PLUS_INSIDE);
+            tree.insert(segs[3], RegionCutRule.MINUS_INSIDE);
+            tree.insert(segs[4], RegionCutRule.INHERIT);
+        });
+    }
+
+    @Test
+    public void testInsert_convexSubhyperplaneList_mixedCutRules() {
+        // act/assert
+        checkMixedCutRuleInsertion(segs -> {
+            tree.insert(Arrays.asList(segs[0]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(Arrays.asList(segs[1])); // default rule
+            tree.insert(Arrays.asList(segs[2]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(Arrays.asList(segs[3]), RegionCutRule.MINUS_INSIDE);
+            tree.insert(Arrays.asList(segs[4]), RegionCutRule.INHERIT);
+        });
+    }
+
+    @Test
+    public void testInsert_boundarySource_mixedCutRules() {
+        // arrange
+        final Function<TestLineSegment, BoundarySource<TestLineSegment>> factory = seg -> {
+            return () -> Arrays.asList(seg).stream();
+        };
+
+        // act/assert
+        checkMixedCutRuleInsertion(segs -> {
+            tree.insert(factory.apply(segs[0]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(factory.apply(segs[1])); // default rule
+            tree.insert(factory.apply(segs[2]), RegionCutRule.PLUS_INSIDE);
+            tree.insert(factory.apply(segs[3]), RegionCutRule.MINUS_INSIDE);
+            tree.insert(factory.apply(segs[4]), RegionCutRule.INHERIT);
+        });
+    }
+
+    /** Helper function to check the insertion of subhyperplanes using different region cut rules.
+     * @param fn
+     */
+    private void checkMixedCutRuleInsertion(Consumer<TestLineSegment[]> fn) {
+        // arrange
+        TestLineSegment bottom = new TestLineSegment(new TestPoint2D(1, 0), new TestPoint2D(0, 0));
+        TestLineSegment right = new TestLineSegment(new TestPoint2D(1, 0), new TestPoint2D(1, 1));
+        TestLineSegment top = new TestLineSegment(new TestPoint2D(0, 1), new TestPoint2D(1, 1));
+        TestLineSegment left = new TestLineSegment(new TestPoint2D(0, 1), new TestPoint2D(0, 0));
+        TestLineSegment diag = new TestLineSegment(new TestPoint2D(0, 0), new TestPoint2D(1, 1));
+
+        tree = emptyTree();
+
+        // act
+        fn.accept(new TestLineSegment[] {
+            bottom,
+            right,
+            top,
+            left,
+            diag
+        });
+
+        // assert
+        TestRegionNode node = tree.getRoot();
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+
+        node = node.getPlus();
+        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+
+        node = node.getMinus();
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+
+        node = node.getPlus();
+        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+
+        node = node.getMinus();
+        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+    }
+
+    @Test
     public void testGetLocation_emptyRoot() {
         // act/assert
         Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
@@ -117,9 +220,19 @@ public class AbstractRegionBSPTreeTest {
         root.insertCut(TestLine.X_AXIS);
 
         // act/assert
-        Assert.assertNull(root.getLocation());
-        Assert.assertEquals(RegionLocation.INSIDE, root.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, root.getPlus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assert.assertFalse(root.isInside());
+        Assert.assertFalse(root.isOutside());
+
+        TestRegionNode minus = root.getMinus();
+        Assert.assertEquals(RegionLocation.INSIDE, minus.getLocation());
+        Assert.assertTrue(minus.isInside());
+        Assert.assertFalse(minus.isOutside());
+
+        TestRegionNode plus = root.getPlus();
+        Assert.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
+        Assert.assertFalse(plus.isInside());
+        Assert.assertTrue(plus.isOutside());
     }
 
     @Test
@@ -131,10 +244,10 @@ public class AbstractRegionBSPTreeTest {
                 new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
 
         // act/assert
-        Assert.assertNull(root.getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
 
         TestRegionNode plus = root.getPlus();
-        Assert.assertNull(plus.getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, plus.getLocation());
 
         TestRegionNode plusPlus = plus.getPlus();
         Assert.assertEquals(RegionLocation.OUTSIDE, plusPlus.getLocation());
@@ -143,7 +256,7 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertEquals(RegionLocation.INSIDE, plusMinus.getLocation());
 
         TestRegionNode minus = root.getMinus();
-        Assert.assertNull(minus.getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, minus.getLocation());
 
         TestRegionNode minusPlus = minus.getPlus();
         Assert.assertEquals(RegionLocation.OUTSIDE, minusPlus.getLocation());
@@ -153,37 +266,161 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetLocation_resetsLocationWhenNodeCleared() {
+    public void testSetLocation() {
         // arrange
-        tree.insert(Arrays.asList(
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)),
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span());
+
+        TestRegionNode node = tree.getRoot().getMinus();
 
         // act
-        root.getPlus().clearCut();
-        root.getMinus().clearCut();
+        node.setLocation(RegionLocation.OUTSIDE);
 
         // assert
-        Assert.assertNull(root.getLocation());
-
-        Assert.assertEquals(RegionLocation.INSIDE, root.getMinus().getLocation());
-        Assert.assertEquals(RegionLocation.OUTSIDE, root.getPlus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+        Assert.assertTrue(tree.isEmpty());
     }
 
     @Test
-    public void testGetLocation_resetRoot() {
+    public void testSetLocation_invalidatesRegionProperties() {
         // arrange
-        tree.insert(Arrays.asList(
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(1, 0)),
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, 1)),
-                new TestLineSegment(TestPoint2D.ZERO, new TestPoint2D(0, -1))));
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span());
+
+        TestRegionNode node = tree.getRoot().getMinus();
+
+        RegionSizeProperties<TestPoint2D> prevProps = tree.getRegionSizeProperties();
 
         // act
-        root.clearCut();
+        node.setLocation(RegionLocation.OUTSIDE);
 
         // assert
-        Assert.assertEquals(RegionLocation.INSIDE, root.getLocation());
+        Assert.assertNotSame(prevProps, tree.getRegionSizeProperties());
+    }
+
+    @Test
+    public void testSetLocation_noChange_doesNotInvalidateTree() {
+        // arrange
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span());
+
+        TestRegionNode node = tree.getRoot().getMinus();
+
+        RegionSizeProperties<TestPoint2D> prevProps = tree.getRegionSizeProperties();
+
+        // act
+        node.setLocation(RegionLocation.INSIDE);
+
+        // assert
+        Assert.assertSame(prevProps, tree.getRegionSizeProperties());
+    }
+
+    @Test
+    public void testSetLocation_invalidArgs() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> root.setLocation(null),
+                IllegalArgumentException.class, "Invalid node location: null");
+        GeometryTestUtils.assertThrows(() -> root.setLocation(RegionLocation.BOUNDARY),
+                IllegalArgumentException.class, "Invalid node location: BOUNDARY");
+    }
+
+    @Test
+    public void testCondense() {
+        // arrange
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
+        tree.insert(TestLine.X_AXIS.span(), RegionCutRule.INHERIT);
+
+        // act
+        boolean result = tree.condense();
+
+        // assert
+        Assert.assertTrue(result);
+
+        Assert.assertEquals(3, tree.count());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
+    }
+
+    @Test
+    public void testCondense_alreadyCondensed() {
+        // arrange
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
+
+        // act
+        boolean result = tree.condense();
+
+        // assert
+        Assert.assertFalse(result);
+
+        Assert.assertEquals(3, tree.count());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getPlus().getLocation());
+    }
+
+    @Test
+    public void testCondense_invalidatesTreeWhenChanged() {
+        // arrange
+        tree = emptyTree();
+        tree.insert(TestLine.Y_AXIS.span(), RegionCutRule.MINUS_INSIDE);
+        tree.insert(TestLine.X_AXIS.span(), RegionCutRule.INHERIT);
+
+        RegionSizeProperties<TestPoint2D> prevProps = tree.getRegionSizeProperties();
+
+        // act
+        boolean result = tree.condense();
+
+        // assert
+        Assert.assertTrue(result);
+
+        Assert.assertNotSame(prevProps, tree.getRegionSizeProperties());
+    }
+
+    @Test
+    public void testCondense_doesNotInvalidateTreeWhenNotChanged() {
+        // arrange
+        tree = emptyTree();
+
+        RegionSizeProperties<TestPoint2D> prevProps = tree.getRegionSizeProperties();
+
+        // act
+        boolean result = tree.condense();
+
+        // assert
+        Assert.assertFalse(result);
+
+        Assert.assertSame(prevProps, tree.getRegionSizeProperties());
+    }
+
+    @Test
+    public void testCut_nodeMethod() {
+        // arrange
+        tree = emptyTree();
+
+        // act
+        tree.getRoot().cut(TestLine.X_AXIS, RegionCutRule.PLUS_INSIDE)
+            .getPlus()
+                .cut(TestLine.Y_AXIS, RegionCutRule.MINUS_INSIDE)
+                .getMinus()
+                    .cut(new TestLine(TestPoint2D.ZERO, new TestPoint2D(-1, -1)), RegionCutRule.INHERIT);
+
+        // assert
+        TestRegionNode node = tree.getRoot();
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getLocation());
+
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
+
+        node = node.getPlus();
+        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.OUTSIDE, node.getPlus().getLocation());
+
+        node = node.getMinus();
+        Assert.assertEquals(RegionLocation.INSIDE, node.getMinus().getLocation());
+        Assert.assertEquals(RegionLocation.INSIDE, node.getPlus().getLocation());
     }
 
     @Test
@@ -402,22 +639,22 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertSame(first, second);
         Assert.assertNotSame(second, third);
 
-        Assert.assertEquals(1, first.getSize(), PartitionTestUtils.EPS);
-        Assert.assertSame(TestPoint2D.ZERO, first.getBarycenter());
+        Assert.assertEquals(1234, first.getSize(), PartitionTestUtils.EPS);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), first.getBarycenter());
     }
 
     @Test
     public void testGetSize() {
         // act/assert
         // make sure our stub value is pulled
-        Assert.assertEquals(1, tree.getSize(), PartitionTestUtils.EPS);
+        Assert.assertEquals(1234, tree.getSize(), PartitionTestUtils.EPS);
     }
 
     @Test
     public void testGetBarycenter() {
         // act/assert
         // make sure our stub value is pulled
-        Assert.assertSame(TestPoint2D.ZERO, tree.getBarycenter());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), tree.getBarycenter());
     }
 
     @Test
@@ -1036,10 +1273,10 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertEquals(tree.count(), copy.count());
 
         List<RegionLocation> origLocations = new ArrayList<>();
-        tree.nodes().forEach(n -> origLocations.add(n.getLocationValue()));
+        tree.nodes().forEach(n -> origLocations.add(n.getLocation()));
 
         List<RegionLocation> copyLocations = new ArrayList<>();
-        copy.nodes().forEach(n -> copyLocations.add(n.getLocationValue()));
+        copy.nodes().forEach(n -> copyLocations.add(n.getLocation()));
 
         Assert.assertEquals(origLocations, copyLocations);
     }
@@ -1098,515 +1335,6 @@ public class AbstractRegionBSPTreeTest {
     }
 
 
-    @Test
-    public void testUnion_singleNodeTrees() {
-        // act/assert
-        unionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testUnion_simpleCrossingCuts() {
-        // act/assert
-        unionChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(false)
-            .count(3)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::xAxisTree)
-            .full(false)
-            .empty(false)
-            .count(3)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::yAxisTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        unionChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1), new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .outside(new TestPoint2D(1, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(5)
-            .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getPlus().getCut();
-
-                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), seg.getStartPoint());
-                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getEndPoint());
-            });
-    }
-
-    @Test
-    public void testUnion_boxTreeWithSingleCutTree() {
-        // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
-            insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
-            return box;
-        };
-
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
-            horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, 2), new TestPoint2D(0, 2)));
-
-            return horizontal;
-        };
-
-        // act/assert
-        unionChecker(horizonalFactory, boxFactory)
-            .count(3)
-            .inside(TestPoint2D.ZERO, new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .outside(new TestPoint2D(0, 3), new TestPoint2D(3, 3))
-            .boundary(new TestPoint2D(-1, 2), new TestPoint2D(3, 2))
-            .check();
-    }
-
-    @Test
-    public void testUnion_treeWithComplement() {
-        // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
-            insertSkewedBowtie(t);
-
-            return t;
-        };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
-            t.complement();
-
-            return t;
-        };
-
-        // act/assert
-        unionChecker(treeFactory, complementFactory)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testIntersection_singleNodeTrees() {
-        // act/assert
-        intersectionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testIntersection_simpleCrossingCuts() {
-        // act/assert
-        intersectionChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::xAxisTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::yAxisTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .outside(new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .boundary(new TestPoint2D(0, 1), new TestPoint2D(0, -1))
-            .count(3)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .outside(new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .boundary(new TestPoint2D(0, 1), new TestPoint2D(0, -1))
-            .count(3)
-            .check();
-
-        intersectionChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(-1, 1))
-            .outside(new TestPoint2D(1, 1), new TestPoint2D(1, -1), new TestPoint2D(-1, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(5)
-            .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
-
-                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getStartPoint());
-                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), seg.getEndPoint());
-            });
-    }
-
-    @Test
-    public void testIntersection_boxTreeWithSingleCutTree() {
-        // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
-            insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
-            return box;
-        };
-
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
-            horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
-
-            return horizontal;
-        };
-
-        // act/assert
-        intersectionChecker(horizonalFactory, boxFactory)
-            .inside(new TestPoint2D(1, -3))
-            .outside(new TestPoint2D(1, -1), new TestPoint2D(-1, -3),
-                    new TestPoint2D(1, -5), new TestPoint2D(3, -3))
-            .boundary(new TestPoint2D(0, -2), new TestPoint2D(2, -2),
-                    new TestPoint2D(0, -4), new TestPoint2D(2, -4))
-            .count(9)
-            .check();
-    }
-
-    @Test
-    public void testIntersection_treeWithComplement() {
-        // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
-            insertSkewedBowtie(t);
-
-            return t;
-        };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
-            t.complement();
-
-            return t;
-        };
-
-        // act/assert
-        intersectionChecker(treeFactory, complementFactory)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testDifference_singleNodeTrees() {
-        // act/assert
-        differenceChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testDifference_simpleCrossingCuts() {
-        // act/assert
-        differenceChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(0, 1))
-            .outside(new TestPoint2D(0, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(3)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::xAxisTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::yAxisTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .outside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .boundary(new TestPoint2D(0, 1), new TestPoint2D(0, -1))
-            .count(3)
-            .check();
-
-        differenceChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1))
-            .outside(new TestPoint2D(-1, 1), new TestPoint2D(1, -1), new TestPoint2D(-1, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(5)
-            .check(t -> {
-                TestLineSegment seg = (TestLineSegment) t.getRoot().getMinus().getCut();
-
-                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, seg.getStartPoint());
-                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), seg.getEndPoint());
-            });
-    }
-
-    @Test
-    public void testDifference_boxTreeWithSingleCutTree() {
-        // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
-            insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
-            return box;
-        };
-
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
-            horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
-
-            return horizontal;
-        };
-
-        // act/assert
-        differenceChecker(horizonalFactory, boxFactory)
-            .inside(new TestPoint2D(-1, -3), new TestPoint2D(-1, -5),
-                    new TestPoint2D(1, -5), new TestPoint2D(3, -5),
-                    new TestPoint2D(4, -3))
-            .outside(new TestPoint2D(1, -1), new TestPoint2D(1, -1),
-                    new TestPoint2D(3, -1), new TestPoint2D(1, -3))
-            .boundary(new TestPoint2D(0, -2), new TestPoint2D(0, -4),
-                    new TestPoint2D(2, -4), new TestPoint2D(2, -2))
-            .count(9)
-            .check();
-    }
-
-    @Test
-    public void testDifference_treeWithCopy() {
-        // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
-            insertSkewedBowtie(t);
-
-            return t;
-        };
-
-        // act/assert
-        differenceChecker(treeFactory, treeFactory)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testXor_singleNodeTrees() {
-        // act/assert
-        xorChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(true)
-            .count(1)
-            .check();
-    }
-
-    @Test
-    public void testXor_simpleCrossingCuts() {
-        // act/assert
-        xorChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::emptyTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(0, 1))
-            .outside(new TestPoint2D(0, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(3)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::emptyTree, AbstractRegionBSPTreeTest::xAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(0, 1))
-            .outside(new TestPoint2D(0, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(3)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::yAxisTree, AbstractRegionBSPTreeTest::fullTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .outside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .boundary(new TestPoint2D(0, 1), new TestPoint2D(0, -1))
-            .count(3)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::fullTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1), new TestPoint2D(1, -1))
-            .outside(new TestPoint2D(-1, 1), new TestPoint2D(-1, -1))
-            .boundary(new TestPoint2D(0, 1), new TestPoint2D(0, -1))
-            .count(3)
-            .check();
-
-        xorChecker(AbstractRegionBSPTreeTest::xAxisTree, AbstractRegionBSPTreeTest::yAxisTree)
-            .full(false)
-            .empty(false)
-            .inside(new TestPoint2D(1, 1), new TestPoint2D(-1, -1))
-            .outside(new TestPoint2D(-1, 1), new TestPoint2D(1, -1))
-            .boundary(TestPoint2D.ZERO)
-            .count(7)
-            .check(t -> {
-                TestLineSegment minusSeg = (TestLineSegment) t.getRoot().getMinus().getCut();
-
-                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, minusSeg.getStartPoint());
-                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.POSITIVE_INFINITY), minusSeg.getEndPoint());
-
-                TestLineSegment plusSeg = (TestLineSegment) t.getRoot().getPlus().getCut();
-
-                PartitionTestUtils.assertPointsEqual(new TestPoint2D(0.0, Double.NEGATIVE_INFINITY), plusSeg.getStartPoint());
-                PartitionTestUtils.assertPointsEqual(TestPoint2D.ZERO, plusSeg.getEndPoint());
-            });
-    }
-
-    @Test
-    public void testXor_boxTreeWithSingleCutTree() {
-        // arrange
-        Supplier<TestRegionBSPTree> boxFactory = () -> {
-            TestRegionBSPTree box = fullTree();
-            insertBox(box, TestPoint2D.ZERO, new TestPoint2D(2, -4));
-            return box;
-        };
-
-        Supplier<TestRegionBSPTree> horizonalFactory = () -> {
-            TestRegionBSPTree horizontal = fullTree();
-            horizontal.getRoot().insertCut(new TestLine(new TestPoint2D(2, -2), new TestPoint2D(0, -2)));
-
-            return horizontal;
-        };
-
-        // act/assert
-        xorChecker(horizonalFactory, boxFactory)
-            .inside(new TestPoint2D(-1, -3), new TestPoint2D(-1, -5),
-                    new TestPoint2D(1, -5), new TestPoint2D(3, -5),
-                    new TestPoint2D(4, -3), new TestPoint2D(1, -1))
-            .outside(new TestPoint2D(3, -1), new TestPoint2D(1, -3),
-                    new TestPoint2D(1, 1), new TestPoint2D(5, -1))
-            .boundary(new TestPoint2D(0, -2), new TestPoint2D(0, -4),
-                    new TestPoint2D(2, -4), new TestPoint2D(2, -2),
-                    TestPoint2D.ZERO, new TestPoint2D(2, 0))
-            .count(15)
-            .check();
-    }
-
-    @Test
-    public void testXor_treeWithComplement() {
-        // arrange
-        Supplier<TestRegionBSPTree> treeFactory = () -> {
-            TestRegionBSPTree t = fullTree();
-            insertSkewedBowtie(t);
-
-            return t;
-        };
-        Supplier<TestRegionBSPTree> complementFactory = () -> {
-            TestRegionBSPTree t = treeFactory.get();
-            t.complement();
-
-            return t;
-        };
-
-        // act/assert
-        xorChecker(treeFactory, complementFactory)
-            .full(true)
-            .empty(false)
-            .count(1)
-            .check();
-    }
 
     @Test
     public void testProject_emptyAndFull() {
@@ -1800,78 +1528,6 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertTrue(tree.getRoot().toString().contains("TestRegionNode"));
     }
 
-    private static MergeChecker unionChecker(
-            final Supplier<TestRegionBSPTree> r1,
-            final Supplier<TestRegionBSPTree> r2) {
-
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
-            result.union(a, b);
-            return result;
-        };
-
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
-            a.union(b);
-            return a;
-        };
-
-        return new MergeChecker(r1, r2, constOperation, inPlaceOperation);
-    }
-
-    private static MergeChecker intersectionChecker(
-            final Supplier<TestRegionBSPTree> tree1Factory,
-            final Supplier<TestRegionBSPTree> tree2Factory) {
-
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
-            result.intersection(a, b);
-            return result;
-        };
-
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
-            a.intersection(b);
-            return a;
-        };
-
-        return new MergeChecker(tree1Factory, tree2Factory, constOperation, inPlaceOperation);
-    }
-
-    private static MergeChecker differenceChecker(
-            final Supplier<TestRegionBSPTree> tree1Factory,
-            final Supplier<TestRegionBSPTree> tree2Factory) {
-
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
-            result.difference(a, b);
-            return result;
-        };
-
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
-            a.difference(b);
-            return a;
-        };
-
-        return new MergeChecker(tree1Factory, tree2Factory, constOperation, inPlaceOperation);
-    }
-
-    private static MergeChecker xorChecker(
-            final Supplier<TestRegionBSPTree> tree1Factory,
-            final Supplier<TestRegionBSPTree> tree2Factory) {
-
-        MergeChecker.Operation constOperation = (a, b) -> {
-            TestRegionBSPTree result = fullTree();
-            result.xor(a, b);
-            return result;
-        };
-
-        MergeChecker.Operation inPlaceOperation = (a, b) -> {
-            a.xor(b);
-            return a;
-        };
-
-        return new MergeChecker(tree1Factory, tree2Factory, constOperation, inPlaceOperation);
-    }
-
     private static void insertBox(final TestRegionBSPTree tree, final TestPoint2D upperLeft,
             final TestPoint2D lowerRight) {
         final TestPoint2D upperRight = new TestPoint2D(lowerRight.getX(), upperLeft.getY());
@@ -1933,19 +1589,5 @@ public class AbstractRegionBSPTreeTest {
 
     private static TestRegionBSPTree fullTree() {
         return new TestRegionBSPTree(true);
-    }
-
-    private static TestRegionBSPTree xAxisTree() {
-        TestRegionBSPTree tree = fullTree();
-        tree.getRoot().cut(TestLine.X_AXIS);
-
-        return tree;
-    }
-
-    private static TestRegionBSPTree yAxisTree() {
-        TestRegionBSPTree tree = fullTree();
-        tree.getRoot().cut(TestLine.Y_AXIS);
-
-        return tree;
     }
 }

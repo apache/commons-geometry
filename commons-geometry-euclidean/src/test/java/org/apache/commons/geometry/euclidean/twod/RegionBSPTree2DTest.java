@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -664,6 +665,44 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(2, path.getSegments().size());
         assertSegmentsEqual(secondSegment, path.getSegments().get(0));
         assertSegmentsEqual(firstSegment, path.getSegments().get(1));
+    }
+
+    @Test
+    public void testGeometricProperties_mixedCutRule() {
+        // arrange
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+
+        tree.getRoot().cut(Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * Math.PI, TEST_PRECISION),
+                RegionCutRule.INHERIT);
+
+        tree.getRoot()
+            .getPlus().cut(X_AXIS, RegionCutRule.MINUS_INSIDE)
+                .getMinus().cut(Line.fromPointAndAngle(Vector2D.of(1, 0), 0.5 * Math.PI, TEST_PRECISION));
+
+        tree.getRoot()
+            .getMinus().cut(Line.fromPointAndAngle(Vector2D.ZERO, 0.5 * Math.PI, TEST_PRECISION), RegionCutRule.PLUS_INSIDE)
+                .getPlus().cut(Line.fromPointAndAngle(Vector2D.of(1, 1), Math.PI, TEST_PRECISION))
+                    .getMinus().cut(Line.fromPointAndAngle(Vector2D.of(0.5, 0.5), 0.75 * Math.PI, TEST_PRECISION), RegionCutRule.INHERIT);
+
+        // act/assert
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+
+        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
+
+        List<Polyline> paths = tree.getBoundaryPaths();
+        Assert.assertEquals(1, paths.size());
+
+        Polyline path = paths.get(0);
+        Assert.assertEquals(4, path.getSegments().size());
+
+        List<Vector2D> vertices = path.getVertices();
+        Assert.assertEquals(5, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), vertices.get(3), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(4), TEST_EPS);
     }
 
     @Test

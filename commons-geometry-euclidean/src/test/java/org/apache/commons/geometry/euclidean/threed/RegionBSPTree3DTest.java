@@ -27,6 +27,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -207,6 +208,58 @@ public class RegionBSPTree3DTest {
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(100, 100, 100),
                 Vector3D.of(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
+    }
+
+    @Test
+    public void testGeometricProperties_mixedCutRules() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+
+        Vector3D min = Vector3D.ZERO;
+        Vector3D max = Vector3D.of(1, 1, 1);
+
+        Plane top = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        Plane bottom = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        Plane left = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        Plane right = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Plane front = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
+        Plane back = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+
+        Plane diag = Plane.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(0.5, -0.5, 0), TEST_PRECISION);
+        Plane midCut = Plane.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        tree.getRoot()
+            .cut(diag, RegionCutRule.INHERIT);
+
+        tree.getRoot()
+            .getMinus().cut(top)
+            .getMinus().cut(bottom.reverse(), RegionCutRule.PLUS_INSIDE)
+            .getPlus().cut(left, RegionCutRule.MINUS_INSIDE)
+            .getMinus().cut(back.reverse(), RegionCutRule.PLUS_INSIDE)
+            .getPlus().cut(midCut, RegionCutRule.INHERIT);
+
+        tree.getRoot()
+            .getPlus().cut(top.reverse(), RegionCutRule.PLUS_INSIDE)
+            .getPlus().cut(bottom)
+            .getMinus().cut(right, RegionCutRule.MINUS_INSIDE)
+            .getMinus().cut(front.reverse(), RegionCutRule.PLUS_INSIDE)
+            .getPlus().cut(midCut, RegionCutRule.INHERIT);
+
+        // assert
+        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+
+        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
+        Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, min, max);
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(2, 2, 2), Vector3D.of(2, 2, -2),
+                Vector3D.of(2, -2, 2), Vector3D.of(2, -2, -2),
+                Vector3D.of(-2, 2, 2), Vector3D.of(-2, 2, -2),
+                Vector3D.of(-2, -2, 2), Vector3D.of(-2, -2, -2));
     }
 
     @Test
@@ -534,7 +587,7 @@ public class RegionBSPTree3DTest {
 
     // Issue GEOMETRY-43
     @Test
-    public void testFirstIntersection_lineParallelToFace() {
+    public void testLinecastFirst_lineParallelToFace() {
         // arrange - setup box
         Vector3D lowerCorner = Vector3D.ZERO;
         Vector3D upperCorner = Vector3D.of(1, 1, 1);

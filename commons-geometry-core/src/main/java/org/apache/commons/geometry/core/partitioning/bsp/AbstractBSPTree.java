@@ -20,24 +20,63 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
-/** Abstract class for Binary Space Partitioning (BSP) tree implementations.
+/** Abstract class for Binary Space Partitioning (BSP) tree implementations. This
+ * class contains basic structures and algorithms that should be common
+ * to all BSP tree implementations, regardless of the end use cases for the tree
+ * (eg, whether the tree is intended to represent polytopes, hold attributes like
+ * a map, etc).
+ *
+ * <h3>Implementation Notes</h3>
+ * <ul>
+ *      <li>The {@link AbstractBSPTree} class is designed to work closely with its nested node type,
+ *      {@link AbstractNode}. The tree class handles all tree manipulation operations while the node type
+ *      is primarily a simple data type and delegates tree operations to internal methods within its
+ *      parent tree. This allows for easier overriding of tree behavior in subclasses.</li>
+ *      <li>Each time the structure of the tree is modified, a {@link #getVersion() version number} is
+ *      incremented in the tree. This allows certain tree properties to be computed lazily and then
+ *      cached. The tree version number is incremented with the {@link #invalidate() invalidate} method. Properties
+ *      can be cached directly on nodes using the {@link AbstractBSPTree.AbstractNode#checkValid() checkValid}
+ *      and {@link AbstractBSPTree.AbstractNode#nodeInvalidated() nodeInvalidated} methods.</li>
+ *      <li>Since the methods used to construct and modify trees can vary by use case, no public API is provided
+ *      for manipulating the tree. Subclasses are expected to use the protected methods of this class to
+ *      create their own. For tree construction, subclasses are expected to pass their own {@link SubtreeInitializer}
+ *      instances to {@link #insert(ConvexSubHyperplane, SubtreeInitializer) insert} and
+ *      {@link #cutNode(AbstractNode, Hyperplane, SubtreeInitializer) cutNode} in order to set the correct properties on
+ *      tree nodes. To support tree copying, subclasses must also override
+ *      {@link #copyNodeProperties(AbstractNode, AbstractNode) copyNodeProperties}.</li>
+ *      <li>This class is not thread safe.</li>
+ * </ul>
+ *
  * @param <P> Point implementation type
  * @param <N> BSP tree node implementation type
+ * @see BSPTree
  */
 public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPTree.AbstractNode<P, N>>
     implements BSPTree<P, N> {
+
+    /** Interface used to initialize newly created BSP subtrees, consisting of a single parent
+     * node and two child nodes.
+     * @param <N> BSP tree node implementation type
+     */
+    @FunctionalInterface
+    public interface SubtreeInitializer<N extends AbstractBSPTree.AbstractNode<?, ?>> {
+
+        /** Initialize the given newly-created subtree. The subtree consists of a single root node and two
+         * child nodes.
+         * @param root the root node of the new subtree
+         */
+        void initSubtree(N root);
+    }
+
     /** The default number of levels to print when creating a string representation of the tree. */
     private static final int DEFAULT_TREE_STRING_MAX_DEPTH = 8;
 
@@ -94,37 +133,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** {@inheritDoc} */
     @Override
-    public N findNode(final P pt, final NodeCutRule cutBehavior) {
+    public N findNode(final P pt, final FindNodeCutRule cutBehavior) {
         return findNode(getRoot(), pt, cutBehavior);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void insert(final SubHyperplane<P> sub) {
-        insert(sub.toConvex());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void insert(final ConvexSubHyperplane<P> convexSub) {
-        insertRecursive(getRoot(), convexSub,
-                convexSub.getHyperplane().span());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs) {
-        for (final ConvexSubHyperplane<P> convexSub : convexSubs) {
-            insert(convexSub);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc) {
-        try (Stream<? extends ConvexSubHyperplane<P>> stream = boundarySrc.boundaryStream()) {
-            stream.forEach(this::insert);
-        }
     }
 
     /** {@inheritDoc} */
@@ -208,17 +218,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param dst destination node
      */
     protected void copyNodeProperties(final N src, final N dst) {
-        // no-op
-    }
-
-    /** Method called to initialize a new child node. Subclasses can use this method to
-     * set initial attributes on the node.
-     * @param parent the parent node
-     * @param child the new child node
-     * @param isPlus true if the child will be assigned as the parent's plus child;
-     *      false if it will be the parent's minus child
-     */
-    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
         // no-op
     }
 
@@ -333,11 +332,11 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * at the given node.
      * @param start the node to begin the search with
      * @param pt the point to check
-     * @param cutBehavior value determining the search behavior when the test point
+     * @param cutRule value determining the search behavior when the test point
      *      lies directly on the cut subhyperplane of an internal node
      * @return the smallest node in the tree containing the point
      */
-    protected N findNode(final N start, final P pt, final NodeCutRule cutBehavior) {
+    protected N findNode(final N start, final P pt, final FindNodeCutRule cutRule) {
         final Hyperplane<P> cutHyper = start.getCutHyperplane();
         if (cutHyper != null) {
             final HyperplaneLocation cutLoc = cutHyper.classify(pt);
@@ -346,10 +345,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             final boolean onMinusSide = cutLoc == HyperplaneLocation.MINUS;
             final boolean onCut = !onPlusSide && !onMinusSide;
 
-            if (onMinusSide || (onCut && cutBehavior == NodeCutRule.MINUS)) {
-                return findNode(start.getMinus(), pt, cutBehavior);
-            } else if (onPlusSide || cutBehavior == NodeCutRule.PLUS) {
-                return findNode(start.getPlus(), pt, cutBehavior);
+            if (onMinusSide || (onCut && cutRule == FindNodeCutRule.MINUS)) {
+                return findNode(start.getMinus(), pt, cutRule);
+            } else if (onPlusSide || cutRule == FindNodeCutRule.PLUS) {
+                return findNode(start.getPlus(), pt, cutRule);
             }
         }
         return start;
@@ -428,10 +427,10 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *          <ul>
      *              <li>the remaining portion becomes the cut subhyperplane for the node,</li>
      *              <li>two new child nodes are created and initialized with
-     *              {@link #initChildNode(AbstractNode, AbstractNode, boolean)}, and</li>
+     *              {@code subtreeInitializer}, and</li>
      *              <li>true is returned.</li>
      *          </ul>
- *          </li>
+     *      </li>
      *      <li>If the remaining portion of the hyperplane <em>is</em> empty (ie, the
      *      cutting hyperplane does not intersect the node's region), then
      *          <ul>
@@ -446,27 +445,32 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * to the tree root, it must only be used on nodes that are already inserted into
      * the tree.</p>
      *
-     * <p>This method always calls {@link #invalidate()} to invalidate cached tree properties.</p>
+     * <p>This method calls {@link #invalidate()} to invalidate cached tree properties if the tree
+     * structure is changed.</p>
      *
      * @param node the node to cut
      * @param cutter the hyperplane to cut the node with
+     * @param subtreeInitializer object used to initialize any newly-created subtrees
      * @return true if the node was cut and two new child nodes were created;
      *      otherwise false
      * @see #trimToNode(AbstractNode, ConvexSubHyperplane)
-     * @see #cutNode(AbstractNode, ConvexSubHyperplane)
+     * @see #setNodeCut(AbstractNode, ConvexSubHyperplane, SubtreeInitializer)
+     * @see #removeNodeCut(AbstractNode)
      * @see #invalidate()
      */
-    protected boolean insertNodeCut(final N node, final Hyperplane<P> cutter) {
+    protected boolean cutNode(final N node, final Hyperplane<P> cutter,
+            final SubtreeInitializer<N> subtreeInitializer) {
+
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
         final ConvexSubHyperplane<P> cut = trimToNode(node, cutter.span());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
-            cutNode(node, null);
+            removeNodeCut(node);
             return false;
         }
 
-        cutNode(node, cut);
+        setNodeCut(node, cut, subtreeInitializer);
         return true;
     }
 
@@ -534,20 +538,26 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
     /** Remove the cut from the given node. Returns true if the node had a cut before
      * the call to this method. Any previous child nodes are lost.
+     *
+     * <p>This method calls {@link #invalidate()} to invalidate cached tree properties if the tree
+     * structure changed.</p>
      * @param node the node to remove the cut from
      * @return true if the node previously had a cut
      */
     protected boolean removeNodeCut(final N node) {
-        boolean hadCut = node.getCut() != null;
-        cutNode(node, null);
+        if (node.getCut() != null) {
+            node.setSubtree(null, null, null);
 
-        return hadCut;
+            invalidate();
+
+            return true;
+        }
+
+        return false;
     }
 
-    /** Set the cut subhyperplane for the given node. If {@code cut} is {@code null} then any
-     * existing child nodes are removed. If {@code cut} is not {@code null}, two new child
-     * nodes are created and initialized with
-     * {@link AbstractBSPTree#initChildNode(AbstractNode, AbstractNode, boolean)}.
+    /** Set the cut subhyperplane for the given node. Two new child nodes are created for the given
+     * node and the new subtree is initialized with {@code subtreeInitializer}.
      *
      * <p>This method performs absolutely <em>no</em> validation on the given cut
      * subhyperplane. It is the responsibility of the caller to ensure that the
@@ -556,22 +566,56 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * <p>This method always calls {@link #invalidate()} to invalidate cached tree properties.</p>
      * @param node the node to cut
      * @param cut the convex subhyperplane to set as the node cut
+     * @param subtreeInitializer object used to initialize the newly-created subtree
      */
-    protected void cutNode(final N node, final ConvexSubHyperplane<P> cut) {
-        N plus = null;
-        N minus = null;
+    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut,
+            final SubtreeInitializer<N> subtreeInitializer) {
 
-        if (cut != null) {
-            minus = createNode();
-            initChildNode(node, minus, false);
+        node.setSubtree(cut, createNode(), createNode());
 
-            plus = createNode();
-            initChildNode(node, plus, true);
-        }
-
-        node.setSubtree(cut, minus, plus);
+        subtreeInitializer.initSubtree(node);
 
         invalidate();
+    }
+
+    /** Insert the given convex subhyperplane into the tree, starting at the root node. Any subtrees
+     * created are initialized with {@code subtreeInit}.
+     * @param convexSub convex subhyperplane to insert into the tree
+     * @param subtreeInit object used to initialize newly created subtrees
+     */
+    protected void insert(final ConvexSubHyperplane<P> convexSub, final SubtreeInitializer<N> subtreeInit) {
+        insertRecursive(getRoot(), convexSub,
+                convexSub.getHyperplane().span(), subtreeInit);
+    }
+
+    /** Recursively insert a subhyperplane into the tree at the given node.
+     * @param node the node to begin insertion with
+     * @param insert the subhyperplane to insert
+     * @param trimmed subhyperplane containing the result of splitting the entire
+     *      space with each hyperplane from this node to the root
+     * @param subtreeInit object used to initialize newly created subtrees
+     */
+    private void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
+            final ConvexSubHyperplane<P> trimmed, final SubtreeInitializer<N> subtreeInit) {
+        if (node.isLeaf()) {
+            setNodeCut(node, trimmed, subtreeInit);
+        } else {
+            final Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
+
+            final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
+            final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
+
+            if (minus != null || plus != null) {
+                final Split<? extends ConvexSubHyperplane<P>> trimmedSplit = trimmed.split(node.getCutHyperplane());
+
+                if (minus != null) {
+                    insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus(), subtreeInit);
+                }
+                if (plus != null) {
+                    insertRecursive(node.getPlus(), plus, trimmedSplit.getPlus(), subtreeInit);
+                }
+            }
+        }
     }
 
     /** Return true if the given transform swaps the inside and outside of
@@ -587,35 +631,6 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      */
     protected boolean swapsInsideOutside(final Transform<P> transform) {
         return !transform.preservesOrientation();
-    }
-
-    /** Recursively insert a subhyperplane into the tree at the given node.
-     * @param node the node to begin insertion with
-     * @param insert the subhyperplane to insert
-     * @param trimmed subhyperplane containing the result of splitting the entire
-     *      space with each hyperplane from this node to the root
-     */
-    private void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
-            final ConvexSubHyperplane<P> trimmed) {
-        if (node.isLeaf()) {
-            cutNode(node, trimmed);
-        } else {
-            final Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
-
-            final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
-            final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
-
-            if (minus != null || plus != null) {
-                final Split<? extends ConvexSubHyperplane<P>> trimmedSplit = trimmed.split(node.getCutHyperplane());
-
-                if (minus != null) {
-                    insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus());
-                }
-                if (plus != null) {
-                    insertRecursive(node.getPlus(), plus, trimmedSplit.getPlus());
-                }
-            }
-        }
     }
 
     /** Transform the subtree rooted as {@code node} recursively.
@@ -970,22 +985,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
-        public boolean insertCut(final Hyperplane<P> cutter) {
-            return tree.insertNodeCut(getSelf(), cutter);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean clearCut() {
-            return tree.removeNodeCut(getSelf());
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public N cut(final Hyperplane<P> cutter) {
-            this.insertCut(cutter);
-
-            return getSelf();
+        public ConvexSubHyperplane<P> trim(final ConvexSubHyperplane<P> sub) {
+            return getTree().trimToNode(getSelf(), sub);
         }
 
         /** {@inheritDoc} */
