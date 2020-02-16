@@ -85,6 +85,19 @@ public class ConvexVolumeTest {
     }
 
     @Test
+    public void testToTree_full() {
+        // arrange
+        ConvexVolume volume = ConvexVolume.full();
+
+        // act
+        RegionBSPTree3D tree = volume.toTree();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
     public void testToTree() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(

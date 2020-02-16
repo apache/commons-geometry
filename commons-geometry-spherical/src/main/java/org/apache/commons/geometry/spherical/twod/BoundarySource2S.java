@@ -23,13 +23,15 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
  */
 public interface BoundarySource2S extends BoundarySource<GreatArc> {
 
-    /** Construct a new BSP tree from the boundaries contained in this
-     * instance.
-     * @return a new BSP tree constructed from the boundaries in this
-     *      instance
-     * @see RegionBSPTree2S#from(BoundarySource)
+    /** Return a BSP tree constructed from the boundaries contained in this
+     * instance. The default implementation creates a new, empty tree
+     * and inserts the boundaries from this instance.
+     * @return a BSP tree constructed from the boundaries in this instance
      */
     default RegionBSPTree2S toTree() {
-        return RegionBSPTree2S.from(this);
+        final RegionBSPTree2S tree = RegionBSPTree2S.empty();
+        tree.insert(this);
+
+        return tree;
     }
 }

@@ -129,6 +129,13 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         return splitInternal(splitter, this, Facet.class, ConvexVolume::new);
     }
 
+    /** Return a BSP tree representing the same region as this instance.
+     */
+    @Override
+    public RegionBSPTree3D toTree() {
+        return RegionBSPTree3D.from(getBoundaries(), true);
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint3D> linecast(final Segment3D segment) {

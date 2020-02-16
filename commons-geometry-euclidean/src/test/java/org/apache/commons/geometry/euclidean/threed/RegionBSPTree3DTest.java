@@ -174,17 +174,12 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testToTree_returnsNewTree() {
+    public void testToTree_returnsSameInstance() {
         // arrange
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 2, 1));
 
-        // act
-        RegionBSPTree3D result = tree.toTree();
-
-        // assert
-        Assert.assertEquals(6, result.getBoundaries().size());
-        Assert.assertEquals(2, result.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 1, 0.5), result.getBarycenter(), TEST_EPS);
+        // act/assert
+        Assert.assertSame(tree, tree.toTree());
     }
 
     @Test
@@ -263,17 +258,6 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
-    public void testFrom_boundaries_noBoundaries() {
-        // act
-        RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList());
-
-        // assert
-        Assert.assertNull(tree.getBarycenter());
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-    }
-
-    @Test
     public void testFrom_boundaries() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
@@ -287,6 +271,8 @@ public class RegionBSPTree3DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(1, 1, -1), Vector3D.of(-1, 1, -1));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -295,12 +281,43 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
+    public void testFrom_boundaries_fullIsTrue() {
+        // act
+        RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
+                    Facet.fromVertexLoop(Arrays.asList(
+                            Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
+                    Facet.fromVertexLoop(Arrays.asList(
+                            Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
+                ), true);
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
+
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
+                Vector3D.of(1, 1, -1), Vector3D.of(-1, 1, -1));
+        EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
+                Vector3D.of(1, 1, 1), Vector3D.of(-1, 1, 1), Vector3D.of(1, -1, 1),
+                Vector3D.of(-1, -1, 1), Vector3D.of(1, -1, -1), Vector3D.of(-1, -1, -1));
+    }
+
+    @Test
+    public void testFrom_boundaries_noBoundaries() {
+        // act/assert
+        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree3D.from(Arrays.asList(), false).isEmpty());
+    }
+
+    @Test
     public void testFromConvexVolume_full() {
         // arrange
         ConvexVolume volume = ConvexVolume.full();
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
+        RegionBSPTree3D tree = volume.toTree();
         Assert.assertNull(tree.getBarycenter());
 
         // assert
@@ -313,7 +330,7 @@ public class RegionBSPTree3DTest {
         ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
+        RegionBSPTree3D tree = volume.toTree();
 
         // assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
@@ -339,7 +356,7 @@ public class RegionBSPTree3DTest {
                 );
 
         // act
-        RegionBSPTree3D tree = RegionBSPTree3D.from(volume);
+        RegionBSPTree3D tree = volume.toTree();
 
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);

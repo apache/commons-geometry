@@ -97,8 +97,24 @@ public class ConvexAreaTest {
         RegionBSPTree2D tree = area.toTree();
 
         // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testToTree_full() {
+        // arrange
+        ConvexArea area = ConvexArea.full();
+
+        // act
+        RegionBSPTree2D tree = area.toTree();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
     }
 
     @Test

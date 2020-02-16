@@ -112,13 +112,10 @@ public class RegionBSPTree2STest {
 
     @Test
     public void testFrom_boundaries_noBoundaries() {
-        // act
-        RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList());
-
-        // assert
-        Assert.assertNull(tree.getBarycenter());
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        // act/assert
+        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree2S.from(Arrays.asList(), false).isEmpty());
     }
 
     @Test
@@ -134,41 +131,31 @@ public class RegionBSPTree2STest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.of(1, 0.5));
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
                 Point2S.of(-1, 0.5), Point2S.of(Math.PI, 0.5 * Math.PI));
     }
 
     @Test
-    public void testFromBoundarySource() {
-        // arrange
-        ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(
-                    Point2S.of(0.1, 0.1), Point2S.of(0, 0.5),
-                    Point2S.of(0.15, 0.75), Point2S.of(0.3, 0.5),
-                    Point2S.of(0.1, 0.1)
-                ), TEST_PRECISION);
-
+    public void testFrom_boundaries_fullIsTrue() {
         // act
-        RegionBSPTree2S tree = RegionBSPTree2S.from(area);
+        RegionBSPTree2S tree = RegionBSPTree2S.from(Arrays.asList(
+                    EQUATOR.arc(Point2S.PLUS_I, Point2S.PLUS_J),
+                    X_MERIDIAN.arc(Point2S.PLUS_K, Point2S.PLUS_I),
+                    Y_MERIDIAN.arc(Point2S.PLUS_J, Point2S.PLUS_K)
+                ), true);
 
         // assert
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
-        Assert.assertEquals(area.getSize(), tree.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(area.getBarycenter(), tree.getBarycenter(), TEST_EPS);
-    }
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
 
-    @Test
-    public void testFromBoundarySource_noBoundaries() {
-        // arrange
-        BoundarySource2S src = () -> new ArrayList<GreatArc>().stream();
-
-        // act
-        RegionBSPTree2S tree = RegionBSPTree2S.from(src);
-
-        // assert
-        Assert.assertTrue(tree.isFull());
+        SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.of(1, 0.5));
+        SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,
+                Point2S.of(-1, 0.5), Point2S.of(Math.PI, 0.5 * Math.PI));
     }
 
     @Test
@@ -238,17 +225,13 @@ public class RegionBSPTree2STest {
     }
 
     @Test
-    public void testToTree_returnsNewInstance() {
+    public void testToTree_returnsSameInstance() {
         // arrange
         RegionBSPTree2S tree = RegionBSPTree2S.empty();
         insertPositiveQuadrant(tree);
 
-        // act
-        RegionBSPTree2S result = tree.toTree();
-
-        // assert
-        Assert.assertNotSame(tree, result);
-        Assert.assertEquals(3, result.getBoundaries().size());
+        // act/assert
+        Assert.assertSame(tree, tree.toTree());
     }
 
     @Test

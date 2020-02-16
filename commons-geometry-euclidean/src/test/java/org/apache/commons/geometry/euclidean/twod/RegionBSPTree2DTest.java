@@ -314,8 +314,7 @@ public class RegionBSPTree2DTest {
     @Test
     public void testToConvex_square() {
         // arrange
-        RegionBSPTree2D tree = RegionBSPTree2D.from(
-                Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION).toTree();
 
         // act
         List<ConvexArea> result = tree.toConvex();
@@ -885,17 +884,6 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
-    public void testFrom_boundaries_noBoundaries() {
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList());
-
-        // assert
-        Assert.assertNull(tree.getBarycenter());
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-    }
-
-    @Test
     public void testFrom_boundaries() {
         // act
         RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
@@ -908,92 +896,48 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
+        Assert.assertEquals(RegionLocation.OUTSIDE, tree.getRoot().getLocation());
+
         checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(-1, 1));
         checkClassify(tree, RegionLocation.OUTSIDE,
                 Vector2D.of(1, 1), Vector2D.of(1, -1), Vector2D.of(-1, -1));
     }
 
     @Test
-    public void testFrom_boundarySource_noBoundaries() {
-        // arrange
-        BoundarySource2D src = BoundarySource2D.from();
-
+    public void testFrom_boundaries_fullIsTrue() {
         // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(src);
+        RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
+                    Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
+                    Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
+                        .segmentFrom(Vector2D.ZERO)
+                ), true);
 
         // assert
-        Assert.assertNull(tree.getBarycenter());
-        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
-    }
 
-    @Test
-    public void testFromConvexArea_full() {
-        // arrange
-        ConvexArea area = ConvexArea.full();
+        Assert.assertEquals(RegionLocation.INSIDE, tree.getRoot().getLocation());
 
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
-
-        // assert
-        Assert.assertNull(tree.getBarycenter());
-        Assert.assertTrue(tree.isFull());
-    }
-
-    @Test
-    public void testFromConvexArea_infinite() {
-        // arrange
-        ConvexArea area = ConvexArea.fromVertices(
-                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
-
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
-
-        // assert
-        GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
-        Assert.assertNull(tree.getBarycenter());
-
-        checkClassify(tree, RegionLocation.OUTSIDE, Vector2D.of(1, 0));
-        checkClassify(tree, RegionLocation.BOUNDARY, Vector2D.ZERO);
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(-1, 0));
-    }
-
-    @Test
-    public void testFromConvexArea_finite() {
-        // arrange
-        ConvexArea area = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
-
-        // act
-        RegionBSPTree2D tree = RegionBSPTree2D.from(area);
-
-        // assert
-        Assert.assertEquals(1, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
-
+        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(-1, 1));
         checkClassify(tree, RegionLocation.OUTSIDE,
-                Vector2D.of(-1, 0.5), Vector2D.of(2, 0.5),
-                Vector2D.of(0.5, -1), Vector2D.of(0.5, 2));
-        checkClassify(tree, RegionLocation.BOUNDARY,
-                Vector2D.of(0, 0.5), Vector2D.of(1, 0.5),
-                Vector2D.of(0.5, 0), Vector2D.of(0.5, 1));
-        checkClassify(tree, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
+                Vector2D.of(1, 1), Vector2D.of(1, -1), Vector2D.of(-1, -1));
     }
 
     @Test
-    public void testToTree_returnsNewTree() {
+    public void testFrom_boundaries_noBoundaries() {
+        // act/assert
+        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList()).isEmpty());
+        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList(), true).isFull());
+        Assert.assertTrue(RegionBSPTree2D.from(Arrays.asList(), false).isEmpty());
+    }
+
+    @Test
+    public void testToTree_returnsSameInstance() {
         // arrange
         RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 2), TEST_PRECISION).toTree();
 
-        // act
-        RegionBSPTree2D result = tree.toTree();
-
-        // assert
-        Assert.assertNotSame(tree, result);
-        Assert.assertEquals(2, result.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 1), result.getBarycenter(), TEST_EPS);
+        // act/assert
+        Assert.assertSame(tree, tree.toTree());
     }
 
     @Test

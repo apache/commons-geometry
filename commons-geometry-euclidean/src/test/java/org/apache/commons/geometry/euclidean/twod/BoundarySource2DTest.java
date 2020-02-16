@@ -33,6 +33,37 @@ public class BoundarySource2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testToTree() {
+        // act
+        BoundarySource2D src = BoundarySource2D.from(
+            Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
+            Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
+        );
+
+        // act
+        RegionBSPTree2D tree = src.toTree();
+
+        // assert
+        Assert.assertEquals(5, tree.count());
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
+    public void testToTree_noBoundaries() {
+        // act
+        BoundarySource2D src = BoundarySource2D.from();
+
+        // act
+        RegionBSPTree2D tree = src.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+    }
+
+    @Test
     public void testFrom_varargs_empty() {
         // act
         BoundarySource2D src = BoundarySource2D.from();
