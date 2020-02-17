@@ -25,4 +25,4 @@ jdk:
   - openjdk-ea
 
 after_success:
-  - mvn clean test pmd:pmd spotbugs:spotbugs checkstyle:checkstyle jacoco:report coveralls:report
+  - mvn jacoco:report coveralls:report
