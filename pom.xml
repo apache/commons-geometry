@@ -284,12 +284,18 @@
           </dependency>
         </dependencies>
         <configuration>
+          <printFailingErrors>true</printFailingErrors>
+          <!-- TODO: remove this when PMD has been fixed. -->
+          <failOnViolation>false</failOnViolation>
           <targetJdk>${maven.compiler.target}</targetJdk>
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
           <rulesets>
             <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources</excludeRoot>
+          </excludeRoots>
         </configuration>
       </plugin>
       <plugin>
@@ -422,6 +428,8 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${geometry.pmd.version}</version>
         <configuration>
+          <verbose>false</verbose>
+          <printFailingErrors>true</printFailingErrors>
           <targetJdk>${maven.compiler.target}</targetJdk>
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
