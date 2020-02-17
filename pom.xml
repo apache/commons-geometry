@@ -596,6 +596,16 @@
       </build>
     </profile>
 
+    <!--
+        Profiles for modules with special requirements.
+    -->
+    <profile>
+      <id>commons-geometry-examples</id>
+      <modules>
+        <module>commons-geometry-examples</module>
+      </modules>
+    </profile>
+
   </profiles>
 
   <developers>

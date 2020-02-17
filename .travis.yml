@@ -24,5 +24,9 @@ jdk:
   - openjdk13
   - openjdk-ea
 
+script:
+  - mvn
+  - mvn -P commons-geometry-examples --projects commons-geometry-examples verify apache-rat:check checkstyle:check
+
 after_success:
   - mvn jacoco:report coveralls:report
