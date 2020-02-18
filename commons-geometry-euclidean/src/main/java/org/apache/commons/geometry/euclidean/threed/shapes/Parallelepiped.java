@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.Facet;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class containing utility methods for constructing parallelepipeds. Parallelepipeds
