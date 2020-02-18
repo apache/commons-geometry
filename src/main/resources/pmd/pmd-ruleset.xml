@@ -62,4 +62,10 @@
     <!-- <exclude name="..." /> -->
   </rule>
 
+  <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+    <properties>
+      <property name="ignoreMagicNumbers" value="-1,0,1" />
+    </properties>
+  </rule>
+
 </ruleset>
