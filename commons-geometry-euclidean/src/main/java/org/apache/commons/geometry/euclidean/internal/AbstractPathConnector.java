@@ -278,7 +278,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
         private E previous;
 
         /** Flag set to true when this element has exported its value to a path. */
-        private boolean exported = false;
+        private boolean exported;
 
         /** Return true if the instance is connected to another element's start point.
          * @return true if the instance has a next element

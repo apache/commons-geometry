@@ -502,16 +502,16 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     private static final class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint> {
         /** Number of inside intervals visited. */
-        private int count = 0;
+        private int count;
 
         /** Total computed size of all inside regions. */
-        private double size = 0;
+        private double size;
 
         /** Raw sum of the barycenters of each inside interval. */
-        private double rawBarycenterSum = 0;
+        private double rawBarycenterSum;
 
         /** The sum of the barycenter of each inside interval, scaled by the size of the interval. */
-        private double scaledBarycenterSum = 0;
+        private double scaledBarycenterSum;
 
         /** {@inheritDoc} */
         @Override
