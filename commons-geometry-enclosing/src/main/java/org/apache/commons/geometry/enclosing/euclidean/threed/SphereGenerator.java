@@ -58,7 +58,7 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
             return new EnclosingBall<>(Vector3D.linearCombination(0.5, vA, 0.5, vB),
                                        0.5 * vA.distance(vB),
                                        Arrays.asList(vA, vB));
-        } 
+        }
         final Vector3D vC = support.get(2);
         if (support.size() < 4) {
             final Plane p = Plane.fromPoints(vA, vB, vC, precision);

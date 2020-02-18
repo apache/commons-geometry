@@ -34,11 +34,11 @@ public class DiskGenerator implements SupportBallGenerator<Vector2D> {
     public EnclosingBall<Vector2D> ballOnSupport(final List<Vector2D> support) {
         if (support.isEmpty()) {
             return new EnclosingBall<>(Vector2D.ZERO, Double.NEGATIVE_INFINITY, Collections.emptyList());
-        } 
+        }
         final Vector2D vA = support.get(0);
         if (support.size() < 2) {
             return new EnclosingBall<>(vA, 0, Arrays.asList(vA));
-        } 
+        }
         final Vector2D vB = support.get(1);
         if (support.size() < 3) {
             return new EnclosingBall<>(Vector2D.linearCombination(0.5, vA, 0.5, vB),
