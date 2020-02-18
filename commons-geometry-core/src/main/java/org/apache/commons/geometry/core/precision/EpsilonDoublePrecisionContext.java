@@ -18,6 +18,8 @@ package org.apache.commons.geometry.core.precision;
 
 import org.apache.commons.numbers.core.Precision;
 
+import java.io.Serializable;
+
 /** Simple {@link DoublePrecisionContext} subclass that uses an absolute epsilon value to
  * determine equality between doubles.
  *
@@ -28,7 +30,9 @@ import org.apache.commons.numbers.core.Precision;
  *
  * @see Precision#compareTo(double, double, double)
  */
-public class EpsilonDoublePrecisionContext extends DoublePrecisionContext {
+public class EpsilonDoublePrecisionContext extends DoublePrecisionContext implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /** Epsilon value. */
     private final double epsilon;
 
