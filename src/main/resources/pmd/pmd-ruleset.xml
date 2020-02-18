@@ -25,6 +25,7 @@
 
   <rule ref="category/java/bestpractices.xml">
     <exclude name="UseVarargs" />
+    <exclude name="ReplaceVectorWithList" />
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="MethodArgumentCouldBeFinal" />
@@ -65,6 +66,25 @@
   <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
     <properties>
       <property name="ignoreMagicNumbers" value="-1,0,1" />
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/FieldNamingConventions">
+    <properties>
+      <property name="publicConstantPattern" value="([A-Z][A-Z_0-9]*)|NaN" />
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+    <properties>
+      <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]+" />
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml/ShortMethodName">
+    <properties>
+        <!-- Allow short method names such as 'eq' and 'of' -->
+      <property name="minimum" value="2" />
     </properties>
   </rule>
 
