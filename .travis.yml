@@ -16,6 +16,11 @@
 language: java
 sudo: false
 
+matrix:
+  allow_failures:
+    # May not yet be supported by all plugins
+    - jdk: openjdk-ea
+
 jdk:
   - openjdk8
   - openjdk10
