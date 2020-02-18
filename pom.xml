@@ -53,10 +53,10 @@
     <commons.encoding>UTF-8</commons.encoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <geometry.pmd.version>3.9.0</geometry.pmd.version>
-    <geometry.pmd.dep.version>6.14.0</geometry.pmd.dep.version>
-    <geometry.checkstyle.version>3.0.0</geometry.checkstyle.version>
-    <geometry.checkstyle.dep.version>8.20</geometry.checkstyle.dep.version>
+    <geometry.pmd.version>3.13.0</geometry.pmd.version>
+    <geometry.pmd.dep.version>6.21.0</geometry.pmd.dep.version>
+    <geometry.checkstyle.version>3.1.0</geometry.checkstyle.version>
+    <geometry.checkstyle.dep.version>8.29</geometry.checkstyle.dep.version>
     <geometry.mathjax.version>2.7.2</geometry.mathjax.version>
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
@@ -284,12 +284,18 @@
           </dependency>
         </dependencies>
         <configuration>
+          <printFailingErrors>true</printFailingErrors>
+          <!-- TODO: remove this when PMD has been fixed. -->
+          <failOnViolation>false</failOnViolation>
           <targetJdk>${maven.compiler.target}</targetJdk>
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
           <rulesets>
             <ruleset>${geometry.parent.dir}/src/main/resources/pmd/pmd-ruleset.xml</ruleset>
           </rulesets>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources</excludeRoot>
+          </excludeRoots>
         </configuration>
       </plugin>
       <plugin>
@@ -422,6 +428,8 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${geometry.pmd.version}</version>
         <configuration>
+          <verbose>false</verbose>
+          <printFailingErrors>true</printFailingErrors>
           <targetJdk>${maven.compiler.target}</targetJdk>
           <skipEmptyReport>false</skipEmptyReport>
           <analysisCache>true</analysisCache>
@@ -586,6 +594,16 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <!--
+        Profiles for modules with special requirements.
+    -->
+    <profile>
+      <id>commons-geometry-examples</id>
+      <modules>
+        <module>commons-geometry-examples</module>
+      </modules>
     </profile>
 
   </profiles>

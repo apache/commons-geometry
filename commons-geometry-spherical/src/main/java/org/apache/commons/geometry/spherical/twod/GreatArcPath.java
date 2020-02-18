@@ -110,7 +110,7 @@ public final class GreatArcPath implements BoundarySource2S {
         }
 
         // add end points
-        for (GreatArc arc : arcs) {
+        for (final GreatArc arc : arcs) {
             pt = arc.getEndPoint();
             if (pt != null) {
                 vertices.add(pt);
@@ -206,7 +206,7 @@ public final class GreatArcPath implements BoundarySource2S {
      */
     public static GreatArcPath fromArcs(final Collection<GreatArc> arcs) {
         final Builder builder = builder(null);
-        for (GreatArc arc : arcs) {
+        for (final GreatArc arc : arcs) {
             builder.append(arc);
         }
 
@@ -398,7 +398,7 @@ public final class GreatArcPath implements BoundarySource2S {
          * @see #append(Point2S)
          */
         public Builder appendVertices(final Collection<Point2S> vertices) {
-            for (Point2S vertex : vertices) {
+            for (final Point2S vertex : vertices) {
                 append(vertex);
             }
 

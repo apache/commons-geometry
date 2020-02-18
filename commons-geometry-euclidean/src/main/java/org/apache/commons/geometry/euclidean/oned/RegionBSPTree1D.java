@@ -58,7 +58,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1D copy() {
-        RegionBSPTree1D result = RegionBSPTree1D.empty();
+        final RegionBSPTree1D result = RegionBSPTree1D.empty();
         result.copy(this);
 
         return result;
@@ -184,7 +184,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         BoundaryPair start = null;
         BoundaryPair end = null;
 
-        for (BoundaryPair current : boundaryPairs) {
+        for (final BoundaryPair current : boundaryPairs) {
             if (start == null) {
                 start = current;
                 end = current;
@@ -240,7 +240,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      *      insides node's convex region
      */
     private void visitInsideIntervals(final BiConsumer<OrientedPoint, OrientedPoint> visitor) {
-        for (RegionNode1D node : nodes()) {
+        for (final RegionNode1D node : nodes()) {
             if (node.isInside()) {
                 node.visitNodeInterval(visitor);
             }
@@ -256,7 +256,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<Vector1D> computeRegionSizeProperties() {
-        RegionSizePropertiesVisitor visitor = new RegionSizePropertiesVisitor();
+        final RegionSizePropertiesVisitor visitor = new RegionSizePropertiesVisitor();
 
         visitInsideIntervals(visitor);
 
@@ -310,7 +310,7 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      * @return a new instance constructed from the given collection of intervals
      */
     public static RegionBSPTree1D from(final Iterable<Interval> intervals) {
-        RegionBSPTree1D tree = new RegionBSPTree1D(false);
+        final RegionBSPTree1D tree = new RegionBSPTree1D(false);
 
         for (final Interval interval : intervals) {
             tree.add(interval);
@@ -503,16 +503,16 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
      */
     private static final class RegionSizePropertiesVisitor implements BiConsumer<OrientedPoint, OrientedPoint> {
         /** Number of inside intervals visited. */
-        private int count = 0;
+        private int count;
 
         /** Total computed size of all inside regions. */
-        private double size = 0;
+        private double size;
 
         /** Raw sum of the barycenters of each inside interval. */
-        private double rawBarycenterSum = 0;
+        private double rawBarycenterSum;
 
         /** The sum of the barycenter of each inside interval, scaled by the size of the interval. */
-        private double scaledBarycenterSum = 0;
+        private double scaledBarycenterSum;
 
         /** {@inheritDoc} */
         @Override

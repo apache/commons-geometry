@@ -162,12 +162,12 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @return the projection of the given line onto the plane.
      */
     public Line3D project(final Line3D line) {
-        Vector3D direction = line.getDirection();
-        Vector3D projection = w.multiply(direction.dot(w) * (1 / w.normSq()));
+        final Vector3D direction = line.getDirection();
+        final Vector3D projection = w.multiply(direction.dot(w) * (1 / w.normSq()));
 
-        Vector3D projectedLineDirection = direction.subtract(projection);
-        Vector3D p1 = project(line.getOrigin());
-        Vector3D p2 = p1.add(projectedLineDirection);
+        final Vector3D projectedLineDirection = direction.subtract(projection);
+        final Vector3D p1 = project(line.getOrigin());
+        final Vector3D p2 = p1.add(projectedLineDirection);
 
         return Line3D.fromPoints(p1, p2, getPrecision());
     }
@@ -300,10 +300,10 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @return a new plane
      */
     public Plane translate(final Vector3D translation) {
-        Vector3D p = getOrigin().add(translation);
-        Vector3D normal = this.w;
-        Vector3D wTmp = normal.normalize();
-        double originOffsetTmp = -p.dot(wTmp);
+        final Vector3D p = getOrigin().add(translation);
+        final Vector3D normal = this.w;
+        final Vector3D wTmp = normal.normalize();
+        final double originOffsetTmp = -p.dot(wTmp);
 
         return new Plane(this.u, this.v, wTmp, originOffsetTmp, getPrecision());
     }
@@ -538,7 +538,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
             return false;
         }
 
-        Plane other = (Plane) obj;
+        final Plane other = (Plane) obj;
 
         return Objects.equals(this.u, other.u) &&
                 Objects.equals(this.v, other.v) &&
@@ -576,10 +576,10 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      */
     public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v,
             final DoublePrecisionContext precision) {
-        Vector3D uNorm = u.normalize();
-        Vector3D vNorm = uNorm.orthogonal(v);
-        Vector3D wNorm = uNorm.cross(vNorm).normalize();
-        double originOffset = -p.dot(wNorm);
+        final Vector3D uNorm = u.normalize();
+        final Vector3D vNorm = uNorm.orthogonal(v);
+        final Vector3D wNorm = uNorm.cross(vNorm).normalize();
+        final double originOffset = -p.dot(wNorm);
 
         return new Plane(uNorm, vNorm, wNorm, originOffset, precision);
     }
@@ -607,11 +607,11 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      */
     public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal,
             final DoublePrecisionContext precision) {
-        Vector3D w = normal.normalize();
-        double originOffset = -p.dot(w);
+        final Vector3D w = normal.normalize();
+        final double originOffset = -p.dot(w);
 
-        Vector3D u = w.orthogonal();
-        Vector3D v = w.cross(u);
+        final Vector3D u = w.orthogonal();
+        final Vector3D v = w.cross(u);
 
         return new Plane(u, v, w, originOffset, precision);
     }
@@ -656,7 +656,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
         final Iterator<Vector3D> it = pts.iterator();
 
-        Vector3D startPt = it.next();
+        final Vector3D startPt = it.next();
 
         Vector3D u = null;
         Vector3D w = null;

@@ -57,7 +57,7 @@ public final class AklToussaintHeuristic {
         Vector2D maxX = null;
         Vector2D minY = null;
         Vector2D maxY = null;
-        for (Vector2D p : points) {
+        for (final Vector2D p : points) {
             if (minX == null || p.getX() < minX.getX()) {
                 minX = p;
             }
@@ -102,8 +102,8 @@ public final class AklToussaintHeuristic {
      * @return the quadrilateral
      */
     private static List<Vector2D> buildQuadrilateral(final Vector2D... points) {
-        List<Vector2D> quadrilateral = new ArrayList<>();
-        for (Vector2D p : points) {
+        final List<Vector2D> quadrilateral = new ArrayList<>();
+        for (final Vector2D p : points) {
             if (!quadrilateral.contains(p)) {
                 quadrilateral.add(p);
             }
@@ -120,7 +120,7 @@ public final class AklToussaintHeuristic {
     private static boolean insideQuadrilateral(final Vector2D point,
                                                final List<Vector2D> quadrilateralPoints) {
 
-        Vector2D v0 = point;
+        final Vector2D v0 = point;
         Vector2D v1 = quadrilateralPoints.get(0);
         Vector2D v2 = quadrilateralPoints.get(1);
 

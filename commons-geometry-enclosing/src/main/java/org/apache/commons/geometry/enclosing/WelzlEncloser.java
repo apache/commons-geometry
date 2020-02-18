@@ -94,7 +94,7 @@ public class WelzlEncloser<P extends Point<P>> implements Encloser<P> {
             // recurse search, restricted to the small subset containing support and farthest point
             support.clear();
             support.add(farthest);
-            EnclosingBall<P> savedBall = ball;
+            final EnclosingBall<P> savedBall = ball;
             ball = moveToFrontBall(extreme, extreme.size(), support);
             if (precision.lt(ball.getRadius(), savedBall.getRadius())) {
                 // this should never happen

@@ -94,14 +94,14 @@ abstract class AbstractConvexHullGenerator2D implements ConvexHullGenerator2D {
      * @return {@code true} if the vertices form a convex hull, {@code false} otherwise
      */
     private boolean isConvex(final Collection<Vector2D> vertices) {
-        int size = vertices.size();
+        final int size = vertices.size();
 
         if (size < 3) {
             // 1 or 2 points always define a convex set
             return true;
         }
 
-        Iterator<Vector2D> it = vertices.iterator();
+        final Iterator<Vector2D> it = vertices.iterator();
 
         Vector2D p1 = it.next();
         Vector2D p2 = it.next();

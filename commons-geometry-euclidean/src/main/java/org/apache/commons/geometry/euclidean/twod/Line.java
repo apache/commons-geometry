@@ -468,7 +468,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
             return false;
         }
 
-        Line other = (Line) obj;
+        final Line other = (Line) obj;
 
         return Objects.equals(this.direction, other.direction) &&
                 Double.compare(this.originOffset, other.originOffset) == 0 &&

@@ -47,7 +47,7 @@ public abstract class AbstractSegmentConnector
      * @see #add(Segment)
      */
     public void add(final Iterable<Segment> segments) {
-        for (Segment segment : segments) {
+        for (final Segment segment : segments) {
             add(segment);
         }
     }
@@ -63,9 +63,9 @@ public abstract class AbstractSegmentConnector
      * @see #connectAll()
      */
     public void connect(final Iterable<Segment> segments) {
-        List<ConnectableSegment> newEntries = new ArrayList<>();
+        final List<ConnectableSegment> newEntries = new ArrayList<>();
 
-        for (Segment segment : segments) {
+        for (final Segment segment : segments) {
             newEntries.add(new ConnectableSegment(segment));
         }
 
@@ -104,7 +104,7 @@ public abstract class AbstractSegmentConnector
         final List<ConnectableSegment> roots = computePathRoots();
         final List<Polyline> paths = new ArrayList<>(roots.size());
 
-        for (ConnectableSegment root : roots) {
+        for (final ConnectableSegment root : roots) {
             paths.add(toPolyline(root));
         }
 

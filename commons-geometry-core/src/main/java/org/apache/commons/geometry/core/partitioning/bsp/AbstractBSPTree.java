@@ -90,7 +90,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * a structural change occurs in the tree and is used to determine when cached values
      * must be recomputed.
      */
-    private int version = 0;
+    private int version;
 
     /** {@inheritDoc} */
     @Override

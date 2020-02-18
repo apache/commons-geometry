@@ -47,7 +47,7 @@ public abstract class AbstractGreatArcConnector
      * @see #add(GreatArc)
      */
     public void add(final Iterable<GreatArc> arcs) {
-        for (GreatArc segment : arcs) {
+        for (final GreatArc segment : arcs) {
             add(segment);
         }
     }
@@ -63,9 +63,9 @@ public abstract class AbstractGreatArcConnector
      * @see #connectAll()
      */
     public void connect(final Iterable<GreatArc> arcs) {
-        List<ConnectableGreatArc> newEntries = new ArrayList<>();
+        final List<ConnectableGreatArc> newEntries = new ArrayList<>();
 
-        for (GreatArc segment : arcs) {
+        for (final GreatArc segment : arcs) {
             newEntries.add(new ConnectableGreatArc(segment));
         }
 
@@ -102,7 +102,7 @@ public abstract class AbstractGreatArcConnector
         final List<ConnectableGreatArc> roots = computePathRoots();
         final List<GreatArcPath> paths = new ArrayList<>(roots.size());
 
-        for (ConnectableGreatArc root : roots) {
+        for (final ConnectableGreatArc root : roots) {
             paths.add(toPath(root));
         }
 

@@ -346,7 +346,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
             return false;
         }
 
-        GreatCircle other = (GreatCircle) obj;
+        final GreatCircle other = (GreatCircle) obj;
 
         return Objects.equals(this.pole, other.pole) &&
                 Objects.equals(this.u, other.u) &&

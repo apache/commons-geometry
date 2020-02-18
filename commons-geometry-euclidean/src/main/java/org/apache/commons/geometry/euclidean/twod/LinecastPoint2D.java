@@ -104,7 +104,7 @@ public class LinecastPoint2D extends AbstractLinecastPoint<Vector2D, Vector2D.Un
     private static boolean containsEq(final LinecastPoint2D pt, final List<LinecastPoint2D> list) {
         final DoublePrecisionContext precision = pt.getLine().getPrecision();
 
-        for (LinecastPoint2D listPt : list) {
+        for (final LinecastPoint2D listPt : list) {
             if (listPt.eq(pt, precision)) {
                 return true;
             }

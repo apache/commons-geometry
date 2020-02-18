@@ -111,7 +111,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
 
         double quadrilateralAreaSum = 0.0;
 
-        for (Segment segment : getBoundaries()) {
+        for (final Segment segment : getBoundaries()) {
             if (segment.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
             }
@@ -125,7 +125,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
     /** {@inheritDoc} */
     @Override
     public Vector2D getBarycenter() {
-        List<Segment> boundaries = getBoundaries();
+        final List<Segment> boundaries = getBoundaries();
 
         double quadrilateralAreaSum = 0.0;
         double scaledSumX = 0.0;
@@ -135,7 +135,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         Vector2D startPoint;
         Vector2D endPoint;
 
-        for (Segment seg : boundaries) {
+        for (final Segment seg : boundaries) {
             if (seg.isInfinite()) {
                 // infinite => no barycenter
                 return null;
@@ -237,7 +237,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         Vector2D prev = null;
         Vector2D cur = null;
 
-        for (Vector2D vertex : vertices) {
+        for (final Vector2D vertex : vertices) {
             cur = vertex;
 
             if (first == null) {

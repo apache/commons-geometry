@@ -108,7 +108,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         }
 
         if (volumeSum > 0) {
-            double size = volumeSum / 3.0;
+            final double size = volumeSum / 3.0;
 
             // Since the volume we used when adding together the facet contributions
             // was 3x the actual pyramid size, we'll multiply by 1/4 here instead

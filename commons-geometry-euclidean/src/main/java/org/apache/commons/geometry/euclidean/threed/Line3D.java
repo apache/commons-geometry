@@ -347,7 +347,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
         if (!(obj instanceof Line3D)) {
             return false;
         }
-        Line3D other = (Line3D) obj;
+        final Line3D other = (Line3D) obj;
         return this.origin.equals(other.origin) &&
                 this.direction.equals(other.direction) &&
                 this.precision.equals(other.precision);

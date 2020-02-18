@@ -118,7 +118,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         }
 
         // add end points
-        for (Segment seg : segments) {
+        for (final Segment seg : segments) {
             pt = seg.getEndPoint();
             if (pt != null) {
                 vertices.add(pt);
@@ -368,9 +368,9 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
      * @throws IllegalStateException if the segments do not form a connected polyline
      */
     public static Polyline fromSegments(final Collection<Segment> segments) {
-        Builder builder = builder(null);
+        final Builder builder = builder(null);
 
-        for (Segment segment : segments) {
+        for (final Segment segment : segments) {
             builder.append(segment);
         }
 
@@ -556,7 +556,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
          * @see #append(Vector2D)
          */
         public Builder appendVertices(final Collection<Vector2D> vertices) {
-            for (Vector2D vertex : vertices) {
+            for (final Vector2D vertex : vertices) {
                 append(vertex);
             }
 
