@@ -292,13 +292,13 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      */
     @Override
     public double angle(final Vector3D v) {
-        double normProduct = getCheckedNorm() * v.getCheckedNorm();
+        final double normProduct = getCheckedNorm() * v.getCheckedNorm();
 
-        double dot = dot(v);
-        double threshold = normProduct * 0.99;
+        final double dot = dot(v);
+        final double threshold = normProduct * 0.99;
         if ((dot < -threshold) || (dot > threshold)) {
             // the vectors are almost aligned, compute using the sine
-            Vector3D cross = cross(v);
+            final Vector3D cross = cross(v);
             if (dot >= 0) {
                 return Math.asin(cross.norm() / normProduct);
             }
@@ -339,7 +339,7 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      */
     @Override
     public Vector3D.Unit orthogonal() {
-        double threshold = 0.6 * getCheckedNorm();
+        final double threshold = 0.6 * getCheckedNorm();
 
         double inverse;
         if (Math.abs(x) <= threshold) {

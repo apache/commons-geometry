@@ -61,7 +61,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree2S copy() {
-        RegionBSPTree2S result = RegionBSPTree2S.empty();
+        final RegionBSPTree2S result = RegionBSPTree2S.empty();
         result.copy(this);
 
         return result;
@@ -127,7 +127,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
             }
         } else {
             // recurse
-            Split<ConvexArea2S> split = nodeArea.split(node.getCutHyperplane());
+            final Split<ConvexArea2S> split = nodeArea.split(node.getCutHyperplane());
 
             toConvexRecursive(node.getMinus(), split.getMinus(), result);
             toConvexRecursive(node.getPlus(), split.getPlus(), result);
@@ -167,7 +167,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         double sizeSum = 0;
         Vector3D barycenterVector = Vector3D.ZERO;
 
-        for (ConvexArea2S area : areas) {
+        for (final ConvexArea2S area : areas) {
             sizeSum += area.getSize();
             barycenterVector = barycenterVector.add(area.getWeightedBarycenterVector());
         }
@@ -222,7 +222,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
      * @return a new tree instance constructed from the given boundaries
      */
     public static RegionBSPTree2S from(final Iterable<GreatArc> boundaries) {
-        RegionBSPTree2S tree = RegionBSPTree2S.full();
+        final RegionBSPTree2S tree = RegionBSPTree2S.full();
         tree.insert(boundaries);
 
         return tree;
@@ -263,7 +263,7 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
             RegionNode2S parent;
 
             while ((parent = child.getParent()) != null) {
-                Split<ConvexArea2S> split = area.split(parent.getCutHyperplane());
+                final Split<ConvexArea2S> split = area.split(parent.getCutHyperplane());
 
                 area = child.isMinus() ? split.getMinus() : split.getPlus();
 

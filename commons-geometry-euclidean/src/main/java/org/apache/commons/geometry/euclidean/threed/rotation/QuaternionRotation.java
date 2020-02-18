@@ -287,7 +287,7 @@ public final class QuaternionRotation implements Rotation3D {
             throw new IllegalArgumentException("Axis sequence cannot be null");
         }
 
-        double[] angles = getAngles(frame, axes);
+        final double[] angles = getAngles(frame, axes);
 
         return new AxisAngleSequence(frame, axes, angles[0], angles[1], angles[2]);
     }
@@ -328,7 +328,7 @@ public final class QuaternionRotation implements Rotation3D {
             return false;
         }
 
-        QuaternionRotation other = (QuaternionRotation) obj;
+        final QuaternionRotation other = (QuaternionRotation) obj;
         return Objects.equals(this.quat, other.quat);
     }
 
@@ -347,7 +347,7 @@ public final class QuaternionRotation implements Rotation3D {
      */
     private double[] getAngles(final AxisReferenceFrame frame, final AxisSequence axes) {
 
-        AxisSequenceType sequenceType = axes.getType();
+        final AxisSequenceType sequenceType = axes.getType();
 
         final Vector3D axis1 = axes.getAxis1();
         final Vector3D axis2 = axes.getAxis2();
@@ -605,8 +605,8 @@ public final class QuaternionRotation implements Rotation3D {
      */
     public static QuaternionRotation createVectorRotation(final Vector3D u, final Vector3D v) {
 
-        double normProduct  = Vectors.checkedNorm(u) * Vectors.checkedNorm(v);
-        double dot = u.dot(v);
+        final double normProduct  = Vectors.checkedNorm(u) * Vectors.checkedNorm(v);
+        final double dot = u.dot(v);
 
         if (dot < ANTIPARALLEL_DOT_THRESHOLD * normProduct) {
             // Special case where u1 = -u2:

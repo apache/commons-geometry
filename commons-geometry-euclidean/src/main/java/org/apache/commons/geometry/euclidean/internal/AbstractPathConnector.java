@@ -99,7 +99,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
             followForwardConnections(segment);
         }
 
-        List<E> rootEntries = new ArrayList<>();
+        final List<E> rootEntries = new ArrayList<>();
         E root;
         for (final E segment : pathElements) {
             root = segment.exportPath();
@@ -167,7 +167,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
             final E searchKey = element.getConnectionSearchKey();
 
             // search up
-            for (E candidate : pathElements.tailSet(searchKey)) {
+            for (final E candidate : pathElements.tailSet(searchKey)) {
                 if (!addPossibleConnection(element, candidate) &&
                         !element.shouldContinueConnectionSearch(candidate, true)) {
                     break;
@@ -175,7 +175,7 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
             }
 
             // search down
-            for (E candidate : pathElementsDescending.tailSet(searchKey, false)) {
+            for (final E candidate : pathElementsDescending.tailSet(searchKey, false)) {
                 if (!addPossibleConnection(element, candidate) &&
                         !element.shouldContinueConnectionSearch(candidate, false)) {
                     break;

@@ -80,7 +80,7 @@ public class MonotoneChain extends AbstractConvexHullGenerator2D {
 
         // build lower hull
         final List<Vector2D> lowerHull = new ArrayList<>();
-        for (Vector2D p : pointsSortedByXAxis) {
+        for (final Vector2D p : pointsSortedByXAxis) {
             updateHull(p, lowerHull);
         }
 

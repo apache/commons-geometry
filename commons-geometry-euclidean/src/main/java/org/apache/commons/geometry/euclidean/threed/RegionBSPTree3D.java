@@ -57,7 +57,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree3D copy() {
-        RegionBSPTree3D result = RegionBSPTree3D.empty();
+        final RegionBSPTree3D result = RegionBSPTree3D.empty();
         result.copy(this);
 
         return result;
@@ -112,7 +112,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             }
         } else {
             // recurse
-            Split<ConvexVolume> split = nodeVolume.split(node.getCutHyperplane());
+            final Split<ConvexVolume> split = nodeVolume.split(node.getCutHyperplane());
 
             toConvexRecursive(node.getMinus(), split.getMinus(), result);
             toConvexRecursive(node.getPlus(), split.getPlus(), result);
@@ -164,7 +164,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             return new RegionSizeProperties<>(0, null);
         }
 
-        RegionSizePropertiesVisitor visitor = new RegionSizePropertiesVisitor();
+        final RegionSizePropertiesVisitor visitor = new RegionSizePropertiesVisitor();
         accept(visitor);
 
         return visitor.getRegionSizeProperties();
@@ -196,7 +196,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @return a new tree instance constructed from the given boundaries
      */
     public static RegionBSPTree3D from(final Iterable<Facet> boundaries) {
-        RegionBSPTree3D tree = RegionBSPTree3D.full();
+        final RegionBSPTree3D tree = RegionBSPTree3D.full();
         tree.insert(boundaries);
 
         return tree;
@@ -209,7 +209,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      *      given source
      */
     public static RegionBSPTree3D from(final BoundarySource<Facet> boundarySrc) {
-        RegionBSPTree3D tree = RegionBSPTree3D.full();
+        final RegionBSPTree3D tree = RegionBSPTree3D.full();
         tree.insert(boundarySrc);
 
         return tree;
@@ -237,7 +237,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             RegionNode3D parent;
 
             while ((parent = child.getParent()) != null) {
-                Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
+                final Split<ConvexVolume> split = volume.split(parent.getCutHyperplane());
 
                 volume = child.isMinus() ? split.getMinus() : split.getPlus();
 
@@ -305,7 +305,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         @Override
         public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
-                RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
+                final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
                 addFacetContribution(boundary.getOutsideFacing(), false);
                 addFacetContribution(boundary.getInsideFacing(), true);
             }
@@ -345,17 +345,17 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param reverse if true, the facet contribution is reversed before being added to the total.
          */
         private void addFacetContribution(final SubHyperplane<Vector3D> boundary, boolean reverse) {
-            SubPlane subplane = (SubPlane) boundary;
-            RegionBSPTree2D base = subplane.getSubspaceRegion();
+            final SubPlane subplane = (SubPlane) boundary;
+            final RegionBSPTree2D base = subplane.getSubspaceRegion();
 
-            double area = base.getSize();
-            Vector2D baseBarycenter = base.getBarycenter();
+            final double area = base.getSize();
+            final Vector2D baseBarycenter = base.getBarycenter();
 
             if (Double.isInfinite(area)) {
                 volumeSum = Double.POSITIVE_INFINITY;
             } else if (baseBarycenter != null) {
-                Plane plane = subplane.getPlane();
-                Vector3D facetBarycenter = plane.toSpace(base.getBarycenter());
+                final Plane plane = subplane.getPlane();
+                final Vector3D facetBarycenter = plane.toSpace(base.getBarycenter());
 
                 // the volume here is actually 3x the actual pyramid volume; we'll apply
                 // the final scaling all at once at the end
@@ -452,7 +452,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
                     } else if (linecastSegment.contains(pt)) {
                         // we've potentially found a new linecast point; add it to the list of potential
                         // results
-                        LinecastPoint3D potentialResult = computeLinecastPoint(pt, node);
+                        final LinecastPoint3D potentialResult = computeLinecastPoint(pt, node);
                         if (potentialResult != null) {
                             results.add(potentialResult);
 

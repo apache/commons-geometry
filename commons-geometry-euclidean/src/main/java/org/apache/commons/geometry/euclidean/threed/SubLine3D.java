@@ -86,7 +86,7 @@ public final class SubLine3D extends AbstractSubLine3D<RegionBSPTree1D> {
         final Line3D line = getLine();
         final List<Segment3D> segments = new ArrayList<>(intervals.size());
 
-        for (Interval interval : intervals) {
+        for (final Interval interval : intervals) {
             segments.add(Segment3D.fromInterval(line, interval));
         }
 

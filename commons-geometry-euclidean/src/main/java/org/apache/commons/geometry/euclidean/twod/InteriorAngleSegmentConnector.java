@@ -44,8 +44,8 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
         double selectedInteriorAngle = Double.POSITIVE_INFINITY;
         ConnectableSegment selected = null;
 
-        for (ConnectableSegment candidate : outgoing) {
-            double interiorAngle = PlaneAngleRadians.PI - segmentLine.angle(candidate.getSegment().getLine());
+        for (final ConnectableSegment candidate : outgoing) {
+            final double interiorAngle = PlaneAngleRadians.PI - segmentLine.angle(candidate.getSegment().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
                 selectedInteriorAngle = interiorAngle;

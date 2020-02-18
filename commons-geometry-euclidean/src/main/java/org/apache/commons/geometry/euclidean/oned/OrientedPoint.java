@@ -222,7 +222,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             return false;
         }
 
-        OrientedPoint other = (OrientedPoint) obj;
+        final OrientedPoint other = (OrientedPoint) obj;
 
         return Objects.equals(this.point, other.point) &&
                 this.positiveFacing == other.positiveFacing &&

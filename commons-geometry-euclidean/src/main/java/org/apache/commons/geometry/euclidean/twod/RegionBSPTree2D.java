@@ -60,7 +60,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree2D copy() {
-        RegionBSPTree2D result = RegionBSPTree2D.empty();
+        final RegionBSPTree2D result = RegionBSPTree2D.empty();
         result.copy(this);
 
         return result;
@@ -133,7 +133,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             }
         } else {
             // recurse
-            Split<ConvexArea> split = nodeArea.split(node.getCutHyperplane());
+            final Split<ConvexArea> split = nodeArea.split(node.getCutHyperplane());
 
             toConvexRecursive(node.getMinus(), split.getMinus(), result);
             toConvexRecursive(node.getPlus(), split.getPlus(), result);
@@ -206,7 +206,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         Vector2D endPoint;
         double signedArea;
 
-        for (Segment segment : boundaries()) {
+        for (final Segment segment : boundaries()) {
 
             if (segment.isInfinite()) {
                 // at least on boundary is infinite, meaning that
@@ -280,7 +280,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @return a new tree instance constructed from the given boundaries
      */
     public static RegionBSPTree2D from(final Iterable<Segment> boundaries) {
-        RegionBSPTree2D tree = RegionBSPTree2D.full();
+        final RegionBSPTree2D tree = RegionBSPTree2D.full();
         tree.insert(boundaries);
 
         return tree;
@@ -321,7 +321,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             RegionNode2D parent;
 
             while ((parent = child.getParent()) != null) {
-                Split<ConvexArea> split = area.split(parent.getCutHyperplane());
+                final Split<ConvexArea> split = area.split(parent.getCutHyperplane());
 
                 area = child.isMinus() ? split.getMinus() : split.getPlus();
 
@@ -436,7 +436,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                     } else if (linecastSegment.contains(pt)) {
                         // we've potentially found a new linecast point; add it to the list of potential
                         // results
-                        LinecastPoint2D potentialResult = computeLinecastPoint(pt, node);
+                        final LinecastPoint2D potentialResult = computeLinecastPoint(pt, node);
                         if (potentialResult != null) {
                             results.add(potentialResult);
 

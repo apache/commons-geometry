@@ -45,8 +45,8 @@ public abstract class InteriorAngleGreatArcConnector extends AbstractGreatArcCon
         double selectedInteriorAngle = Double.POSITIVE_INFINITY;
         ConnectableGreatArc selected = null;
 
-        for (ConnectableGreatArc candidate : outgoing) {
-            double interiorAngle = PlaneAngleRadians.PI - circle.angle(candidate.getArc().getCircle(),
+        for (final ConnectableGreatArc candidate : outgoing) {
+            final double interiorAngle = PlaneAngleRadians.PI - circle.angle(candidate.getArc().getCircle(),
                     incoming.getArc().getEndPoint());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {

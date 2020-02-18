@@ -60,7 +60,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      * @see #copy(org.apache.commons.geometry.core.partitioning.bsp.BSPTree)
      */
     public RegionBSPTree1S copy() {
-        RegionBSPTree1S result = RegionBSPTree1S.empty();
+        final RegionBSPTree1S result = RegionBSPTree1S.empty();
         result.copy(this);
 
         return result;
@@ -97,7 +97,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
             setEmpty();
 
-            for (AngularInterval interval : intervals) {
+            for (final AngularInterval interval : intervals) {
                 union(interval.transform(transform).toTree());
             }
         }
@@ -130,7 +130,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         // Handle the special case where the cut is on the azimuth equivalent to zero.
         // In this case, it is not possible for any points to lie between it and zero.
         if (!isEmpty() && splitter.classify(Point1S.ZERO) == HyperplaneLocation.ON) {
-            CutAngle cut = (CutAngle) splitter;
+            final CutAngle cut = (CutAngle) splitter;
             if (cut.isPositiveFacing()) {
                 return new Split<>(null, copy());
             } else {
@@ -161,8 +161,8 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         final boolean zeroOnPlusSide = splitter.getPrecision()
                 .lte(plusPole.distance(Point1S.ZERO), PlaneAngleRadians.PI_OVER_TWO);
 
-        Split<RegionBSPTree1S> firstSplit = split(splitter);
-        Split<RegionBSPTree1S> secondSplit = split(opposite);
+        final Split<RegionBSPTree1S> firstSplit = split(splitter);
+        final Split<RegionBSPTree1S> secondSplit = split(opposite);
 
         RegionBSPTree1S minus = RegionBSPTree1S.empty();
         RegionBSPTree1S plus = RegionBSPTree1S.empty();
@@ -204,7 +204,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         }
 
         final List<BoundaryPair> insideBoundaryPairs = new ArrayList<>();
-        for (RegionNode1S node : nodes()) {
+        for (final RegionNode1S node : nodes()) {
             if (node.isInside()) {
                 insideBoundaryPairs.add(getNodeBoundaryPair(node));
             }
@@ -212,7 +212,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         insideBoundaryPairs.sort(BOUNDARY_PAIR_COMPARATOR);
 
-        int boundaryPairCount = insideBoundaryPairs.size();
+        final int boundaryPairCount = insideBoundaryPairs.size();
 
         // Find the index of the first boundary pair that is not connected to pair before it.
         // This will be our start point for merging intervals together.
@@ -277,7 +277,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         CutAngle min = start.getMin();
         CutAngle max = end.getMax();
 
-        DoublePrecisionContext precision = (min != null) ? min.getPrecision() : max.getPrecision();
+        final DoublePrecisionContext precision = (min != null) ? min.getPrecision() : max.getPrecision();
 
         // flip the hyperplanes if needed since there's no
         // guarantee that the inside will be on the minus side
@@ -347,7 +347,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         double intervalSize;
 
-        for (AngularInterval interval : toIntervals()) {
+        for (final AngularInterval interval : toIntervals()) {
             intervalSize = interval.getSize();
 
             size += intervalSize;
