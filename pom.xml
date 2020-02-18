@@ -65,11 +65,6 @@
     <!-- Required for Java 13 build -->
     <commons.spotbugs.dep.version>4.0.0</commons.spotbugs.dep.version>
 
-    <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
-       jxr:aggregate. If compile is forked it fails when building the Java 9 modules that
-       depend on other packages. -->
-    <commons.jxr.version>2.5</commons.jxr.version>
-
     <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
 
     <commons.site.path>geometry</commons.site.path>
