@@ -61,12 +61,9 @@
     <!-- Workaround to avoid duplicating config files. -->
     <geometry.parent.dir>${basedir}</geometry.parent.dir>
 
-    <!-- Version fix to support Java 11 site generation using parent-48 -->
-    <commons.spotbugs.version>3.1.11</commons.spotbugs.version>
-    <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
-       jxr:aggregate. If compile is forked it fails when building the Java 9 modules that
-       depend on other packages. -->
-    <commons.jxr.version>2.5</commons.jxr.version>
+    <commons.spotbugs.version>3.1.12</commons.spotbugs.version>
+    <!-- Required for Java 13 build -->
+    <commons.spotbugs.dep.version>4.0.0</commons.spotbugs.dep.version>
 
     <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
 
@@ -230,6 +227,13 @@
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${commons.spotbugs.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>${commons.spotbugs.dep.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
           <threshold>Normal</threshold>
           <effort>Default</effort>
