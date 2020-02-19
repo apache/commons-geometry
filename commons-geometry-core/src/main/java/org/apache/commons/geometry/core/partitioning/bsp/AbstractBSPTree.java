@@ -35,7 +35,7 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
  * (eg, whether the tree is intended to represent polytopes, hold attributes like
  * a map, etc).
  *
- * <h3>Implementation Notes</h3>
+ * <h1>Implementation Notes</h1>
  * <ul>
  *      <li>The {@link AbstractBSPTree} class is designed to work closely with its nested node type,
  *      {@link AbstractNode}. The tree class handles all tree manipulation operations while the node type
