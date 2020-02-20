@@ -18,14 +18,25 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 
-/** Interface for Binary Space Partitioning (BSP) trees.
+/** Interface for Binary Space Partitioning (BSP) trees. BSP trees are spatial data
+ * structures that recursively subdivide a space using hyperplanes. They can be used
+ * for a wide variety of purposes, such as representing arbitrary polytopes, storing
+ * data for fast spatial lookups, determining the correct rendering order for objects
+ * in a 3D scene, and so on.
+ *
+ * <p>This interface contains a number of methods for extracting information from existing
+ * trees, but it does not include methods for constructing trees or modifying tree structure.
+ * This is due to the large number of possible use cases for BSP trees. Each use case is likely
+ * to have its own specific methods and rules for tree construction, making it difficult to define
+ * a single API at this level. Thus, it is left to implementation classes to define their own
+ * API for tree construction and modification.</p>
+ *
  * @param <P> Point implementation type
  * @param <N> Node implementation type
+ * @see <a href="https://en.wikipedia.org/wiki/Binary_space_partitioning">Binary space partitioning</a>
  */
 public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     extends BSPSubtree<P, N> {
@@ -33,7 +44,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     /** Enum specifying possible behaviors when a point used to locate a node
      * falls directly on the cut subhyperplane of an internal node.
      */
-    enum NodeCutRule {
+    enum FindNodeCutRule {
 
         /** Choose the minus child of the internal node and continue searching.
          * This behavior will result in a leaf node always being returned by the
@@ -60,14 +71,14 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
 
     /** Find a node in this subtree containing the given point or its interior or boundary.
      * When a point lies directly on the cut of an internal node, the minus child of the
-     * cut is chosen. This is equivalent to {@code subtree.findNode(pt, NodeCutRule.MINUS)}
+     * cut is chosen. This is equivalent to {@code subtree.findNode(pt, FindNodeCutRule.MINUS)}
      * and always returns a leaf node.
      * @param pt test point used to locate a node in the tree
      * @return leaf node containing the point on its interior or boundary
-     * @see #findNode(Point, NodeCutRule)
+     * @see #findNode(Point, FindNodeCutRule)
      */
     default N findNode(P pt) {
-        return findNode(pt, NodeCutRule.MINUS);
+        return findNode(pt, FindNodeCutRule.MINUS);
     }
 
     /** Find a node in this subtree containing the given point on it interior or boundary. The
@@ -76,9 +87,9 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      * the search should continue with the minus child, the plus child, or end with the internal
      * node. The {@code cutRule} argument specifies what should happen in this case.
      * <ul>
-     *      <li>{@link NodeCutRule#MINUS} - continue the search in the minus subtree</li>
-     *      <li>{@link NodeCutRule#PLUS} - continue the search in the plus subtree</li>
-     *      <li>{@link NodeCutRule#NODE} - stop the search and return the internal node</li>
+     *      <li>{@link FindNodeCutRule#MINUS} - continue the search in the minus subtree</li>
+     *      <li>{@link FindNodeCutRule#PLUS} - continue the search in the plus subtree</li>
+     *      <li>{@link FindNodeCutRule#NODE} - stop the search and return the internal node</li>
      * </ul>
      * @param pt test point used to locate a node in the tree
      * @param cutRule value used to determine the search behavior when the test point lies
@@ -86,29 +97,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      * @return node containing the point on its interior or boundary
      * @see #findNode(Point)
      */
-    N findNode(P pt, NodeCutRule cutRule);
-
-    /** Insert a subhyperplane into the tree.
-     * @param sub the subhyperplane to insert into the tree
-     */
-    void insert(SubHyperplane<P> sub);
-
-    /** Insert a convex subhyperplane into the tree.
-     * @param convexSub the convex subhyperplane to insert into the tree
-     */
-    void insert(ConvexSubHyperplane<P> convexSub);
-
-    /** Insert a set of convex subhyperplanes into the tree.
-     * @param convexSubs iterable containing a collection of subhyperplanes
-     *      to insert into the tree
-     */
-    void insert(Iterable<? extends ConvexSubHyperplane<P>> convexSubs);
-
-    /** Insert all convex subhyperplanes from the given source into the tree.
-     * @param boundarySrc source of boundary convex subhyperplanes to insert
-     *      into the tree
-     */
-    void insert(BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc);
+    N findNode(P pt, FindNodeCutRule cutRule);
 
     /** Make the current instance a deep copy of the argument.
      * @param src the tree to copy
@@ -202,31 +191,14 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
          */
         boolean isPlus();
 
-        /** Insert a cut into this node. If the given hyperplane intersects
-         * this node's region, then the node's cut is set to the {@link ConvexSubHyperplane}
-         * representing the intersection, new plus and minus child leaf nodes
-         * are assigned, and true is returned. If the hyperplane does not intersect
-         * the node's region, then the node's cut and plus and minus child references
-         * are all set to null (ie, it becomes a leaf node) and false is returned. In
-         * either case, any existing cut and/or child nodes are removed by this method.
-         * @param cutter the hyperplane to cut the node's region with
-         * @return true if the cutting hyperplane intersected the node's region, resulting
-         *      in the creation of new child nodes
+        /** Trim the given subhyperplane to the region defined by this node by cutting
+         * the argument with the cut hyperplanes (binary partitioners) of all parent nodes
+         * up to the root. Null is returned if the subhyperplane lies outside of the region
+         * defined by the node.
+         * @param sub the convex subhyperplane to trim
+         * @return the trimmed convex subhyperplane or null if no part of the argument lies
+         *      within the node's region
          */
-        boolean insertCut(Hyperplane<P> cutter);
-
-        /** Remove the cut from this node. Returns true if the node previously had a cut.
-         * @return true if the node had a cut before the call to this method
-         */
-        boolean clearCut();
-
-        /** Cut this node with the given hyperplane. The same node is returned, regardless of
-         * the outcome of the cut operation. If the operation succeeded, then the node will
-         * have plus and minus child nodes.
-         * @param cutter the hyperplane to cut the node's region with
-         * @return this node
-         * @see #insertCut(Hyperplane)
-         */
-        N cut(Hyperplane<P> cutter);
+        ConvexSubHyperplane<P> trim(ConvexSubHyperplane<P> sub);
     }
 }

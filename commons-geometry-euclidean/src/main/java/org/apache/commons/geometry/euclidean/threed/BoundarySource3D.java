@@ -26,14 +26,16 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
  */
 public interface BoundarySource3D extends BoundarySource<Facet> {
 
-    /** Construct a new BSP tree from the boundaries contained in this
-     * instance.
-     * @return a new BSP tree constructed from the boundaries in this
-     *      instance
-     * @see RegionBSPTree3D#from(BoundarySource)
+    /** Return a BSP tree constructed from the boundaries contained in this instance.
+     * The default implementation creates a new, empty tree and inserts the
+     * boundaries from this instance.
+     * @return a BSP tree constructed from the boundaries in this instance
      */
     default RegionBSPTree3D toTree() {
-        return RegionBSPTree3D.from(this);
+        final RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.insert(this);
+
+        return tree;
     }
 
     /** Return a {@link BoundarySource3D} instance containing the given boundaries.

@@ -315,8 +315,8 @@ public class GreatArcPathTest {
         RegionBSPTree2S tree = GreatArcPath.empty().toTree();
 
         // assert
-        Assert.assertTrue(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
     }
 
     @Test

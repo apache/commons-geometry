@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -101,7 +100,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @param area the convex area to add
      */
     public void add(final ConvexArea area) {
-        union(from(area));
+        union(area.toTree());
     }
 
     /** Return a list of {@link ConvexArea}s representing the same region
@@ -155,6 +154,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         accept(projector);
 
         return projector.getProjected();
+    }
+
+    /** Return the current instance.
+     */
+    @Override
+    public RegionBSPTree2D toTree() {
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -275,26 +281,25 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     }
 
     /** Construct a new tree from the given boundaries. If no boundaries
-     * are present, the returned tree contains the full space.
+     * are present, the returned tree is empty.
      * @param boundaries boundaries to construct the tree from
      * @return a new tree instance constructed from the given boundaries
+     * @see #from(Iterable, boolean)
      */
     public static RegionBSPTree2D from(final Iterable<Segment> boundaries) {
-        final RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.insert(boundaries);
-
-        return tree;
+        return from(boundaries, false);
     }
 
-    /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
-     * are present in the given source, their the returned tree contains the full space.
-     * @param boundarySrc boundary source to construct a tree from
-     * @return a new tree instance constructed from the boundaries in the
-     *      given source
+    /** Construct a new tree from the given boundaries. If {@code full} is true, then
+     * the initial tree before boundary insertion contains the entire space. Otherwise,
+     * it is empty.
+     * @param boundaries boundaries to construct the tree from
+     * @param full if true, the initial tree will contain the entire space
+     * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree2D from(final BoundarySource<Segment> boundarySrc) {
-        final RegionBSPTree2D tree = RegionBSPTree2D.full();
-        tree.insert(boundarySrc);
+    public static RegionBSPTree2D from(final Iterable<Segment> boundaries, final boolean full) {
+        final RegionBSPTree2D tree = new RegionBSPTree2D(full);
+        tree.insert(boundaries);
 
         return tree;
     }

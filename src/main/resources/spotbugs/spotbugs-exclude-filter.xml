@@ -29,8 +29,8 @@
   <Class name="~.*\.jmh\.generated\..*" />
 
   <Match>
-    <!-- This is a false positive -->
-    <Class name="org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree"/>
+    <!-- This is a false positive. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Class name="org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree"/>
     <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
   </Match>
 

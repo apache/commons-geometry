@@ -28,6 +28,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 
 /** Binary space partitioning (BSP) tree representing a region in one dimensional
  * Euclidean space.
@@ -331,13 +332,13 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         RegionNode1D node = tree.getRoot();
 
         if (minBoundary != null) {
-            tree.cutNode(node, minBoundary.span());
+            tree.setNodeCut(node, minBoundary.span(), tree.getSubtreeInitializer(RegionCutRule.MINUS_INSIDE));
 
             node = node.getMinus();
         }
 
         if (maxBoundary != null) {
-            tree.cutNode(node, maxBoundary.span());
+            tree.setNodeCut(node, maxBoundary.span(), tree.getSubtreeInitializer(RegionCutRule.MINUS_INSIDE));
         }
 
         return tree;

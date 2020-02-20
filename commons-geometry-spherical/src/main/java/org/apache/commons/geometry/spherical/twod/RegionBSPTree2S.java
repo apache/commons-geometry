@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -151,6 +150,13 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         return projector.getProjected();
     }
 
+    /** Return the current instance.
+     */
+    @Override
+    public RegionBSPTree2S toTree() {
+        return this;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<Point2S> computeRegionSizeProperties() {
@@ -217,26 +223,25 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
     }
 
     /** Construct a new tree from the given boundaries. If no boundaries
-     * are present, the returned tree contains the full space.
+     * are present, the returned tree is empty.
      * @param boundaries boundaries to construct the tree from
      * @return a new tree instance constructed from the given boundaries
+     * @see #from(Iterable, boolean)
      */
     public static RegionBSPTree2S from(final Iterable<GreatArc> boundaries) {
-        final RegionBSPTree2S tree = RegionBSPTree2S.full();
-        tree.insert(boundaries);
-
-        return tree;
+        return from(boundaries, false);
     }
 
-    /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
-     * are present in the given source, their the returned tree contains the full space.
-     * @param boundarySrc boundary source to construct a tree from
-     * @return a new tree instance constructed from the boundaries in the
-     *      given source
+    /** Construct a new tree from the given boundaries. If {@code full} is true, then
+     * the initial tree before boundary insertion contains the entire space. Otherwise,
+     * it is empty.
+     * @param boundaries boundaries to construct the tree from
+     * @param full if true, the initial tree will contain the entire space
+     * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree2S from(final BoundarySource<GreatArc> boundarySrc) {
-        final RegionBSPTree2S tree = RegionBSPTree2S.full();
-        tree.insert(boundarySrc);
+    public static RegionBSPTree2S from(final Iterable<GreatArc> boundaries, final boolean full) {
+        final RegionBSPTree2S tree = new RegionBSPTree2S(full);
+        tree.insert(boundaries);
 
         return tree;
     }
