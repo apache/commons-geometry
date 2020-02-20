@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
@@ -136,6 +135,13 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         return projector.getProjected();
     }
 
+    /** Return the current instance.
+     */
+    @Override
+    public RegionBSPTree3D toTree() {
+        return this;
+    }
+
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint3D> linecast(final Segment3D segment) {
@@ -191,26 +197,25 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
     }
 
     /** Construct a new tree from the given boundaries. If no boundaries
-     * are present, the returned tree contains the full space.
+     * are present, the returned tree is empty.
      * @param boundaries boundaries to construct the tree from
      * @return a new tree instance constructed from the given boundaries
+     * @see #from(Iterable, boolean)
      */
     public static RegionBSPTree3D from(final Iterable<Facet> boundaries) {
-        final RegionBSPTree3D tree = RegionBSPTree3D.full();
-        tree.insert(boundaries);
-
-        return tree;
+        return from(boundaries, false);
     }
 
-    /** Construct a new tree from the boundaries in the given boundary source. If no boundaries
-     * are present in the given source, their the returned tree contains the full space.
-     * @param boundarySrc boundary source to construct a tree from
-     * @return a new tree instance constructed from the boundaries in the
-     *      given source
+    /** Construct a new tree from the given boundaries. If {@code full} is true, then
+     * the initial tree before boundary insertion contains the entire space. Otherwise,
+     * it is empty.
+     * @param boundaries boundaries to construct the tree from
+     * @param full if true, the initial tree will contain the entire space
+     * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree3D from(final BoundarySource<Facet> boundarySrc) {
-        final RegionBSPTree3D tree = RegionBSPTree3D.full();
-        tree.insert(boundarySrc);
+    public static RegionBSPTree3D from(final Iterable<Facet> boundaries, final boolean full) {
+        final RegionBSPTree3D tree = new RegionBSPTree3D(full);
+        tree.insert(boundaries);
 
         return tree;
     }

@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.Point;
+import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** Simple {@link BSPTree} implementation allowing arbitrary values to be
@@ -54,15 +55,6 @@ public class AttributeBSPTree<P extends Point<P>, T>
 
     /** {@inheritDoc} */
     @Override
-    protected void initChildNode(final AttributeNode<P, T> parent, final AttributeNode<P, T> child,
-            final boolean isPlus) {
-        super.initChildNode(parent, child, isPlus);
-
-        child.setAttribute(initialNodeAttribute);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected void copyNodeProperties(final AttributeNode<P, T> src, final AttributeNode<P, T> dst) {
         dst.setAttribute(src.getAttribute());
     }
@@ -90,6 +82,24 @@ public class AttributeBSPTree<P extends Point<P>, T>
             return (AttributeBSPTree<P, T>) super.getTree();
         }
 
+        /** Cut this node with the given hyperplane. If the hyperplane intersects the node's region,
+         * then the node becomes an internal node with two child leaf node. If the hyperplane does
+         * not intersect the node's region, then the node is made a leaf node. The same node is
+         * returned, regardless of the outcome of the cut operation.
+         * @param cutter hyperplane to cut the node with
+         * @return this node
+         */
+        public AttributeNode<P, T> cut(final Hyperplane<P> cutter) {
+            final AttributeBSPTree<P, T> tree = getTree();
+
+            tree.cutNode(getSelf(), cutter, root -> {
+                root.getMinus().setAttribute(tree.initialNodeAttribute);
+                root.getPlus().setAttribute(tree.initialNodeAttribute);
+            });
+
+            return this;
+        }
+
         /** Get the attribute associated with this node.
          * @return the attribute associated with this node
          */
@@ -100,7 +110,7 @@ public class AttributeBSPTree<P extends Point<P>, T>
         /** Set the attribute associated with this node.
          * @param attribute the attribute to associate with this node
          */
-        public void setAttribute(T attribute) {
+        public void setAttribute(final T attribute) {
             this.attribute = attribute;
         }
 

@@ -26,14 +26,16 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
  */
 public interface BoundarySource2D extends BoundarySource<Segment> {
 
-    /** Construct a new BSP tree from the boundaries contained in this
-     * instance.
-     * @return a new BSP tree constructed from the boundaries in this
-     *      instance
-     * @see RegionBSPTree2D#from(BoundarySource)
+    /** Return a BSP tree constructed from the boundaries contained in this
+     * instance. The default implementation creates a new, empty tree
+     * and inserts the boundaries from this instance.
+     * @return a BSP tree constructed from the boundaries in this instance
      */
     default RegionBSPTree2D toTree() {
-        return RegionBSPTree2D.from(this);
+        final RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.insert(this);
+
+        return tree;
     }
 
     /** Return a {@link BoundarySource2D} instance containing the given segments.

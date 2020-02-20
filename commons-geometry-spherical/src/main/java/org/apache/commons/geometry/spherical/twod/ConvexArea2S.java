@@ -169,6 +169,13 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
         return splitInternal(splitter, this, GreatArc.class, ConvexArea2S::new);
     }
 
+    /** Return a BSP tree representing the same region as this instance.
+     */
+    @Override
+    public RegionBSPTree2S toTree() {
+        return RegionBSPTree2S.from(getBoundaries(), true);
+    }
+
     /** Return a new instance transformed by the argument.
      * @param transform transform to apply
      * @return a new instance transformed by the argument

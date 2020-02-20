@@ -297,7 +297,11 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           minus side of the cutting hyperplane is considered to be inside of the shape, while the child node on the plus
           side is considered to be on the outside. For example, in Euclidean 3D space, plane normals point toward the plus
           side of the plane. Thus, when splitting a BSP tree node with a plane, the plane normal points outward from
-          the shape, as one might expect.
+          the shape, as one might expect. (In <em>Commons Geometry</em>, this default convention can be changed by passing a
+          <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/bsp/RegionCutRule.html">RegionCutRule</a>
+          value when inserting into a tree. This gives fine-grain control over the structure of the tree and can
+          be used to create structural splits in the tree, meaning splits that do not encode region information but are
+          only used to help keep the tree balanced.)
         </p>
         <p>
           One of the main sources for the development of the BSP tree code in this project and the original
@@ -317,8 +321,8 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
 
         <h5>Manual BSP Tree Region Creation</h5>
         <p>
-          The example below manually creates a BSP tree representing a right triangle at the origin. This is not the
-          recommended way to construct such a tree, but is included here to demonstrate the BSP tree API.
+          The example below creates a BSP tree representing the unit square by directly inserting hyperplane cuts
+          into nodes. A diagonal "structural" cut is used at the root node in order to keep the tree balanced.
         </p>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
@@ -326,28 +330,39 @@ DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 // create a tree representing an empty space (nothing "inside")
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-// get the root node
-RegionBSPTree2D.RegionNode2D currentNode = tree.getRoot();
+// insert a "structural" cut, meaning a cut whose children have the same inside/outside
+// status as the parent; this will help keep our tree balanced and limit its overall height
+tree.getRoot().insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
+        RegionCutRule.INHERIT);
 
-// cut each minus node with the next hyperplane in the shape
+RegionBSPTree2D.RegionNode2D currentNode;
+
+// insert on the plus side of the structural diagonal cut
+currentNode = tree.getRoot().getPlus();
+
 currentNode.insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
 currentNode = currentNode.getMinus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(-1, 1), precision));
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
+
+// insert on the plus side of the structural diagonal cut
+currentNode = tree.getRoot().getMinus();
+
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
 currentNode = currentNode.getMinus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_Y, Vector2D.Unit.MINUS_Y, precision));
-currentNode = currentNode.getMinus();
+currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
 
-currentNode.isInside(); // true (node is inside)
-currentNode.getParent().getPlus().isInside(); // false (sibling node is outside)
-tree.getSize(); // size of the region = 0.5
-tree.count(); // number of nodes in the tree = 7
+// compute some tree properties
+int count = tree.count(); // number of nodes in the tree = 11
+int height = tree.height(); // height of the tree = 3
+double size = tree.getSize(); // size of the region = 1
+Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
         </source>
 
         <h5>Standard BSP Tree Region Creation</h5>
         <p>
-          The example below uses the recommended approach to building BSP tree regions by inserting subhyperplanes
+          The example below uses the standard approach to building BSP tree regions by inserting subhyperplanes
           into the tree. The shape is the same as the example above.
         </p>
         <source>
@@ -358,13 +373,17 @@ RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
 // insert the subhyperplanes
 tree.insert(Arrays.asList(
-            Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision),
-            Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, precision),
-            Segment.fromPoints(Vector2D.Unit.PLUS_Y, Vector2D.ZERO, precision)
+            Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
+            Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
+            Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
+            Segment.fromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
         ));
 
-tree.getSize(); // size of the region = 0.5
-tree.count(); // number of nodes in the tree = 7
+// compute some tree properties
+int count = tree.count(); // number of nodes in the tree = 9
+int height = tree.height(); // height of the tree = 4
+double size = tree.getSize(); // size of the region = 1
+Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
         </source>
 
       </subsection>

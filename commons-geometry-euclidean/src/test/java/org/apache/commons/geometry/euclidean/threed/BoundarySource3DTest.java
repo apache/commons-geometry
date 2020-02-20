@@ -34,6 +34,39 @@ public class BoundarySource3DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testToTree() {
+        // act
+        Facet a = Facet.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
+        Facet b = Facet.fromVertexLoop(
+                Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
+
+        BoundarySource3D src = BoundarySource3D.from(a, b);
+
+        // act
+        RegionBSPTree3D tree = src.toTree();
+
+        // assert
+        Assert.assertEquals(5, tree.count());
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
+    public void testToTree_noBoundaries() {
+        // act
+        BoundarySource3D src = BoundarySource3D.from();
+
+        // act
+        RegionBSPTree3D tree = src.toTree();
+
+        // assert
+        Assert.assertEquals(1, tree.count());
+        Assert.assertFalse(tree.isFull());
+        Assert.assertTrue(tree.isEmpty());
+    }
+
+    @Test
     public void testFrom_varargs_empty() {
         // act
         BoundarySource3D src = BoundarySource3D.from();

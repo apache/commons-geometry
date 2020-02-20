@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 
 /**  Region BSP Tree implementation class for testing purposes.
  */
@@ -38,9 +39,8 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     /**
      * Expose the direct node cut method for easier creation of test tree structures.
      */
-    @Override
     public void cutNode(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut) {
-        super.cutNode(node, cut);
+        super.setNodeCut(node, cut, getSubtreeInitializer(RegionCutRule.MINUS_INSIDE));
     }
 
     /** {@inheritDoc} */
@@ -52,8 +52,8 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     /** {@inheritDoc} */
     @Override
     protected RegionSizeProperties<TestPoint2D> computeRegionSizeProperties() {
-        // return a set of stub values
-        return new RegionSizeProperties<>(1, TestPoint2D.ZERO);
+     // return a set of stub values
+        return new RegionSizeProperties<>(1234, new TestPoint2D(12, 34));
     }
 
     /** {@inheritDoc} */

@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.Point;
  * themselves as well as each node in a tree.
  * @param <P> Point implementation type
  * @param <N> Node implementation type
+ * @see BSPTree
  */
 public interface BSPSubtree<P extends Point<P>, N extends BSPTree.Node<P, N>> {
 

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Interval;
@@ -131,29 +132,40 @@ public class DocumentationExamplesTest {
         // create a tree representing an empty space (nothing "inside")
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        // get the root node
-        RegionBSPTree2D.RegionNode2D currentNode = tree.getRoot();
+        // insert a "structural" cut, meaning a cut whose children have the same inside/outside
+        // status as the parent; this will help keep our tree balanced and limit its overall height
+        tree.getRoot().insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
+                RegionCutRule.INHERIT);
 
-        // cut each minus node with the next hyperplane in the shape
+        RegionBSPTree2D.RegionNode2D currentNode;
+
+        // insert on the plus side of the structural diagonal cut
+        currentNode = tree.getRoot().getPlus();
+
         currentNode.insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
         currentNode = currentNode.getMinus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(-1, 1), precision));
+        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
+
+        // insert on the plus side of the structural diagonal cut
+        currentNode = tree.getRoot().getMinus();
+
+        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
         currentNode = currentNode.getMinus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.Unit.PLUS_Y, Vector2D.Unit.MINUS_Y, precision));
-        currentNode = currentNode.getMinus();
+        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
 
-        currentNode.isInside(); // true (node is inside)
-        currentNode.getParent().getPlus().isInside(); // false (sibling node is outside)
-        tree.getSize(); // size of the region = 0.5
-        tree.count(); // number of nodes in the tree = 7
+        // compute some tree properties
+        int count = tree.count(); // number of nodes in the tree = 11
+        int height = tree.height(); // height of the tree = 3
+        double size = tree.getSize(); // size of the region = 1
+        Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
 
         // ---------
-        Assert.assertTrue(currentNode.isInside());
-        Assert.assertFalse(currentNode.getParent().getPlus().isInside());
-        Assert.assertEquals(0.5, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(7, tree.count());
+        Assert.assertEquals(1, size, TEST_EPS);
+        Assert.assertEquals(11, count);
+        Assert.assertEquals(3, height);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), barycenter, TEST_EPS);
     }
 
     @Test
@@ -165,17 +177,23 @@ public class DocumentationExamplesTest {
 
         // insert the subhyperplanes
         tree.insert(Arrays.asList(
-                    Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision),
-                    Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, precision),
-                    Segment.fromPoints(Vector2D.Unit.PLUS_Y, Vector2D.ZERO, precision)
+                    Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
+                    Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
+                    Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
+                    Segment.fromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
                 ));
 
-        tree.getSize(); // size of the region = 0.5
-        tree.count(); // number of nodes in the tree = 7
+        // compute some tree properties
+        int count = tree.count(); // number of nodes in the tree = 9
+        int height = tree.height(); // height of the tree = 4
+        double size = tree.getSize(); // size of the region = 1
+        Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
 
         // ---------
-        Assert.assertEquals(0.5, tree.getSize(), TEST_EPS);
-        Assert.assertEquals(7, tree.count());
+        Assert.assertEquals(1, size, TEST_EPS);
+        Assert.assertEquals(9, count);
+        Assert.assertEquals(4, height);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), barycenter, TEST_EPS);
     }
 
     @Test

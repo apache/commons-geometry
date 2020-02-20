@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.internal.IteratorTransform;
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
@@ -33,16 +35,23 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestFirstVisitor;
 
-/** {@link BSPTree} specialized for representing regions of space. For example, this
- * class can be used to represent polygons in Euclidean 2D space and polyhedrons
+/** Abstract {@link BSPTree} specialized for representing regions of space. For example,
+ * this class can be used to represent polygons in Euclidean 2D space and polyhedrons
  * in Euclidean 3D space.
+ *
+ * <p>This class is not thread safe.</p>
  * @param <P> Point implementation type
  * @param <N> BSP tree node implementation type
+ * @see HyperplaneBoundedRegion
  */
 public abstract class AbstractRegionBSPTree<
         P extends Point<P>,
         N extends AbstractRegionBSPTree.AbstractRegionNode<P, N>>
     extends AbstractBSPTree<P, N> implements HyperplaneBoundedRegion<P> {
+
+    /** The default {@link RegionCutRule}. */
+    private static final RegionCutRule DEFAULT_REGION_CUT_RULE = RegionCutRule.MINUS_INSIDE;
+
     /** Value used to indicate an unknown size. */
     private static final double UNKNOWN_SIZE = -1.0;
 
@@ -59,7 +68,7 @@ public abstract class AbstractRegionBSPTree<
      *      be empty
      */
     protected AbstractRegionBSPTree(final boolean full) {
-        getRoot().setLocation(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
+        getRoot().setLocationValue(full ? RegionLocation.INSIDE : RegionLocation.OUTSIDE);
     }
 
     /** {@inheritDoc} */
@@ -97,7 +106,7 @@ public abstract class AbstractRegionBSPTree<
         final N root = getRoot();
 
         root.clearCut();
-        root.setLocation(RegionLocation.INSIDE);
+        root.setLocationValue(RegionLocation.INSIDE);
     }
 
     /** Modify this instance so that is is completely empty.
@@ -107,7 +116,7 @@ public abstract class AbstractRegionBSPTree<
         final N root = getRoot();
 
         root.clearCut();
-        root.setLocation(RegionLocation.OUTSIDE);
+        root.setLocationValue(RegionLocation.OUTSIDE);
     }
 
     /** {@inheritDoc} */
@@ -135,6 +144,105 @@ public abstract class AbstractRegionBSPTree<
         }
 
         return boundarySize;
+    }
+
+    /** Insert a subhyperplane into the tree, using the default {@link RegionCutRule} of
+     * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
+     * @param sub the subhyperplane to insert into the tree
+     */
+    public void insert(final SubHyperplane<P> sub) {
+        insert(sub, DEFAULT_REGION_CUT_RULE);
+    }
+
+    /** Insert a subhyperplane into the tree.
+     * @param sub the subhyperplane to insert into the tree
+     * @param cutRule rule used to determine the region locations of new child nodes
+     */
+    public void insert(final SubHyperplane<P> sub, final RegionCutRule cutRule) {
+        insert(sub.toConvex(), cutRule);
+    }
+
+    /** Insert a convex subhyperplane into the tree, using the default {@link RegionCutRule} of
+     * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
+     * @param convexSub the convex subhyperplane to insert into the tree
+     */
+    public void insert(final ConvexSubHyperplane<P> convexSub) {
+        insert(convexSub, DEFAULT_REGION_CUT_RULE);
+    }
+
+    /** Insert a convex subhyperplane into the tree.
+     * @param convexSub the convex subhyperplane to insert into the tree
+     * @param cutRule rule used to determine the region locations of new child nodes
+     */
+    public void insert(final ConvexSubHyperplane<P> convexSub, final RegionCutRule cutRule) {
+        insert(convexSub, getSubtreeInitializer(cutRule));
+    }
+
+    /** Insert a set of convex subhyperplanes into the tree, using the default {@link RegionCutRule} of
+     * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
+     * @param convexSubs iterable containing a collection of subhyperplanes
+     *      to insert into the tree
+     */
+    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs) {
+        insert(convexSubs, DEFAULT_REGION_CUT_RULE);
+    }
+
+    /** Insert a set of convex subhyperplanes into the tree.
+     * @param convexSubs iterable containing a collection of subhyperplanes
+     *      to insert into the tree
+     * @param cutRule rule used to determine the region locations of new child nodes
+     */
+    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs, final RegionCutRule cutRule) {
+        for (final ConvexSubHyperplane<P> convexSub : convexSubs) {
+            insert(convexSub, cutRule);
+        }
+    }
+
+    /** Insert all convex subhyperplanes from the given source into the tree, using the default
+     * {@link RegionCutRule} of {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
+     * @param boundarySrc source of boundary convex subhyperplanes to insert
+     *      into the tree
+     */
+    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc) {
+        insert(boundarySrc, DEFAULT_REGION_CUT_RULE);
+    }
+
+    /** Insert all convex subhyperplanes from the given source into the tree.
+     * @param boundarySrc source of boundary convex subhyperplanes to insert
+     *      into the tree
+     * @param cutRule rule used to determine the region locations of new child nodes
+     */
+    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc,
+            final RegionCutRule cutRule) {
+        try (Stream<? extends ConvexSubHyperplane<P>> stream = boundarySrc.boundaryStream()) {
+            stream.forEach(c -> insert(c, cutRule));
+        }
+    }
+
+    /** Get the subtree initializer to use for the given region cut rule.
+     * @param cutRule the cut rule to get an initializer for
+     * @return the subtree initializer for the given region cut rule
+     */
+    protected SubtreeInitializer<N> getSubtreeInitializer(final RegionCutRule cutRule) {
+        switch (cutRule) {
+        case INHERIT:
+            return root -> {
+                final RegionLocation rootLoc = root.getLocation();
+
+                root.getMinus().setLocationValue(rootLoc);
+                root.getPlus().setLocationValue(rootLoc);
+            };
+        case PLUS_INSIDE:
+            return root -> {
+                root.getMinus().setLocationValue(RegionLocation.OUTSIDE);
+                root.getPlus().setLocationValue(RegionLocation.INSIDE);
+            };
+        default:
+            return root -> {
+                root.getMinus().setLocationValue(RegionLocation.INSIDE);
+                root.getPlus().setLocationValue(RegionLocation.OUTSIDE);
+            };
+        }
     }
 
     /** Return an {@link Iterable} for iterating over the boundaries of the region.
@@ -220,13 +328,13 @@ public abstract class AbstractRegionBSPTree<
         T splitPlus = null;
 
         if (minus != null) {
-            minus.getRoot().getPlus().setLocation(RegionLocation.OUTSIDE);
+            minus.getRoot().getPlus().setLocationValue(RegionLocation.OUTSIDE);
             minus.condense();
 
             splitMinus = minus.isEmpty() ? null : minus;
         }
         if (plus != null) {
-            plus.getRoot().getMinus().setLocation(RegionLocation.OUTSIDE);
+            plus.getRoot().getMinus().setLocationValue(RegionLocation.OUTSIDE);
             plus.condense();
 
             splitPlus = plus.isEmpty() ? null : plus;
@@ -318,11 +426,11 @@ public abstract class AbstractRegionBSPTree<
      */
     private void complementRecursive(final AbstractRegionNode<P, N> node) {
         if (node != null) {
-            final RegionLocation newLoc = (node.getLocationValue() == RegionLocation.INSIDE) ?
+            final RegionLocation newLoc = (node.getLocation() == RegionLocation.INSIDE) ?
                     RegionLocation.OUTSIDE :
                     RegionLocation.INSIDE;
 
-            node.setLocation(newLoc);
+            node.setLocationValue(newLoc);
 
             complementRecursive(node.getMinus());
             complementRecursive(node.getPlus());
@@ -397,7 +505,8 @@ public abstract class AbstractRegionBSPTree<
         new XorOperator<P, N>().apply(a, b, this);
     }
 
-    /** Condense this tree by removing redundant subtrees.
+    /** Condense this tree by removing redundant subtrees, returning true if the
+     * tree structure was modified.
      *
      * <p>This operation can be used to reduce the total number of nodes in the
      * tree after performing node manipulations. For example, if two sibling leaf
@@ -406,47 +515,16 @@ public abstract class AbstractRegionBSPTree<
      * therefore both merged into their parent node. This method performs this
      * simplification process.
      * </p>
+     * @return true if the tree structure was modified, otherwise false
      */
-    protected void condense() {
-        condenseRecursive(getRoot());
-    }
-
-    /** Recursively condense nodes that have children with homogenous location attributes
-     * (eg, both inside, both outside) into single nodes.
-     * @param node the root of the subtree to condense
-     * @return the location of the successfully condensed subtree or null if no condensing was
-     *      able to be performed
-     */
-    private RegionLocation condenseRecursive(final N node) {
-        if (node.isLeaf()) {
-            return node.getLocation();
-        }
-
-        final RegionLocation minusLocation = condenseRecursive(node.getMinus());
-        final RegionLocation plusLocation = condenseRecursive(node.getPlus());
-
-        if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
-            node.setLocation(minusLocation);
-            node.clearCut();
-
-            return minusLocation;
-        }
-
-        return null;
+    public boolean condense() {
+        return new Condenser<P, N>().condense(getRoot());
     }
 
     /** {@inheritDoc} */
     @Override
     protected void copyNodeProperties(final N src, final N dst) {
-        dst.setLocation(src.getLocationValue());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void initChildNode(final N parent, final N child, final boolean isPlus) {
-        super.initChildNode(parent, child, isPlus);
-
-        child.setLocation(isPlus ? RegionLocation.OUTSIDE : RegionLocation.INSIDE);
+        dst.setLocationValue(src.getLocation());
     }
 
     /** {@inheritDoc} */
@@ -487,12 +565,36 @@ public abstract class AbstractRegionBSPTree<
             return (AbstractRegionBSPTree<P, N>) super.getTree();
         }
 
-        /** Get the location of the node. This value will only be non-null for
-         * leaf nodes.
-         * @return the location of the node; will be null for internal nodes
+        /** Get the location property of the node. Only the locations of leaf nodes are meaningful
+         * as they relate to the region represented by the BSP tree. For example, changing
+         * the location of an internal node will only affect the geometric properties
+         * of the region if the node later becomes a leaf node.
+         * @return the location of the node
          */
         public RegionLocation getLocation() {
-            return isLeaf() ? location : null;
+            return location;
+        }
+
+        /** Set the location property for the node. If the location is changed, the tree is
+         * invalidated.
+         *
+         * <p>Only the locations of leaf nodes are meaningful
+         * as they relate to the region represented by the BSP tree. For example, changing
+         * the location of an internal node will only affect the geometric properties
+         * of the region if the node later becomes a leaf node.</p>
+         * @param location the location for the node
+         * @throws IllegalArgumentException if {@code location} is not one of
+         *      {@link RegionLocation#INSIDE INSIDE} or {@link RegionLocation#OUTSIDE OUTSIDE}
+         */
+        public void setLocation(final RegionLocation location) {
+            if (location != RegionLocation.INSIDE && location != RegionLocation.OUTSIDE) {
+                throw new IllegalArgumentException("Invalid node location: " + location);
+            }
+            if (this.location != location) {
+                this.location = location;
+
+                getTree().invalidate();
+            }
         }
 
         /** True if the node is a leaf node and has a location of {@link RegionLocation#INSIDE}.
@@ -500,7 +602,7 @@ public abstract class AbstractRegionBSPTree<
          *      {@link RegionLocation#INSIDE}
          */
         public boolean isInside() {
-            return getLocation() == RegionLocation.INSIDE;
+            return isLeaf() && getLocation() == RegionLocation.INSIDE;
         }
 
         /** True if the node is a leaf node and has a location of {@link RegionLocation#OUTSIDE}.
@@ -508,7 +610,70 @@ public abstract class AbstractRegionBSPTree<
          *      {@link RegionLocation#OUTSIDE}
          */
         public boolean isOutside() {
-            return getLocation() == RegionLocation.OUTSIDE;
+            return isLeaf() && getLocation() == RegionLocation.OUTSIDE;
+        }
+
+        /** Insert a cut into this node, using the default region cut rule of
+         * (@link {@link RegionCutRule#MINUS_INSIDE}.
+         * @param cutter the hyperplane to cut the node's region with
+         * @return true if the cutting hyperplane intersected the node's region, resulting
+         *      in the creation of new child nodes
+         * @see #insertCut(Hyperplane, RegionCutRule)
+         */
+        public boolean insertCut(final Hyperplane<P> cutter) {
+            return insertCut(cutter, DEFAULT_REGION_CUT_RULE);
+        }
+
+        /** Insert a cut into this node. If the given hyperplane intersects
+         * this node's region, then the node's cut is set to the {@link ConvexSubHyperplane}
+         * representing the intersection, new plus and minus child leaf nodes
+         * are assigned, and true is returned. If the hyperplane does not intersect
+         * the node's region, then the node's cut and plus and minus child references
+         * are all set to null (ie, it becomes a leaf node) and false is returned. In
+         * either case, any existing cut and/or child nodes are removed by this method.
+         * @param cutter the hyperplane to cut the node's region with
+         * @param cutRule rule used to determine the region locations of newly created
+         *      child nodes
+         * @return true if the cutting hyperplane intersected the node's region, resulting
+         *      in the creation of new child nodes
+         */
+        public boolean insertCut(final Hyperplane<P> cutter, final RegionCutRule cutRule) {
+            final AbstractRegionBSPTree<P, N> tree = getTree();
+            return tree.cutNode(getSelf(), cutter, tree.getSubtreeInitializer(cutRule));
+        }
+
+        /** Remove the cut from this node. Returns true if the node previously had a cut.
+         * @return true if the node had a cut before the call to this method
+         */
+        public boolean clearCut() {
+            return getTree().removeNodeCut(getSelf());
+        }
+
+        /** Cut this node with the given hyperplane. The same node is returned, regardless of
+         * the outcome of the cut operation. If the operation succeeded, then the node will
+         * have plus and minus child nodes.
+         * @param cutter the hyperplane to cut the node's region with
+         * @return this node
+         * @see #insertCut(Hyperplane)
+         */
+        public N cut(final Hyperplane<P> cutter) {
+            return cut(cutter, DEFAULT_REGION_CUT_RULE);
+        }
+
+        /** Cut this node with the given hyperplane, using {@code cutRule} to determine the region
+         * locations of any new child nodes. The same node is returned, regardless of
+         * the outcome of the cut operation. If the operation succeeded, then the node will
+         * have plus and minus child nodes.
+         * @param cutter the hyperplane to cut the node's region with
+         * @param cutRule rule used to determine the region locations of newly created
+         *      child nodes
+         * @return this node
+         * @see #insertCut(Hyperplane, RegionCutRule)
+         */
+        public N cut(final Hyperplane<P> cutter, final RegionCutRule cutRule) {
+            this.insertCut(cutter, cutRule);
+
+            return getSelf();
         }
 
         /** Get the portion of the node's cut subhyperplane that lies on the boundary of the
@@ -629,19 +794,13 @@ public abstract class AbstractRegionBSPTree<
             cutBoundary = null;
         }
 
-        /** Set the location attribute for the node.
-         * @param location the location attribute for the node
+        /** Directly set the value of the location property for the node. No input validation
+         * is performed and the tree is not invalidated.
+         * @param locationValue the new location value for the node
+         * @see #setLocation(RegionLocation)
          */
-        protected void setLocation(final RegionLocation location) {
-            this.location = location;
-        }
-
-        /** Get the value of the location property, unmodified based on the
-         * node's leaf state.
-         * @return the value of the location property
-         */
-        protected RegionLocation getLocationValue() {
-            return location;
+        protected void setLocationValue(final RegionLocation locationValue) {
+            this.location = locationValue;
         }
     }
 
@@ -842,7 +1001,7 @@ public abstract class AbstractRegionBSPTree<
             } else if (node2.isInside()) {
                 // this region is inside of tree2 and so cannot be in the result region
                 final N output = outputNode();
-                output.setLocation(RegionLocation.OUTSIDE);
+                output.setLocationValue(RegionLocation.OUTSIDE);
 
                 return output;
             }
@@ -883,6 +1042,54 @@ public abstract class AbstractRegionBSPTree<
             // the operation is symmetric, so perform the same operation but with the
             // nodes flipped
             return mergeLeaf(node2, node1);
+        }
+    }
+
+    /** Internal class used to perform tree condense operations.
+     * @param <P> Point implementation type
+     * @param <N> BSP tree node implementation type
+     */
+    private static final class Condenser<P extends Point<P>, N extends AbstractRegionNode<P, N>> {
+        /** Flag set to true if the tree was modified during the operation. */
+        private boolean modifiedTree;
+
+        /** Condense the nodes in the subtree rooted at the given node. Redundant child nodes are
+         * removed. The tree is invalidated if the tree structure was modified.
+         * @param node the root node of the subtree to condense
+         * @return true if the tree was modified.
+         */
+        boolean condense(final N node) {
+            modifiedTree = false;
+
+            condenseRecursive(node);
+
+            return modifiedTree;
+        }
+
+        /** Recursively condense nodes that have children with homogenous location attributes
+         * (eg, both inside, both outside) into single nodes.
+         * @param node the root of the subtree to condense
+         * @return the location of the successfully condensed subtree or null if no condensing was
+         *      able to be performed
+         */
+        private RegionLocation condenseRecursive(final N node) {
+            if (node.isLeaf()) {
+                return node.getLocation();
+            }
+
+            final RegionLocation minusLocation = condenseRecursive(node.getMinus());
+            final RegionLocation plusLocation = condenseRecursive(node.getPlus());
+
+            if (minusLocation != null && plusLocation != null && minusLocation == plusLocation) {
+                node.setLocationValue(minusLocation);
+                node.clearCut();
+
+                modifiedTree = true;
+
+                return minusLocation;
+            }
+
+            return null;
         }
     }
 

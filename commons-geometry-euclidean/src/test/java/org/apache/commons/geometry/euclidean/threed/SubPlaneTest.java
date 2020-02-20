@@ -348,7 +348,7 @@ public class SubPlaneTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        SubPlane sp = new SubPlane(plane, RegionBSPTree2D.from(area));
+        SubPlane sp = new SubPlane(plane, area.toTree());
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO))
@@ -378,7 +378,7 @@ public class SubPlaneTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        SubPlane sp = new SubPlane(plane, RegionBSPTree2D.from(area));
+        SubPlane sp = new SubPlane(plane, area.toTree());
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(-1, 1, 1);
 
@@ -429,7 +429,7 @@ public class SubPlaneTest {
 
         // act
         builder.add(Facet.fromConvexArea(closePlane, a));
-        builder.add(new SubPlane(closePlane, RegionBSPTree2D.from(b)));
+        builder.add(new SubPlane(closePlane, b.toTree()));
 
         SubPlane result = builder.build();
 

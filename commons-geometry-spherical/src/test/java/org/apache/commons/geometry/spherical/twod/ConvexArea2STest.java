@@ -726,6 +726,19 @@ public class ConvexArea2STest {
     }
 
     @Test
+    public void testToTree_full() {
+        // arrange
+        ConvexArea2S area = ConvexArea2S.full();
+
+        // act
+        RegionBSPTree2S tree = area.toTree();
+
+        // assert
+        Assert.assertTrue(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+    }
+
+    @Test
     public void testToTree() {
         // arrange
         ConvexArea2S area = ConvexArea2S.fromVertexLoop(Arrays.asList(

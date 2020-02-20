@@ -16,7 +16,10 @@
  */
 package org.apache.commons.geometry.core.partition.test;
 
+import org.apache.commons.geometry.core.partitioning.BoundarySource;
+import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
@@ -29,12 +32,28 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
         return new TestNode(this);
     }
 
+    public void insert(final SubHyperplane<TestPoint2D> sub) {
+        insert(sub.toConvex());
+    }
+
+    public void insert(final ConvexSubHyperplane<TestPoint2D> sub) {
+        insert(sub, root -> { });
+    }
+
+    public void insert(final Iterable<? extends ConvexSubHyperplane<TestPoint2D>> subs) {
+        subs.forEach(this::insert);
+    }
+
+    public void insert(final BoundarySource<TestLineSegment> src) {
+        src.boundaryStream().forEach(this::insert);
+    }
+
     /** {@inheritDoc}
      *
      * <p>Exposed as public for testing.</p>
      */
     @Override
-    public void splitIntoTrees(Hyperplane<TestPoint2D> splitter,
+    public void splitIntoTrees(final Hyperplane<TestPoint2D> splitter,
             final AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> minus,
             final AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> plus) {
 
@@ -46,6 +65,27 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
     public static class TestNode extends AbstractBSPTree.AbstractNode<TestPoint2D, TestNode> {
         public TestNode(AbstractBSPTree<TestPoint2D, TestNode> tree) {
             super(tree);
+        }
+
+        /** Cut this node with the given hyperplane. If the hyperplane intersects the node's region,
+         * then the node becomes an internal node with two child leaf node. If the hyperplane does
+         * not intersect the node's region, then the node is made a leaf node. The same node is
+         * returned, regardless of the outcome of the cut operation.
+         * @param cutter hyperplane to cut the node with
+         * @return this node
+         */
+        public TestNode cut(final Hyperplane<TestPoint2D> cutter) {
+            insertCut(cutter);
+
+            return this;
+        }
+
+        public boolean insertCut(final Hyperplane<TestPoint2D> cutter) {
+            return ((TestBSPTree) getTree()).cutNode(getSelf(), cutter, root -> { });
+        }
+
+        public boolean clearCut() {
+            return ((TestBSPTree) getTree()).removeNodeCut(getSelf());
         }
 
         /** {@inheritDoc} */
