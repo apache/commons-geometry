@@ -64,20 +64,20 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public Iterable<Facet> boundaries() {
-        return createBoundaryIterable(b -> (Facet) b);
+    public Iterable<ConvexSubPlane> boundaries() {
+        return createBoundaryIterable(b -> (ConvexSubPlane) b);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<Facet> boundaryStream() {
+    public Stream<ConvexSubPlane> boundaryStream() {
         return StreamSupport.stream(boundaries().spliterator(), false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<Facet> getBoundaries() {
-        return createBoundaryList(b -> (Facet) b);
+    public List<ConvexSubPlane> getBoundaries() {
+        return createBoundaryList(b -> (ConvexSubPlane) b);
     }
 
     /** Return a list of {@link ConvexVolume}s representing the same region
@@ -202,7 +202,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @return a new tree instance constructed from the given boundaries
      * @see #from(Iterable, boolean)
      */
-    public static RegionBSPTree3D from(final Iterable<Facet> boundaries) {
+    public static RegionBSPTree3D from(final Iterable<ConvexSubPlane> boundaries) {
         return from(boundaries, false);
     }
 
@@ -213,7 +213,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @param full if true, the initial tree will contain the entire space
      * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree3D from(final Iterable<Facet> boundaries, final boolean full) {
+    public static RegionBSPTree3D from(final Iterable<ConvexSubPlane> boundaries, final boolean full) {
         final RegionBSPTree3D tree = new RegionBSPTree3D(full);
         tree.insert(boundaries);
 
@@ -294,7 +294,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      */
     private static final class RegionSizePropertiesVisitor implements BSPTreeVisitor<Vector3D, RegionNode3D> {
 
-        /** Accumulator for facet volume contributions. */
+        /** Accumulator for boundary volume contributions. */
         private double volumeSum;
 
         /** Barycenter contribution x coordinate accumulator. */
@@ -311,8 +311,8 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         public Result visit(final RegionNode3D node) {
             if (node.isInternal()) {
                 final RegionCutBoundary<Vector3D> boundary = node.getCutBoundary();
-                addFacetContribution(boundary.getOutsideFacing(), false);
-                addFacetContribution(boundary.getInsideFacing(), true);
+                addBoundaryContribution(boundary.getOutsideFacing(), false);
+                addBoundaryContribution(boundary.getInsideFacing(), true);
             }
 
             return Result.CONTINUE;
@@ -331,7 +331,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
                 // apply the 1/3 pyramid volume scaling factor
                 size = volumeSum / 3.0;
 
-                // Since the volume we used when adding together the facet contributions
+                // Since the volume we used when adding together the boundary contributions
                 // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
                 // of 3/4 to adjust for the actual barycenter position in each pyramid.
                 final double barycenterScale = 1.0 / (4 * size);
@@ -344,12 +344,12 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
             return new RegionSizeProperties<>(size, barycenter);
         }
 
-        /** Add the facet contribution of the given node cut boundary. If {@code reverse} is true,
-         * the volume of the facet contribution is reversed before being added to the total.
+        /** Add the contribution of the given node cut boundary. If {@code reverse} is true,
+         * the volume of the contribution is reversed before being added to the total.
          * @param boundary node cut boundary
-         * @param reverse if true, the facet contribution is reversed before being added to the total.
+         * @param reverse if true, the boundary contribution is reversed before being added to the total.
          */
-        private void addFacetContribution(final SubHyperplane<Vector3D> boundary, boolean reverse) {
+        private void addBoundaryContribution(final SubHyperplane<Vector3D> boundary, boolean reverse) {
             final SubPlane subplane = (SubPlane) boundary;
             final RegionBSPTree2D base = subplane.getSubspaceRegion();
 
