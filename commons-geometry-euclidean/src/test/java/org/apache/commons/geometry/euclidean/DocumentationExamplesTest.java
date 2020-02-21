@@ -29,7 +29,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.Facet;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
@@ -415,10 +415,10 @@ public class DocumentationExamplesTest {
             {b1, b2, b3, b4}
         };
 
-        // convert the vertices to facets and insert into a bsp tree
+        // convert the vertices to convex subplanes and insert into a bsp tree
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
         Arrays.stream(faceIndices)
-            .map(vertices -> Facet.fromVertexLoop(Arrays.asList(vertices), precision))
+            .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
             .forEach(tree::insert);
 
         // split the region through its barycenter along a diagonal of the base
@@ -426,15 +426,15 @@ public class DocumentationExamplesTest {
         Split<RegionBSPTree3D> split = tree.split(cutter);
 
         // compute some properties for the minus side of the split and convert back to subhyperplanes
-        // (ie, facets)
+        // (ie, boundary facets)
         RegionBSPTree3D minus = split.getMinus();
 
         double minusSize = minus.getSize(); // 1/6
-        List<Facet> minusFacets = minus.getBoundaries(); // size = 4
+        List<ConvexSubPlane> minusBoundaries = minus.getBoundaries(); // size = 4
 
         // ---------------------
         Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
-        Assert.assertEquals(4, minusFacets.size());
+        Assert.assertEquals(4, minusBoundaries.size());
     }
 
     @Test

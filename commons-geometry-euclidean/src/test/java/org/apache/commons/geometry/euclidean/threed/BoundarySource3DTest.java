@@ -36,9 +36,9 @@ public class BoundarySource3DTest {
     @Test
     public void testToTree() {
         // act
-        Facet a = Facet.fromVertexLoop(
+        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        Facet b = Facet.fromVertexLoop(
+        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         BoundarySource3D src = BoundarySource3D.from(a, b);
@@ -72,22 +72,22 @@ public class BoundarySource3DTest {
         BoundarySource3D src = BoundarySource3D.from();
 
         // assert
-        List<Facet> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_varargs() {
         // act
-        Facet a = Facet.fromVertexLoop(
+        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        Facet b = Facet.fromVertexLoop(
+        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         BoundarySource3D src = BoundarySource3D.from(a, b);
 
         // assert
-        List<Facet> boundaries = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, boundaries.size());
 
         Assert.assertSame(a, boundaries.get(0));
@@ -97,32 +97,32 @@ public class BoundarySource3DTest {
     @Test
     public void testFrom_list_empty() {
         // arrange
-        List<Facet> input = new ArrayList<>();
+        List<ConvexSubPlane> input = new ArrayList<>();
 
         // act
         BoundarySource3D src = BoundarySource3D.from(input);
 
         // assert
-        List<Facet> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_list() {
         // act
-        Facet a = Facet.fromVertexLoop(
+        ConvexSubPlane a = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        Facet b = Facet.fromVertexLoop(
+        ConvexSubPlane b = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
-        List<Facet> input = new ArrayList<>();
+        List<ConvexSubPlane> input = new ArrayList<>();
         input.add(a);
         input.add(b);
 
         BoundarySource3D src = BoundarySource3D.from(input);
 
         // assert
-        List<Facet> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));

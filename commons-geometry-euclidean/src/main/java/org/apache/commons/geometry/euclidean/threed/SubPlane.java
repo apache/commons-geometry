@@ -66,14 +66,14 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
 
     /** {@inheritDoc} */
     @Override
-    public List<Facet> toConvex() {
+    public List<ConvexSubPlane> toConvex() {
         final List<ConvexArea> areas = region.toConvex();
 
         final Plane plane = getPlane();
-        final List<Facet> facets = new ArrayList<>(areas.size());
+        final List<ConvexSubPlane> facets = new ArrayList<>(areas.size());
 
         for (final ConvexArea area : areas) {
-            facets.add(Facet.fromConvexArea(plane, area));
+            facets.add(ConvexSubPlane.fromConvexArea(plane, area));
         }
 
         return facets;
@@ -112,15 +112,15 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
         return new SubPlane(subTransform.getPlane(), tRegion);
     }
 
-    /** Add a facet (convex subplane) to this instance.
-     * @param facet facet to add
-     * @throws IllegalArgumentException if the given facet is not from
+    /** Add a convex subplane to this instance.
+     * @param subplane convex subplane to add
+     * @throws IllegalArgumentException if the given subplane is not from
      *      a plane equivalent to this instance
      */
-    public void add(final Facet facet) {
-        validatePlane(facet.getPlane());
+    public void add(final ConvexSubPlane subplane) {
+        validatePlane(subplane.getPlane());
 
-        region.add(facet.getSubspaceRegion());
+        region.add(subplane.getSubspaceRegion());
     }
 
     /** Add a subplane to this instance.
@@ -186,8 +186,8 @@ public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
          * @param sub the subhyperplane to add; either convex or non-convex
          */
         private void addInternal(final SubHyperplane<Vector3D> sub) {
-            if (sub instanceof Facet) {
-                subplane.add((Facet) sub);
+            if (sub instanceof ConvexSubPlane) {
+                subplane.add((ConvexSubPlane) sub);
             } else if (sub instanceof SubPlane) {
                 subplane.add((SubPlane) sub);
             } else {

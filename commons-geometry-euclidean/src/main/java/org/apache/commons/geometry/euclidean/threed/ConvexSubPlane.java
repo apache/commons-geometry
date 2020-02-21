@@ -33,7 +33,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /** Class representing a convex subhyperplane in 3 dimensional Euclidean space, meaning
  * a 2D convex area embedded in a plane. The subhyperplane may be finite or infinite.
  */
-public final class Facet extends AbstractSubPlane<ConvexArea>
+public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
     implements ConvexSubHyperplane<Vector3D>  {
     /** The embedded 2D area. */
     private final ConvexArea area;
@@ -42,7 +42,7 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
      * @param plane plane the the convex area is embedded in
      * @param area the embedded convex area
      */
-    private Facet(final Plane plane, final ConvexArea area) {
+    private ConvexSubPlane(final Plane plane, final ConvexArea area) {
         super(plane);
 
         this.area = area;
@@ -50,13 +50,13 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
 
     /** {@inheritDoc} */
     @Override
-    public List<Facet> toConvex() {
+    public List<ConvexSubPlane> toConvex() {
         return Arrays.asList(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Facet reverse() {
+    public ConvexSubPlane reverse() {
         final Plane plane = getPlane();
         final Plane rPlane = plane.reverse();
 
@@ -66,12 +66,12 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
         final AffineTransformMatrix2D transform =
                 AffineTransformMatrix2D.fromColumnVectors(rU, rV);
 
-        return new Facet(rPlane, area.transform(transform));
+        return new ConvexSubPlane(rPlane, area.transform(transform));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Facet transform(final Transform<Vector3D> transform) {
+    public ConvexSubPlane transform(final Transform<Vector3D> transform) {
         final SubspaceTransform st = getPlane().subspaceTransform(transform);
         final ConvexArea tArea = area.transform(st.getTransform());
 
@@ -86,15 +86,15 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
 
     /** {@inheritDoc} */
     @Override
-    public Split<Facet> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, (p, r) -> new Facet(p, (ConvexArea) r));
+    public Split<ConvexSubPlane> split(final Hyperplane<Vector3D> splitter) {
+        return splitInternal(splitter, this, (p, r) -> new ConvexSubPlane(p, (ConvexArea) r));
     }
 
-    /** Get the unique intersection of this facet with the given line. Null is
+    /** Get the unique intersection of this subplane with the given line. Null is
      * returned if no unique intersection point exists (ie, the line and plane are
-     * parallel or coincident) or the line does not intersect the facet.
-     * @param line line to intersect with this facet
-     * @return the unique intersection point between the line and this facet
+     * parallel or coincident) or the line does not intersect the subplane.
+     * @param line line to intersect with this subplane
+     * @return the unique intersection point between the line and this subplane
      *      or null if no such point exists.
      * @see Plane#intersection(Line3D)
      */
@@ -103,12 +103,12 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
         return (pt != null && contains(pt)) ? pt : null;
     }
 
-    /** Get the unique intersection of this facet with the given segment. Null
+    /** Get the unique intersection of this subplane with the given segment. Null
      * is returned if the underlying line and plane do not have a unique intersection
      * point (ie, they are parallel or coincident) or the intersection point is unique
-     * but is not contained in both the segment and facet.
+     * but is not contained in both the segment and subplane.
      * @param segment segment to intersect with
-     * @return the unique intersection point between this facet and the argument or
+     * @return the unique intersection point between this subplane and the argument or
      *      null if no such point exists.
      * @see Plane#intersection(Line3D)
      */
@@ -117,9 +117,9 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
         return (pt != null && segment.contains(pt)) ? pt : null;
     }
 
-    /** Get the vertices for the facet. The vertices lie at the intersections of the
+    /** Get the vertices for the subplane. The vertices lie at the intersections of the
      * 2D area bounding lines.
-     * @return the vertices for the facets
+     * @return the vertices for the subplane
      */
     public List<Vector3D> getVertices() {
         return getPlane().toSpace(area.getVertices());
@@ -130,15 +130,15 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
      * @param area area embedded in the plane
      * @return a new convex sub plane instance
      */
-    public static Facet fromConvexArea(final Plane plane, final ConvexArea area) {
-        return new Facet(plane, area);
+    public static ConvexSubPlane fromConvexArea(final Plane plane, final ConvexArea area) {
+        return new ConvexSubPlane(plane, area);
     }
 
     /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
     * at least 3 unique vertices must be given. In contrast with the
     * {@link #fromVertices(Collection, DoublePrecisionContext)} method, the first point in the sequence is included
     * at the end if needed, in order to form a closed loop.
-    * @param pts collection of points defining the facets
+    * @param pts collection of points defining the subplane
     * @param precision precision context used to compare floating point values
     * @return a new instance defined by the given sequence of vertices
     * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
@@ -147,14 +147,14 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
     */
-    public static Facet fromVertexLoop(final Collection<Vector3D> pts,
+    public static ConvexSubPlane fromVertexLoop(final Collection<Vector3D> pts,
             final DoublePrecisionContext precision) {
         return fromVertices(pts, true, precision);
     }
 
     /** Create a new instance from the given sequence of points. The points must define a unique plane, meaning that
      * at least 3 unique vertices must be given.
-     * @param pts collection of points defining the facet
+     * @param pts collection of points defining the subplane
      * @param precision precision context used to compare floating point values
      * @return a new instance defined by the given sequence of vertices
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
@@ -163,7 +163,7 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      * @see Plane#fromPoints(Collection, DoublePrecisionContext)
      */
-    public static Facet fromVertices(final Collection<Vector3D> pts,
+    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts,
             final DoublePrecisionContext precision) {
         return fromVertices(pts, false, precision);
     }
@@ -175,14 +175,14 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
      * @param close if true, the point sequence will implicitly include the start point again at the end; otherwise
      *      the vertex sequence is taken as-is
      * @param precision precision context used to compare floating point values
-     * @return a new facet instance
+     * @return a new subplane instance
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *      unique plane
      * @see #fromVertexLoop(Collection, DoublePrecisionContext)
      * @see #fromVertices(Collection, DoublePrecisionContext)
      * @see Plane#fromPoints(Collection, DoublePrecisionContext)
      */
-    public static Facet fromVertices(final Collection<Vector3D> pts, final boolean close,
+    public static ConvexSubPlane fromVertices(final Collection<Vector3D> pts, final boolean close,
             final DoublePrecisionContext precision) {
 
         final Plane plane = Plane.fromPoints(pts, precision);
@@ -190,6 +190,6 @@ public final class Facet extends AbstractSubPlane<ConvexArea>
         final List<Vector2D> subspacePts = plane.toSubspace(pts);
         final ConvexArea area = ConvexArea.fromVertices(subspacePts, close, precision);
 
-        return new Facet(plane, area);
+        return new ConvexSubPlane(plane, area);
     }
 }

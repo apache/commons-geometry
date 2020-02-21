@@ -426,8 +426,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
     /** {@inheritDoc} */
     @Override
-    public Facet span() {
-        return Facet.fromConvexArea(this, ConvexArea.full());
+    public ConvexSubPlane span() {
+        return ConvexSubPlane.fromConvexArea(this, ConvexArea.full());
     }
 
     /**

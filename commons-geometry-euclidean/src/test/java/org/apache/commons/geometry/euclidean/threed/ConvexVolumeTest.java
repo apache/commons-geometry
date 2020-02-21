@@ -62,12 +62,12 @@ public class ConvexVolumeTest {
         ConvexVolume volume = ConvexVolume.fromBounds(plane);
 
         // act
-        List<Facet> boundaries = volume.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries = volume.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, boundaries.size());
 
-        Facet sp = boundaries.get(0);
+        ConvexSubPlane sp = boundaries.get(0);
         Assert.assertEquals(0, sp.getSubspaceRegion().getBoundaries().size());
         Assert.assertSame(plane, sp.getPlane());
     }
@@ -78,7 +78,7 @@ public class ConvexVolumeTest {
         ConvexVolume volume = ConvexVolume.full();
 
         // act
-        List<Facet> boundaries = volume.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> boundaries = volume.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, boundaries.size());
@@ -186,11 +186,11 @@ public class ConvexVolumeTest {
         // arrange
         ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
-        Facet subplane = Facet.fromConvexArea(
+        ConvexSubPlane subplane = ConvexSubPlane.fromConvexArea(
                 Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION), ConvexArea.full());
 
         // act
-        Facet trimmed = vol.trim(subplane);
+        ConvexSubPlane trimmed = vol.trim(subplane);
 
         // assert
         Assert.assertEquals(1, trimmed.getSize(), TEST_EPS);

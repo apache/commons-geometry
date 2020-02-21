@@ -704,7 +704,7 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
           </li>
           <li>
             ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Facet.html">Facet</a>
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexSubPlane.html">ConvexSubPlane</a>
           </li>
           <li>
             Region
@@ -813,10 +813,10 @@ Vector3D[][] faceIndices = {
     {b1, b2, b3, b4}
 };
 
-// convert the vertices to facets and insert into a bsp tree
+// convert the vertices to convex subplanes and insert into a bsp tree
 RegionBSPTree3D tree = RegionBSPTree3D.empty();
 Arrays.stream(faceIndices)
-    .map(vertices -> Facet.fromVertexLoop(Arrays.asList(vertices), precision))
+    .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
     .forEach(tree::insert);
 
 // split the region through its barycenter along a diagonal of the base
@@ -824,11 +824,11 @@ Plane cutter = Plane.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from
 Split&lt;RegionBSPTree3D&gt; split = tree.split(cutter);
 
 // compute some properties for the minus side of the split and convert back to subhyperplanes
-// (ie, facets)
+// (ie, boundary facets)
 RegionBSPTree3D minus = split.getMinus();
 
 double minusSize = minus.getSize(); // 1/6
-List&lt;Facet&gt; minusFacets = minus.getBoundaries(); // size = 4
+List&lt;ConvexSubPlane&gt; minusBoundaries = minus.getBoundaries(); // size = 4
         </source>
 
         <h5>Linecast</h5>

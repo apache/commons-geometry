@@ -31,7 +31,7 @@ import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
  * The boundaries of this area, if any, are composed of facets.
  */
-public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, Facet>
+public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
     implements BoundarySource3D, Linecastable3D {
 
     /** Instance representing the full 3D volume. */
@@ -41,13 +41,13 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaries the boundaries of the convex area
      */
-    private ConvexVolume(final List<Facet> boundaries) {
+    private ConvexVolume(final List<ConvexSubPlane> boundaries) {
         super(boundaries);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<Facet> boundaryStream() {
+    public Stream<ConvexSubPlane> boundaryStream() {
         return getBoundaries().stream();
     }
 
@@ -60,15 +60,15 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
 
         double volumeSum = 0.0;
 
-        for (final Facet facet : getBoundaries()) {
-            if (facet.isInfinite()) {
+        for (final ConvexSubPlane boundary : getBoundaries()) {
+            if (boundary.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
             }
 
-            final Plane plane = facet.getPlane();
-            final ConvexArea subarea = facet.getSubspaceRegion();
+            final Plane plane = boundary.getPlane();
+            final ConvexArea subarea = boundary.getSubspaceRegion();
 
-            final Vector3D facetBarycenter = facet.getHyperplane().toSpace(
+            final Vector3D facetBarycenter = boundary.getHyperplane().toSpace(
                     subarea.getBarycenter());
 
 
@@ -87,15 +87,15 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         double sumY = 0.0;
         double sumZ = 0.0;
 
-        for (final Facet facet : getBoundaries()) {
-            if (facet.isInfinite()) {
+        for (final ConvexSubPlane boundary : getBoundaries()) {
+            if (boundary.isInfinite()) {
                 return null;
             }
 
-            final Plane plane = facet.getPlane();
-            final ConvexArea subarea = facet.getSubspaceRegion();
+            final Plane plane = boundary.getPlane();
+            final ConvexArea subarea = boundary.getSubspaceRegion();
 
-            final Vector3D facetBarycenter = facet.getHyperplane().toSpace(
+            final Vector3D facetBarycenter = boundary.getHyperplane().toSpace(
                     subarea.getBarycenter());
 
             final double scaledVolume = subarea.getSize() * facetBarycenter.dot(plane.getNormal());
@@ -110,7 +110,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
         if (volumeSum > 0) {
             final double size = volumeSum / 3.0;
 
-            // Since the volume we used when adding together the facet contributions
+            // Since the volume we used when adding together the boundary contributions
             // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
             // of 3/4 to adjust for the actual barycenter position in each pyramid.
             final double barycenterScale = 1.0 / (4 * size);
@@ -126,7 +126,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
     /** {@inheritDoc} */
     @Override
     public Split<ConvexVolume> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, Facet.class, ConvexVolume::new);
+        return splitInternal(splitter, this, ConvexSubPlane.class, ConvexVolume::new);
     }
 
     /** Return a BSP tree representing the same region as this instance.
@@ -150,8 +150,8 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
 
     /** {@inheritDoc} */
     @Override
-    public Facet trim(final ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
-        return (Facet) super.trim(convexSubHyperplane);
+    public ConvexSubPlane trim(final ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
+        return (ConvexSubPlane) super.trim(convexSubHyperplane);
     }
 
     /** Return a new instance transformed by the argument.
@@ -159,7 +159,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * @return a new instance transformed by the argument
      */
     public ConvexVolume transform(final Transform<Vector3D> transform) {
-        return transformInternal(transform, this, Facet.class, ConvexVolume::new);
+        return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
     }
 
     /** Return an instance representing the full 3D volume.
@@ -196,7 +196,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      *      meaning that there is no region that is on the minus side of all of the bounding planes.
      */
     public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
-        final List<Facet> facets = new ConvexRegionBoundaryBuilder<>(Facet.class)
+        final List<ConvexSubPlane> facets = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class)
                 .build(boundingPlanes);
         return facets.isEmpty() ? full() : new ConvexVolume(facets);
     }

@@ -35,7 +35,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FacetTest {
+public class ConvexSubPlaneTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -55,7 +55,7 @@ public class FacetTest {
                 ), TEST_PRECISION);
 
         // act
-        Facet sp = Facet.fromConvexArea(plane, area);
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, area);
 
         // assert
         Assert.assertFalse(sp.isFull());
@@ -72,7 +72,7 @@ public class FacetTest {
     @Test
     public void testFromVertices_infinite() {
         // act
-        Facet sp = Facet.fromVertices(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertices(Arrays.asList(
                     Vector3D.of(1, 0, 0),
                     Vector3D.of(1, 1, 0),
                     Vector3D.of(1, 1, 1)
@@ -112,7 +112,7 @@ public class FacetTest {
     @Test
     public void testFromVertices_finite() {
         // act
-        Facet sp = Facet.fromVertices(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertices(Arrays.asList(
                     Vector3D.of(1, 0, 0),
                     Vector3D.of(1, 1, 0),
                     Vector3D.of(1, 1, 2),
@@ -153,7 +153,7 @@ public class FacetTest {
     @Test
     public void testFromVertexLoop() {
         // act
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 0, 0),
                     Vector3D.of(1, 1, 0),
                     Vector3D.of(1, 1, 2)
@@ -193,11 +193,11 @@ public class FacetTest {
     @Test
     public void testToConvex() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.Unit.PLUS_X,  Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_Z), TEST_PRECISION);
 
         // act
-        List<Facet> convex = sp.toConvex();
+        List<ConvexSubPlane> convex = sp.toConvex();
 
         // assert
         Assert.assertEquals(1, convex.size());
@@ -208,7 +208,7 @@ public class FacetTest {
     public void testGetVertices_full() {
         // arrange
         Plane plane = Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.full());
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
 
         // act
         List<Vector3D> vertices = sp.getVertices();
@@ -221,7 +221,7 @@ public class FacetTest {
     public void testGetVertices_twoParallelLines() {
         // arrange
         Plane plane = Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.fromBounds(
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
                 ));
@@ -237,7 +237,7 @@ public class FacetTest {
     public void testGetVertices_infiniteWithVertices() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.fromBounds(
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromBounds(
                     Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
                     Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
@@ -257,7 +257,7 @@ public class FacetTest {
     public void testGetVertices_finite() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.fromVertexLoop(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.Unit.PLUS_X,
                     Vector2D.Unit.PLUS_Y
@@ -282,10 +282,10 @@ public class FacetTest {
         Vector3D p2 = Vector3D.of(2, 0, 1);
         Vector3D p3 = Vector3D.of(1, 1, 1);
 
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(p1, p2, p3), TEST_PRECISION);
 
         // act
-        Facet reversed = sp.reverse();
+        ConvexSubPlane reversed = sp.reverse();
 
         // assert
         Assert.assertEquals(sp.getPlane().reverse(), reversed.getPlane());
@@ -304,14 +304,14 @@ public class FacetTest {
     public void testTransform_full() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.full());
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.identity()
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO))
                 .translate(Vector3D.Unit.PLUS_Y);
 
         // act
-        Facet transformed = sp.transform(transform);
+        ConvexSubPlane transformed = sp.transform(transform);
 
         // assert
         Assert.assertTrue(transformed.isFull());
@@ -324,14 +324,14 @@ public class FacetTest {
     public void testTransform_halfSpace() {
         // arrange
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane,
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane,
                 ConvexArea.fromBounds(Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)));
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createRotation(Vector3D.Unit.PLUS_Z,
                 QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        Facet transformed = sp.transform(transform);
+        ConvexSubPlane transformed = sp.transform(transform);
 
         // assert
         Assert.assertFalse(transformed.isFull());
@@ -343,14 +343,14 @@ public class FacetTest {
     @Test
     public void testTransform_finite() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(2)
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        Facet transformed = sp.transform(transform);
+        ConvexSubPlane transformed = sp.transform(transform);
 
         // assert
         Vector3D midpt = Vector3D.of(2, 2, -2).multiply(1 / 3.0);
@@ -368,13 +368,13 @@ public class FacetTest {
     @Test
     public void testTransform_reflection() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(
                 Arrays.asList(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, 0), Vector3D.of(0, 0, 1)), TEST_PRECISION);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(-1, 1, 1);
 
         // act
-        Facet transformed = sp.transform(transform);
+        ConvexSubPlane transformed = sp.transform(transform);
 
         // assert
         Vector3D midpt = Vector3D.of(-1, 1, 1).multiply(1 / 3.0);
@@ -393,23 +393,23 @@ public class FacetTest {
     public void testSplit_full() {
         // arrange
         Plane plane = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        Facet sp = Facet.fromConvexArea(plane, ConvexArea.full());
+        ConvexSubPlane sp = ConvexSubPlane.fromConvexArea(plane, ConvexArea.full());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        Facet minus = split.getMinus();
+        ConvexSubPlane minus = split.getMinus();
         Assert.assertEquals(1, minus.getSubspaceRegion().getBoundaries().size());
         checkPoints(minus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y);
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.Unit.MINUS_X);
         checkPoints(minus, RegionLocation.OUTSIDE, Vector3D.Unit.PLUS_X);
 
-        Facet plus = split.getPlus();
+        ConvexSubPlane plus = split.getPlus();
         Assert.assertEquals(1, plus.getSubspaceRegion().getBoundaries().size());
         checkPoints(plus, RegionLocation.BOUNDARY, Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Y);
         checkPoints(plus, RegionLocation.INSIDE, Vector3D.Unit.PLUS_X);
@@ -419,62 +419,62 @@ public class FacetTest {
     @Test
     public void testSplit_both() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        Facet minus = split.getMinus();
+        ConvexSubPlane minus = split.getMinus();
         checkVertices(minus, Vector3D.of(1, 1, 0), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 0));
 
-        Facet plus = split.getPlus();
+        ConvexSubPlane plus = split.getPlus();
         checkVertices(plus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, 0), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
     }
 
     @Test
     public void testSplit_plusOnly() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, -3.1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
         Assert.assertNull(split.getMinus());
 
-        Facet plus = split.getPlus();
+        ConvexSubPlane plus = split.getPlus();
         checkVertices(plus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
     }
 
     @Test
     public void testSplit_minusOnly() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1.1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        Facet minus = split.getMinus();
+        ConvexSubPlane minus = split.getMinus();
         checkVertices(minus, Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0), Vector3D.of(1, 1, 1));
 
         Assert.assertNull(split.getPlus());
@@ -483,14 +483,14 @@ public class FacetTest {
     @Test
     public void testSplit_parallelSplitter_on() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
         Plane splitter = sp.getPlane();
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -502,7 +502,7 @@ public class FacetTest {
     @Test
     public void testSplit_parallelSplitter_minus() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
@@ -510,7 +510,7 @@ public class FacetTest {
         Plane splitter = plane.translate(plane.getNormal());
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -522,7 +522,7 @@ public class FacetTest {
     @Test
     public void testSplit_parallelSplitter_plus() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
@@ -530,7 +530,7 @@ public class FacetTest {
         Plane splitter = plane.translate(plane.getNormal().negate());
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -542,14 +542,14 @@ public class FacetTest {
     @Test
     public void testSplit_antiParallelSplitter_on() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
         Plane splitter = sp.getPlane().reverse();
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -561,7 +561,7 @@ public class FacetTest {
     @Test
     public void testSplit_antiParallelSplitter_minus() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
@@ -569,7 +569,7 @@ public class FacetTest {
         Plane splitter = plane.translate(plane.getNormal());
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -581,7 +581,7 @@ public class FacetTest {
     @Test
     public void testSplit_antiParallelSplitter_plus() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.of(1, 1, 1), Vector3D.of(1, 1, -3), Vector3D.of(0, 2, 0)
                 ), TEST_PRECISION);
 
@@ -589,7 +589,7 @@ public class FacetTest {
         Plane splitter = plane.translate(plane.getNormal().negate());
 
         // act
-        Split<Facet> split = sp.split(splitter);
+        Split<ConvexSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -601,7 +601,7 @@ public class FacetTest {
     @Test
     public void testIntersection_line() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                 Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),
                 TEST_PRECISION);
 
@@ -621,7 +621,7 @@ public class FacetTest {
     @Test
     public void testIntersection_segment() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                 Vector3D.of(0, 0, 2), Vector3D.of(1, 0, 2), Vector3D.of(1, 1, 2), Vector3D.of(0, 1, 2)),
                 TEST_PRECISION);
 
@@ -643,7 +643,7 @@ public class FacetTest {
     @Test
     public void testToString() {
         // arrange
-        Facet sp = Facet.fromVertexLoop(Arrays.asList(
+        ConvexSubPlane sp = ConvexSubPlane.fromVertexLoop(Arrays.asList(
                     Vector3D.ZERO,
                     Vector3D.Unit.PLUS_X,
                     Vector3D.Unit.PLUS_Y
@@ -682,13 +682,13 @@ public class FacetTest {
         EuclideanTestUtils.assertCoordinatesEqual(origin, plane.getNormal().multiply(-offset), TEST_EPS);
     }
 
-    private static void checkPoints(Facet sp, RegionLocation loc, Vector3D... pts) {
+    private static void checkPoints(ConvexSubPlane sp, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected location for point " + pt, loc, sp.classify(pt));
         }
     }
 
-    private static void checkVertices(Facet sp, Vector3D... pts) {
+    private static void checkVertices(ConvexSubPlane sp, Vector3D... pts) {
         List<Vector3D> actual = sp.getPlane().toSpace(
                 sp.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
 

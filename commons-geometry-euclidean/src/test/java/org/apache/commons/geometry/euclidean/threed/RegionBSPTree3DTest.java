@@ -130,7 +130,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<Facet> facets = new ArrayList<>();
+        List<ConvexSubPlane> facets = new ArrayList<>();
         tree.boundaries().forEach(facets::add);
 
         // assert
@@ -143,7 +143,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<Facet> facets = tree.getBoundaries();
+        List<ConvexSubPlane> facets = tree.getBoundaries();
 
         // assert
         Assert.assertEquals(6, facets.size());
@@ -155,7 +155,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<Facet> facets = tree.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(6, facets.size());
@@ -167,7 +167,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = RegionBSPTree3D.full();
 
         // act
-        List<Facet> facets = tree.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubPlane> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, facets.size());
@@ -261,9 +261,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    Facet.fromVertexLoop(Arrays.asList(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    Facet.fromVertexLoop(Arrays.asList(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ));
 
@@ -284,9 +284,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries_fullIsTrue() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    Facet.fromVertexLoop(Arrays.asList(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    Facet.fromVertexLoop(Arrays.asList(
+                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ), true);
 
@@ -464,13 +464,13 @@ public class RegionBSPTree3DTest {
         // arrange
         RegionBSPTree3D a = RegionBSPTree3D.empty();
         Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(0.5, 1, 1), TEST_PRECISION).stream()
-            .map(Facet::reverse)
+            .map(ConvexSubPlane::reverse)
             .forEach(a::insert);
         a.complement();
 
         RegionBSPTree3D b = RegionBSPTree3D.empty();
         Parallelepiped.axisAligned(Vector3D.of(0.5, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION).stream()
-            .map(Facet::reverse)
+            .map(ConvexSubPlane::reverse)
             .forEach(b::insert);
         b.complement();
 
@@ -923,11 +923,11 @@ public class RegionBSPTree3DTest {
         Vector3D vertex3 = Vector3D.of(2, 3, 3);
         Vector3D vertex4 = Vector3D.of(1, 3, 4);
 
-        List<Facet> boundaries = Arrays.asList(
-                Facet.fromVertexLoop(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
-                Facet.fromVertexLoop(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
-                Facet.fromVertexLoop(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
-                Facet.fromVertexLoop(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
+        List<ConvexSubPlane> boundaries = Arrays.asList(
+                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
+                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
+                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
+                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
             );
 
         // act
@@ -1525,7 +1525,7 @@ public class RegionBSPTree3DTest {
             {3, 0, 4, 7}
         };
 
-        List<Facet> faces = indexedFacetsToBoundaries(vertices, facets);
+        List<ConvexSubPlane> faces = indexedFacetsToBoundaries(vertices, facets);
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.full();
@@ -1542,8 +1542,8 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
     }
 
-    private static List<Facet> indexedFacetsToBoundaries(Vector3D[] vertices, int[][] facets) {
-        List<Facet> boundaries = new ArrayList<>();
+    private static List<ConvexSubPlane> indexedFacetsToBoundaries(Vector3D[] vertices, int[][] facets) {
+        List<ConvexSubPlane> boundaries = new ArrayList<>();
 
         List<Vector3D> vertexList = new ArrayList<>();
 
@@ -1554,7 +1554,7 @@ public class RegionBSPTree3DTest {
                 vertexList.add(vertices[indices[j]]);
             }
 
-            boundaries.add(Facet.fromVertexLoop(vertexList, TEST_PRECISION));
+            boundaries.add(ConvexSubPlane.fromVertexLoop(vertexList, TEST_PRECISION));
 
             vertexList.clear();
         }

@@ -93,7 +93,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(XY_PLANE, true);
 
         // act
-        List<Facet> convex = sp.toConvex();
+        List<ConvexSubPlane> convex = sp.toConvex();
 
         // assert
         Assert.assertEquals(1, convex.size());
@@ -106,7 +106,7 @@ public class SubPlaneTest {
         SubPlane sp = new SubPlane(XY_PLANE, false);
 
         // act
-        List<Facet> convex = sp.toConvex();
+        List<ConvexSubPlane> convex = sp.toConvex();
 
         // assert
         Assert.assertEquals(0, convex.size());
@@ -125,11 +125,11 @@ public class SubPlaneTest {
                 ), TEST_PRECISION);
 
         SubPlane sp = new SubPlane(XY_PLANE, false);
-        sp.add(Facet.fromConvexArea(XY_PLANE, a));
-        sp.add(Facet.fromConvexArea(XY_PLANE, b));
+        sp.add(ConvexSubPlane.fromConvexArea(XY_PLANE, a));
+        sp.add(ConvexSubPlane.fromConvexArea(XY_PLANE, b));
 
         // act
-        List<Facet> convex = sp.toConvex();
+        List<ConvexSubPlane> convex = sp.toConvex();
 
         // assert
         Assert.assertEquals(2, convex.size());
@@ -428,7 +428,7 @@ public class SubPlaneTest {
                 Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        builder.add(Facet.fromConvexArea(closePlane, a));
+        builder.add(ConvexSubPlane.fromConvexArea(closePlane, a));
         builder.add(new SubPlane(closePlane, b.toTree()));
 
         SubPlane result = builder.build();
@@ -455,7 +455,7 @@ public class SubPlaneTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            sp.add(Facet.fromConvexArea(
+            sp.add(ConvexSubPlane.fromConvexArea(
                     Plane.fromPointAndPlaneVectors(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_X, TEST_PRECISION),
                     ConvexArea.full()));
         }, IllegalArgumentException.class);
