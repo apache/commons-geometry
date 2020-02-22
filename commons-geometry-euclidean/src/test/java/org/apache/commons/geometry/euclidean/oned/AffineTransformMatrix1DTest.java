@@ -533,6 +533,72 @@ public class AffineTransformMatrix1DTest {
     }
 
     @Test
+    public void testLinear() {
+        // arrange
+        AffineTransformMatrix1D mat = AffineTransformMatrix1D.of(2, 3);
+
+        // act
+        AffineTransformMatrix1D result = mat.linear();
+
+        // assert
+        Assert.assertArrayEquals(new double[] {2, 0}, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testLinearTranspose() {
+        // arrange
+        AffineTransformMatrix1D mat = AffineTransformMatrix1D.of(2, 3);
+
+        // act
+        AffineTransformMatrix1D result = mat.linearTranspose();
+
+        // assert
+        Assert.assertArrayEquals(new double[] {2, 0}, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testNormalTransform() {
+        // act/assert
+        checkNormalTransform(AffineTransformMatrix1D.identity());
+
+        checkNormalTransform(AffineTransformMatrix1D.createTranslation(4));
+        checkNormalTransform(AffineTransformMatrix1D.createTranslation(-4));
+
+        checkNormalTransform(AffineTransformMatrix1D.createScale(2));
+        checkNormalTransform(AffineTransformMatrix1D.createScale(-2));
+
+        checkNormalTransform(AffineTransformMatrix1D.createScale(2).translate(3));
+        checkNormalTransform(AffineTransformMatrix1D.createScale(2).translate(-3));
+        checkNormalTransform(AffineTransformMatrix1D.createTranslation(2).scale(-3));
+        checkNormalTransform(AffineTransformMatrix1D.createTranslation(-4).scale(-1));
+    }
+
+    private void checkNormalTransform(AffineTransformMatrix1D transform) {
+        AffineTransformMatrix1D normalTransform = transform.normalTransform();
+
+        Vector1D expectedPlus = transform.apply(Vector1D.Unit.PLUS)
+                .subtract(transform.apply(Vector1D.ZERO))
+                .normalize();
+
+        Vector1D expectedMinus = transform.apply(Vector1D.Unit.MINUS)
+                .subtract(transform.apply(Vector1D.ZERO))
+                .normalize();
+
+        EuclideanTestUtils.assertCoordinatesEqual(expectedPlus,
+                normalTransform.apply(Vector1D.Unit.PLUS).normalize(), EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(expectedMinus,
+                normalTransform.apply(Vector1D.Unit.MINUS).normalize(), EPS);
+    }
+
+    @Test
+    public void testNormalTransform_nonInvertible() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix1D.createScale(0).normalTransform();
+        }, IllegalStateException.class);
+    }
+
+    @Test
     public void testInverse_identity() {
         // act
         AffineTransformMatrix1D inverse = AffineTransformMatrix1D.identity().inverse();

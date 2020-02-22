@@ -33,7 +33,7 @@ import org.apache.commons.numbers.core.Precision;
 * use arrays containing 6 elements, instead of 9.
 * </p>
 */
-public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D> {
+public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix<Vector2D, AffineTransformMatrix2D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 6;
 
@@ -170,6 +170,38 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
             );
     }
 
+    /** {@inheritDoc}
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b, c ]   [ a, b, 0 ]
+     *      [ d, e, f ] &rarr; [ d, e, 0 ]
+     *      [ 0, 0, 1 ]   [ 0, 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix2D linear() {
+        return new AffineTransformMatrix2D(
+                m00, m01, 0.0,
+                m10, m11, 0.0);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b, c ]   [ a, d, 0 ]
+     *      [ d, e, f ] &rarr; [ b, e, 0 ]
+     *      [ 0, 0, 1 ]   [ 0, 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix2D linearTranspose() {
+        return new AffineTransformMatrix2D(
+                m00, m10, 0.0,
+                m01, m11, 0.0);
+    }
+
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -277,7 +309,7 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
 
     /** {@inheritDoc}
     *
-    * @throws IllegalStateException if the transform matrix cannot be inverted
+    * @throws IllegalStateException if the matrix cannot be inverted
     */
     @Override
     public AffineTransformMatrix2D inverse() {

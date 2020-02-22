@@ -19,6 +19,8 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -27,6 +29,9 @@ import org.junit.Test;
 public class AffineTransformMatrix2DTest {
 
     private static final double EPS = 1e-12;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(EPS);
 
     @Test
     public void testOf() {
@@ -978,6 +983,96 @@ public class AffineTransformMatrix2DTest {
                     1, 0, Double.NEGATIVE_INFINITY,
                     0, 1, 0).inverse();
         }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: -Infinity");
+    }
+
+    @Test
+    public void testLinear() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.of(
+                2, 3, 4,
+                5, 6, 7);
+
+        // act
+        AffineTransformMatrix2D result = mat.linear();
+
+        // assert
+        double[] expected = {
+            2, 3, 0,
+            5, 6, 0
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testLinearTranspose() {
+        // arrange
+        AffineTransformMatrix2D mat = AffineTransformMatrix2D.of(
+                2, 3, 4,
+                5, 6, 7);
+
+        // act
+        AffineTransformMatrix2D result = mat.linearTranspose();
+
+        // assert
+        double[] expected = {
+            2, 5, 0,
+            3, 6, 0
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testNormalTransform() {
+        // act/assert
+        checkNormalTransform(AffineTransformMatrix2D.identity());
+
+        checkNormalTransform(AffineTransformMatrix2D.createTranslation(2, 3));
+        checkNormalTransform(AffineTransformMatrix2D.createTranslation(-3, -4));
+
+        checkNormalTransform(AffineTransformMatrix2D.createScale(2, 5));
+        checkNormalTransform(AffineTransformMatrix2D.createScale(-3, 4));
+        checkNormalTransform(AffineTransformMatrix2D.createScale(-2, -5));
+
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(PlaneAngleRadians.PI_OVER_TWO));
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(PlaneAngleRadians.THREE_PI_OVER_TWO));
+
+        checkNormalTransform(AffineTransformMatrix2D.createRotation(Vector2D.of(3, 4), PlaneAngleRadians.THREE_PI_OVER_TWO)
+                .translate(8, 2)
+                .scale(-3, -2));
+        checkNormalTransform(AffineTransformMatrix2D.createScale(2, -1)
+                .translate(-3, -4)
+                .rotate(Vector2D.of(-0.5, 0.5), 0.75 * Math.PI));
+    }
+
+    private void checkNormalTransform(AffineTransformMatrix2D transform) {
+        AffineTransformMatrix2D normalTransform = transform.normalTransform();
+
+        Vector2D p1 = Vector2D.of(-0.25, 0.75);
+        Vector2D t1 = transform.apply(p1);
+
+        EuclideanTestUtils.permute(-10, 10, 1, (x, y) -> {
+            Vector2D p2 = Vector2D.of(x, y);
+            Vector2D n = Line.fromPoints(p1, p2, TEST_PRECISION).getOffsetDirection();
+
+            Vector2D t2 = transform.apply(p2);
+
+            Line tLine = transform.preservesOrientation() ?
+                    Line.fromPoints(t1, t2, TEST_PRECISION) :
+                    Line.fromPoints(t2, t1, TEST_PRECISION);
+            Vector2D expected = tLine.getOffsetDirection();
+
+            Vector2D actual = normalTransform.apply(n).normalize();
+
+            EuclideanTestUtils.assertCoordinatesEqual(expected, actual, EPS);
+        });
+    }
+
+    @Test
+    public void testNormalTransform_nonInvertible() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix2D.createScale(0).normalTransform();
+        }, IllegalStateException.class);
     }
 
     @Test

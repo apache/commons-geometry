@@ -19,8 +19,11 @@ package org.apache.commons.geometry.euclidean;
 /** Base class for affine transform matrices in Euclidean space.
  *
  * @param <V> Vector/point implementation type defining the space.
+ * @param <M> Matrix transform implementation type.
  */
-public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>>
+public abstract class AbstractAffineTransformMatrix<
+        V extends EuclideanVector<V>,
+        M extends AbstractAffineTransformMatrix<V, M>>
     implements EuclideanTransform<V> {
 
     /** Apply this transform to the given vector, ignoring translations and normalizing the
@@ -38,6 +41,39 @@ public abstract class AbstractAffineTransformMatrix<V extends EuclideanVector<V>
      * @return the determinant of the matrix
      */
     public abstract double determinant();
+
+    /** {@inheritDoc}
+     * @throws IllegalStateException if the matrix cannot be inverted
+     */
+    @Override
+    public abstract M inverse();
+
+    /** Return a matrix containing only the linear portion of this transform.
+     * The returned instance contains the same matrix elements as this instance
+     * but with the translation component set to zero.
+     * @return a matrix containing only the linear portion of this transform
+     */
+    public abstract M linear();
+
+    /** Return a matrix containing the transpose of the linear portion of this transform.
+     * The returned instance is linear, meaning it has a translation component of zero.
+     * @return a matrix containing the transpose of the linear portion of this transform
+     */
+    public abstract M linearTranspose();
+
+    /** Return a transform suitable for transforming normals. The returned matrix is
+     * the inverse transpose of the linear portion of this instance, i.e.
+     * <code>N = (L<sup>-1</sup>)<sup>T</sup></code>, where <code>L</code> is the linear portion
+     * of this instance and <code>N</code> is the returned matrix. Note that normals
+     * transformed with the returned matrix may be scaled during transformation and require
+     * normalization.
+     * @return a transform suitable for transforming normals
+     * @throws IllegalStateException if the matrix cannot be inverted
+     * @see <a href="https://en.wikipedia.org/wiki/Normal_(geometry)#Transforming_normals">Transforming normals</a>
+     */
+    public M normalTransform() {
+        return inverse().linearTranspose();
+    }
 
     /** {@inheritDoc}
      *

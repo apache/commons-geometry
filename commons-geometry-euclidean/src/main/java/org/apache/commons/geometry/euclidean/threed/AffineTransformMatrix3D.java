@@ -34,7 +34,7 @@ import org.apache.commons.numbers.core.Precision;
  * use arrays containing 12 elements, instead of 16.
  * </p>
  */
-public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D> {
+public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix<Vector3D, AffineTransformMatrix3D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 12;
 
@@ -206,6 +206,42 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
             );
     }
 
+    /** {@inheritDoc}
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b, c, d ]   [ a, b, c, 0 ]
+     *      [ e, f, g, h ]   [ e, f, g, 0 ]
+     *      [ i, j, k, l ] &rarr; [ i, j, k, 0 ]
+     *      [ 0, 0, 0, 1 ]   [ 0, 0, 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix3D linear() {
+        return new AffineTransformMatrix3D(
+                m00, m01, m02, 0.0,
+                m10, m11, m12, 0.0,
+                m20, m21, m22, 0.0);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b, c, d ]   [ a, e, i, 0 ]
+     *      [ e, f, g, h ]   [ b, f, j, 0 ]
+     *      [ i, j, k, l ] &rarr; [ c, g, k, 0 ]
+     *      [ 0, 0, 0, 1 ]   [ 0, 0, 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix3D linearTranspose() {
+        return new AffineTransformMatrix3D(
+                m00, m10, m20, 0.0,
+                m01, m11, m21, 0.0,
+                m02, m12, m22, 0.0);
+    }
+
     /** Apply a translation to the current instance, returning the result as a new transform.
      * @param translation vector containing the translation values for each axis
      * @return a new transform containing the result of applying a translation to
@@ -318,7 +354,7 @@ public final class AffineTransformMatrix3D extends AbstractAffineTransformMatrix
 
     /** {@inheritDoc}
     *
-    * @throws IllegalStateException if the transform matrix cannot be inverted
+    * @throws IllegalStateException if the matrix cannot be inverted
     */
     @Override
     public AffineTransformMatrix3D inverse() {
