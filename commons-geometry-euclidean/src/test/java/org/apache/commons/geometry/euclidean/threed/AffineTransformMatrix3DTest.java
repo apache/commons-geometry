@@ -19,6 +19,8 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils.PermuteCallback3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -30,6 +32,9 @@ import org.junit.Test;
 public class AffineTransformMatrix3DTest {
 
     private static final double EPS = 1e-12;
+
+    private static final DoublePrecisionContext TEST_PRECISION =
+            new EpsilonDoublePrecisionContext(EPS);
 
     @Test
     public void testOf() {
@@ -1017,6 +1022,108 @@ public class AffineTransformMatrix3DTest {
                     0, 1, 0, 0,
                     0, 0, 1, Double.NEGATIVE_INFINITY).inverse();
         }, IllegalStateException.class, "Matrix is not invertible; invalid matrix element: -Infinity");
+    }
+
+    @Test
+    public void testLinear() {
+        // arrange
+        AffineTransformMatrix3D mat = AffineTransformMatrix3D.of(
+                2, 3, 4, 5,
+                6, 7, 8, 9,
+                10, 11, 12, 13);
+
+        // act
+        AffineTransformMatrix3D result = mat.linear();
+
+        // assert
+        double[] expected = {
+            2, 3, 4, 0,
+            6, 7, 8, 0,
+            10, 11, 12, 0
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testLinearTranspose() {
+        // arrange
+        AffineTransformMatrix3D mat = AffineTransformMatrix3D.of(
+                2, 3, 4, 5,
+                6, 7, 8, 9,
+                10, 11, 12, 13);
+
+        // act
+        AffineTransformMatrix3D result = mat.linearTranspose();
+
+        // assert
+        double[] expected = {
+            2, 6, 10, 0,
+            3, 7, 11, 0,
+            4, 8, 12, 0
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), 0.0);
+    }
+
+    @Test
+    public void testNormalTransform() {
+        // act/assert
+        checkNormalTransform(AffineTransformMatrix3D.identity());
+
+        checkNormalTransform(AffineTransformMatrix3D.createTranslation(2, 3, 4));
+        checkNormalTransform(AffineTransformMatrix3D.createTranslation(-3, -4, -5));
+
+        checkNormalTransform(AffineTransformMatrix3D.createScale(2, 5, 0.5));
+        checkNormalTransform(AffineTransformMatrix3D.createScale(-3, 4, 2));
+        checkNormalTransform(AffineTransformMatrix3D.createScale(-0.1, -0.5, 0.8));
+        checkNormalTransform(AffineTransformMatrix3D.createScale(-2, -5, -8));
+
+        QuaternionRotation rotA = QuaternionRotation.fromAxisAngle(Vector3D.of(2, 3, 4), 0.75 * Math.PI);
+        QuaternionRotation rotB = QuaternionRotation.fromAxisAngle(Vector3D.of(-1, 1, -1), 1.75 * Math.PI);
+
+        checkNormalTransform(AffineTransformMatrix3D.createRotation(Vector3D.of(1, 1, 1), rotA));
+        checkNormalTransform(AffineTransformMatrix3D.createRotation(Vector3D.of(-1, -1, -1), rotB));
+
+        checkNormalTransform(AffineTransformMatrix3D.createTranslation(2, 3, 4)
+                .scale(7, 5, 4)
+                .rotate(rotA));
+        checkNormalTransform(AffineTransformMatrix3D.createRotation(Vector3D.ZERO, rotB)
+                .translate(7, 5, 4)
+                .rotate(rotA)
+                .scale(2, 3, 0.5));
+    }
+
+    private void checkNormalTransform(AffineTransformMatrix3D transform) {
+        AffineTransformMatrix3D normalTransform = transform.normalTransform();
+
+        Vector3D p1 = Vector3D.of(-0.25, 0.75, 0.5);
+        Vector3D p2 = Vector3D.of(0.5, -0.75, 0.25);
+
+        Vector3D t1 = transform.apply(p1);
+        Vector3D t2 = transform.apply(p2);
+
+        EuclideanTestUtils.permute(-10, 10, 1, (x, y, z) -> {
+            Vector3D p3 = Vector3D.of(x, y, z);
+            Vector3D n = Plane.fromPoints(p1, p2, p3, TEST_PRECISION).getNormal();
+
+            Vector3D t3 = transform.apply(p3);
+
+            Plane tPlane = transform.preservesOrientation() ?
+                    Plane.fromPoints(t1, t2, t3, TEST_PRECISION) :
+                    Plane.fromPoints(t1, t3, t2, TEST_PRECISION);
+            Vector3D expected = tPlane.getNormal();
+
+            Vector3D actual = normalTransform.apply(n).normalize();
+
+            EuclideanTestUtils.assertCoordinatesEqual(expected, actual, EPS);
+        });
+    }
+
+    @Test
+    public void testNormalTransform_nonInvertible() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            AffineTransformMatrix3D.createScale(0).normalTransform();
+        }, IllegalStateException.class);
     }
 
     @Test

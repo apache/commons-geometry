@@ -31,7 +31,7 @@ import org.apache.commons.geometry.euclidean.internal.Vectors;
 * use arrays containing 2 elements, instead of 4.
 * </p>
 */
-public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D> {
+public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix<Vector1D, AffineTransformMatrix1D> {
     /** The number of internal matrix elements. */
     private static final int NUM_ELEMENTS = 2;
 
@@ -110,6 +110,34 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
     @Override
     public double determinant() {
         return m00;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b ]   [ a, 0 ]
+     *      [ 0, 1 ] &rarr; [ 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix1D linear() {
+        return new AffineTransformMatrix1D(m00, 0.0);
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>In the one dimensional case, this is exactly the same as {@link #linear()}.</p>
+     *
+     * <p><strong>Example</strong>
+     * <pre>
+     *      [ a, b ]   [ a, 0 ]
+     *      [ 0, 1 ] &rarr; [ 0, 1 ]
+     * </pre>
+     */
+    @Override
+    public AffineTransformMatrix1D linearTranspose() {
+        return linear();
     }
 
     /** Get a new transform containing the result of applying a translation logically after
@@ -200,7 +228,7 @@ public final class AffineTransformMatrix1D extends AbstractAffineTransformMatrix
 
     /** {@inheritDoc}
      *
-     * @throws IllegalStateException if the transform matrix cannot be inverted
+     * @throws IllegalStateException if the matrix cannot be inverted
      */
     @Override
     public AffineTransformMatrix1D inverse() {
