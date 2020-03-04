@@ -610,6 +610,14 @@
       </modules>
     </profile>
 
+    <profile>
+      <id>release</id>
+      <modules>
+        <module>commons-geometry-examples</module>
+        <module>dist-archive</module>
+      </modules>
+    </profile>
+
   </profiles>
 
   <developers>
