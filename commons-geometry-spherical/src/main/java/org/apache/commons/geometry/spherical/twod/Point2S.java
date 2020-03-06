@@ -175,7 +175,7 @@ public final class Point2S implements Point<Point2S> {
         final QuaternionRotation start = QuaternionRotation.identity();
         final QuaternionRotation end = QuaternionRotation.createVectorRotation(getVector(), other.getVector());
 
-        final QuaternionRotation quat = QuaternionRotation.of(start.slerp(end).apply(t));
+        final QuaternionRotation quat = start.slerp(end).apply(t);
 
         return Point2S.from(quat.apply(getVector()));
     }

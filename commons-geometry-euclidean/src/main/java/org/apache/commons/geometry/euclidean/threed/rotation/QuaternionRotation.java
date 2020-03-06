@@ -25,7 +25,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
-import org.apache.commons.numbers.quaternion.Slerp;
 
 /**
  * Class using a unit-length quaternion to represent
@@ -256,13 +255,16 @@ public final class QuaternionRotation implements Rotation3D {
     }
 
     /**
-     * Creates a {@link Slerp} transform.
+     * Create a {@link SlerpFunction} instance that can be used to perform spherical
+     * linear interpolation between this instance and the argument.
      *
-     * @param end End rotation of the interpolation.
-     * @return the transform.
+     * @param end end value of the interpolation
+     * @return function that can be used to interpolate between this instance and
+     *      the argument
+     * @see <a href="https://en.wikipedia.org/wiki/Slerp">Slerp</a>
      */
-    public Slerp slerp(QuaternionRotation end) {
-        return new Slerp(quat, end.quat);
+    public SlerpFunction slerp(final QuaternionRotation end) {
+        return new SlerpFunction(this, end);
     }
 
     /** Get a sequence of axis-angle rotations that produce an overall rotation equivalent to this instance.
