@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.internal.DoubleFunction2N;
 import org.apache.commons.geometry.euclidean.AbstractAffineTransformMatrix;
 import org.apache.commons.geometry.euclidean.internal.Matrices;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
+import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.core.Precision;
 
@@ -260,9 +261,20 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @param angle the angle of counterclockwise rotation in radians
      * @return a new transform containing the result of applying a rotation to the
      *      current instance
+     * @see Rotation2D#of(double)
      */
     public AffineTransformMatrix2D rotate(final double angle) {
-        return multiply(createRotation(angle), this);
+        return rotate(Rotation2D.of(angle));
+    }
+
+    /** Apply a <em>counterclockwise</em> rotation to the current instance, returning the result as a
+     *  new transform.
+     * @param rotation the rotation to apply
+     * @return a new transform containing the result of applying the rotation to the
+     *      current instance
+     */
+    public AffineTransformMatrix2D rotate(final Rotation2D rotation) {
+        return multiply(rotation.toMatrix(), this);
     }
 
     /** Apply a <em>counterclockwise</em> rotation about the given center point to the current instance,
@@ -275,6 +287,19 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      */
     public AffineTransformMatrix2D rotate(final Vector2D center, final double angle) {
         return multiply(createRotation(center, angle), this);
+    }
+
+    /** Apply a <em>counterclockwise</em> rotation about the given center point to the current instance,
+     * returning the result as a new transform. This is accomplished by translating the center to the origin,
+     * applying the rotation, and then translating back.
+     * @param center the center of rotation
+     * @param rotation the rotation to apply
+     * @return a new transform containing the result of applying a rotation about the given
+     *      center point to the current instance
+     */
+    public AffineTransformMatrix2D rotate(final Vector2D center, final Rotation2D rotation) {
+        // use to raw angle method to avoid matrix multiplication
+        return rotate(center, rotation.getAngle());
     }
 
     /** Get a new transform created by multiplying this instance by the argument.
@@ -554,15 +579,10 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * radians around the origin.
      * @param angle the angle of rotation in radians
      * @return a new transform representing the rotation
+     * @see Rotation2D#toMatrix()
      */
     public static AffineTransformMatrix2D createRotation(final double angle) {
-        final double sin = Math.sin(angle);
-        final double cos = Math.cos(angle);
-
-        return new AffineTransformMatrix2D(
-                    cos, -sin, 0,
-                    sin, cos, 0
-                );
+        return Rotation2D.of(angle).toMatrix();
     }
 
     /** Create a transform representing a <em>counterclockwise</em> rotation of {@code angle}
@@ -573,6 +593,8 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
      * @return a new transform representing the rotation about the given center
      */
     public static AffineTransformMatrix2D createRotation(final Vector2D center, final double angle) {
+        // it's possible to do this using Rotation2D to create the rotation matrix but we
+        // can avoid the matrix multiplications by simply doing everything in-line here
         final double x = center.getX();
         final double y = center.getY();
 
@@ -583,6 +605,17 @@ public final class AffineTransformMatrix2D extends AbstractAffineTransformMatrix
                 cos, -sin, (-x * cos) + (y * sin) + x,
                 sin, cos, (-x * sin) - (y * cos) + y
             );
+    }
+
+    /** Create a transform representing a <em>counterclockwise</em> rotation around the given center point.
+     * This is accomplished by translating the center point to the origin, applying the rotation, and then
+     * translating back.
+     * @param center the center of rotation
+     * @param rotation the rotation to apply
+     * @return a new transform representing the rotation about the given center
+     */
+    public static AffineTransformMatrix2D createRotation(final Vector2D center, final Rotation2D rotation) {
+        return createRotation(center, rotation.getAngle());
     }
 
     /** Multiply two transform matrices together.
