@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import java.util.Objects;
+import java.util.function.DoubleFunction;
 
 import org.apache.commons.geometry.core.internal.GeometryInternalError;
 import org.apache.commons.geometry.euclidean.internal.Vectors;
@@ -25,7 +26,6 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
 import org.apache.commons.numbers.quaternion.Quaternion;
-import org.apache.commons.numbers.quaternion.Slerp;
 
 /**
  * Class using a unit-length quaternion to represent
@@ -255,14 +255,16 @@ public final class QuaternionRotation implements Rotation3D {
         return q.multiply(this);
     }
 
-    /**
-     * Creates a {@link Slerp} transform.
+    /** Create a {@link QuaternionRotation.Slerp} instance that can be used to perform spherical
+     * linear interpolation between this instance and the argument.
      *
-     * @param end End rotation of the interpolation.
-     * @return the transform.
+     * @param end end value of the interpolation
+     * @return function that can be used to interpolate between this instance and
+     *      the argument
+     * @see <a href="https://en.wikipedia.org/wiki/Slerp">Slerp</a>
      */
-    public Slerp slerp(QuaternionRotation end) {
-        return new Slerp(quat, end.quat);
+    public QuaternionRotation.Slerp slerp(final QuaternionRotation end) {
+        return new QuaternionRotation.Slerp(this, end);
     }
 
     /** Get a sequence of axis-angle rotations that produce an overall rotation equivalent to this instance.
@@ -824,5 +826,38 @@ public final class QuaternionRotation implements Rotation3D {
         }
 
         return arr;
+    }
+
+    /** Class used to perform spherical linear interpolation (ie, "Slerp") between quaternion rotations.
+     * This class serves as a rotation-specific wrapper around the generic
+     * {@link org.apache.commons.numbers.quaternion.Slerp} class.
+     * @see org.apache.commons.numbers.quaternion.Slerp
+     * @see <a href="https://en.wikipedia.org/wiki/Slerp">Slerp</a>
+     */
+    public static final class Slerp implements DoubleFunction<QuaternionRotation> {
+
+        /** Slerp instance that will perform the interpolation. */
+        private final org.apache.commons.numbers.quaternion.Slerp slerp;
+
+        /** Create a new instance that interpolates between the given start and end rotations.
+         * @param start start of the interpolation
+         * @param end end of the interpolation
+         */
+        public Slerp(final QuaternionRotation start, final QuaternionRotation end) {
+            this.slerp = new org.apache.commons.numbers.quaternion.Slerp(
+                    start.getQuaternion(), end.getQuaternion());
+        }
+
+        /** Perform the interpolation. The rotation returned by this method is controlled by the interpolation
+         * parameter, {@code t}. If {@code t = 0}, a rotation equal to the start instance is returned. If {@code t = 1},
+         * a rotation equal to the end instance is returned.  All other values are interpolated (or extrapolated if
+         * {@code t} is outside of the {@code [0, 1]} range).
+         * @param t interpolation control parameter
+         * @return an interpolated rotation
+         */
+        @Override
+        public QuaternionRotation apply(final double t) {
+            return QuaternionRotation.of(slerp.apply(t));
+        }
     }
 }
