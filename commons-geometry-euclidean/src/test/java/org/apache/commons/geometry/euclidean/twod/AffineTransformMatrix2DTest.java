@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -310,7 +311,7 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testCreateRotation_aroundCenter() {
+    public void testCreateRotation_aroundCenter_rawAngle() {
         // act
         Vector2D center = Vector2D.of(1, 2);
         double angle = PlaneAngleRadians.PI * 2.0 / 3.0;
@@ -328,7 +329,26 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testRotate() {
+    public void testCreateRotation_aroundCenter_rotationInstance() {
+        // act
+        Vector2D center = Vector2D.of(1, 2);
+        double angle = PlaneAngleRadians.PI * 4.0 / 3.0;
+        Rotation2D rotation = Rotation2D.of(angle);
+        AffineTransformMatrix2D transform = AffineTransformMatrix2D.createRotation(center, rotation);
+
+        // assert
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        double[] expected = {
+            cos, -sin, -cos + (2 * sin) + 1,
+            sin, cos, -sin - (2 * cos) + 2
+        };
+        Assert.assertArrayEquals(expected, transform.toArray(), EPS);
+    }
+
+    @Test
+    public void testRotate_rawAngle() {
         // arrange
         AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
                     1, 2, 3,
@@ -347,7 +367,26 @@ public class AffineTransformMatrix2DTest {
     }
 
     @Test
-    public void testRotate_aroundCenter() {
+    public void testRotate_rotationInstance() {
+        // arrange
+        AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
+                    1, 2, 3,
+                    4, 5, 6
+                );
+
+        // act
+        AffineTransformMatrix2D result = a.rotate(Rotation2D.of(PlaneAngleRadians.PI_OVER_TWO));
+
+        // assert
+        double[] expected = {
+            -4, -5, -6,
+            1, 2, 3
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), EPS);
+    }
+
+    @Test
+    public void testRotate_aroundCenter_rawAngle() {
         // arrange
         Vector2D center = Vector2D.of(1, 2);
 
@@ -358,6 +397,27 @@ public class AffineTransformMatrix2DTest {
 
         // act
         AffineTransformMatrix2D result = a.rotate(center, PlaneAngleRadians.PI_OVER_TWO);
+
+        // assert
+        double[] expected = {
+            -4, -5, -3,
+            1, 2, 4
+        };
+        Assert.assertArrayEquals(expected, result.toArray(), EPS);
+    }
+
+    @Test
+    public void testRotate_aroundCenter_rotationInstance() {
+        // arrange
+        Vector2D center = Vector2D.of(1, 2);
+
+        AffineTransformMatrix2D a = AffineTransformMatrix2D.of(
+                    1, 2, 3,
+                    4, 5, 6
+                );
+
+        // act
+        AffineTransformMatrix2D result = a.rotate(center, Rotation2D.of(PlaneAngleRadians.PI_OVER_TWO));
 
         // assert
         double[] expected = {
