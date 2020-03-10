@@ -65,6 +65,11 @@
     <!-- Required for Java 13 build -->
     <commons.spotbugs.dep.version>4.0.0</commons.spotbugs.dep.version>
 
+    <!-- Fix to avoid JXR 3.0.0 forking the lifecycle phase 'compile' during site report
+       jxr:aggregate. If compile is forked, the dist-archive build fails when attempting
+       to collect the artifacts from other modules. -->
+    <commons.jxr.version>2.5</commons.jxr.version>
+
     <commons.jacoco.haltOnFailure>false</commons.jacoco.haltOnFailure>
 
     <commons.site.path>geometry</commons.site.path>
@@ -264,8 +269,6 @@
         </configuration>
         <executions>
           <execution>
-            <id>validate</id>
-            <phase>validate</phase>
             <goals>
               <goal>check</goal>
             </goals>
