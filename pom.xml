@@ -618,12 +618,14 @@
       <id>erans</id>
       <email>erans at apache dot org</email>
     </developer>
+    <developer>
+      <name>Matt Juntunen</name>
+      <id>mattjuntunen</id>
+      <email>mattjuntunen at apache dot org</email>
+    </developer>
   </developers>
 
   <contributors>
-    <contributor>
-        <name>Matt Juntunen</name>
-    </contributor>
   </contributors>
 
 </project>
