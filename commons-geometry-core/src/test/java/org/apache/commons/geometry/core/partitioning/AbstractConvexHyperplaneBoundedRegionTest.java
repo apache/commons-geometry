@@ -292,6 +292,63 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         checkClassify(plus, RegionLocation.INSIDE, new TestPoint2D(1.5, -0.25));
     }
 
+    // The following tests are designed to check the situation where there are
+    // inconsistencies between how a splitter splits a set of boundaries and how
+    // the boundaries split the splitter. For example, no portion of the splitter
+    // may lie inside the region (on the minus sides of all boundaries), but some
+    // of the boundaries may be determined to lie on both sides of the splitter.
+    // One potential cause of this situation is accumulated floating point errors.
+
+    @Test
+    public void testSplit_inconsistentBoundarySplitLocations_minus() {
+        // arrange
+        TestLine a = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 1));
+        TestLine b = new TestLine(new TestPoint2D(-1, 1), new TestPoint2D(0, 0));
+
+        StubRegion region = new StubRegion(Arrays.asList(
+                    new TestLineSegment(-1e-8, Double.POSITIVE_INFINITY, a),
+                    new TestLineSegment(Double.NEGATIVE_INFINITY, 1e-8, b)
+                ));
+
+        List<TestLineSegment> segments = region.getBoundaries();
+        PartitionTestUtils.assertPointsEqual(segments.get(0).getStartPoint(), segments.get(1).getEndPoint());
+
+        TestLine splitter = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 0));
+
+        // act
+        Split<StubRegion> split = region.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assert.assertSame(region, split.getMinus());
+        Assert.assertNull(split.getPlus());
+    }
+
+    @Test
+    public void testSplit_inconsistentBoundarySplitLocations_plus() {
+        // arrange
+        TestLine a = new TestLine(new TestPoint2D(0, 0), new TestPoint2D(1, 1));
+        TestLine b = new TestLine(new TestPoint2D(-1, 1), new TestPoint2D(0, 0));
+
+        StubRegion region = new StubRegion(Arrays.asList(
+                    new TestLineSegment(-1e-8, Double.POSITIVE_INFINITY, a),
+                    new TestLineSegment(Double.NEGATIVE_INFINITY, 1e-8, b)
+                ));
+
+        List<TestLineSegment> segments = region.getBoundaries();
+        PartitionTestUtils.assertPointsEqual(segments.get(0).getStartPoint(), segments.get(1).getEndPoint());
+
+        TestLine splitter = new TestLine(new TestPoint2D(1, 0), new TestPoint2D(0, 0));
+
+        // act
+        Split<StubRegion> split = region.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+        Assert.assertNull(split.getMinus());
+        Assert.assertSame(region, split.getPlus());
+    }
+
     @Test
     public void testTransform_full() {
         // arrange

@@ -236,20 +236,11 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
             if (trimmedSplitter == null) {
                 // The splitter lies entirely outside of the region; we need
                 // to determine whether we lie on the plus or minus side of the splitter.
-                // We can use the first boundary to determine this. If the boundary is entirely
-                // on the minus side of the splitter or lies directly on the splitter and has
-                // the same orientation, then the area lies on the minus side of the splitter.
-                // Otherwise, it lies on the plus side.
-                final ConvexSubHyperplane<P> testSegment = boundaries.get(0);
-                final SplitLocation testLocation = testSegment.split(splitter).getLocation();
 
-                if (SplitLocation.MINUS == testLocation ||
-                        (SplitLocation.NEITHER == testLocation &&
-                            splitter.similarOrientation(testSegment.getHyperplane()))) {
-                    return new Split<>(thisInstance, null);
-                }
-
-                return new Split<>(null, thisInstance);
+                final SplitLocation regionLoc = determineRegionPlusMinusLocation(splitter);
+                return regionLoc == SplitLocation.MINUS ?
+                        new Split<>(thisInstance, null) :
+                        new Split<>(null, thisInstance);
             }
 
             final List<S> minusBoundaries = new ArrayList<>();
@@ -262,6 +253,57 @@ public abstract class AbstractConvexHyperplaneBoundedRegion<P extends Point<P>, 
 
             return new Split<>(factory.apply(minusBoundaries), factory.apply(plusBoundaries));
         }
+    }
+
+    /** Determine whether the region lies on the plus or minus side of the given splitter. It is assumed
+     * that (1) the region is not full, and (2) the given splitter does not pass through the region.
+     *
+     * <p>In theory, this is a very simple operation: one need only test a single region boundary
+     * to see if it lies on the plus or minus side of the splitter. In practice, however, accumulated
+     * floating point errors can cause discrepancies between the splitting operations, causing
+     * boundaries to be classified as lying on both sides of the splitter when they should only lie on one.
+     * Therefore, this method examines as many boundaries as needed in order to determine the best response.
+     * The algorithm proceeds as follows:
+     * <ol>
+     *  <li>If any boundary lies completely on the minus or plus side of the splitter, then
+     *      {@link SplitLocation#MINUS MINUS} or {@link SplitLocation#PLUS PLUS} is returned, respectively.</li>
+     *  <li>If any boundary is coincident with the splitter ({@link SplitLocation#NEITHER NEITHER}), then
+     *      {@link SplitLocation#MINUS MINUS} is returned if the boundary hyperplane has the same orientation
+     *      as the splitter, otherwise {@link SplitLocation#PLUS PLUS}.</li>
+     *  <li>If no boundaries match the above conditions, then the sizes of the split boundaries are compared. If
+     *      the sum of the sizes of the boundaries on the minus side is greater than the sum of the sizes of
+     *      the boundaries on the plus size, then {@link SplitLocation#MINUS MINUS} is returned. Otherwise,
+     *      {@link SplitLocation#PLUS PLUS} is returned.
+     * </ol>
+     * @param splitter splitter to classify the region against; the splitter is assumed to lie
+     *      completely outside of the region
+     * @return {@link SplitLocation#MINUS} if the region lies on the minus side of the splitter and
+     *      {@link SplitLocation#PLUS} if the region lies on the plus side of the splitter
+     */
+    private SplitLocation determineRegionPlusMinusLocation(final Hyperplane<P> splitter) {
+        double minusSize = 0;
+        double plusSize = 0;
+
+        Split<? extends ConvexSubHyperplane<P>> split;
+        SplitLocation loc;
+
+        for (final S boundary : boundaries) {
+            split = boundary.split(splitter);
+            loc = split.getLocation();
+
+            if (loc == SplitLocation.MINUS || loc == SplitLocation.PLUS) {
+                return loc;
+            } else if (loc == SplitLocation.NEITHER) {
+                return splitter.similarOrientation(boundary.getHyperplane()) ?
+                        SplitLocation.MINUS :
+                        SplitLocation.PLUS;
+            } else {
+                minusSize += split.getMinus().getSize();
+                plusSize += split.getPlus().getSize();
+            }
+        }
+
+        return minusSize > plusSize ? SplitLocation.MINUS : SplitLocation.PLUS;
     }
 
     /** Split the boundaries of the region by the given hyperplane, adding the split parts into the
