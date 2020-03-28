@@ -101,31 +101,32 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         return (seg != null) ? seg.getEndPoint() : null;
     }
 
-    /** Get the vertices contained in the polyline in the order they appear.
-     * Closed polyline contain the start point at the beginning of the list
-     * as well as the end.
-     * @return the vertices contained in the polyline in order they appear
+    /** Get the sequence of vertices defined by the polyline. Vertices appear in the
+     * list as many times as they are visited in the path. For example, the vertex
+     * sequence for a closed polyline contains the start point at the beginning
+     * of the list as well as the end.
+     * @return the sequence of vertices defined by the polyline
      */
-    public List<Vector2D> getVertices() {
-        final List<Vector2D> vertices = new ArrayList<>();
+    public List<Vector2D> getVertexSequence() {
+        final List<Vector2D> sequence = new ArrayList<>();
 
         Vector2D pt;
 
         // add the start point, if present
         pt = getStartVertex();
         if (pt != null) {
-            vertices.add(pt);
+            sequence.add(pt);
         }
 
         // add end points
         for (final Segment seg : segments) {
             pt = seg.getEndPoint();
             if (pt != null) {
-                vertices.add(pt);
+                sequence.add(pt);
             }
         }
 
-        return vertices;
+        return sequence;
     }
 
     /** Return true if the polyline has a start of end line segment that
@@ -328,7 +329,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             }
 
             sb.append("vertices= ")
-                .append(getVertices());
+                .append(getVertexSequence());
 
             final Segment endSegment = getEndSegment();
             if (endSegment.getEndPoint() == null) {

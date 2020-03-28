@@ -677,9 +677,9 @@ List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
+Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
-LinecastPoint2D pt = path.linecastFirst(
+LinecastPoint2D pt = box.linecastFirst(
         Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
 Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
@@ -835,8 +835,8 @@ List&lt;ConvexSubPlane&gt; minusBoundaries = minus.getBoundaries(); // size = 4
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-RegionBSPTree3D tree = RegionBSPTree3D.from(
-        Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision));
+RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision)
+        .toTree();
 
 List&lt;LinecastPoint3D&gt; pts = tree.linecast(
         Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
@@ -1024,7 +1024,7 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-// create two non-parallel great arcs
+// create two great circles
 GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
 GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
 

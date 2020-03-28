@@ -58,7 +58,7 @@ public class PolylineTest {
 
         Assert.assertEquals(0, path.getSegments().size());
 
-        Assert.assertEquals(0, path.getVertices().size());
+        Assert.assertEquals(0, path.getVertexSequence().size());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class PolylineTest {
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
-        Assert.assertEquals(Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0)), path.getVertices());
+        Assert.assertEquals(Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0)), path.getVertexSequence());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class PolylineTest {
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
-        Assert.assertEquals(0, path.getVertices().size());
+        Assert.assertEquals(0, path.getVertexSequence().size());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class PolylineTest {
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3), path.getVertexSequence());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class PolylineTest {
         Assert.assertSame(b, segments.get(1));
         Assert.assertSame(c, segments.get(2));
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertexSequence());
     }
 
     @Test
@@ -209,7 +209,7 @@ public class PolylineTest {
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
 
-        Assert.assertEquals(Arrays.asList(Vector2D.of(1, 0)), path.getVertices());
+        Assert.assertEquals(Arrays.asList(Vector2D.of(1, 0)), path.getVertexSequence());
     }
 
     @Test
@@ -238,7 +238,7 @@ public class PolylineTest {
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
 
-        Assert.assertEquals(Arrays.asList(Vector2D.of(1, 0), Vector2D.of(1, 1)), path.getVertices());
+        Assert.assertEquals(Arrays.asList(Vector2D.of(1, 0), Vector2D.of(1, 1)), path.getVertexSequence());
     }
 
     @Test
@@ -267,7 +267,7 @@ public class PolylineTest {
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
 
-        Assert.assertEquals(Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0)), path.getVertices());
+        Assert.assertEquals(Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0)), path.getVertexSequence());
     }
 
     @Test
@@ -312,7 +312,7 @@ public class PolylineTest {
 
         Assert.assertEquals(0, path.getSegments().size());
 
-        Assert.assertEquals(0, path.getVertices().size());
+        Assert.assertEquals(0, path.getVertexSequence().size());
     }
 
     @Test
@@ -348,7 +348,7 @@ public class PolylineTest {
         Assert.assertEquals(1, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
 
-        Assert.assertEquals(Arrays.asList(p1, p2), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2), path.getVertexSequence());
     }
 
     @Test
@@ -380,7 +380,7 @@ public class PolylineTest {
         assertFiniteSegment(segments.get(1), p2, p3);
         assertFiniteSegment(segments.get(2), p3, p4);
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p4), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p4), path.getVertexSequence());
     }
 
     @Test
@@ -413,7 +413,7 @@ public class PolylineTest {
         assertFiniteSegment(segments.get(2), p3, p4);
         assertFiniteSegment(segments.get(3), p4, p1);
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p4, p1), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p4, p1), path.getVertexSequence());
     }
 
     @Test
@@ -435,7 +435,7 @@ public class PolylineTest {
 
         Assert.assertEquals(0, path.getSegments().size());
 
-        Assert.assertEquals(0, path.getVertices().size());
+        Assert.assertEquals(0, path.getVertexSequence().size());
     }
 
     @Test
@@ -468,7 +468,7 @@ public class PolylineTest {
         assertFiniteSegment(segments.get(1), p2, p3);
         assertFiniteSegment(segments.get(2), p3, p1);
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertexSequence());
     }
 
     @Test
@@ -493,7 +493,7 @@ public class PolylineTest {
         assertFiniteSegment(segments.get(1), p2, p3);
         assertFiniteSegment(segments.get(2), p3, p1);
 
-        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertices());
+        Assert.assertEquals(Arrays.asList(p1, p2, p3, p1), path.getVertexSequence());
     }
 
     @Test

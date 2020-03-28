@@ -30,8 +30,9 @@ public class BoundarySourceLinecaster3DTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final BoundarySource3D UNIT_CUBE =
-            BoundarySource3D.from(Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION));
+    private static final BoundarySource3D UNIT_CUBE = Parallelepiped.builder(TEST_PRECISION)
+            .setPosition(Vector3D.of(0.5, 0.5, 0.5))
+            .build();
 
     @Test
     public void testLinecast_line_simple() {

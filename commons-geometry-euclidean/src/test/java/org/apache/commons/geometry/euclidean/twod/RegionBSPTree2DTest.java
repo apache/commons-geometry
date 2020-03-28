@@ -695,7 +695,7 @@ public class RegionBSPTree2DTest {
         Polyline path = paths.get(0);
         Assert.assertEquals(4, path.getSegments().size());
 
-        List<Vector2D> vertices = path.getVertices();
+        List<Vector2D> vertices = path.getVertexSequence();
         Assert.assertEquals(5, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), vertices.get(1), TEST_EPS);
@@ -1303,7 +1303,7 @@ public class RegionBSPTree2DTest {
     private static void checkVertices(Polyline path, Vector2D... vertices) {
         Assert.assertTrue("Line segment path is not finite", path.isFinite());
 
-        List<Vector2D> actual = path.getVertices();
+        List<Vector2D> actual = path.getVertexSequence();
 
         Assert.assertEquals("Vertex lists have different lengths", vertices.length, actual.size());
 

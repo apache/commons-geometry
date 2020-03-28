@@ -47,8 +47,10 @@ DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create a binary space partitioning tree representing the unit cube
 // centered on the origin
-RegionBSPTree3D region = RegionBSPTree3D.from(
-        Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
+RegionBSPTree3D region = Parallelepiped.builder(precision)
+        .setPosition(Vector3D.ZERO)
+        .build()
+        .toTree();
 
 // create a rotated copy of the region
 RegionBSPTree3D copy = region.copy();

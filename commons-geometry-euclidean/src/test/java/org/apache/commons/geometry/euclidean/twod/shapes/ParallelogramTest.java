@@ -22,10 +22,12 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,11 +39,98 @@ public class ParallelogramTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testAxisAligned_minFirst() {
+    public void testUnitSquare() {
         // act
-        Polyline path = Parallelogram.axisAligned(Vector2D.of(1, 2), Vector2D.of(3, 4), TEST_PRECISION);
+        Parallelogram box = Parallelogram.unitSquare(TEST_PRECISION);
 
         // assert
+        Assert.assertEquals(1, box.getSize(), TEST_EPS);
+        Assert.assertEquals(4, box.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, box.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = box.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-0.5, -0.5), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, -0.5), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-0.5, 0.5), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testFromTransformedUnitSquare() {
+        // arrange
+        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.of(1, 0))
+                .rotate(Math.PI * 0.25)
+                .scale(Vector2D.of(2, 1));
+
+        // act
+        Parallelogram p = Parallelogram.fromTransformedUnitSquare(t, TEST_PRECISION);
+
+        // assert
+        double sqrt2 = Math.sqrt(2);
+        double invSqrt2 = 1 / sqrt2;
+
+        Assert.assertEquals(2, p.getSize(), TEST_EPS);
+        Assert.assertEquals(4 * Math.sqrt(2.5), p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * invSqrt2, invSqrt2), p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, invSqrt2), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * invSqrt2, 0), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * sqrt2, invSqrt2), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2 * invSqrt2, sqrt2), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testFromTransformedUnitSquare_transformDoesNotPreserveOrientation() {
+        // arrange
+        AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.of(1, 0))
+                .rotate(Math.PI * 0.25)
+                .scale(Vector2D.of(-2, 1));
+
+        // act
+        Parallelogram p = Parallelogram.fromTransformedUnitSquare(t, TEST_PRECISION);
+
+        // assert
+        double sqrt2 = Math.sqrt(2);
+        double invSqrt2 = 1 / sqrt2;
+
+        Assert.assertEquals(2, p.getSize(), TEST_EPS);
+        Assert.assertEquals(4 * Math.sqrt(2.5), p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2 * invSqrt2, invSqrt2), p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2 * sqrt2, invSqrt2), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2 * invSqrt2, 0), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, invSqrt2), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2 * invSqrt2, sqrt2), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testFromTransformedUnitSquare_zeroSizeRegion() {
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1e-16, 1)),
+                    TEST_PRECISION);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Parallelogram.fromTransformedUnitSquare(AffineTransformMatrix2D.createScale(Vector2D.of(1, 1e-16)),
+                    TEST_PRECISION);
+        }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testAxisAligned_minFirst() {
+        // act
+        Parallelogram box = Parallelogram.axisAligned(Vector2D.of(1, 2), Vector2D.of(3, 4), TEST_PRECISION);
+
+        // assert
+        Assert.assertEquals(1, box.getBoundaryPaths().size());
+        Polyline path = box.getBoundaryPaths().get(0);
+
         List<Segment> segments = path.getSegments();
         Assert.assertEquals(4, segments.size());
 
@@ -54,9 +143,12 @@ public class ParallelogramTest {
     @Test
     public void testAxisAligned_maxFirst() {
         // act
-        Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(-1, -2), TEST_PRECISION);
+        Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(-1, -2), TEST_PRECISION);
 
         // assert
+        Assert.assertEquals(1, box.getBoundaryPaths().size());
+        Polyline path = box.getBoundaryPaths().get(0);
+
         List<Segment> segments = path.getSegments();
         Assert.assertEquals(4, segments.size());
 
@@ -64,20 +156,6 @@ public class ParallelogramTest {
         assertSegment(segments.get(1), Vector2D.of(0, -2), Vector2D.ZERO);
         assertSegment(segments.get(2), Vector2D.ZERO, Vector2D.of(-1, 0));
         assertSegment(segments.get(3), Vector2D.of(-1, 0), Vector2D.of(-1, -2));
-    }
-
-    @Test
-    public void testAxisAligned_toTree() {
-        // act
-        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 4), TEST_PRECISION)
-                .toTree();
-
-        // assert
-        Assert.assertFalse(tree.isFull());
-        Assert.assertFalse(tree.isEmpty());
-
-        Assert.assertEquals(4, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 2), tree.getBarycenter(), TEST_EPS);
     }
 
     @Test
@@ -94,6 +172,118 @@ public class ParallelogramTest {
         GeometryTestUtils.assertThrows(() -> {
             Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(2, 3), TEST_PRECISION);
         }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testBuilder_defaultValues() {
+        // arrange
+        Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
+
+        // act
+        Parallelogram p = builder.build();
+
+        // assert
+        Assert.assertEquals(1, p.getSize(), TEST_EPS);
+        Assert.assertEquals(4, p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-0.5, -0.5), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, -0.5), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-0.5, 0.5), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testBuilder_rotatedRect_withXDirection() {
+        // arrange
+        Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
+
+        // act
+        Parallelogram p = builder
+                .setScale(1, 2)
+                .setXDirection(Vector2D.Unit.PLUS_Y)
+                .setPosition(Vector2D.of(1, 2))
+                .build();
+
+        // assert
+        Assert.assertEquals(2, p.getSize(), TEST_EPS);
+        Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1.5), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1.5), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2.5), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 2.5), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testBuilder_rotatedRect_withYDirection() {
+        // arrange
+        Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
+
+        // act
+        Parallelogram p = builder
+                .setScale(Vector2D.of(2, 1))
+                .setYDirection(Vector2D.Unit.MINUS_X)
+                .setPosition(Vector2D.of(1, 2))
+                .build();
+
+        // assert
+        Assert.assertEquals(2, p.getSize(), TEST_EPS);
+        Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 1), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 3), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 3), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testBuilder_rotatedRect_withRotation() {
+        // arrange
+        Parallelogram.Builder builder = Parallelogram.builder(TEST_PRECISION);
+
+        // act
+        Parallelogram p = builder
+                .setScale(2)
+                .setRotation(Rotation2D.of(0.25 * Math.PI))
+                .setPosition(Vector2D.of(1, 2))
+                .build();
+
+        // assert
+        Assert.assertEquals(4, p.getSize(), TEST_EPS);
+        Assert.assertEquals(8, p.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), p.getBarycenter(), TEST_EPS);
+
+        List<Vector2D> vertices = p.getVertices();
+        Assert.assertEquals(4, vertices.size());
+
+        double sqrt2 = Math.sqrt(2);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1 - sqrt2, 2), vertices.get(0), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2 - sqrt2), vertices.get(1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1 + sqrt2, 2), vertices.get(2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2 + sqrt2), vertices.get(3), TEST_EPS);
+    }
+
+    @Test
+    public void testToTree() {
+        // act
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(1, 4), TEST_PRECISION)
+                .toTree();
+
+        // assert
+        Assert.assertFalse(tree.isFull());
+        Assert.assertFalse(tree.isEmpty());
+
+        Assert.assertEquals(4, tree.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 2), tree.getBarycenter(), TEST_EPS);
     }
 
     private static void assertSegment(Segment segment, Vector2D start, Vector2D end) {

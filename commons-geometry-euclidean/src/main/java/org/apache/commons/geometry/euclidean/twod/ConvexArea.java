@@ -32,9 +32,9 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
- * The boundaries of this area, if any, are composed of line segments.
+ * The boundaries of this area, if any, are composed of convex sublines.
  */
-public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment>
+public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment>
     implements BoundarySource2D, Linecastable2D {
 
     /** Instance representing the full 2D plane. */
@@ -44,7 +44,7 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaries the boundaries of the convex area
      */
-    private ConvexArea(final List<Segment> boundaries) {
+    protected ConvexArea(final List<Segment> boundaries) {
         super(boundaries);
     }
 
@@ -72,17 +72,27 @@ public final class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vect
         return InteriorAngleSegmentConnector.connectMinimized(getBoundaries());
     }
 
-    /** Get the vertices for the area. The vertices lie at the intersections of the
-     * area bounding lines.
-     * @return the vertices for the area
+    /** Get the vertices defining the area. The vertices lie at the intersections of the
+     * area bounding lines. Note that it is possible for areas to contain no vertices at
+     * all. For example, an area with no boundaries (representing the full space), an area
+     * with a single boundary, or an area one with two parallel boundaries will not contain
+     * vertices.
+     * @return the vertices defining the area
      */
     public List<Vector2D> getVertices() {
-        final List<Polyline> path = getBoundaryPaths();
+        final List<Polyline> paths = getBoundaryPaths();
 
         // we will only have vertices if we have a single path; otherwise, we have a full
         // area or two non-intersecting infinite segments
-        if (path.size() == 1) {
-            return path.get(0).getVertices();
+        if (paths.size() == 1) {
+            final Polyline path = paths.get(0);
+            final List<Vector2D> vertices = path.getVertexSequence();
+
+            if (path.isClosed()) {
+                // do not include the repeated start point
+                return vertices.subList(0, vertices.size() - 1);
+            }
+            return vertices;
         }
 
         return Collections.emptyList();

@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.twod.rotation;
 
 import org.apache.commons.geometry.euclidean.EuclideanTransform;
+import org.apache.commons.geometry.euclidean.internal.Vectors;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -24,6 +25,9 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * rotations are in a <em>counter-clockwise</em> direction.
  */
 public final class Rotation2D implements EuclideanTransform<Vector2D> {
+
+    /** Instance representing a rotation of zero radians. */
+    private static final Rotation2D IDENTITY = new Rotation2D(0);
 
     /** The angle of the rotation in radians. */
     private final double angle;
@@ -138,5 +142,32 @@ public final class Rotation2D implements EuclideanTransform<Vector2D> {
      */
     public static Rotation2D of(final double angle) {
         return new Rotation2D(angle);
+    }
+
+    /** Return an instance representing the identity rotation, ie a rotation
+     * of zero radians.
+     * @return an instance representing a rotation of zero radians
+     */
+    public static Rotation2D identity() {
+        return IDENTITY;
+    }
+
+    /** Create a rotation instance that rotates the vector {@code u} to point in the direction of
+     * vector {@code v}.
+     * @param u input vector
+     * @param v target vector
+     * @return a rotation instance that rotates {@code u} to point in the direction of {@code v}
+     * @throws IllegalArgumentException if either vector cannot be normalized
+     */
+    public static Rotation2D createVectorRotation(final Vector2D u, final Vector2D v) {
+        // make sure that the vectors are real-valued and of non-zero length; we don't
+        // actually need to use the norm value; we just need to check its properties
+        Vectors.checkedNorm(u);
+        Vectors.checkedNorm(v);
+
+        final double uAzimuth = Math.atan2(u.getY(), u.getX());
+        final double vAzimuth = Math.atan2(v.getY(), v.getX());
+
+        return of(vAzimuth - uAzimuth);
     }
 }

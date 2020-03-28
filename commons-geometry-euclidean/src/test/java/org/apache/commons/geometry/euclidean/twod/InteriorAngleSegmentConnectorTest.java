@@ -328,7 +328,7 @@ public class InteriorAngleSegmentConnectorTest {
 
     private static void assertPathVertices(Polyline path, Vector2D... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
-        List<Vector2D> actualVertices = path.getVertices();
+        List<Vector2D> actualVertices = path.getVertexSequence();
 
         String msg = "Expected path vertices to equal " + expectedVertices + " but was " + actualVertices;
         Assert.assertEquals(msg, expectedVertices.size(), actualVertices.size());

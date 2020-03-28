@@ -301,12 +301,11 @@ public class ConvexAreaTest {
         List<Vector2D> vertices = area.getVertices();
 
         // assert
-        Assert.assertEquals(4, vertices.size());
+        Assert.assertEquals(3, vertices.size());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, vertices.get(2), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(3), TEST_EPS);
     }
 
     @Test
@@ -677,6 +676,31 @@ public class ConvexAreaTest {
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
         Assert.assertNull(split.getMinus());
         Assert.assertSame(area, split.getPlus());
+    }
+
+    @Test
+    public void testSplit_fannedLines() {
+        // arrange
+        Line a = Line.fromPointAndDirection(
+                Vector2D.of(0.00600526260605261, -0.3392565140336253),
+                Vector2D.of(0.9998433697734339, 0.017698472253402094), TEST_PRECISION);
+        Line b = Line.fromPointAndDirection(
+                Vector2D.of(-0.05020576603061953, 1.7524758059156824),
+                Vector2D.of(0.9995898847600798, 0.02863672965494457), TEST_PRECISION);
+
+        ConvexArea area = ConvexArea.fromBounds(a, b.reverse());
+
+        Line splitter = Line.fromPointAndDirection(
+                Vector2D.of(0.01581855191043128, -2.5270731411451215),
+                Vector2D.of(0.999980409069402, 0.006259510954681248), TEST_PRECISION);
+
+        // act
+        Split<ConvexArea> split = area.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
+        Assert.assertSame(area, split.getMinus());
+        Assert.assertNull(split.getPlus());
     }
 
     @Test

@@ -614,7 +614,7 @@ public abstract class AbstractRegionBSPTree<
         }
 
         /** Insert a cut into this node, using the default region cut rule of
-         * (@link {@link RegionCutRule#MINUS_INSIDE}.
+         * {@link RegionCutRule#MINUS_INSIDE}.
          * @param cutter the hyperplane to cut the node's region with
          * @return true if the cutting hyperplane intersected the node's region, resulting
          *      in the creation of new child nodes

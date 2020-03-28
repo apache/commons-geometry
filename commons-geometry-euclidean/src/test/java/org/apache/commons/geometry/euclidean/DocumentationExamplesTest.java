@@ -63,8 +63,10 @@ public class DocumentationExamplesTest {
 
         // create a binary space partitioning tree representing the unit cube
         // centered on the origin
-        RegionBSPTree3D region = RegionBSPTree3D.from(
-                Parallelepiped.axisAligned(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5), precision));
+        RegionBSPTree3D region = Parallelepiped.builder(precision)
+                .setPosition(Vector3D.ZERO)
+                .build()
+                .toTree();
 
         // create a rotated copy of the region
         RegionBSPTree3D copy = region.copy();
@@ -328,9 +330,9 @@ public class DocumentationExamplesTest {
     public void testLinecast2DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        Polyline path = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
+        Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
-        LinecastPoint2D pt = path.linecastFirst(
+        LinecastPoint2D pt = box.linecastFirst(
                 Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
         Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
@@ -441,8 +443,8 @@ public class DocumentationExamplesTest {
     public void testLinecast3DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        RegionBSPTree3D tree = RegionBSPTree3D.from(
-                Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision));
+        RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision)
+                .toTree();
 
         List<LinecastPoint3D> pts = tree.linecast(
                 Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));

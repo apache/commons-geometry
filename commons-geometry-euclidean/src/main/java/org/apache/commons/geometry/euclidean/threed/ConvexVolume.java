@@ -29,9 +29,9 @@ import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
- * The boundaries of this area, if any, are composed of facets.
+ * The boundaries of this area, if any, are composed of convex subplanes.
  */
-public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
+public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
     implements BoundarySource3D, Linecastable3D {
 
     /** Instance representing the full 3D volume. */
@@ -41,7 +41,7 @@ public final class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Ve
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaries the boundaries of the convex area
      */
-    private ConvexVolume(final List<ConvexSubPlane> boundaries) {
+    protected ConvexVolume(final List<ConvexSubPlane> boundaries) {
         super(boundaries);
     }
 

@@ -679,7 +679,7 @@ public final class QuaternionRotation implements Rotation3D {
      * @param v2 second vector of the target basis
      * @return an instance that rotates the source basis to the target basis
      * @throws IllegalArgumentException if any of the input vectors cannot be normalized
-     *      or the vectors defining either basis are colinear
+     *      or the vectors defining either basis are collinear
      */
     public static QuaternionRotation createBasisRotation(final Vector3D u1, final Vector3D u2,
             final Vector3D v1, final Vector3D v2) {

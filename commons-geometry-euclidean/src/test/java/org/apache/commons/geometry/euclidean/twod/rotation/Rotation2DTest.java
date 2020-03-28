@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod.rotation;
 import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -36,6 +37,16 @@ public class Rotation2DTest {
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
+
+    @Test
+    public void testIdentity() {
+        // act
+        Rotation2D r = Rotation2D.identity();
+
+        // assert
+        Assert.assertEquals(0.0, r.getAngle(), 0.0);
+        Assert.assertTrue(r.preservesOrientation());
+    }
 
     @Test
     public void testProperties() {
@@ -116,6 +127,69 @@ public class Rotation2DTest {
     public void testToMatrix_apply() {
         // act/assert
         checkRotate(angle -> Rotation2D.of(angle).toMatrix(), AffineTransformMatrix2D::apply);
+    }
+
+    @Test
+    public void testCreateRotationVector() {
+        // arrange
+        double min = -8;
+        double max = 8;
+        double step = 1;
+
+        EuclideanTestUtils.permuteSkipZero(min, max, step, (ux, uy) -> {
+            EuclideanTestUtils.permuteSkipZero(min, max, step, (vx, vy) -> {
+
+                Vector2D u = Vector2D.of(ux, uy);
+                Vector2D v = Vector2D.of(vx, vy);
+
+                // act
+                Rotation2D r = Rotation2D.createVectorRotation(u, v);
+
+                // assert
+                EuclideanTestUtils.assertCoordinatesEqual(v.normalize(), r.apply(u).normalize(), TEST_EPS); // u -> v
+                Assert.assertEquals(0.0, v.dot(r.apply(u.orthogonal())), TEST_EPS); // preserves orthogonality
+            });
+        });
+    }
+
+    @Test
+    public void testCreateRotationVector_invalidVectors() {
+        // arrange
+        Vector2D vec = Vector2D.of(1, 1);
+
+        Vector2D zero = Vector2D.ZERO;
+        Vector2D nan = Vector2D.NaN;
+        Vector2D posInf = Vector2D.POSITIVE_INFINITY;
+        Vector2D negInf = Vector2D.POSITIVE_INFINITY;
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(zero, vec);
+        }, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(vec, zero);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(nan, vec);
+        }, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(vec, nan);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(posInf, vec);
+        }, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(vec, negInf);
+        }, IllegalArgumentException.class);
+
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(zero, nan);
+        }, IllegalArgumentException.class);
+        GeometryTestUtils.assertThrows(() -> {
+            Rotation2D.createVectorRotation(negInf, posInf);
+        }, IllegalArgumentException.class);
     }
 
     @Test

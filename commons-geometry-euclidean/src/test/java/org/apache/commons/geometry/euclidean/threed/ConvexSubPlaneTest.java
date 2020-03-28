@@ -267,12 +267,11 @@ public class ConvexSubPlaneTest {
         List<Vector3D> vertices = sp.getVertices();
 
         // assert
-        Assert.assertEquals(4, vertices.size());
+        Assert.assertEquals(3, vertices.size());
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 1), vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 1), vertices.get(2), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), vertices.get(3), TEST_EPS);
     }
 
     @Test
@@ -690,7 +689,7 @@ public class ConvexSubPlaneTest {
 
     private static void checkVertices(ConvexSubPlane sp, Vector3D... pts) {
         List<Vector3D> actual = sp.getPlane().toSpace(
-                sp.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
+                sp.getSubspaceRegion().getBoundaryPaths().get(0).getVertexSequence());
 
         Assert.assertEquals(pts.length, actual.size());
 

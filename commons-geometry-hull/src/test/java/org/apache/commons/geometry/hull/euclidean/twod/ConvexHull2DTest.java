@@ -48,7 +48,7 @@ public class ConvexHull2DTest {
         Polyline path = hull.getPath();
         Assert.assertEquals(0, path.getSegments().size());
 
-        List<Vector2D> pathVertices = path.getVertices();
+        List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
 
         Assert.assertNull(hull.getRegion());
@@ -68,7 +68,7 @@ public class ConvexHull2DTest {
         Polyline path = hull.getPath();
         Assert.assertEquals(0, path.getSegments().size());
 
-        List<Vector2D> pathVertices = path.getVertices();
+        List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
 
         Assert.assertNull(hull.getRegion());
@@ -88,7 +88,7 @@ public class ConvexHull2DTest {
         Polyline path = hull.getPath();
         Assert.assertEquals(1, path.getSegments().size());
 
-        List<Vector2D> pathVertices = path.getVertices();
+        List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(2, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, pathVertices.get(1), TEST_EPS);
@@ -110,7 +110,7 @@ public class ConvexHull2DTest {
         Polyline path = hull.getPath();
         Assert.assertEquals(3, path.getSegments().size());
 
-        List<Vector2D> pathVertices = path.getVertices();
+        List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(4, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);
@@ -135,7 +135,7 @@ public class ConvexHull2DTest {
         Polyline path = hull.getPath();
         Assert.assertEquals(4, path.getSegments().size());
 
-        List<Vector2D> pathVertices = path.getVertices();
+        List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(5, pathVertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, pathVertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, pathVertices.get(1), TEST_EPS);

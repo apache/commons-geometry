@@ -89,7 +89,7 @@ public class DocumentationExamplesTest {
     public void testGreatCircleIntersectionExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        // create two non-parallel great arcs
+        // create two great circles
         GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
         GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
 

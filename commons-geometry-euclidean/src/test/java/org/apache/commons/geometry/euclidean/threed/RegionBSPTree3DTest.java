@@ -463,13 +463,13 @@ public class RegionBSPTree3DTest {
     public void testLinecast_complexRegion() {
         // arrange
         RegionBSPTree3D a = RegionBSPTree3D.empty();
-        Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(0.5, 1, 1), TEST_PRECISION).stream()
+        Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(0.5, 1, 1), TEST_PRECISION).boundaryStream()
             .map(ConvexSubPlane::reverse)
             .forEach(a::insert);
         a.complement();
 
         RegionBSPTree3D b = RegionBSPTree3D.empty();
-        Parallelepiped.axisAligned(Vector3D.of(0.5, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION).stream()
+        Parallelepiped.axisAligned(Vector3D.of(0.5, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION).boundaryStream()
             .map(ConvexSubPlane::reverse)
             .forEach(b::insert);
         b.complement();
@@ -851,7 +851,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), eps);
         Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.208e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.4166e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -1567,8 +1567,7 @@ public class RegionBSPTree3DTest {
     }
 
     private static RegionBSPTree3D createRect(final Vector3D a, final Vector3D b, final DoublePrecisionContext precision) {
-        return RegionBSPTree3D.from(
-                Parallelepiped.axisAligned(a, b, precision));
+        return Parallelepiped.axisAligned(a, b, precision).toTree();
     }
 
     private static RegionBSPTree3D createSphere(final Vector3D center, final double radius, final int stacks, final int slices) {

@@ -196,7 +196,7 @@ public class ConvexVolumeTest {
         Assert.assertEquals(1, trimmed.getSize(), TEST_EPS);
 
         List<Vector3D> vertices = trimmed.getPlane().toSpace(
-                trimmed.getSubspaceRegion().getBoundaryPaths().get(0).getVertices());
+                trimmed.getSubspaceRegion().getBoundaryPaths().get(0).getVertexSequence());
 
         Assert.assertEquals(5, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0.5, -0.5), vertices.get(0), TEST_EPS);
