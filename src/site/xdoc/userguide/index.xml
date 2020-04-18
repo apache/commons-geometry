@@ -572,7 +572,11 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
           </li>
           <li>
             ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ConvexSubLine.html">ConvexSubLine</a>
+            (subclasses include
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>,
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Ray.html">Ray</a>, and
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/TerminatedLine.html">TerminatedLine</a>)
           </li>
           <li>
             Region
@@ -602,7 +606,7 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             <ul>
               <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Polyline.html">Polyline</a> -
-                  Represents a connected sequence of line segments.
+                  Represents a connected sequence of convex sublines.
               </li>
             </ul>
           </li>
@@ -629,14 +633,15 @@ double angleBtoA = b.angle(a); // -pi/4
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create some line segments
-Segment closedPosX = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1) , precision);
-Segment closedNegX = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
-Segment halfOpen = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision)
-        .segmentFrom(Vector2D.of(2, 0));
+Segment segmentA = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
+Segment segmentB = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
+
+// create a ray to intersect against the segments
+Ray ray = Ray.fromPointAndDirection(Vector2D.of(2, 0), Vector2D.Unit.PLUS_X, precision);
 
 // compute some intersections
-Vector2D posXIntersection = closedPosX.intersection(halfOpen); // (3, 0)
-Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no intersection
+Vector2D aIntersection = segmentA.intersection(ray); // (3, 0)
+Vector2D bIntersection = segmentB.intersection(ray); // null - no intersection
         </source>
 
         <h5>BSP tree union</h5>
@@ -743,9 +748,11 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
                 Represents a line in 3D space.
               </li>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Segment3D.html">Segment3D</a> -
-                Represents a line segment in 3D space. Since the segment can extend to infinity in either direction, this
-                class can also be used to represent rays.
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexSubLine3D.html">ConvexSubLine3D</a> -
+                Represents a finite or infinite convex subline. Subclasses include
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Segment3D.html">Segment3D</a>,
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Ray3D.html">Ray3D</a>, and
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/TerminatedLine3D.html">TerminatedLine3D</a>.
               </li>
             </ul>
           </li>
@@ -835,12 +842,17 @@ List&lt;ConvexSubPlane&gt; minusBoundaries = minus.getBoundaries(); // size = 4
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision)
+// create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)
+RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), precision)
         .toTree();
 
-List&lt;LinecastPoint3D&gt; pts = tree.linecast(
-        Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+// create a ray starting on one side of the cube and pointing through its center
+Ray3D ray = Ray3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
 
+// perform the linecast
+List&lt;LinecastPoint3D&gt; pts = tree.linecast(ray);
+
+// check the results
 int intersectionCount = pts.size(); // intersectionCount = 2
 Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
 Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)

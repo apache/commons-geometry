@@ -25,12 +25,12 @@ import java.util.Random;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.AbstractSegmentConnector.ConnectableSegment;
+import org.apache.commons.geometry.euclidean.twod.AbstractSubLineConnector.ConnectableSubLine;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractSegmentConnectorTest {
+public class AbstractSubLineConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -54,7 +54,7 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testConnectAll_singleInfiniteLine() {
         // arrange
-        Segment segment = Y_AXIS.span();
+        ConvexSubLine segment = Y_AXIS.span();
 
         // act
         List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
@@ -63,14 +63,14 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertSame(segment, path.getStartSegment());
+        Assert.assertEquals(1, path.getSubLines().size());
+        Assert.assertSame(segment, path.getStartSubLine());
     }
 
     @Test
     public void testConnectAll_singleHalfInfiniteLine_noEndPoint() {
         // arrange
-        Segment segment = Y_AXIS.segmentFrom(Vector2D.ZERO);
+        ConvexSubLine segment = Y_AXIS.rayFrom(Vector2D.ZERO);
 
         // act
         List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
@@ -79,14 +79,14 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertSame(segment, path.getStartSegment());
+        Assert.assertEquals(1, path.getSubLines().size());
+        Assert.assertSame(segment, path.getStartSubLine());
     }
 
     @Test
     public void testConnectAll_singleHalfInfiniteLine_noStartPoint() {
         // arrange
-        Segment segment = Y_AXIS.segmentTo(Vector2D.ZERO);
+        ConvexSubLine segment = Y_AXIS.lineTo(Vector2D.ZERO);
 
         // act
         List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
@@ -95,17 +95,17 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        Assert.assertSame(segment, path.getStartSegment());
+        Assert.assertEquals(1, path.getSubLines().size());
+        Assert.assertSame(segment, path.getStartSubLine());
     }
 
     @Test
     public void testConnectAll_disjointSegments() {
         // arrange
-        Segment a = Y_AXIS.segment(Vector2D.of(0, 1), Vector2D.of(0, 2));
-        Segment b = Y_AXIS.segment(Vector2D.of(0, -1), Vector2D.ZERO);
+        ConvexSubLine a = Y_AXIS.segment(Vector2D.of(0, 1), Vector2D.of(0, 2));
+        ConvexSubLine b = Y_AXIS.segment(Vector2D.of(0, -1), Vector2D.ZERO);
 
-        List<Segment> segments = Arrays.asList(a, b);
+        List<ConvexSubLine> segments = Arrays.asList(a, b);
 
         // act
         List<Polyline> paths = connector.connectAll(segments);
@@ -124,7 +124,7 @@ public class AbstractSegmentConnectorTest {
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
                 .close();
 
-        List<Segment> segments = new ArrayList<>(input.getSegments());
+        List<ConvexSubLine> segments = new ArrayList<>(input.getSubLines());
         shuffle(segments);
 
         // act
@@ -152,10 +152,10 @@ public class AbstractSegmentConnectorTest {
                 .appendVertices(Vector2D.of(1, 3), Vector2D.of(0, 2), Vector2D.of(1, 2))
                 .close();
 
-        List<Segment> segments = new ArrayList<>();
-        segments.addAll(a.getSegments());
-        segments.addAll(b.getSegments());
-        segments.addAll(c.getSegments());
+        List<ConvexSubLine> segments = new ArrayList<>();
+        segments.addAll(a.getSubLines());
+        segments.addAll(b.getSubLines());
+        segments.addAll(c.getSubLines());
 
         shuffle(segments);
 
@@ -182,7 +182,7 @@ public class AbstractSegmentConnectorTest {
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
                 .build();
 
-        List<Segment> segments = new ArrayList<>(input.getSegments());
+        List<ConvexSubLine> segments = new ArrayList<>(input.getSubLines());
         shuffle(segments);
 
         // act
@@ -198,9 +198,9 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testConnectAll_mixOfOpenConnectedAndInfinite() {
         // arrange
-        Segment inputYInf = Y_AXIS.segmentTo(Vector2D.ZERO);
-        Segment inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
-                .segmentFrom(Vector2D.ZERO);
+        ConvexSubLine inputYInf = Y_AXIS.lineTo(Vector2D.ZERO);
+        ConvexSubLine inputXInf = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
+                .rayFrom(Vector2D.ZERO);
 
         Polyline closedPath = Polyline.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3))
@@ -210,11 +210,11 @@ public class AbstractSegmentConnectorTest {
                 .appendVertices(Vector2D.of(-1, 3), Vector2D.of(0, 1), Vector2D.of(1, 1))
                 .build();
 
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.add(inputYInf);
         segments.add(inputXInf);
-        segments.addAll(closedPath.getSegments());
-        segments.addAll(openPath.getSegments());
+        segments.addAll(closedPath.getSubLines());
+        segments.addAll(openPath.getSubLines());
 
         shuffle(segments);
 
@@ -229,9 +229,9 @@ public class AbstractSegmentConnectorTest {
 
         Polyline infPath = paths.get(1);
         Assert.assertTrue(infPath.isInfinite());
-        Assert.assertEquals(2, infPath.getSegments().size());
-        Assert.assertSame(inputYInf, infPath.getSegments().get(0));
-        Assert.assertSame(inputXInf, infPath.getSegments().get(1));
+        Assert.assertEquals(2, infPath.getSubLines().size());
+        Assert.assertSame(inputYInf, infPath.getSubLines().get(0));
+        Assert.assertSame(inputXInf, infPath.getSubLines().get(1));
 
         assertFinitePath(paths.get(2),
                 Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3), Vector2D.of(0, 2));
@@ -242,7 +242,7 @@ public class AbstractSegmentConnectorTest {
         // arrange
         Vector2D p0 = Vector2D.ZERO;
 
-        List<Segment> segments = Arrays.asList(Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
+        List<ConvexSubLine> segments = Arrays.asList(Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
 
         // act
         List<Polyline> paths = connector.connectAll(segments);
@@ -273,7 +273,7 @@ public class AbstractSegmentConnectorTest {
                         .segment(almostP0, almostP0))
                 .build();
 
-        List<Segment> segments = new ArrayList<>(input.getSegments());
+        List<ConvexSubLine> segments = new ArrayList<>(input.getSubLines());
         shuffle(segments);
 
         // act
@@ -293,10 +293,10 @@ public class AbstractSegmentConnectorTest {
 
         Segment seg0 = Segment.fromPoints(p0, p1, TEST_PRECISION);
         Segment seg1 = Segment.fromPoints(p1, p0, TEST_PRECISION);
-        Segment seg2 = Line.fromPointAndAngle(p1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p1, p1);
-        Segment seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg2 = Line.fromPointAndAngle(p1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p1, p1);
+        ConvexSubLine seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
-        List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
+        List<ConvexSubLine> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);
 
         // act
@@ -306,10 +306,10 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertSame(seg0, path.getSegments().get(0));
-        Assert.assertSame(seg2, path.getSegments().get(1));
-        Assert.assertSame(seg1, path.getSegments().get(2));
-        Assert.assertSame(seg3, path.getSegments().get(3));
+        Assert.assertSame(seg0, path.getSubLines().get(0));
+        Assert.assertSame(seg2, path.getSubLines().get(1));
+        Assert.assertSame(seg1, path.getSubLines().get(2));
+        Assert.assertSame(seg3, path.getSubLines().get(3));
     }
 
     @Test
@@ -317,12 +317,12 @@ public class AbstractSegmentConnectorTest {
         // arrange
         Vector2D p0 = Vector2D.of(1, 0);
 
-        Segment seg0 = Line.fromPointAndAngle(p0, 0.0, TEST_PRECISION).segment(p0, p0);
-        Segment seg1 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
-        Segment seg2 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
-        Segment seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg0 = Line.fromPointAndAngle(p0, 0.0, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg1 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg2 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg3 = Line.fromPointAndAngle(p0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segment(p0, p0);
 
-        List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
+        List<ConvexSubLine> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2, seg3));
         shuffle(segments);
 
         // act
@@ -332,10 +332,10 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertSame(seg2, path.getSegments().get(0));
-        Assert.assertSame(seg3, path.getSegments().get(1));
-        Assert.assertSame(seg0, path.getSegments().get(2));
-        Assert.assertSame(seg1, path.getSegments().get(3));
+        Assert.assertSame(seg2, path.getSubLines().get(0));
+        Assert.assertSame(seg3, path.getSubLines().get(1));
+        Assert.assertSame(seg0, path.getSubLines().get(2));
+        Assert.assertSame(seg1, path.getSubLines().get(3));
     }
 
     @Test
@@ -344,11 +344,11 @@ public class AbstractSegmentConnectorTest {
         Vector2D p0 = Vector2D.ZERO;
         Vector2D p1 = Vector2D.of(1, 0);
 
-        Segment seg0 = Line.fromPointAndAngle(p1, 0.0, TEST_PRECISION).segment(p1, p1);
-        Segment seg1 = Line.fromPointAndAngle(p1, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(p1, p1);
-        Segment seg2 = Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg0 = Line.fromPointAndAngle(p1, 0.0, TEST_PRECISION).segment(p1, p1);
+        ConvexSubLine seg1 = Line.fromPointAndAngle(p1, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(p1, p1);
+        ConvexSubLine seg2 = Line.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0);
 
-        List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
+        List<ConvexSubLine> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
 
         shuffle(segments);
 
@@ -359,13 +359,13 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(2, paths.size());
 
         Polyline path0 = paths.get(0);
-        Assert.assertEquals(1, path0.getSegments().size());
-        Assert.assertSame(seg2, path0.getSegments().get(0));
+        Assert.assertEquals(1, path0.getSubLines().size());
+        Assert.assertSame(seg2, path0.getSubLines().get(0));
 
         Polyline path1 = paths.get(1);
-        Assert.assertEquals(2, path1.getSegments().size());
-        Assert.assertSame(seg0, path1.getSegments().get(0));
-        Assert.assertSame(seg1, path1.getSegments().get(1));
+        Assert.assertEquals(2, path1.getSubLines().size());
+        Assert.assertSame(seg0, path1.getSubLines().get(0));
+        Assert.assertSame(seg1, path1.getSubLines().get(1));
     }
 
     @Test
@@ -375,11 +375,11 @@ public class AbstractSegmentConnectorTest {
         Vector2D p1 = Vector2D.of(1, 0);
         Vector2D p2 = Vector2D.of(1, 1);
 
-        Segment seg0 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
-        Segment seg1 = Segment.fromPoints(p0, p1, TEST_PRECISION);
-        Segment seg2 = Segment.fromPoints(p1, p2, TEST_PRECISION);
+        ConvexSubLine seg0 = Line.fromPointAndAngle(p0, PlaneAngleRadians.PI, TEST_PRECISION).segment(p0, p0);
+        ConvexSubLine seg1 = Segment.fromPoints(p0, p1, TEST_PRECISION);
+        ConvexSubLine seg2 = Segment.fromPoints(p1, p2, TEST_PRECISION);
 
-        List<Segment> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
+        List<ConvexSubLine> segments = new ArrayList<>(Arrays.asList(seg0, seg1, seg2));
 
         shuffle(segments);
 
@@ -390,9 +390,9 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertSame(seg0, path.getSegments().get(0));
-        Assert.assertSame(seg1, path.getSegments().get(1));
-        Assert.assertSame(seg2, path.getSegments().get(2));
+        Assert.assertSame(seg0, path.getSubLines().get(0));
+        Assert.assertSame(seg1, path.getSubLines().get(1));
+        Assert.assertSame(seg2, path.getSubLines().get(2));
     }
 
     @Test
@@ -406,9 +406,9 @@ public class AbstractSegmentConnectorTest {
                 .appendVertices(Vector2D.of(1, 1), Vector2D.of(-0.5, 0), Vector2D.of(1, -1))
                 .build();
 
-        List<Segment> segments = new ArrayList<>();
-        segments.addAll(a.getSegments());
-        segments.addAll(b.getSegments());
+        List<ConvexSubLine> segments = new ArrayList<>();
+        segments.addAll(a.getSubLines());
+        segments.addAll(b.getSubLines());
 
         shuffle(segments);
 
@@ -428,8 +428,8 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testInstancesCanBeReused() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        ConvexSubLine a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexSubLine b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
         List<Polyline> firstPaths = connector.connectAll(Arrays.asList(a));
@@ -439,16 +439,16 @@ public class AbstractSegmentConnectorTest {
         Assert.assertEquals(1, firstPaths.size());
         Assert.assertEquals(1, secondPaths.size());
 
-        Assert.assertSame(a, firstPaths.get(0).getSegments().get(0));
-        Assert.assertSame(b, secondPaths.get(0).getSegments().get(0));
+        Assert.assertSame(a, firstPaths.get(0).getSubLines().get(0));
+        Assert.assertSame(b, secondPaths.get(0).getSubLines().get(0));
     }
 
     @Test
     public void testAdd() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+        ConvexSubLine a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexSubLine b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        ConvexSubLine c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
 
         // act
         connector.add(Arrays.asList(a, b));
@@ -466,9 +466,9 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testConnect() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
-        Segment c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
+        ConvexSubLine a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexSubLine b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        ConvexSubLine c = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(2, 0), TEST_PRECISION);
 
         // act
         connector.connect(Arrays.asList(a, b));
@@ -486,10 +486,10 @@ public class AbstractSegmentConnectorTest {
     @Test
     public void testConnectableSegment_hashCode() {
         // arrange
-        Segment segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        ConvexSubLine segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexSubLine segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        ConnectableSegment a = new ConnectableSegment(segA);
+        ConnectableSubLine a = new ConnectableSubLine(segA);
 
         // act
         int hash = a.hashCode();
@@ -497,19 +497,19 @@ public class AbstractSegmentConnectorTest {
         // assert
         Assert.assertEquals(hash, a.hashCode());
 
-        Assert.assertNotEquals(hash, new ConnectableSegment(segB).hashCode());
-        Assert.assertNotEquals(hash, new ConnectableSegment(Vector2D.Unit.PLUS_X).hashCode());
+        Assert.assertNotEquals(hash, new ConnectableSubLine(segB).hashCode());
+        Assert.assertNotEquals(hash, new ConnectableSubLine(Vector2D.Unit.PLUS_X).hashCode());
 
-        Assert.assertEquals(hash, new ConnectableSegment(segA).hashCode());
+        Assert.assertEquals(hash, new ConnectableSubLine(segA).hashCode());
     }
 
     @Test
     public void testConnectableSegment_equals() {
         // arrange
-        Segment segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        ConvexSubLine segA = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexSubLine segB = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        ConnectableSegment a = new ConnectableSegment(segA);
+        ConnectableSubLine a = new ConnectableSubLine(segA);
 
         // act/assert
         Assert.assertTrue(a.equals(a));
@@ -517,17 +517,17 @@ public class AbstractSegmentConnectorTest {
         Assert.assertFalse(a.equals(null));
         Assert.assertFalse(a.equals(new Object()));
 
-        Assert.assertFalse(a.equals(new ConnectableSegment(segB)));
-        Assert.assertFalse(a.equals(new ConnectableSegment(Vector2D.Unit.PLUS_X)));
+        Assert.assertFalse(a.equals(new ConnectableSubLine(segB)));
+        Assert.assertFalse(a.equals(new ConnectableSubLine(Vector2D.Unit.PLUS_X)));
 
-        Assert.assertTrue(a.equals(new ConnectableSegment(segA)));
+        Assert.assertTrue(a.equals(new ConnectableSubLine(segA)));
     }
 
-    private static List<Segment> shuffle(final List<Segment> segments) {
+    private static List<ConvexSubLine> shuffle(final List<ConvexSubLine> segments) {
         return shuffle(segments, 1);
     }
 
-    private static List<Segment> shuffle(final List<Segment> segments, final int seed) {
+    private static List<ConvexSubLine> shuffle(final List<ConvexSubLine> segments, final int seed) {
         Collections.shuffle(segments, new Random(seed));
 
         return segments;
@@ -552,10 +552,10 @@ public class AbstractSegmentConnectorTest {
         }
     }
 
-    private static class TestConnector extends AbstractSegmentConnector {
+    private static class TestConnector extends AbstractSubLineConnector {
 
         @Override
-        protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {
+        protected ConnectableSubLine selectConnection(ConnectableSubLine incoming, List<ConnectableSubLine> outgoing) {
             // just choose the first element
             return outgoing.get(0);
         }

@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
@@ -44,7 +45,7 @@ public class CircleTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Comparator<Segment> SEGMENT_DIRECTION_COMPARATOR =
+    private static final Comparator<ConvexSubLine> SEGMENT_DIRECTION_COMPARATOR =
         (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(
             a.getLine().getDirection(),
             b.getLine().getDirection());
@@ -284,7 +285,7 @@ public class CircleTest {
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -314,7 +315,7 @@ public class CircleTest {
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(4, segments.size());
@@ -494,7 +495,7 @@ public class CircleTest {
         }
     }
 
-    private static void checkLinecast(Circle c, Segment segment, Vector2D... expectedPts) {
+    private static void checkLinecast(Circle c, ConvexSubLine segment, Vector2D... expectedPts) {
         // check linecast
         List<LinecastPoint2D> results = c.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());
@@ -544,7 +545,7 @@ public class CircleTest {
         Assert.assertTrue("Expected approximation area to be less than circle", tree.getSize() < c.getSize());
     }
 
-    private static void assertFiniteSegment(Segment segment, Vector2D start, Vector2D end) {
+    private static void assertFiniteSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 

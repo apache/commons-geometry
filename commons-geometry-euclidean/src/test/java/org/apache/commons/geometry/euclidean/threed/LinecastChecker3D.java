@@ -94,7 +94,7 @@ class LinecastChecker3D {
      * expected results.
      * @param segment
      */
-    public void whenGiven(final Segment3D segment) {
+    public void whenGiven(final ConvexSubLine3D segment) {
         Line3D line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);

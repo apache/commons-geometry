@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Line segment connector that selects between multiple connection options
+/** Subline connector that selects between multiple connection options
  * based on the resulting interior angle. An interior angle in this
- * case is the angle created between an incoming segment and an outgoing segment
+ * case is the angle created between an incoming subline and an outgoing subline
  * as measured on the minus (interior) side of the incoming line. If looking
- * along the direction of the incoming line segment, smaller interior angles
+ * along the direction of the incoming subline, smaller interior angles
  * point more to the left and larger ones point more to the right.
  *
  * <p>This class provides two concrete implementations: {@link Maximize} and
@@ -33,19 +33,19 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * angles respectively.
  * </p>
  */
-public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConnector {
+public abstract class InteriorAngleSubLineConnector extends AbstractSubLineConnector {
     /** {@inheritDoc} */
     @Override
-    protected ConnectableSegment selectConnection(ConnectableSegment incoming, List<ConnectableSegment> outgoing) {
+    protected ConnectableSubLine selectConnection(ConnectableSubLine incoming, List<ConnectableSubLine> outgoing) {
 
         // search for the best connection
-        final Line segmentLine = incoming.getSegment().getLine();
+        final Line incomingLine = incoming.getSubLine().getLine();
 
         double selectedInteriorAngle = Double.POSITIVE_INFINITY;
-        ConnectableSegment selected = null;
+        ConnectableSubLine selected = null;
 
-        for (final ConnectableSegment candidate : outgoing) {
-            final double interiorAngle = PlaneAngleRadians.PI - segmentLine.angle(candidate.getSegment().getLine());
+        for (final ConnectableSubLine candidate : outgoing) {
+            final double interiorAngle = PlaneAngleRadians.PI - incomingLine.angle(candidate.getSubLine().getLine());
 
             if (selected == null || isBetterAngle(interiorAngle, selectedInteriorAngle)) {
                 selectedInteriorAngle = interiorAngle;
@@ -63,33 +63,33 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
      */
     protected abstract boolean isBetterAngle(double newAngle, double previousAngle);
 
-    /** Convenience method for connecting a set of line segments with interior angles maximized
-     * when possible. This method is equivalent to {@code new Maximize().connect(segments)}.
-     * @param segments line segments to connect
-     * @return a list of connected line segment paths
+    /** Convenience method for connecting a set of sublines with interior angles maximized
+     * when possible. This method is equivalent to {@code new Maximize().connect(sublines)}.
+     * @param sublines sublines to connect
+     * @return a list of connected subline paths
      * @see Maximize
      */
-    public static List<Polyline> connectMaximized(final Collection<Segment> segments) {
-        return new Maximize().connectAll(segments);
+    public static List<Polyline> connectMaximized(final Collection<ConvexSubLine> sublines) {
+        return new Maximize().connectAll(sublines);
     }
 
-    /** Convenience method for connecting a set of line segments with interior angles minimized
-     * when possible. This method is equivalent to {@code new Minimize().connect(segments)}.
-     * @param segments line segments to connect
-     * @return a list of connected line segment paths
+    /** Convenience method for connecting a set of sublines with interior angles minimized
+     * when possible. This method is equivalent to {@code new Minimize().connect(sublines)}.
+     * @param sublines sublines to connect
+     * @return a list of connected subline paths
      * @see Minimize
      */
-    public static List<Polyline> connectMinimized(final Collection<Segment> segments) {
-        return new Minimize().connectAll(segments);
+    public static List<Polyline> connectMinimized(final Collection<ConvexSubLine> sublines) {
+        return new Minimize().connectAll(sublines);
     }
 
-    /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment
+    /** Implementation of {@link InteriorAngleSubLineConnector} that chooses subline
      * connections that produce the largest interior angles. Another way to visualize this is
-     * that when presented multiple connection options for a given line segment, this class will
+     * that when presented multiple connection options for a given subline, this class will
      * choose the option that points most to the right when viewed in the direction of the incoming
-     * line segment.
+     * subline.
      */
-    public static class Maximize extends InteriorAngleSegmentConnector {
+    public static class Maximize extends InteriorAngleSubLineConnector {
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {
@@ -97,13 +97,13 @@ public abstract class InteriorAngleSegmentConnector extends AbstractSegmentConne
         }
     }
 
-    /** Implementation of {@link InteriorAngleSegmentConnector} that chooses line segment
+    /** Implementation of {@link InteriorAngleSubLineConnector} that chooses subline
      * connections that produce the smallest interior angles. Another way to visualize this is
-     * that when presented multiple connection options for a given line segment, this class will
+     * that when presented multiple connection options for a given subline, this class will
      * choose the option that points most to the left when viewed in the direction of the incoming
-     * line segment.
+     * subline.
      */
-    public static class Minimize extends InteriorAngleSegmentConnector {
+    public static class Minimize extends InteriorAngleSubLineConnector {
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {

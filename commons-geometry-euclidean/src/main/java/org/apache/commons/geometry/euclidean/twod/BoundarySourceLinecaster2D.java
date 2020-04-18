@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 /** Class that performs linecast operations against arbitrary {@link BoundarySource2D}
  * instances. This class performs a brute-force computation of the intersections of the
- * line or line segment against all boundaries. Some data structures may support more
+ * line or subline against all boundaries. Some data structures may support more
  * efficient algorithms and should therefore prefer those instead.
  */
 final class BoundarySourceLinecaster2D implements Linecastable2D {
@@ -41,8 +41,8 @@ final class BoundarySourceLinecaster2D implements Linecastable2D {
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint2D> linecast(final Segment segment) {
-        final List<LinecastPoint2D> results = getIntersectionStream(segment)
+    public List<LinecastPoint2D> linecast(final ConvexSubLine subline) {
+        final List<LinecastPoint2D> results = getIntersectionStream(subline)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         LinecastPoint2D.sortAndFilter(results);
@@ -52,37 +52,37 @@ final class BoundarySourceLinecaster2D implements Linecastable2D {
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint2D linecastFirst(final Segment segment) {
-        return getIntersectionStream(segment)
+    public LinecastPoint2D linecastFirst(final ConvexSubLine subline) {
+        return getIntersectionStream(subline)
                 .min(LinecastPoint2D.ABSCISSA_ORDER)
                 .orElse(null);
     }
 
     /** Return a stream containing intersections between the boundary source and the
-     * given line segment.
-     * @param segment segment to intersect
+     * given subline.
+     * @param subline subline to intersect
      * @return a stream containing linecast intersections
      */
-    private Stream<LinecastPoint2D> getIntersectionStream(final Segment segment) {
+    private Stream<LinecastPoint2D> getIntersectionStream(final ConvexSubLine subline) {
         return boundarySrc.boundaryStream()
-                .map(boundary -> computeIntersection(boundary, segment))
+                .map(boundary -> computeIntersection(boundary, subline))
                 .filter(Objects::nonNull);
     }
 
-    /** Compute the intersection between a boundary segment and linecast intersecting segment. Null is
+    /** Compute the intersection between a boundary subline and linecast intersecting subline. Null is
      * returned if no intersection is discovered.
      * @param boundary boundary from the boundary source
-     * @param segment linecast segment to intersect with
+     * @param subline linecast subline to intersect with
      * @return the linecast intersection between the two arguments or null if there is no such
      *      intersection
      */
-    private LinecastPoint2D computeIntersection(final Segment boundary, final Segment segment) {
-        final Vector2D intersectionPt = boundary.intersection(segment);
+    private LinecastPoint2D computeIntersection(final ConvexSubLine boundary, final ConvexSubLine subline) {
+        final Vector2D intersectionPt = boundary.intersection(subline);
 
         if (intersectionPt != null) {
             final Vector2D normal = boundary.getLine().getOffsetDirection();
 
-            return new LinecastPoint2D(intersectionPt, normal, segment.getLine());
+            return new LinecastPoint2D(intersectionPt, normal, subline.getLine());
         }
 
         return null; // no intersection

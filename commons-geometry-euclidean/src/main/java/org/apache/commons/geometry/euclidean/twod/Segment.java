@@ -16,290 +16,244 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.Arrays;
-import java.util.List;
+import java.text.MessageFormat;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
-/** <p>Class representing a line segment in 2D Euclidean space. Segments
- * need not be finite, in which case the start or end point (or both)
- * will be null.</p>
+/** Class representing a line segment in 2D Euclidean space. A line segment is a portion of
+ * a line with finite start and end points.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see <a href="https://en.wikipedia.org/wiki/Line_segment">Line Segment</a>
  */
-public final class Segment extends AbstractSubLine
-    implements ConvexSubHyperplane<Vector2D> {
-    /** String used to indicate the start point of the segment in the toString() representation. */
-    private static final String START_STR = "start= ";
+public final class Segment extends ConvexSubLine {
 
-    /** String used to indicate the direction the segment in the toString() representation. */
-    private static final String DIR_STR = "direction= ";
+    /** Start abscissa for the segment. */
+    private final double start;
 
-    /** String used to indicate the end point of the segment in the toString() representation. */
-    private static final String END_STR = "end= ";
+    /** End abscissa for the segment. */
+    private final double end;
 
-    /** String used as a separator value in the toString() representation. */
-    private static final String SEP_STR = ", ";
-
-    /** The interval representing the region of the line contained in
-     * the line segment.
+    /** Construct a new instance from a line and two points on the line. The points are projected onto
+     * the line and must be in order of increasing abscissa. No validation is performed.
+     * @param line line for the segment
+     * @param startPoint segment start point
+     * @param endPoint segment end point
      */
-    private final Interval interval;
+    Segment(final Line line, final Vector2D startPoint, final Vector2D endPoint) {
+        this(line, line.abscissa(startPoint), line.abscissa(endPoint));
+    }
 
-    /** Construct a line segment from an underlying line and a 1D interval
-     * on it.
-     * @param line the underlying line
-     * @param interval 1D interval on the line defining the line segment
+    /** Construct a new instance from a line and two abscissa locations on the line.
+     * The abscissa locations must be in increasing order. No validation is performed.
+     * @param line line for the segment
+     * @param start abscissa start location
+     * @param end abscissa end location
      */
-    private Segment(final Line line, final Interval interval) {
+    Segment(final Line line, final double start, final double end) {
         super(line);
 
-        this.interval = interval;
+        this.start = start;
+        this.end = end;
     }
 
-    /** Get the start value in the 1D subspace of the line.
-     * @return the start value in the 1D subspace of the line.
-     */
-    public double getSubspaceStart() {
-        return interval.getMin();
+    /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code false}.</p>
+    */
+    @Override
+    public boolean isFull() {
+        return false;
     }
 
-    /** Get the end value in the 1D subspace of the line.
-     * @return the end value in the 1D subspace of the line
-     */
-    public double getSubspaceEnd() {
-        return interval.getMax();
-    }
-
-    /** Get the start point of the line segment or null if no start point
-     * exists (ie, the segment is infinite).
-     * @return the start point of the line segment or null if no start point
-     *      exists
-     */
-    public Vector2D getStartPoint() {
-        return interval.hasMinBoundary() ? getLine().toSpace(interval.getMin()) : null;
-    }
-
-    /** Get the end point of the line segment or null if no end point
-     * exists (ie, the segment is infinite).
-     * @return the end point of the line segment or null if no end point
-     *      exists
-     */
-    public Vector2D getEndPoint() {
-        return interval.hasMaxBoundary() ? getLine().toSpace(interval.getMax()) : null;
-    }
-
-    /** Return the 1D interval for the line segment.
-     * @return the 1D interval for the line segment
-     * @see #getSubspaceRegion()
-     */
-    public Interval getInterval() {
-        return interval;
-    }
-
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code false}.</p>
+    */
     @Override
     public boolean isInfinite() {
-        return interval.isInfinite();
+        return false;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code true}.</p>
+     */
     @Override
     public boolean isFinite() {
-        return interval.isFinite();
+        return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Interval getSubspaceRegion() {
-        return getInterval();
+    public double getSize() {
+        return end - start;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<Segment> toConvex() {
-        return Arrays.asList(this);
+    public Vector2D getStartPoint() {
+        return getLine().toSpace(start);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Split<Segment> split(final Hyperplane<Vector2D> splitter) {
-        return splitInternal(splitter, this, (line, region) -> new Segment(line, (Interval) region));
+    public double getSubspaceStart() {
+        return start;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Segment transform(Transform<Vector2D> transform) {
-        final Line line = getLine();
-        final SubspaceTransform st = line.subspaceTransform(transform);
-
-        return fromInterval(st.getLine(), interval.transform(st.getTransform()));
+    public Vector2D getEndPoint() {
+        return getLine().toSpace(end);
     }
 
-    /** Get the unique intersection of this segment with the given line. Null is
-     * returned if no unique intersection point exists (ie, the lines are
-     * parallel or coincident) or the line does not intersect the segment.
-     * @param line line to intersect with this segment
-     * @return the unique intersection point between the line and this segment
-     *      or null if no such point exists.
-     * @see Line#intersection(Line)
-     */
-    public Vector2D intersection(final Line line) {
-        final Vector2D pt = getLine().intersection(line);
-        return (pt != null && contains(pt)) ? pt : null;
+    /** {@inheritDoc} */
+    @Override
+    public double getSubspaceEnd() {
+        return end;
     }
 
-    /** Get the unique intersection of this instance with the given segment. Null
-     * is returned if the lines containing the segments do not have a unique intersection
-     * point (ie, they are parallel or coincident) or the intersection point is unique
-     * but in not contained in both segments.
-     * @param segment segment to intersect with
-     * @return the unique intersection point between this segment and the argument or
-     *      null if no such point exists.
-     * @see Line#intersection(Line)
-     */
-    public Vector2D intersection(final Segment segment) {
-        final Vector2D pt = intersection(segment.getLine());
-        return (pt != null && segment.contains(pt)) ? pt : null;
+    /** {@inheritDoc} */
+    @Override
+    public Segment transform(final Transform<Vector2D> transform) {
+        final Vector2D t1 = transform.apply(getStartPoint());
+        final Vector2D t2 = transform.apply(getEndPoint());
+
+        final Line tLine = getLine().transform(transform);
+
+        return new Segment(tLine, t1, t2);
     }
 
     /** {@inheritDoc} */
     @Override
     public Segment reverse() {
-        final Interval reversedInterval = interval.transform(AffineTransformMatrix1D.createScale(-1));
-        return fromInterval(getLine().reverse(), reversedInterval);
+        return new Segment(getLine().reverse(), -end, -start);
     }
 
-    /** Return a string representation of the segment.
-    *
-    * <p>In order to keep the representation short but informative, the exact format used
-    * depends on the properties of the instance, as demonstrated in the examples
-    * below.
-    * <ul>
-    *      <li>Infinite segment -
-    *          {@code "Segment[lineOrigin= (0.0, 0.0), lineDirection= (1.0, 0.0)]"}</li>
-    *      <li>Start point but no end point -
-    *          {@code "Segment[start= (0.0, 0.0), direction= (1.0, 0.0)]"}</li>
-    *      <li>End point but no start point -
-    *          {@code "Segment[direction= (1.0, 0.0), end= (0.0, 0.0)]"}</li>
-    *      <li>Start point and end point -
-    *          {@code "Segment[start= (0.0, 0.0), end= (1.0, 0.0)]"}</li>
-    * </ul>
-    */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
-        final Vector2D startPoint = getStartPoint();
-        final Vector2D endPoint = getEndPoint();
-
         final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append('[');
-
-        if (startPoint != null && endPoint != null) {
-            sb.append(START_STR)
-                .append(startPoint)
-                .append(SEP_STR)
-                .append(END_STR)
-                .append(endPoint);
-        } else if (startPoint != null) {
-            sb.append(START_STR)
-                .append(startPoint)
-                .append(SEP_STR)
-                .append(DIR_STR)
-                .append(getLine().getDirection());
-        } else if (endPoint != null) {
-            sb.append(DIR_STR)
-                .append(getLine().getDirection())
-                .append(SEP_STR)
-                .append(END_STR)
-                .append(endPoint);
-        } else {
-            final Line line = getLine();
-
-            sb.append("lineOrigin= ")
-                .append(line.getOrigin())
-                .append(", lineDirection= ")
-                .append(line.getDirection());
-        }
-
-        sb.append(']');
+        sb.append(getClass().getSimpleName())
+            .append("[startPoint= ")
+            .append(getStartPoint())
+            .append(", endPoint= ")
+            .append(getEndPoint())
+            .append(']');
 
         return sb.toString();
     }
 
-    /** Create a line segment between two points. The underlying line points in the direction from {@code start}
-     * to {@code end}.
-     * @param start start point for the line segment
-     * @param end end point for the line segment
-     * @param precision precision context used to determine floating point equality
-     * @return a new line segment between {@code start} and {@code end}.
-     */
-    public static Segment fromPoints(final Vector2D start, final Vector2D end, final DoublePrecisionContext precision) {
-        final Line line = Line.fromPoints(start, end, precision);
-        return fromPointsOnLine(line, start, end);
+    /** {@inheritDoc} */
+    @Override
+    RegionLocation classifyAbscissa(final double abscissa) {
+        final DoublePrecisionContext precision = getPrecision();
+        int startCmp = precision.compare(abscissa, start);
+        if (startCmp > 0) {
+            int endCmp = precision.compare(abscissa, end);
+            if (endCmp < 0) {
+                return RegionLocation.INSIDE;
+            } else if (endCmp == 0) {
+                return RegionLocation.BOUNDARY;
+            }
+        } else if (startCmp == 0) {
+            return RegionLocation.BOUNDARY;
+        }
+
+        return RegionLocation.OUTSIDE;
     }
 
-    /** Construct a line segment from a starting point and a direction that the line should extend to
-     * infinity from. This is equivalent to constructing a ray.
-     * @param start start point for the segment
-     * @param direction direction that the line should extend from the segment
-     * @param precision precision context used to determine floating point equality
-     * @return a new line segment starting from the given point and extending to infinity in the
-     *      specified direction
+    /** {@inheritDoc} */
+    @Override
+    double closestAbscissa(final double abscissa) {
+        return Math.max(start, Math.min(end, abscissa));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
+        final Line line = getLine();
+        final double splitAbscissa = line.abscissa(intersection);
+
+        Segment low = null;
+        Segment high = null;
+
+        final DoublePrecisionContext precision = getPrecision();
+        int startCmp = precision.compare(splitAbscissa, start);
+        if (startCmp <= 0) {
+            high = this;
+        }  else {
+            int endCmp = precision.compare(splitAbscissa, end);
+            if (endCmp >= 0) {
+                low = this;
+            } else {
+                low = new Segment(line, start, splitAbscissa);
+                high = new Segment(line, splitAbscissa, end);
+            }
+        }
+
+        return createSplitResult(splitter, low, high);
+    }
+
+    /** Construct a new line segment from two points. A new line is created for the segment and points in the
+     * direction from {@code startPoint} to {@code endPoint}.
+     * @param startPoint segment start point
+     * @param endPoint segment end point
+     * @param precision precision context to use for floating point comparisons
+     * @return a new line segment instance with the given start and end points
+     * @throws IllegalArgumentException If the vector between {@code startPoint} and {@code endPoint} has zero length,
+     *      as evaluated by the given precision context
+     * @see Line#fromPoints(Vector2D, Vector2D, DoublePrecisionContext)
      */
-    public static Segment fromPointAndDirection(final Vector2D start, final Vector2D direction,
+    public static Segment fromPoints(final Vector2D startPoint, final Vector2D endPoint,
             final DoublePrecisionContext precision) {
-        final Line line = Line.fromPointAndDirection(start, direction, precision);
-        return fromInterval(line, Interval.min(line.toSubspace(start).getX(), precision));
+        final Line line = Line.fromPoints(startPoint, endPoint, precision);
+
+        // we know that the points lie on the line and are in increasing abscissa order
+        // since they were used to create the line
+        return new Segment(line, startPoint, endPoint);
     }
 
-    /** Create a line segment from an underlying line and a 1D interval on the line.
-     * @param line the line that the line segment will belong to
-     * @param interval 1D interval on the line
-     * @return a line segment defined by the given line and interval
+    /** Construct a new line segment from a line and a pair of points. The returned segment represents
+     * all points on the line between the projected locations of {@code a} and {@code b}. The points may
+     * be given in any order.
+     * @param line line forming the base of the segment
+     * @param a first point
+     * @param b second point
+     * @return a new line segment representing the points between the projected locations of {@code a}
+     *      and {@code b} on the given line
+     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
+     * @see #fromLineLocations(Line, double, double)
      */
-    public static Segment fromInterval(final Line line, final Interval interval) {
-        return new Segment(line, interval);
+    public static Segment fromPoints(final Line line, final Vector2D a, final Vector2D b) {
+        return fromLocations(line, line.abscissa(a), line.abscissa(b));
     }
 
-    /** Create a line segment from an underlying line and a 1D interval on the line.
-     * @param line the line that the line segment will belong to
+    /** Construct a new line segment from a pair of 1D locations on a line. The returned line
+     * segment consists of all points between the two locations, regardless of the order the
+     * arguments are given.
+     * @param line line forming the base of the segment
      * @param a first 1D location on the line
      * @param b second 1D location on the line
-     * @return a line segment defined by the given line and interval
+     * @return a new line segment representing the points between {@code a} and {@code b} on
+     *      the given line
+     * @throws IllegalArgumentException if either of the locations is NaN or infinite
      */
-    public static Segment fromInterval(final Line line, final double a, final double b) {
-        return fromInterval(line, Interval.of(a, b, line.getPrecision()));
-    }
+    public static Segment fromLocations(final Line line, final double a, final double b) {
 
-    /** Create a line segment from an underlying line and a 1D interval on the line.
-     * @param line the line that the line segment will belong to
-     * @param a first 1D point on the line; must not be null
-     * @param b second 1D point on the line; must not be null
-     * @return a line segment defined by the given line and interval
-     */
-    public static Segment fromInterval(final Line line, final Vector1D a, final Vector1D b) {
-        return fromInterval(line, a.getX(), b.getX());
-    }
+        if (Double.isFinite(a) && Double.isFinite(b)) {
+            final double min = Math.min(a, b);
+            final double max = Math.max(a, b);
 
-    /** Create a new line segment from a line and points known to lie on the line.
-     * @param line the line that the line segment will belong to
-     * @param start line segment start point known to lie on the line
-     * @param end line segment end poitn known to lie on the line
-     * @return a new line segment created from the line and points
-     */
-    private static Segment fromPointsOnLine(final Line line, final Vector2D start, final Vector2D end) {
-        final double subspaceStart = line.toSubspace(start).getX();
-        final double subspaceEnd = line.toSubspace(end).getX();
+            return new Segment(line, min, max);
+        }
 
-        return fromInterval(line, subspaceStart, subspaceEnd);
+        throw new IllegalArgumentException(
+                MessageFormat.format("Invalid line segment locations: {0}, {1}",
+                        Double.toString(a), Double.toString(b)));
     }
 }

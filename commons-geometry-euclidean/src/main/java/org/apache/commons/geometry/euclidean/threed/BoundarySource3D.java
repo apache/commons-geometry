@@ -47,7 +47,7 @@ public interface BoundarySource3D extends BoundarySource<ConvexSubPlane> {
     }
 
     /** Return a {@link BoundarySource3D} instance containing the given boundaries. The given
-     * collection is used directly as the source of the subplanes; no copy is made.
+     * collection is used directly as the source of the boundaries; no copy is made.
      * @param boundaries boundaries to include in the boundary source
      * @return a boundary source containing the given boundaries
      */

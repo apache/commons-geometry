@@ -69,7 +69,7 @@ public class BoundarySource2DTest {
         BoundarySource2D src = BoundarySource2D.from();
 
         // assert
-        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
@@ -82,7 +82,7 @@ public class BoundarySource2DTest {
         BoundarySource2D src = BoundarySource2D.from(a, b);
 
         // assert
-        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));
@@ -92,13 +92,13 @@ public class BoundarySource2DTest {
     @Test
     public void testFrom_list_empty() {
         // arrange
-        List<Segment> input = new ArrayList<>();
+        List<ConvexSubLine> input = new ArrayList<>();
 
         // act
         BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
@@ -108,14 +108,14 @@ public class BoundarySource2DTest {
         Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
         Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        List<Segment> input = new ArrayList<>();
+        List<ConvexSubLine> input = new ArrayList<>();
         input.add(a);
         input.add(b);
 
         BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<Segment> segments = src.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));

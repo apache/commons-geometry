@@ -147,12 +147,12 @@ public class BoundarySourceLinecaster2DTest {
         LinecastChecker2D.with(linecaster)
             .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(center, Vector2D.Unit.PLUS_X, TEST_PRECISION)
-                    .segmentFrom(center));
+                    .rayFrom(center));
 
         LinecastChecker2D.with(linecaster)
             .expect(Vector2D.of(1, 0.5), Vector2D.Unit.PLUS_X)
             .whenGiven(Line.fromPointAndDirection(center, Vector2D.Unit.MINUS_X, TEST_PRECISION)
-                    .segmentTo(center));
+                    .lineTo(center));
     }
 
     @Test

@@ -45,7 +45,7 @@ public class RegionBSPTree2DTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Comparator<Segment> SEGMENT_COMPARATOR =
+    private static final Comparator<ConvexSubLine> SEGMENT_COMPARATOR =
         (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getStartPoint(), b.getStartPoint());
 
     private static final Line X_AXIS = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
@@ -128,7 +128,7 @@ public class RegionBSPTree2DTest {
                 .toTree();
 
         // act
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         tree.boundaries().forEach(segments::add);
 
         // assert
@@ -142,7 +142,7 @@ public class RegionBSPTree2DTest {
                 .toTree();
 
         // act
-        List<Segment> segments = tree.getBoundaries();
+        List<ConvexSubLine> segments = tree.getBoundaries();
 
         // assert
         Assert.assertEquals(4, segments.size());
@@ -155,7 +155,7 @@ public class RegionBSPTree2DTest {
                 .toTree();
 
         // act
-        List<Segment> segments = tree.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(4, segments.size());
@@ -167,7 +167,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = RegionBSPTree2D.full();
 
         // act
-        List<Segment> segments = tree.boundaryStream().collect(Collectors.toList());
+        List<ConvexSubLine> segments = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -438,9 +438,9 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, minusBoundaryList.size());
 
         Polyline minusBoundary = minusBoundaryList.get(0);
-        Assert.assertEquals(1, minusBoundary.getSegments().size());
+        Assert.assertEquals(1, minusBoundary.getSubLines().size());
         Assert.assertTrue(minusBoundary.isInfinite());
-        Assert.assertSame(splitter, minusBoundary.getStartSegment().getLine());
+        Assert.assertSame(splitter, minusBoundary.getStartSubLine().getLine());
 
         checkClassify(split.getPlus(), RegionLocation.OUTSIDE, Vector2D.of(0, 1));
         checkClassify(split.getPlus(), RegionLocation.INSIDE, Vector2D.of(1, -1));
@@ -449,9 +449,9 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, plusBoundaryList.size());
 
         Polyline plusBoundary = minusBoundaryList.get(0);
-        Assert.assertEquals(1, plusBoundary.getSegments().size());
+        Assert.assertEquals(1, plusBoundary.getSubLines().size());
         Assert.assertTrue(plusBoundary.isInfinite());
-        Assert.assertSame(splitter, plusBoundary.getStartSegment().getLine());
+        Assert.assertSame(splitter, plusBoundary.getStartSubLine().getLine());
     }
 
     @Test
@@ -583,10 +583,10 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = tree.getBoundaries();
+        List<ConvexSubLine> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
-        Segment segment = segments.get(0);
+        ConvexSubLine segment = segments.get(0);
         Assert.assertSame(X_AXIS, segment.getLine());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -595,8 +595,8 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        assertSegmentsEqual(segment, path.getStartSegment());
+        Assert.assertEquals(1, path.getSubLines().size());
+        assertSegmentsEqual(segment, path.getStartSubLine());
     }
 
     @Test
@@ -613,10 +613,10 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = tree.getBoundaries();
+        List<ConvexSubLine> segments = tree.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
-        Segment segment = segments.get(0);
+        ConvexSubLine segment = segments.get(0);
         Assert.assertEquals(X_AXIS.reverse(), segment.getLine());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -625,8 +625,8 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        assertSegmentsEqual(segment, path.getSegments().get(0));
+        Assert.assertEquals(1, path.getSubLines().size());
+        assertSegmentsEqual(segment, path.getSubLines().get(0));
     }
 
     @Test
@@ -642,17 +642,17 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
-        Segment firstSegment = segments.get(0);
+        ConvexSubLine firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
         Assert.assertNull(firstSegment.getEndPoint());
         Assert.assertSame(Y_AXIS, firstSegment.getLine());
 
-        Segment secondSegment = segments.get(1);
+        ConvexSubLine secondSegment = segments.get(1);
         Assert.assertNull(secondSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertSame(X_AXIS, secondSegment.getLine());
@@ -661,9 +661,9 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(2, path.getSegments().size());
-        assertSegmentsEqual(secondSegment, path.getSegments().get(0));
-        assertSegmentsEqual(firstSegment, path.getSegments().get(1));
+        Assert.assertEquals(2, path.getSubLines().size());
+        assertSegmentsEqual(secondSegment, path.getSubLines().get(0));
+        assertSegmentsEqual(firstSegment, path.getSubLines().get(1));
     }
 
     @Test
@@ -693,7 +693,7 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
+        Assert.assertEquals(4, path.getSubLines().size());
 
         List<Vector2D> vertices = path.getVertexSequence();
         Assert.assertEquals(5, vertices.size());
@@ -719,17 +719,17 @@ public class RegionBSPTree2DTest {
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Assert.assertEquals(2, segments.size());
 
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
-        Segment firstSegment = segments.get(0);
+        ConvexSubLine firstSegment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, firstSegment.getStartPoint(), TEST_EPS);
         Assert.assertNull(firstSegment.getEndPoint());
         Assert.assertEquals(X_AXIS.reverse(), firstSegment.getLine());
 
-        Segment secondSegment = segments.get(1);
+        ConvexSubLine secondSegment = segments.get(1);
         Assert.assertNull(secondSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, secondSegment.getEndPoint(), TEST_EPS);
         Assert.assertEquals(Y_AXIS.reverse(), secondSegment.getLine());
@@ -738,9 +738,9 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(2, path.getSegments().size());
-        assertSegmentsEqual(secondSegment, path.getSegments().get(0));
-        assertSegmentsEqual(firstSegment, path.getSegments().get(1));
+        Assert.assertEquals(2, path.getSubLines().size());
+        assertSegmentsEqual(secondSegment, path.getSubLines().get(0));
+        assertSegmentsEqual(firstSegment, path.getSubLines().get(1));
     }
 
     @Test
@@ -757,7 +757,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -788,7 +788,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -819,7 +819,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(8, segments.size());
@@ -860,7 +860,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
-        List<Segment> segments = new ArrayList<>(tree.getBoundaries());
+        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_COMPARATOR);
 
         Assert.assertEquals(8, segments.size());
@@ -889,7 +889,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
                     Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
-                        .segmentFrom(Vector2D.ZERO)
+                        .rayFrom(Vector2D.ZERO)
                 ));
 
         // assert
@@ -909,7 +909,7 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = RegionBSPTree2D.from(Arrays.asList(
                     Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).span(),
                     Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION)
-                        .segmentFrom(Vector2D.ZERO)
+                        .rayFrom(Vector2D.ZERO)
                 ), true);
 
         // assert
@@ -1132,11 +1132,11 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
-        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-4, -0.5), Vector2D.of(-2, -0.5));
-        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-2, -0.5), Vector2D.of(-2, 0.5));
-        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-2, 0.5), Vector2D.of(-4, 0.5));
-        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-4, 0.5), Vector2D.of(-4, -0.5));
+        Assert.assertEquals(4, path.getSubLines().size());
+        checkFiniteSegment(path.getSubLines().get(0), Vector2D.of(-4, -0.5), Vector2D.of(-2, -0.5));
+        checkFiniteSegment(path.getSubLines().get(1), Vector2D.of(-2, -0.5), Vector2D.of(-2, 0.5));
+        checkFiniteSegment(path.getSubLines().get(2), Vector2D.of(-2, 0.5), Vector2D.of(-4, 0.5));
+        checkFiniteSegment(path.getSubLines().get(3), Vector2D.of(-4, 0.5), Vector2D.of(-4, -0.5));
     }
 
     @Test
@@ -1157,8 +1157,8 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSegments().size());
-        Segment segment = path.getStartSegment();
+        Assert.assertEquals(1, path.getSubLines().size());
+        ConvexSubLine segment = path.getStartSubLine();
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
 
@@ -1198,11 +1198,11 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
-        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, 1), Vector2D.of(-1, 1));
-        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, 1), Vector2D.of(-1, 2));
-        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-1, 2), Vector2D.of(-2, 2));
-        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-2, 2), Vector2D.of(-2, 1));
+        Assert.assertEquals(4, path.getSubLines().size());
+        checkFiniteSegment(path.getSubLines().get(0), Vector2D.of(-2, 1), Vector2D.of(-1, 1));
+        checkFiniteSegment(path.getSubLines().get(1), Vector2D.of(-1, 1), Vector2D.of(-1, 2));
+        checkFiniteSegment(path.getSubLines().get(2), Vector2D.of(-1, 2), Vector2D.of(-2, 2));
+        checkFiniteSegment(path.getSubLines().get(3), Vector2D.of(-2, 2), Vector2D.of(-2, 1));
     }
 
     @Test
@@ -1221,11 +1221,11 @@ public class RegionBSPTree2DTest {
         Assert.assertEquals(1, paths.size());
 
         Polyline path = paths.get(0);
-        Assert.assertEquals(4, path.getSegments().size());
-        checkFiniteSegment(path.getSegments().get(0), Vector2D.of(-2, -2), Vector2D.of(-1, -2));
-        checkFiniteSegment(path.getSegments().get(1), Vector2D.of(-1, -2), Vector2D.of(-1, -1));
-        checkFiniteSegment(path.getSegments().get(2), Vector2D.of(-1, -1), Vector2D.of(-2, -1));
-        checkFiniteSegment(path.getSegments().get(3), Vector2D.of(-2, -1), Vector2D.of(-2, -2));
+        Assert.assertEquals(4, path.getSubLines().size());
+        checkFiniteSegment(path.getSubLines().get(0), Vector2D.of(-2, -2), Vector2D.of(-1, -2));
+        checkFiniteSegment(path.getSubLines().get(1), Vector2D.of(-1, -2), Vector2D.of(-1, -1));
+        checkFiniteSegment(path.getSubLines().get(2), Vector2D.of(-1, -1), Vector2D.of(-2, -1));
+        checkFiniteSegment(path.getSubLines().get(3), Vector2D.of(-2, -1), Vector2D.of(-2, -2));
     }
 
     @Test
@@ -1259,7 +1259,7 @@ public class RegionBSPTree2DTest {
                 Vector2D.of(1, 2), Vector2D.of(1, 1));
     }
 
-    private static void assertSegmentsEqual(Segment expected, Segment actual) {
+    private static void assertSegmentsEqual(ConvexSubLine expected, ConvexSubLine actual) {
         Assert.assertEquals(expected.getLine(), actual.getLine());
 
         Vector2D expectedStart = expected.getStartPoint();
@@ -1278,7 +1278,7 @@ public class RegionBSPTree2DTest {
         }
     }
 
-    private static void checkFiniteSegment(Segment segment, Vector2D start, Vector2D end) {
+    private static void checkFiniteSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }

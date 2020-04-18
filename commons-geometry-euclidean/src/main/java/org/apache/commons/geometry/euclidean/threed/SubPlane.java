@@ -16,183 +16,129 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiFunction;
 
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** Class representing an arbitrary region of a plane. This class can represent
- * both convex and non-convex regions of its underlying plane.
- *
- * <p>This class is mutable and <em>not</em> thread safe.</p>
+/** Class representing a subplane in 3D Euclidean space. A subplane is defined in this library
+ * as a subset of the points lying in a plane. For example, triangles and other polygons in
+ * 3D are subplanes. Subplanes may be finite or infinite.
  */
-public final class SubPlane extends AbstractSubPlane<RegionBSPTree2D> {
-    /** The 2D region representing the area on the plane. */
-    private final RegionBSPTree2D region;
+public abstract class SubPlane
+    extends AbstractEmbeddingSubHyperplane<Vector3D, Vector2D, Plane> {
+    /** The plane defining this instance. */
+    private final Plane plane;
 
-    /** Construct a new, empty subplane for the given plane.
-     * @param plane plane defining the subplane
+    /** Construct a new instance based on the given plane.
+     * @param plane the plane defining the subplane
      */
-    public SubPlane(final Plane plane) {
-        this(plane, false);
+    SubPlane(final Plane plane) {
+        this.plane = plane;
     }
 
-    /** Construct a new subplane for the given plane. If {@code full}
-     * is true, then the subplane will cover the entire plane; otherwise,
-     * it will be empty.
-     * @param plane plane defining the subplane
-     * @param full if true, the subplane will cover the entire space;
-     *      otherwise it will be empty
+    /** Get the plane that this subplane lies on. This method is an alias
+     * for {@link #getHyperplane()}.
+     * @return the plane that this subplane lies on
+     * @see #getHyperplane()
      */
-    public SubPlane(final Plane plane, boolean full) {
-        this(plane, new RegionBSPTree2D(full));
-    }
-
-    /** Construct a new instance from its defining plane and subspace region.
-     * @param plane plane defining the subplane
-     * @param region subspace region for the subplane
-     */
-    public SubPlane(final Plane plane, final RegionBSPTree2D region) {
-        super(plane);
-
-        this.region = region;
+    public Plane getPlane() {
+        return getHyperplane();
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<ConvexSubPlane> toConvex() {
-        final List<ConvexArea> areas = region.toConvex();
-
-        final Plane plane = getPlane();
-        final List<ConvexSubPlane> facets = new ArrayList<>(areas.size());
-
-        for (final ConvexArea area : areas) {
-            facets.add(ConvexSubPlane.fromConvexArea(plane, area));
-        }
-
-        return facets;
-    }
-
-    /** {@inheritDoc}
-     *
-     * <p>In all cases, the current instance is not modified. However, In order to avoid
-     * unnecessary copying, this method will use the current instance as the split value when
-     * the instance lies entirely on the plus or minus side of the splitter. For example, if
-     * this instance lies entirely on the minus side of the splitter, the subplane
-     * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
-     * will return the current instance if it lies entirely on the plus side. Callers need to make
-     * special note of this, since this class is mutable.</p>
-     */
-    @Override
-    public Split<SubPlane> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, (p, r) -> new SubPlane(p, (RegionBSPTree2D) r));
+    public Plane getHyperplane() {
+        return plane;
     }
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTree2D getSubspaceRegion() {
-        return region;
+    public RegionBSPTreeSubPlane.Builder builder() {
+        return new RegionBSPTreeSubPlane.Builder(plane);
+    }
+
+    /** Return the object used to perform floating point comparisons, which is the
+     * same object used by the underlying {@link Plane}).
+     * @return precision object used to perform floating point comparisons.
+     */
+    public DoublePrecisionContext getPrecision() {
+        return plane.getPrecision();
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubPlane transform(final Transform<Vector3D> transform) {
-        final Plane.SubspaceTransform subTransform = getPlane().subspaceTransform(transform);
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName())
+            .append("[plane= ")
+            .append(getPlane())
+            .append(", subspaceRegion= ")
+            .append(getSubspaceRegion())
+            .append(']');
 
-        final RegionBSPTree2D tRegion = RegionBSPTree2D.empty();
-        tRegion.copy(region);
-        tRegion.transform(subTransform.getTransform());
 
-        return new SubPlane(subTransform.getPlane(), tRegion);
+        return sb.toString();
     }
 
-    /** Add a convex subplane to this instance.
-     * @param subplane convex subplane to add
-     * @throws IllegalArgumentException if the given subplane is not from
-     *      a plane equivalent to this instance
+    /** Generic, internal split method. Subclasses should call this from their
+     * {@link #split(Hyperplane)} methods.
+     * @param splitter splitting hyperplane
+     * @param thisInstance a reference to the current instance; this is passed as
+     *      an argument in order to allow it to be a generic type
+     * @param factory function used to create new subhyperplane instances
+     * @param <T> Subplane implementation type
+     * @return the result of the split operation
      */
-    public void add(final ConvexSubPlane subplane) {
-        validatePlane(subplane.getPlane());
+    protected <T extends SubPlane> Split<T> splitInternal(final Hyperplane<Vector3D> splitter,
+                    final T thisInstance, final BiFunction<Plane, HyperplaneBoundedRegion<Vector2D>, T> factory) {
 
-        region.add(subplane.getSubspaceRegion());
-    }
+        final Plane thisPlane = thisInstance.getPlane();
+        final Plane splitterPlane = (Plane) splitter;
+        final DoublePrecisionContext precision = thisInstance.getPrecision();
 
-    /** Add a subplane to this instance.
-     * @param subplane subplane to add
-     * @throws IllegalArgumentException if the given subplane is not from
-     *      a plane equivalent to this instance
-     */
-    public void add(final SubPlane subplane) {
-        validatePlane(subplane.getPlane());
+        final Line3D intersection = thisPlane.intersection(splitterPlane);
+        if (intersection == null) {
+            // the planes are parallel or coincident; check which side of
+            // the splitter we lie on
+            final double offset = splitterPlane.offset(thisPlane);
+            final int comp = precision.compare(offset, 0.0);
 
-        region.union(subplane.getSubspaceRegion());
-    }
-
-    /** Validate that the given plane is equivalent to the plane
-     * defining this subplane.
-     * @param inputPlane plane to validate
-     * @throws IllegalArgumentException if the given plane is not equivalent
-     *      to the plane for this instance
-     */
-    private void validatePlane(final Plane inputPlane) {
-        final Plane plane = getPlane();
-
-        if (!plane.eq(inputPlane, plane.getPrecision())) {
-            throw new IllegalArgumentException("Argument is not on the same " +
-                    "plane. Expected " + plane + " but was " +
-                    inputPlane);
-        }
-    }
-
-    /** {@link Builder} implementation for sublines.
-     */
-    public static class SubPlaneBuilder implements SubHyperplane.Builder<Vector3D> {
-
-        /** Subplane instance created by this builder. */
-        private final SubPlane subplane;
-
-        /** Construct a new instance for building subplane region for the given plane.
-         * @param plane the underlying plane for the subplane region
-         */
-        public SubPlaneBuilder(final Plane plane) {
-            this.subplane = new SubPlane(plane);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final SubHyperplane<Vector3D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final ConvexSubHyperplane<Vector3D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SubPlane build() {
-            return subplane;
-        }
-
-        /** Internal method for adding subhyperplanes to this builder.
-         * @param sub the subhyperplane to add; either convex or non-convex
-         */
-        private void addInternal(final SubHyperplane<Vector3D> sub) {
-            if (sub instanceof ConvexSubPlane) {
-                subplane.add((ConvexSubPlane) sub);
-            } else if (sub instanceof SubPlane) {
-                subplane.add((SubPlane) sub);
+            if (comp < 0) {
+                return new Split<>(thisInstance, null);
+            } else if (comp > 0) {
+                return new Split<>(null, thisInstance);
             } else {
-                throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
+                return new Split<>(null, null);
             }
+        } else {
+            // the lines intersect; split the subregion
+            final Vector3D intersectionOrigin = intersection.getOrigin();
+            final Vector2D subspaceP1 = thisPlane.toSubspace(intersectionOrigin);
+            final Vector2D subspaceP2 = thisPlane.toSubspace(intersectionOrigin.add(intersection.getDirection()));
+
+            final Line subspaceSplitter = Line.fromPoints(subspaceP1, subspaceP2, getPrecision());
+
+            final Split<? extends HyperplaneBoundedRegion<Vector2D>> split =
+                    thisInstance.getSubspaceRegion().split(subspaceSplitter);
+            final SplitLocation subspaceSplitLoc = split.getLocation();
+
+            if (SplitLocation.MINUS == subspaceSplitLoc) {
+                return new Split<>(thisInstance, null);
+            } else if (SplitLocation.PLUS == subspaceSplitLoc) {
+                return new Split<>(null, thisInstance);
+            }
+
+            final T minus = (split.getMinus() != null) ? factory.apply(getPlane(), split.getMinus()) : null;
+            final T plus = (split.getPlus() != null) ? factory.apply(getPlane(), split.getPlus()) : null;
+
+            return new Split<>(minus, plus);
         }
     }
 }

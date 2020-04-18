@@ -21,7 +21,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -436,25 +435,11 @@ public class LineTest {
         Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Segment result = line.span();
+        Line.Span result = line.span();
 
         // assert
         Assert.assertSame(line, result.getHyperplane());
-        GeometryTestUtils.assertPositiveInfinity(result.getSize());
-    }
-
-    @Test
-    public void testSegment_interval() {
-        // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Interval interval = Interval.of(1, 2, TEST_PRECISION);
-
-        // act
-        Segment segment = line.segment(interval);
-
-        // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertSame(interval, segment.getSubspaceRegion());
+        Assert.assertSame(line, result.getLine());
     }
 
     @Test
@@ -500,88 +485,111 @@ public class LineTest {
     }
 
     @Test
-    public void testSegmentTo_pointOnLine() {
+    public void testLineTo_pointOnLine() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentTo(Vector2D.of(-3, 1));
+        TerminatedLine halfLine = line.lineTo(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentTo_pointProjectedOnLine() {
+    public void testLineTo_pointProjectedOnLine() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentTo(Vector2D.of(-3, 5));
+        TerminatedLine halfLine = line.lineTo(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentFrom_pointOnLine() {
+    public void testLineTo_double() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentFrom(Vector2D.of(-3, 1));
+        TerminatedLine halfLine = line.lineTo(-1);
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(2, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentFrom_pointProjectedOnLine() {
+    public void testRayFrom_pointOnLine() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentFrom(Vector2D.of(-3, 5));
+        Ray ray = line.rayFrom(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
 
-        Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSubline() {
+    public void testRayFrom_pointProjectedOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        SubLine subline = line.subline();
+        Ray ray = line.rayFrom(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, subline.getLine());
-        Assert.assertTrue(subline.isEmpty());
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
+
+        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
+    }
+
+    @Test
+    public void testRayFrom_double() {
+        // arrange
+        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+
+        // act
+        Ray ray = line.rayFrom(-1);
+
+        // assert
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
+
+        Assert.assertFalse(ray.contains(Vector2D.of(2, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test

@@ -29,7 +29,7 @@ import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Linecastable3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
-import org.apache.commons.geometry.euclidean.threed.Segment3D;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubLine3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -137,28 +137,28 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint3D> linecast(final Segment3D segment) {
-        return getLinecastStream(segment)
+    public List<LinecastPoint3D> linecast(final ConvexSubLine3D subline) {
+        return getLinecastStream(subline)
                 .collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint3D linecastFirst(final Segment3D segment) {
-        return getLinecastStream(segment)
+    public LinecastPoint3D linecastFirst(final ConvexSubLine3D subline) {
+        return getLinecastStream(subline)
                 .findFirst()
                 .orElse(null);
     }
 
     /** Get a stream containing the linecast intersection points of the given
-     * segment with this instance.
-     * @param segment segment to intersect against this instance
+     * subline with this instance.
+     * @param subline subline to intersect against this instance
      * @return a stream containing linecast intersection points
      */
-    private Stream<LinecastPoint3D> getLinecastStream(final Segment3D segment) {
-        return intersections(segment.getLine()).stream()
-            .filter(segment::contains)
-            .map(pt -> new LinecastPoint3D(pt, getCenter().directionTo(pt), segment.getLine()));
+    private Stream<LinecastPoint3D> getLinecastStream(final ConvexSubLine3D subline) {
+        return intersections(subline.getLine()).stream()
+            .filter(subline::contains)
+            .map(pt -> new LinecastPoint3D(pt, getCenter().directionTo(pt), subline.getLine()));
     }
 
     /** Construct a sphere from a center point and radius.

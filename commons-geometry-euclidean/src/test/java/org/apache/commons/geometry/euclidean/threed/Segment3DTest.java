@@ -17,14 +17,11 @@
 package org.apache.commons.geometry.euclidean.threed;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
-import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,349 +35,301 @@ public class Segment3DTest {
     @Test
     public void testFromPoints() {
         // arrange
-        Vector3D p0 = Vector3D.of(1, 3, 2);
-        Vector3D p1 = Vector3D.of(1, 2, 3);
-        Vector3D p2 = Vector3D.of(-3, 4, 5);
-        Vector3D p3 = Vector3D.of(-5, -6, -8);
+        Vector3D p1 = Vector3D.of(1, 1, 2);
+        Vector3D p2 = Vector3D.of(1, 3, 2);
 
-        // act/assert
+        // act
+        Segment3D seg = Segment3D.fromPoints(p1, p2, TEST_PRECISION);
 
-        checkFiniteSegment(Segment3D.fromPoints(p0, p1, TEST_PRECISION), p0, p1);
-        checkFiniteSegment(Segment3D.fromPoints(p1, p0, TEST_PRECISION), p1, p0);
+        // assert
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
 
-        checkFiniteSegment(Segment3D.fromPoints(p0, p2, TEST_PRECISION), p0, p2);
-        checkFiniteSegment(Segment3D.fromPoints(p2, p0, TEST_PRECISION), p2, p0);
+        EuclideanTestUtils.assertCoordinatesEqual(p1, seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p2, seg.getEndPoint(), TEST_EPS);
 
-        checkFiniteSegment(Segment3D.fromPoints(p0, p3, TEST_PRECISION), p0, p3);
-        checkFiniteSegment(Segment3D.fromPoints(p3, p0, TEST_PRECISION), p3, p0);
+        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertEquals(2, seg.getSize(), TEST_EPS);
     }
 
     @Test
     public void testFromPoints_invalidArgs() {
         // arrange
-        Vector3D p0 = Vector3D.of(-1, 2, -3);
+        Vector3D p1 = Vector3D.of(0, 2, 4);
+        Vector3D p2 = Vector3D.of(1e-17, 2, 4);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Segment3D.fromPoints(p0, p0, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+            Segment3D.fromPoints(p1, p1, TEST_PRECISION);
+        }, IllegalArgumentException.class, "Line direction cannot be zero");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment3D.fromPoints(p0, Vector3D.POSITIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Segment3D.fromPoints(p0, Vector3D.NEGATIVE_INFINITY, TEST_PRECISION);
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            Segment3D.fromPoints(p0, Vector3D.NaN, TEST_PRECISION);
-        }, IllegalArgumentException.class);
+            Segment3D.fromPoints(p1, p2, TEST_PRECISION);
+        }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
-    public void testFromPointAndDirection() {
-        // act
-        Segment3D seg = Segment3D.fromPointAndDirection(Vector3D.of(1, 3, -2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-
-        // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, -2), seg.getStartPoint(), TEST_EPS);
-        Assert.assertNull(seg.getEndPoint());
-
-        Line3D line = seg.getLine();
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, -2), line.getOrigin(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Y, line.getDirection(), TEST_EPS);
-    }
-
-    @Test
-    public void testFromInterval_intervalArg_finite() {
+    public void testFromPoints_givenLine() {
         // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.of(-1, 2, intervalPrecision);
+        Vector3D p1 = Vector3D.of(-1, -1, 2);
+        Vector3D p2 = Vector3D.of(3, 3, 3);
 
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment3D segment = Segment3D.fromInterval(line, interval);
+        Segment3D seg = Segment3D.fromPoints(line, p2, p1); // reverse location order
 
         // assert
-        double side = 1.0 / Math.sqrt(3);
-        checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
 
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), seg.getEndPoint(), TEST_EPS);
+
+        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertEquals(4, seg.getSize(), TEST_EPS);
     }
 
     @Test
-    public void testFromInterval_intervalArg_full() {
+    public void testFromPoints_givenLine_singlePoint() {
         // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
+        Vector3D p1 = Vector3D.of(-1, 2, 0);
+
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment3D segment = Segment3D.fromInterval(line, Interval.full());
+        Segment3D seg = Segment3D.fromPoints(line, p1, p1);
 
         // assert
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertFalse(segment.isFinite());
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
 
-        GeometryTestUtils.assertNegativeInfinity(segment.getSubspaceStart());
-        GeometryTestUtils.assertPositiveInfinity(segment.getSubspaceEnd());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getEndPoint(), TEST_EPS);
 
-        Assert.assertNull(segment.getStartPoint());
-        Assert.assertNull(segment.getEndPoint());
+        Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
-        Assert.assertSame(Interval.full(), segment.getInterval());
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
+        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
     }
 
     @Test
-    public void testFromInterval_intervalArg_positiveHalfSpace() {
+    public void testFromPoints_givenLine_invalidArgs() {
         // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.min(-1, intervalPrecision);
+        Vector3D p0 = Vector3D.of(1, 0, 0);
+        Vector3D p1 = Vector3D.of(2, 0, 0);
 
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, interval);
-
-        // assert
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertFalse(segment.isFinite());
-
-        Assert.assertEquals(-1.0, segment.getSubspaceStart(), TEST_EPS);
-        GeometryTestUtils.assertPositiveInfinity(segment.getSubspaceEnd());
-
-        double side = 1.0 / Math.sqrt(3);
-
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-side, -side, -side), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
-
-        Assert.assertSame(interval, segment.getInterval());
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_intervalArg_negativeHalfSpace() {
-        // arrange
-        DoublePrecisionContext intervalPrecision = new EpsilonDoublePrecisionContext(1e-2);
-        Interval interval = Interval.max(2, intervalPrecision);
-
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, interval);
-
-        // assert
-        GeometryTestUtils.assertNegativeInfinity(segment.getSubspaceStart());
-        Assert.assertEquals(2, segment.getSubspaceEnd(), TEST_EPS);
-
-        double side = 1.0 / Math.sqrt(3);
-
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * side, 2 * side, 2 * side), segment.getEndPoint(), TEST_EPS);
-
-        Assert.assertSame(interval, segment.getInterval());
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_doubleArgs_finite() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, -1, 2);
-
-        // assert
-        double side = 1.0 / Math.sqrt(3);
-        checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
-
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_doubleArgs_full() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-
-        // assert
-        GeometryTestUtils.assertNegativeInfinity(segment.getSubspaceStart());
-        GeometryTestUtils.assertPositiveInfinity(segment.getSubspaceEnd());
-
-        Assert.assertNull(segment.getStartPoint());
-        Assert.assertNull(segment.getEndPoint());
-
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_doubleArgs_positiveHalfSpace() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, -1, Double.POSITIVE_INFINITY);
-
-        // assert
-        Assert.assertEquals(-1.0, segment.getSubspaceStart(), TEST_EPS);
-        GeometryTestUtils.assertPositiveInfinity(segment.getSubspaceEnd());
-
-        double side = 1.0 / Math.sqrt(3);
-
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-side, -side, -side), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
-
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_doubleArgs_negativeHalfSpace() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, 2, Double.NEGATIVE_INFINITY);
-
-        // assert
-        GeometryTestUtils.assertNegativeInfinity(segment.getSubspaceStart());
-        Assert.assertEquals(2, segment.getSubspaceEnd(), TEST_EPS);
-
-        double side = 1.0 / Math.sqrt(3);
-
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * side, 2 * side, 2 * side), segment.getEndPoint(), TEST_EPS);
-
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testFromInterval_vectorArgs() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-
-        // act
-        Segment3D segment = Segment3D.fromInterval(line, Vector1D.of(-1), Vector1D.of(2));
-
-        // assert
-        double side = 1.0 / Math.sqrt(3);
-        checkFiniteSegment(segment, Vector3D.of(-side, -side, -side), Vector3D.of(2 * side, 2 * side, 2 * side));
-
-        Assert.assertSame(TEST_PRECISION, segment.getPrecision());
-    }
-
-    @Test
-    public void testGetSubspaceRegion() {
-        // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
-        Interval interval = Interval.full();
-
-        Segment3D segment = Segment3D.fromInterval(line, interval);
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        Assert.assertSame(interval, segment.getInterval());
-        Assert.assertSame(interval, segment.getSubspaceRegion());
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromPoints(line, Vector3D.NaN, p1);
+        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromPoints(line, p0, Vector3D.NaN);
+        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromPoints(line, Vector3D.NEGATIVE_INFINITY, p1);
+        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromPoints(line, p0, Vector3D.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
     }
 
     @Test
-    public void testTransform_infinite() {
+    public void testFromLocations() {
         // arrange
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.of(0, 1, -1), TEST_PRECISION);
-        Segment3D segment = Segment3D.fromInterval(line,
-                Interval.min(line.toSubspace(Vector3D.of(1, 0, 0)).getX(), TEST_PRECISION));
-
-        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
-                .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Segment3D transformed = segment.transform(transform);
+        Segment3D seg = Segment3D.fromLocations(line, -1, 2);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -2), transformed.getStartPoint(), TEST_EPS);
-        Assert.assertNull(transformed.getEndPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 1, 0).normalize(), transformed.getLine().getDirection(), TEST_EPS);
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), seg.getEndPoint(), TEST_EPS);
+
+        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
     }
 
     @Test
-    public void testTransform_finite() {
+    public void testFromLocations_reversedLocationOrder() {
         // arrange
-        Segment3D segment = Segment3D.fromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 1, 0), TEST_PRECISION);
-
-        Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
-                .scale(2, 1, 1)
-                .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Segment3D transformed = segment.transform(transform);
+        Segment3D seg = Segment3D.fromLocations(line, 2, -1);
 
         // assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -2), transformed.getStartPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -4), transformed.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -2).normalize(), transformed.getLine().getDirection(), TEST_EPS);
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), seg.getEndPoint(), TEST_EPS);
+
+        Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testFromLocations_singlePoint() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+
+        // act
+        Segment3D seg = Segment3D.fromLocations(line, 1, 1);
+
+        // assert
+        Assert.assertFalse(seg.isInfinite());
+        Assert.assertTrue(seg.isFinite());
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getEndPoint(), TEST_EPS);
+
+        Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
+        Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
+
+        Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testFromLocations_invalidArgs() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromLocations(line, Double.NaN, 2);
+        }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromLocations(line, 1, Double.NaN);
+        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromLocations(line, Double.NEGATIVE_INFINITY, 2);
+        }, IllegalArgumentException.class, "Invalid line segment locations: -Infinity, 2.0");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Segment3D.fromLocations(line, 1, Double.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, Infinity");
+    }
+
+    @Test
+    public void testTransform() {
+        // arrange
+        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+                .toMatrix()
+                .translate(Vector3D.Unit.PLUS_Y);
+
+        Segment3D seg = Segment3D.fromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
+
+        // act
+        Segment3D result = seg.transform(t);
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -1), result.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, -2), result.getEndPoint(), TEST_EPS);
+    }
+
+    @Test
+    public void testTransform_reflection() {
+        // arrange
+        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+                .toMatrix()
+                .translate(Vector3D.Unit.PLUS_Y)
+                .scale(1, 1, -2);
+
+        Segment3D seg = Segment3D.fromPoints(Vector3D.of(1, 0, 0), Vector3D.of(2, 0, 0), TEST_PRECISION);
+
+        // act
+        Segment3D result = seg.transform(t);
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 2), result.getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 4), result.getEndPoint(), TEST_EPS);
     }
 
     @Test
     public void testContains() {
         // arrange
-        Vector3D p1 = Vector3D.of(1, 0, 0);
-        Vector3D p2 = Vector3D.of(3, 0, 2);
-        Segment3D segment = Segment3D.fromPoints(p1, p2, TEST_PRECISION);
+        Vector3D p0 = Vector3D.of(1, 1, 1);
+        Vector3D p1 = Vector3D.of(3, 1, 1);
+
+        Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
+
+        Segment3D seg = Segment3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(3, 1, 1), TEST_PRECISION);
 
         // act/assert
-        Assert.assertTrue(segment.contains(p1));
-        Assert.assertTrue(segment.contains(p2));
-        Assert.assertTrue(segment.contains(p1.lerp(p2, 0.5)));
+        Assert.assertFalse(seg.contains(Vector3D.of(2, 2, 2)));
+        Assert.assertFalse(seg.contains(Vector3D.of(0.9, 1, 1)));
+        Assert.assertFalse(seg.contains(Vector3D.of(3.1, 1, 1)));
 
-        Assert.assertFalse(segment.contains(p1.lerp(p2, -1)));
-        Assert.assertFalse(segment.contains(p1.lerp(p2, 2)));
+        Assert.assertTrue(seg.contains(p0));
+        Assert.assertTrue(seg.contains(p1));
 
-        Assert.assertFalse(segment.contains(Vector3D.ZERO));
+        Assert.assertTrue(seg.contains(p0.subtract(delta)));
+        Assert.assertTrue(seg.contains(p1.add(delta)));
+
+        Assert.assertTrue(seg.contains(p0.lerp(p1, 0.5)));
+    }
+
+    @Test
+    public void testGetInterval() {
+        // arrange
+        Segment3D seg = Segment3D.fromPoints(Vector3D.of(2, -1, 3), Vector3D.of(2, 2, 3), TEST_PRECISION);
+
+        // act
+        Interval interval = seg.getInterval();
+
+        // assert
+        Assert.assertEquals(-1, interval.getMin(), TEST_EPS);
+        Assert.assertEquals(2, interval.getMax(), TEST_EPS);
+
+        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
+    }
+
+    @Test
+    public void testGetInterval_singlePoint() {
+        // arrange
+        Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Segment3D seg = Segment3D.fromLocations(line, 1, 1);
+
+        // act
+        Interval interval = seg.getInterval();
+
+        // assert
+        Assert.assertEquals(1, interval.getMin(), TEST_EPS);
+        Assert.assertEquals(1, interval.getMax(), TEST_EPS);
+        Assert.assertEquals(0, interval.getSize(), TEST_EPS);
+
+        Assert.assertSame(seg.getLine().getPrecision(), interval.getMinBoundary().getPrecision());
     }
 
     @Test
     public void testToString() {
         // arrange
-        Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Segment3D seg = Segment3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
 
-        Segment3D full = Segment3D.fromInterval(line, Interval.full());
-        Segment3D startOnly = Segment3D.fromInterval(line, 0, Double.POSITIVE_INFINITY);
-        Segment3D endOnly = Segment3D.fromInterval(line, Double.NEGATIVE_INFINITY, 0);
-        Segment3D finite = Segment3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        // act
+        String str = seg.toString();
 
-        // act/assert
-        String fullStr = full.toString();
-        Assert.assertTrue(fullStr.contains("lineOrigin=") && fullStr.contains("lineDirection="));
-
-        String startOnlyStr = startOnly.toString();
-        Assert.assertTrue(startOnlyStr.contains("start=") && startOnlyStr.contains("direction="));
-
-        String endOnlyStr = endOnly.toString();
-        Assert.assertTrue(endOnlyStr.contains("direction=") && endOnlyStr.contains("end="));
-
-        String finiteStr = finite.toString();
-        Assert.assertTrue(finiteStr.contains("start=") && finiteStr.contains("end="));
-    }
-
-    private static void checkFiniteSegment(Segment3D segment, Vector3D start, Vector3D end) {
-        checkFiniteSegment(segment, start, end, TEST_PRECISION);
-    }
-
-    private static void checkFiniteSegment(Segment3D segment, Vector3D start, Vector3D end, DoublePrecisionContext precision) {
-        Assert.assertFalse(segment.isInfinite());
-        Assert.assertTrue(segment.isFinite());
-
-        EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
-
-        Line3D line = segment.getLine();
-
-        Assert.assertEquals(line.toSubspace(segment.getStartPoint()).getX(), segment.getSubspaceStart(), TEST_EPS);
-        Assert.assertEquals(line.toSubspace(segment.getEndPoint()).getX(), segment.getSubspaceEnd(), TEST_EPS);
-
-        Assert.assertSame(precision, segment.getPrecision());
-        Assert.assertSame(precision, line.getPrecision());
+        // assert
+        GeometryTestUtils.assertContains("Segment3D[startPoint= (0", str);
+        GeometryTestUtils.assertContains(", endPoint= (1", str);
     }
 }

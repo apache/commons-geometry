@@ -33,6 +33,7 @@ import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
+import org.apache.commons.geometry.euclidean.threed.Ray3D;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -41,6 +42,7 @@ import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
+import org.apache.commons.geometry.euclidean.twod.Ray;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -273,18 +275,19 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create some line segments
-        Segment closedPosX = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
-        Segment closedNegX = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
-        Segment halfOpen = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision)
-                .segmentFrom(Vector2D.of(2, 0));
+        Segment segmentA = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
+        Segment segmentB = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
+
+        // create a ray to intersect against the segments
+        Ray ray = Ray.fromPointAndDirection(Vector2D.of(2, 0), Vector2D.Unit.PLUS_X, precision);
 
         // compute some intersections
-        Vector2D posXIntersection = closedPosX.intersection(halfOpen); // (3, 0)
-        Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no intersection
+        Vector2D aIntersection = segmentA.intersection(ray); // (3, 0)
+        Vector2D bIntersection = segmentB.intersection(ray); // null - no intersection
 
         // ----------------------------
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), posXIntersection, TEST_EPS);
-        Assert.assertNull(negXIntersection);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), aIntersection, TEST_EPS);
+        Assert.assertNull(bIntersection);
     }
 
     @Test
@@ -443,12 +446,17 @@ public class DocumentationExamplesTest {
     public void testLinecast3DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision)
+        // create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)
+        RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), precision)
                 .toTree();
 
-        List<LinecastPoint3D> pts = tree.linecast(
-                Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+        // create a ray starting on one side of the cube and pointing through its center
+        Ray3D ray = Ray3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
 
+        // perform the linecast
+        List<LinecastPoint3D> pts = tree.linecast(ray);
+
+        // check the results
         int intersectionCount = pts.size(); // intersectionCount = 2
         Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
         Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)

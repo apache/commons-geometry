@@ -16,11 +16,11 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -58,10 +58,16 @@ public class Line3DTest {
         Assert.assertSame(TEST_PRECISION, line.getPrecision());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromPointAndDirection_illegalDirectionNorm() {
         // act/assert
-        Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.ZERO, TEST_PRECISION);
+        GeometryTestUtils.assertThrows(() -> {
+            Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.ZERO, TEST_PRECISION);
+        }, IllegalArgumentException.class, "Line direction cannot be zero");
+
+        GeometryTestUtils.assertThrows(() -> {
+            Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1e-12, 1e-12, 1e-12), TEST_PRECISION);
+        }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
@@ -343,25 +349,105 @@ public class Line3DTest {
         Line3D line = Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Segment3D segment = line.span();
+        Line3D.Span span = line.span();
 
         // assert
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.getInterval().isFull());
+        Assert.assertTrue(span.isInfinite());
+        Assert.assertFalse(span.isFinite());
+
+        Assert.assertNull(span.getStartPoint());
+        Assert.assertNull(span.getEndPoint());
+
+        GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());
+        GeometryTestUtils.assertPositiveInfinity(span.getSubspaceEnd());
+
+        GeometryTestUtils.assertPositiveInfinity(span.getSize());
+
+        Assert.assertSame(line, span.getLine());
+        Assert.assertTrue(span.getInterval().isFull());
     }
 
     @Test
-    public void testSegment() {
+    public void testSpan_contains() {
+        // arrange
+        double delta = 1e-12;
+
+        Line3D.Span span = Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+
+        for (double x = -10; x <= 10; x += 0.5) {
+
+            // act/assert
+            Assert.assertFalse(span.contains(Vector3D.of(0, 1, 0)));
+            Assert.assertFalse(span.contains(Vector3D.of(0, 0, 1)));
+
+            Assert.assertTrue(span.contains(Vector3D.of(x, 0, 0)));
+            Assert.assertTrue(span.contains(Vector3D.of(x + delta, delta, delta)));
+        }
+    }
+
+    @Test
+    public void testSpan_transform() {
+        // arrange
+        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+                .toMatrix()
+                .translate(Vector3D.Unit.PLUS_Y);
+
+        Line3D.Span span = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION)
+                .span();
+
+        // act
+        Line3D.Span result = span.transform(t);
+
+        // assert
+        Assert.assertNull(result.getStartPoint());
+        Assert.assertNull(result.getEndPoint());
+
+        Assert.assertTrue(result.contains(Vector3D.of(0, 1, -1)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_Z, result.getLine().getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testSpan_transform_reflection() {
+        // arrange
+        AffineTransformMatrix3D t = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, 0.5 * Math.PI)
+                .toMatrix()
+                .translate(Vector3D.Unit.PLUS_Y)
+                .scale(1, 1, -2);
+
+        Line3D.Span span = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION)
+                .span();
+
+        // act
+        Line3D.Span result = span.transform(t);
+
+        // assert
+        Assert.assertNull(result.getStartPoint());
+        Assert.assertNull(result.getEndPoint());
+
+        Assert.assertTrue(result.contains(Vector3D.of(0, 1, 2)));
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, result.getLine().getDirection(), TEST_EPS);
+    }
+
+    @Test
+    public void testSpan_toString() {
+        // arrange
+        Line3D.Span span = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION)
+                .span();
+
+        // act
+        String str = span.toString();
+
+        // assert
+        GeometryTestUtils.assertContains("Line3D.Span[origin= (0", str);
+        GeometryTestUtils.assertContains(", direction= (1", str);
+    }
+
+    @Test
+    public void testSublineMethods() {
         // arrange
         Line3D line = Line3D.fromPoints(Vector3D.of(0, 3, 0), Vector3D.of(1, 3, 0), TEST_PRECISION);
-        Interval interval = Interval.of(1, 2, TEST_PRECISION);
 
         // act/assert
-        Segment3D intervalArgResult = line.segment(interval);
-        Assert.assertSame(line, intervalArgResult.getLine());
-        Assert.assertSame(interval, intervalArgResult.getInterval());
-
         Segment3D doubleArgResult = line.segment(3, 4);
         Assert.assertSame(line, doubleArgResult.getLine());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(3, 3, 0), doubleArgResult.getStartPoint(), TEST_EPS);
@@ -372,28 +458,25 @@ public class Line3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 3, 0), ptArgResult.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 3, 0), ptArgResult.getEndPoint(), TEST_EPS);
 
-        Segment3D fromResult = line.segmentFrom(Vector3D.of(1, 4, 0));
-        Assert.assertSame(line, fromResult.getLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), fromResult.getStartPoint(), TEST_EPS);
-        Assert.assertNull(fromResult.getEndPoint());
+        Ray3D rayDoubleResult = line.rayFrom(2);
+        Assert.assertSame(line, rayDoubleResult.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 3, 0), rayDoubleResult.getStartPoint(), TEST_EPS);
+        Assert.assertNull(rayDoubleResult.getEndPoint());
 
-        Segment3D toResult = line.segmentTo(Vector3D.of(1, 4, 0));
-        Assert.assertSame(line, toResult.getLine());
-        Assert.assertNull(toResult.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), toResult.getEndPoint(), TEST_EPS);
-    }
+        Ray3D rayPtResult = line.rayFrom(Vector3D.of(1, 4, 0));
+        Assert.assertSame(line, rayPtResult.getLine());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), rayPtResult.getStartPoint(), TEST_EPS);
+        Assert.assertNull(rayPtResult.getEndPoint());
 
-    @Test
-    public void testSubLine() {
-        // arrange
-        Line3D line = Line3D.fromPoints(Vector3D.of(0, 3, 0), Vector3D.of(1, 3, 0), TEST_PRECISION);
+        TerminatedLine3D toDoubleResult = line.lineTo(-1);
+        Assert.assertSame(line, toDoubleResult.getLine());
+        Assert.assertNull(toDoubleResult.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 3, 0), toDoubleResult.getEndPoint(), TEST_EPS);
 
-        // act
-        SubLine3D sub = line.subline();
-
-        // assert
-        Assert.assertSame(line, sub.getLine());
-        Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
+        TerminatedLine3D toPtResult = line.lineTo(Vector3D.of(1, 4, 0));
+        Assert.assertSame(line, toPtResult.getLine());
+        Assert.assertNull(toPtResult.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), toPtResult.getEndPoint(), TEST_EPS);
     }
 
     @Test

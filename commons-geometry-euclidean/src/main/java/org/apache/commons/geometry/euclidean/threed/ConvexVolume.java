@@ -138,14 +138,14 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint3D> linecast(final Segment3D segment) {
-        return new BoundarySourceLinecaster3D(this).linecast(segment);
+    public List<LinecastPoint3D> linecast(final ConvexSubLine3D subline) {
+        return new BoundarySourceLinecaster3D(this).linecast(subline);
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint3D linecastFirst(final Segment3D segment) {
-        return new BoundarySourceLinecaster3D(this).linecastFirst(segment);
+    public LinecastPoint3D linecastFirst(final ConvexSubLine3D subline) {
+        return new BoundarySourceLinecaster3D(this).linecastFirst(subline);
     }
 
     /** {@inheritDoc} */

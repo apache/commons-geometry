@@ -33,7 +33,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
 /** Class representing a convex subhyperplane in 3 dimensional Euclidean space, meaning
  * a 2D convex area embedded in a plane. The subhyperplane may be finite or infinite.
  */
-public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
+public final class ConvexSubPlane extends SubPlane
     implements ConvexSubHyperplane<Vector3D>  {
     /** The embedded 2D area. */
     private final ConvexArea area;
@@ -103,18 +103,18 @@ public final class ConvexSubPlane extends AbstractSubPlane<ConvexArea>
         return (pt != null && contains(pt)) ? pt : null;
     }
 
-    /** Get the unique intersection of this subplane with the given segment. Null
+    /** Get the unique intersection of this subplane with the given subline. Null
      * is returned if the underlying line and plane do not have a unique intersection
      * point (ie, they are parallel or coincident) or the intersection point is unique
-     * but is not contained in both the segment and subplane.
-     * @param segment segment to intersect with
+     * but is not contained in both the subline and subplane.
+     * @param subline subline to intersect with
      * @return the unique intersection point between this subplane and the argument or
      *      null if no such point exists.
      * @see Plane#intersection(Line3D)
      */
-    public Vector3D intersection(final Segment3D segment) {
-        final Vector3D pt = intersection(segment.getLine());
-        return (pt != null && segment.contains(pt)) ? pt : null;
+    public Vector3D intersection(final ConvexSubLine3D subline) {
+        final Vector3D pt = intersection(subline.getLine());
+        return (pt != null && subline.contains(pt)) ? pt : null;
     }
 
     /** Get the vertices for the subplane. The vertices lie at the intersections of the

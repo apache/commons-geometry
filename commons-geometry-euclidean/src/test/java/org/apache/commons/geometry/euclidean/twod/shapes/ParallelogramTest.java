@@ -23,9 +23,9 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
+import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
-import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.junit.Assert;
@@ -131,7 +131,7 @@ public class ParallelogramTest {
         Assert.assertEquals(1, box.getBoundaryPaths().size());
         Polyline path = box.getBoundaryPaths().get(0);
 
-        List<Segment> segments = path.getSegments();
+        List<ConvexSubLine> segments = path.getSubLines();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(1, 2), Vector2D.of(3, 2));
@@ -149,7 +149,7 @@ public class ParallelogramTest {
         Assert.assertEquals(1, box.getBoundaryPaths().size());
         Polyline path = box.getBoundaryPaths().get(0);
 
-        List<Segment> segments = path.getSegments();
+        List<ConvexSubLine> segments = path.getSubLines();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(-1, -2), Vector2D.of(0, -2));
@@ -286,7 +286,7 @@ public class ParallelogramTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 2), tree.getBarycenter(), TEST_EPS);
     }
 
-    private static void assertSegment(Segment segment, Vector2D start, Vector2D end) {
+    private static void assertSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(end, segment.getEndPoint(), TEST_EPS);
     }

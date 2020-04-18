@@ -16,15 +16,17 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
 import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -57,6 +59,10 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  */
 public final class Line extends AbstractHyperplane<Vector2D>
     implements EmbeddingHyperplane<Vector2D, Vector1D> {
+
+    /** Format string for creating line string representations. */
+    private static final String TO_STRING_FORMAT = "{0}[origin= {1}, direction= {2}]";
+
     /** The direction of the line as a normalized vector. */
     private final Vector2D direction;
 
@@ -178,62 +184,81 @@ public final class Line extends AbstractHyperplane<Vector2D>
 
     /** {@inheritDoc} */
     @Override
-    public Segment span() {
-        return segment(Interval.full());
+    public Span span() {
+        return new Span(this);
     }
 
-    /** Create a new line segment from the given interval.
-     * @param interval interval representing the 1D region for the line segment
-     * @return a new line segment on this line
-     */
-    public Segment segment(final Interval interval) {
-        return Segment.fromInterval(this, interval);
-    }
-
-    /** Create a new line segment from the given interval.
+    /** Create a new line segment from the given 1D interval. The returned line
+     * segment consists of all points between the two locations, regardless of the order the
+     * arguments are given.
      * @param a first 1D location for the interval
      * @param b second 1D location for the interval
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either of the locations is NaN or infinite
+     * @see Segment#fromLocations(Line, double, double)
      */
     public Segment segment(final double a, final double b) {
-        return Segment.fromInterval(this, a, b);
+        return Segment.fromLocations(this, a, b);
     }
 
-    /** Create a new line segment between the projections of the two
-     * given points onto this line.
+    /** Create a new line segment from two points. The returned segment represents all points on this line
+     * between the projected locations of {@code a} and {@code b}. The points may be given in any order.
      * @param a first point
      * @param b second point
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
+     * @see Segment#fromPoints(Line, Vector2D, Vector2D)
      */
     public Segment segment(final Vector2D a, final Vector2D b) {
-        return Segment.fromInterval(this, toSubspace(a), toSubspace(b));
+        return Segment.fromPoints(this, a, b);
     }
 
-    /** Create a new line segment that starts at infinity and continues along
-     * the line up to the projection of the given point.
-     * @param pt point defining the end point of the line segment; the end point
+    /** Create a new convex subline that starts at infinity and continues along
+     * the line up to the projection of the given end point.
+     * @param endPoint point defining the end point of the subline; the end point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a new, half-open subline that ends at the given point
+     * @see TerminatedLine#fromPoint(Line, Vector2D)
+     * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
-    public Segment segmentTo(final Vector2D pt) {
-        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    public TerminatedLine lineTo(final Vector2D endPoint) {
+        return TerminatedLine.fromPoint(this, endPoint);
     }
 
-    /** Create a new line segment that starts at the projection of the given point
-     * and continues in the direction of the line to infinity, similar to a ray.
-     * @param pt point defining the start point of the line segment; the start point
+    /** Create a new convex subline that starts at infinity and continues along
+     * the line up to the given 1D location.
+     * @param endLocation the 1D location of the end of the half-line
+     * @return a new, half-open subline that ends at the given 1D location
+     * @see TerminatedLine#fromLocation(Line, double)
+     * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
+     */
+    public TerminatedLine lineTo(final double endLocation) {
+        return TerminatedLine.fromLocation(this, endLocation);
+    }
+
+    /** Create a new ray instance that starts at the projection of the given point
+     * and continues in the direction of the line to infinity.
+     * @param startPoint point defining the start point of the ray; the start point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a ray starting at the projected point and extending along this line
+     *      to infinity
+     * @see Ray#fromPoint(Line, Vector2D)
+     * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
      */
-    public Segment segmentFrom(final Vector2D pt) {
-        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
+    public Ray rayFrom(final Vector2D startPoint) {
+        return Ray.fromPoint(this, startPoint);
     }
 
-    /** Create a new, empty subline based on this line.
-     * @return a new, empty subline based on this line
+    /** Create a new ray instance that starts at the given 1D location and continues in
+     * the direction of the line to infinity.
+     * @param startLocation 1D location defining the start point of the ray
+     * @return a ray starting at the given 1D location and extending along this line
+     *      to infinity
+     * @see Ray#fromLocation(Line, double)
+     * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
      */
-    public SubLine subline() {
-        return new SubLine(this);
+    public Ray rayFrom(final double startLocation) {
+        return Ray.fromLocation(this, startLocation);
     }
 
     /** Get the abscissa of the given point on the line. The abscissa represents
@@ -478,15 +503,10 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName())
-            .append("[origin= ")
-            .append(getOrigin())
-            .append(", direction= ")
-            .append(direction)
-            .append(']');
-
-        return sb.toString();
+        return MessageFormat.format(TO_STRING_FORMAT,
+                getClass().getSimpleName(),
+                getOrigin(),
+                getDirection());
     }
 
     /** Create a line from two points lying on the line. The line points in the direction
@@ -569,6 +589,139 @@ public final class Line extends AbstractHyperplane<Vector2D>
          */
         public AffineTransformMatrix1D getTransform() {
             return transform;
+        }
+    }
+
+    /** Class representing the span of a line in 2D Euclidean space. This is the set of all points
+     * contained by the line.
+     *
+     * <p>Instances of this class are guaranteed to be immutable.</p>
+     */
+    public static final class Span extends ConvexSubLine {
+
+        /** Construct a new instance for the given line.
+         * @param line line to construct the span for
+         */
+        Span(final Line line) {
+            super(line);
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method always returns {@code true}.</p>
+         */
+        @Override
+        public boolean isFull() {
+            return true;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code true}.</p>
+        */
+        @Override
+        public boolean isInfinite() {
+            return true;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code false}.</p>
+        */
+        @Override
+        public boolean isFinite() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+        */
+        @Override
+        public double getSize() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code null}.</p>
+        */
+        @Override
+        public Vector2D getStartPoint() {
+            return null;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@link Double#NEGATIVE_INFINITY}.</p>
+        */
+        @Override
+        public double getSubspaceStart() {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code null}.</p>
+        */
+        @Override
+        public Vector2D getEndPoint() {
+            return null;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+         */
+        @Override
+        public double getSubspaceEnd() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Span transform(final Transform<Vector2D> transform) {
+            return new Span(getLine().transform(transform));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Span reverse() {
+            return new Span(getLine().reverse());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final Line line = getLine();
+
+            return MessageFormat.format(TO_STRING_FORMAT,
+                    Line.class.getSimpleName() + "." + getClass().getSimpleName(),
+                    line.getOrigin(),
+                    line.getDirection());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        RegionLocation classifyAbscissa(double abscissa) {
+            return RegionLocation.INSIDE;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        double closestAbscissa(double abscissa) {
+            return abscissa;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
+            final Line line = getLine();
+
+            final TerminatedLine low = new TerminatedLine(line, intersection);
+            final Ray high = new Ray(line, intersection);
+
+            return createSplitResult(splitter, low, high);
         }
     }
 }

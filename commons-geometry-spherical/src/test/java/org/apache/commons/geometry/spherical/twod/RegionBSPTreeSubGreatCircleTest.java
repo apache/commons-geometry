@@ -32,12 +32,11 @@ import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
-import org.apache.commons.geometry.spherical.twod.SubGreatCircle.SubGreatCircleBuilder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SubGreatCircleTest {
+public class RegionBSPTreeSubGreatCircleTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -50,7 +49,7 @@ public class SubGreatCircleTest {
     @Test
     public void testCtor_default() {
         // act
-        SubGreatCircle sub = new SubGreatCircle(XY_CIRCLE);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(XY_CIRCLE);
 
         // assert
         Assert.assertFalse(sub.isFull());
@@ -70,7 +69,7 @@ public class SubGreatCircleTest {
     @Test
     public void testCtor_boolean_true() {
         // act
-        SubGreatCircle sub = new SubGreatCircle(XY_CIRCLE, true);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(XY_CIRCLE, true);
 
         // assert
         Assert.assertTrue(sub.isFull());
@@ -92,7 +91,7 @@ public class SubGreatCircleTest {
     @Test
     public void testCtor_boolean_false() {
         // act
-        SubGreatCircle sub = new SubGreatCircle(XY_CIRCLE, false);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(XY_CIRCLE, false);
 
         // assert
         Assert.assertFalse(sub.isFull());
@@ -115,7 +114,7 @@ public class SubGreatCircleTest {
         RegionBSPTree1S tree = RegionBSPTree1S.fromInterval(AngularInterval.of(1, 2, TEST_PRECISION));
 
         // act
-        SubGreatCircle sub = new SubGreatCircle(XY_CIRCLE, tree);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(XY_CIRCLE, tree);
 
         // assert
         Assert.assertFalse(sub.isFull());
@@ -146,10 +145,10 @@ public class SubGreatCircleTest {
         Transform2S t = Transform2S.createRotation(Point2S.PLUS_I, PlaneAngleRadians.PI_OVER_TWO)
                 .reflect(Point2S.of(-0.25 * PlaneAngleRadians.PI,  PlaneAngleRadians.PI_OVER_TWO));
 
-        SubGreatCircle sub = new SubGreatCircle(circle, region);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, region);
 
         // act
-        SubGreatCircle result = sub.transform(t);
+        RegionBSPTreeSubGreatCircle result = sub.transform(t);
 
         // assert
         List<GreatArc> arcs = result.toConvex();
@@ -163,17 +162,17 @@ public class SubGreatCircleTest {
     public void testSplit_full() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        SubGreatCircle sub = new SubGreatCircle(circle, true);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, true);
 
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         // act
-        Split<SubGreatCircle> split = sub.split(splitter);
+        Split<RegionBSPTreeSubGreatCircle> split = sub.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        SubGreatCircle minus = split.getMinus();
+        RegionBSPTreeSubGreatCircle minus = split.getMinus();
         Assert.assertSame(sub.getCircle(), minus.getCircle());
 
         List<GreatArc> minusArcs = minus.toConvex();
@@ -183,7 +182,7 @@ public class SubGreatCircleTest {
         checkClassify(minus, RegionLocation.OUTSIDE, Point2S.MINUS_I);
         checkClassify(minus, RegionLocation.INSIDE, Point2S.PLUS_I);
 
-        SubGreatCircle plus = split.getPlus();
+        RegionBSPTreeSubGreatCircle plus = split.getPlus();
         Assert.assertSame(sub.getCircle(), plus.getCircle());
 
         List<GreatArc> plusArcs = plus.toConvex();
@@ -198,20 +197,20 @@ public class SubGreatCircleTest {
     public void testSplit_empty() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        SubGreatCircle sub = new SubGreatCircle(circle, false);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, false);
 
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         // act
-        Split<SubGreatCircle> split = sub.split(splitter);
+        Split<RegionBSPTreeSubGreatCircle> split = sub.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
 
-        SubGreatCircle minus = split.getMinus();
+        RegionBSPTreeSubGreatCircle minus = split.getMinus();
         Assert.assertNull(minus);
 
-        SubGreatCircle plus = split.getPlus();
+        RegionBSPTreeSubGreatCircle plus = split.getPlus();
         Assert.assertNull(plus);
     }
 
@@ -225,17 +224,17 @@ public class SubGreatCircleTest {
         tree.add(AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION));
         tree.add(AngularInterval.of(PlaneAngleRadians.PI + 1, PlaneAngleRadians.PI + 2, TEST_PRECISION));
 
-        SubGreatCircle sub = new SubGreatCircle(circle, tree);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, tree);
 
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, 1), TEST_PRECISION);
 
         // act
-        Split<SubGreatCircle> split = sub.split(splitter);
+        Split<RegionBSPTreeSubGreatCircle> split = sub.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        SubGreatCircle minus = split.getMinus();
+        RegionBSPTreeSubGreatCircle minus = split.getMinus();
         Assert.assertSame(sub.getCircle(), minus.getCircle());
         List<GreatArc> minusArcs = minus.toConvex();
         Assert.assertEquals(2, minusArcs.size());
@@ -243,7 +242,7 @@ public class SubGreatCircleTest {
         checkArc(minusArcs.get(1), Point2S.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO + 1),
                 Point2S.of(0.5 * PlaneAngleRadians.PI, (1.5 * PlaneAngleRadians.PI) - 2));
 
-        SubGreatCircle plus = split.getPlus();
+        RegionBSPTreeSubGreatCircle plus = split.getPlus();
         Assert.assertSame(sub.getCircle(), plus.getCircle());
         List<GreatArc> plusArcs = plus.toConvex();
         Assert.assertEquals(2, plusArcs.size());
@@ -257,20 +256,20 @@ public class SubGreatCircleTest {
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
         RegionBSPTree1S tree = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).toTree();
 
-        SubGreatCircle sub = new SubGreatCircle(circle, tree);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, tree);
 
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.from(-1, 0, -1), TEST_PRECISION);
 
         // act
-        Split<SubGreatCircle> split = sub.split(splitter);
+        Split<RegionBSPTreeSubGreatCircle> split = sub.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
 
-        SubGreatCircle minus = split.getMinus();
+        RegionBSPTreeSubGreatCircle minus = split.getMinus();
         Assert.assertSame(sub, minus);
 
-        SubGreatCircle plus = split.getPlus();
+        RegionBSPTreeSubGreatCircle plus = split.getPlus();
         Assert.assertNull(plus);
     }
 
@@ -280,20 +279,20 @@ public class SubGreatCircleTest {
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
         RegionBSPTree1S tree = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).toTree();
 
-        SubGreatCircle sub = new SubGreatCircle(circle, tree);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, tree);
 
         GreatCircle splitter = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<SubGreatCircle> split = sub.split(splitter);
+        Split<RegionBSPTreeSubGreatCircle> split = sub.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
 
-        SubGreatCircle minus = split.getMinus();
+        RegionBSPTreeSubGreatCircle minus = split.getMinus();
         Assert.assertNull(minus);
 
-        SubGreatCircle plus = split.getPlus();
+        RegionBSPTreeSubGreatCircle plus = split.getPlus();
         Assert.assertSame(sub, plus);
     }
 
@@ -303,7 +302,7 @@ public class SubGreatCircleTest {
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
         RegionBSPTree1S tree = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION).toTree();
 
-        SubGreatCircle sub = new SubGreatCircle(circle, tree);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle, tree);
 
         // act/assert
         Assert.assertEquals(SplitLocation.NEITHER,
@@ -319,7 +318,7 @@ public class SubGreatCircleTest {
         GreatCircle closeCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
                 Point2S.of((1.5 * PlaneAngleRadians.PI) - 1e-11, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         // act
         sub.add(circle.arc(Point2S.of(1.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI), Point2S.MINUS_J));
@@ -339,7 +338,7 @@ public class SubGreatCircleTest {
         GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
                 Point2S.of((1.5 * PlaneAngleRadians.PI) - 1e-2, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         // act/assert
         sub.add(otherCircle.arc(Point2S.PLUS_J, Point2S.of(1.5 * PlaneAngleRadians.PI, 0.75 * PlaneAngleRadians.PI)));
@@ -352,7 +351,7 @@ public class SubGreatCircleTest {
         GreatCircle closeCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
                 Point2S.of((1.5 * PlaneAngleRadians.PI) - 1e-11, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         RegionBSPTree1S regionA = RegionBSPTree1S.empty();
         regionA.add(AngularInterval.of(PlaneAngleRadians.PI, 1.25 * PlaneAngleRadians.PI, TEST_PRECISION));
@@ -362,8 +361,8 @@ public class SubGreatCircleTest {
         regionB.add(AngularInterval.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION));
 
         // act
-        sub.add(new SubGreatCircle(circle, regionA));
-        sub.add(new SubGreatCircle(closeCircle, regionB));
+        sub.add(new RegionBSPTreeSubGreatCircle(circle, regionA));
+        sub.add(new RegionBSPTreeSubGreatCircle(closeCircle, regionB));
 
         // assert
         List<GreatArc> arcs = sub.toConvex();
@@ -380,10 +379,10 @@ public class SubGreatCircleTest {
         GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.MINUS_K,
                 Point2S.of((1.5 * PlaneAngleRadians.PI) - 1e-5, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         // act/assert
-        sub.add(new SubGreatCircle(otherCircle, RegionBSPTree1S.full()));
+        sub.add(new RegionBSPTreeSubGreatCircle(otherCircle, RegionBSPTree1S.full()));
     }
 
     @Test
@@ -391,19 +390,19 @@ public class SubGreatCircleTest {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         RegionBSPTree1S region = RegionBSPTree1S.empty();
         region.add(AngularInterval.of(PlaneAngleRadians.PI, 1.25 * PlaneAngleRadians.PI, TEST_PRECISION));
         region.add(AngularInterval.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         // act
-        SubGreatCircleBuilder builder = sub.builder();
+        RegionBSPTreeSubGreatCircle.Builder builder = sub.builder();
 
-        builder.add(new SubGreatCircle(circle, region));
+        builder.add(new RegionBSPTreeSubGreatCircle(circle, region));
         builder.add(circle.arc(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
 
-        SubGreatCircle result = builder.build();
+        RegionBSPTreeSubGreatCircle result = builder.build();
 
         // assert
         List<GreatArc> arcs = result.toConvex();
@@ -419,9 +418,9 @@ public class SubGreatCircleTest {
         GreatCircle circle = GreatCircle.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
         GreatCircle otherCircle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
 
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
-        SubGreatCircleBuilder builder = sub.builder();
+        RegionBSPTreeSubGreatCircle.Builder builder = sub.builder();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -429,7 +428,7 @@ public class SubGreatCircleTest {
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(new SubGreatCircle(otherCircle));
+            builder.add(new RegionBSPTreeSubGreatCircle(otherCircle));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
@@ -441,7 +440,7 @@ public class SubGreatCircleTest {
     public void testToString() {
         // arrange
         GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        SubGreatCircle sub = new SubGreatCircle(circle);
+        RegionBSPTreeSubGreatCircle sub = new RegionBSPTreeSubGreatCircle(circle);
 
         // act
         String str = sub.toString();

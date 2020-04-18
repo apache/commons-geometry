@@ -523,52 +523,52 @@ public class RegionBSPTree3DTest {
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-1.1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-1.1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(1.1, 0, 0))));
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-0.9, 0, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(xPlus.rayFrom(Vector3D.of(1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(1.1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1.1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(-1.1, 0, 0))));
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(0.9, 0, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(xMinus.rayFrom(Vector3D.of(-1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -1.1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1.1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, 1.1, 0))));
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -0.9, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, 1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 1.1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1.1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, -1.1, 0))));
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 0.9, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, -1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -1.1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1.1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, 1.1))));
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -0.9))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, 1.1))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 1.1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1.1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, -1.1))));
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 0.9))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, -1.1))));
     }
 
     // issue GEOMETRY-38
@@ -585,19 +585,19 @@ public class RegionBSPTree3DTest {
         Line3D downDiagonal = upDiagonal.reverse();
 
         // act/assert
-        LinecastPoint3D upFromOutsideResult = tree.linecastFirst(upDiagonal.segmentFrom(Vector3D.of(-1, -1, -1)));
+        LinecastPoint3D upFromOutsideResult = tree.linecastFirst(upDiagonal.rayFrom(Vector3D.of(-1, -1, -1)));
         Assert.assertNotNull(upFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, upFromOutsideResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D upFromCenterResult = tree.linecastFirst(upDiagonal.segmentFrom(center));
+        LinecastPoint3D upFromCenterResult = tree.linecastFirst(upDiagonal.rayFrom(center));
         Assert.assertNotNull(upFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, upFromCenterResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D downFromOutsideResult = tree.linecastFirst(downDiagonal.segmentFrom(Vector3D.of(2, 2, 2)));
+        LinecastPoint3D downFromOutsideResult = tree.linecastFirst(downDiagonal.rayFrom(Vector3D.of(2, 2, 2)));
         Assert.assertNotNull(downFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, downFromOutsideResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D downFromCenterResult = tree.linecastFirst(downDiagonal.segmentFrom(center));
+        LinecastPoint3D downFromCenterResult = tree.linecastFirst(downDiagonal.rayFrom(center));
         Assert.assertNotNull(downFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, downFromCenterResult.getPoint(), TEST_EPS);
     }
@@ -619,11 +619,11 @@ public class RegionBSPTree3DTest {
         Vector3D expectedIntersection2 = Vector3D.of(0.5, 1.0, 0.0);
 
         // act/assert
-        LinecastPoint3D bottom = tree.linecastFirst(bottomLine.segmentFrom(firstPointOnLine));
+        LinecastPoint3D bottom = tree.linecastFirst(bottomLine.rayFrom(firstPointOnLine));
         Assert.assertNotNull(bottom);
         EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection1, bottom.getPoint(), TEST_EPS);
 
-        bottom = tree.linecastFirst(bottomLine.segmentFrom(Vector3D.of(0.5, 0.1, 0.0)));
+        bottom = tree.linecastFirst(bottomLine.rayFrom(Vector3D.of(0.5, 0.1, 0.0)));
         Assert.assertNotNull(bottom);
         Vector3D intersection = bottom.getPoint();
         Assert.assertNotNull(intersection);
@@ -643,10 +643,10 @@ public class RegionBSPTree3DTest {
         Line3D outOfBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         // act/assert
-        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.segmentFrom(pt));
+        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.rayFrom(pt));
         EuclideanTestUtils.assertCoordinatesEqual(pt, intoBoxResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.segmentFrom(pt));
+        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.rayFrom(pt));
         EuclideanTestUtils.assertCoordinatesEqual(pt, outOfBoxResult.getPoint(), TEST_EPS);
     }
 
@@ -662,10 +662,10 @@ public class RegionBSPTree3DTest {
         Line3D outOfBoxLine = intoBoxLine.reverse();
 
         // act/assert
-        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.segmentFrom(lowerCorner));
+        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.rayFrom(lowerCorner));
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, intoBoxResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.segmentFrom(lowerCorner));
+        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.rayFrom(lowerCorner));
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, outOfBoxResult.getPoint(), TEST_EPS);
     }
 

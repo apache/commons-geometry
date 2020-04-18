@@ -16,105 +16,43 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
-
-/** Class representing an arbitrary region of a 3 dimensional line. This class can represent
- * both convex and non-convex regions of its underlying line.
- *
- * <p>This class is mutable and <em>not</em> thread safe.</p>
+/** Class representing a subline in 3D Euclidean space. A subline is defined in this library
+ * as a subset of the points lying on a line. For examples, line segments and rays are sublines.
+ * Sublines may be finite or infinite.
  */
-public final class SubLine3D extends AbstractSubLine3D<RegionBSPTree1D> {
-    /** The 1D region representing the area on the line. */
-    private final RegionBSPTree1D region;
+public abstract class SubLine3D {
+    /** The line containing this instance. */
+    private final Line3D line;
 
-    /** Construct a new, empty subline for the given line.
-     * @param line line defining the subline
+    /** Construct a new instance based on the given line.
+     * @param line line containing the instance
      */
-    public SubLine3D(final Line3D line) {
-        this(line, false);
+    SubLine3D(final Line3D line) {
+        this.line = line;
     }
 
-    /** Construct a new subline for the given line. If {@code full}
-     * is true, then the subline will cover the entire line; otherwise,
-     * it will be empty.
-     * @param line line defining the subline
-     * @param full if true, the subline will cover the entire space;
-     *      otherwise it will be empty
+    /** Get the line containing this subline.
+     * @return the line containing this subline
      */
-    public SubLine3D(final Line3D line, boolean full) {
-        this(line, new RegionBSPTree1D(full));
+    public Line3D getLine() {
+        return line;
     }
 
-    /** Construct a new instance from its defining line and subspace region.
-     * @param line line defining the subline
-     * @param region subspace region for the subline
+    /** Get the precision object used to perform floating point
+     * comparisons for this instance. This is the same instance as
+     * that used by the containing line.
+     * @return the precision object for this instance
      */
-    public SubLine3D(final Line3D line, final RegionBSPTree1D region) {
-        super(line);
-
-        this.region = region;
+    public DoublePrecisionContext getPrecision() {
+        return line.getPrecision();
     }
 
-    /** Transform this instance.
-     * @param transform the transform to apply
-     * @return a new, transformed instance
+    /** Get the subspace region for the subline.
+     * @return the subspace region for the subline
      */
-    public SubLine3D transform(final Transform<Vector3D> transform) {
-        final SubspaceTransform st = getLine().subspaceTransform(transform);
-
-        final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
-        tRegion.copy(region);
-        tRegion.transform(st.getTransform());
-
-        return new SubLine3D(st.getLine(), tRegion);
-    }
-
-    /** Return a list of {@link Segment3D} instances representing the same region
-     * as this subline.
-     * @return a list of {@link Segment3D} instances representing the same region
-     *      as this instance.
-     */
-    public List<Segment3D> toConvex() {
-        final List<Interval> intervals = region.toIntervals();
-
-        final Line3D line = getLine();
-        final List<Segment3D> segments = new ArrayList<>(intervals.size());
-
-        for (final Interval interval : intervals) {
-            segments.add(Segment3D.fromInterval(line, interval));
-        }
-
-        return segments;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RegionBSPTree1D getSubspaceRegion() {
-        return region;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final Line3D line = getLine();
-
-        final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append('[')
-            .append("lineOrigin= ")
-            .append(line.getOrigin())
-            .append(", lineDirection= ")
-            .append(line.getDirection())
-            .append(", region= ")
-            .append(region)
-            .append(']');
-
-        return sb.toString();
-    }
+    public abstract HyperplaneBoundedRegion<Vector1D> getSubspaceRegion();
 }

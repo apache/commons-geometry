@@ -26,13 +26,13 @@ import java.util.function.Consumer;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Maximize;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleSegmentConnector.Minimize;
+import org.apache.commons.geometry.euclidean.twod.InteriorAngleSubLineConnector.Maximize;
+import org.apache.commons.geometry.euclidean.twod.InteriorAngleSubLineConnector.Minimize;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class InteriorAngleSegmentConnectorTest {
+public class InteriorAngleSubLineConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -43,7 +43,7 @@ public class InteriorAngleSegmentConnectorTest {
     public void testConnectAll_noSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<Segment> segments = new ArrayList<>();
+            List<ConvexSubLine> segments = new ArrayList<>();
 
             // act
             List<Polyline> paths = connector.connectAll(segments);
@@ -57,7 +57,7 @@ public class InteriorAngleSegmentConnectorTest {
     public void testConnectAll_singleFiniteSegment() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<Segment> segments = Arrays.asList(
+            List<ConvexSubLine> segments = Arrays.asList(
                         Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION)
                     );
 
@@ -75,7 +75,7 @@ public class InteriorAngleSegmentConnectorTest {
     public void testConnectAll_dualConnectedSegments() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<Segment> segments = Arrays.asList(
+            List<ConvexSubLine> segments = Arrays.asList(
                         Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                         Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION)
                     );
@@ -95,7 +95,7 @@ public class InteriorAngleSegmentConnectorTest {
     public void testConnectAll_singleFiniteSegmentLoop() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<Segment> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
+            List<ConvexSubLine> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
 
             // act
             List<Polyline> paths = connector.connectAll(segments);
@@ -113,12 +113,12 @@ public class InteriorAngleSegmentConnectorTest {
     public void testConnectAll_disjointPaths() {
         runWithMaxAndMin(connector -> {
             // arrange
-            List<Segment> segments = new ArrayList<>();
+            List<ConvexSubLine> segments = new ArrayList<>();
             segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
 
             Vector2D pt = Vector2D.of(0, 2);
-            Segment a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).segmentTo(pt);
-            Segment b = Line.fromPointAndAngle(pt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).segmentFrom(pt);
+            TerminatedLine a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).lineTo(pt);
+            Ray b = Line.fromPointAndAngle(pt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).rayFrom(pt);
 
             segments.add(a);
             segments.add(b);
@@ -144,7 +144,7 @@ public class InteriorAngleSegmentConnectorTest {
         // arrange
         Maximize connector = new Maximize();
 
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
         segments.addAll(createSquare(Vector2D.of(1, 1), 1, 1));
 
@@ -168,7 +168,7 @@ public class InteriorAngleSegmentConnectorTest {
         // arrange
         Maximize connector = new Maximize();
 
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
@@ -191,7 +191,7 @@ public class InteriorAngleSegmentConnectorTest {
         // arrange
         Minimize connector = new Minimize();
 
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
         segments.addAll(createSquare(Vector2D.of(1, 1), 1, 1));
 
@@ -217,7 +217,7 @@ public class InteriorAngleSegmentConnectorTest {
         // arrange
         Minimize connector = new Minimize();
 
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
@@ -238,14 +238,14 @@ public class InteriorAngleSegmentConnectorTest {
     @Test
     public void testConnectMaximized() {
         // arrange
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = InteriorAngleSegmentConnector.connectMaximized(segments);
+        List<Polyline> paths = InteriorAngleSubLineConnector.connectMaximized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -259,14 +259,14 @@ public class InteriorAngleSegmentConnectorTest {
     @Test
     public void testConnectMinimized() {
         // arrange
-        List<Segment> segments = new ArrayList<>();
+        List<ConvexSubLine> segments = new ArrayList<>();
         segments.add(Segment.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), TEST_PRECISION));
 
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(2, 4), TEST_PRECISION));
         segments.add(Segment.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = InteriorAngleSegmentConnector.connectMinimized(segments);
+        List<Polyline> paths = InteriorAngleSubLineConnector.connectMinimized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -281,12 +281,12 @@ public class InteriorAngleSegmentConnectorTest {
      * Run the given consumer function twice, once with a Maximize instance and once with
      * a Minimize instance.
      */
-    private static void runWithMaxAndMin(Consumer<InteriorAngleSegmentConnector> body) {
+    private static void runWithMaxAndMin(Consumer<InteriorAngleSubLineConnector> body) {
         body.accept(new Maximize());
         body.accept(new Minimize());
     }
 
-    private static List<Segment> createSquare(final Vector2D lowerLeft, final double width, final double height) {
+    private static List<ConvexSubLine> createSquare(final Vector2D lowerLeft, final double width, final double height) {
         final Vector2D lowerRight = Vector2D.of(lowerLeft.getX() + width, lowerLeft.getY());
         final Vector2D upperRight = Vector2D.of(lowerLeft.getX() + width, lowerLeft.getY() + height);
         final Vector2D upperLeft = Vector2D.of(lowerLeft.getX(), lowerLeft.getY() + height);
@@ -299,22 +299,22 @@ public class InteriorAngleSegmentConnectorTest {
                 );
     }
 
-    private static List<Segment> shuffle(final List<Segment> segments) {
+    private static List<ConvexSubLine> shuffle(final List<ConvexSubLine> segments) {
         return shuffle(segments, 1);
     }
 
-    private static List<Segment> shuffle(final List<Segment> segments, final int seed) {
+    private static List<ConvexSubLine> shuffle(final List<ConvexSubLine> segments, final int seed) {
         Collections.shuffle(segments, new Random(seed));
 
         return segments;
     }
 
-    private static void assertInfinitePath(Polyline path, Segment start, Segment end, Vector2D... vertices) {
+    private static void assertInfinitePath(Polyline path, ConvexSubLine start, ConvexSubLine end, Vector2D... vertices) {
         Assert.assertTrue(path.isInfinite());
         Assert.assertFalse(path.isFinite());
 
-        Assert.assertEquals(start, path.getStartSegment());
-        Assert.assertEquals(end, path.getEndSegment());
+        Assert.assertEquals(start, path.getStartSubLine());
+        Assert.assertEquals(end, path.getEndSubLine());
 
         assertPathVertices(path, vertices);
     }

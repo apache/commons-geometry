@@ -29,7 +29,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SubLine3DTest {
+public class RegionBSPTreeSubLine3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class SubLine3DTest {
     @Test
     public void testCtor_default() {
         // act
-        SubLine3D sub = new SubLine3D(line);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -52,7 +52,7 @@ public class SubLine3DTest {
     @Test
     public void testCtor_true() {
         // act
-        SubLine3D sub = new SubLine3D(line, true);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -63,7 +63,7 @@ public class SubLine3DTest {
     @Test
     public void testCtor_false() {
         // act
-        SubLine3D sub = new SubLine3D(line, false);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, false);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -77,7 +77,7 @@ public class SubLine3DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act
-        SubLine3D sub = new SubLine3D(line, tree);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -88,7 +88,7 @@ public class SubLine3DTest {
     @Test
     public void testTransform_full() {
         // arrange
-        SubLine3D sub = new SubLine3D(line, true);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -96,7 +96,7 @@ public class SubLine3DTest {
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        SubLine3D result = sub.transform(transform);
+        RegionBSPTreeSubLine3D result = sub.transform(transform);
 
         // assert
         Line3D resultLine = result.getLine();
@@ -118,7 +118,7 @@ public class SubLine3DTest {
                 line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
                 line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        SubLine3D sub = new SubLine3D(line, tree);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -126,7 +126,7 @@ public class SubLine3DTest {
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        SubLine3D result = sub.transform(transform);
+        RegionBSPTreeSubLine3D result = sub.transform(transform);
 
         // assert
         Line3D resultLine = result.getLine();
@@ -152,10 +152,10 @@ public class SubLine3DTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        SubLine3D sub = new SubLine3D(line, true);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
 
         // act
-        List<Segment3D> segments = sub.toConvex();
+        List<ConvexSubLine3D> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(1, segments.size());
@@ -170,15 +170,15 @@ public class SubLine3DTest {
                 line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
                 line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        SubLine3D sub = new SubLine3D(line, tree);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
 
         // act
-        List<Segment3D> segments = sub.toConvex();
+        List<ConvexSubLine3D> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(1, segments.size());
 
-        Segment3D segment = segments.get(0);
+        ConvexSubLine3D segment = segments.get(0);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 0), segment.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 2, 0), segment.getEndPoint(), TEST_EPS);
     }
@@ -186,7 +186,7 @@ public class SubLine3DTest {
     @Test
     public void testToString() {
         // arrange
-        SubLine3D sub = new SubLine3D(line);
+        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line);
 
         // act
         String str = sub.toString();

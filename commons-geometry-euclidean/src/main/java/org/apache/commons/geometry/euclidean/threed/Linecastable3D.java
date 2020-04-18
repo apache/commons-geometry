@@ -21,11 +21,11 @@ import java.util.List;
 /** Interface for objects that support linecast operations in Euclidean 3D space.
  *
  * <p>
- * Linecasting is a process that takes a line or line segment and intersects it with
+ * Linecasting is a process that takes a line or convex subline and intersects it with
  * the boundaries of a region. This is similar to
  * <a href="https://en.wikipedia.org/wiki/Ray_casting">raycasting</a> used
  * for collision detection with the exception that the intersecting element can be a
- * line or line segment and not just a ray.
+ * line or subline and not just a ray.
  * </p>
  */
 public interface Linecastable3D {
@@ -41,14 +41,14 @@ public interface Linecastable3D {
         return linecast(line.span());
     }
 
-    /** Intersect the given line segment against the boundaries in this instance, returning
-     * a list of all intersections in order of increasing distance along the line. An empty
-     * list is returned if no intersections are discovered.
-     * @param segment segment to intersect
+    /** Intersect the given subline against the boundaries in this instance, returning a list
+     * of all intersections in order of increasing distance along the line. An empty list is
+     * returned if no intersections are discovered.
+     * @param subline subline to intersect
      * @return a list of computed intersections in order of increasing distance
      *      along the line
      */
-    List<LinecastPoint3D> linecast(Segment3D segment);
+    List<LinecastPoint3D> linecast(ConvexSubLine3D subline);
 
     /** Intersect the given line against the boundaries in this instance, returning the first
      * intersection found when traveling in the direction of the line from infinity.
@@ -60,12 +60,11 @@ public interface Linecastable3D {
         return linecastFirst(line.span());
     }
 
-    /** Intersect the given line segment against the boundaries in this instance, returning
-     * the first intersection found when traveling in the direction of the line segment
-     * from its start point.
-     * @param segment segment to intersect
+    /** Intersect the given subline against the boundaries in this instance, returning the first
+     * intersection found when traveling in the direction of the subline from its start point.
+     * @param subline subline to intersect
      * @return the first intersection found or null if no intersection
      *      is found
      */
-    LinecastPoint3D linecastFirst(Segment3D segment);
+    LinecastPoint3D linecastFirst(ConvexSubLine3D subline);
 }

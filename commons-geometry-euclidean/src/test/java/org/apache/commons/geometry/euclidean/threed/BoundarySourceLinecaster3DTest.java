@@ -155,12 +155,12 @@ public class BoundarySourceLinecaster3DTest {
         LinecastChecker3D.with(linecaster)
             .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(center, Vector3D.Unit.PLUS_X, TEST_PRECISION)
-                    .segmentFrom(center));
+                    .rayFrom(center));
 
         LinecastChecker3D.with(linecaster)
             .expect(Vector3D.of(1, 0.5, 0.5), Vector3D.Unit.PLUS_X)
             .whenGiven(Line3D.fromPointAndDirection(center, Vector3D.Unit.MINUS_X, TEST_PRECISION)
-                    .segmentTo(center));
+                    .lineTo(center));
     }
 
     @Test

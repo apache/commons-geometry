@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
+import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
@@ -32,12 +33,12 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.twod.SubLine.SubLineBuilder;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTreeSubLine.Builder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SubLineTest {
+public class RegionBSPTreeSubLineTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -50,7 +51,7 @@ public class SubLineTest {
     @Test
     public void testCtor_lineOnly() {
         // act
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -65,7 +66,7 @@ public class SubLineTest {
     @Test
     public void testCtor_lineAndBoolean() {
         // act
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE, true);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, true);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -83,7 +84,7 @@ public class SubLineTest {
         RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         // act
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE, tree);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, tree);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -99,25 +100,25 @@ public class SubLineTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE, true);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, true);
 
         // act
-        List<Segment> segments = sub.toConvex();
+        List<ConvexSubLine> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(1, segments.size());
 
-        Segment seg = segments.get(0);
+        ConvexSubLine seg = segments.get(0);
         Assert.assertTrue(seg.isFull());
     }
 
     @Test
     public void testToConvex_empty() {
         // arrange
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE, false);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, false);
 
         // act
-        List<Segment> segments = sub.toConvex();
+        List<ConvexSubLine> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -126,13 +127,13 @@ public class SubLineTest {
     @Test
     public void testToConvex_finiteAndInfiniteSegments() {
         // arrange
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE, false);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, false);
         RegionBSPTree1D tree = sub.getSubspaceRegion();
         tree.add(Interval.max(-2.0, TEST_PRECISION));
         tree.add(Interval.of(-1, 2, TEST_PRECISION));
 
         // act
-        List<Segment> segments = sub.toConvex();
+        List<ConvexSubLine> segments = sub.toConvex();
 
         // assert
         Assert.assertEquals(2, segments.size());
@@ -150,18 +151,18 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
 
-        SubLine subline = new SubLine(line);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
 
         // act
-        subline.add(Segment.fromInterval(line, 2, 4));
-        subline.add(Segment.fromInterval(otherLine, 1, 3));
+        subline.add(ConvexSubLine.fromInterval(line, 2, 4));
+        subline.add(ConvexSubLine.fromInterval(otherLine, 1, 3));
         subline.add(Segment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEndPoint(), TEST_EPS);
@@ -175,17 +176,17 @@ public class SubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        SubLine a = new SubLine(line);
+        RegionBSPTreeSubLine a = new RegionBSPTreeSubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
         aTree.add(Interval.max(-3, TEST_PRECISION));
         aTree.add(Interval.of(1, 2, TEST_PRECISION));
 
-        SubLine b = new SubLine(line);
+        RegionBSPTreeSubLine b = new RegionBSPTreeSubLine(line);
         RegionBSPTree1D bTree = b.getSubspaceRegion();
         bTree.add(Interval.of(2, 4, TEST_PRECISION));
         bTree.add(Interval.of(-4, -2, TEST_PRECISION));
 
-        SubLine subline = new SubLine(line);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
 
         int aTreeCount = aTree.count();
         int bTreeCount = bTree.count();
@@ -198,7 +199,7 @@ public class SubLineTest {
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
 
         Assert.assertEquals(2, segments.size());
 
@@ -218,15 +219,15 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
 
-        SubLine subline = new SubLine(line);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            subline.add(Segment.fromInterval(otherLine, 0, 1));
+            subline.add(ConvexSubLine.fromInterval(otherLine, 0, 1));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            subline.add(new SubLine(otherLine));
+            subline.add(new RegionBSPTreeSubLine(otherLine));
         }, IllegalArgumentException.class);
     }
 
@@ -238,21 +239,21 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<Segment> minusSegments = split.getMinus().toConvex();
+        List<ConvexSubLine> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(1, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
 
-        List<Segment> plusSegments = split.getPlus().toConvex();
+        List<ConvexSubLine> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(2, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(plusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
@@ -266,22 +267,22 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        List<Segment> minusSegments = split.getMinus().toConvex();
+        List<ConvexSubLine> minusSegments = split.getMinus().toConvex();
         Assert.assertEquals(2, minusSegments.size());
         checkFiniteSegment(minusSegments.get(0), Vector2D.of(1, 0), Vector2D.of(2, 0));
         checkFiniteSegment(minusSegments.get(1), Vector2D.of(3, 0), Vector2D.of(4, 0));
 
-        List<Segment> plusSegments = split.getPlus().toConvex();
+        List<ConvexSubLine> plusSegments = split.getPlus().toConvex();
         Assert.assertEquals(1, plusSegments.size());
         checkFiniteSegment(plusSegments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
     }
@@ -294,12 +295,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -316,12 +317,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -338,12 +339,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -360,12 +361,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -382,12 +383,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -404,12 +405,12 @@ public class SubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        SubLine subline = new SubLine(line, subRegion);
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<SubLine> split = subline.split(splitter);
+        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -425,23 +426,23 @@ public class SubLineTest {
                 .createRotation(Vector2D.of(0, 1), PlaneAngleRadians.PI_OVER_TWO)
                 .scale(Vector2D.of(3, 2));
 
-        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.min(3, TEST_PRECISION));
 
         // act
-        SubLine transformed = subline.transform(mat);
+        RegionBSPTreeSubLine transformed = subline.transform(mat);
 
         // assert
         Assert.assertNotSame(subline, transformed);
 
-        List<Segment> originalSegments = subline.toConvex();
+        List<ConvexSubLine> originalSegments = subline.toConvex();
         Assert.assertEquals(2, originalSegments.size());
         checkFiniteSegment(originalSegments.get(0), Vector2D.ZERO, Vector2D.Unit.PLUS_X);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0), originalSegments.get(1).getStartPoint(), TEST_EPS);
         Assert.assertNull(originalSegments.get(1).getEndPoint());
 
-        List<Segment> transformedSegments = transformed.toConvex();
+        List<ConvexSubLine> transformedSegments = transformed.toConvex();
         Assert.assertEquals(2, transformedSegments.size());
         checkFiniteSegment(transformedSegments.get(0), Vector2D.of(3, 2), Vector2D.of(3, 4));
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 8), transformedSegments.get(1).getStartPoint(), TEST_EPS);
@@ -453,20 +454,20 @@ public class SubLineTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
 
-        SubLine subline = new SubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
+        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
 
         // act
-        SubLine transformed = subline.transform(mat);
+        RegionBSPTreeSubLine transformed = subline.transform(mat);
 
         // assert
         Assert.assertNotSame(subline, transformed);
 
-        List<Segment> originalSegments = subline.toConvex();
+        List<ConvexSubLine> originalSegments = subline.toConvex();
         Assert.assertEquals(1, originalSegments.size());
         checkFiniteSegment(originalSegments.get(0), Vector2D.of(0, 1), Vector2D.of(1, 1));
 
-        List<Segment> transformedSegments = transformed.toConvex();
+        List<ConvexSubLine> transformedSegments = transformed.toConvex();
         Assert.assertEquals(1, transformedSegments.size());
         checkFiniteSegment(transformedSegments.get(0), Vector2D.of(0, 2), Vector2D.of(-1, 2));
     }
@@ -475,16 +476,16 @@ public class SubLineTest {
     public void testBuilder_instanceMethod() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        SubLineBuilder builder = new SubLine(line).builder();
+        Builder builder = new RegionBSPTreeSubLine(line).builder();
 
         // act
-        SubLine subline = builder.build();
+        RegionBSPTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertTrue(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
         Assert.assertEquals(0, segments.size());
 
         Assert.assertSame(line, subline.getLine());
@@ -497,16 +498,16 @@ public class SubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        SubLineBuilder builder = new SubLineBuilder(line);
+        Builder builder = new Builder(line);
 
         // act
-        SubLine subline = builder.build();
+        RegionBSPTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertTrue(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
         Assert.assertEquals(0, segments.size());
     }
 
@@ -516,20 +517,20 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
 
-        SubLineBuilder builder = new SubLineBuilder(line);
+        Builder builder = new Builder(line);
 
         // act
-        builder.add(Segment.fromInterval(line, 2, 4));
-        builder.add(Segment.fromInterval(otherLine, 1, 3));
+        builder.add(ConvexSubLine.fromInterval(line, 2, 4));
+        builder.add(ConvexSubLine.fromInterval(otherLine, 1, 3));
         builder.add(Segment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
-        SubLine subline = builder.build();
+        RegionBSPTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEndPoint(), TEST_EPS);
@@ -543,17 +544,17 @@ public class SubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        SubLine a = new SubLine(line);
+        RegionBSPTreeSubLine a = new RegionBSPTreeSubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
         aTree.add(Interval.max(-3, TEST_PRECISION));
         aTree.add(Interval.of(1, 2, TEST_PRECISION));
 
-        SubLine b = new SubLine(line);
+        RegionBSPTreeSubLine b = new RegionBSPTreeSubLine(line);
         RegionBSPTree1D bTree = b.getSubspaceRegion();
         bTree.add(Interval.of(2, 4, TEST_PRECISION));
         bTree.add(Interval.of(-4, -2, TEST_PRECISION));
 
-        SubLineBuilder builder = new SubLineBuilder(line);
+        Builder builder = new Builder(line);
 
         int aTreeCount = aTree.count();
         int bTreeCount = bTree.count();
@@ -562,13 +563,13 @@ public class SubLineTest {
         builder.add(a);
         builder.add(b);
 
-        SubLine subline = builder.build();
+        RegionBSPTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
         Assert.assertFalse(subline.isEmpty());
 
-        List<Segment> segments = subline.toConvex();
+        List<ConvexSubLine> segments = subline.toConvex();
 
         Assert.assertEquals(2, segments.size());
 
@@ -588,15 +589,15 @@ public class SubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
 
-        SubLineBuilder builder = new SubLineBuilder(line);
+        Builder builder = new Builder(line);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(Segment.fromInterval(otherLine, 0, 1));
+            builder.add(ConvexSubLine.fromInterval(otherLine, 0, 1));
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(new SubLine(otherLine));
+            builder.add(new RegionBSPTreeSubLine(otherLine));
         }, IllegalArgumentException.class);
     }
 
@@ -605,7 +606,7 @@ public class SubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        AbstractSubLine unknownType = new AbstractSubLine(line) {
+        SubLine unknownType = new SubLine(line) {
             @Override
             public boolean isInfinite() {
                 return false;
@@ -635,9 +636,34 @@ public class SubLineTest {
             public SubHyperplane<Vector2D> transform(Transform<Vector2D> transform) {
                 return null;
             }
+
+            @Override
+            public Vector2D closest(Vector2D point) {
+                return null;
+            }
+
+            @Override
+            public boolean isFull() {
+                return false;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public double getSize() {
+                return 0;
+            }
+
+            @Override
+            RegionLocation classifyAbscissa(double abscissa) {
+                return null;
+            }
         };
 
-        SubLineBuilder builder = new SubLineBuilder(line);
+        Builder builder = new Builder(line);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -648,7 +674,7 @@ public class SubLineTest {
     @Test
     public void testToString() {
         // arrange
-        SubLine sub = new SubLine(DEFAULT_TEST_LINE);
+        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE);
 
         // act
         String str = sub.toString();
@@ -659,7 +685,7 @@ public class SubLineTest {
         Assert.assertTrue(str.contains(", region= "));
     }
 
-    private static void checkFiniteSegment(Segment segment, Vector2D start, Vector2D end) {
+    private static void checkFiniteSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
 
         EuclideanTestUtils.assertCoordinatesEqual(start, segment.getStartPoint(), TEST_EPS);

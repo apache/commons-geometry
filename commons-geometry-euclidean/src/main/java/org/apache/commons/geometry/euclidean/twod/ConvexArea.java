@@ -34,7 +34,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
  * The boundaries of this area, if any, are composed of convex sublines.
  */
-public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, Segment>
+public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, ConvexSubLine>
     implements BoundarySource2D, Linecastable2D {
 
     /** Instance representing the full 2D plane. */
@@ -44,32 +44,32 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaries the boundaries of the convex area
      */
-    protected ConvexArea(final List<Segment> boundaries) {
+    protected ConvexArea(final List<ConvexSubLine> boundaries) {
         super(boundaries);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<Segment> boundaryStream() {
+    public Stream<ConvexSubLine> boundaryStream() {
         return getBoundaries().stream();
     }
 
-    /** Get the connected line segment paths comprising the boundary of the area. The
-     * segments are oriented so that their minus sides point toward the interior of the
+    /** Get the connected subline paths comprising the boundary of the area. The
+     * sublines are oriented so that their minus sides point toward the interior of the
      * region. The size of the returned list is
      * <ul>
      *      <li><strong>0</strong> if the convex area is full,</li>
      *      <li><strong>1</strong> if at least one boundary is present and
-     *          a single path can connect all segments (this will be the case
+     *          a single path can connect all sublines (this will be the case
      *          for most instances), and</li>
      *      <li><strong>2</strong> if only two boundaries exist and they are
      *          parallel to each other (in which case they cannot be connected
      *          as a single path).</li>
      * </ul>
-     * @return the line segment paths comprising the boundary of the area.
+     * @return the subline paths comprising the boundary of the area.
      */
     public List<Polyline> getBoundaryPaths() {
-        return InteriorAngleSegmentConnector.connectMinimized(getBoundaries());
+        return InteriorAngleSubLineConnector.connectMinimized(getBoundaries());
     }
 
     /** Get the vertices defining the area. The vertices lie at the intersections of the
@@ -83,7 +83,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         final List<Polyline> paths = getBoundaryPaths();
 
         // we will only have vertices if we have a single path; otherwise, we have a full
-        // area or two non-intersecting infinite segments
+        // area or two non-intersecting infinite sublines
         if (paths.size() == 1) {
             final Polyline path = paths.get(0);
             final List<Vector2D> vertices = path.getVertexSequence();
@@ -103,13 +103,13 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * @return a new instance transformed by the argument
      */
     public ConvexArea transform(final Transform<Vector2D> transform) {
-        return transformInternal(transform, this, Segment.class, ConvexArea::new);
+        return transformInternal(transform, this, ConvexSubLine.class, ConvexArea::new);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Segment trim(final ConvexSubHyperplane<Vector2D> convexSubHyperplane) {
-        return (Segment) super.trim(convexSubHyperplane);
+    public ConvexSubLine trim(final ConvexSubHyperplane<Vector2D> convexSubHyperplane) {
+        return (ConvexSubLine) super.trim(convexSubHyperplane);
     }
 
     /** {@inheritDoc} */
@@ -121,12 +121,12 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
         double quadrilateralAreaSum = 0.0;
 
-        for (final Segment segment : getBoundaries()) {
-            if (segment.isInfinite()) {
+        for (final ConvexSubLine subline : getBoundaries()) {
+            if (subline.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
             }
 
-            quadrilateralAreaSum += segment.getStartPoint().signedArea(segment.getEndPoint());
+            quadrilateralAreaSum += subline.getStartPoint().signedArea(subline.getEndPoint());
         }
 
         return 0.5 * quadrilateralAreaSum;
@@ -135,7 +135,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
     /** {@inheritDoc} */
     @Override
     public Vector2D getBarycenter() {
-        final List<Segment> boundaries = getBoundaries();
+        final List<ConvexSubLine> boundaries = getBoundaries();
 
         double quadrilateralAreaSum = 0.0;
         double scaledSumX = 0.0;
@@ -145,7 +145,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         Vector2D startPoint;
         Vector2D endPoint;
 
-        for (final Segment seg : boundaries) {
+        for (final ConvexSubLine seg : boundaries) {
             if (seg.isInfinite()) {
                 // infinite => no barycenter
                 return null;
@@ -172,7 +172,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
     /** {@inheritDoc} */
     @Override
     public Split<ConvexArea> split(final Hyperplane<Vector2D> splitter) {
-        return splitInternal(splitter, this, Segment.class, ConvexArea::new);
+        return splitInternal(splitter, this, ConvexSubLine.class, ConvexArea::new);
     }
 
     /** Return a BSP tree representing the same region as this instance.
@@ -184,14 +184,14 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint2D> linecast(final Segment segment) {
-        return new BoundarySourceLinecaster2D(this).linecast(segment);
+    public List<LinecastPoint2D> linecast(final ConvexSubLine subline) {
+        return new BoundarySourceLinecaster2D(this).linecast(subline);
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint2D linecastFirst(final Segment segment) {
-        return new BoundarySourceLinecaster2D(this).linecastFirst(segment);
+    public LinecastPoint2D linecastFirst(final ConvexSubLine subline) {
+        return new BoundarySourceLinecaster2D(this).linecastFirst(subline);
     }
 
     /** Return an instance representing the full 2D area.
@@ -272,15 +272,15 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         return fromBounds(lines);
     }
 
-    /** Construct a convex area from a line segment path. The area represents the intersection of all of the negative
-     * half-spaces of the lines in the path. The boundaries of the returned area may therefore not match the line
-     * segments in the path.
+    /** Construct a convex area from a subline path. The area represents the intersection of all of the negative
+     * half-spaces of the lines in the path. The boundaries of the returned area may therefore not match the sublines
+     * in the path.
      * @param path path to construct the area from
-     * @return a convex area constructed from the lines in the given path
+     * @return a convex area constructed from the subline in the given path
      */
     public static ConvexArea fromPath(final Polyline path) {
         final List<Line> lines = path.boundaryStream()
-                .map(Segment::getLine)
+                .map(ConvexSubLine::getLine)
                 .collect(Collectors.toList());
 
         return fromBounds(lines);
@@ -313,7 +313,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      *      meaning that there is no region that is on the minus side of all of the bounding lines.
      */
     public static ConvexArea fromBounds(final Iterable<Line> bounds) {
-        final List<Segment> segments = new ConvexRegionBoundaryBuilder<>(Segment.class).build(bounds);
-        return segments.isEmpty() ? full() : new ConvexArea(segments);
+        final List<ConvexSubLine> sublines = new ConvexRegionBoundaryBuilder<>(ConvexSubLine.class).build(bounds);
+        return sublines.isEmpty() ? full() : new ConvexArea(sublines);
     }
 }

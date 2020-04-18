@@ -16,204 +16,148 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SubHyperplane;
-import org.apache.commons.geometry.euclidean.oned.Interval;
-import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
-/** Class representing an arbitrary region of a line. This class can represent
- * both convex and non-convex regions of its underlying line.
- *
- * <p>This class is mutable and <em>not</em> thread safe.</p>
+/** Class representing a subline in 2D Euclidean space. A subline is defined in this library
+ * as a subset of the points lying on a line. For example, line segments and rays are sublines.
+ * Sublines may be finite or infinite.
  */
-public final class SubLine extends AbstractSubLine {
-    /** The 1D region representing the area on the line. */
-    private final RegionBSPTree1D region;
+public abstract class SubLine implements SubHyperplane<Vector2D> {
+    /** The line defining this instance. */
+    private final Line line;
 
-    /** Construct a new, empty subline for the given line.
-     * @param line line defining the subline
+    /** Construct a new instance based on the given line.
+     * @param line line forming the base of the instance
      */
-    public SubLine(final Line line) {
-        this(line, false);
+    SubLine(final Line line) {
+        this.line = line;
     }
 
-    /** Construct a new subline for the given line. If {@code full}
-     * is true, then the subline will cover the entire line; otherwise,
-     * it will be empty.
-     * @param line line defining the subline
-     * @param full if true, the subline will cover the entire space;
-     *      otherwise it will be empty
+    /** Get the line containing this subline. This method is an alias
+     * for {@link #getHyperplane()}.
+     * @return the line containing this subline
+     * @see #getHyperplane()
      */
-    public SubLine(final Line line, boolean full) {
-        this(line, new RegionBSPTree1D(full));
-    }
-
-    /** Construct a new instance from its defining line and subspace region.
-     * @param line line defining the subline
-     * @param region subspace region for the subline
-     */
-    public SubLine(final Line line, final RegionBSPTree1D region) {
-        super(line);
-
-        this.region = region;
+    public Line getLine() {
+        return getHyperplane();
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubLine transform(final Transform<Vector2D> transform) {
-        final SubspaceTransform st = getLine().subspaceTransform(transform);
-
-        final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
-        tRegion.copy(region);
-        tRegion.transform(st.getTransform());
-
-        return new SubLine(st.getLine(), tRegion);
+    public Line getHyperplane() {
+        return line;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<Segment> toConvex() {
-        final List<Interval> intervals = region.toIntervals();
-
-        final Line line = getLine();
-        final List<Segment> segments = new ArrayList<>(intervals.size());
-
-        for (final Interval interval : intervals) {
-            segments.add(Segment.fromInterval(line, interval));
-        }
-
-        return segments;
+    public RegionBSPTreeSubLine.Builder builder() {
+        return new RegionBSPTreeSubLine.Builder(line);
     }
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTree1D getSubspaceRegion() {
-        return region;
+    public RegionLocation classify(final Vector2D pt) {
+        if (line.contains(pt)) {
+            return classifyAbscissa(line.abscissa(pt));
+        }
+
+        return RegionLocation.OUTSIDE;
     }
 
-    /** {@inheritDoc}
-     *
-     * <p>In all cases, the current instance is not modified. However, In order to avoid
-     * unnecessary copying, this method will use the current instance as the split value when
-     * the instance lies entirely on the plus or minus side of the splitter. For example, if
-     * this instance lies entirely on the minus side of the splitter, the subplane
-     * returned by {@link Split#getMinus()} will be this instance. Similarly, {@link Split#getPlus()}
-     * will return the current instance if it lies entirely on the plus side. Callers need to make
-     * special note of this, since this class is mutable.</p>
+    /** Get the unique intersection of this subline with the given line. Null is
+     * returned if no unique intersection point exists (ie, the lines are
+     * parallel or coincident) or the line does not intersect the subline.
+     * @param inputLine line to intersect with this subline
+     * @return the unique intersection point between the line and this subline
+     *      or null if no such point exists.
+     * @see Line#intersection(Line)
      */
-    @Override
-    public Split<SubLine> split(final Hyperplane<Vector2D> splitter) {
-        return splitInternal(splitter, this, (line, reg) -> new SubLine(line, (RegionBSPTree1D) reg));
+    public Vector2D intersection(final Line inputLine) {
+        final Vector2D pt = line.intersection(inputLine);
+        return (pt != null && contains(pt)) ? pt : null;
     }
 
-    /** Add a line segment to this instance..
-     * @param segment line segment to add
-     * @throws IllegalArgumentException if the given line segment is not from
-     *      a line equivalent to this instance
+    /** Get the unique intersection of this instance with the given subline. Null
+     * is returned if the lines containing the sublines do not have a unique intersection
+     * point (ie, they are parallel or coincident) or the intersection point is unique
+     * but in not contained in both sublines.
+     * @param subline subline to intersect with
+     * @return the unique intersection point between this subline and the argument or
+     *      null if no such point exists.
+     * @see Line#intersection(Line)
      */
-    public void add(final Segment segment) {
-        validateLine(segment.getLine());
-
-        region.add(segment.getSubspaceRegion());
+    public Vector2D intersection(final SubLine subline) {
+        final Vector2D pt = intersection(subline.getLine());
+        return (pt != null && subline.contains(pt)) ? pt : null;
     }
 
-    /** Add the region represented by the given subline to this instance.
-     * The argument is not modified.
-     * @param subline subline to add
-     * @throws IllegalArgumentException if the given subline is not from
-     *      a line equivalent to this instance
+    /** Return the object used to perform floating point comparisons, which is the
+     * same object used by the underlying {@link Line}).
+     * @return precision object used to perform floating point comparisons.
      */
-    public void add(final SubLine subline) {
-        validateLine(subline.getLine());
-
-        region.union(subline.getSubspaceRegion());
+    public DoublePrecisionContext getPrecision() {
+        return line.getPrecision();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final Line line = getLine();
-
-        final StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getSimpleName())
-            .append('[')
-            .append("lineOrigin= ")
-            .append(line.getOrigin())
-            .append(", lineDirection= ")
-            .append(line.getDirection())
-            .append(", region= ")
-            .append(region)
-            .append(']');
-
-        return sb.toString();
-    }
-
-    /** Validate that the given line is equivalent to the line
-     * defining this subline.
-     * @param inputLine the line to validate
-     * @throws IllegalArgumentException if the given line is not equivalent
-     *      to the line for this instance
+    /** Get the 1D subspace region for this subline.
+     * @return the 1D subspace region for this subline
      */
-    private void validateLine(final Line inputLine) {
-        final Line line = getLine();
+    public abstract HyperplaneBoundedRegion<Vector1D> getSubspaceRegion();
 
-        if (!line.eq(inputLine, line.getPrecision())) {
-            throw new IllegalArgumentException("Argument is not on the same " +
-                    "line. Expected " + line + " but was " +
-                    inputLine);
+    /** Classify the given line abscissa value with respect to the subspace region.
+     * @param abscissa the abscissa value to classify
+     * @return the region location of the line abscissa value
+     */
+    abstract RegionLocation classifyAbscissa(double abscissa);
+
+    /** Get a split result for cases where no intersection exists between the splitting line and the
+     * line underlying the given subline. This occurs when the two lines are parallel or coincident.
+     * @param <T> Subline type
+     * @param splitter splitting line
+     * @param subline subline instance being split
+     * @return return result of the non-intersecting split operation
+     */
+    <T extends SubLine> Split<T> getNonIntersectingSplitResult(final Line splitter, final T subline) {
+        // check which side of the splitter we lie on
+        final double offset = splitter.offset(subline.getLine());
+        final int comp = getPrecision().compare(offset, 0.0);
+
+        if (comp < 0) {
+            return new Split<>(subline, null);
+        } else if (comp > 0) {
+            return new Split<>(null, subline);
+        } else {
+            return new Split<>(null, null);
         }
     }
 
-    /** {@link Builder} implementation for sublines.
+    /** Return true if the plus side of the given splitter line is facing in the positive direction
+     * of this line.
+     * @param splitterLine line splitting this instance
+     * @return true if the plus side of the given line is facing in the positive direction of this
+     *      line
      */
-    public static final class SubLineBuilder implements SubHyperplane.Builder<Vector2D> {
+    boolean splitterPlusIsPositiveFacing(final Line splitterLine) {
+        return line.getOffsetDirection().dot(splitterLine.getDirection()) <= 0;
+    }
 
-        /** SubLine instance created by this builder. */
-        private final SubLine subline;
-
-        /** Construct a new instance for building subline region for the given line.
-         * @param line the underlying line for the subline region
-         */
-        public SubLineBuilder(final Line line) {
-            this.subline = new SubLine(line);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final SubHyperplane<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final ConvexSubHyperplane<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public SubLine build() {
-            return subline;
-        }
-
-        /** Internal method for adding subhyperplanes to this builder.
-         * @param sub the subhyperplane to add; either convex or non-convex
-         */
-        private void addInternal(final SubHyperplane<Vector2D> sub) {
-            if (sub instanceof Segment) {
-                subline.add((Segment) sub);
-            } else if (sub instanceof SubLine) {
-                subline.add((SubLine) sub);
-            } else {
-                throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
-            }
-        }
+    /** Create a split result for the given splitter line, given the low and high split portion of this
+     * instance. The arguments are assigned to the split result's minus and plus properties based on the
+     * relative orientation of the splitter line.
+     * @param <T> Subline type
+     * @param splitter splitter line
+     * @param low portion of the split result closest to negative infinity on this line
+     * @param high portion of th split result closest to positive infinity on this line
+     * @return a split result for the given splitter line.
+     */
+    <T extends SubLine> Split<T> createSplitResult(final Line splitter, final T low, final T high) {
+        return splitterPlusIsPositiveFacing(splitter) ?
+                new Split<>(low, high) :
+                new Split<>(high, low);
     }
 }

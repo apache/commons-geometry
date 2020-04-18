@@ -95,14 +95,14 @@ public abstract class AbstractPathConnector<E extends AbstractPathConnector.Conn
      * @return a list of root elements for the computed connected paths
      */
     protected List<E> computePathRoots() {
-        for (final E segment : pathElements) {
-            followForwardConnections(segment);
+        for (final E element : pathElements) {
+            followForwardConnections(element);
         }
 
         final List<E> rootEntries = new ArrayList<>();
         E root;
-        for (final E segment : pathElements) {
-            root = segment.exportPath();
+        for (final E element : pathElements) {
+            root = element.exportPath();
             if (root != null) {
                 rootEntries.add(root);
             }

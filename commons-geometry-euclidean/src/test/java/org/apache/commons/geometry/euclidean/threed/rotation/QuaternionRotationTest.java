@@ -18,8 +18,8 @@ package org.apache.commons.geometry.euclidean.threed.rotation;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.UnaryOperator;
 import java.util.function.DoubleFunction;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;

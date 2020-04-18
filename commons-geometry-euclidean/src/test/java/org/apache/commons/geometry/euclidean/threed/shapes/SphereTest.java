@@ -24,6 +24,7 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.threed.ConvexSubLine3D;
 import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.Line3D;
 import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
@@ -477,7 +478,7 @@ public class SphereTest {
         }
     }
 
-    private static void checkLinecast(Sphere s, Segment3D segment, Vector3D... expectedPts) {
+    private static void checkLinecast(Sphere s, ConvexSubLine3D segment, Vector3D... expectedPts) {
         // check linecast
         List<LinecastPoint3D> results = s.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());

@@ -23,88 +23,86 @@ import java.util.Objects;
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
-/** Abstract class for joining collections of line segments into connected
+/** Abstract class for joining collections of sublines into connected
  * paths. This class is not thread-safe.
  */
-public abstract class AbstractSegmentConnector
-    extends AbstractPathConnector<AbstractSegmentConnector.ConnectableSegment> {
-    /** Add a line segment to the connector, leaving it unconnected until a later call to
+public abstract class AbstractSubLineConnector
+    extends AbstractPathConnector<AbstractSubLineConnector.ConnectableSubLine> {
+    /** Add a subline to the connector, leaving it unconnected until a later call to
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
-     * @param segment line segment to add
+     * @param subline subline to add
      * @see #connect(Iterable)
      * @see #connectAll()
      */
-    public void add(final Segment segment) {
-        addPathElement(new ConnectableSegment(segment));
+    public void add(final ConvexSubLine subline) {
+        addPathElement(new ConnectableSubLine(subline));
     }
 
-    /** Add a collection of line segments to the connector, leaving them unconnected
+    /** Add a collection of sublines to the connector, leaving them unconnected
      * until a later call to {@link #connect(Iterable)} or
      * {@link #connectAll()}.
-     * @param segments line segments to add
+     * @param sublines sublines to add
      * @see #connect(Iterable)
      * @see #connectAll()
-     * @see #add(Segment)
+     * @see #add(ConvexSubLine)
      */
-    public void add(final Iterable<Segment> segments) {
-        for (final Segment segment : segments) {
-            add(segment);
+    public void add(final Iterable<ConvexSubLine> sublines) {
+        for (final ConvexSubLine subline : sublines) {
+            add(subline);
         }
     }
 
-    /** Add a collection of line segments to the connector and attempt to connect each new
-     * segment with existing segments. Connections made at this time will not be
+    /** Add a collection of sublines to the connector and attempt to connect each new
+     * subline with existing sublines. Connections made at this time will not be
      * overwritten by subsequent calls to this or other connection methods.
      * (eg, {@link #connectAll()}).
      *
-     * <p>The connector is not reset by this call. Additional segments can still be added
+     * <p>The connector is not reset by this call. Additional sublines can still be added
      * to the current set of paths.</p>
-     * @param segments line segments to connect
+     * @param sublines sublines to connect
      * @see #connectAll()
      */
-    public void connect(final Iterable<Segment> segments) {
-        final List<ConnectableSegment> newEntries = new ArrayList<>();
+    public void connect(final Iterable<ConvexSubLine> sublines) {
+        final List<ConnectableSubLine> newEntries = new ArrayList<>();
 
-        for (final Segment segment : segments) {
-            newEntries.add(new ConnectableSegment(segment));
+        for (final ConvexSubLine subline : sublines) {
+            newEntries.add(new ConnectableSubLine(subline));
         }
 
         connectPathElements(newEntries);
     }
 
-    /** Add the given line segments to this instance and connect all current
-     * segments into polylines (ie, line segment paths). This call is equivalent to
+    /** Add the given sublines to this instance and connect all current
+     * sublines into polylines (ie, 2D paths). This call is equivalent to
      * <pre>
-     *      connector.add(segments);
+     *      connector.add(sublines);
      *      List&lt;Polyline&gt; result = connector.connectAll();
      * </pre>
      *
      * <p>The connector is reset after this call. Further calls to
-     * add or connect line segments will result in new paths being
-     * generated.</p>
-     * @param segments line segments to add
-     * @return the connected line segment paths
+     * add or connect sublines will result in new paths being generated.</p>
+     * @param sublines sublines to add
+     * @return the connected 2D paths
      * @see #add(Iterable)
      * @see #connectAll()
      */
-    public List<Polyline> connectAll(final Iterable<Segment> segments) {
-        add(segments);
+    public List<Polyline> connectAll(final Iterable<ConvexSubLine> sublines) {
+        add(sublines);
         return connectAll();
     }
 
-    /** Connect all current segments into connected paths, returning the result as a
+    /** Connect all current sublines into connected paths, returning the result as a
      * list of polylines.
      *
      * <p>The connector is reset after this call. Further calls to
-     * add or connect line segments will result in new paths being
-     * generated.</p>
-     * @return the connected line segments paths
+     * add or connect sublines will result in new paths being generated.</p>
+     * @return the connected 2D paths
      */
     public List<Polyline> connectAll() {
-        final List<ConnectableSegment> roots = computePathRoots();
+        final List<ConnectableSubLine> roots = computePathRoots();
         final List<Polyline> paths = new ArrayList<>(roots.size());
 
-        for (final ConnectableSegment root : roots) {
+        for (final ConnectableSubLine root : roots) {
             paths.add(toPolyline(root));
         }
 
@@ -116,59 +114,59 @@ public abstract class AbstractSegmentConnector
      * @param root root of a connected path linked list
      * @return a polyline representing the linked list path
      */
-    private Polyline toPolyline(final ConnectableSegment root) {
+    private Polyline toPolyline(final ConnectableSubLine root) {
         final Polyline.Builder builder = Polyline.builder(null);
 
-        builder.append(root.getSegment());
+        builder.append(root.getSubLine());
 
-        ConnectableSegment current = root.getNext();
+        ConnectableSubLine current = root.getNext();
 
         while (current != null && current != root) {
-            builder.append(current.getSegment());
+            builder.append(current.getSubLine());
             current = current.getNext();
         }
 
         return builder.build();
     }
 
-    /** Internal class used to connect line segments together.
+    /** Internal class used to connect sublines together.
      */
-    protected static class ConnectableSegment extends AbstractPathConnector.ConnectableElement<ConnectableSegment> {
-        /** Segment start point. This will be used to connect to other path elements. */
+    protected static class ConnectableSubLine extends AbstractPathConnector.ConnectableElement<ConnectableSubLine> {
+        /** Subline start point. This will be used to connect to other path elements. */
         private final Vector2D start;
 
-        /** Line segment for the entry. */
-        private final Segment segment;
+        /** Subline for the entry. */
+        private final ConvexSubLine subline;
 
         /** Create a new instance with the given start point. This constructor is
          * intended only for performing searches for other path elements.
          * @param start start point
          */
-        public ConnectableSegment(final Vector2D start) {
+        public ConnectableSubLine(final Vector2D start) {
             this(start, null);
         }
 
-        /** Create a new instance from the given line segment.
-         * @param segment line segment
+        /** Create a new instance from the given subline.
+         * @param subline subline instance
          */
-        public ConnectableSegment(final Segment segment) {
-            this(segment.getStartPoint(), segment);
+        public ConnectableSubLine(final ConvexSubLine subline) {
+            this(subline.getStartPoint(), subline);
         }
 
-        /** Create a new instance with the given start point and line segment.
+        /** Create a new instance with the given start point and subline.
          * @param start start point
-         * @param segment line segment
+         * @param subline subline instance
          */
-        private ConnectableSegment(final Vector2D start, final Segment segment) {
+        private ConnectableSubLine(final Vector2D start, final ConvexSubLine subline) {
             this.start = start;
-            this.segment = segment;
+            this.subline = subline;
         }
 
-        /** Get the line segment for this instance.
-         * @return the line segment for this instance
+        /** Get the subline for this instance.
+         * @return the subline for this instance
          */
-        public Segment getSegment() {
-            return segment;
+        public ConvexSubLine getSubLine() {
+            return subline;
         }
 
         /** {@inheritDoc} */
@@ -180,22 +178,22 @@ public abstract class AbstractSegmentConnector
         /** {@inheritDoc} */
         @Override
         public boolean hasEnd() {
-            return segment != null && segment.getEndPoint() != null;
+            return subline != null && subline.getEndPoint() != null;
         }
 
         /** Return true if this instance has a size equivalent to zero.
          * @return true if this instance has a size equivalent to zero.
          */
         public boolean hasZeroSize() {
-            return segment != null && segment.getPrecision().eqZero(segment.getSize());
+            return subline != null && subline.getPrecision().eqZero(subline.getSize());
         }
 
         /** {@inheritDoc} */
         @Override
-        public boolean endPointsEq(final ConnectableSegment other) {
+        public boolean endPointsEq(final ConnectableSubLine other) {
             if (hasEnd() && other.hasEnd()) {
-                return segment.getEndPoint()
-                        .eq(other.segment.getEndPoint(), segment.getPrecision());
+                return subline.getEndPoint()
+                        .eq(other.subline.getEndPoint(), subline.getPrecision());
             }
 
             return false;
@@ -203,34 +201,34 @@ public abstract class AbstractSegmentConnector
 
         /** {@inheritDoc} */
         @Override
-        public boolean canConnectTo(final ConnectableSegment next) {
-            final Vector2D end = segment.getEndPoint();
+        public boolean canConnectTo(final ConnectableSubLine next) {
+            final Vector2D end = subline.getEndPoint();
             final Vector2D nextStart = next.start;
 
             return end != null && nextStart != null &&
-                    end.eq(nextStart, segment.getPrecision());
+                    end.eq(nextStart, subline.getPrecision());
         }
 
         /** {@inheritDoc} */
         @Override
-        public double getRelativeAngle(final ConnectableSegment next) {
-            return segment.getLine().angle(next.getSegment().getLine());
+        public double getRelativeAngle(final ConnectableSubLine next) {
+            return subline.getLine().angle(next.getSubLine().getLine());
         }
 
         /** {@inheritDoc} */
         @Override
-        public ConnectableSegment getConnectionSearchKey() {
-            return new ConnectableSegment(segment.getEndPoint());
+        public ConnectableSubLine getConnectionSearchKey() {
+            return new ConnectableSubLine(subline.getEndPoint());
         }
 
         /** {@inheritDoc} */
         @Override
-        public boolean shouldContinueConnectionSearch(final ConnectableSegment candidate, final boolean ascending) {
+        public boolean shouldContinueConnectionSearch(final ConnectableSubLine candidate, final boolean ascending) {
 
             if (candidate.hasStart()) {
-                final double candidateX = candidate.getSegment().getStartPoint().getX();
-                final double thisX = segment.getEndPoint().getX();
-                final int cmp = segment.getPrecision().compare(candidateX, thisX);
+                final double candidateX = candidate.getSubLine().getStartPoint().getX();
+                final double thisX = subline.getEndPoint().getX();
+                final int cmp = subline.getPrecision().compare(candidateX, thisX);
 
                 return ascending ? cmp <= 0 : cmp >= 0;
             }
@@ -240,26 +238,26 @@ public abstract class AbstractSegmentConnector
 
         /** {@inheritDoc} */
         @Override
-        public int compareTo(ConnectableSegment other) {
+        public int compareTo(ConnectableSubLine other) {
             // sort by coordinates
             int cmp = Vector2D.COORDINATE_ASCENDING_ORDER.compare(start, other.start);
             if (cmp == 0) {
-                // sort entries without segments before ones with segments
-                final boolean thisHasSegment = segment != null;
-                final boolean otherHasSegment = other.segment != null;
+                // sort entries without sublines before ones with sublines
+                final boolean thisHasSubline = subline != null;
+                final boolean otherHasSubline = other.subline != null;
 
-                cmp = Boolean.compare(thisHasSegment, otherHasSegment);
+                cmp = Boolean.compare(thisHasSubline, otherHasSubline);
 
-                if (cmp == 0 && thisHasSegment) {
-                    // place point-like segments before ones with non-zero length
+                if (cmp == 0 && thisHasSubline) {
+                    // place point-like sublines before ones with non-zero length
                     cmp = Boolean.compare(this.hasZeroSize(), other.hasZeroSize());
 
                     if (cmp == 0) {
                         // sort by line angle
                         final double aAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
-                                this.getSegment().getLine().getAngle());
+                                this.getSubLine().getLine().getAngle());
                         final double bAngle = PlaneAngleRadians.normalizeBetweenMinusPiAndPi(
-                                other.getSegment().getLine().getAngle());
+                                other.getSubLine().getLine().getAngle());
 
                         cmp = Double.compare(aAngle, bAngle);
                     }
@@ -271,7 +269,7 @@ public abstract class AbstractSegmentConnector
         /** {@inheritDoc} */
         @Override
         public int hashCode() {
-            return Objects.hash(start, segment);
+            return Objects.hash(start, subline);
         }
 
         /** {@inheritDoc} */
@@ -284,14 +282,14 @@ public abstract class AbstractSegmentConnector
                 return false;
             }
 
-            final ConnectableSegment other = (ConnectableSegment) obj;
+            final ConnectableSubLine other = (ConnectableSubLine) obj;
             return Objects.equals(this.start, other.start) &&
-                    Objects.equals(this.segment, other.segment);
+                    Objects.equals(this.subline, other.subline);
         }
 
         /** {@inheritDoc} */
         @Override
-        protected ConnectableSegment getSelf() {
+        protected ConnectableSubLine getSelf() {
             return this;
         }
     }

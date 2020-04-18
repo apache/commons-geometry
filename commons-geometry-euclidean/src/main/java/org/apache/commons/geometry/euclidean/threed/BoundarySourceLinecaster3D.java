@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 /** Class that performs linecast operations against arbitrary {@link BoundarySource3D}
  * instances. This class performs a brute-force computation of the intersections of the
- * line or line segment against all boundaries. Some data structures may support more
+ * line or convex subline against all boundaries. Some data structures may support more
  * efficient algorithms and should therefore prefer those instead.
  */
 final class BoundarySourceLinecaster3D implements Linecastable3D {
@@ -41,8 +41,8 @@ final class BoundarySourceLinecaster3D implements Linecastable3D {
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint3D> linecast(final Segment3D segment) {
-        final List<LinecastPoint3D> results =  getIntersectionStream(segment)
+    public List<LinecastPoint3D> linecast(final ConvexSubLine3D subline) {
+        final List<LinecastPoint3D> results =  getIntersectionStream(subline)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         LinecastPoint3D.sortAndFilter(results);
@@ -52,37 +52,37 @@ final class BoundarySourceLinecaster3D implements Linecastable3D {
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint3D linecastFirst(final Segment3D segment) {
-        return getIntersectionStream(segment)
+    public LinecastPoint3D linecastFirst(final ConvexSubLine3D subline) {
+        return getIntersectionStream(subline)
                 .min(LinecastPoint3D.ABSCISSA_ORDER)
                 .orElse(null);
     }
 
     /** Return a stream containing intersections between the boundary source and the
-     * given line segment.
-     * @param segment segment to intersect
+     * given convex subline.
+     * @param subline subline to intersect
      * @return a stream containing linecast intersections
      */
-    private Stream<LinecastPoint3D> getIntersectionStream(final Segment3D segment) {
+    private Stream<LinecastPoint3D> getIntersectionStream(final ConvexSubLine3D subline) {
         return boundarySrc.boundaryStream()
-                .map(boundary -> computeIntersection(boundary, segment))
+                .map(boundary -> computeIntersection(boundary, subline))
                 .filter(Objects::nonNull);
     }
 
-    /** Compute the intersection between a boundary subplane and segment. Null is
+    /** Compute the intersection between a boundary subplane and subline. Null is
      * returned if no intersection is discovered.
      * @param subplane subplane from the boundary source
-     * @param segment linecast segment to intersect with
+     * @param subline linecast subline to intersect with
      * @return the linecast intersection between the two arguments or null if there is no such
      *      intersection
      */
-    private LinecastPoint3D computeIntersection(final ConvexSubPlane subplane, final Segment3D segment) {
-        final Vector3D intersectionPt = subplane.intersection(segment);
+    private LinecastPoint3D computeIntersection(final ConvexSubPlane subplane, final ConvexSubLine3D subline) {
+        final Vector3D intersectionPt = subplane.intersection(subline);
 
         if (intersectionPt != null) {
             final Vector3D normal = subplane.getPlane().getNormal();
 
-            return new LinecastPoint3D(intersectionPt, normal, segment.getLine());
+            return new LinecastPoint3D(intersectionPt, normal, subline.getLine());
         }
 
         return null; // no intersection

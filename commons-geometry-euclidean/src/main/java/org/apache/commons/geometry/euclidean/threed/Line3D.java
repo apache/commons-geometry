@@ -16,13 +16,13 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Embedding;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 
 /** Class representing a line in 3D space.
@@ -30,6 +30,10 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
  * <p>Instances of this class are guaranteed to be immutable.</p>
  */
 public final class Line3D implements Embedding<Vector3D, Vector1D> {
+
+    /** Format string for creating line string representations. */
+    private static final String TO_STRING_FORMAT = "{0}[origin= {1}, direction= {2}]";
+
     /** Line point closest to the origin. */
     private final Vector3D origin;
 
@@ -137,12 +141,12 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * 2D space). Abscissa values increase in the direction of the line. This method
      * is exactly equivalent to {@link #toSubspace(Vector3D)} except that this method
      * returns a double instead of a {@link Vector1D}.
-     * @param point point to compute the abscissa for
+     * @param pt point to compute the abscissa for
      * @return abscissa value of the point
      * @see #toSubspace(Vector3D)
      */
-    public double abscissa(final Vector3D point) {
-        return point.subtract(origin).dot(direction);
+    public double abscissa(final Vector3D pt) {
+        return pt.subtract(origin).dot(direction);
     }
 
     /** Get one point from the line.
@@ -155,13 +159,13 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D toSubspace(Vector3D pt) {
+    public Vector1D toSubspace(final Vector3D pt) {
         return Vector1D.of(abscissa(pt));
     }
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D toSpace(Vector1D pt) {
+    public Vector3D toSpace(final Vector1D pt) {
         return toSpace(pt.getX());
     }
 
@@ -258,65 +262,84 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
         return line.contains(closestPt) ? closestPt : null;
     }
 
-    /** Return a new infinite segment representing the entire line.
-     * @return a new infinite segment representing the entire line
+    /** Return a new infinite subline representing the entire line.
+     * @return a new infinite subline representing the entire line
      */
-    public Segment3D span() {
-        return Segment3D.fromInterval(this, Interval.full());
+    public Span span() {
+        return new Span(this);
     }
 
-    /** Create a new line segment from the given interval.
-     * @param interval interval representing the 1D region for the line segment
-     * @return a new line segment on this line
-     */
-    public Segment3D segment(final Interval interval) {
-        return Segment3D.fromInterval(this, interval);
-    }
-
-    /** Create a new line segment from the given interval.
+    /** Create a new line segment from the given 1D interval. The returned line
+     * segment consists of all points between the two locations, regardless of the order the
+     * arguments are given.
      * @param a first 1D location for the interval
      * @param b second 1D location for the interval
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either of the locations is NaN or infinite
+     * @see Segment3D#fromLocations(Line, double, double)
      */
     public Segment3D segment(final double a, final double b) {
-        return Segment3D.fromInterval(this, a, b);
+        return Segment3D.fromLocations(this, a, b);
     }
 
-    /** Create a new line segment between the projections of the two
-     * given points onto this line.
+    /** Create a new line segment from two points. The returned segment represents all points on this line
+     * between the projected locations of {@code a} and {@code b}. The points may be given in any order.
      * @param a first point
      * @param b second point
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
+     * @see Segment3D#fromPoints(Line, Vector2D, Vector2D)
      */
     public Segment3D segment(final Vector3D a, final Vector3D b) {
-        return Segment3D.fromInterval(this, toSubspace(a), toSubspace(b));
+        return Segment3D.fromPoints(this, a, b);
     }
 
-    /** Create a new line segment that starts at infinity and continues along
-     * the line up to the projection of the given point.
-     * @param pt point defining the end point of the line segment; the end point
+    /** Create a new convex subline that starts at infinity and continues along
+     * the line up to the projection of the given end point.
+     * @param endPoint point defining the end point of the subline; the end point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a new, half-open subline that ends at the given point
+     * @see TerminatedLine3D#fromPoint(Line3D, Vector2D)
+     * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
-    public Segment3D segmentTo(final Vector3D pt) {
-        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    public TerminatedLine3D lineTo(final Vector3D endPoint) {
+        return TerminatedLine3D.fromPoint(this, endPoint);
     }
 
-    /** Create a new line segment that starts at the projection of the given point
-     * and continues in the direction of the line to infinity, similar to a ray.
-     * @param pt point defining the start point of the line segment; the start point
+    /** Create a new convex subline that starts at infinity and continues along
+     * the line up to the given 1D location.
+     * @param endLocation the 1D location of the end of the half-line
+     * @return a new, half-open subline that ends at the given 1D location
+     * @see TerminatedLine3D#fromLocation(Line3D, double)
+     * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
+     */
+    public TerminatedLine3D lineTo(final double endLocation) {
+        return TerminatedLine3D.fromLocation(this, endLocation);
+    }
+
+    /** Create a new ray instance that starts at the projection of the given point
+     * and continues in the direction of the line to infinity.
+     * @param startPoint point defining the start point of the ray; the start point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a ray starting at the projected point and extending along this line
+     *      to infinity
+     * @see Ray3D#fromPoint(Line3D, Vector3D)
+     * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
      */
-    public Segment3D segmentFrom(final Vector3D pt) {
-        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
+    public Ray3D rayFrom(final Vector3D startPoint) {
+        return Ray3D.fromPoint(this, startPoint);
     }
 
-    /** Create a new, empty subline based on this line.
-     * @return a new, empty subline based on this line
+    /** Create a new ray instance that starts at the given 1D location and continues in
+     * the direction of the line to infinity.
+     * @param startLocation 1D location defining the start point of the ray
+     * @return a ray starting at the given 1D location and extending along this line
+     *      to infinity
+     * @see Ray3D#fromLocation(Line3D, double)
+     * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
      */
-    public SubLine3D subline() {
-        return new SubLine3D(this);
+    public Ray3D rayFrom(final double startLocation) {
+        return Ray3D.fromLocation(this, startLocation);
     }
 
     /** Return true if this instance should be considered equivalent to the argument, using the
@@ -356,15 +379,10 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName())
-            .append("[origin= ")
-            .append(origin)
-            .append(", direction= ")
-            .append(direction)
-            .append("]");
-
-        return sb.toString();
+        return MessageFormat.format(TO_STRING_FORMAT,
+                getClass().getSimpleName(),
+                getOrigin(),
+                getDirection());
     }
 
     /** Create a new line instance from two points that lie on the line. The line
@@ -374,25 +392,29 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param precision floating point precision context
      * @return a new line instance that contains both of the given point and that has
      *      a direction going from the first point to the second point
-     * @throws IllegalArgumentException if the points lie too close to reate a non-zero direction vector
+     * @throws IllegalArgumentException if the points lie too close to create a non-zero direction vector
      */
     public static Line3D fromPoints(final Vector3D p1, final Vector3D p2,
             final DoublePrecisionContext precision) {
-        return fromPointAndDirection(p1, p1.directionTo(p2), precision);
+        return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
     }
 
     /** Create a new line instance from a point and a direction.
      * @param pt a point lying on the line
-     * @param direction the direction of the line
+     * @param dir the direction of the line
      * @param precision floating point precision context
      * @return a new line instance that contains the given point and points in the
      *      given direction
-     * @throws IllegalArgumentException if the direction cannot be normalized
+     * @throws IllegalArgumentException if {@code dir} has zero length, as evaluated by the
+     *      given precision context
      */
-    public static Line3D fromPointAndDirection(final Vector3D pt, final Vector3D direction,
+    public static Line3D fromPointAndDirection(final Vector3D pt, final Vector3D dir,
             final DoublePrecisionContext precision) {
+        if (dir.isZero(precision)) {
+            throw new IllegalArgumentException("Line direction cannot be zero");
+        }
 
-        final Vector3D normDirection = direction.normalize();
+        final Vector3D normDirection = dir.normalize();
         final Vector3D origin = pt.reject(normDirection);
 
         return new Line3D(origin, normDirection, precision);
@@ -430,6 +452,107 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
          */
         public AffineTransformMatrix1D getTransform() {
             return transform;
+        }
+    }
+
+    /** Class representing the span of a line in 3D Euclidean space. This is the set of all points
+     * contained by the line.
+     *
+     * <p>Instances of this class are guaranteed to be immutable.</p>
+     */
+    public static final class Span extends ConvexSubLine3D {
+
+        /** Construct a new instance for the given line.
+         * @param line line to construct the span for
+         */
+        Span(final Line3D line) {
+            super(line);
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code true}.</p>
+        */
+        @Override
+        public boolean isInfinite() {
+            return true;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code false}.</p>
+        */
+        @Override
+        public boolean isFinite() {
+            return false;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+        */
+        @Override
+        public double getSize() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code null}.</p>
+        */
+        @Override
+        public Vector3D getStartPoint() {
+            return null;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@link Double#NEGATIVE_INFINITY}.</p>
+        */
+        @Override
+        public double getSubspaceStart() {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        /** {@inheritDoc}
+        *
+        * <p>This method always returns {@code null}.</p>
+        */
+        @Override
+        public Vector3D getEndPoint() {
+            return null;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+         */
+        @Override
+        public double getSubspaceEnd() {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Span transform(final Transform<Vector3D> transform) {
+            return new Span(getLine().transform(transform));
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            final Line3D line = getLine();
+
+            return MessageFormat.format(TO_STRING_FORMAT,
+                    Line3D.class.getSimpleName() + "." + getClass().getSimpleName(),
+                    line.getOrigin(),
+                    line.getDirection());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        boolean containsAbscissa(final double abscissa) {
+            return true;
         }
     }
 }
