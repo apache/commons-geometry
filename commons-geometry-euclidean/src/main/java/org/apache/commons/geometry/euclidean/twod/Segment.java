@@ -227,7 +227,7 @@ public final class Segment extends ConvexSubLine {
      * @return a new line segment representing the points between the projected locations of {@code a}
      *      and {@code b} on the given line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see #fromLineLocations(Line, double, double)
+     * @see #fromLocations(Line, double, double)
      */
     public static Segment fromPoints(final Line line, final Vector2D a, final Vector2D b) {
         return fromLocations(line, line.abscissa(a), line.abscissa(b));

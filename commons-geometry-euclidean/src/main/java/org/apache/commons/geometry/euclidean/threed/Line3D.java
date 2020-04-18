@@ -276,7 +276,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param b second 1D location for the interval
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either of the locations is NaN or infinite
-     * @see Segment3D#fromLocations(Line, double, double)
+     * @see Segment3D#fromLocations(Line3D, double, double)
      */
     public Segment3D segment(final double a, final double b) {
         return Segment3D.fromLocations(this, a, b);
@@ -288,7 +288,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param b second point
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see Segment3D#fromPoints(Line, Vector2D, Vector2D)
+     * @see Segment3D#fromPoints(Line3D, Vector3D, Vector3D)
      */
     public Segment3D segment(final Vector3D a, final Vector3D b) {
         return Segment3D.fromPoints(this, a, b);
@@ -299,7 +299,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param endPoint point defining the end point of the subline; the end point
      *      is equal to the projection of this point onto the line
      * @return a new, half-open subline that ends at the given point
-     * @see TerminatedLine3D#fromPoint(Line3D, Vector2D)
+     * @see TerminatedLine3D#fromPoint(Line3D, Vector3D)
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
     public TerminatedLine3D lineTo(final Vector3D endPoint) {

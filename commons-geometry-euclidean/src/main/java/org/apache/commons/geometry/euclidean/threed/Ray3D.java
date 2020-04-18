@@ -149,7 +149,7 @@ public final class Ray3D extends ConvexSubLine3D {
      * @return a new ray instance with the given start point and direction
      * @throws IllegalArgumentException If {@code direction} has zero length, as evaluated by the
      *      given precision context
-     * @see Line3D#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see Line3D#fromPointAndDirection(Vector3D, Vector3D, DoublePrecisionContext)
      */
     public static Ray3D fromPointAndDirection(final Vector3D startPoint, final Vector3D direction,
             final DoublePrecisionContext precision) {

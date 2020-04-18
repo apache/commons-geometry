@@ -147,7 +147,7 @@ public final class Segment3D extends ConvexSubLine3D {
      * @return a new line segment instance with the given start and end points
      * @throws IllegalArgumentException If the vector between {@code startPoint} and {@code endPoint} has zero length,
      *      as evaluated by the given precision context
-     * @see Line3D#fromPoints(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see Line3D#fromPoints(Vector3D, Vector3D, DoublePrecisionContext)
      */
     public static Segment3D fromPoints(final Vector3D startPoint, final Vector3D endPoint,
             final DoublePrecisionContext precision) {
@@ -167,7 +167,7 @@ public final class Segment3D extends ConvexSubLine3D {
      * @return a new line segment representing the points between the projected locations of {@code a}
      *      and {@code b} on the given line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see #fromLineLocations(Line, double, double)
+     * @see #fromLocations(Line3D, double, double)
      */
     public static Segment3D fromPoints(final Line3D line, final Vector3D a, final Vector3D b) {
         return fromLocations(line, line.abscissa(a), line.abscissa(b));

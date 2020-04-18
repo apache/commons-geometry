@@ -143,7 +143,7 @@ public final class TerminatedLine3D extends ConvexSubLine3D {
      * @return a new terminated line instance with the given end point and line direction
      * @throws IllegalArgumentException If {@code lineDirection} has zero length, as evaluated by the
      *      given precision context
-     * @see Line3D#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see Line3D#fromPointAndDirection(Vector3D, Vector3D, DoublePrecisionContext)
      */
     public static TerminatedLine3D fromPointAndDirection(final Vector3D endPoint, final Vector3D lineDirection,
             final DoublePrecisionContext precision) {
