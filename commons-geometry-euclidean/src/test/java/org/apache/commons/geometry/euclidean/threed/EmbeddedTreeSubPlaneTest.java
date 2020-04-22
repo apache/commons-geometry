@@ -40,7 +40,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RegionBSPTreeSubPlaneTest {
+public class EmbeddedTreeSubPlaneTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -53,7 +53,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testCtor_plane() {
         // act
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE);
 
         // assert
         Assert.assertFalse(sp.isFull());
@@ -65,7 +65,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testCtor_plane_booleanFalse() {
         // act
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
 
         // assert
         Assert.assertFalse(sp.isFull());
@@ -77,7 +77,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testCtor_plane_booleanTrue() {
         // act
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, true);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, true);
 
         // assert
         Assert.assertTrue(sp.isFull());
@@ -89,7 +89,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testToConvex_full() {
         // act
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, true);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, true);
 
         // act
         List<ConvexSubPlane> convex = sp.toConvex();
@@ -102,7 +102,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testToConvex_empty() {
         // act
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
 
         // act
         List<ConvexSubPlane> convex = sp.toConvex();
@@ -123,7 +123,7 @@ public class RegionBSPTreeSubPlaneTest {
                     Vector2D.of(2, 1), Vector2D.of(1, 1)
                 ), TEST_PRECISION);
 
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.add(ConvexSubPlane.fromConvexArea(XY_PLANE, a));
         sp.add(ConvexSubPlane.fromConvexArea(XY_PLANE, b));
 
@@ -139,12 +139,12 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_empty() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
 
         Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -156,23 +156,23 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_halfSpace() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().getRoot().cut(
                 Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
 
         Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        RegionBSPTreeSubPlane minus = split.getMinus();
+        EmbeddedTreeSubPlane minus = split.getMinus();
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.of(-1, 1, 0));
         checkPoints(minus, RegionLocation.OUTSIDE, Vector3D.of(1, 1, 0), Vector3D.of(0, -1, 0));
 
-        RegionBSPTreeSubPlane plus = split.getPlus();
+        EmbeddedTreeSubPlane plus = split.getPlus();
         checkPoints(plus, RegionLocation.OUTSIDE, Vector3D.of(-1, 1, 0), Vector3D.of(0, -1, 0));
         checkPoints(plus, RegionLocation.INSIDE, Vector3D.of(1, 1, 0));
     }
@@ -180,25 +180,25 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_both() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
 
-        RegionBSPTreeSubPlane minus = split.getMinus();
+        EmbeddedTreeSubPlane minus = split.getMinus();
         checkPoints(minus, RegionLocation.INSIDE, Vector3D.of(-0.5, 0, 0));
         checkPoints(minus, RegionLocation.OUTSIDE,
                 Vector3D.of(0.5, 0, 0), Vector3D.of(1.5, 0, 0),
                 Vector3D.of(0, 1.5, 0), Vector3D.of(0, -1.5, 0));
 
-        RegionBSPTreeSubPlane plus = split.getPlus();
+        EmbeddedTreeSubPlane plus = split.getPlus();
         checkPoints(plus, RegionLocation.INSIDE, Vector3D.of(0.5, 0, 0));
         checkPoints(plus, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.5, 0, 0), Vector3D.of(1.5, 0, 0),
@@ -208,14 +208,14 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_intersects_plusOnly() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0.1, 0, 1), TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -227,14 +227,14 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_intersects_minusOnly() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.of(0.1, 0, -1), TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -246,14 +246,14 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_parallel_plusOnly() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -265,14 +265,14 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_parallel_minusOnly() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         Plane splitter = Plane.fromPointAndNormal(Vector3D.of(0, 0, 1), Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(splitter);
+        Split<EmbeddedTreeSubPlane> split = sp.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -284,12 +284,12 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSplit_coincident() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
         sp.getSubspaceRegion().union(
                 Parallelogram.axisAligned(Vector2D.of(-1, -1), Vector2D.of(1, 1), TEST_PRECISION).toTree());
 
         // act
-        Split<RegionBSPTreeSubPlane> split = sp.split(sp.getPlane());
+        Split<EmbeddedTreeSubPlane> split = sp.split(sp.getPlane());
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -301,12 +301,12 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testTransform_empty() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.Unit.PLUS_Z);
 
         // act
-        RegionBSPTreeSubPlane result = sp.transform(transform);
+        EmbeddedTreeSubPlane result = sp.transform(transform);
 
         // assert
         Assert.assertNotSame(sp, result);
@@ -322,12 +322,12 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testTransform_full() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, true);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, true);
 
         AffineTransformMatrix3D transform = AffineTransformMatrix3D.createTranslation(Vector3D.Unit.PLUS_Z);
 
         // act
-        RegionBSPTreeSubPlane result = sp.transform(transform);
+        EmbeddedTreeSubPlane result = sp.transform(transform);
 
         // assert
         Assert.assertNotSame(sp, result);
@@ -347,14 +347,14 @@ public class RegionBSPTreeSubPlaneTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(plane, area.toTree());
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(plane, area.toTree());
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO))
                 .translate(Vector3D.of(1, 0, 0));
 
         // act
-        RegionBSPTreeSubPlane result = sp.transform(transform);
+        EmbeddedTreeSubPlane result = sp.transform(transform);
 
         // assert
         Assert.assertNotSame(sp, result);
@@ -377,12 +377,12 @@ public class RegionBSPTreeSubPlaneTest {
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
         Plane plane = Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(plane, area.toTree());
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(plane, area.toTree());
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.createScale(-1, 1, 1);
 
         // act
-        RegionBSPTreeSubPlane result = sp.transform(transform);
+        EmbeddedTreeSubPlane result = sp.transform(transform);
 
         // assert
         Assert.assertNotSame(sp, result);
@@ -401,7 +401,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testToString() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         String str = sp.toString();
@@ -416,7 +416,7 @@ public class RegionBSPTreeSubPlaneTest {
         // arrange
         Plane mainPlane = Plane.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        RegionBSPTreeSubPlane.Builder builder = new RegionBSPTreeSubPlane.Builder(mainPlane);
+        EmbeddedTreeSubPlane.Builder builder = new EmbeddedTreeSubPlane.Builder(mainPlane);
 
         ConvexArea a = ConvexArea.fromVertexLoop(
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
@@ -428,9 +428,9 @@ public class RegionBSPTreeSubPlaneTest {
 
         // act
         builder.add(ConvexSubPlane.fromConvexArea(closePlane, a));
-        builder.add(new RegionBSPTreeSubPlane(closePlane, b.toTree()));
+        builder.add(new EmbeddedTreeSubPlane(closePlane, b.toTree()));
 
-        RegionBSPTreeSubPlane result = builder.build();
+        EmbeddedTreeSubPlane result = builder.build();
 
         // assert
         Assert.assertFalse(result.isFull());
@@ -450,7 +450,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testSubPlaneAddMethods_validatesPlane() {
         // arrange
-        RegionBSPTreeSubPlane sp = new RegionBSPTreeSubPlane(XY_PLANE, false);
+        EmbeddedTreeSubPlane sp = new EmbeddedTreeSubPlane(XY_PLANE, false);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -460,7 +460,7 @@ public class RegionBSPTreeSubPlaneTest {
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            sp.add(new RegionBSPTreeSubPlane(
+            sp.add(new EmbeddedTreeSubPlane(
                     Plane.fromPointAndPlaneVectors(Vector3D.of(0, 0, -1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION),
                     false));
         }, IllegalArgumentException.class);
@@ -469,7 +469,7 @@ public class RegionBSPTreeSubPlaneTest {
     @Test
     public void testBuilder_addUnknownType() {
         // arrange
-        RegionBSPTreeSubPlane.Builder sp = new RegionBSPTreeSubPlane.Builder(XY_PLANE);
+        EmbeddedTreeSubPlane.Builder sp = new EmbeddedTreeSubPlane.Builder(XY_PLANE);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -477,7 +477,7 @@ public class RegionBSPTreeSubPlaneTest {
         }, IllegalArgumentException.class);
     }
 
-    private static void checkPoints(RegionBSPTreeSubPlane sp, RegionLocation loc, Vector3D... pts) {
+    private static void checkPoints(EmbeddedTreeSubPlane sp, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected subplane location for point " + pt, loc, sp.classify(pt));
         }

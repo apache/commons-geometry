@@ -111,7 +111,7 @@ public class ConvexSubLine3DTest {
         Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        TerminatedLine3D halfLine = (TerminatedLine3D) ConvexSubLine3D.fromInterval(line, interval);
+        ReverseRay3D halfLine = (ReverseRay3D) ConvexSubLine3D.fromInterval(line, interval);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
@@ -185,7 +185,7 @@ public class ConvexSubLine3DTest {
         Line3D line = Line3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);
 
         // act
-        TerminatedLine3D halfLine = (TerminatedLine3D) ConvexSubLine3D.fromInterval(line, 2, Double.NEGATIVE_INFINITY);
+        ReverseRay3D halfLine = (ReverseRay3D) ConvexSubLine3D.fromInterval(line, 2, Double.NEGATIVE_INFINITY);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());

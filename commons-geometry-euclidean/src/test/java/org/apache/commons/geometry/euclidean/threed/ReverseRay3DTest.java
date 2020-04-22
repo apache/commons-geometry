@@ -25,7 +25,7 @@ import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TerminatedLine3DTest {
+public class ReverseRay3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -38,21 +38,21 @@ public class TerminatedLine3DTest {
         Vector3D pt = Vector3D.of(1, 1, 2);
 
         // act
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(pt, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // assert
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(pt, halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(pt, revRay.getEndPoint(), TEST_EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, halfLine.getLine().getDirection(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.PLUS_Z, revRay.getLine().getDirection(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(2, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(2, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TerminatedLine3DTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine3D.fromPointAndDirection(pt, dir, TEST_PRECISION);
+            ReverseRay3D.fromPointAndDirection(pt, dir, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -75,19 +75,19 @@ public class TerminatedLine3DTest {
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(1, 0, 2), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPoint(line, pt);
+        ReverseRay3D revRay = ReverseRay3D.fromPoint(line, pt);
 
         // assert
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), revRay.getEndPoint(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(-1, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(-1, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -97,16 +97,16 @@ public class TerminatedLine3DTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine3D.fromPoint(line, Vector3D.NaN);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: NaN");
+            ReverseRay3D.fromPoint(line, Vector3D.NaN);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine3D.fromPoint(line, Vector3D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: NaN");
+            ReverseRay3D.fromPoint(line, Vector3D.NEGATIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine3D.fromPoint(line, Vector3D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: NaN");
+            ReverseRay3D.fromPoint(line, Vector3D.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
     }
 
     @Test
@@ -115,19 +115,19 @@ public class TerminatedLine3DTest {
         Line3D line = Line3D.fromPointAndDirection(Vector3D.of(-1, 0, 0), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
-        TerminatedLine3D halfLine = TerminatedLine3D.fromLocation(line, -1);
+        ReverseRay3D revRay = ReverseRay3D.fromLocation(line, -1);
 
         // assert
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), revRay.getEndPoint(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(-1, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(-1, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -137,10 +137,10 @@ public class TerminatedLine3DTest {
                 .toMatrix()
                 .translate(Vector3D.Unit.PLUS_Y);
 
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        TerminatedLine3D result = halfLine.transform(t);
+        ReverseRay3D result = revRay.transform(t);
 
         // assert
         Assert.assertNull(result.getStartPoint());
@@ -157,10 +157,10 @@ public class TerminatedLine3DTest {
                 .translate(Vector3D.Unit.PLUS_Y)
                 .scale(1, 1, -2);
 
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(Vector3D.of(1, 0, 0), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        TerminatedLine3D result = halfLine.transform(t);
+        ReverseRay3D result = revRay.transform(t);
 
         // assert
         Assert.assertNull(result.getStartPoint());
@@ -176,44 +176,44 @@ public class TerminatedLine3DTest {
 
         Vector3D delta = Vector3D.of(1e-12, 1e-12, 1e-12);
 
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        Assert.assertFalse(halfLine.contains(Vector3D.of(2, 2, 2)));
-        Assert.assertFalse(halfLine.contains(Vector3D.of(1.1, 1, 1)));
-        Assert.assertFalse(halfLine.contains(Vector3D.of(100, 1, 1)));
+        Assert.assertFalse(revRay.contains(Vector3D.of(2, 2, 2)));
+        Assert.assertFalse(revRay.contains(Vector3D.of(1.1, 1, 1)));
+        Assert.assertFalse(revRay.contains(Vector3D.of(100, 1, 1)));
 
-        Assert.assertTrue(halfLine.contains(p0));
-        Assert.assertTrue(halfLine.contains(p0.add(delta)));
+        Assert.assertTrue(revRay.contains(p0));
+        Assert.assertTrue(revRay.contains(p0.add(delta)));
 
-        Assert.assertTrue(halfLine.contains(Vector3D.of(-1000, 1, 1)));
+        Assert.assertTrue(revRay.contains(Vector3D.of(-1000, 1, 1)));
     }
 
     @Test
     public void testGetInterval() {
         // arrange
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(Vector3D.of(2, -1, 3), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Interval interval = halfLine.getInterval();
+        Interval interval = revRay.getInterval();
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
         Assert.assertEquals(-1, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(halfLine.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
+        Assert.assertSame(revRay.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
     }
 
     @Test
     public void testToString() {
         // arrange
-        TerminatedLine3D halfLine = TerminatedLine3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay3D revRay = ReverseRay3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        String str = halfLine.toString();
+        String str = revRay.toString();
 
         // assert
-        GeometryTestUtils.assertContains("TerminatedLine3D[direction= (1", str);
+        GeometryTestUtils.assertContains("ReverseRay3D[direction= (1", str);
         GeometryTestUtils.assertContains(", endPoint= (0", str);
     }
 }

@@ -26,7 +26,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TerminatedLineTest {
+public class ReverseRayTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -40,21 +40,21 @@ public class TerminatedLineTest {
         Vector2D p1 = Vector2D.of(2, 2);
 
         // act
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
 
         // assert
-        Assert.assertFalse(halfLine.isFull());
-        Assert.assertFalse(halfLine.isEmpty());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertFalse(revRay.isFull());
+        Assert.assertFalse(revRay.isEmpty());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(p0, halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(p0, revRay.getEndPoint(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(1, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(1, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TerminatedLineTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromPointAndDirection(p, d, TEST_PRECISION);
+            ReverseRay.fromPointAndDirection(p, d, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -79,21 +79,21 @@ public class TerminatedLineTest {
         Line line = Line.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = TerminatedLine.fromPoint(line, p3);
+        ReverseRay revRay = ReverseRay.fromPoint(line, p3);
 
         // assert
-        Assert.assertFalse(halfLine.isFull());
-        Assert.assertFalse(halfLine.isEmpty());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertFalse(revRay.isFull());
+        Assert.assertFalse(revRay.isEmpty());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), revRay.getEndPoint(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(3, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(3, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -105,16 +105,16 @@ public class TerminatedLineTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromPoint(line, Vector2D.NaN);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: NaN");
+            ReverseRay.fromPoint(line, Vector2D.NaN);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromPoint(line, Vector2D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: Infinity");
+            ReverseRay.fromPoint(line, Vector2D.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromPoint(line, Vector2D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: -Infinity");
+            ReverseRay.fromPoint(line, Vector2D.NEGATIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: -Infinity");
     }
 
     @Test
@@ -126,21 +126,21 @@ public class TerminatedLineTest {
         Line line = Line.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = TerminatedLine.fromLocation(line, -2);
+        ReverseRay revRay = ReverseRay.fromLocation(line, -2);
 
         // assert
-        Assert.assertFalse(halfLine.isFull());
-        Assert.assertFalse(halfLine.isEmpty());
-        Assert.assertTrue(halfLine.isInfinite());
-        Assert.assertFalse(halfLine.isFinite());
+        Assert.assertFalse(revRay.isFull());
+        Assert.assertFalse(revRay.isEmpty());
+        Assert.assertTrue(revRay.isInfinite());
+        Assert.assertFalse(revRay.isFinite());
 
-        Assert.assertNull(halfLine.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -2), halfLine.getEndPoint(), TEST_EPS);
+        Assert.assertNull(revRay.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -2), revRay.getEndPoint(), TEST_EPS);
 
-        GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
-        Assert.assertEquals(-2, halfLine.getSubspaceEnd(), TEST_EPS);
+        GeometryTestUtils.assertNegativeInfinity(revRay.getSubspaceStart());
+        Assert.assertEquals(-2, revRay.getSubspaceEnd(), TEST_EPS);
 
-        GeometryTestUtils.assertPositiveInfinity(halfLine.getSize());
+        GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
     }
 
     @Test
@@ -152,16 +152,16 @@ public class TerminatedLineTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromLocation(line, Double.NaN);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: NaN");
+            ReverseRay.fromLocation(line, Double.NaN);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromLocation(line, Double.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: Infinity");
+            ReverseRay.fromLocation(line, Double.POSITIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
-            TerminatedLine.fromLocation(line, Double.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid terminated line end location: -Infinity");
+            ReverseRay.fromLocation(line, Double.NEGATIVE_INFINITY);
+        }, IllegalArgumentException.class, "Invalid reverse ray end location: -Infinity");
     }
 
     @Test
@@ -170,10 +170,10 @@ public class TerminatedLineTest {
         AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
 
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        TerminatedLine result = halfLine.transform(t);
+        ReverseRay result = revRay.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -1), result.getEndPoint(), TEST_EPS);
@@ -186,11 +186,11 @@ public class TerminatedLineTest {
                 .translate(Vector2D.Unit.PLUS_X)
                 .scale(1, -1);
 
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(Vector2D.of(2, 3),
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(Vector2D.of(2, 3),
                 Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        TerminatedLine result = halfLine.transform(t);
+        ReverseRay result = revRay.transform(t);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, -2), result.getEndPoint(), TEST_EPS);
@@ -204,16 +204,16 @@ public class TerminatedLineTest {
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (x, y) -> {
             Vector2D dir = Vector2D.of(x, y);
 
-            TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(start, dir, TEST_PRECISION);
+            ReverseRay revRay = ReverseRay.fromPointAndDirection(start, dir, TEST_PRECISION);
 
             // act
-            Ray rev = halfLine.reverse();
+            Ray rev = revRay.reverse();
 
             // assert
-            EuclideanTestUtils.assertCoordinatesEqual(halfLine.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
-            Assert.assertEquals(-1, halfLine.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
+            EuclideanTestUtils.assertCoordinatesEqual(revRay.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);
+            Assert.assertEquals(-1, revRay.getLine().getDirection().dot(rev.getLine().getDirection()), TEST_EPS);
 
-            EuclideanTestUtils.assertCoordinatesEqual(halfLine.getEndPoint(), rev.getStartPoint(), TEST_EPS);
+            EuclideanTestUtils.assertCoordinatesEqual(revRay.getEndPoint(), rev.getStartPoint(), TEST_EPS);
         });
     }
 
@@ -222,39 +222,39 @@ public class TerminatedLineTest {
         // arrange
         Vector2D p1 = Vector2D.of(0, -1);
         Vector2D p2 = Vector2D.of(0, 1);
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(p2, p1.directionTo(p2), TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(p2, p1.directionTo(p2), TEST_PRECISION);
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(p1, halfLine.closest(p1), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -2), halfLine.closest(Vector2D.of(0, -2)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -2), halfLine.closest(Vector2D.of(2, -2)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -1), halfLine.closest(Vector2D.of(-1, -1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p1, revRay.closest(p1), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -2), revRay.closest(Vector2D.of(0, -2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -2), revRay.closest(Vector2D.of(2, -2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -1), revRay.closest(Vector2D.of(-1, -1)), TEST_EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(p2, halfLine.closest(p2), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(p2, halfLine.closest(Vector2D.of(0, 2)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(p2, halfLine.closest(Vector2D.of(-2, 2)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(p2, halfLine.closest(Vector2D.of(-1, 1)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p2, revRay.closest(p2), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p2, revRay.closest(Vector2D.of(0, 2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p2, revRay.closest(Vector2D.of(-2, 2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p2, revRay.closest(Vector2D.of(-1, 1)), TEST_EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, halfLine.closest(Vector2D.ZERO), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 0.5), halfLine.closest(Vector2D.of(1, 0.5)), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -0.5), halfLine.closest(Vector2D.of(-2, -0.5)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, revRay.closest(Vector2D.ZERO), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 0.5), revRay.closest(Vector2D.of(1, 0.5)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -0.5), revRay.closest(Vector2D.of(-2, -0.5)), TEST_EPS);
     }
 
     @Test
     public void testClassify() {
         // arrange
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(Vector2D.of(1, 1),
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(Vector2D.of(1, 1),
                 Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
-        EuclideanTestUtils.assertRegionLocation(halfLine, RegionLocation.OUTSIDE,
+        EuclideanTestUtils.assertRegionLocation(revRay, RegionLocation.OUTSIDE,
                 Vector2D.of(2, 2), Vector2D.of(2, 0),
                 Vector2D.of(2, 1), Vector2D.of(5, 1));
 
-        EuclideanTestUtils.assertRegionLocation(halfLine, RegionLocation.BOUNDARY,
+        EuclideanTestUtils.assertRegionLocation(revRay, RegionLocation.BOUNDARY,
                 Vector2D.of(1, 1), Vector2D.of(1 + 1e-16, 1));
 
-        EuclideanTestUtils.assertRegionLocation(halfLine, RegionLocation.INSIDE,
+        EuclideanTestUtils.assertRegionLocation(revRay, RegionLocation.INSIDE,
                 Vector2D.of(-2, 1), Vector2D.of(-5, 1 + 1e-16));
     }
 
@@ -267,44 +267,44 @@ public class TerminatedLineTest {
 
         Vector2D delta = Vector2D.of(1e-11, 1e-11);
 
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // --- act
 
         // parallel
-        checkSplit(halfLine.split(Line.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
                 null, null,
                 null, p0);
-        checkSplit(halfLine.split(Line.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
                 null, p0,
                 null, null);
 
         // coincident
-        checkSplit(halfLine.split(Line.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
                 null, null,
                 null, null);
 
-        // through point on halfLine
-        checkSplit(halfLine.split(Line.fromPointAndAngle(p1, 1, TEST_PRECISION)),
+        // through point on revRay
+        checkSplit(revRay.split(Line.fromPointAndAngle(p1, 1, TEST_PRECISION)),
                 null, p1,
                 p1, p0);
-        checkSplit(halfLine.split(Line.fromPointAndAngle(p1, -1, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(p1, -1, TEST_PRECISION)),
                 p1, p0,
                 null, p1);
 
         // through end point
-        checkSplit(halfLine.split(Line.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
                 null, p0,
                 null, null);
-        checkSplit(halfLine.split(Line.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
                 null, null,
                 null, p0);
 
         // intersection above end point
-        checkSplit(halfLine.split(Line.fromPointAndAngle(high, 1, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(high, 1, TEST_PRECISION)),
                 null, p0,
                 null, null);
-        checkSplit(halfLine.split(Line.fromPointAndAngle(high, -1, TEST_PRECISION)),
+        checkSplit(revRay.split(Line.fromPointAndAngle(high, -1, TEST_PRECISION)),
                 null, null,
                 null, p0);
     }
@@ -312,28 +312,28 @@ public class TerminatedLineTest {
     @Test
     public void testGetInterval() {
         // arrange
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Interval interval = halfLine.getInterval();
+        Interval interval = revRay.getInterval();
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(interval.getMin());
         Assert.assertEquals(2, interval.getMax(), TEST_EPS);
 
-        Assert.assertSame(halfLine.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
+        Assert.assertSame(revRay.getLine().getPrecision(), interval.getMaxBoundary().getPrecision());
     }
 
     @Test
     public void testToString() {
         // arrange
-        TerminatedLine halfLine = TerminatedLine.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        ReverseRay revRay = ReverseRay.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
-        String str = halfLine.toString();
+        String str = revRay.toString();
 
         // assert
-        GeometryTestUtils.assertContains("TerminatedLine[direction= (1", str);
+        GeometryTestUtils.assertContains("ReverseRay[direction= (1", str);
         GeometryTestUtils.assertContains(", endPoint= (0", str);
     }
 

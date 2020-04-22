@@ -302,8 +302,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @see TerminatedLine3D#fromPoint(Line3D, Vector3D)
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
-    public TerminatedLine3D lineTo(final Vector3D endPoint) {
-        return TerminatedLine3D.fromPoint(this, endPoint);
+    public ReverseRay3D lineTo(final Vector3D endPoint) {
+        return ReverseRay3D.fromPoint(this, endPoint);
     }
 
     /** Create a new convex subline that starts at infinity and continues along
@@ -313,8 +313,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @see TerminatedLine3D#fromLocation(Line3D, double)
      * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
      */
-    public TerminatedLine3D lineTo(final double endLocation) {
-        return TerminatedLine3D.fromLocation(this, endLocation);
+    public ReverseRay3D lineTo(final double endLocation) {
+        return ReverseRay3D.fromLocation(this, endLocation);
     }
 
     /** Create a new ray instance that starts at the projection of the given point

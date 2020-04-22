@@ -33,12 +33,12 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
-import org.apache.commons.geometry.euclidean.twod.RegionBSPTreeSubLine.Builder;
+import org.apache.commons.geometry.euclidean.twod.EmbeddedTreeSubLine.Builder;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RegionBSPTreeSubLineTest {
+public class EmbeddedTreeSubLineTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -51,7 +51,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testCtor_lineOnly() {
         // act
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -66,7 +66,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testCtor_lineAndBoolean() {
         // act
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, true);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE, true);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -84,7 +84,7 @@ public class RegionBSPTreeSubLineTest {
         RegionBSPTree1D tree = RegionBSPTree1D.full();
 
         // act
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, tree);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE, tree);
 
         // assert
         Assert.assertSame(DEFAULT_TEST_LINE, sub.getLine());
@@ -100,7 +100,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, true);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE, true);
 
         // act
         List<ConvexSubLine> segments = sub.toConvex();
@@ -115,7 +115,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testToConvex_empty() {
         // arrange
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, false);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE, false);
 
         // act
         List<ConvexSubLine> segments = sub.toConvex();
@@ -127,7 +127,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testToConvex_finiteAndInfiniteSegments() {
         // arrange
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE, false);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE, false);
         RegionBSPTree1D tree = sub.getSubspaceRegion();
         tree.add(Interval.max(-2.0, TEST_PRECISION));
         tree.add(Interval.of(-1, 2, TEST_PRECISION));
@@ -151,7 +151,7 @@ public class RegionBSPTreeSubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-11, TEST_PRECISION);
 
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line);
 
         // act
         subline.add(ConvexSubLine.fromInterval(line, 2, 4));
@@ -176,17 +176,17 @@ public class RegionBSPTreeSubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        RegionBSPTreeSubLine a = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine a = new EmbeddedTreeSubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
         aTree.add(Interval.max(-3, TEST_PRECISION));
         aTree.add(Interval.of(1, 2, TEST_PRECISION));
 
-        RegionBSPTreeSubLine b = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine b = new EmbeddedTreeSubLine(line);
         RegionBSPTree1D bTree = b.getSubspaceRegion();
         bTree.add(Interval.of(2, 4, TEST_PRECISION));
         bTree.add(Interval.of(-4, -2, TEST_PRECISION));
 
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line);
 
         int aTreeCount = aTree.count();
         int bTreeCount = bTree.count();
@@ -219,7 +219,7 @@ public class RegionBSPTreeSubLineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
         Line otherLine = Line.fromPointAndAngle(Vector2D.of(0, 1), 1e-2, TEST_PRECISION);
 
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -227,7 +227,7 @@ public class RegionBSPTreeSubLineTest {
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            subline.add(new RegionBSPTreeSubLine(otherLine));
+            subline.add(new EmbeddedTreeSubLine(otherLine));
         }, IllegalArgumentException.class);
     }
 
@@ -239,12 +239,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
@@ -267,12 +267,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.9 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.BOTH, split.getLocation());
@@ -295,12 +295,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(-1, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -317,12 +317,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(10, 0), 0.1 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -339,12 +339,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
@@ -361,12 +361,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.MINUS, split.getLocation());
@@ -383,12 +383,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -405,12 +405,12 @@ public class RegionBSPTreeSubLineTest {
         subRegion.add(Interval.of(3,  4, TEST_PRECISION));
 
         Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(line, subRegion);
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(line, subRegion);
 
         Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Split<RegionBSPTreeSubLine> split = subline.split(splitter);
+        Split<EmbeddedTreeSubLine> split = subline.split(splitter);
 
         // assert
         Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
@@ -426,12 +426,12 @@ public class RegionBSPTreeSubLineTest {
                 .createRotation(Vector2D.of(0, 1), PlaneAngleRadians.PI_OVER_TWO)
                 .scale(Vector2D.of(3, 2));
 
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.min(3, TEST_PRECISION));
 
         // act
-        RegionBSPTreeSubLine transformed = subline.transform(mat);
+        EmbeddedTreeSubLine transformed = subline.transform(mat);
 
         // assert
         Assert.assertNotSame(subline, transformed);
@@ -454,11 +454,11 @@ public class RegionBSPTreeSubLineTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
 
-        RegionBSPTreeSubLine subline = new RegionBSPTreeSubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
+        EmbeddedTreeSubLine subline = new EmbeddedTreeSubLine(Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION));
         subline.getSubspaceRegion().add(Interval.of(0, 1, TEST_PRECISION));
 
         // act
-        RegionBSPTreeSubLine transformed = subline.transform(mat);
+        EmbeddedTreeSubLine transformed = subline.transform(mat);
 
         // assert
         Assert.assertNotSame(subline, transformed);
@@ -476,10 +476,10 @@ public class RegionBSPTreeSubLineTest {
     public void testBuilder_instanceMethod() {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Builder builder = new RegionBSPTreeSubLine(line).builder();
+        Builder builder = new EmbeddedTreeSubLine(line).builder();
 
         // act
-        RegionBSPTreeSubLine subline = builder.build();
+        EmbeddedTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
@@ -501,7 +501,7 @@ public class RegionBSPTreeSubLineTest {
         Builder builder = new Builder(line);
 
         // act
-        RegionBSPTreeSubLine subline = builder.build();
+        EmbeddedTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
@@ -524,7 +524,7 @@ public class RegionBSPTreeSubLineTest {
         builder.add(ConvexSubLine.fromInterval(otherLine, 1, 3));
         builder.add(Segment.fromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
-        RegionBSPTreeSubLine subline = builder.build();
+        EmbeddedTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
@@ -544,12 +544,12 @@ public class RegionBSPTreeSubLineTest {
         // arrange
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
-        RegionBSPTreeSubLine a = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine a = new EmbeddedTreeSubLine(line);
         RegionBSPTree1D aTree = a.getSubspaceRegion();
         aTree.add(Interval.max(-3, TEST_PRECISION));
         aTree.add(Interval.of(1, 2, TEST_PRECISION));
 
-        RegionBSPTreeSubLine b = new RegionBSPTreeSubLine(line);
+        EmbeddedTreeSubLine b = new EmbeddedTreeSubLine(line);
         RegionBSPTree1D bTree = b.getSubspaceRegion();
         bTree.add(Interval.of(2, 4, TEST_PRECISION));
         bTree.add(Interval.of(-4, -2, TEST_PRECISION));
@@ -563,7 +563,7 @@ public class RegionBSPTreeSubLineTest {
         builder.add(a);
         builder.add(b);
 
-        RegionBSPTreeSubLine subline = builder.build();
+        EmbeddedTreeSubLine subline = builder.build();
 
         // assert
         Assert.assertFalse(subline.isFull());
@@ -597,7 +597,7 @@ public class RegionBSPTreeSubLineTest {
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(new RegionBSPTreeSubLine(otherLine));
+            builder.add(new EmbeddedTreeSubLine(otherLine));
         }, IllegalArgumentException.class);
     }
 
@@ -674,7 +674,7 @@ public class RegionBSPTreeSubLineTest {
     @Test
     public void testToString() {
         // arrange
-        RegionBSPTreeSubLine sub = new RegionBSPTreeSubLine(DEFAULT_TEST_LINE);
+        EmbeddedTreeSubLine sub = new EmbeddedTreeSubLine(DEFAULT_TEST_LINE);
 
         // act
         String str = sub.toString();

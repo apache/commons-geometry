@@ -106,7 +106,7 @@ public class ConvexSubLineTest {
         Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = (TerminatedLine) ConvexSubLine.fromInterval(line, interval);
+        ReverseRay halfLine = (ReverseRay) ConvexSubLine.fromInterval(line, interval);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());
@@ -180,7 +180,7 @@ public class ConvexSubLineTest {
         Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = (TerminatedLine) ConvexSubLine.fromInterval(line, 2, Double.NEGATIVE_INFINITY);
+        ReverseRay halfLine = (ReverseRay) ConvexSubLine.fromInterval(line, 2, Double.NEGATIVE_INFINITY);
 
         // assert
         GeometryTestUtils.assertNegativeInfinity(halfLine.getSubspaceStart());

@@ -38,14 +38,14 @@ import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class RegionBSPTreeSubLine extends SubLine {
+public final class EmbeddedTreeSubLine extends SubLine {
     /** The 1D region representing the area on the line. */
     private final RegionBSPTree1D region;
 
     /** Construct a new, empty subline for the given line.
      * @param line line defining the subline
      */
-    public RegionBSPTreeSubLine(final Line line) {
+    public EmbeddedTreeSubLine(final Line line) {
         this(line, false);
     }
 
@@ -56,7 +56,7 @@ public final class RegionBSPTreeSubLine extends SubLine {
      * @param full if true, the subline will cover the entire space;
      *      otherwise it will be empty
      */
-    public RegionBSPTreeSubLine(final Line line, boolean full) {
+    public EmbeddedTreeSubLine(final Line line, boolean full) {
         this(line, new RegionBSPTree1D(full));
     }
 
@@ -65,7 +65,7 @@ public final class RegionBSPTreeSubLine extends SubLine {
      * @param line line defining the subline
      * @param region subspace region for the subline
      */
-    public RegionBSPTreeSubLine(final Line line, final RegionBSPTree1D region) {
+    public EmbeddedTreeSubLine(final Line line, final RegionBSPTree1D region) {
         super(line);
 
         this.region = region;
@@ -103,14 +103,14 @@ public final class RegionBSPTreeSubLine extends SubLine {
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubLine transform(final Transform<Vector2D> transform) {
+    public EmbeddedTreeSubLine transform(final Transform<Vector2D> transform) {
         final SubspaceTransform st = getLine().subspaceTransform(transform);
 
         final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
         tRegion.copy(region);
         tRegion.transform(st.getTransform());
 
-        return new RegionBSPTreeSubLine(st.getLine(), tRegion);
+        return new EmbeddedTreeSubLine(st.getLine(), tRegion);
     }
 
     /** {@inheritDoc} */
@@ -145,7 +145,7 @@ public final class RegionBSPTreeSubLine extends SubLine {
      * special note of this, since this class is mutable.</p>
      */
     @Override
-    public Split<RegionBSPTreeSubLine> split(final Hyperplane<Vector2D> splitter) {
+    public Split<EmbeddedTreeSubLine> split(final Hyperplane<Vector2D> splitter) {
         final Line thisLine = getLine();
         final Line splitterLine = (Line) splitter;
         final DoublePrecisionContext precision = getPrecision();
@@ -170,11 +170,11 @@ public final class RegionBSPTreeSubLine extends SubLine {
             return new Split<>(null, this);
         }
 
-        final RegionBSPTreeSubLine minus = (subspaceSplit.getMinus() != null) ?
-                new RegionBSPTreeSubLine(thisLine, subspaceSplit.getMinus()) :
+        final EmbeddedTreeSubLine minus = (subspaceSplit.getMinus() != null) ?
+                new EmbeddedTreeSubLine(thisLine, subspaceSplit.getMinus()) :
                 null;
-        final RegionBSPTreeSubLine plus = (subspaceSplit.getPlus() != null) ?
-                new RegionBSPTreeSubLine(thisLine, subspaceSplit.getPlus()) :
+        final EmbeddedTreeSubLine plus = (subspaceSplit.getPlus() != null) ?
+                new EmbeddedTreeSubLine(thisLine, subspaceSplit.getPlus()) :
                 null;
 
         return new Split<>(minus, plus);
@@ -213,7 +213,7 @@ public final class RegionBSPTreeSubLine extends SubLine {
      * @throws IllegalArgumentException if the given subline is not from
      *      a line equivalent to this instance
      */
-    public void add(final RegionBSPTreeSubLine subline) {
+    public void add(final EmbeddedTreeSubLine subline) {
         validateLine(subline.getLine());
 
         region.union(subline.getSubspaceRegion());
@@ -265,13 +265,13 @@ public final class RegionBSPTreeSubLine extends SubLine {
     public static final class Builder implements SubHyperplane.Builder<Vector2D> {
 
         /** SubLine instance created by this builder. */
-        private final RegionBSPTreeSubLine subline;
+        private final EmbeddedTreeSubLine subline;
 
         /** Construct a new instance for building a subline region for the given line.
          * @param line the underlying line for the subline region
          */
         public Builder(final Line line) {
-            this.subline = new RegionBSPTreeSubLine(line);
+            this.subline = new EmbeddedTreeSubLine(line);
         }
 
         /** {@inheritDoc} */
@@ -288,7 +288,7 @@ public final class RegionBSPTreeSubLine extends SubLine {
 
         /** {@inheritDoc} */
         @Override
-        public RegionBSPTreeSubLine build() {
+        public EmbeddedTreeSubLine build() {
             return subline;
         }
 
@@ -298,8 +298,8 @@ public final class RegionBSPTreeSubLine extends SubLine {
         private void addInternal(final SubHyperplane<Vector2D> sub) {
             if (sub instanceof ConvexSubLine) {
                 subline.add((ConvexSubLine) sub);
-            } else if (sub instanceof RegionBSPTreeSubLine) {
-                subline.add((RegionBSPTreeSubLine) sub);
+            } else if (sub instanceof EmbeddedTreeSubLine) {
+                subline.add((EmbeddedTreeSubLine) sub);
             } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }

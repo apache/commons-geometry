@@ -29,7 +29,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RegionBSPTreeSubLine3DTest {
+public class EmbeddedTreeSubLine3DTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -41,7 +41,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testCtor_default() {
         // act
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -52,7 +52,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testCtor_true() {
         // act
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, true);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -63,7 +63,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testCtor_false() {
         // act
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, false);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, false);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -77,7 +77,7 @@ public class RegionBSPTreeSubLine3DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, tree);
 
         // assert
         Assert.assertSame(line, sub.getLine());
@@ -88,7 +88,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testTransform_full() {
         // arrange
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, true);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -96,7 +96,7 @@ public class RegionBSPTreeSubLine3DTest {
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        RegionBSPTreeSubLine3D result = sub.transform(transform);
+        EmbeddedTreeSubLine3D result = sub.transform(transform);
 
         // assert
         Line3D resultLine = result.getLine();
@@ -118,7 +118,7 @@ public class RegionBSPTreeSubLine3DTest {
                 line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
                 line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, tree);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -126,7 +126,7 @@ public class RegionBSPTreeSubLine3DTest {
                 .rotate(QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Y, PlaneAngleRadians.PI_OVER_TWO));
 
         // act
-        RegionBSPTreeSubLine3D result = sub.transform(transform);
+        EmbeddedTreeSubLine3D result = sub.transform(transform);
 
         // assert
         Line3D resultLine = result.getLine();
@@ -152,7 +152,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, true);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, true);
 
         // act
         List<ConvexSubLine3D> segments = sub.toConvex();
@@ -170,7 +170,7 @@ public class RegionBSPTreeSubLine3DTest {
                 line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
                 line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line, tree);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line, tree);
 
         // act
         List<ConvexSubLine3D> segments = sub.toConvex();
@@ -186,7 +186,7 @@ public class RegionBSPTreeSubLine3DTest {
     @Test
     public void testToString() {
         // arrange
-        RegionBSPTreeSubLine3D sub = new RegionBSPTreeSubLine3D(line);
+        EmbeddedTreeSubLine3D sub = new EmbeddedTreeSubLine3D(line);
 
         // act
         String str = sub.toString();

@@ -50,8 +50,8 @@ public abstract class SubGreatCircle
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubGreatCircle.Builder builder() {
-        return new RegionBSPTreeSubGreatCircle.Builder(circle);
+    public EmbeddedTreeSubGreatCircle.Builder builder() {
+        return new EmbeddedTreeSubGreatCircle.Builder(circle);
     }
 
     /** Return the object used to perform floating point comparisons, which is the

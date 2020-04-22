@@ -33,14 +33,14 @@ import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
+public final class EmbeddedTreeSubGreatCircle extends SubGreatCircle {
     /** The 1D region on the great circle. */
     private final RegionBSPTree1S region;
 
     /** Construct a new, empty subhyperplane for the given great circle.
      * @param greatCircle great circle defining this instance
      */
-    public RegionBSPTreeSubGreatCircle(final GreatCircle greatCircle) {
+    public EmbeddedTreeSubGreatCircle(final GreatCircle greatCircle) {
         this(greatCircle, false);
     }
 
@@ -51,7 +51,7 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
      * @param full if true, the sub-region will cover the entire circle;
      *      otherwise it will be empty
      */
-    public RegionBSPTreeSubGreatCircle(final GreatCircle circle, final boolean full) {
+    public EmbeddedTreeSubGreatCircle(final GreatCircle circle, final boolean full) {
         this(circle, new RegionBSPTree1S(full));
     }
 
@@ -59,7 +59,7 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
      * @param circle great circle that the sub-region will belong to
      * @param region subspace region
      */
-    public RegionBSPTreeSubGreatCircle(final GreatCircle circle, final RegionBSPTree1S region) {
+    public EmbeddedTreeSubGreatCircle(final GreatCircle circle, final RegionBSPTree1S region) {
         super(circle);
 
         this.region = region;
@@ -73,10 +73,10 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubGreatCircle transform(final Transform<Point2S> transform) {
+    public EmbeddedTreeSubGreatCircle transform(final Transform<Point2S> transform) {
         final GreatCircle circle = getCircle().transform(transform);
 
-        return new RegionBSPTreeSubGreatCircle(circle, region.copy());
+        return new EmbeddedTreeSubGreatCircle(circle, region.copy());
     }
 
     /** {@inheritDoc} */
@@ -99,15 +99,15 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
      * special note of this, since this class is mutable.</p>
      */
     @Override
-    public Split<RegionBSPTreeSubGreatCircle> split(final Hyperplane<Point2S> splitter) {
+    public Split<EmbeddedTreeSubGreatCircle> split(final Hyperplane<Point2S> splitter) {
 
         final GreatCircle splitterCircle = (GreatCircle) splitter;
         final GreatCircle thisCircle = getCircle();
 
         final Point2S intersection = splitterCircle.intersection(thisCircle);
 
-        RegionBSPTreeSubGreatCircle minus = null;
-        RegionBSPTreeSubGreatCircle plus = null;
+        EmbeddedTreeSubGreatCircle minus = null;
+        EmbeddedTreeSubGreatCircle plus = null;
 
         if (intersection != null) {
             final CutAngle subSplitter = CutAngle.createPositiveFacing(
@@ -121,8 +121,8 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
             } else if (subLoc == SplitLocation.PLUS) {
                 plus = this;
             } else if (subLoc == SplitLocation.BOTH) {
-                minus = new RegionBSPTreeSubGreatCircle(thisCircle, subSplit.getMinus());
-                plus =  new RegionBSPTreeSubGreatCircle(thisCircle, subSplit.getPlus());
+                minus = new EmbeddedTreeSubGreatCircle(thisCircle, subSplit.getMinus());
+                plus =  new EmbeddedTreeSubGreatCircle(thisCircle, subSplit.getPlus());
             }
         }
 
@@ -146,7 +146,7 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
      * @throws IllegalArgumentException if the given subcircle is not from
      *      a great circle equivalent to this instance
      */
-    public void add(final RegionBSPTreeSubGreatCircle subcircle) {
+    public void add(final EmbeddedTreeSubGreatCircle subcircle) {
         validateGreatCircle(subcircle.getCircle());
 
         region.union(subcircle.getSubspaceRegion());
@@ -188,13 +188,13 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
     public static final class Builder implements SubHyperplane.Builder<Point2S> {
 
         /** SubGreatCircle instance created by this builder. */
-        private final RegionBSPTreeSubGreatCircle subcircle;
+        private final EmbeddedTreeSubGreatCircle subcircle;
 
         /** Construct a new instance for building regions for the given great circle.
          * @param circle the underlying great circle for the region
          */
         public Builder(final GreatCircle circle) {
-            this.subcircle = new RegionBSPTreeSubGreatCircle(circle);
+            this.subcircle = new EmbeddedTreeSubGreatCircle(circle);
         }
 
         /** {@inheritDoc} */
@@ -211,7 +211,7 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
 
         /** {@inheritDoc} */
         @Override
-        public RegionBSPTreeSubGreatCircle build() {
+        public EmbeddedTreeSubGreatCircle build() {
             return subcircle;
         }
 
@@ -221,8 +221,8 @@ public final class RegionBSPTreeSubGreatCircle extends SubGreatCircle {
         private void addInternal(final SubHyperplane<Point2S> sub) {
             if (sub instanceof GreatArc) {
                 subcircle.add((GreatArc) sub);
-            } else if (sub instanceof RegionBSPTreeSubGreatCircle) {
-                subcircle.add((RegionBSPTreeSubGreatCircle) sub);
+            } else if (sub instanceof EmbeddedTreeSubGreatCircle) {
+                subcircle.add((EmbeddedTreeSubGreatCircle) sub);
             } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }

@@ -490,7 +490,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = line.lineTo(Vector2D.of(-3, 1));
+        ReverseRay halfLine = line.lineTo(Vector2D.of(-3, 1));
 
         // assert
         Assert.assertSame(line, halfLine.getLine());
@@ -508,7 +508,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = line.lineTo(Vector2D.of(-3, 5));
+        ReverseRay halfLine = line.lineTo(Vector2D.of(-3, 5));
 
         // assert
         Assert.assertSame(line, halfLine.getLine());
@@ -526,7 +526,7 @@ public class LineTest {
         Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        TerminatedLine halfLine = line.lineTo(-1);
+        ReverseRay halfLine = line.lineTo(-1);
 
         // assert
         Assert.assertSame(line, halfLine.getLine());

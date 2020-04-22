@@ -60,8 +60,8 @@ public abstract class SubPlane
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubPlane.Builder builder() {
-        return new RegionBSPTreeSubPlane.Builder(plane);
+    public EmbeddedTreeSubPlane.Builder builder() {
+        return new EmbeddedTreeSubPlane.Builder(plane);
     }
 
     /** Return the object used to perform floating point comparisons, which is the

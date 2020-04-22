@@ -30,14 +30,14 @@ import org.apache.commons.geometry.euclidean.threed.Line3D.SubspaceTransform;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class RegionBSPTreeSubLine3D extends SubLine3D {
+public final class EmbeddedTreeSubLine3D extends SubLine3D {
     /** The 1D region representing the area on the line. */
     private final RegionBSPTree1D region;
 
     /** Construct a new, empty subline for the given line.
      * @param line line defining the subline
      */
-    public RegionBSPTreeSubLine3D(final Line3D line) {
+    public EmbeddedTreeSubLine3D(final Line3D line) {
         this(line, false);
     }
 
@@ -48,7 +48,7 @@ public final class RegionBSPTreeSubLine3D extends SubLine3D {
      * @param full if true, the subline will cover the entire space;
      *      otherwise it will be empty
      */
-    public RegionBSPTreeSubLine3D(final Line3D line, boolean full) {
+    public EmbeddedTreeSubLine3D(final Line3D line, boolean full) {
         this(line, new RegionBSPTree1D(full));
     }
 
@@ -56,7 +56,7 @@ public final class RegionBSPTreeSubLine3D extends SubLine3D {
      * @param line line defining the subline
      * @param region subspace region for the subline
      */
-    public RegionBSPTreeSubLine3D(final Line3D line, final RegionBSPTree1D region) {
+    public EmbeddedTreeSubLine3D(final Line3D line, final RegionBSPTree1D region) {
         super(line);
 
         this.region = region;
@@ -66,14 +66,14 @@ public final class RegionBSPTreeSubLine3D extends SubLine3D {
      * @param transform the transform to apply
      * @return a new, transformed instance
      */
-    public RegionBSPTreeSubLine3D transform(final Transform<Vector3D> transform) {
+    public EmbeddedTreeSubLine3D transform(final Transform<Vector3D> transform) {
         final SubspaceTransform st = getLine().subspaceTransform(transform);
 
         final RegionBSPTree1D tRegion = RegionBSPTree1D.empty();
         tRegion.copy(region);
         tRegion.transform(st.getTransform());
 
-        return new RegionBSPTreeSubLine3D(st.getLine(), tRegion);
+        return new EmbeddedTreeSubLine3D(st.getLine(), tRegion);
     }
 
     /** Return a list of {@link Segment3D} instances representing the same region

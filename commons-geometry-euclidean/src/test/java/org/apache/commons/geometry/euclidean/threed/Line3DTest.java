@@ -468,12 +468,12 @@ public class Line3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), rayPtResult.getStartPoint(), TEST_EPS);
         Assert.assertNull(rayPtResult.getEndPoint());
 
-        TerminatedLine3D toDoubleResult = line.lineTo(-1);
+        ReverseRay3D toDoubleResult = line.lineTo(-1);
         Assert.assertSame(line, toDoubleResult.getLine());
         Assert.assertNull(toDoubleResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 3, 0), toDoubleResult.getEndPoint(), TEST_EPS);
 
-        TerminatedLine3D toPtResult = line.lineTo(Vector3D.of(1, 4, 0));
+        ReverseRay3D toPtResult = line.lineTo(Vector3D.of(1, 4, 0));
         Assert.assertSame(line, toPtResult.getLine());
         Assert.assertNull(toPtResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 0), toPtResult.getEndPoint(), TEST_EPS);

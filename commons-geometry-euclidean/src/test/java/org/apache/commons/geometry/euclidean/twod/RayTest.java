@@ -214,7 +214,7 @@ public class RayTest {
             Ray ray = Ray.fromPointAndDirection(start, dir, TEST_PRECISION);
 
             // act
-            TerminatedLine rev = ray.reverse();
+            ReverseRay rev = ray.reverse();
 
             // assert
             EuclideanTestUtils.assertCoordinatesEqual(ray.getLine().getOrigin(), rev.getLine().getOrigin(), TEST_EPS);

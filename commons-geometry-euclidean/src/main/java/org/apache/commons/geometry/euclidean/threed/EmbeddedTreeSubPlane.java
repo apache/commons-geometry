@@ -32,14 +32,14 @@ import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
  *
  * <p>This class is mutable and <em>not</em> thread safe.</p>
  */
-public final class RegionBSPTreeSubPlane extends SubPlane {
+public final class EmbeddedTreeSubPlane extends SubPlane {
     /** The 2D region representing the area on the plane. */
     private final RegionBSPTree2D region;
 
     /** Construct a new, empty subplane for the given plane.
      * @param plane plane defining the subplane
      */
-    public RegionBSPTreeSubPlane(final Plane plane) {
+    public EmbeddedTreeSubPlane(final Plane plane) {
         this(plane, false);
     }
 
@@ -50,7 +50,7 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
      * @param full if true, the subplane will cover the entire space;
      *      otherwise it will be empty
      */
-    public RegionBSPTreeSubPlane(final Plane plane, boolean full) {
+    public EmbeddedTreeSubPlane(final Plane plane, boolean full) {
         this(plane, new RegionBSPTree2D(full));
     }
 
@@ -58,7 +58,7 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
      * @param plane plane defining the subplane
      * @param region subspace region for the subplane
      */
-    public RegionBSPTreeSubPlane(final Plane plane, final RegionBSPTree2D region) {
+    public EmbeddedTreeSubPlane(final Plane plane, final RegionBSPTree2D region) {
         super(plane);
 
         this.region = region;
@@ -90,8 +90,8 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
      * special note of this, since this class is mutable.</p>
      */
     @Override
-    public Split<RegionBSPTreeSubPlane> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, (p, r) -> new RegionBSPTreeSubPlane(p, (RegionBSPTree2D) r));
+    public Split<EmbeddedTreeSubPlane> split(final Hyperplane<Vector3D> splitter) {
+        return splitInternal(splitter, this, (p, r) -> new EmbeddedTreeSubPlane(p, (RegionBSPTree2D) r));
     }
 
     /** {@inheritDoc} */
@@ -102,14 +102,14 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubPlane transform(final Transform<Vector3D> transform) {
+    public EmbeddedTreeSubPlane transform(final Transform<Vector3D> transform) {
         final Plane.SubspaceTransform subTransform = getPlane().subspaceTransform(transform);
 
         final RegionBSPTree2D tRegion = RegionBSPTree2D.empty();
         tRegion.copy(region);
         tRegion.transform(subTransform.getTransform());
 
-        return new RegionBSPTreeSubPlane(subTransform.getPlane(), tRegion);
+        return new EmbeddedTreeSubPlane(subTransform.getPlane(), tRegion);
     }
 
     /** Add a convex subplane to this instance.
@@ -128,7 +128,7 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
      * @throws IllegalArgumentException if the given subplane is not from
      *      a plane equivalent to this instance
      */
-    public void add(final RegionBSPTreeSubPlane subplane) {
+    public void add(final EmbeddedTreeSubPlane subplane) {
         validatePlane(subplane.getPlane());
 
         region.union(subplane.getSubspaceRegion());
@@ -155,13 +155,13 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
     public static class Builder implements SubHyperplane.Builder<Vector3D> {
 
         /** Subplane instance created by this builder. */
-        private final RegionBSPTreeSubPlane subplane;
+        private final EmbeddedTreeSubPlane subplane;
 
         /** Construct a new instance for building subplane region for the given plane.
          * @param plane the underlying plane for the subplane region
          */
         public Builder(final Plane plane) {
-            this.subplane = new RegionBSPTreeSubPlane(plane);
+            this.subplane = new EmbeddedTreeSubPlane(plane);
         }
 
         /** {@inheritDoc} */
@@ -178,7 +178,7 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
 
         /** {@inheritDoc} */
         @Override
-        public RegionBSPTreeSubPlane build() {
+        public EmbeddedTreeSubPlane build() {
             return subplane;
         }
 
@@ -188,8 +188,8 @@ public final class RegionBSPTreeSubPlane extends SubPlane {
         private void addInternal(final SubHyperplane<Vector3D> sub) {
             if (sub instanceof ConvexSubPlane) {
                 subplane.add((ConvexSubPlane) sub);
-            } else if (sub instanceof RegionBSPTreeSubPlane) {
-                subplane.add((RegionBSPTreeSubPlane) sub);
+            } else if (sub instanceof EmbeddedTreeSubPlane) {
+                subplane.add((EmbeddedTreeSubPlane) sub);
             } else {
                 throw new IllegalArgumentException("Unsupported subhyperplane type: " + sub.getClass().getName());
             }

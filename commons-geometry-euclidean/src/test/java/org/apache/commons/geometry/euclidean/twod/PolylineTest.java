@@ -186,7 +186,7 @@ public class PolylineTest {
     @Test
     public void testFromSegments_infiniteSegments() {
         // arrange
-        TerminatedLine a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
+        ReverseRay a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
                 .lineTo(1.0);
         Ray b = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
@@ -217,7 +217,7 @@ public class PolylineTest {
     @Test
     public void testFromSegments_finiteAndInfiniteSegments_startInfinite() {
         // arrange
-        TerminatedLine a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).lineTo(1.0);
+        ReverseRay a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).lineTo(1.0);
         Segment b = Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         // act

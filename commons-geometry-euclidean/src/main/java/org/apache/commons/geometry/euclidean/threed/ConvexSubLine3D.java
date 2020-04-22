@@ -142,7 +142,7 @@ public abstract class ConvexSubLine3D extends SubLine3D {
             return new Ray3D(line, min);
         } else if (hasMax) {
             // max only
-            return new TerminatedLine3D(line, max);
+            return new ReverseRay3D(line, max);
         } else if (Double.isInfinite(min) && Double.isInfinite(max) && Double.compare(min, max) < 0) {
             return new Line3D.Span(line);
         }

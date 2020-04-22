@@ -55,8 +55,8 @@ public abstract class SubLine implements SubHyperplane<Vector2D> {
 
     /** {@inheritDoc} */
     @Override
-    public RegionBSPTreeSubLine.Builder builder() {
-        return new RegionBSPTreeSubLine.Builder(line);
+    public EmbeddedTreeSubLine.Builder builder() {
+        return new EmbeddedTreeSubLine.Builder(line);
     }
 
     /** {@inheritDoc} */

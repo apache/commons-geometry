@@ -175,7 +175,7 @@ public abstract class ConvexSubLine extends SubLine implements ConvexSubHyperpla
             return new Ray(line, min);
         } else if (hasMax) {
             // max only
-            return new TerminatedLine(line, max);
+            return new ReverseRay(line, max);
         } else if (Double.isInfinite(min) && Double.isInfinite(max) && Double.compare(min, max) < 0) {
             return new Line.Span(line);
         }

@@ -117,7 +117,7 @@ public class InteriorAngleSubLineConnectorTest {
             segments.addAll(createSquare(Vector2D.ZERO, 1, 1));
 
             Vector2D pt = Vector2D.of(0, 2);
-            TerminatedLine a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).lineTo(pt);
+            ReverseRay a = Line.fromPointAndAngle(pt, 0.0, TEST_PRECISION).lineTo(pt);
             Ray b = Line.fromPointAndAngle(pt, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).rayFrom(pt);
 
             segments.add(a);

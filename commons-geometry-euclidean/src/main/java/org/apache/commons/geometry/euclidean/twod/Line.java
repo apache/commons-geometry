@@ -221,8 +221,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @see TerminatedLine#fromPoint(Line, Vector2D)
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
-    public TerminatedLine lineTo(final Vector2D endPoint) {
-        return TerminatedLine.fromPoint(this, endPoint);
+    public ReverseRay lineTo(final Vector2D endPoint) {
+        return ReverseRay.fromPoint(this, endPoint);
     }
 
     /** Create a new convex subline that starts at infinity and continues along
@@ -232,8 +232,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @see TerminatedLine#fromLocation(Line, double)
      * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
      */
-    public TerminatedLine lineTo(final double endLocation) {
-        return TerminatedLine.fromLocation(this, endLocation);
+    public ReverseRay lineTo(final double endLocation) {
+        return ReverseRay.fromLocation(this, endLocation);
     }
 
     /** Create a new ray instance that starts at the projection of the given point
@@ -718,7 +718,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
         Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
             final Line line = getLine();
 
-            final TerminatedLine low = new TerminatedLine(line, intersection);
+            final ReverseRay low = new ReverseRay(line, intersection);
             final Ray high = new Ray(line, intersection);
 
             return createSplitResult(splitter, low, high);

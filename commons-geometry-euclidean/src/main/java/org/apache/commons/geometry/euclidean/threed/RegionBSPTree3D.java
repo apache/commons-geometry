@@ -350,7 +350,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param reverse if true, the boundary contribution is reversed before being added to the total.
          */
         private void addBoundaryContribution(final SubHyperplane<Vector3D> boundary, boolean reverse) {
-            final RegionBSPTreeSubPlane subplane = (RegionBSPTreeSubPlane) boundary;
+            final EmbeddedTreeSubPlane subplane = (EmbeddedTreeSubPlane) boundary;
             final RegionBSPTree2D base = subplane.getSubspaceRegion();
 
             final double area = base.getSize();

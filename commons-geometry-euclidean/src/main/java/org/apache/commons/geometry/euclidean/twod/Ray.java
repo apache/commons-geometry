@@ -135,8 +135,8 @@ public final class Ray extends ConvexSubLine {
 
     /** {@inheritDoc} */
     @Override
-    public TerminatedLine reverse() {
-        return new TerminatedLine(getLine().reverse(), -start);
+    public ReverseRay reverse() {
+        return new ReverseRay(getLine().reverse(), -start);
     }
 
     /** {@inheritDoc} */
