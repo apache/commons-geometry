@@ -266,6 +266,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
 
     /** Return a new infinite line subset representing the entire line.
      * @return a new infinite line subset representing the entire line
+     * @see Lines3D#span(Line3D)
      */
     public LineConvexSubset3D span() {
         return Lines3D.span(this);
@@ -278,7 +279,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param b second 1D location for the interval
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either of the locations is NaN or infinite
-     * @see Segment3D#fromLocations(Line3D, double, double)
+     * @see Lines3D#segmentFromLocations(Line3D, double, double)
      */
     public Segment3D segment(final double a, final double b) {
         return Lines3D.segmentFromLocations(this, a, b);
@@ -290,7 +291,7 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param b second point
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see Segment3D#fromPoints(Line3D, Vector3D, Vector3D)
+     * @see Lines3D#segmentFromPoints(Line3D, Vector3D, Vector3D)
      */
     public Segment3D segment(final Vector3D a, final Vector3D b) {
         return Lines3D.segmentFromPoints(this, a, b);
@@ -301,8 +302,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param endPoint point defining the end point of the line subset; the end point
      *      is equal to the projection of this point onto the line
      * @return a new, half-open line subset that ends at the given point
-     * @see TerminatedLine3D#fromPoint(Line3D, Vector3D)
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
+     * @see Lines3D#reverseRayFromPoint(Line3D, Vector3D)
      */
     public ReverseRay3D reverseRayTo(final Vector3D endPoint) {
         return Lines3D.reverseRayFromPoint(this, endPoint);
@@ -312,8 +313,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * the line up to the given 1D location.
      * @param endLocation the 1D location of the end of the half-line
      * @return a new, half-open line subset that ends at the given 1D location
-     * @see TerminatedLine3D#fromLocation(Line3D, double)
      * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
+     * @see Lines3D#reverseRayFromLocation(Line3D, double)
      */
     public ReverseRay3D reverseRayTo(final double endLocation) {
         return Lines3D.reverseRayFromLocation(this, endLocation);
@@ -325,8 +326,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      *      is equal to the projection of this point onto the line
      * @return a ray starting at the projected point and extending along this line
      *      to infinity
-     * @see Lines3D#rayFromPoint(Line3D, Vector3D)
      * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
+     * @see Lines3D#rayFromPoint(Line3D, Vector3D)
      */
     public Ray3D rayFrom(final Vector3D startPoint) {
         return Lines3D.rayFromPoint(this, startPoint);
@@ -337,8 +338,8 @@ public final class Line3D implements Embedding<Vector3D, Vector1D> {
      * @param startLocation 1D location defining the start point of the ray
      * @return a ray starting at the given 1D location and extending along this line
      *      to infinity
-     * @see Lines3D#rayFromLocation(Line3D, double)
      * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
+     * @see Lines3D#rayFromLocation(Line3D, double)
      */
     public Ray3D rayFrom(final double startLocation) {
         return Lines3D.rayFromLocation(this, startLocation);

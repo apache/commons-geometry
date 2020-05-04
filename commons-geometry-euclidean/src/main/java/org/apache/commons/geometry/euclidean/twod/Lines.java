@@ -84,7 +84,7 @@ public final class Lines {
      * @return a new ray instance with the given start point and direction
      * @throws IllegalArgumentException If {@code direction} has zero length, as evaluated by the
      *      given precision context
-     * @see Line#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see #fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
      */
     public static Ray rayFromPointAndDirection(final Vector2D startPoint, final Vector2D direction,
             final DoublePrecisionContext precision) {
@@ -128,7 +128,7 @@ public final class Lines {
      * @return a new instance with the given end point and line direction
      * @throws IllegalArgumentException If {@code lineDirection} has zero length, as evaluated by the
      *      given precision context
-     * @see Line#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
+     * @see #fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
      */
     public static ReverseRay reverseRayFromPointAndDirection(final Vector2D endPoint, final Vector2D lineDirection,
             final DoublePrecisionContext precision) {
@@ -172,7 +172,6 @@ public final class Lines {
      * @return a new line segment instance with the given start and end points
      * @throws IllegalArgumentException If the vector between {@code startPoint} and {@code endPoint} has zero length,
      *      as evaluated by the given precision context
-     * @see Line#fromPoints(Vector2D, Vector2D, DoublePrecisionContext)
      */
     public static Segment segmentFromPoints(final Vector2D startPoint, final Vector2D endPoint,
             final DoublePrecisionContext precision) {
@@ -192,7 +191,6 @@ public final class Lines {
      * @return a new line segment representing the points between the projected locations of {@code a}
      *      and {@code b} on the given line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see #fromLocations(Line, double, double)
      */
     public static Segment segmentFromPoints(final Line line, final Vector2D a, final Vector2D b) {
         return segmentFromLocations(line, line.abscissa(a), line.abscissa(b));

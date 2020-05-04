@@ -206,16 +206,15 @@ public final class Planes {
 
     /** Create a new plane subset from the given sequence of points. The points must define a unique plane,
      * meaning that at least 3 unique vertices must be given. In contrast with the
-     * {@link #fromVertices(Collection, DoublePrecisionContext)} method, the first point in the sequence is included
-     * at the end if needed, in order to form a closed loop.
+     * {@link #subsetFromVertices(Collection, DoublePrecisionContext)} method, the first point in the sequence
+     * is included at the end if needed, in order to form a closed loop.
      * @param pts collection of points defining the plane subset
      * @param precision precision context used to compare floating point values
      * @return a new plane subset defined by the given sequence of vertices
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *       unique plane
-     * @see #fromVertices(Collection, DoublePrecisionContext)
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
-     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
+     * @see #subsetFromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromPoints(Collection, DoublePrecisionContext)
      */
     public static PlaneConvexSubset subsetFromVertexLoop(final Collection<Vector3D> pts,
             final DoublePrecisionContext precision) {
@@ -229,9 +228,9 @@ public final class Planes {
      * @return a new plane subset defined by the given sequence of vertices
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *      unique plane
-     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
-     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
+     * @see #subsetFromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #subsetFromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromPoints(Collection, DoublePrecisionContext)
      */
     public static PlaneConvexSubset subsetFromVertices(final Collection<Vector3D> pts,
             final DoublePrecisionContext precision) {
@@ -248,9 +247,9 @@ public final class Planes {
      * @return a new plane subset instance
      * @throws IllegalArgumentException if fewer than 3 vertices are given or the vertices do not define a
      *      unique plane
-     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
-     * @see #fromVertices(Collection, DoublePrecisionContext)
-     * @see Plane#fromPoints(Collection, DoublePrecisionContext)
+     * @see #subsetFromVertexLoop(Collection, DoublePrecisionContext)
+     * @see #subsetFromVertices(Collection, boolean, DoublePrecisionContext)
+     * @see #fromPoints(Collection, DoublePrecisionContext)
      */
     public static PlaneConvexSubset subsetFromVertices(final Collection<Vector3D> pts, final boolean close,
             final DoublePrecisionContext precision) {

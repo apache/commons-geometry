@@ -194,7 +194,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param b second 1D location for the interval
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either of the locations is NaN or infinite
-     * @see Segment#fromLocations(Line, double, double)
+     * @see Lines#segmentFromLocations(Line, double, double)
      */
     public Segment segment(final double a, final double b) {
         return Lines.segmentFromLocations(this, a, b);
@@ -206,7 +206,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param b second point
      * @return a new line segment on this line
      * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see Segment#fromPoints(Line, Vector2D, Vector2D)
+     * @see Lines#segmentFromPoints(Line, Vector2D, Vector2D)
      */
     public Segment segment(final Vector2D a, final Vector2D b) {
         return Lines.segmentFromPoints(this, a, b);
@@ -217,8 +217,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param endPoint point defining the end point of the line subset; the end point
      *      is equal to the projection of this point onto the line
      * @return a new, half-open line subset that ends at the given point
-     * @see TerminatedLine#fromPoint(Line, Vector2D)
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
+     * @see Lines#reverseRayFromPoint(Line, Vector2D)
      */
     public ReverseRay reverseRayTo(final Vector2D endPoint) {
         return Lines.reverseRayFromPoint(this, endPoint);
@@ -228,8 +228,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * the line up to the given 1D location.
      * @param endLocation the 1D location of the end of the half-line
      * @return a new, half-open line subset that ends at the given 1D location
-     * @see TerminatedLine#fromLocation(Line, double)
      * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
+     * @see Lines#reverseRayFromLocation(Line, double)
      */
     public ReverseRay reverseRayTo(final double endLocation) {
         return Lines.reverseRayFromLocation(this, endLocation);
@@ -241,8 +241,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      *      is equal to the projection of this point onto the line
      * @return a ray starting at the projected point and extending along this line
      *      to infinity
-     * @see Ray#fromPoint(Line, Vector2D)
      * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
+     * @see Lines#rayFromPoint(Line, Vector2D)
      */
     public Ray rayFrom(final Vector2D startPoint) {
         return Lines.rayFromPoint(this, startPoint);
@@ -253,8 +253,8 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param startLocation 1D location defining the start point of the ray
      * @return a ray starting at the given 1D location and extending along this line
      *      to infinity
-     * @see Ray#fromLocation(Line, double)
      * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
+     * @see Lines#rayFromLocation(Line, double)
      */
     public Ray rayFrom(final double startLocation) {
         return Lines.rayFromLocation(this, startLocation);
