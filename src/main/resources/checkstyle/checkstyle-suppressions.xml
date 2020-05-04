@@ -32,7 +32,7 @@
   <!-- allow Vector2D.linearCombination() methods -->
   <suppress checks="ParameterNumber" files=".*[/\\]twod[/\\]Vector2D" />
   <!-- Prevent subclass error on generic package-private methods (checkstyle parsing issue?) -->
-  <suppress checks="DesignForExtension" files=".*[/\\]twod[/\\]SubLine" />
+  <suppress checks="DesignForExtension" files=".*[/\\]twod[/\\]LineSubset" />
 
   <!-- Be more lenient on tests. -->
   <suppress checks="Javadoc" files=".*[/\\]test[/\\].*" />

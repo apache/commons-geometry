@@ -36,8 +36,8 @@ public class BoundarySource2DTest {
     public void testToTree() {
         // act
         BoundarySource2D src = BoundarySource2D.from(
-            Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
-            Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
+            Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION),
+            Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION)
         );
 
         // act
@@ -69,20 +69,20 @@ public class BoundarySource2DTest {
         BoundarySource2D src = BoundarySource2D.from();
 
         // assert
-        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_varargs() {
         // act
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
         BoundarySource2D src = BoundarySource2D.from(a, b);
 
         // assert
-        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));
@@ -92,30 +92,30 @@ public class BoundarySource2DTest {
     @Test
     public void testFrom_list_empty() {
         // arrange
-        List<ConvexSubLine> input = new ArrayList<>();
+        List<LineConvexSubset> input = new ArrayList<>();
 
         // act
         BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testFrom_list() {
         // act
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), TEST_PRECISION);
 
-        List<ConvexSubLine> input = new ArrayList<>();
+        List<LineConvexSubset> input = new ArrayList<>();
         input.add(a);
         input.add(b);
 
         BoundarySource2D src = BoundarySource2D.from(input);
 
         // assert
-        List<ConvexSubLine> segments = src.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = src.boundaryStream().collect(Collectors.toList());
         Assert.assertEquals(2, segments.size());
 
         Assert.assertSame(a, segments.get(0));

@@ -35,6 +35,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * circle plane, while the vector {@code w} (the pole) is perpendicular to it.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see GreatCircles
  */
 public final class GreatCircle extends AbstractHyperplane<Point2S>
     implements EmbeddingHyperplane<Point2S, Point1S> {
@@ -53,7 +54,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @param v v axis in the equator plane
      * @param precision precision context used for floating point comparisons
      */
-    private GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit u, final Vector3D.Unit v,
+    GreatCircle(final Vector3D.Unit pole, final Vector3D.Unit u, final Vector3D.Unit v,
             final DoublePrecisionContext precision) {
         super(precision);
 
@@ -193,7 +194,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
         final Point2S tu = transform.apply(Point2S.from(u));
         final Point2S tv = transform.apply(Point2S.from(v));
 
-        return fromPoints(tu, tv, getPrecision());
+        return GreatCircles.fromPoints(tu, tv, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -206,7 +207,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
     /** {@inheritDoc} */
     @Override
     public GreatArc span() {
-        return GreatArc.fromInterval(this, AngularInterval.full());
+        return GreatCircles.arcFromInterval(this, AngularInterval.full());
     }
 
     /** Create an arc on this circle between the given points.
@@ -247,7 +248,7 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
      * @return an arc on this circle consisting of the given subspace interval
      */
     public GreatArc arc(final AngularInterval.Convex interval) {
-        return GreatArc.fromInterval(this, interval);
+        return GreatCircles.arcFromInterval(this, interval);
     }
 
     /** Return one of the two intersection points between this instance and the argument.
@@ -368,72 +369,5 @@ public final class GreatCircle extends AbstractHyperplane<Point2S>
             .append(']');
 
         return sb.toString();
-    }
-
-    /** Create a great circle instance from its pole vector. An arbitrary u-axis is chosen.
-     * @param pole pole vector for the great circle
-     * @param precision precision context used to compare floating point values
-     * @return a great circle defined by the given pole vector
-     */
-    public static GreatCircle fromPole(final Vector3D pole, final DoublePrecisionContext precision) {
-        final Vector3D.Unit u = pole.orthogonal();
-        final Vector3D.Unit v = pole.cross(u).normalize();
-        return new GreatCircle(pole.normalize(), u, v, precision);
-    }
-
-    /** Create a great circle instance from its pole vector and a vector representing the u-axis
-     * in the equator plane. The u-axis vector defines the {@code 0pi} location for the embedded
-     * subspace.
-     * @param pole pole vector for the great circle
-     * @param u u-axis direction for the equator plane
-     * @param precision precision context used to compare floating point values
-     * @return a great circle defined by the given pole vector and u-axis direction
-     */
-    public static GreatCircle fromPoleAndU(final Vector3D pole, final Vector3D u,
-            final DoublePrecisionContext precision) {
-
-        final Vector3D.Unit unitPole = pole.normalize();
-        final Vector3D.Unit unitX = pole.orthogonal(u);
-        final Vector3D.Unit unitY = pole.cross(u).normalize();
-
-        return new GreatCircle(unitPole, unitX, unitY, precision);
-    }
-
-    /** Create a great circle instance from two points on the circle. The u-axis of the
-     * instance points to the location of the first point. The orientation of the circle
-     * is along the shortest path between the two points.
-     * @param a first point on the great circle
-     * @param b second point on the great circle
-     * @param precision precision context used to compare floating point values
-     * @return great circle instance containing the given points
-     * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given points are
-     *      equal or antipodal as evaluated by the given precision context
-     */
-    public static GreatCircle fromPoints(final Point2S a, final Point2S b,
-            final DoublePrecisionContext precision) {
-
-        if (!a.isFinite() || !b.isFinite()) {
-            throw new IllegalArgumentException("Invalid points for great circle: " + a + ", " + b);
-        }
-
-        String err = null;
-
-        final double dist = a.distance(b);
-        if (precision.eqZero(dist)) {
-            err = "equal";
-        } else if (precision.eq(dist, PlaneAngleRadians.PI)) {
-            err = "antipodal";
-        }
-
-        if (err != null) {
-            throw new IllegalArgumentException("Cannot create great circle from points " + a + " and " + b +
-                    ": points are " + err);
-        }
-
-        final Vector3D.Unit u = a.getVector().normalize();
-        final Vector3D.Unit pole = u.cross(b.getVector()).normalize();
-        final Vector3D.Unit v = pole.cross(u).normalize();
-
-        return new GreatCircle(pole, u, v, precision);
     }
 }

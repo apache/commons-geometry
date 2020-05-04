@@ -94,7 +94,7 @@ class LinecastChecker2D {
      * expected results.
      * @param segment
      */
-    public void whenGiven(final ConvexSubLine segment) {
+    public void whenGiven(final LineConvexSubset segment) {
         Line line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);

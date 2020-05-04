@@ -16,18 +16,18 @@
  */
 package org.apache.commons.geometry.spherical.oned;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing an oriented point in 1-dimensional spherical space,
@@ -54,6 +54,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * Euclidean space, which always have infinitely many points on both sides.</p>
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see CutAngles
  */
 public final class CutAngle extends AbstractHyperplane<Point1S> {
     /** Hyperplane location as a point. */
@@ -68,7 +69,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      *      direction; otherwise, it will point in a negative direction
      * @param precision precision context used to compare floating point values
      */
-    private CutAngle(final Point1S point, final boolean positiveFacing,
+    CutAngle(final Point1S point, final boolean positiveFacing,
             final DoublePrecisionContext precision) {
         super(precision);
 
@@ -179,7 +180,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
         final Point1S tPoint = transform.apply(point);
         final boolean tPositiveFacing = transform.preservesOrientation() == positiveFacing;
 
-        return CutAngle.fromPointAndDirection(tPoint, tPositiveFacing, getPrecision());
+        return CutAngles.fromPointAndDirection(tPoint, tPositiveFacing, getPrecision());
     }
 
     /** {@inheritDoc} */
@@ -188,10 +189,15 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
         return positiveFacing == ((CutAngle) other).positiveFacing;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>Since there are no subspaces in spherical 1D space, this method effectively returns a stub implementation
+     * of {@link HyperplaneConvexSubset}, the main purpose of which is to support the proper functioning
+     * of the partitioning code.</p>
+     */
     @Override
-    public SubCutAngle span() {
-        return new SubCutAngle(this);
+    public HyperplaneConvexSubset<Point1S> span() {
+        return new CutAngleConvexSubset(this);
     }
 
     /** {@inheritDoc} */
@@ -229,82 +235,18 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
         return sb.toString();
     }
 
-    /** Create a new instance from the given azimuth and direction.
-     * @param azimuth azimuth value in radians
-     * @param positiveFacing if true, the instance's plus side will be oriented to point toward increasing
-     *      angular values; if false, it will point toward decreasing angular value
-     * @param precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle fromAzimuthAndDirection(final double azimuth, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
-        return fromPointAndDirection(Point1S.of(azimuth), positiveFacing, precision);
-    }
-
-    /** Create a new instance from the given point and direction.
-     * @param point point representing the location of the hyperplane
-     * @param positiveFacing if true, the instance's plus side will be oriented to point toward increasing
-     *      angular values; if false, it will point toward decreasing angular value
-     * @param precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle fromPointAndDirection(final Point1S point, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
-        return new CutAngle(point, positiveFacing, precision);
-    }
-
-    /** Create a new instance at the given azimuth, oriented so that the plus side of the hyperplane points
-     * toward increasing angular values.
-     * @param azimuth azimuth value in radians
-     * @param precision precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle createPositiveFacing(final double azimuth, final DoublePrecisionContext precision) {
-        return createPositiveFacing(Point1S.of(azimuth), precision);
-    }
-
-    /** Create a new instance at the given point, oriented so that the plus side of the hyperplane points
-     * toward increasing angular values.
-     * @param point point representing the location of the hyperplane
-     * @param precision precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle createPositiveFacing(final Point1S point, final DoublePrecisionContext precision) {
-        return fromPointAndDirection(point, true, precision);
-    }
-
-    /** Create a new instance at the given azimuth, oriented so that the plus side of the hyperplane points
-     * toward decreasing angular values.
-     * @param azimuth azimuth value in radians
-     * @param precision precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle createNegativeFacing(final double azimuth, final DoublePrecisionContext precision) {
-        return createNegativeFacing(Point1S.of(azimuth), precision);
-    }
-
-    /** Create a new instance at the given point, oriented so that the plus side of the hyperplane points
-     * toward decreasing angular values.
-     * @param point point representing the location of the hyperplane
-     * @param precision precision precision context used to determine floating point equality
-     * @return a new instance
-     */
-    public static CutAngle createNegativeFacing(final Point1S point, final DoublePrecisionContext precision) {
-        return fromPointAndDirection(point, false, precision);
-    }
-
-    /** {@link ConvexSubHyperplane} implementation for spherical 1D space. Since there are no subspaces in 1D,
+    /** {@link HyperplaneConvexSubset} implementation for spherical 1D space. Since there are no subspaces in 1D,
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class SubCutAngle implements ConvexSubHyperplane<Point1S> {
-        /** The underlying hyperplane for this instance. */
+    private static class CutAngleConvexSubset implements HyperplaneConvexSubset<Point1S> {
+        /** The hyperplane containing for this instance. */
         private final CutAngle hyperplane;
 
         /** Simple constructor.
-         * @param hyperplane underlying hyperplane instance
+         * @param hyperplane containing hyperplane instance
          */
-        public SubCutAngle(final CutAngle hyperplane) {
+        CutAngleConvexSubset(final CutAngle hyperplane) {
             this.hyperplane = hyperplane;
         }
 
@@ -382,11 +324,11 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc} */
         @Override
-        public Split<SubCutAngle> split(final Hyperplane<Point1S> splitter) {
+        public Split<CutAngleConvexSubset> split(final Hyperplane<Point1S> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
-            SubCutAngle minus = null;
-            SubCutAngle plus = null;
+            CutAngleConvexSubset minus = null;
+            CutAngleConvexSubset plus = null;
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
@@ -399,26 +341,26 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc} */
         @Override
-        public List<SubCutAngle> toConvex() {
-            return Arrays.asList(this);
+        public List<CutAngleConvexSubset> toConvex() {
+            return Collections.singletonList(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubCutAngle transform(final Transform<Point1S> transform) {
-            return getHyperplane().transform(transform).span();
+        public CutAngleConvexSubset transform(final Transform<Point1S> transform) {
+            return new CutAngleConvexSubset(getHyperplane().transform(transform));
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubCutAngleBuilder builder() {
-            return new SubCutAngleBuilder(this);
+        public CutAngleSubsetBuilder builder() {
+            return new CutAngleSubsetBuilder(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubCutAngle reverse() {
-            return new SubCutAngle(hyperplane.reverse());
+        public CutAngleConvexSubset reverse() {
+            return new CutAngleConvexSubset(hyperplane.reverse());
         }
 
         /** {@inheritDoc} */
@@ -434,36 +376,36 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
         }
     }
 
-    /** {@link SubHyperplane.Builder} implementation for spherical 1D space. This is effectively
+    /** {@link HyperplaneSubset.Builder} implementation for spherical 1D space. This is effectively
      * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static final class SubCutAngleBuilder implements SubHyperplane.Builder<Point1S> {
-        /** Base subhyperplane for the builder. */
-        private final SubCutAngle base;
+    public static final class CutAngleSubsetBuilder implements HyperplaneSubset.Builder<Point1S> {
+        /** Base hyperplane subset for the builder. */
+        private final CutAngleConvexSubset base;
 
-        /** Construct a new instance using the given base subhyperplane.
-         * @param base base subhyperplane for the instance
+        /** Construct a new instance using the given base hyperplane subset.
+         * @param base base hyperplane subset for the instance
          */
-        private SubCutAngleBuilder(final SubCutAngle base) {
+        CutAngleSubsetBuilder(final CutAngleConvexSubset base) {
             this.base = base;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(final SubHyperplane<Point1S> sub) {
+        public void add(final HyperplaneSubset<Point1S> sub) {
             validateHyperplane(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(final ConvexSubHyperplane<Point1S> sub) {
+        public void add(final HyperplaneConvexSubset<Point1S> sub) {
             validateHyperplane(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubCutAngle build() {
+        public CutAngleConvexSubset build() {
             return base;
         }
 
@@ -479,12 +421,12 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
             return sb.toString();
         }
 
-        /** Validate the given subhyperplane lies on the same hyperplane.
-         * @param sub subhyperplane to validate
+        /** Validate that the given hyperplane subset lies on the same hyperplane subset as this instance.
+         * @param sub hyperplane subset to validate
          * @throws IllegalArgumentException if the argument is not on the same hyperplane
          *      as the instance
          */
-        private void validateHyperplane(final SubHyperplane<Point1S> sub) {
+        private void validateHyperplane(final HyperplaneSubset<Point1S> sub) {
             final CutAngle baseHyper = base.getHyperplane();
             final CutAngle inputHyper = (CutAngle) sub.getHyperplane();
 

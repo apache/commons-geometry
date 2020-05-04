@@ -18,7 +18,7 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 
 /** Interface for Binary Space Partitioning (BSP) trees. BSP trees are spatial data
@@ -42,7 +42,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
     extends BSPSubtree<P, N> {
 
     /** Enum specifying possible behaviors when a point used to locate a node
-     * falls directly on the cut subhyperplane of an internal node.
+     * falls directly on the cut of an internal node.
      */
     enum FindNodeCutRule {
 
@@ -81,9 +81,9 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
         return findNode(pt, FindNodeCutRule.MINUS);
     }
 
-    /** Find a node in this subtree containing the given point on it interior or boundary. The
+    /** Find a node in this subtree containing the given point on its interior or boundary. The
      * search should always return a leaf node except in the cases where the given point lies
-     * exactly on the cut subhyperplane of an internal node. In this case, it is unclear whether
+     * exactly on the cut of an internal node. In this case, it is unclear whether
      * the search should continue with the minus child, the plus child, or end with the internal
      * node. The {@code cutRule} argument specifies what should happen in this case.
      * <ul>
@@ -93,7 +93,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      * </ul>
      * @param pt test point used to locate a node in the tree
      * @param cutRule value used to determine the search behavior when the test point lies
-     *      exactly on the cut subhyperplane of an internal node
+     *      exactly on the cut of an internal node
      * @return node containing the point on its interior or boundary
      * @see #findNode(Point)
      */
@@ -110,7 +110,7 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
      */
     void extract(N node);
 
-    /** Transform this tree. Each cut subhyperplane in the tree is transformed in place using
+    /** Transform this tree. Each cut in the tree is transformed in place using
      * the given {@link Transform}.
      * @param transform the transform to apply
      */
@@ -139,17 +139,18 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
          */
         N getParent();
 
-        /** Get the cut for the node. This is a convex subhyperplane that splits
+        /** Get the cut for the node. This is a hyperplane convex subset that splits
          * the region for the cell into two disjoint regions, namely the plus and
          * minus regions. This will be null for leaf nodes.
          * @see #getPlus()
          * @see #getMinus()
-         * @return the cut subhyperplane for the cell
+         * @return the cut for the cell
+         * @see #getCutHyperplane()
          */
-        ConvexSubHyperplane<P> getCut();
+        HyperplaneConvexSubset<P> getCut();
 
-        /** Get the hyperplane belonging to the node cut, if it exists.
-         * @return the hyperplane belonging to the node cut, or null if
+        /** Get the hyperplane containing the node cut, if it exists.
+         * @return the hyperplane containing the node cut, or null if
          *      the node does not have a cut
          * @see #getCut()
          */
@@ -191,14 +192,14 @@ public interface BSPTree<P extends Point<P>, N extends BSPTree.Node<P, N>>
          */
         boolean isPlus();
 
-        /** Trim the given subhyperplane to the region defined by this node by cutting
+        /** Trim the given hyperplane subset to the region defined by this node by cutting
          * the argument with the cut hyperplanes (binary partitioners) of all parent nodes
-         * up to the root. Null is returned if the subhyperplane lies outside of the region
+         * up to the root. Null is returned if the hyperplane subset lies outside of the region
          * defined by the node.
-         * @param sub the convex subhyperplane to trim
-         * @return the trimmed convex subhyperplane or null if no part of the argument lies
+         * @param sub the hyperplane subset to trim
+         * @return the trimmed hyperplane subset or null if no part of the argument lies
          *      within the node's region
          */
-        ConvexSubHyperplane<P> trim(ConvexSubHyperplane<P> sub);
+        HyperplaneConvexSubset<P> trim(HyperplaneConvexSubset<P> sub);
     }
 }

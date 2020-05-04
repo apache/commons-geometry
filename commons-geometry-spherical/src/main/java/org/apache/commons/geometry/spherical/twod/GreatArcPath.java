@@ -385,7 +385,7 @@ public final class GreatArcPath implements BoundarySource2S {
             } else if (!endVertex.eq(vertex, vertexPrecision)) {
                 // only add the vertex if its not equal to the end point
                 // of the last arc
-                appendInternal(GreatArc.fromPoints(endVertex, vertex, endVertexPrecision));
+                appendInternal(GreatCircles.arcFromPoints(endVertex, vertex, endVertexPrecision));
             }
 
             return this;
@@ -453,7 +453,7 @@ public final class GreatArcPath implements BoundarySource2S {
             } else if (!vertex.eq(startVertex, vertexPrecision)) {
                 // only add if the vertex is not equal to the start
                 // point of the first arc
-                prependInternal(GreatArc.fromPoints(vertex, startVertex, vertexPrecision));
+                prependInternal(GreatCircles.arcFromPoints(vertex, startVertex, vertexPrecision));
             }
 
             return this;
@@ -559,7 +559,7 @@ public final class GreatArcPath implements BoundarySource2S {
             if (end != null) {
                 if (startVertex != null && endVertex != null) {
                     if (!endVertex.eq(startVertex, endVertexPrecision)) {
-                        appendInternal(GreatArc.fromPoints(endVertex, startVertex, endVertexPrecision));
+                        appendInternal(GreatCircles.arcFromPoints(endVertex, startVertex, endVertexPrecision));
                     }
                 } else {
                     throw new IllegalStateException("Unable to close path: path is full");

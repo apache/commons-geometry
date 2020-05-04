@@ -25,84 +25,74 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
-/** Class representing a polyline, ie, a connected series of line segments. The line
+/** Class representing a polyline, ie, a connected sequence of line segments. The line
  * segments in the polyline are connected end to end, with the end vertex of the previous
  * line segment equivalent to the start vertex of the next line segment.
  *
- * <p>In order to make this class more applicable for use with infinite regions, the contained path
- * elements are not required to be finite line segments. Instead, they are only required to be convex
- * sublines. This means that the start element, end element or both, may be infinite, e.g. one of
- * {@link Line.Span}, {@link Ray}, or {@link TerminatedLine}.</p>
+ * <p>In order to increase the flexibility of this class, the contained sequence elements are not
+ * restricted to finite line segments but instead may be any type of
+ * {@link LineConvexSubset line convex subset}, including types with infinite size. However, the
+ * requirement that the end vertex of one element be connected to the start vertex of the next
+ * remains, meaning that only the start element, end element or both may be infinite.</p>
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class Polyline implements BoundarySource2D, Linecastable2D {
-    /** Polyline instance containing no sublines. */
+public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
+    /** Polyline instance containing no segments. */
     private static final Polyline EMPTY = new Polyline(Collections.emptyList());
 
-    /** List of sublines comprising the instance. */
-    private final List<ConvexSubLine> sublines;
+    /** List of connected line subsets comprising the instance. */
+    private final List<LineConvexSubset> elements;
 
     /** Simple constructor. No validation is performed on the input.
-     * @param sublines sublines comprising the instance
+     * @param elements connected line subsets comprising the instance
      */
-    private Polyline(final List<ConvexSubLine> sublines) {
-        this.sublines = Collections.unmodifiableList(sublines);
+    private Polyline(final List<LineConvexSubset> elements) {
+        this.elements = Collections.unmodifiableList(elements);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<ConvexSubLine> boundaryStream() {
-        return getSubLines().stream();
+    public Stream<LineConvexSubset> boundaryStream() {
+        return getSequence().stream();
     }
 
-    /** Get the sublines comprising the polyline.
-     * @return the sublines comprising the polyline
+    /** Get the sequence of line subsets comprising the polyline.
+     * @return the sequence of line subsets comprising the polyline
      */
-    public List<ConvexSubLine> getSubLines() {
-        return sublines;
+    public List<LineConvexSubset> getSequence() {
+        return elements;
     }
 
-    /** Get the start subline for the polyline or null if the polyline is empty.
-     * @return the start subline for the polyline or null if the polyline is empty
+    /** Get the line subset at the start of the polyline or null if the polyline is empty. If the
+     * polyline consists of a single line subset, then the returned instance with be the same
+     * as that returned by {@link #getEnd()}.
+     * @return the line subset at the start of the polyline or null if the polyline is empty
+     * @see #getEnd()
      */
-    public ConvexSubLine getStartSubLine() {
+    public LineConvexSubset getStart() {
         if (!isEmpty()) {
-            return sublines.get(0);
+            return elements.get(0);
         }
         return null;
     }
 
-    /** Get the end subline for the polyline or null if the polyline is empty.
-     * @return the end subline for the polyline or null if the polyline is empty
+    /** Get the line subset at the end of the polyline or null if the polyline is empty. If the
+     * polyline consists of a single line subset, then the returned instance with be the same
+     * as that returned by {@link #getStart()}.
+     * @return the line subset at the end of the polyline or null if the polyline is empty
+     * @see #getStart()
      */
-    public ConvexSubLine getEndSubLine() {
+    public LineConvexSubset getEnd() {
         if (!isEmpty()) {
-            return sublines.get(sublines.size() - 1);
+            return elements.get(elements.size() - 1);
         }
         return null;
-    }
-
-    /** Get the start vertex for the polyline or null if the polyline is empty
-     * or has an infinite start subline.
-     * @return the start vertex for the polyline
-     */
-    public Vector2D getStartVertex() {
-        final ConvexSubLine seg = getStartSubLine();
-        return (seg != null) ? seg.getStartPoint() : null;
-    }
-
-    /** Get the end vertex for the polyline or null if the polyline is empty
-     * or has an infinite end subline.
-     * @return the end vertex for the polyline
-     */
-    public Vector2D getEndVertex() {
-        final ConvexSubLine seg = getEndSubLine();
-        return (seg != null) ? seg.getEndPoint() : null;
     }
 
     /** Get the sequence of vertices defined by the polyline. Vertices appear in the
@@ -123,7 +113,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         }
 
         // add end points
-        for (final ConvexSubLine sub : sublines) {
+        for (final LineConvexSubset sub : elements) {
             pt = sub.getEndPoint();
             if (pt != null) {
                 sequence.add(pt);
@@ -133,42 +123,57 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         return sequence;
     }
 
-    /** Return true if the polyline has a start or end subline that
-     * extends to infinity.
+    /** Return true if the polyline has an element with infinite size.
      * @return true if the polyline is infinite
      */
+    @Override
     public boolean isInfinite() {
         return !isEmpty() && (getStartVertex() == null || getEndVertex() == null);
     }
 
-    /** Return true if the polyline has a finite length. This will be true if there are
-     * no sublines in the polyline or if all sublines have a finite length.
+    /** Return true if the polyline has a finite size. This will be true if there are
+     * no elements in the polyline or if all elements have a finite length.
      * @return true if the polyline is finite
      */
+    @Override
     public boolean isFinite() {
         return !isInfinite();
     }
 
-    /** Return true if the polyline does not contain any sublines.
-     * @return true if the polyline does not contain any sublines
+    /** {@inheritDoc}
+     *
+     * <p>The size of the polyline is defined as the sum of the sizes of all path elements.</p>
+     */
+    @Override
+    public double getSize() {
+        double sum = 0.0;
+        for (final LineConvexSubset element : elements) {
+            sum += element.getSize();
+        }
+
+        return sum;
+    }
+
+    /** Return true if the polyline does not contain any elements.
+     * @return true if the polyline does not contain any elements
      */
     public boolean isEmpty() {
-        return sublines.isEmpty();
+        return elements.isEmpty();
     }
 
     /** Return true if the polyline is closed, meaning that the end point for the last
-     * subline is equivalent to the start point of the first.
-     * @return true if the end point for the last subline is equivalent to the
+     * element is equivalent to the start point of the first.
+     * @return true if the end point for the last element is equivalent to the
      *      start point for the first
      */
     public boolean isClosed() {
-        final ConvexSubLine endSubLine = getEndSubLine();
+        final LineConvexSubset endElement = getEnd();
 
-        if (endSubLine != null) {
+        if (endElement != null) {
             final Vector2D start = getStartVertex();
-            final Vector2D end = endSubLine.getEndPoint();
+            final Vector2D end = endElement.getEndPoint();
 
-            return start != null && end != null && start.eq(end, endSubLine.getPrecision());
+            return start != null && end != null && start.eq(end, endElement.getPrecision());
         }
 
         return false;
@@ -180,7 +185,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
      */
     public Polyline transform(final Transform<Vector2D> transform) {
         if (!isEmpty()) {
-            final List<ConvexSubLine> transformed = sublines.stream()
+            final List<LineConvexSubset> transformed = elements.stream()
                 .map(s -> s.transform(transform))
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -190,15 +195,15 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         return this;
     }
 
-    /** Return a new instance with all subline directions, and their order,
-     * reversed. The last subline in this instance will be the first in the
+    /** Return a new instance with all line subset directions, and their order,
+     * reversed. The last line subset in this instance will be the first in the
      * returned instance.
      * @return a new instance with the polyline reversed
      */
     public Polyline reverse() {
         if (!isEmpty()) {
-            final List<ConvexSubLine> reversed = sublines.stream()
-                .map(ConvexSubLine::reverse)
+            final List<LineConvexSubset> reversed = elements.stream()
+                .map(LineConvexSubset::reverse)
                 .collect(Collectors.toCollection(ArrayList::new));
             Collections.reverse(reversed);
 
@@ -208,36 +213,36 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         return this;
     }
 
-    /** Simplify this polyline, if possible, by combining adjacent sublines that lie on the
+    /** Simplify this polyline, if possible, by combining adjacent elements that lie on the
      * same line (as determined by {@link Line#equals(Object)}).
      * @return a simplified instance
      */
     public Polyline simplify() {
-        final List<ConvexSubLine> simplified = new ArrayList<>();
+        final List<LineConvexSubset> simplified = new ArrayList<>();
 
-        final int size = sublines.size();
+        final int size = elements.size();
 
-        ConvexSubLine current;
+        LineConvexSubset current;
         Line currentLine;
         double end;
 
         int idx = 0;
         int testIdx;
         while (idx < size) {
-            current = sublines.get(idx);
+            current = elements.get(idx);
             currentLine = current.getLine();
             end = current.getSubspaceEnd();
 
             // try to combine with forward neighbors
             testIdx = idx + 1;
-            while (testIdx < size && currentLine.equals(sublines.get(testIdx).getLine())) {
-                end = Math.max(end, sublines.get(testIdx).getSubspaceEnd());
+            while (testIdx < size && currentLine.equals(elements.get(testIdx).getLine())) {
+                end = Math.max(end, elements.get(testIdx).getSubspaceEnd());
                 ++testIdx;
             }
 
             if (testIdx > idx + 1) {
                 // we found something to merge
-                simplified.add(ConvexSubLine.fromInterval(currentLine, current.getSubspaceStart(), end));
+                simplified.add(Lines.subsetFromInterval(currentLine, current.getSubspaceStart(), end));
             } else {
                 simplified.add(current);
             }
@@ -249,11 +254,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         if (isClosed() && simplified.size() > 2 && simplified.get(0).getLine().equals(
                 simplified.get(simplified.size() - 1).getLine())) {
 
-            final ConvexSubLine startSubLine = simplified.get(0);
-            final ConvexSubLine endSubLine = simplified.remove(simplified.size() - 1);
+            final LineConvexSubset startElement = simplified.get(0);
+            final LineConvexSubset endElement = simplified.remove(simplified.size() - 1);
 
-            final ConvexSubLine combined = ConvexSubLine.fromInterval(
-                    endSubLine.getLine(), endSubLine.getSubspaceStart(), startSubLine.getSubspaceEnd());
+            final LineConvexSubset combined = Lines.subsetFromInterval(
+                    endElement.getLine(), endElement.getSubspaceStart(), startElement.getSubspaceEnd());
 
             simplified.set(0, combined);
         }
@@ -263,14 +268,14 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint2D> linecast(final ConvexSubLine subline) {
-        return new BoundarySourceLinecaster2D(this).linecast(subline);
+    public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
+        return new BoundarySourceLinecaster2D(this).linecast(subset);
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint2D linecastFirst(final ConvexSubLine subline) {
-        return new BoundarySourceLinecaster2D(this).linecastFirst(subline);
+    public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
+        return new BoundarySourceLinecaster2D(this).linecastFirst(subset);
     }
 
     /** Return a string representation of the polyline.
@@ -284,28 +289,27 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
      *              <li>{@code Polyline[empty= true]}</li>
      *          </ul>
      *      </li>
-     *      <li>Single subline
+     *      <li>Single element
      *          <ul>
-     *              <li>{@code Polyline[subLine= Line.Span[origin= (0.0, 0.0), direction= (1.0, 0.0)]]}</li>
-     *              <li>{@code Polyline[subLine= Segment[startPoint= (0.0, 0.0), endPoint= (1.0, 0.0)]]}</li>
+     *              <li>{@code Polyline[single= Segment[startPoint= (0.0, 0.0), endPoint= (1.0, 0.0)]]}</li>
      *          </ul>
      *      </li>
-     *      <li>Path with infinite start subline
+     *      <li>Path with infinite start element
      *          <ul>
      *              <li>{@code Polyline[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
      *          </ul>
      *      </li>
-     *      <li>Path with infinite end subline
+     *      <li>Path with infinite end element
      *          <ul>
      *              <li>{@code Polyline[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
      *          </ul>
      *      </li>
-     *      <li>Path with infinite start and end sublines
+     *      <li>Path with infinite start and end elements
      *          <ul>
      *              <li>{@code Polyline[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
      *          </ul>
      *      </li>
-     *      <li>Path with no infinite sublines
+     *      <li>Path with no infinite elements
      *          <ul>
      *              <li>{@code Polyline[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
      *          </ul>
@@ -318,32 +322,52 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         sb.append(this.getClass().getSimpleName())
             .append('[');
 
-        if (sublines.isEmpty()) {
+        if (elements.isEmpty()) {
             sb.append("empty= true");
-        } else if (sublines.size() == 1) {
-            sb.append("subLine= ")
-                .append(sublines.get(0));
+        } else if (elements.size() == 1) {
+            sb.append("single= ")
+                .append(elements.get(0));
         } else {
-            final ConvexSubLine startSubLine = getStartSubLine();
-            if (startSubLine.getStartPoint() == null) {
+            final LineConvexSubset startElement = getStart();
+            if (startElement.getStartPoint() == null) {
                 sb.append("startDirection= ")
-                    .append(startSubLine.getLine().getDirection())
+                    .append(startElement.getLine().getDirection())
                     .append(", ");
             }
 
             sb.append("vertices= ")
                 .append(getVertexSequence());
 
-            final ConvexSubLine endSubLine = getEndSubLine();
-            if (endSubLine.getEndPoint() == null) {
+            final LineConvexSubset endElement = getEnd();
+            if (endElement.getEndPoint() == null) {
                 sb.append(", endDirection= ")
-                    .append(endSubLine.getLine().getDirection());
+                    .append(endElement.getLine().getDirection());
             }
         }
 
         sb.append(']');
 
         return sb.toString();
+    }
+
+    /** Get the start vertex for the polyline or null if the polyline is empty
+     * or has an infinite start line subset.
+     * @return the start vertex for the polyline or null if the polyline does
+     *      not start with a vertex
+     */
+    private Vector2D getStartVertex() {
+        final LineConvexSubset seg = getStart();
+        return (seg != null) ? seg.getStartPoint() : null;
+    }
+
+    /** Get the end vertex for the polyline or null if the polyline is empty
+     * or has an infinite end line subset.
+     * @return the end vertex for the polyline or null if the polyline does
+     *      not end with a vertex
+     */
+    private Vector2D getEndVertex() {
+        final LineConvexSubset seg = getEnd();
+        return (seg != null) ? seg.getEndPoint() : null;
     }
 
     /** Return a {@link Builder} instance configured with the given precision
@@ -357,25 +381,25 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
         return new Builder(precision);
     }
 
-    /** Build a new polyline from the given sublines.
-     * @param sublines the sublines to comprise the polyline
-     * @return new polyline containing the given sublines in order
-     * @throws IllegalStateException if the sublines do not form a connected polyline
+    /** Build a new polyline from the given line subsets.
+     * @param subsets the line subsets to comprise the polyline
+     * @return new polyline containing the given line subsets in order
+     * @throws IllegalStateException if the line subsets do not form a connected polyline
      */
-    public static Polyline fromSubLines(final ConvexSubLine... sublines) {
-        return fromSubLines(Arrays.asList(sublines));
+    public static Polyline fromLineSubsets(final LineConvexSubset... subsets) {
+        return fromLineSubsets(Arrays.asList(subsets));
     }
 
-    /** Build a new polyline from the given sublines.
-     * @param sublines the sublines to comprise the path
-     * @return new polyline containing the given sublines in order
-     * @throws IllegalStateException if the sublines do not form a connected polyline
+    /** Build a new polyline from the given line subsets.
+     * @param subsets the line subsets to comprise the path
+     * @return new polyline containing the given line subsets in order
+     * @throws IllegalStateException if the subsets do not form a connected polyline
      */
-    public static Polyline fromSubLines(final Collection<ConvexSubLine> sublines) {
+    public static Polyline fromLineSubsets(final Collection<LineConvexSubset> subsets) {
         final Builder builder = builder(null);
 
-        for (final ConvexSubLine subline : sublines) {
-            builder.append(subline);
+        for (final LineConvexSubset subset : subsets) {
+            builder.append(subset);
         }
 
         return builder.build();
@@ -431,8 +455,8 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
                 .build(close);
     }
 
-    /** Return a polyline containing no sublines.
-     * @return a polyline containing no sublines.
+    /** Return a polyline containing no elements.
+     * @return a polyline containing no elements
      */
     public static Polyline empty() {
         return EMPTY;
@@ -441,11 +465,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
     /** Class used to build polylines.
      */
     public static final class Builder {
-        /** Sublines appended to the polyline. */
-        private List<ConvexSubLine> appendedSublines = null;
+        /** Line subsets appended to the polyline. */
+        private List<LineConvexSubset> appended = null;
 
-        /** Sublines prepended to the polyline. */
-        private List<ConvexSubLine> prependedSublines = null;
+        /** Line subsets prepended to the polyline. */
+        private List<LineConvexSubset> prepended = null;
 
         /** Precision context used when creating line segments directly from vertices. */
         private DoublePrecisionContext precision;
@@ -473,7 +497,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
 
         /** Set the precision context. This context is used only when creating line segments
          * from appended or prepended vertices. It is not used when adding existing
-         * {@link ConvexSubLine} instances since those contain their own precision contexts.
+         * {@link LineConvexSubset} instances since those contain their own precision contexts.
          * @param builderPrecision precision context to use when creating line segments
          *      from vertices
          * @return this instance
@@ -484,38 +508,38 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             return this;
         }
 
-        /** Get the subline at the start of the polyline or null if it does not exist.
-         * @return the subline at the start of the polyline
+        /** Get the line subset at the start of the polyline or null if it does not exist.
+         * @return the line subset at the start of the polyline
          */
-        public ConvexSubLine getStartSubLine() {
-            ConvexSubLine start = getLast(prependedSublines);
+        public LineConvexSubset getStart() {
+            LineConvexSubset start = getLast(prepended);
             if (start == null) {
-                start = getFirst(appendedSublines);
+                start = getFirst(appended);
             }
             return start;
         }
 
-        /** Get the subline at the end of the polyline or null if it does not exist.
-         * @return the subline at the end of the polyline
+        /** Get the line subset at the end of the polyline or null if it does not exist.
+         * @return the line subset at the end of the polyline
          */
-        public ConvexSubLine getEndSubLine() {
-            ConvexSubLine end = getLast(appendedSublines);
+        public LineConvexSubset getEnd() {
+            LineConvexSubset end = getLast(appended);
             if (end == null) {
-                end = getFirst(prependedSublines);
+                end = getFirst(prepended);
             }
             return end;
         }
 
-        /** Append a subline to the end of the polyline.
-         * @param subline subline to append to the polyline
+        /** Append a line subset to the end of the polyline.
+         * @param subset line subset to append to the polyline
          * @return the current builder instance
-         * @throws IllegalStateException if the polyline contains a previous subline
-         *      and the end vertex of the previous subline is not equivalent to the
-         *      start vertex of the given subline.
+         * @throws IllegalStateException if the polyline contains a previous element
+         *      and the end vertex of the previous element is not equivalent to the
+         *      start vertex of the argument
          */
-        public Builder append(final ConvexSubLine subline) {
-            validateSubLinesConnected(getEndSubLine(), subline);
-            appendInternal(subline);
+        public Builder append(final LineConvexSubset subset) {
+            validateConnected(getEnd(), subset);
+            appendInternal(subset);
 
             return this;
         }
@@ -531,11 +555,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (endVertex == null) {
-                // make sure that we're not adding to an infinite subline
-                final ConvexSubLine end = getEndSubLine();
+                // make sure that we're not adding to an infinite element
+                final LineConvexSubset end = getEnd();
                 if (end != null) {
                     throw new IllegalStateException(
-                            MessageFormat.format("Cannot add vertex {0} after infinite subline: {1}",
+                            MessageFormat.format("Cannot add vertex {0} after infinite line subset: {1}",
                                     vertex, end));
                 }
 
@@ -545,8 +569,8 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
                 endVertexPrecision = vertexPrecision;
             } else if (!endVertex.eq(vertex, endVertexPrecision)) {
                 // only add the vertex if its not equal to the end point
-                // of the last subline
-                appendInternal(Segment.fromPoints(endVertex, vertex, endVertexPrecision));
+                // of the last element
+                appendInternal(Lines.segmentFromPoints(endVertex, vertex, endVertexPrecision));
             }
 
             return this;
@@ -574,16 +598,16 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             return appendVertices(Arrays.asList(vertices));
         }
 
-        /** Prepend a subline to the beginning of the polyline.
-         * @param subline subline to prepend to the polyline
+        /** Prepend a line subset to the beginning of the polyline.
+         * @param subset line subset to prepend to the polyline
          * @return the current builder instance
-         * @throws IllegalStateException if the polyline contains a start subline
-         *      and the end vertex of the given subline is not equivalent to the
-         *      start vertex of the start subline.
+         * @throws IllegalStateException if the polyline contains a start element
+         *      and the end vertex of the argument is not equivalent to the
+         *      start vertex of the start element.
          */
-        public Builder prepend(final ConvexSubLine subline) {
-            validateSubLinesConnected(subline, getStartSubLine());
-            prependInternal(subline);
+        public Builder prepend(final LineConvexSubset subset) {
+            validateConnected(subset, getStart());
+            prependInternal(subset);
 
             return this;
         }
@@ -599,11 +623,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             final DoublePrecisionContext vertexPrecision = getAddVertexPrecision();
 
             if (startVertex == null) {
-                // make sure that we're not adding to an infinite subline
-                final ConvexSubLine start = getStartSubLine();
+                // make sure that we're not adding to an infinite element
+                final LineConvexSubset start = getStart();
                 if (start != null) {
                     throw new IllegalStateException(
-                            MessageFormat.format("Cannot add vertex {0} before infinite subline: {1}",
+                            MessageFormat.format("Cannot add vertex {0} before infinite line subset: {1}",
                                     vertex, start));
                 }
 
@@ -613,8 +637,8 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
                 endVertexPrecision = vertexPrecision;
             } else if (!vertex.eq(startVertex, vertexPrecision)) {
                 // only add if the vertex is not equal to the start
-                // point of the first subline
-                prependInternal(Segment.fromPoints(vertex, startVertex, vertexPrecision));
+                // point of the first element
+                prependInternal(Lines.segmentFromPoints(vertex, startVertex, vertexPrecision));
             }
 
             return this;
@@ -676,19 +700,19 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
                 closePath();
             }
 
-            // combine all of the sublines
-            List<ConvexSubLine> result = null;
+            // combine all of the line subsets
+            List<LineConvexSubset> result = null;
 
-            if (prependedSublines != null) {
-                result = prependedSublines;
+            if (prepended != null) {
+                result = prepended;
                 Collections.reverse(result);
             }
 
-            if (appendedSublines != null) {
+            if (appended != null) {
                 if (result == null) {
-                    result = appendedSublines;
+                    result = appended;
                 } else {
-                    result.addAll(appendedSublines);
+                    result.addAll(appended);
                 }
             }
 
@@ -703,11 +727,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             }
 
             // clear internal state
-            appendedSublines = null;
-            prependedSublines = null;
+            appended = null;
+            prepended = null;
 
             // build the final polyline instance, using the shared empty instance if
-            // no sublines are present
+            // no line subsets are present
             return result.isEmpty() ? empty() : new Polyline(result);
         }
 
@@ -715,12 +739,12 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
          * @throws IllegalStateException if the path cannot be closed
          */
         private void closePath() {
-            final ConvexSubLine end = getEndSubLine();
+            final LineConvexSubset end = getEnd();
 
             if (end != null) {
                 if (startVertex != null && endVertex != null) {
                     if (!endVertex.eq(startVertex, endVertexPrecision)) {
-                        appendInternal(Segment.fromPoints(endVertex, startVertex, endVertexPrecision));
+                        appendInternal(Lines.segmentFromPoints(endVertex, startVertex, endVertexPrecision));
                     }
                 } else {
                     throw new IllegalStateException("Unable to close polyline: polyline is infinite");
@@ -728,15 +752,15 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             }
         }
 
-        /** Validate that the given sublines are connected, meaning that the end vertex of {@code previous}
-         * is equivalent to the start vertex of {@code next}. The sublines are considered valid if either
-         * subline is null.
-         * @param previous previous subline
-         * @param next next subline
+        /** Validate that the given line subsets  are connected, meaning that the end vertex of {@code previous}
+         * is equivalent to the start vertex of {@code next}. The line subsets are considered valid if either
+         * line subset is null.
+         * @param previous previous line subset
+         * @param next next line subset
          * @throws IllegalStateException if previous and next are not null and the end vertex of previous
          *      is not equivalent the start vertex of next
          */
-        private void validateSubLinesConnected(final ConvexSubLine previous, final ConvexSubLine next) {
+        private void validateConnected(final LineConvexSubset previous, final LineConvexSubset next) {
             if (previous != null && next != null) {
                 final Vector2D nextStartVertex = next.getStartPoint();
                 final Vector2D previousEndVertex = previous.getEndPoint();
@@ -746,7 +770,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
                         !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
 
                     throw new IllegalStateException(
-                            MessageFormat.format("Polyline sublines are not connected: previous= {0}, next= {1}",
+                            MessageFormat.format("Polyline line subsets are not connected: previous= {0}, next= {1}",
                                     previous, next));
                 }
             }
@@ -765,42 +789,42 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
             return precision;
         }
 
-        /** Append the given, validated subline to the polyline.
-         * @param subline validated subline to append
+        /** Append the given, validated line subsets to the polyline.
+         * @param subset validated line subset to append
          */
-        private void appendInternal(final ConvexSubLine subline) {
-            if (appendedSublines == null) {
-                appendedSublines = new ArrayList<>();
+        private void appendInternal(final LineConvexSubset subset) {
+            if (appended == null) {
+                appended = new ArrayList<>();
             }
 
-            if (appendedSublines.isEmpty() &&
-                    (prependedSublines == null || prependedSublines.isEmpty())) {
-                startVertex = subline.getStartPoint();
+            if (appended.isEmpty() &&
+                    (prepended == null || prepended.isEmpty())) {
+                startVertex = subset.getStartPoint();
             }
 
-            endVertex = subline.getEndPoint();
-            endVertexPrecision = subline.getPrecision();
+            endVertex = subset.getEndPoint();
+            endVertexPrecision = subset.getPrecision();
 
-            appendedSublines.add(subline);
+            appended.add(subset);
         }
 
-        /** Prepend the given, validated subline to the polyline.
-         * @param subline validated subline to prepend
+        /** Prepend the given, validated line subset to the polyline.
+         * @param subset validated line subset to prepend
          */
-        private void prependInternal(final ConvexSubLine subline) {
-            if (prependedSublines == null) {
-                prependedSublines = new ArrayList<>();
+        private void prependInternal(final LineConvexSubset subset) {
+            if (prepended == null) {
+                prepended = new ArrayList<>();
             }
 
-            startVertex = subline.getStartPoint();
+            startVertex = subset.getStartPoint();
 
-            if (prependedSublines.isEmpty() &&
-                    (appendedSublines == null || appendedSublines.isEmpty())) {
-                endVertex = subline.getEndPoint();
-                endVertexPrecision = subline.getPrecision();
+            if (prepended.isEmpty() &&
+                    (appended == null || appended.isEmpty())) {
+                endVertex = subset.getEndPoint();
+                endVertexPrecision = subset.getPrecision();
             }
 
-            prependedSublines.add(subline);
+            prepended.add(subset);
         }
 
         /** Get the first element in the list or null if the list is null
@@ -808,7 +832,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
          * @param list the list to return the first item from
          * @return the first item from the given list or null if it does not exist
          */
-        private ConvexSubLine getFirst(final List<ConvexSubLine> list) {
+        private LineConvexSubset getFirst(final List<LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {
                 return list.get(0);
             }
@@ -820,7 +844,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
          * @param list the list to return the last item from
          * @return the last item from the given list or null if it does not exist
          */
-        private ConvexSubLine getLast(final List<ConvexSubLine> list) {
+        private LineConvexSubset getLast(final List<LineConvexSubset> list) {
             if (list != null && !list.isEmpty()) {
                 return list.get(list.size() - 1);
             }
@@ -829,17 +853,17 @@ public class Polyline implements BoundarySource2D, Linecastable2D {
     }
 
     /** Internal class returned when a polyline is simplified to remove
-     * unecessary subline divisions. The {@link #simplify()} method on this
+     * unnecessary line subset divisions. The {@link #simplify()} method on this
      * class simply returns the same instance.
      */
     private static final class SimplifiedPolyline extends Polyline {
-        /** Create a new instance containing the given sublines. No validation is
-         * performed on the inputs. Caller must ensure that the given sublines represent
+        /** Create a new instance containing the given line subsets. No validation is
+         * performed on the inputs. Caller must ensure that the given line subsets represent
          * a valid, simplified path.
-         * @param sublines sublines comprising the path
+         * @param subsets line subsets comprising the path
          */
-        private SimplifiedPolyline(final List<ConvexSubLine> sublines) {
-            super(sublines);
+        private SimplifiedPolyline(final List<LineConvexSubset> subsets) {
+            super(subsets);
         }
 
         /** {@inheritDoc} */

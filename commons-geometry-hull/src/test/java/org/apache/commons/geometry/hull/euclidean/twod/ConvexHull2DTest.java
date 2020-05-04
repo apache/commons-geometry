@@ -46,7 +46,7 @@ public class ConvexHull2DTest {
         Assert.assertEquals(0, hull.getVertices().size());
 
         Polyline path = hull.getPath();
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
@@ -66,7 +66,7 @@ public class ConvexHull2DTest {
         Assert.assertEquals(vertices, hull.getVertices());
 
         Polyline path = hull.getPath();
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
@@ -86,7 +86,7 @@ public class ConvexHull2DTest {
         Assert.assertEquals(vertices, hull.getVertices());
 
         Polyline path = hull.getPath();
-        Assert.assertEquals(1, path.getSubLines().size());
+        Assert.assertEquals(1, path.getSequence().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(2, pathVertices.size());
@@ -108,7 +108,7 @@ public class ConvexHull2DTest {
         Assert.assertEquals(vertices, hull.getVertices());
 
         Polyline path = hull.getPath();
-        Assert.assertEquals(3, path.getSubLines().size());
+        Assert.assertEquals(3, path.getSequence().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(4, pathVertices.size());
@@ -133,7 +133,7 @@ public class ConvexHull2DTest {
         Assert.assertEquals(vertices, hull.getVertices());
 
         Polyline path = hull.getPath();
-        Assert.assertEquals(4, path.getSubLines().size());
+        Assert.assertEquals(4, path.getSequence().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(5, pathVertices.size());

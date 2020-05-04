@@ -24,7 +24,7 @@ import org.apache.commons.geometry.core.partitioning.BoundarySource;
 /** Extension of the {@link BoundarySource} interface for Euclidean 2D
  * space.
  */
-public interface BoundarySource2D extends BoundarySource<ConvexSubLine> {
+public interface BoundarySource2D extends BoundarySource<LineConvexSubset> {
 
     /** Return a BSP tree constructed from the boundaries contained in this
      * instance. The default implementation creates a new, empty tree
@@ -38,20 +38,20 @@ public interface BoundarySource2D extends BoundarySource<ConvexSubLine> {
         return tree;
     }
 
-    /** Return a {@link BoundarySource2D} instance containing the given sublines.
-     * @param boundaries sublines to include in the boundary source
+    /** Return a {@link BoundarySource2D} instance containing the given boundaries.
+     * @param boundaries line subsets to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2D from(final ConvexSubLine... boundaries) {
+    static BoundarySource2D from(final LineConvexSubset... boundaries) {
         return from(Arrays.asList(boundaries));
     }
 
-    /** Return a {@link BoundarySource2D} instance containing the given sublines. The given
-     * collection is used directly as the source of the sublines; no copy is made.
-     * @param boundaries sublines to include in the boundary source
+    /** Return a {@link BoundarySource2D} instance containing the given boundaries. The given
+     * collection is used directly as the source of the line subsets; no copy is made.
+     * @param boundaries line subsets to include in the boundary source
      * @return a boundary source containing the given boundaries
      */
-    static BoundarySource2D from(final Collection<ConvexSubLine> boundaries) {
+    static BoundarySource2D from(final Collection<LineConvexSubset> boundaries) {
         return boundaries::stream;
     }
 }

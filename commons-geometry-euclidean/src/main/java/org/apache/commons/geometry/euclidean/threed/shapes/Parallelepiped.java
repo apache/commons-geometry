@@ -24,8 +24,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
 import org.apache.commons.geometry.euclidean.threed.ConvexVolume;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
+import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 
@@ -53,7 +54,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @param boundaries the boundaries of the parallelepiped; this must be a list
      *      with 6 elements
      */
-    private Parallelepiped(final List<ConvexSubPlane> boundaries) {
+    private Parallelepiped(final List<PlaneConvexSubset> boundaries) {
         super(boundaries);
     }
 
@@ -152,7 +153,7 @@ public final class Parallelepiped extends ConvexVolume {
         ensureNonZeroSideLength(vertices.get(1), vertices.get(2), precision);
         ensureNonZeroSideLength(vertices.get(0), vertices.get(4), precision);
 
-        final List<ConvexSubPlane> boundaries = Arrays.asList(
+        final List<PlaneConvexSubset> boundaries = Arrays.asList(
                     // planes orthogonal to x
                     createFace(0, 4, 7, 3, vertices, reverse, precision),
                     createFace(1, 2, 6, 5, vertices, reverse, precision),
@@ -187,7 +188,7 @@ public final class Parallelepiped extends ConvexVolume {
      * @param precision precision context used to create the face
      * @return a parallelepiped face created from the indexed vertices
      */
-    private static ConvexSubPlane createFace(final int a, final int b, final int c, final int d,
+    private static PlaneConvexSubset createFace(final int a, final int b, final int c, final int d,
             final List<Vector3D> vertices, final boolean reverse, final DoublePrecisionContext precision) {
 
         final Vector3D pa = vertices.get(a);
@@ -199,7 +200,7 @@ public final class Parallelepiped extends ConvexVolume {
                 Arrays.asList(pd, pc, pb, pa) :
                 Arrays.asList(pa, pb, pc, pd);
 
-        return ConvexSubPlane.fromVertexLoop(loop, precision);
+        return Planes.subsetFromVertexLoop(loop, precision);
     }
 
     /** Ensure that the given points defining one side of a parallelepiped face are separated by a non-zero

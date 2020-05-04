@@ -675,7 +675,7 @@ public class AbstractBSPTreeTest {
     }
 
     @Test
-    public void testInsert_subhyperplane_concaveRegion() {
+    public void testInsert_hyperplaneSubset_concaveRegion() {
         // arrange
         TestBSPTree tree = new TestBSPTree();
 

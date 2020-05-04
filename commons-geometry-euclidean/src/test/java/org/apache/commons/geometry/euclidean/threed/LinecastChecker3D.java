@@ -21,6 +21,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.lines.Line3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Linecastable3D;
 import org.junit.Assert;
 
 /** Helper class designed to assist with linecast test assertions in 3D.
@@ -94,7 +98,7 @@ class LinecastChecker3D {
      * expected results.
      * @param segment
      */
-    public void whenGiven(final ConvexSubLine3D segment) {
+    public void whenGiven(final LineConvexSubset3D segment) {
         Line3D line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);

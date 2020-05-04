@@ -230,12 +230,12 @@ public class RegionBSPTree1STest {
         for (double theta = 0; theta <= PlaneAngleRadians.TWO_PI; theta += 0.2) {
             // act/assert
             tree.setEmpty();
-            tree.getRoot().cut(CutAngle.createPositiveFacing(theta, TEST_PRECISION));
+            tree.getRoot().cut(CutAngles.createPositiveFacing(theta, TEST_PRECISION));
 
             checkSingleInterval(tree, 0, theta);
 
             tree.setEmpty();
-            tree.getRoot().cut(CutAngle.createNegativeFacing(theta, TEST_PRECISION));
+            tree.getRoot().cut(CutAngles.createNegativeFacing(theta, TEST_PRECISION));
 
             checkSingleInterval(tree, theta, PlaneAngleRadians.TWO_PI);
         }
@@ -318,15 +318,15 @@ public class RegionBSPTree1STest {
 
         // act/assert
         Assert.assertEquals(SplitLocation.NEITHER,
-                tree.split(CutAngle.createPositiveFacing(0, TEST_PRECISION)).getLocation());
+                tree.split(CutAngles.createPositiveFacing(0, TEST_PRECISION)).getLocation());
         Assert.assertEquals(SplitLocation.NEITHER,
-                tree.split(CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getLocation());
+                tree.split(CutAngles.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getLocation());
         Assert.assertEquals(SplitLocation.NEITHER,
-                tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.PI, TEST_PRECISION)).getLocation());
+                tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.PI, TEST_PRECISION)).getLocation());
         Assert.assertEquals(SplitLocation.NEITHER,
-                tree.split(CutAngle.createNegativeFacing(-PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getLocation());
+                tree.split(CutAngles.createNegativeFacing(-PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getLocation());
         Assert.assertEquals(SplitLocation.NEITHER,
-                tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.TWO_PI, TEST_PRECISION)).getLocation());
+                tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI, TEST_PRECISION)).getLocation());
     }
 
     @Test
@@ -336,27 +336,27 @@ public class RegionBSPTree1STest {
 
         // act/assert
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(1e-6, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(1e-6, TEST_PRECISION)),
             AngularInterval.of(0, 1e-6, TEST_PRECISION),
             AngularInterval.of(1e-6, PlaneAngleRadians.TWO_PI, TEST_PRECISION)
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
             AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.TWO_PI, TEST_PRECISION),
             AngularInterval.of(0, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.PI, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.PI, TEST_PRECISION)),
             AngularInterval.of(0, PlaneAngleRadians.PI, TEST_PRECISION),
             AngularInterval.of(PlaneAngleRadians.PI, PlaneAngleRadians.TWO_PI, TEST_PRECISION)
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(-PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(-PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
             AngularInterval.of(-PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.TWO_PI, TEST_PRECISION),
             AngularInterval.of(0, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.TWO_PI - 1e-6, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI - 1e-6, TEST_PRECISION)),
             AngularInterval.of(0, PlaneAngleRadians.TWO_PI - 1e-6, TEST_PRECISION),
             AngularInterval.of(PlaneAngleRadians.TWO_PI - 1e-6, PlaneAngleRadians.TWO_PI, TEST_PRECISION)
         );
@@ -371,23 +371,23 @@ public class RegionBSPTree1STest {
 
         // act/assert
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(0, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(0, TEST_PRECISION)),
             null,
             twoPi
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(0, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(0, TEST_PRECISION)),
             twoPi,
             null
         );
 
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.TWO_PI - 1e-18, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI - 1e-18, TEST_PRECISION)),
             null,
             twoPi
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(PlaneAngleRadians.TWO_PI - 1e-18, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(PlaneAngleRadians.TWO_PI - 1e-18, TEST_PRECISION)),
             twoPi,
             null
         );
@@ -401,29 +401,29 @@ public class RegionBSPTree1STest {
 
         // act
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(0, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(0, TEST_PRECISION)),
             interval,
             null
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(-PlaneAngleRadians.TWO_PI, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(-PlaneAngleRadians.TWO_PI, TEST_PRECISION)),
             interval,
             null
         );
 
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(PlaneAngleRadians.TWO_PI + PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI + PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)),
             null,
             interval
         );
         checkSimpleSplit(
-            tree.split(CutAngle.createPositiveFacing(1.5 * PlaneAngleRadians.PI, TEST_PRECISION)),
+            tree.split(CutAngles.createPositiveFacing(1.5 * PlaneAngleRadians.PI, TEST_PRECISION)),
             interval,
             null
         );
 
         checkSimpleSplit(
-            tree.split(CutAngle.createNegativeFacing(PlaneAngleRadians.PI, TEST_PRECISION)),
+            tree.split(CutAngles.createNegativeFacing(PlaneAngleRadians.PI, TEST_PRECISION)),
             AngularInterval.of(PlaneAngleRadians.PI, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
             AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION)
         );
@@ -434,7 +434,7 @@ public class RegionBSPTree1STest {
         // arrange
         RegionBSPTree1S tree = AngularInterval.of(-PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).toTree();
 
-        CutAngle cut = CutAngle.createPositiveFacing(0, TEST_PRECISION);
+        CutAngle cut = CutAngles.createPositiveFacing(0, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.split(cut);
@@ -458,7 +458,7 @@ public class RegionBSPTree1STest {
         tree.add(AngularInterval.of(PlaneAngleRadians.TWO_PI - 1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
         tree.add(AngularInterval.of(PlaneAngleRadians.PI, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
-        CutAngle cut = CutAngle.createNegativeFacing(1, TEST_PRECISION);
+        CutAngle cut = CutAngles.createNegativeFacing(1, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.split(cut);
@@ -483,7 +483,7 @@ public class RegionBSPTree1STest {
     public void testSplitDiameter_full() {
         // arrange
         RegionBSPTree1S full = RegionBSPTree1S.full();
-        CutAngle splitter = CutAngle.createPositiveFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = full.splitDiameter(splitter);
@@ -506,7 +506,7 @@ public class RegionBSPTree1STest {
     public void testSplitDiameter_empty() {
         // arrange
         RegionBSPTree1S empty = RegionBSPTree1S.empty();
-        CutAngle splitter = CutAngle.createPositiveFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = empty.splitDiameter(splitter);
@@ -525,7 +525,7 @@ public class RegionBSPTree1STest {
     public void testSplitDiameter_minus_zeroOnMinusSide() {
         // arrange
         RegionBSPTree1S tree = AngularInterval.of(0, 1, TEST_PRECISION).toTree();
-        CutAngle splitter = CutAngle.createPositiveFacing(1, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(1, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);
@@ -546,7 +546,7 @@ public class RegionBSPTree1STest {
     public void testSplitDiameter_minus_zeroOnPlusSide() {
         // arrange
         RegionBSPTree1S tree = AngularInterval.of(1, 2, TEST_PRECISION).toTree();
-        CutAngle splitter = CutAngle.createNegativeFacing(0, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(0, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);
@@ -570,7 +570,7 @@ public class RegionBSPTree1STest {
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
         tree.add(AngularInterval.of(2, 2.1, TEST_PRECISION));
 
-        CutAngle splitter = CutAngle.createPositiveFacing(1, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(1, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);
@@ -595,7 +595,7 @@ public class RegionBSPTree1STest {
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
         tree.add(AngularInterval.of(2, 2.1, TEST_PRECISION));
 
-        CutAngle splitter = CutAngle.createNegativeFacing(PlaneAngleRadians.PI - 1, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(PlaneAngleRadians.PI - 1, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);
@@ -620,7 +620,7 @@ public class RegionBSPTree1STest {
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
         tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
 
-        CutAngle splitter = CutAngle.createPositiveFacing(2.5, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(2.5, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);
@@ -647,7 +647,7 @@ public class RegionBSPTree1STest {
         tree.add(AngularInterval.of(1, 1.1, TEST_PRECISION));
         tree.add(AngularInterval.of(2, 3, TEST_PRECISION));
 
-        CutAngle splitter = CutAngle.createNegativeFacing(2.5, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(2.5, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = tree.splitDiameter(splitter);

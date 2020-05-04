@@ -72,7 +72,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
         // assert
         Assert.assertEquals(0, hull.getVertices().size());
-        Assert.assertEquals(0, hull.getPath().getSubLines().size());
+        Assert.assertEquals(0, hull.getPath().getSequence().size());
         Assert.assertNull(hull.getRegion());
     }
 
@@ -86,7 +86,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
         // assert
         Assert.assertEquals(1, hull.getVertices().size());
-        Assert.assertEquals(0, hull.getPath().getSubLines().size());
+        Assert.assertEquals(0, hull.getPath().getSequence().size());
         Assert.assertNull(hull.getRegion());
     }
 
@@ -100,7 +100,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
         // assert
         Assert.assertEquals(2, hull.getVertices().size());
-        Assert.assertEquals(1, hull.getPath().getSubLines().size());
+        Assert.assertEquals(1, hull.getPath().getSequence().size());
         Assert.assertNull(hull.getRegion());
     }
 
@@ -118,7 +118,7 @@ public abstract class ConvexHullGenerator2DAbstractTest {
 
         // assert
         Assert.assertEquals(1, hull.getVertices().size());
-        Assert.assertEquals(0, hull.getPath().getSubLines().size());
+        Assert.assertEquals(0, hull.getPath().getSequence().size());
         Assert.assertNull(hull.getRegion());
     }
 

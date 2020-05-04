@@ -56,7 +56,7 @@ public class InteriorAngleGreatArcConnectorTest {
         runWithMaxAndMin(connector -> {
             // arrange
             List<GreatArc> arcs = Arrays.asList(
-                        GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
+                        GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION)
                     );
             connector.add(arcs);
 
@@ -75,13 +75,13 @@ public class InteriorAngleGreatArcConnectorTest {
     @Test
     public void testConnectAll_maximize_instance() {
         // arrange
-        GreatArc a1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
-        GreatArc a2 = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatArc a3 = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatArc a3 = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
-        GreatArc b1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
-        GreatArc b2 = GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
-        GreatArc b3 = GreatArc.fromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc b1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
+        GreatArc b2 = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
+        GreatArc b3 = GreatCircles.arcFromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
         InteriorAngleGreatArcConnector connector = new InteriorAngleGreatArcConnector.Maximize();
 
@@ -105,13 +105,13 @@ public class InteriorAngleGreatArcConnectorTest {
     @Test
     public void testConnectAll_maximize_method() {
         // arrange
-        GreatArc a1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
-        GreatArc a2 = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatArc a3 = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatArc a3 = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
-        GreatArc b1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
-        GreatArc b2 = GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
-        GreatArc b3 = GreatArc.fromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc b1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
+        GreatArc b2 = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
+        GreatArc b3 = GreatCircles.arcFromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
         // act
         List<GreatArcPath> paths = InteriorAngleGreatArcConnector.connectMaximized(
@@ -134,13 +134,13 @@ public class InteriorAngleGreatArcConnectorTest {
     @Test
     public void testConnectAll_minimize_instance() {
         // arrange
-        GreatArc a1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
-        GreatArc a2 = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatArc a3 = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatArc a3 = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
-        GreatArc b1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
-        GreatArc b2 = GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
-        GreatArc b3 = GreatArc.fromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc b1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
+        GreatArc b2 = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
+        GreatArc b3 = GreatCircles.arcFromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
         InteriorAngleGreatArcConnector connector = new InteriorAngleGreatArcConnector.Minimize();
 
@@ -168,13 +168,13 @@ public class InteriorAngleGreatArcConnectorTest {
     @Test
     public void testConnectAll_minimize_method() {
         // arrange
-        GreatArc a1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
-        GreatArc a2 = GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatArc a3 = GreatArc.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc a1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatArc a2 = GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatArc a3 = GreatCircles.arcFromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
-        GreatArc b1 = GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
-        GreatArc b2 = GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
-        GreatArc b3 = GreatArc.fromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatArc b1 = GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_I, TEST_PRECISION);
+        GreatArc b2 = GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION);
+        GreatArc b3 = GreatCircles.arcFromPoints(Point2S.MINUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
         // act
         List<GreatArcPath> paths = InteriorAngleGreatArcConnector.connectMinimized(

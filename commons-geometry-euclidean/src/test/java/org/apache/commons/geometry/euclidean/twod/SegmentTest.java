@@ -40,7 +40,7 @@ public class SegmentTest {
         Vector2D p2 = Vector2D.of(3, 2);
 
         // act
-        Segment seg = Segment.fromPoints(p1, p2, TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -65,11 +65,11 @@ public class SegmentTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(p1, p1, TEST_PRECISION);
+            Lines.segmentFromPoints(p1, p1, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(p1, p2, TEST_PRECISION);
+            Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -79,10 +79,10 @@ public class SegmentTest {
         Vector2D p1 = Vector2D.of(-1, 2);
         Vector2D p2 = Vector2D.of(3, 3);
 
-        Line line = Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment seg = Segment.fromPoints(line, p2, p1); // reverse location order
+        Segment seg = Lines.segmentFromPoints(line, p2, p1); // reverse location order
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -104,10 +104,10 @@ public class SegmentTest {
         // arrange
         Vector2D p1 = Vector2D.of(-1, 2);
 
-        Line line = Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment seg = Segment.fromPoints(line, p1, p1);
+        Segment seg = Lines.segmentFromPoints(line, p1, p1);
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -130,33 +130,33 @@ public class SegmentTest {
         Vector2D p0 = Vector2D.of(1, 0);
         Vector2D p1 = Vector2D.of(2, 0);
 
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(line, Vector2D.NaN, p1);
+            Lines.segmentFromPoints(line, Vector2D.NaN, p1);
         }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(line, p0, Vector2D.NaN);
+            Lines.segmentFromPoints(line, p0, Vector2D.NaN);
         }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(line, Vector2D.NEGATIVE_INFINITY, p1);
+            Lines.segmentFromPoints(line, Vector2D.NEGATIVE_INFINITY, p1);
         }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromPoints(line, p0, Vector2D.POSITIVE_INFINITY);
+            Lines.segmentFromPoints(line, p0, Vector2D.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
     }
 
     @Test
     public void testFromLocations() {
         // arrange
-        Line line = Line.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment seg = Segment.fromLocations(line, -1, 2);
+        Segment seg = Lines.segmentFromLocations(line, -1, 2);
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -176,10 +176,10 @@ public class SegmentTest {
     @Test
     public void testFromLocations_reversedLocationOrder() {
         // arrange
-        Line line = Line.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment seg = Segment.fromLocations(line, 2, -1);
+        Segment seg = Lines.segmentFromLocations(line, 2, -1);
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -199,10 +199,10 @@ public class SegmentTest {
     @Test
     public void testFromLocations_singlePoint() {
         // arrange
-        Line line = Line.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(-1, 0), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        Segment seg = Segment.fromLocations(line, 1, 1);
+        Segment seg = Lines.segmentFromLocations(line, 1, 1);
 
         // assert
         Assert.assertFalse(seg.isFull());
@@ -222,23 +222,23 @@ public class SegmentTest {
     @Test
     public void testFromLocations_invalidArgs() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromLocations(line, Double.NaN, 2);
+            Lines.segmentFromLocations(line, Double.NaN, 2);
         }, IllegalArgumentException.class, "Invalid line segment locations: NaN, 2.0");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromLocations(line, 1, Double.NaN);
+            Lines.segmentFromLocations(line, 1, Double.NaN);
         }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromLocations(line, Double.NEGATIVE_INFINITY, 2);
+            Lines.segmentFromLocations(line, Double.NEGATIVE_INFINITY, 2);
         }, IllegalArgumentException.class, "Invalid line segment locations: -Infinity, 2.0");
 
         GeometryTestUtils.assertThrows(() -> {
-            Segment.fromLocations(line, 1, Double.POSITIVE_INFINITY);
+            Lines.segmentFromLocations(line, 1, Double.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, Infinity");
     }
 
@@ -248,7 +248,7 @@ public class SegmentTest {
         AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
 
-        Segment seg = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
         Segment result = seg.transform(t);
@@ -265,7 +265,7 @@ public class SegmentTest {
                 .translate(Vector2D.Unit.PLUS_X)
                 .scale(1, -1);
 
-        Segment seg = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
         Segment result = seg.transform(t);
@@ -283,7 +283,7 @@ public class SegmentTest {
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (x, y) -> {
             Vector2D end = Vector2D.of(x, y).add(start);
 
-            Segment seg = Segment.fromPoints(start, end, TEST_PRECISION);
+            Segment seg = Lines.segmentFromPoints(start, end, TEST_PRECISION);
 
             // act
             Segment rev = seg.reverse();
@@ -304,7 +304,7 @@ public class SegmentTest {
         // arrange
         Vector2D p1 = Vector2D.of(0, -1);
         Vector2D p2 = Vector2D.of(0, 1);
-        Segment seg = Segment.fromPoints(p1, p2, TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, seg.closest(p1), TEST_EPS);
@@ -325,7 +325,7 @@ public class SegmentTest {
     @Test
     public void testClassify() {
         // arrange
-        Segment seg = Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertRegionLocation(seg, RegionLocation.OUTSIDE,
@@ -350,60 +350,60 @@ public class SegmentTest {
 
         Vector2D delta = Vector2D.of(1e-11, 1e-11);
 
-        Segment seg = Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.of(1, 1), Vector2D.of(3, 1), TEST_PRECISION);
 
         // --- act
 
         // parallel
-        checkSplit(seg.split(Line.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
                 null, null,
                 p0, p1);
-        checkSplit(seg.split(Line.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
                 p0, p1,
                 null, null);
 
         // coincident
-        checkSplit(seg.split(Line.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
                 null, null,
                 null, null);
 
         // through mid point
-        checkSplit(seg.split(Line.fromPointAndAngle(mid, 1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(mid, 1, TEST_PRECISION)),
                 p0, mid,
                 mid, p1);
-        checkSplit(seg.split(Line.fromPointAndAngle(mid, -1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(mid, -1, TEST_PRECISION)),
                 mid, p1,
                 p0, mid);
 
         // through start point
-        checkSplit(seg.split(Line.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
                 null, null,
                 p0, p1);
-        checkSplit(seg.split(Line.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
                 p0, p1,
                 null, null);
 
         // through end point
-        checkSplit(seg.split(Line.fromPointAndAngle(p1.subtract(delta), 1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(p1.subtract(delta), 1, TEST_PRECISION)),
                 p0, p1,
                 null, null);
-        checkSplit(seg.split(Line.fromPointAndAngle(p1.add(delta), -1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(p1.add(delta), -1, TEST_PRECISION)),
                 null, null,
                 p0, p1);
 
         // intersection below minus
-        checkSplit(seg.split(Line.fromPointAndAngle(low, 1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(low, 1, TEST_PRECISION)),
                 null, null,
                 p0, p1);
-        checkSplit(seg.split(Line.fromPointAndAngle(low, -1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(low, -1, TEST_PRECISION)),
                 p0, p1,
                 null, null);
 
         // intersection above minus
-        checkSplit(seg.split(Line.fromPointAndAngle(high, 1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(high, 1, TEST_PRECISION)),
                 p0, p1,
                 null, null);
-        checkSplit(seg.split(Line.fromPointAndAngle(high, -1, TEST_PRECISION)),
+        checkSplit(seg.split(Lines.fromPointAndAngle(high, -1, TEST_PRECISION)),
                 null, null,
                 p0, p1);
     }
@@ -411,7 +411,7 @@ public class SegmentTest {
     @Test
     public void testGetInterval() {
         // arrange
-        Segment seg = Segment.fromPoints(Vector2D.of(2, -1), Vector2D.of(2, 2), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.of(2, -1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act
         Interval interval = seg.getInterval();
@@ -426,8 +426,8 @@ public class SegmentTest {
     @Test
     public void testGetInterval_singlePoint() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
-        Segment seg = Segment.fromLocations(line, 1, 1);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Segment seg = Lines.segmentFromLocations(line, 1, 1);
 
         // act
         Interval interval = seg.getInterval();
@@ -443,7 +443,7 @@ public class SegmentTest {
     @Test
     public void testToString() {
         // arrange
-        Segment seg = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
         String str = seg.toString();
@@ -453,7 +453,7 @@ public class SegmentTest {
         GeometryTestUtils.assertContains(", endPoint= (1", str);
     }
 
-    private static void checkSplit(Split<ConvexSubLine> split, Vector2D minusStart, Vector2D minusEnd,
+    private static void checkSplit(Split<LineConvexSubset> split, Vector2D minusStart, Vector2D minusEnd,
             Vector2D plusStart, Vector2D plusEnd) {
 
         Segment minus = (Segment) split.getMinus();

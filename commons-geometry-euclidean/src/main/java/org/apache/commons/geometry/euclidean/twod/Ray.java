@@ -19,16 +19,15 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a ray in 2D Euclidean space. A ray is a portion of a line consisting of
  * a single start point and extending to infinity along the direction of the line.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @see TerminatedLine
- * @see <a href="https://en.wikipedia.org/wiki/Line_(geometry)#Ray">Ray</a>
+ * @see ReverseRay
+ * @see Lines
  */
-public final class Ray extends ConvexSubLine {
+public final class Ray extends LineConvexSubset {
 
     /** The start abscissa value for the ray. */
     private final double start;
@@ -174,13 +173,13 @@ public final class Ray extends ConvexSubLine {
 
     /** {@inheritDoc} */
     @Override
-    Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
+    Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
 
         final Line line = getLine();
         final double splitAbscissa = line.abscissa(intersection);
 
-        ConvexSubLine low = null;
-        ConvexSubLine high = null;
+        LineConvexSubset low = null;
+        LineConvexSubset high = null;
 
         int cmp = getPrecision().compare(splitAbscissa, start);
         if (cmp > 0) {
@@ -191,49 +190,5 @@ public final class Ray extends ConvexSubLine {
         }
 
         return createSplitResult(splitter, low, high);
-    }
-
-    /** Construct a ray from a start point and a direction.
-     * @param startPoint ray start point
-     * @param direction ray direction
-     * @param precision precision context used for floating point comparisons
-     * @return a new ray instance with the given start point and direction
-     * @throws IllegalArgumentException If {@code direction} has zero length, as evaluated by the
-     *      given precision context
-     * @see Line#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
-     */
-    public static Ray fromPointAndDirection(final Vector2D startPoint, final Vector2D direction,
-            final DoublePrecisionContext precision) {
-        final Line line = Line.fromPointAndDirection(startPoint, direction, precision);
-
-        return new Ray(line, startPoint);
-    }
-
-    /** Construct a ray starting at the given point and continuing to infinity in the direction
-     * of {@code line}. The given point is projected onto the line.
-     * @param line line for the ray
-     * @param startPoint start point for the ray
-     * @return a new ray instance starting at the given point and continuing in the direction of
-     *      {@code line}
-     * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
-     */
-    public static Ray fromPoint(final Line line, final Vector2D startPoint) {
-        return fromLocation(line, line.abscissa(startPoint));
-    }
-
-    /** Construct a ray starting at the given 1D location on {@code line} and continuing in the
-     * direction of the line to infinity.
-     * @param line line for the ray
-     * @param startLocation 1D location of the ray start point
-     * @return a new ray instance starting at the given 1D location and continuing to infinity
-     *      along {@code line}
-     * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
-     */
-    public static Ray fromLocation(final Line line, final double startLocation) {
-        if (!Double.isFinite(startLocation)) {
-            throw new IllegalArgumentException("Invalid ray start location: " + Double.toString(startLocation));
-        }
-
-        return new Ray(line, startLocation);
     }
 }

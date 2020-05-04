@@ -24,14 +24,14 @@ import java.util.stream.Stream;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractNSphere;
-import org.apache.commons.geometry.euclidean.threed.Line3D;
-import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.Linecastable3D;
-import org.apache.commons.geometry.euclidean.threed.Plane;
+import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubLine3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Line3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Linecastable3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Class representing a 3 dimensional sphere in Euclidean space.
@@ -137,28 +137,28 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint3D> linecast(final ConvexSubLine3D subline) {
-        return getLinecastStream(subline)
+    public List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
+        return getLinecastStream(subset)
                 .collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint3D linecastFirst(final ConvexSubLine3D subline) {
-        return getLinecastStream(subline)
+    public LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
+        return getLinecastStream(subset)
                 .findFirst()
                 .orElse(null);
     }
 
     /** Get a stream containing the linecast intersection points of the given
-     * subline with this instance.
-     * @param subline subline to intersect against this instance
+     * line subset with this instance.
+     * @param subset line subset to intersect against this instance
      * @return a stream containing linecast intersection points
      */
-    private Stream<LinecastPoint3D> getLinecastStream(final ConvexSubLine3D subline) {
-        return intersections(subline.getLine()).stream()
-            .filter(subline::contains)
-            .map(pt -> new LinecastPoint3D(pt, getCenter().directionTo(pt), subline.getLine()));
+    private Stream<LinecastPoint3D> getLinecastStream(final LineConvexSubset3D subset) {
+        return intersections(subset.getLine()).stream()
+            .filter(subset::contains)
+            .map(pt -> new LinecastPoint3D(pt, getCenter().directionTo(pt), subset.getLine()));
     }
 
     /** Construct a sphere from a center point and radius.
@@ -205,7 +205,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
         /** Create a new instance for approximating the given sphere.
          * @param sphere sphere to approximate
          * @param stacks number of "stacks" (sections parallel to the x-y plane) in the approximation
-         * @param slices number of "slices" (boundary subplanes per stack) in the approximation
+         * @param slices number of "slices" (boundary plane subsets per stack) in the approximation
          * @throws IllegalArgumentException if {@code stacks} is less than 2 or {@code slices} is less than 3
          */
         SphereApproximationBuilder(final Sphere sphere, final int stacks, final int slices) {
@@ -258,7 +258,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
                 final int splitIdx = (indexDiff / 2) + polarTopIdx;
                 final Vector3D splitPt = pointAt(splitIdx, 0);
 
-                node.cut(Plane.fromPointAndNormal(splitPt, Vector3D.Unit.PLUS_Z, sphere.getPrecision()),
+                node.cut(Planes.fromPointAndNormal(splitPt, Vector3D.Unit.PLUS_Z, sphere.getPrecision()),
                         RegionCutRule.INHERIT);
 
                 splitAndInsertStacks(node.getPlus(), polarTopIdx, splitIdx);
@@ -288,7 +288,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
                 final Vector3D p1 = pointAt(polarBottomIdx, splitIdx);
                 final Vector3D p2 = pointAt(polarBottomIdx - 1, splitIdx);
 
-                splitNode.cut(Plane.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
+                splitNode.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
 
                 splitAndInsertSlices(splitNode.getPlus(), polarBottomIdx, 0, splitIdx);
                 splitAndInsertSlices(splitNode.getMinus(), polarBottomIdx, splitIdx, sliceEndIdx);
@@ -314,7 +314,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
                 final Vector3D p1 = pointAt(polarBottomIdx, splitIdx);
                 final Vector3D p2 = pointAt(polarBottomIdx - 1, splitIdx);
 
-                node.cut(Plane.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
+                node.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()), RegionCutRule.INHERIT);
 
                 splitAndInsertSlices(node.getPlus(), polarBottomIdx, azimuthStartIdx, splitIdx);
                 splitAndInsertSlices(node.getMinus(), polarBottomIdx, splitIdx, azimuthStopIdx);
@@ -349,7 +349,7 @@ public final class Sphere extends AbstractNSphere<Vector3D> implements Linecasta
                         pointAt(polarBottomIdx - 1, i - 1) :
                         pointAt(polarBottomIdx, i - 1);
 
-                currNode = currNode.cut(Plane.fromPoints(p0, p1, p2, sphere.getPrecision()))
+                currNode = currNode.cut(Planes.fromPoints(p0, p1, p2, sphere.getPrecision()))
                         .getMinus();
             }
 

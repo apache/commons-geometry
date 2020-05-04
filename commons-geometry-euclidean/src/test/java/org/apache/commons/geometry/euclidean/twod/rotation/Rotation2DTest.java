@@ -26,6 +26,7 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.EuclideanTransform;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -286,7 +287,7 @@ public class Rotation2DTest {
         double limit = 4 * Math.PI;
         double inc = 0.25;
 
-        Line line = Line.fromPointAndDirection(Vector2D.ZERO, pt, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, pt, TEST_PRECISION);
 
         T transform;
         Vector2D resultPt;
@@ -301,7 +302,7 @@ public class Rotation2DTest {
             // check that the norm is unchanged
             Assert.assertEquals(pt.norm(), resultPt.norm(), TEST_EPS);
 
-            resultLine = Line.fromPointAndDirection(Vector2D.ZERO, resultPt, TEST_PRECISION);
+            resultLine = Lines.fromPointAndDirection(Vector2D.ZERO, resultPt, TEST_PRECISION);
             double lineAngle = line.angle(resultLine);
 
             // check that the angle is what we expect

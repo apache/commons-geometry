@@ -67,7 +67,7 @@ public final class OBJWriter {
             final DoublePrecisionContext precision) throws IOException {
         // get the vertices and faces
         final MeshBuilder meshBuilder = new MeshBuilder(precision);
-        try (Stream<ConvexSubPlane> stream = boundarySrc.boundaryStream()) {
+        try (Stream<PlaneConvexSubset> stream = boundarySrc.boundaryStream()) {
             stream.forEach(meshBuilder::add);
         }
 
@@ -190,7 +190,7 @@ public final class OBJWriter {
         /** Add a convex subplane boundary to this mesh.
          * @param subplane
          */
-        public void add(final ConvexSubPlane subplane) {
+        public void add(final PlaneConvexSubset subplane) {
             if (!subplane.isEmpty()) {
                 if (!subplane.isFinite()) {
                     throw new IllegalArgumentException("Cannot add infinite convex subplane to mesh: " + subplane);

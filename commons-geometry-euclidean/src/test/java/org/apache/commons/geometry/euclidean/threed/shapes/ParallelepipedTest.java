@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
@@ -63,7 +63,7 @@ public class ParallelepipedTest {
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubPlane> boundaries = p.getBoundaries();
+        List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -168,7 +168,7 @@ public class ParallelepipedTest {
         Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(1, 2, 3), Vector3D.of(4, 5, 6), TEST_PRECISION);
 
         // assert
-        List<ConvexSubPlane> boundaries = p.getBoundaries();
+        List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -190,7 +190,7 @@ public class ParallelepipedTest {
         Parallelepiped p = Parallelepiped.axisAligned(Vector3D.of(4, 5, 6), Vector3D.of(1, 2, 3), TEST_PRECISION);
 
         // assert
-        List<ConvexSubPlane> boundaries = p.getBoundaries();
+        List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -235,7 +235,7 @@ public class ParallelepipedTest {
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubPlane> boundaries = p.getBoundaries();
+        List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         assertVertices(p,
@@ -327,7 +327,7 @@ public class ParallelepipedTest {
         expectedVertices.addAll(Arrays.asList(vertices));
 
         Set<Vector3D> actualVertices = new TreeSet<>(VERTEX_COMPARATOR);
-        for (ConvexSubPlane boundary : p.getBoundaries()) {
+        for (PlaneConvexSubset boundary : p.getBoundaries()) {
             actualVertices.addAll(boundary.getVertices());
         }
 

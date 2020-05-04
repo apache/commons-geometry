@@ -40,9 +40,9 @@ public class PolylineTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
-    public void testFromSegments_empty() {
+    public void testFromLineSubsets_empty() {
         // act
-        Polyline path = Polyline.fromSubLines(new ArrayList<>());
+        Polyline path = Polyline.fromLineSubsets(new ArrayList<>());
 
         // assert
         Assert.assertTrue(path.isEmpty());
@@ -50,24 +50,23 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertNull(path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        Assert.assertEquals(0, path.getSize(), TEST_EPS);
 
-        Assert.assertNull(path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
+        Assert.assertNull(path.getStart());
+        Assert.assertNull(path.getEnd());
 
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
 
         Assert.assertEquals(0, path.getVertexSequence().size());
     }
 
     @Test
-    public void testFromSegments_singleFiniteSegment() {
+    public void testFromLineSubsets_singleFiniteSegment() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
-        Polyline path = Polyline.fromSubLines(a);
+        Polyline path = Polyline.fromLineSubsets(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -75,13 +74,12 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, path.getStartVertex(), TEST_EPS);
+        Assert.assertEquals(1, path.getSize(), TEST_EPS);
 
-        Assert.assertSame(a, path.getEndSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), path.getEndVertex(), TEST_EPS);
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getEnd());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
@@ -89,12 +87,12 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_singleInfiniteSegment() {
+    public void testFromLineSubsets_singleInfiniteSegment() {
         // arrange
-        ConvexSubLine a = Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
+        LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION).span();
 
         // act
-        Polyline path = Polyline.fromSubLines(a);
+        Polyline path = Polyline.fromLineSubsets(a);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -102,13 +100,12 @@ public class PolylineTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        GeometryTestUtils.assertPositiveInfinity(path.getSize());
 
-        Assert.assertSame(a, path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(a, path.getEnd());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(a, segments.get(0));
 
@@ -116,17 +113,17 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_finiteSegments_notClosed() {
+    public void testFromLineSubsets_finiteSegments_notClosed() {
         // arrange
         Vector2D p1 = Vector2D.ZERO;
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Segment a = Segment.fromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Segment.fromPoints(p2, p3, TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
 
         // act
-        Polyline path = Polyline.fromSubLines(a, b);
+        Polyline path = Polyline.fromLineSubsets(a, b);
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -134,13 +131,12 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
+        Assert.assertEquals(2, path.getSize(), TEST_EPS);
 
-        Assert.assertSame(b, path.getEndSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(p3, path.getEndVertex(), TEST_EPS);
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(b, path.getEnd());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -149,18 +145,18 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_finiteSegments_closed() {
+    public void testFromLineSubsets_finiteSegments_closed() {
         // arrange
         Vector2D p1 = Vector2D.ZERO;
         Vector2D p2 = Vector2D.of(1, 0);
         Vector2D p3 = Vector2D.of(1, 1);
 
-        Segment a = Segment.fromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Segment.fromPoints(p2, p3, TEST_PRECISION);
-        Segment c = Segment.fromPoints(p3, p1, TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
+        Segment c = Lines.segmentFromPoints(p3, p1, TEST_PRECISION);
 
         // act
-        Polyline path = Polyline.fromSubLines(Arrays.asList(a, b, c));
+        Polyline path = Polyline.fromLineSubsets(Arrays.asList(a, b, c));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -168,13 +164,12 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(c, path.getEnd());
 
-        Assert.assertSame(c, path.getEndSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getEndVertex(), TEST_EPS);
+        Assert.assertEquals(2 + Math.sqrt(2), path.getSize(), TEST_EPS);
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -184,15 +179,15 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_infiniteSegments() {
+    public void testFromLineSubsets_infiniteSegments() {
         // arrange
-        ReverseRay a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
-                .lineTo(1.0);
-        Ray b = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION)
+                .reverseRayTo(1.0);
+        Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
-        Polyline path = Polyline.fromSubLines(Arrays.asList(a, b));
+        Polyline path = Polyline.fromLineSubsets(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -200,13 +195,12 @@ public class PolylineTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        GeometryTestUtils.assertPositiveInfinity(path.getSize());
 
-        Assert.assertSame(b, path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(b, path.getEnd());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -215,13 +209,13 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_finiteAndInfiniteSegments_startInfinite() {
+    public void testFromLineSubsets_finiteAndInfiniteSegments_startInfinite() {
         // arrange
-        ReverseRay a = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).lineTo(1.0);
-        Segment b = Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        ReverseRay a = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).reverseRayTo(1.0);
+        Segment b = Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         // act
-        Polyline path = Polyline.fromSubLines(Arrays.asList(a, b));
+        Polyline path = Polyline.fromLineSubsets(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -229,13 +223,10 @@ public class PolylineTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(b, path.getEnd());
 
-        Assert.assertSame(b, path.getEndSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), path.getEndVertex(), TEST_EPS);
-
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -244,14 +235,14 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_finiteAndInfiniteSegments_endInfinite() {
+    public void testFromLineSubsets_finiteAndInfiniteSegments_endInfinite() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Ray b = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Ray b = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0.0);
 
         // act
-        Polyline path = Polyline.fromSubLines(Arrays.asList(a, b));
+        Polyline path = Polyline.fromLineSubsets(Arrays.asList(a, b));
 
         // assert
         Assert.assertFalse(path.isEmpty());
@@ -259,13 +250,10 @@ public class PolylineTest {
         Assert.assertFalse(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertSame(a, path.getStartSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, path.getStartVertex(), TEST_EPS);
+        Assert.assertSame(a, path.getStart());
+        Assert.assertSame(b, path.getEnd());
 
-        Assert.assertSame(b, path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
-
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(2, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -274,25 +262,25 @@ public class PolylineTest {
     }
 
     @Test
-    public void testFromSegments_segmentsNotConnected() {
+    public void testFromLineSubsets_segmentsNotConnected() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Segment b = Segment.fromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(Vector2D.of(1.01, 0), Vector2D.of(1, 0), TEST_PRECISION);
 
-        ConvexSubLine c = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
-        ConvexSubLine d = Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
+        LineConvexSubset c = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span();
+        LineConvexSubset d = Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION).span();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Polyline.fromSubLines(a, b);
+            Polyline.fromLineSubsets(a, b);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Polyline.fromSubLines(c, b);
+            Polyline.fromLineSubsets(c, b);
         }, IllegalStateException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            Polyline.fromSubLines(a, d);
+            Polyline.fromLineSubsets(a, d);
         }, IllegalStateException.class);
     }
 
@@ -307,13 +295,10 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertNull(path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        Assert.assertNull(path.getStart());
+        Assert.assertNull(path.getEnd());
 
-        Assert.assertNull(path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
-
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
 
         Assert.assertEquals(0, path.getVertexSequence().size());
     }
@@ -341,13 +326,10 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        assertFiniteSegment(path.getStartSubLine(), p1, p2);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
+        assertFiniteSegment(path.getStart(), p1, p2);
+        Assert.assertSame(path.getStart(), path.getEnd());
 
-        Assert.assertSame(path.getStartSubLine(), path.getEndSubLine());
-        EuclideanTestUtils.assertCoordinatesEqual(p2, path.getEndVertex(), TEST_EPS);
-
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(1, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
 
@@ -371,13 +353,10 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        assertFiniteSegment(path.getStartSubLine(), p1, p2);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
+        assertFiniteSegment(path.getStart(), p1, p2);
+        assertFiniteSegment(path.getEnd(), p3, p4);
 
-        assertFiniteSegment(path.getEndSubLine(), p3, p4);
-        EuclideanTestUtils.assertCoordinatesEqual(p4, path.getEndVertex(), TEST_EPS);
-
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -403,13 +382,10 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        assertFiniteSegment(path.getStartSubLine(), p1, p2);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getStartVertex(), TEST_EPS);
+        assertFiniteSegment(path.getStart(), p1, p2);
+        assertFiniteSegment(path.getEnd(), p4, p1);
 
-        assertFiniteSegment(path.getEndSubLine(), p4, p1);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, path.getEndVertex(), TEST_EPS);
-
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -430,13 +406,10 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertFalse(path.isClosed());
 
-        Assert.assertNull(path.getStartSubLine());
-        Assert.assertNull(path.getStartVertex());
+        Assert.assertNull(path.getStart());
+        Assert.assertNull(path.getEnd());
 
-        Assert.assertNull(path.getEndSubLine());
-        Assert.assertNull(path.getEndVertex());
-
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
 
         Assert.assertEquals(0, path.getVertexSequence().size());
     }
@@ -465,7 +438,7 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -490,7 +463,7 @@ public class PolylineTest {
         Assert.assertTrue(path.isFinite());
         Assert.assertTrue(path.isClosed());
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -513,14 +486,14 @@ public class PolylineTest {
         // assert
         Assert.assertFalse(open.isClosed());
 
-        List<ConvexSubLine> openSegments = open.getSubLines();
+        List<LineConvexSubset> openSegments = open.getSequence();
         Assert.assertEquals(2, openSegments.size());
         assertFiniteSegment(openSegments.get(0), p1, p2);
         assertFiniteSegment(openSegments.get(1), p2, p3);
 
         Assert.assertTrue(closed.isClosed());
 
-        List<ConvexSubLine> closedSegments = closed.getSubLines();
+        List<LineConvexSubset> closedSegments = closed.getSequence();
         Assert.assertEquals(3, closedSegments.size());
         assertFiniteSegment(closedSegments.get(0), p1, p2);
         assertFiniteSegment(closedSegments.get(1), p2, p3);
@@ -530,31 +503,31 @@ public class PolylineTest {
     @Test
     public void testGetSegments_listIsNotModifiable() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        List<ConvexSubLine> inputSegments = new ArrayList<>(Arrays.asList(a));
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        List<LineConvexSubset> inputSegments = new ArrayList<>(Arrays.asList(a));
 
         // act
-        Polyline path = Polyline.fromSubLines(inputSegments);
+        Polyline path = Polyline.fromLineSubsets(inputSegments);
 
         inputSegments.clear();
 
         // assert
-        Assert.assertNotSame(inputSegments, path.getSubLines());
-        Assert.assertEquals(1, path.getSubLines().size());
+        Assert.assertNotSame(inputSegments, path.getSequence());
+        Assert.assertEquals(1, path.getSequence().size());
 
         GeometryTestUtils.assertThrows(() -> {
-            path.getSubLines().add(a);
+            path.getSequence().add(a);
         }, UnsupportedOperationException.class);
     }
 
     @Test
     public void testBoundaryStream() {
         // arrange
-        Segment seg = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
-        Polyline path = Polyline.fromSubLines(Arrays.asList(seg));
+        Segment seg = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Polyline path = Polyline.fromLineSubsets(Arrays.asList(seg));
 
         // act
-        List<ConvexSubLine> segments = path.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, segments.size());
@@ -567,7 +540,7 @@ public class PolylineTest {
         Polyline path = Polyline.empty();
 
         // act
-        List<ConvexSubLine> segments = path.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = path.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -603,7 +576,7 @@ public class PolylineTest {
         Assert.assertTrue(result.isClosed());
         Assert.assertTrue(result.isFinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
 
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(2, 0), Vector2D.of(2, 1));
@@ -614,8 +587,8 @@ public class PolylineTest {
     @Test
     public void testTransform_infinite() {
         // arrange
-        Polyline path = Polyline.fromSubLines(
-                Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
+        Polyline path = Polyline.fromLineSubsets(
+                Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         AffineTransformMatrix2D t = AffineTransformMatrix2D.createTranslation(Vector2D.Unit.PLUS_X);
 
@@ -627,10 +600,10 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
 
         Assert.assertEquals(1, segments.size());
-        ConvexSubLine segment = segments.get(0);
+        LineConvexSubset segment = segments.get(0);
         Assert.assertTrue(segment.isInfinite());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -664,7 +637,7 @@ public class PolylineTest {
         Assert.assertTrue(result.isClosed());
         Assert.assertTrue(result.isFinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
 
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.Unit.ZERO, Vector2D.Unit.PLUS_Y);
@@ -675,8 +648,8 @@ public class PolylineTest {
     @Test
     public void testReverse_singleInfinite() {
         // arrange
-        Polyline path = Polyline.fromSubLines(
-                Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
+        Polyline path = Polyline.fromLineSubsets(
+                Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // act
         Polyline result = path.reverse();
@@ -686,10 +659,10 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
 
         Assert.assertEquals(1, segments.size());
-        ConvexSubLine segment = segments.get(0);
+        LineConvexSubset segment = segments.get(0);
         Assert.assertTrue(segment.isInfinite());
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
@@ -700,10 +673,10 @@ public class PolylineTest {
     @Test
     public void testReverse_doubleInfinite() {
         // arrange
-        ConvexSubLine a = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).lineTo(Vector2D.ZERO);
-        ConvexSubLine b = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).rayFrom(Vector2D.ZERO);
+        LineConvexSubset a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION).reverseRayTo(Vector2D.ZERO);
+        LineConvexSubset b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).rayFrom(Vector2D.ZERO);
 
-        Polyline path = Polyline.fromSubLines(a, b);
+        Polyline path = Polyline.fromLineSubsets(a, b);
 
         // act
         Polyline result = path.reverse();
@@ -713,17 +686,17 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isFinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(2, segments.size());
 
-        ConvexSubLine bResult = segments.get(0);
+        LineConvexSubset bResult = segments.get(0);
         Assert.assertTrue(bResult.isInfinite());
         Assert.assertNull(bResult.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getEndPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, bResult.getLine().getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X, bResult.getLine().getDirection(), TEST_EPS);
 
-        ConvexSubLine aResult = segments.get(1);
+        LineConvexSubset aResult = segments.get(1);
         Assert.assertTrue(aResult.isInfinite());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, aResult.getStartPoint(), TEST_EPS);
         Assert.assertNull(aResult.getEndPoint());
@@ -770,7 +743,7 @@ public class PolylineTest {
         Polyline result = path.simplify();
 
         // assert
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(2, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(1, 2));
@@ -796,7 +769,7 @@ public class PolylineTest {
         Assert.assertTrue(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.of(-1, 0), Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(0, 1));
@@ -818,14 +791,14 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(0, segments.size());
     }
 
     @Test
     public void testSimplify_infiniteSegment() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         Builder builder = Polyline.builder(TEST_PRECISION);
         Polyline path = builder
@@ -840,10 +813,11 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertTrue(result.isInfinite());
 
-        Assert.assertNull(result.getStartVertex());
-        Assert.assertNull(result.getEndVertex());
+        Assert.assertNotNull(path.getStart());
+        Assert.assertNotNull(path.getEnd());
+        Assert.assertSame(path.getStart(), path.getEnd());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
     }
@@ -851,8 +825,9 @@ public class PolylineTest {
     @Test
     public void testSimplify_combinedInfiniteSegment() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Split<ConvexSubLine> split = line.span().split(Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Split<LineConvexSubset> split = line.span().split(
+                Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         Builder builder = Polyline.builder(TEST_PRECISION);
         Polyline path = builder
@@ -868,10 +843,11 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertTrue(result.isInfinite());
 
-        Assert.assertNull(result.getStartVertex());
-        Assert.assertNull(result.getEndVertex());
+        Assert.assertNotNull(result.getStart());
+        Assert.assertNotNull(result.getEnd());
+        Assert.assertSame(result.getStart(), result.getEnd());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
     }
@@ -879,7 +855,7 @@ public class PolylineTest {
     @Test
     public void testSimplify_startAndEndNotCombinedWhenNotClosed() {
         // arrange
-        Line xAxis = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line xAxis = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
         Builder builder = Polyline.builder(TEST_PRECISION);
 
         Polyline path = builder
@@ -898,7 +874,7 @@ public class PolylineTest {
         Assert.assertFalse(result.isClosed());
         Assert.assertFalse(result.isInfinite());
 
-        List<ConvexSubLine> segments = result.getSubLines();
+        List<LineConvexSubset> segments = result.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), Vector2D.ZERO, Vector2D.of(1, 0));
         assertFiniteSegment(segments.get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
@@ -932,11 +908,11 @@ public class PolylineTest {
         // act/assert
         LinecastChecker2D.with(polyline)
             .expectNothing()
-            .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker2D.with(polyline)
             .expectNothing()
-            .whenGiven(Segment.fromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines.segmentFromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 
     @Test
@@ -950,35 +926,35 @@ public class PolylineTest {
         // act/assert
         LinecastChecker2D.with(polyline)
             .expectNothing()
-            .whenGiven(Line.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
 
         LinecastChecker2D.with(polyline)
             .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
             .and(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
-            .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
 
         LinecastChecker2D.with(polyline)
             .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
-            .whenGiven(Segment.fromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
+            .whenGiven(Lines.segmentFromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
     }
 
     @Test
     public void testToString() {
         // arrange
-        Line yAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line xAxis = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line yAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line xAxis = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         Polyline empty = Polyline.empty();
 
-        Polyline singleFullSegment = Polyline.fromSubLines(xAxis.span());
-        Polyline singleFiniteSegment = Polyline.fromSubLines(
-                Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+        Polyline singleFullSegment = Polyline.fromLineSubsets(xAxis.span());
+        Polyline singleFiniteSegment = Polyline.fromLineSubsets(
+                Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         Polyline startOpenPath = Polyline.builder(TEST_PRECISION)
-                .append(xAxis.lineTo(Vector2D.Unit.PLUS_X))
+                .append(xAxis.reverseRayTo(Vector2D.Unit.PLUS_X))
                 .append(Vector2D.of(1, 1))
                 .build();
 
@@ -988,7 +964,7 @@ public class PolylineTest {
                 .append(xAxis.rayFrom(Vector2D.ZERO))
                 .build();
 
-        Polyline doubleOpenPath = Polyline.fromSubLines(yAxis.lineTo(Vector2D.ZERO),
+        Polyline doubleOpenPath = Polyline.fromLineSubsets(yAxis.reverseRayTo(Vector2D.ZERO),
                 xAxis.rayFrom(Vector2D.ZERO));
 
         Polyline nonOpenPath = Polyline.builder(TEST_PRECISION)
@@ -1002,10 +978,10 @@ public class PolylineTest {
         GeometryTestUtils.assertContains("Polyline[empty= true", emptyStr);
 
         String singleFullStr = singleFullSegment.toString();
-        GeometryTestUtils.assertContains("Polyline[subLine= Line.Span[", singleFullStr);
+        GeometryTestUtils.assertContains("Polyline[single= LineSpanningSubset[", singleFullStr);
 
         String singleFiniteStr = singleFiniteSegment.toString();
-        GeometryTestUtils.assertContains("Polyline[subLine= Segment[", singleFiniteStr);
+        GeometryTestUtils.assertContains("Polyline[single= Segment[", singleFiniteStr);
 
         String startOpenStr = startOpenPath.toString();
         GeometryTestUtils.assertContains("Polyline[startDirection= ", startOpenStr);
@@ -1032,10 +1008,10 @@ public class PolylineTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(1, 0);
 
-        Segment a = Segment.fromPoints(p1, p2, TEST_PRECISION);
-        Segment b = Segment.fromPoints(p2, p3, TEST_PRECISION);
-        Segment c = Segment.fromPoints(p3, p4, TEST_PRECISION);
-        Segment d = Segment.fromPoints(p4, p1, TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        Segment b = Lines.segmentFromPoints(p2, p3, TEST_PRECISION);
+        Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
+        Segment d = Lines.segmentFromPoints(p4, p1, TEST_PRECISION);
 
         Builder builder = Polyline.builder(null);
 
@@ -1048,7 +1024,7 @@ public class PolylineTest {
         Polyline path = builder.build();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         Assert.assertSame(a, segments.get(0));
         Assert.assertSame(b, segments.get(1));
@@ -1059,7 +1035,7 @@ public class PolylineTest {
     @Test
     public void testBuilder_prependAndAppend_disconnectedSegments() {
         // arrange
-        Segment a = Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         Builder builder = Polyline.builder(null);
         builder.append(a);
@@ -1094,7 +1070,7 @@ public class PolylineTest {
         Polyline path = builder.build();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1126,7 +1102,7 @@ public class PolylineTest {
         Vector2D p = Vector2D.Unit.PLUS_X;
         Builder builder = Polyline.builder(TEST_PRECISION);
 
-        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span());
+        builder.append(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION).span());
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1157,7 +1133,7 @@ public class PolylineTest {
         // assert
         Polyline path = builder.build();
 
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(1, segments.size());
         assertFiniteSegment(segments.get(0), p, Vector2D.Unit.PLUS_X);
     }
@@ -1170,8 +1146,8 @@ public class PolylineTest {
         Vector2D p3 = Vector2D.of(1, 1);
         Vector2D p4 = Vector2D.of(0, 1);
 
-        Segment a = Segment.fromPoints(p1, p2, TEST_PRECISION);
-        Segment c = Segment.fromPoints(p3, p4, TEST_PRECISION);
+        Segment a = Lines.segmentFromPoints(p1, p2, TEST_PRECISION);
+        Segment c = Lines.segmentFromPoints(p3, p4, TEST_PRECISION);
 
         Builder builder = Polyline.builder(TEST_PRECISION);
 
@@ -1185,7 +1161,7 @@ public class PolylineTest {
         Polyline path = builder.build();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1210,7 +1186,7 @@ public class PolylineTest {
         Polyline path = builder.build();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1235,7 +1211,7 @@ public class PolylineTest {
         Polyline path = builder.build();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(4, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1260,7 +1236,7 @@ public class PolylineTest {
         Polyline path = builder.close();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1285,7 +1261,7 @@ public class PolylineTest {
         Polyline path = builder.close();
 
         // assert
-        List<ConvexSubLine> segments = path.getSubLines();
+        List<LineConvexSubset> segments = path.getSequence();
         Assert.assertEquals(3, segments.size());
         assertFiniteSegment(segments.get(0), p1, p2);
         assertFiniteSegment(segments.get(1), p2, p3);
@@ -1297,8 +1273,8 @@ public class PolylineTest {
         // arrange
         Builder builder = Polyline.builder(TEST_PRECISION);
 
-        builder.append(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION)
-                .lineTo(1))
+        builder.append(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION)
+                .reverseRayTo(1))
             .append(Vector2D.of(1, 1));
 
         // act/assert
@@ -1315,7 +1291,7 @@ public class PolylineTest {
         builder
             .append(Vector2D.ZERO)
             .append(Vector2D.Unit.PLUS_X)
-            .append(Line.fromPointAndAngle(Vector2D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+            .append(Lines.fromPointAndAngle(Vector2D.Unit.PLUS_X, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 .rayFrom(0));
 
         // act/assert
@@ -1333,7 +1309,7 @@ public class PolylineTest {
         Polyline path = builder.close();
 
         // assert
-        Assert.assertEquals(0, path.getSubLines().size());
+        Assert.assertEquals(0, path.getSequence().size());
     }
 
     @Test
@@ -1346,13 +1322,13 @@ public class PolylineTest {
         Polyline path = builder.close();
 
         // assert
-        Assert.assertEquals(3, path.getSubLines().size());
-        assertFiniteSegment(path.getSubLines().get(0), Vector2D.ZERO, Vector2D.of(1, 0));
-        assertFiniteSegment(path.getSubLines().get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
-        assertFiniteSegment(path.getSubLines().get(2), Vector2D.of(2, 1), Vector2D.ZERO);
+        Assert.assertEquals(3, path.getSequence().size());
+        assertFiniteSegment(path.getSequence().get(0), Vector2D.ZERO, Vector2D.of(1, 0));
+        assertFiniteSegment(path.getSequence().get(1), Vector2D.of(1, 0), Vector2D.of(2, 1));
+        assertFiniteSegment(path.getSequence().get(2), Vector2D.of(2, 1), Vector2D.ZERO);
     }
 
-    private static void assertFiniteSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
+    private static void assertFiniteSegment(LineConvexSubset segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 

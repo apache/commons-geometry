@@ -24,10 +24,11 @@ import java.util.stream.Stream;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutRule;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.AbstractNSphere;
-import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Linecastable2D;
+import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -120,14 +121,14 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint2D> linecast(final ConvexSubLine segment) {
+    public List<LinecastPoint2D> linecast(final LineConvexSubset segment) {
         return getLinecastStream(segment)
                 .collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint2D linecastFirst(final ConvexSubLine segment) {
+    public LinecastPoint2D linecastFirst(final LineConvexSubset segment) {
         return getLinecastStream(segment)
                 .findFirst()
                 .orElse(null);
@@ -138,7 +139,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
      * @param segment segment to intersect against this instance
      * @return a stream containing linecast intersection points
      */
-    private Stream<LinecastPoint2D> getLinecastStream(final ConvexSubLine segment) {
+    private Stream<LinecastPoint2D> getLinecastStream(final LineConvexSubset segment) {
         return intersections(segment.getLine()).stream()
             .filter(segment::contains)
             .map(pt -> new LinecastPoint2D(pt, getCenter().directionTo(pt), segment.getLine()));
@@ -212,7 +213,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
                 final Vector2D p0 = pointAt(0);
                 final Vector2D p1 = pointAt(splitIdx);
 
-                root.cut(Line.fromPoints(p0, p1, circle.getPrecision()), RegionCutRule.INHERIT);
+                root.cut(Lines.fromPoints(p0, p1, circle.getPrecision()), RegionCutRule.INHERIT);
 
                 splitAndInsert(root.getPlus(), 0, splitIdx);
                 splitAndInsert(root.getMinus(), splitIdx, segments);
@@ -232,7 +233,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
                 final Vector2D p0 = circle.getCenter();
                 final Vector2D p1 = pointAt(splitIdx);
 
-                node.cut(Line.fromPoints(p0, p1, circle.getPrecision()), RegionCutRule.INHERIT);
+                node.cut(Lines.fromPoints(p0, p1, circle.getPrecision()), RegionCutRule.INHERIT);
 
                 splitAndInsert(node.getPlus(), startIdx, splitIdx);
                 splitAndInsert(node.getMinus(), splitIdx, stopIdx);
@@ -254,7 +255,7 @@ public final class Circle extends AbstractNSphere<Vector2D> implements Linecasta
             for (int i = startIdx + 1; i <= stopIdx; ++i) {
                 currPt = pointAt(i);
 
-                currNode = currNode.cut(Line.fromPoints(prevPt, currPt, circle.getPrecision()))
+                currNode = currNode.cut(Lines.fromPoints(prevPt, currPt, circle.getPrecision()))
                         .getMinus();
 
                 prevPt = currPt;

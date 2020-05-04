@@ -29,18 +29,21 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
-import org.apache.commons.geometry.euclidean.threed.Line3D;
-import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
-import org.apache.commons.geometry.euclidean.threed.Ray3D;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
+import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Line3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Lines3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Ray3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
+import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Ray;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
@@ -138,7 +141,7 @@ public class DocumentationExamplesTest {
 
         // insert a "structural" cut, meaning a cut whose children have the same inside/outside
         // status as the parent; this will help keep our tree balanced and limit its overall height
-        tree.getRoot().insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
+        tree.getRoot().insertCut(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
                 RegionCutRule.INHERIT);
 
         RegionBSPTree2D.RegionNode2D currentNode;
@@ -146,18 +149,18 @@ public class DocumentationExamplesTest {
         // insert on the plus side of the structural diagonal cut
         currentNode = tree.getRoot().getPlus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
+        currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
         currentNode = currentNode.getMinus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
+        currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
 
         // insert on the plus side of the structural diagonal cut
         currentNode = tree.getRoot().getMinus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
+        currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
         currentNode = currentNode.getMinus();
 
-        currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
+        currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
 
         // compute some tree properties
         int count = tree.count(); // number of nodes in the tree = 11
@@ -173,18 +176,18 @@ public class DocumentationExamplesTest {
     }
 
     @Test
-    public void testSubHyperplaneBSPTreeExample() {
+    public void testHyperplaneSubsetBSPTreeExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create a tree representing an empty space (nothing "inside")
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        // insert the subhyperplanes
+        // insert the hyperplane subsets
         tree.insert(Arrays.asList(
-                    Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
-                    Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
-                    Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
-                    Segment.fromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
+                    Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
+                    Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
+                    Lines.segmentFromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
+                    Lines.segmentFromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
                 ));
 
         // compute some tree properties
@@ -256,8 +259,8 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create some lines
-        Line a = Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
-        Line b = Line.fromPointAndDirection(Vector2D.of(1, -1), Vector2D.Unit.PLUS_Y, precision);
+        Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
+        Line b = Lines.fromPointAndDirection(Vector2D.of(1, -1), Vector2D.Unit.PLUS_Y, precision);
 
         // compute the intersection and angles
         Vector2D intersection = a.intersection(b); // (1, 1)
@@ -275,11 +278,11 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create some line segments
-        Segment segmentA = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
-        Segment segmentB = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
+        Segment segmentA = Lines.segmentFromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
+        Segment segmentB = Lines.segmentFromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
 
         // create a ray to intersect against the segments
-        Ray ray = Ray.fromPointAndDirection(Vector2D.of(2, 0), Vector2D.Unit.PLUS_X, precision);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(2, 0), Vector2D.Unit.PLUS_X, precision);
 
         // compute some intersections
         Vector2D aIntersection = segmentA.intersection(ray); // (3, 0)
@@ -336,7 +339,7 @@ public class DocumentationExamplesTest {
         Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
         LinecastPoint2D pt = box.linecastFirst(
-                Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+                Lines.segmentFromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
         Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
         Vector2D normal = pt.getNormal(); // (1.0, 0.0)
@@ -351,8 +354,8 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create two planes
-        Plane a = Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
-        Plane b = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
+        Plane a = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
+        Plane b = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
                 Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, precision);
 
         // compute the intersection
@@ -423,19 +426,19 @@ public class DocumentationExamplesTest {
         // convert the vertices to convex subplanes and insert into a bsp tree
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
         Arrays.stream(faceIndices)
-            .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
+            .map(vertices -> Planes.subsetFromVertexLoop(Arrays.asList(vertices), precision))
             .forEach(tree::insert);
 
         // split the region through its barycenter along a diagonal of the base
-        Plane cutter = Plane.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
+        Plane cutter = Planes.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
         Split<RegionBSPTree3D> split = tree.split(cutter);
 
-        // compute some properties for the minus side of the split and convert back to subhyperplanes
+        // compute some properties for the minus side of the split and convert back to hyperplane subsets
         // (ie, boundary facets)
         RegionBSPTree3D minus = split.getMinus();
 
         double minusSize = minus.getSize(); // 1/6
-        List<ConvexSubPlane> minusBoundaries = minus.getBoundaries(); // size = 4
+        List<PlaneConvexSubset> minusBoundaries = minus.getBoundaries(); // size = 4
 
         // ---------------------
         Assert.assertEquals(1.0 / 6.0, minusSize, TEST_EPS);
@@ -451,7 +454,7 @@ public class DocumentationExamplesTest {
                 .toTree();
 
         // create a ray starting on one side of the cube and pointing through its center
-        Ray3D ray = Ray3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
+        Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
 
         // perform the linecast
         List<LinecastPoint3D> pts = tree.linecast(ray);

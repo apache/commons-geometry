@@ -17,55 +17,51 @@
 package org.apache.commons.geometry.core.partitioning.bsp;
 
 import org.apache.commons.geometry.core.Point;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 
 /** Class representing the portion of an
- * {@link AbstractRegionBSPTree.AbstractRegionNode AbstractRegionNode}'s cut subhyperplane that
- * lies on the boundary of the region. Portions of this subhyperplane
- * may be oriented so that the plus side of the subhyperplane points toward
+ * {@link AbstractRegionBSPTree.AbstractRegionNode AbstractRegionNode}'s cut that
+ * lies on the boundary of the region. Portions of this hyperplane subset
+ * may be oriented so that the plus side of the hyperplane subset points toward
  * the outside of the region ({@link #getOutsideFacing()}) and other portions
- * of the same subhyperplane may be oriented so that the plus side points
+ * of the same hyperplane subset may be oriented so that the plus side points
  * toward the inside of the region ({@link #getInsideFacing()}).
  *
  * @param <P> Point implementation type
  */
 public final class RegionCutBoundary<P extends Point<P>> {
-    /** Portion of the region cut subhyperplane with its plus side facing the
-     * inside of the region.
+    /** Portion of the cut with its plus side facing the inside of the region.
      */
-    private final SubHyperplane<P> insideFacing;
+    private final HyperplaneSubset<P> insideFacing;
 
-    /** Portion of the region cut subhyperplane with its plus side facing the
-     * outside of the region.
+    /** Portion of the cut with its plus side facing the outside of the region.
      */
-    private final SubHyperplane<P> outsideFacing;
+    private final HyperplaneSubset<P> outsideFacing;
 
     /** Simple constructor.
-     * @param insideFacing portion of the region cut subhyperplane with its plus side facing the
+     * @param insideFacing portion of the cut with its plus side facing the
      *      inside of the region
-     * @param outsideFacing portion of the region cut subhyperplane with its plus side facing the
+     * @param outsideFacing portion of the cut with its plus side facing the
      *      outside of the region
      */
-    public RegionCutBoundary(final SubHyperplane<P> insideFacing, final SubHyperplane<P> outsideFacing) {
+    public RegionCutBoundary(final HyperplaneSubset<P> insideFacing, final HyperplaneSubset<P> outsideFacing) {
         this.insideFacing = insideFacing;
         this.outsideFacing = outsideFacing;
     }
 
-    /** Get the portion of the region cut subhyperplane with its plus side facing the
-     * inside of the region.
-     * @return the portion of the region cut subhyperplane with its plus side facing the
+    /** Get the portion of the cut with its plus side facing the inside of the region.
+     * @return the portion of the cut with its plus side facing the
      *      inside of the region
      */
-    public SubHyperplane<P> getInsideFacing() {
+    public HyperplaneSubset<P> getInsideFacing() {
         return insideFacing;
     }
 
-    /** Get the portion of the region cut subhyperplane with its plus side facing the
-     * outside of the region.
-     * @return the portion of the region cut subhyperplane with its plus side facing the
+    /** Get the portion of the cut with its plus side facing the outside of the region.
+     * @return the portion of the cut with its plus side facing the
      *      outside of the region
      */
-    public SubHyperplane<P> getOutsideFacing() {
+    public HyperplaneSubset<P> getOutsideFacing() {
         return outsideFacing;
     }
 
@@ -73,7 +69,7 @@ public final class RegionCutBoundary<P extends Point<P>> {
      * portions of the cut boundary.
      * @param pt the reference point
      * @return the point in the cut boundary closest to the reference point
-     * @see SubHyperplane#closest(Point)
+     * @see HyperplaneSubset#closest(Point)
      */
     public P closest(final P pt) {
         final P insideFacingPt = (insideFacing != null) ? insideFacing.closest(pt) : null;
@@ -94,7 +90,7 @@ public final class RegionCutBoundary<P extends Point<P>> {
      * inside facing portion or the outside facing portion.
      * @param pt point to test
      * @return true if the point is contained in the boundary
-     * @see SubHyperplane#contains(Point)
+     * @see HyperplaneSubset#contains(Point)
      */
     public boolean contains(final P pt) {
         return (insideFacing != null && insideFacing.contains(pt)) ||

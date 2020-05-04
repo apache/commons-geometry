@@ -41,7 +41,7 @@ public class RegionBSPTree1DTest {
     public void testCopy() {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D(true);
-        tree.getRoot().cut(OrientedPoint.createPositiveFacing(1.0, TEST_PRECISION));
+        tree.getRoot().cut(OrientedPoints.createPositiveFacing(1.0, TEST_PRECISION));
 
         // act
         RegionBSPTree1D copy = tree.copy();
@@ -80,8 +80,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
+                    OrientedPoints.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
+                    OrientedPoints.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
                 ));
 
         // act/assert
@@ -123,8 +123,8 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = new RegionBSPTree1D();
         tree.insert(Arrays.asList(
-                    OrientedPoint.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
-                    OrientedPoint.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
+                    OrientedPoints.createNegativeFacing(Vector1D.of(-1), TEST_PRECISION).span(),
+                    OrientedPoints.createPositiveFacing(Vector1D.of(9), TEST_PRECISION).span()
                 ));
 
         // act/assert
@@ -395,7 +395,7 @@ public class RegionBSPTree1DTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         RegionBSPTree1D tree = new RegionBSPTree1D();
-        tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(1.0, true, precision));
+        tree.getRoot().cut(OrientedPoints.fromLocationAndDirection(1.0, true, precision));
 
         // act
         List<Interval> intervals = tree.toIntervals();
@@ -411,7 +411,7 @@ public class RegionBSPTree1DTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
         RegionBSPTree1D tree = new RegionBSPTree1D();
-        tree.getRoot().cut(OrientedPoint.fromLocationAndDirection(-1.0, false, precision));
+        tree.getRoot().cut(OrientedPoints.fromLocationAndDirection(-1.0, false, precision));
 
         // act
         List<Interval> intervals = tree.toIntervals();
@@ -607,10 +607,10 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         RegionNode1D root = tree.getRoot();
-        root.cut(OrientedPoint.createPositiveFacing(1.0, TEST_PRECISION));
+        root.cut(OrientedPoints.createPositiveFacing(1.0, TEST_PRECISION));
 
         RegionNode1D minus = root.getMinus();
-        minus.cut(OrientedPoint.createNegativeFacing(0.0, TEST_PRECISION));
+        minus.cut(OrientedPoints.createNegativeFacing(0.0, TEST_PRECISION));
 
         // act/assert
         checkInterval(root.getNodeRegion(), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -705,7 +705,7 @@ public class RegionBSPTree1DTest {
     public void testSplit_full() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.full();
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, true, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, true, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -726,7 +726,7 @@ public class RegionBSPTree1DTest {
     public void testSplit_empty() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, true, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, true, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -745,7 +745,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.max(-2, TEST_PRECISION));
         tree.add(Interval.of(1, 4, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, false, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -769,7 +769,7 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 4, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -790,7 +790,7 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 4, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(4, false, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(4, false, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -810,7 +810,7 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1.0, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(2, false, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -830,7 +830,7 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -850,7 +850,7 @@ public class RegionBSPTree1DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.from(Interval.point(1, TEST_PRECISION));
 
-        OrientedPoint splitter = OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION);
+        OrientedPoint splitter = OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1D> split = tree.split(splitter);
@@ -871,10 +871,10 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D full = RegionBSPTree1D.full();
 
         RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
-        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+        posHalfSpace.getRoot().cut(OrientedPoints.createNegativeFacing(-2.0, TEST_PRECISION));
 
         RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
-        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+        negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
         Assert.assertEquals(Double.POSITIVE_INFINITY, full.getSize(), TEST_EPS);
@@ -967,10 +967,10 @@ public class RegionBSPTree1DTest {
         RegionBSPTree1D full = RegionBSPTree1D.full();
 
         RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
-        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+        posHalfSpace.getRoot().cut(OrientedPoints.createNegativeFacing(-2.0, TEST_PRECISION));
 
         RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
-        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+        negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
         Assert.assertNull(full.getBarycenter());
@@ -1081,10 +1081,10 @@ public class RegionBSPTree1DTest {
     public void testGetMinMax_halfSpaces() {
         // arrange
         RegionBSPTree1D posHalfSpace = RegionBSPTree1D.empty();
-        posHalfSpace.getRoot().cut(OrientedPoint.createNegativeFacing(-2.0, TEST_PRECISION));
+        posHalfSpace.getRoot().cut(OrientedPoints.createNegativeFacing(-2.0, TEST_PRECISION));
 
         RegionBSPTree1D negHalfSpace = RegionBSPTree1D.empty();
-        negHalfSpace.getRoot().cut(OrientedPoint.createPositiveFacing(3.0, TEST_PRECISION));
+        negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
         Assert.assertEquals(-2, posHalfSpace.getMin(), TEST_EPS);

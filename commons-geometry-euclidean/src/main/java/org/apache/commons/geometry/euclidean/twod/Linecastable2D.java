@@ -21,11 +21,11 @@ import java.util.List;
 /** Interface for objects that support linecast operations in Euclidean 2D space.
  *
  * <p>
- * Linecasting is a process that takes a line or convex subline and intersects it with
+ * Linecasting is a process that takes a line or convex line subset and intersects it with
  * the boundaries of a region. This is similar to
  * <a href="https://en.wikipedia.org/wiki/Ray_casting">raycasting</a> used
  * for collision detection with the exception that the intersecting element can be a
- * line or convex subline and not just a ray.
+ * line or convex line subset and not just a ray.
  * </p>
  */
 public interface Linecastable2D {
@@ -41,14 +41,14 @@ public interface Linecastable2D {
         return linecast(line.span());
     }
 
-    /** Intersect the given convex subline against the boundaries in this instance, returning
+    /** Intersect the given line subset against the boundaries in this instance, returning
      * a list of all intersections in order of increasing position along the line. An empty
      * list is returned if no intersections are discovered.
-     * @param subline subline to intersect
+     * @param subset line subset to intersect
      * @return a list of computed intersections in order of increasing position
      *      along the line
      */
-    List<LinecastPoint2D> linecast(ConvexSubLine subline);
+    List<LinecastPoint2D> linecast(LineConvexSubset subset);
 
     /** Intersect the given line against the boundaries in this instance, returning
      * the first intersection found when traveling in the direction of the line from
@@ -61,12 +61,12 @@ public interface Linecastable2D {
         return linecastFirst(line.span());
     }
 
-    /** Intersect the given convex subline against the boundaries in this instance, returning
-     * the first intersection found when traveling in the direction of the subline
+    /** Intersect the given line subset against the boundaries in this instance, returning
+     * the first intersection found when traveling in the direction of the line subset
      * from its start location.
-     * @param subline subline to intersect
+     * @param subset line subset to intersect
      * @return the first intersection found or null if no intersection
      *      is found
      */
-    LinecastPoint2D linecastFirst(ConvexSubLine subline);
+    LinecastPoint2D linecastFirst(LineConvexSubset subset);
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.text.MessageFormat;
-
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -27,9 +25,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * a line with finite start and end points.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see Lines
  * @see <a href="https://en.wikipedia.org/wiki/Line_segment">Line Segment</a>
  */
-public final class Segment extends ConvexSubLine {
+public final class Segment extends LineConvexSubset {
 
     /** Start abscissa for the segment. */
     private final double start;
@@ -175,7 +174,7 @@ public final class Segment extends ConvexSubLine {
 
     /** {@inheritDoc} */
     @Override
-    Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
+    Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
         final Line line = getLine();
         final double splitAbscissa = line.abscissa(intersection);
 
@@ -197,63 +196,5 @@ public final class Segment extends ConvexSubLine {
         }
 
         return createSplitResult(splitter, low, high);
-    }
-
-    /** Construct a new line segment from two points. A new line is created for the segment and points in the
-     * direction from {@code startPoint} to {@code endPoint}.
-     * @param startPoint segment start point
-     * @param endPoint segment end point
-     * @param precision precision context to use for floating point comparisons
-     * @return a new line segment instance with the given start and end points
-     * @throws IllegalArgumentException If the vector between {@code startPoint} and {@code endPoint} has zero length,
-     *      as evaluated by the given precision context
-     * @see Line#fromPoints(Vector2D, Vector2D, DoublePrecisionContext)
-     */
-    public static Segment fromPoints(final Vector2D startPoint, final Vector2D endPoint,
-            final DoublePrecisionContext precision) {
-        final Line line = Line.fromPoints(startPoint, endPoint, precision);
-
-        // we know that the points lie on the line and are in increasing abscissa order
-        // since they were used to create the line
-        return new Segment(line, startPoint, endPoint);
-    }
-
-    /** Construct a new line segment from a line and a pair of points. The returned segment represents
-     * all points on the line between the projected locations of {@code a} and {@code b}. The points may
-     * be given in any order.
-     * @param line line forming the base of the segment
-     * @param a first point
-     * @param b second point
-     * @return a new line segment representing the points between the projected locations of {@code a}
-     *      and {@code b} on the given line
-     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
-     * @see #fromLocations(Line, double, double)
-     */
-    public static Segment fromPoints(final Line line, final Vector2D a, final Vector2D b) {
-        return fromLocations(line, line.abscissa(a), line.abscissa(b));
-    }
-
-    /** Construct a new line segment from a pair of 1D locations on a line. The returned line
-     * segment consists of all points between the two locations, regardless of the order the
-     * arguments are given.
-     * @param line line forming the base of the segment
-     * @param a first 1D location on the line
-     * @param b second 1D location on the line
-     * @return a new line segment representing the points between {@code a} and {@code b} on
-     *      the given line
-     * @throws IllegalArgumentException if either of the locations is NaN or infinite
-     */
-    public static Segment fromLocations(final Line line, final double a, final double b) {
-
-        if (Double.isFinite(a) && Double.isFinite(b)) {
-            final double min = Math.min(a, b);
-            final double max = Math.max(a, b);
-
-            return new Segment(line, min, max);
-        }
-
-        throw new IllegalArgumentException(
-                MessageFormat.format("Invalid line segment locations: {0}, {1}",
-                        Double.toString(a), Double.toString(b)));
     }
 }

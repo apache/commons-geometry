@@ -101,38 +101,38 @@ public class IntervalTest {
     public void testOf_hyperplanes() {
         // act/assert
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION)), 1, 1);
+                OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION)), 1, 1);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), 1, 1);
+                OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)), 1, 1);
 
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(-2, false, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), -2, 5);
+                OrientedPoints.fromLocationAndDirection(-2, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(5, true, TEST_PRECISION)), -2, 5);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(-2, false, TEST_PRECISION)), -2, 5);
+                OrientedPoints.fromLocationAndDirection(5, true, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(-2, false, TEST_PRECISION)), -2, 5);
 
         checkInterval(Interval.of(
                 null,
-                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
+                OrientedPoints.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(5, true, TEST_PRECISION),
                 null), Double.NEGATIVE_INFINITY, 5);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(Double.NEGATIVE_INFINITY, false, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
+                OrientedPoints.fromLocationAndDirection(Double.NEGATIVE_INFINITY, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(5, true, TEST_PRECISION)), Double.NEGATIVE_INFINITY, 5);
 
         checkInterval(Interval.of(
                 null,
-                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
+                OrientedPoints.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(5, false, TEST_PRECISION),
                 null), 5, Double.POSITIVE_INFINITY);
         checkInterval(Interval.of(
-                OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION),
-                OrientedPoint.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
+                OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION),
+                OrientedPoints.fromLocationAndDirection(5, false, TEST_PRECISION)), 5, Double.POSITIVE_INFINITY);
     }
 
     @Test
@@ -143,33 +143,33 @@ public class IntervalTest {
         // act/assert
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION)), excType);
 
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(2, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(2, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
 
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(Double.POSITIVE_INFINITY, true, TEST_PRECISION)), excType);
 
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(1, true, TEST_PRECISION)), excType);
 
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(1, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(1, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
 
         GeometryTestUtils.assertThrows(
             () -> Interval.of(
-                    OrientedPoint.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
-                    OrientedPoint.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
+                    OrientedPoints.fromLocationAndDirection(Double.NaN, false, TEST_PRECISION),
+                    OrientedPoints.fromLocationAndDirection(Double.NaN, true, TEST_PRECISION)), excType);
     }
 
     @Test
@@ -655,7 +655,7 @@ public class IntervalTest {
     public void testSplit_full_positiveFacingSplitter() {
         // arrange
         Interval interval = Interval.full();
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), true, TEST_PRECISION);
 
         // act
@@ -672,7 +672,7 @@ public class IntervalTest {
     public void testSplit_full_negativeFacingSplitter() {
         // arrange
         Interval interval = Interval.full();
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), true, TEST_PRECISION);
 
         // act
@@ -689,7 +689,7 @@ public class IntervalTest {
     public void testSplit_halfSpace_positiveFacingSplitter() {
         // arrange
         Interval interval = Interval.min(-1, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), false, TEST_PRECISION);
 
         // act
@@ -707,7 +707,7 @@ public class IntervalTest {
     public void testSplit_halfSpace_negativeFacingSplitter() {
         // arrange
         Interval interval = Interval.min(-1, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), false, TEST_PRECISION);
 
         // act
@@ -724,7 +724,7 @@ public class IntervalTest {
     public void testSplit_splitterBelowInterval() {
         // arrange
         Interval interval = Interval.of(5, 10, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), true, TEST_PRECISION);
 
         // act
@@ -740,7 +740,7 @@ public class IntervalTest {
     public void testSplit_splitterOnMinBoundary() {
         // arrange
         Interval interval = Interval.of(5, 10, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(5), false, TEST_PRECISION);
 
         // act
@@ -756,7 +756,7 @@ public class IntervalTest {
     public void testSplit_splitterAboveInterval() {
         // arrange
         Interval interval = Interval.of(5, 10, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(11), true, TEST_PRECISION);
 
         // act
@@ -772,7 +772,7 @@ public class IntervalTest {
     public void testSplit_splitterOnMaxBoundary() {
         // arrange
         Interval interval = Interval.of(5, 10, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(10), false, TEST_PRECISION);
 
         // act
@@ -788,7 +788,7 @@ public class IntervalTest {
     public void testSplit_point_minusOnly() {
         // arrange
         Interval interval = Interval.point(2, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), false, TEST_PRECISION);
 
         // act
@@ -805,7 +805,7 @@ public class IntervalTest {
     public void testSplit_point_plusOnly() {
         // arrange
         Interval interval = Interval.point(2, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), true, TEST_PRECISION);
 
         // act
@@ -822,7 +822,7 @@ public class IntervalTest {
     public void testSplit_point_onPoint() {
         // arrange
         Interval interval = Interval.point(1, TEST_PRECISION);
-        OrientedPoint splitter = OrientedPoint.fromPointAndDirection(
+        OrientedPoint splitter = OrientedPoints.fromPointAndDirection(
                 Vector1D.of(1), true, TEST_PRECISION);
 
         // act

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.shapes.Sphere;
@@ -60,7 +60,7 @@ public class RegionBSPTree3DPerformance {
         /** Compute the boundaries for the instance.
          * @return the boundaries for the instance.
          */
-        protected List<ConvexSubPlane> computeBoundaries() {
+        protected List<PlaneConvexSubset> computeBoundaries() {
             final Sphere sphere = Sphere.from(Vector3D.ZERO, 1, new EpsilonDoublePrecisionContext(1e-10));
             return sphere.toTree(stacksSlices, stacksSlices).getBoundaries();
         }
@@ -72,7 +72,7 @@ public class RegionBSPTree3DPerformance {
     public static class SphericalBoundaryInput extends SphericalBoundaryInputBase {
 
         /** List containing the convex boundaries of the sphere approximation. */
-        private List<ConvexSubPlane> boundaries;
+        private List<PlaneConvexSubset> boundaries;
 
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
@@ -83,7 +83,7 @@ public class RegionBSPTree3DPerformance {
         /** Get the computed sphere boundaries.
          * @return the computed sphere boundaries
          */
-        public List<ConvexSubPlane> getBoundaries() {
+        public List<PlaneConvexSubset> getBoundaries() {
             return boundaries;
         }
     }
@@ -122,7 +122,7 @@ public class RegionBSPTree3DPerformance {
     public RegionBSPTree3D insertConvexWorstCase(final SphericalBoundaryInput input) {
         final RegionBSPTree3D tree = RegionBSPTree3D.empty();
 
-        for (ConvexSubPlane boundary : input.getBoundaries()) {
+        for (PlaneConvexSubset boundary : input.getBoundaries()) {
             tree.insert(boundary);
         }
 
@@ -135,7 +135,7 @@ public class RegionBSPTree3DPerformance {
      * @return list of tree boundaries
      */
     @Benchmark
-    public List<ConvexSubPlane> boundaryConvexWorstCase(final WorstCaseSphericalRegionInput input) {
+    public List<PlaneConvexSubset> boundaryConvexWorstCase(final WorstCaseSphericalRegionInput input) {
         return input.getTree().getBoundaries();
     }
 }

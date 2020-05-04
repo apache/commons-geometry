@@ -19,7 +19,6 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a portion of a line in 2D Euclidean space that starts at infinity and
  * continues in the direction of the line up to a single end point. This is equivalent to taking a
@@ -27,10 +26,11 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
  * @see Ray
+ * @see Lines
  */
-public final class ReverseRay extends ConvexSubLine {
+public final class ReverseRay extends LineConvexSubset {
 
-    /** The abscissa of the subline endpoint. */
+    /** The abscissa of the endpoint. */
     private final double end;
 
     /** Construct a new instance from the given line and end point. The end point is projected onto
@@ -168,13 +168,13 @@ public final class ReverseRay extends ConvexSubLine {
 
     /** {@inheritDoc} */
     @Override
-    protected Split<ConvexSubLine> splitOnIntersection(final Line splitter, final Vector2D intersection) {
+    protected Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
 
         final Line line = getLine();
         final double splitAbscissa = line.abscissa(intersection);
 
-        ConvexSubLine low = null;
-        ConvexSubLine high = null;
+        LineConvexSubset low = null;
+        LineConvexSubset high = null;
 
         int cmp = getPrecision().compare(splitAbscissa, end);
         if (cmp < 0) {
@@ -185,48 +185,5 @@ public final class ReverseRay extends ConvexSubLine {
         }
 
         return createSplitResult(splitter, low, high);
-    }
-
-    /** Construct a new instance from an end point and a line direction.
-     * @param endPoint instance end point
-     * @param lineDirection line direction
-     * @param precision precision context used for floating point comparisons
-     * @return a new instance with the given end point and line direction
-     * @throws IllegalArgumentException If {@code lineDirection} has zero length, as evaluated by the
-     *      given precision context
-     * @see Line#fromPointAndDirection(Vector2D, Vector2D, DoublePrecisionContext)
-     */
-    public static ReverseRay fromPointAndDirection(final Vector2D endPoint, final Vector2D lineDirection,
-            final DoublePrecisionContext precision) {
-        final Line line = Line.fromPointAndDirection(endPoint, lineDirection, precision);
-
-        return new ReverseRay(line, endPoint);
-    }
-
-    /** Construct a new instance starting at infinity and continuing in the direction of {@code line}
-     * to the given end point. The point is projected onto the line.
-     * @param line line for the instance
-     * @param endPoint end point for the instance
-     * @return a new instance starting at infinity and continuing along the line to {@code endPoint}
-     * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
-     */
-    public static ReverseRay fromPoint(final Line line, final Vector2D endPoint) {
-        return fromLocation(line, line.abscissa(endPoint));
-    }
-
-    /** Construct a new instance starting at infinity and continuing in the direction of {@code line}
-     * to the given 1D end location.
-     * @param line line for the instance
-     * @param endLocation 1D location of the instance end point
-     * @return a new instance starting infinity and continuing in the direction of {@code line}
-     *      to the given 1D end location
-     * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
-     */
-    public static ReverseRay fromLocation(final Line line, final double endLocation) {
-        if (!Double.isFinite(endLocation)) {
-            throw new IllegalArgumentException("Invalid reverse ray end location: " + Double.toString(endLocation));
-        }
-
-        return new ReverseRay(line, endLocation);
     }
 }

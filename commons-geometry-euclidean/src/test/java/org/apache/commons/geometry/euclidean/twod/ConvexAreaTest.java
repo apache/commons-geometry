@@ -57,15 +57,15 @@ public class ConvexAreaTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
         ConvexArea area = ConvexArea.fromBounds(line);
 
         // act
-        List<ConvexSubLine> segments = area.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = area.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(1, segments.size());
-        ConvexSubLine segment = segments.get(0);
+        LineConvexSubset segment = segments.get(0);
         Assert.assertNull(segment.getStartPoint());
         Assert.assertNull(segment.getEndPoint());
         Assert.assertSame(line, segment.getLine());
@@ -77,7 +77,7 @@ public class ConvexAreaTest {
         ConvexArea area = ConvexArea.full();
 
         // act
-        List<ConvexSubLine> segments = area.boundaryStream().collect(Collectors.toList());
+        List<LineConvexSubset> segments = area.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, segments.size());
@@ -87,10 +87,10 @@ public class ConvexAreaTest {
     public void testToTree() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(1, 1), PlaneAngleRadians.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                    Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(1, 1), PlaneAngleRadians.PI, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(0, 1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 );
 
         // act
@@ -138,8 +138,8 @@ public class ConvexAreaTest {
                 .scale(Vector2D.of(3, 2));
 
         ConvexArea area = ConvexArea.fromBounds(
-                Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION),
-                Line.fromPointAndAngle(Vector2D.ZERO, -0.25 * PlaneAngleRadians.PI, TEST_PRECISION));
+                Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION),
+                Lines.fromPointAndAngle(Vector2D.ZERO, -0.25 * PlaneAngleRadians.PI, TEST_PRECISION));
 
         // act
         ConvexArea transformed = area.transform(mat);
@@ -150,15 +150,15 @@ public class ConvexAreaTest {
         List<Polyline> paths = transformed.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        List<ConvexSubLine> segments = paths.get(0).getSubLines();
+        List<LineConvexSubset> segments = paths.get(0).getSequence();
         Assert.assertEquals(2, segments.size());
 
-        ConvexSubLine firstSegment = segments.get(0);
+        LineConvexSubset firstSegment = segments.get(0);
         Assert.assertNull(firstSegment.getStartPoint());
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), firstSegment.getEndPoint(), TEST_EPS);
         Assert.assertEquals(Math.atan2(2, 3), firstSegment.getLine().getAngle(), TEST_EPS);
 
-        ConvexSubLine secondSegment = segments.get(1);
+        LineConvexSubset secondSegment = segments.get(1);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 2), secondSegment.getStartPoint(), TEST_EPS);
         Assert.assertNull(secondSegment.getEndPoint());
         Assert.assertEquals(Math.atan2(2, -3), secondSegment.getLine().getAngle(), TEST_EPS);
@@ -180,7 +180,7 @@ public class ConvexAreaTest {
         // assert
         Assert.assertNotSame(area, transformed);
 
-        List<ConvexSubLine> segments = transformed.getBoundaries();
+        List<LineConvexSubset> segments = transformed.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
@@ -208,7 +208,7 @@ public class ConvexAreaTest {
         // assert
         Assert.assertNotSame(area, transformed);
 
-        List<ConvexSubLine> segments = transformed.getBoundaries();
+        List<LineConvexSubset> segments = transformed.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
@@ -236,7 +236,7 @@ public class ConvexAreaTest {
         // assert
         Assert.assertNotSame(area, transformed);
 
-        List<ConvexSubLine> segments = transformed.getBoundaries();
+        List<LineConvexSubset> segments = transformed.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
@@ -261,8 +261,8 @@ public class ConvexAreaTest {
     public void testGetVertices_twoParallelLines() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
+                    Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION)
                 );
 
         // act/assert
@@ -273,9 +273,9 @@ public class ConvexAreaTest {
     public void testGetVertices_infiniteWithVertices() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
-                    Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
-                    Line.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                    Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(0, -1), 0.0, TEST_PRECISION),
+                    Lines.fromPointAndAngle(Vector2D.of(1, 0), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                 );
 
         // act
@@ -322,7 +322,7 @@ public class ConvexAreaTest {
     public void testProject_halfSpace() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(
-                Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
+                Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 1), area.project(Vector2D.of(1, 1)), TEST_EPS);
@@ -353,10 +353,10 @@ public class ConvexAreaTest {
     public void testTrim_full() {
         // arrange
         ConvexArea area = ConvexArea.full();
-        Segment segment = Segment.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Segment segment = Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        ConvexSubLine trimmed = area.trim(segment);
+        LineConvexSubset trimmed = area.trim(segment);
 
         // assert
         Assert.assertSame(segment, trimmed);
@@ -365,11 +365,11 @@ public class ConvexAreaTest {
     @Test
     public void testTrim_halfSpace() {
         // arrange
-        ConvexArea area = ConvexArea.fromBounds(Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
-        ConvexSubLine segment = Line.fromPoints(Vector2D.Unit.MINUS_Y, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span();
+        ConvexArea area = ConvexArea.fromBounds(Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION));
+        LineConvexSubset segment = Lines.fromPoints(Vector2D.Unit.MINUS_Y, Vector2D.Unit.PLUS_Y, TEST_PRECISION).span();
 
         // act
-        ConvexSubLine trimmed = area.trim(segment);
+        LineConvexSubset trimmed = area.trim(segment);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, trimmed.getStartPoint(), TEST_EPS);
@@ -380,10 +380,10 @@ public class ConvexAreaTest {
     public void testTrim_square() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.ZERO, 1, 1));
-        ConvexSubLine segment = Line.fromPoints(Vector2D.of(0.5, 0), Vector2D.of(0.5, 1), TEST_PRECISION).span();
+        LineConvexSubset segment = Lines.fromPoints(Vector2D.of(0.5, 0), Vector2D.of(0.5, 1), TEST_PRECISION).span();
 
         // act
-        ConvexSubLine trimmed = area.trim(segment);
+        LineConvexSubset trimmed = area.trim(segment);
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0), trimmed.getStartPoint(), TEST_EPS);
@@ -394,10 +394,10 @@ public class ConvexAreaTest {
     public void testTrim_segmentOutsideOfRegion() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.ZERO, 1, 1));
-        ConvexSubLine segment = Line.fromPoints(Vector2D.of(-0.5, 0), Vector2D.of(-0.5, 1), TEST_PRECISION).span();
+        LineConvexSubset segment = Lines.fromPoints(Vector2D.of(-0.5, 0), Vector2D.of(-0.5, 1), TEST_PRECISION).span();
 
         // act
-        ConvexSubLine trimmed = area.trim(segment);
+        LineConvexSubset trimmed = area.trim(segment);
 
         // assert
         Assert.assertNull(trimmed);
@@ -407,10 +407,10 @@ public class ConvexAreaTest {
     public void testTrim_segmentDirectlyOnBoundaryOfRegion() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.ZERO, 1, 1));
-        ConvexSubLine segment = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION).span();
+        LineConvexSubset segment = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION).span();
 
         // act
-        ConvexSubLine trimmed = area.trim(segment);
+        LineConvexSubset trimmed = area.trim(segment);
 
         // assert
         Assert.assertNull(trimmed);
@@ -421,7 +421,7 @@ public class ConvexAreaTest {
         // arrange
         ConvexArea input = ConvexArea.full();
 
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = input.split(splitter);
@@ -437,7 +437,7 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(minus.getSize());
         Assert.assertNull(minus.getBarycenter());
 
-        List<ConvexSubLine> minusSegments = minus.getBoundaries();
+        List<LineConvexSubset> minusSegments = minus.getBoundaries();
         Assert.assertEquals(1, minusSegments.size());
         Assert.assertEquals(splitter, minusSegments.get(0).getLine());
 
@@ -449,7 +449,7 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(plus.getSize());
         Assert.assertNull(plus.getBarycenter());
 
-        List<ConvexSubLine> plusSegments = plus.getBoundaries();
+        List<LineConvexSubset> plusSegments = plus.getBoundaries();
         Assert.assertEquals(1, plusSegments.size());
         Assert.assertEquals(splitter, plusSegments.get(0).getLine().reverse());
     }
@@ -457,8 +457,8 @@ public class ConvexAreaTest {
     @Test
     public void testSplit_halfSpace_split() {
         // arrange
-        ConvexArea area = ConvexArea.fromBounds(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
-        Line splitter = Line.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        ConvexArea area = ConvexArea.fromBounds(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -490,8 +490,8 @@ public class ConvexAreaTest {
     @Test
     public void testSplit_halfSpace_splitOnBoundary() {
         // arrange
-        ConvexArea area = ConvexArea.fromBounds(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
-        Line splitter = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        ConvexArea area = ConvexArea.fromBounds(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+        Line splitter = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -506,8 +506,8 @@ public class ConvexAreaTest {
     @Test
     public void testSplit_halfSpace_splitOnBoundaryWithReversedSplitter() {
         // arrange
-        ConvexArea area = ConvexArea.fromBounds(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
-        Line splitter = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).reverse();
+        ConvexArea area = ConvexArea.fromBounds(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+        Line splitter = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).reverse();
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -523,7 +523,7 @@ public class ConvexAreaTest {
     public void testSplit_square_split() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 2, 1));
-        Line splitter = Line.fromPointAndAngle(Vector2D.of(2, 1), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        Line splitter = Lines.fromPointAndAngle(Vector2D.of(2, 1), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -556,7 +556,7 @@ public class ConvexAreaTest {
     public void testSplit_square_splitOnVertices() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
+        Line splitter = Lines.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -589,7 +589,7 @@ public class ConvexAreaTest {
     public void testSplit_square_splitOnVerticesWithReversedSplitter() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).reverse();
+        Line splitter = Lines.fromPoints(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION).reverse();
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -622,7 +622,7 @@ public class ConvexAreaTest {
     public void testSplit_square_entirelyOnMinus() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(3, 1), Vector2D.of(3, 2), TEST_PRECISION);
+        Line splitter = Lines.fromPoints(Vector2D.of(3, 1), Vector2D.of(3, 2), TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -637,7 +637,7 @@ public class ConvexAreaTest {
     public void testSplit_square_onMinusBoundary() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(2, 2), TEST_PRECISION);
+        Line splitter = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -652,7 +652,7 @@ public class ConvexAreaTest {
     public void testSplit_square_entirelyOnPlus() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, 2), TEST_PRECISION);
+        Line splitter = Lines.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, 2), TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -667,7 +667,7 @@ public class ConvexAreaTest {
     public void testSplit_square_onPlusBoundary() {
         // arrange
         ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(1, 1), 1, 1));
-        Line splitter = Line.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 2), TEST_PRECISION);
+        Line splitter = Lines.fromPoints(Vector2D.of(1, 1), Vector2D.of(1, 2), TEST_PRECISION);
 
         // act
         Split<ConvexArea> split = area.split(splitter);
@@ -681,16 +681,16 @@ public class ConvexAreaTest {
     @Test
     public void testSplit_fannedLines() {
         // arrange
-        Line a = Line.fromPointAndDirection(
+        Line a = Lines.fromPointAndDirection(
                 Vector2D.of(0.00600526260605261, -0.3392565140336253),
                 Vector2D.of(0.9998433697734339, 0.017698472253402094), TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(
+        Line b = Lines.fromPointAndDirection(
                 Vector2D.of(-0.05020576603061953, 1.7524758059156824),
                 Vector2D.of(0.9995898847600798, 0.02863672965494457), TEST_PRECISION);
 
         ConvexArea area = ConvexArea.fromBounds(a, b.reverse());
 
-        Line splitter = Line.fromPointAndDirection(
+        Line splitter = Lines.fromPointAndDirection(
                 Vector2D.of(0.01581855191043128, -2.5270731411451215),
                 Vector2D.of(0.999980409069402, 0.006259510954681248), TEST_PRECISION);
 
@@ -711,11 +711,11 @@ public class ConvexAreaTest {
         // act/assert
         LinecastChecker2D.with(area)
             .expectNothing()
-            .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker2D.with(area)
             .expectNothing()
-            .whenGiven(Segment.fromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines.segmentFromPoints(Vector2D.Unit.MINUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION));
     }
 
     @Test
@@ -729,19 +729,19 @@ public class ConvexAreaTest {
         // act/assert
         LinecastChecker2D.with(area)
             .expectNothing()
-            .whenGiven(Line.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.of(0, 5), Vector2D.of(1, 6), TEST_PRECISION));
 
         LinecastChecker2D.with(area)
             .expect(Vector2D.ZERO, Vector2D.Unit.MINUS_X)
             .and(Vector2D.ZERO, Vector2D.Unit.MINUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
-            .whenGiven(Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
+            .whenGiven(Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION));
 
         LinecastChecker2D.with(area)
             .expect(Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y)
             .and(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X)
-            .whenGiven(Segment.fromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
+            .whenGiven(Lines.segmentFromPoints(Vector2D.of(0.5, 0.5), Vector2D.of(1, 1), TEST_PRECISION));
     }
 
     @Test
@@ -1081,7 +1081,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_singleLine() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 3), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(0, 1), Vector2D.of(1, 3), TEST_PRECISION);
 
         // act
         ConvexArea area = ConvexArea.fromBounds(line);
@@ -1094,7 +1094,7 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(1, segments.size());
         Assert.assertSame(line, segments.get(0).getLine());
 
@@ -1106,8 +1106,8 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_twoLines() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         ConvexArea area = ConvexArea.fromBounds(a, b);
@@ -1120,7 +1120,7 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(2, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-1, -1));
@@ -1133,9 +1133,9 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_triangle() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(-2, 0), -0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI, TEST_PRECISION);
+        Line c = Lines.fromPointAndAngle(Vector2D.of(-2, 0), -0.25 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         ConvexArea area = ConvexArea.fromBounds(a, b, c);
@@ -1148,7 +1148,7 @@ public class ConvexAreaTest {
         Assert.assertEquals(2, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2.0 / 3.0, -2.0 / 3.0), area.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(3, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(-0.5, -0.5));
@@ -1174,7 +1174,7 @@ public class ConvexAreaTest {
         Assert.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
@@ -1190,9 +1190,9 @@ public class ConvexAreaTest {
     public void testFromBounds_square_extraLines() {
         // arrange
         List<Line> extraLines = new ArrayList<>();
-        extraLines.add(Line.fromPoints(Vector2D.of(10, 10), Vector2D.of(10, 11), TEST_PRECISION));
-        extraLines.add(Line.fromPoints(Vector2D.of(-10, 10), Vector2D.of(-10, 9), TEST_PRECISION));
-        extraLines.add(Line.fromPoints(Vector2D.of(0, 10), Vector2D.of(-1, 11), TEST_PRECISION));
+        extraLines.add(Lines.fromPoints(Vector2D.of(10, 10), Vector2D.of(10, 11), TEST_PRECISION));
+        extraLines.add(Lines.fromPoints(Vector2D.of(-10, 10), Vector2D.of(-10, 9), TEST_PRECISION));
+        extraLines.add(Lines.fromPoints(Vector2D.of(0, 10), Vector2D.of(-1, 11), TEST_PRECISION));
         extraLines.addAll(createSquareBoundingLines(Vector2D.ZERO, 1, 1));
 
         // act
@@ -1206,7 +1206,7 @@ public class ConvexAreaTest {
         Assert.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
@@ -1236,7 +1236,7 @@ public class ConvexAreaTest {
         Assert.assertEquals(1, area.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(4, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
@@ -1251,9 +1251,9 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_duplicateLines_similarOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line c = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         ConvexArea area = ConvexArea.fromBounds(a, b, c);
@@ -1266,7 +1266,7 @@ public class ConvexAreaTest {
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
 
-        List<ConvexSubLine> segments = area.getBoundaries();
+        List<LineConvexSubset> segments = area.getBoundaries();
         Assert.assertEquals(1, segments.size());
 
         EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.of(0, 1), Vector2D.of(1, 1), Vector2D.of(-1, 1));
@@ -1277,9 +1277,9 @@ public class ConvexAreaTest {
     @Test
     public void testFromBounds_duplicateLines_differentOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line c = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1292,9 +1292,9 @@ public class ConvexAreaTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             ConvexArea.fromBounds(Arrays.asList(
-                        Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
-                        Line.fromPointAndAngle(Vector2D.of(0, -1), PlaneAngleRadians.PI, TEST_PRECISION),
-                        Line.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
+                        Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION),
+                        Lines.fromPointAndAngle(Vector2D.of(0, -1), PlaneAngleRadians.PI, TEST_PRECISION),
+                        Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)
                     ));
         }, IllegalArgumentException.class);
     }
@@ -1305,10 +1305,10 @@ public class ConvexAreaTest {
         final Vector2D upperLeft = Vector2D.of(lowerLeft.getX(), lowerLeft.getY() + height);
 
         return Arrays.asList(
-                    Line.fromPoints(lowerLeft, lowerRight, TEST_PRECISION),
-                    Line.fromPoints(upperRight, upperLeft, TEST_PRECISION),
-                    Line.fromPoints(lowerRight, upperRight, TEST_PRECISION),
-                    Line.fromPoints(upperLeft, lowerLeft, TEST_PRECISION)
+                    Lines.fromPoints(lowerLeft, lowerRight, TEST_PRECISION),
+                    Lines.fromPoints(upperRight, upperLeft, TEST_PRECISION),
+                    Lines.fromPoints(lowerRight, upperRight, TEST_PRECISION),
+                    Lines.fromPoints(upperLeft, lowerLeft, TEST_PRECISION)
                 );
     }
 }

@@ -34,10 +34,10 @@ public class LinecastPoint2DTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     private static final Line X_AXIS =
-            Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+            Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
     private static final Line Y_AXIS =
-            Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+            Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
     public void testProperties() {
@@ -121,8 +121,8 @@ public class LinecastPoint2DTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
-        Line otherLine = Line.fromPointAndDirection(Vector2D.of(1e-4, 1e-4), Vector2D.Unit.PLUS_X, precision);
+        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+        Line otherLine = Lines.fromPointAndDirection(Vector2D.of(1e-4, 1e-4), Vector2D.Unit.PLUS_X, precision);
 
         LinecastPoint2D a = new LinecastPoint2D(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, line);
 
@@ -172,9 +172,9 @@ public class LinecastPoint2DTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-2);
 
-        Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
-        Line eqLine = Line.fromPointAndDirection(Vector2D.of(1e-3, 1e-3), Vector2D.Unit.PLUS_X, precision);
-        Line diffLine = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, precision);
+        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision);
+        Line eqLine = Lines.fromPointAndDirection(Vector2D.of(1e-3, 1e-3), Vector2D.Unit.PLUS_X, precision);
+        Line diffLine = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, precision);
 
         LinecastPoint2D a = new LinecastPoint2D(Vector2D.ZERO, Vector2D.Unit.MINUS_Y, line);
         LinecastPoint2D aDup1 = new LinecastPoint2D(Vector2D.of(1e-3, 0), Vector2D.Unit.MINUS_Y, line);

@@ -24,14 +24,14 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubLine3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
-import org.apache.commons.geometry.euclidean.threed.Line3D;
-import org.apache.commons.geometry.euclidean.threed.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D;
-import org.apache.commons.geometry.euclidean.threed.Segment3D;
 import org.apache.commons.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Line3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.lines.Lines3D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -194,50 +194,50 @@ public class SphereTest {
 
         // --- act/assert
         // descending along y in x-y plane
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, 4, 3), Vector3D.of(5, 4, 3), TEST_PRECISION));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, 3, 3), Vector3D.of(5, 3, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, 4, 3), Vector3D.of(5, 4, 3), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, 3, 3), Vector3D.of(5, 3, 3), TEST_PRECISION),
                 Vector3D.of(2, 3, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, 2, 3), Vector3D.of(5, 2, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, 2, 3), Vector3D.of(5, 2, 3), TEST_PRECISION),
                 Vector3D.of(2 - sqrt3, 2, 3), Vector3D.of(2 + sqrt3, 2, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, 1, 3), Vector3D.of(5, 1, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, 1, 3), Vector3D.of(5, 1, 3), TEST_PRECISION),
                 Vector3D.of(0, 1, 3), Vector3D.of(4, 1, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, 0, 3), Vector3D.of(5, 0, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, 0, 3), Vector3D.of(5, 0, 3), TEST_PRECISION),
                 Vector3D.of(2 - sqrt3, 0, 3), Vector3D.of(2 + sqrt3, 0, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, -1, 3), Vector3D.of(5, -1, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, -1, 3), Vector3D.of(5, -1, 3), TEST_PRECISION),
                 Vector3D.of(2, -1, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(5, -2, 3), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(5, -2, 3), TEST_PRECISION));
 
         // ascending along x in x-y plane
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(-1, 5, 3), TEST_PRECISION));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(0, -2, 3), Vector3D.of(0, 5, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(-1, 5, 3), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(0, -2, 3), Vector3D.of(0, 5, 3), TEST_PRECISION),
                 Vector3D.of(0, 1, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(1, -2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(1, -2, 3), Vector3D.of(1, 5, 3), TEST_PRECISION),
                 Vector3D.of(1, 1 - sqrt3, 3), Vector3D.of(1, 1 + sqrt3, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 3), Vector3D.of(2, 5, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 3), Vector3D.of(2, 5, 3), TEST_PRECISION),
                 Vector3D.of(2, -1, 3), Vector3D.of(2, 3, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(3, -2, 3), Vector3D.of(3, 5, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(3, -2, 3), Vector3D.of(3, 5, 3), TEST_PRECISION),
                 Vector3D.of(3, 1 - sqrt3, 3), Vector3D.of(3, 1 + sqrt3, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(4, -2, 3), Vector3D.of(4, 5, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(4, -2, 3), Vector3D.of(4, 5, 3), TEST_PRECISION),
                 Vector3D.of(4, 1, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(5, -2, 3), Vector3D.of(5, 5, 3), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(5, -2, 3), Vector3D.of(5, 5, 3), TEST_PRECISION));
 
         // descending along z in y-z plane
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 6), Vector3D.of(2, 4, 6), TEST_PRECISION));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 5), Vector3D.of(2, 4, 5), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 6), Vector3D.of(2, 4, 6), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 5), Vector3D.of(2, 4, 5), TEST_PRECISION),
                 Vector3D.of(2, 1, 5));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 4), Vector3D.of(2, 4, 4), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 4), Vector3D.of(2, 4, 4), TEST_PRECISION),
                 Vector3D.of(2, 1 - sqrt3, 4), Vector3D.of(2, 1 + sqrt3, 4));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 3), Vector3D.of(2, 4, 3), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 3), Vector3D.of(2, 4, 3), TEST_PRECISION),
                 Vector3D.of(2, -1, 3), Vector3D.of(2, 3, 3));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 2), Vector3D.of(2, 4, 2), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 2), Vector3D.of(2, 4, 2), TEST_PRECISION),
                 Vector3D.of(2, 1 - sqrt3, 2), Vector3D.of(2, 1 + sqrt3, 2));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 1), Vector3D.of(2, 4, 1), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 1), Vector3D.of(2, 4, 1), TEST_PRECISION),
                 Vector3D.of(2, 1, 1));
-        checkIntersections(s, Line3D.fromPoints(Vector3D.of(2, -2, 0), Vector3D.of(2, 4, 0), TEST_PRECISION));
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.of(2, -2, 0), Vector3D.of(2, 4, 0), TEST_PRECISION));
 
         // diagonal from origin
         Vector3D center = s.getCenter();
-        checkIntersections(s, Line3D.fromPoints(Vector3D.ZERO, s.getCenter(), TEST_PRECISION),
+        checkIntersections(s, Lines3D.fromPoints(Vector3D.ZERO, s.getCenter(), TEST_PRECISION),
                 center.withNorm(center.norm() - s.getRadius()), center.withNorm(center.norm() + s.getRadius()));
     }
 
@@ -248,18 +248,18 @@ public class SphereTest {
         double sqrt3 = Math.sqrt(3);
 
         // act/assert
-        checkLinecast(s, Segment3D.fromPoints(Vector3D.of(-1, 0, 3), Vector3D.of(5, 0, 3), TEST_PRECISION),
+        checkLinecast(s, Lines3D.segmentFromPoints(Vector3D.of(-1, 0, 3), Vector3D.of(5, 0, 3), TEST_PRECISION),
                 Vector3D.of(2 - sqrt3, 0, 3), Vector3D.of(2 + sqrt3, 0, 3));
-        checkLinecast(s, Segment3D.fromPoints(Vector3D.of(-1, 3, 3), Vector3D.of(5, 3, 3), TEST_PRECISION),
+        checkLinecast(s, Lines3D.segmentFromPoints(Vector3D.of(-1, 3, 3), Vector3D.of(5, 3, 3), TEST_PRECISION),
                 Vector3D.of(2, 3, 3));
-        checkLinecast(s, Segment3D.fromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(5, -2, 3), TEST_PRECISION));
+        checkLinecast(s, Lines3D.segmentFromPoints(Vector3D.of(-1, -2, 3), Vector3D.of(5, -2, 3), TEST_PRECISION));
     }
 
     @Test
     public void testLinecast_intersectionsNotInSegment() {
         // arrange
         Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         checkLinecast(s, line.segment(-1, 0));
@@ -272,7 +272,7 @@ public class SphereTest {
     public void testLinecast_segmentPointOnBoundary() {
         // arrange
         Sphere s = Sphere.from(Vector3D.of(2, 1, 3), 2, TEST_PRECISION);
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 3), Vector3D.Unit.PLUS_X, TEST_PRECISION);
         double sqrt3 = Math.sqrt(3);
         double start = 2 - sqrt3;
         double end = 2 + sqrt3;
@@ -295,7 +295,7 @@ public class SphereTest {
         // assert
         checkBasicApproximationProperties(s, tree);
 
-        List<ConvexSubPlane> boundaries = tree.getBoundaries();
+        List<PlaneConvexSubset> boundaries = tree.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
 
         double expectedSize = 0.5 * Math.sqrt(3) * (r * r * r);
@@ -478,7 +478,7 @@ public class SphereTest {
         }
     }
 
-    private static void checkLinecast(Sphere s, ConvexSubLine3D segment, Vector3D... expectedPts) {
+    private static void checkLinecast(Sphere s, LineConvexSubset3D segment, Vector3D... expectedPts) {
         // check linecast
         List<LinecastPoint3D> results = s.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());
@@ -514,7 +514,7 @@ public class SphereTest {
         Assert.assertTrue("Expected approximation volume to be less than circle", tree.getSize() < s.getSize());
 
         // all vertices must be inside the sphere or on the boundary
-        for (ConvexSubPlane boundary : tree.getBoundaries()) {
+        for (PlaneConvexSubset boundary : tree.getBoundaries()) {
             Assert.assertTrue(boundary.isFinite());
 
             for (Vector3D vertex : boundary.getVertices()) {

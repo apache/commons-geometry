@@ -19,8 +19,8 @@ package org.apache.commons.geometry.core.partitioning;
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
 
-/** Interface representing a hyperplane, which is a subspace of dimension
- * one less than its surrounding space. (A hyperplane in Euclidean 3D space,
+/** Interface representing a hyperplane, which in a space of dimension {@code n} is
+ * a subspace of dimension {@code n - 1}. (A hyperplane in Euclidean 3D space,
  * for example, is a 2 dimensional plane.)
  *
  * <p>
@@ -36,7 +36,7 @@ import org.apache.commons.geometry.core.Transform;
  *
  * @param <P> Point implementation type
  * @see HyperplaneLocation
- * @see SubHyperplane
+ * @see HyperplaneSubset
  */
 public interface Hyperplane<P extends Point<P>> {
 
@@ -92,9 +92,9 @@ public interface Hyperplane<P extends Point<P>> {
      */
     boolean similarOrientation(Hyperplane<P> other);
 
-    /** Return a {@link ConvexSubHyperplane} spanning this entire hyperplane. The returned
-     * subhyperplane contains all points lying in this hyperplane and no more.
-     * @return a {@link ConvexSubHyperplane} containing all points lying in this hyperplane
+    /** Return a {@link HyperplaneConvexSubset} spanning this entire hyperplane. The returned
+     * subset contains all points lying in this hyperplane and no more.
+     * @return a {@link HyperplaneConvexSubset} containing all points lying in this hyperplane
      */
-    ConvexSubHyperplane<P> span();
+    HyperplaneConvexSubset<P> span();
 }

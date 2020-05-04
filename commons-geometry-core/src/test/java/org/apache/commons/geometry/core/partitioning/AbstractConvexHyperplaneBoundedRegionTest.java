@@ -579,8 +579,8 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         }
 
         @Override
-        public TestLineSegment trim(ConvexSubHyperplane<TestPoint2D> convexSubHyperplane) {
-            return (TestLineSegment) super.trim(convexSubHyperplane);
+        public TestLineSegment trim(HyperplaneConvexSubset<TestPoint2D> subset) {
+            return (TestLineSegment) super.trim(subset);
         }
 
         @Override

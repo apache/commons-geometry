@@ -44,41 +44,41 @@ public class GreatCircleTest {
     @Test
     public void testFromPole() {
         // act/assert
-        checkGreatCircle(GreatCircle.fromPole(X, TEST_PRECISION), X, Z);
-        checkGreatCircle(GreatCircle.fromPole(Y, TEST_PRECISION), Y, Z.negate());
-        checkGreatCircle(GreatCircle.fromPole(Z, TEST_PRECISION), Z, Y);
+        checkGreatCircle(GreatCircles.fromPole(X, TEST_PRECISION), X, Z);
+        checkGreatCircle(GreatCircles.fromPole(Y, TEST_PRECISION), Y, Z.negate());
+        checkGreatCircle(GreatCircles.fromPole(Z, TEST_PRECISION), Z, Y);
     }
 
     @Test
     public void testFromPoleAndXAxis() {
         // act/assert
-        checkGreatCircle(GreatCircle.fromPoleAndU(X, Y, TEST_PRECISION), X, Y);
-        checkGreatCircle(GreatCircle.fromPoleAndU(X, Z, TEST_PRECISION), X, Z);
-        checkGreatCircle(GreatCircle.fromPoleAndU(Y, Z, TEST_PRECISION), Y, Z);
+        checkGreatCircle(GreatCircles.fromPoleAndU(X, Y, TEST_PRECISION), X, Y);
+        checkGreatCircle(GreatCircles.fromPoleAndU(X, Z, TEST_PRECISION), X, Z);
+        checkGreatCircle(GreatCircles.fromPoleAndU(Y, Z, TEST_PRECISION), Y, Z);
     }
 
     @Test
     public void testFromPoints() {
         // act/assert
-        checkGreatCircle(GreatCircle.fromPoints(
+        checkGreatCircle(GreatCircles.fromPoints(
                     Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                     Point2S.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI_OVER_TWO),
                     TEST_PRECISION),
                 Z, X);
 
-        checkGreatCircle(GreatCircle.fromPoints(
+        checkGreatCircle(GreatCircles.fromPoints(
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 Point2S.of(-0.1 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION),
             Z.negate(), X);
 
-        checkGreatCircle(GreatCircle.fromPoints(
+        checkGreatCircle(GreatCircles.fromPoints(
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 Point2S.of(1.5 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION),
             Z.negate(), X);
 
-        checkGreatCircle(GreatCircle.fromPoints(
+        checkGreatCircle(GreatCircles.fromPoints(
                 Point2S.of(0, 0),
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION),
@@ -93,41 +93,41 @@ public class GreatCircleTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(p1, p1, TEST_PRECISION);
+            GreatCircles.fromPoints(p1, p1, TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(p1, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
+            GreatCircles.fromPoints(p1, Point2S.of(1e-12, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are equal$"));
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(
+            GreatCircles.fromPoints(
                     Point2S.from(Vector3D.Unit.PLUS_X),
                     Point2S.from(Vector3D.Unit.MINUS_X),
                     TEST_PRECISION);
         }, IllegalArgumentException.class, Pattern.compile("^.*points are antipodal$"));
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(p1, Point2S.NaN, TEST_PRECISION);
+            GreatCircles.fromPoints(p1, Point2S.NaN, TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(Point2S.NaN, p2, TEST_PRECISION);
+            GreatCircles.fromPoints(Point2S.NaN, p2, TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
+            GreatCircles.fromPoints(p1, Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            GreatCircle.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION);
+            GreatCircles.fromPoints(Point2S.of(Double.POSITIVE_INFINITY, PlaneAngleRadians.PI_OVER_TWO), p2, TEST_PRECISION);
         }, IllegalArgumentException.class);
     }
 
     @Test
     public void testOffset_point() {
         // --- arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // --- act/assert
@@ -150,7 +150,7 @@ public class GreatCircleTest {
     @Test
     public void testOffset_vector() {
         // --- arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // --- act/assert
@@ -180,7 +180,7 @@ public class GreatCircleTest {
     @Test
     public void testAzimuth_point() {
         // --- arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // --- act/assert
@@ -210,7 +210,7 @@ public class GreatCircleTest {
     @Test
     public void testAzimuth_vector() {
         // --- arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // --- act/assert
@@ -240,7 +240,7 @@ public class GreatCircleTest {
     @Test
     public void testVectorAt() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
@@ -254,7 +254,7 @@ public class GreatCircleTest {
     @Test
     public void testProject() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(
+        GreatCircle circle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
@@ -276,9 +276,9 @@ public class GreatCircleTest {
     @Test
     public void testProject_poles() {
         // arrange
-        GreatCircle minusXCircle = GreatCircle.fromPoleAndU(
+        GreatCircle minusXCircle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        GreatCircle plusZCircle = GreatCircle.fromPoleAndU(
+        GreatCircle plusZCircle = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
 
         // act
@@ -296,7 +296,7 @@ public class GreatCircleTest {
     @Test
     public void testReverse() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         GreatCircle reverse = circle.reverse();
@@ -308,7 +308,7 @@ public class GreatCircleTest {
     @Test
     public void testTransform_rotateAroundPole() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoints(
+        GreatCircle circle = GreatCircles.fromPoints(
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION);
@@ -326,7 +326,7 @@ public class GreatCircleTest {
     @Test
     public void testTransform_rotateAroundNonPole() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoints(
+        GreatCircle circle = GreatCircles.fromPoints(
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION);
@@ -344,7 +344,7 @@ public class GreatCircleTest {
     @Test
     public void testTransform_piMinusAzimuth() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoints(
+        GreatCircle circle = GreatCircles.fromPoints(
                 Point2S.of(0, PlaneAngleRadians.PI_OVER_TWO),
                 Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO),
                 TEST_PRECISION);
@@ -363,11 +363,11 @@ public class GreatCircleTest {
     @Test
     public void testSimilarOrientation() {
         // arrange
-        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.MINUS_Z, TEST_PRECISION);
-        GreatCircle d = GreatCircle.fromPole(Vector3D.Unit.from(1, 1, -1), TEST_PRECISION);
-        GreatCircle e = GreatCircle.fromPole(Vector3D.Unit.from(1, 1, 1), TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPole(Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        GreatCircle d = GreatCircles.fromPole(Vector3D.Unit.from(1, 1, -1), TEST_PRECISION);
+        GreatCircle e = GreatCircles.fromPole(Vector3D.Unit.from(1, 1, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.similarOrientation(a));
@@ -382,7 +382,7 @@ public class GreatCircleTest {
     @Test
     public void testSpan() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
         GreatArc span = circle.span();
@@ -398,7 +398,7 @@ public class GreatCircleTest {
     @Test
     public void testArc_points_2s() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
         checkArc(circle.arc(Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO), Point2S.of(0, 1)),
@@ -410,7 +410,7 @@ public class GreatCircleTest {
     @Test
     public void testArc_points_1s() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
         checkArc(circle.arc(Point1S.of(PlaneAngleRadians.PI), Point1S.of(1.5 * PlaneAngleRadians.PI)),
@@ -422,7 +422,7 @@ public class GreatCircleTest {
     @Test
     public void testArc_azimuths() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
         checkArc(circle.arc(PlaneAngleRadians.PI, 1.5 * PlaneAngleRadians.PI),
@@ -434,7 +434,7 @@ public class GreatCircleTest {
     @Test
     public void testArc_interval() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
         AngularInterval.Convex interval = AngularInterval.Convex.of(1, 2, TEST_PRECISION);
 
         // act
@@ -450,11 +450,11 @@ public class GreatCircleTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, precision);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, precision);
-        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.of(1, 1e-4, 1e-4), precision);
-        GreatCircle d = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, precision);
-        GreatCircle e = GreatCircle.fromPole(Vector3D.Unit.of(-1, 1e-4, 1e-4), precision);
+        GreatCircle a = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, precision);
+        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, precision);
+        GreatCircle c = GreatCircles.fromPole(Vector3D.Unit.of(1, 1e-4, 1e-4), precision);
+        GreatCircle d = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, precision);
+        GreatCircle e = GreatCircles.fromPole(Vector3D.Unit.of(-1, 1e-4, 1e-4), precision);
 
         // act/assert
         Assert.assertNull(a.intersection(b));
@@ -466,9 +466,9 @@ public class GreatCircleTest {
     @Test
     public void testIntersection() {
         // arrange
-        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act/assert
         SphericalTestUtils.assertVectorsEqual(Vector3D.Unit.PLUS_Z,
@@ -485,16 +485,16 @@ public class GreatCircleTest {
     @Test
     public void testAngle_withoutReferencePoint() {
      // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
-        GreatCircle d = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
-        GreatCircle e = GreatCircle.fromPoleAndU(
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle d = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle e = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.of(1, 0, 1),
                 Vector3D.Unit.PLUS_Y,
                 TEST_PRECISION);
 
-        GreatCircle f = GreatCircle.fromPoleAndU(
+        GreatCircle f = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.of(1, 0, -1),
                 Vector3D.Unit.PLUS_Y,
                 TEST_PRECISION);
@@ -519,16 +519,16 @@ public class GreatCircleTest {
     @Test
     public void testAngle_withReferencePoint() {
         // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
-        GreatCircle d = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
-        GreatCircle e = GreatCircle.fromPoleAndU(
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle d = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle e = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.of(1, 0, 1),
                 Vector3D.Unit.PLUS_Y,
                 TEST_PRECISION);
 
-        GreatCircle f = GreatCircle.fromPoleAndU(
+        GreatCircle f = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.of(1, 0, -1),
                 Vector3D.Unit.PLUS_Y,
                 TEST_PRECISION);
@@ -568,8 +568,8 @@ public class GreatCircleTest {
     @Test
     public void testAngle_withReferencePoint_pointEquidistanceFromIntersections() {
         // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoleAndU(
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoleAndU(
                 Vector3D.Unit.of(1, 0, 1),
                 Vector3D.Unit.PLUS_Y,
                 TEST_PRECISION);
@@ -582,7 +582,7 @@ public class GreatCircleTest {
     @Test
     public void testToSubspace() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act/assert
         SphericalTestUtils.assertPointsEqual(Point1S.ZERO,
@@ -606,7 +606,7 @@ public class GreatCircleTest {
     @Test
     public void testToSpace() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
 
         // act/assert
         SphericalTestUtils.assertPointsEqual(Point2S.from(Vector3D.Unit.MINUS_Z),
@@ -628,15 +628,15 @@ public class GreatCircleTest {
         double eps = 1e-3;
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
 
-        GreatCircle a = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
+        GreatCircle a = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
 
-        GreatCircle b = GreatCircle.fromPoleAndU(Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X, precision);
-        GreatCircle c = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, precision);
-        GreatCircle d = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoleAndU(Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X, precision);
+        GreatCircle c = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, precision);
+        GreatCircle d = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-        GreatCircle e = GreatCircle.fromPoleAndU(Vector3D.of(1e-6, 0, 1), Vector3D.Unit.PLUS_X, precision);
-        GreatCircle f = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.of(1, 1e-6, 0), precision);
-        GreatCircle g = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X,
+        GreatCircle e = GreatCircles.fromPoleAndU(Vector3D.of(1e-6, 0, 1), Vector3D.Unit.PLUS_X, precision);
+        GreatCircle f = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.of(1, 1e-6, 0), precision);
+        GreatCircle g = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X,
                 new EpsilonDoublePrecisionContext(eps));
 
         // act/assert
@@ -661,13 +661,13 @@ public class GreatCircleTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        GreatCircle a = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-        GreatCircle b = GreatCircle.fromPoleAndU(Vector3D.of(0, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle d = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
+        GreatCircle b = GreatCircles.fromPoleAndU(Vector3D.of(0, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle d = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
 
-        GreatCircle e = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle e = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         int hash = a.hashCode();
@@ -687,13 +687,13 @@ public class GreatCircleTest {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
-        GreatCircle a = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-        GreatCircle b = GreatCircle.fromPoleAndU(Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle d = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
+        GreatCircle b = GreatCircles.fromPoleAndU(Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle d = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, precision);
 
-        GreatCircle e = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle e = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.equals(a));
@@ -712,7 +712,7 @@ public class GreatCircleTest {
     @Test
     public void testToString() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoleAndU(Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         String str = circle.toString();

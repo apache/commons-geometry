@@ -26,13 +26,13 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
 import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
+import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
 import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
-import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -45,7 +45,7 @@ public class CircleTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Comparator<ConvexSubLine> SEGMENT_DIRECTION_COMPARATOR =
+    private static final Comparator<LineConvexSubset> SEGMENT_DIRECTION_COMPARATOR =
         (a, b) -> Vector2D.COORDINATE_ASCENDING_ORDER.compare(
             a.getLine().getDirection(),
             b.getLine().getDirection());
@@ -199,36 +199,36 @@ public class CircleTest {
 
         // --- act/assert
         // descending horizontal lines
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, 4), Vector2D.of(5, 4), TEST_PRECISION));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, 3), Vector2D.of(5, 3), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, 4), Vector2D.of(5, 4), TEST_PRECISION));
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, 3), Vector2D.of(5, 3), TEST_PRECISION),
                 Vector2D.of(2, 3));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, 2), Vector2D.of(5, 2), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, 2), Vector2D.of(5, 2), TEST_PRECISION),
                 Vector2D.of(2 - sqrt3, 2), Vector2D.of(2 + sqrt3, 2));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, 1), Vector2D.of(5, 1), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, 1), Vector2D.of(5, 1), TEST_PRECISION),
                 Vector2D.of(0, 1), Vector2D.of(4, 1));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(5, 0), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(5, 0), TEST_PRECISION),
                 Vector2D.of(2 - sqrt3, 0), Vector2D.of(2 + sqrt3, 0));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, -1), Vector2D.of(5, -1), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, -1), Vector2D.of(5, -1), TEST_PRECISION),
                 Vector2D.of(2, -1));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, -2), Vector2D.of(5, -2), TEST_PRECISION));
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, -2), Vector2D.of(5, -2), TEST_PRECISION));
 
         // ascending vertical lines
-        checkIntersections(c, Line.fromPoints(Vector2D.of(-1, -2), Vector2D.of(-1, 5), TEST_PRECISION));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(0, -2), Vector2D.of(0, 5), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(-1, -2), Vector2D.of(-1, 5), TEST_PRECISION));
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(0, -2), Vector2D.of(0, 5), TEST_PRECISION),
                 Vector2D.of(0, 1));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(1, -2), Vector2D.of(1, 5), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(1, -2), Vector2D.of(1, 5), TEST_PRECISION),
                 Vector2D.of(1, 1 - sqrt3), Vector2D.of(1, 1 + sqrt3));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(2, -2), Vector2D.of(2, 5), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(2, -2), Vector2D.of(2, 5), TEST_PRECISION),
                 Vector2D.of(2, -1), Vector2D.of(2, 3));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(3, -2), Vector2D.of(3, 5), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(3, -2), Vector2D.of(3, 5), TEST_PRECISION),
                 Vector2D.of(3, 1 - sqrt3), Vector2D.of(3, 1 + sqrt3));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(4, -2), Vector2D.of(4, 5), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(4, -2), Vector2D.of(4, 5), TEST_PRECISION),
                 Vector2D.of(4, 1));
-        checkIntersections(c, Line.fromPoints(Vector2D.of(5, -2), Vector2D.of(5, 5), TEST_PRECISION));
+        checkIntersections(c, Lines.fromPoints(Vector2D.of(5, -2), Vector2D.of(5, 5), TEST_PRECISION));
 
         // diagonal from origin
         Vector2D center = c.getCenter();
-        checkIntersections(c, Line.fromPoints(Vector2D.ZERO, c.getCenter(), TEST_PRECISION),
+        checkIntersections(c, Lines.fromPoints(Vector2D.ZERO, c.getCenter(), TEST_PRECISION),
                 center.withNorm(center.norm() - c.getRadius()), center.withNorm(center.norm() + c.getRadius()));
     }
 
@@ -239,18 +239,18 @@ public class CircleTest {
         double sqrt3 = Math.sqrt(3);
 
         // act/assert
-        checkLinecast(c, Segment.fromPoints(Vector2D.of(-1, 0), Vector2D.of(5, 0), TEST_PRECISION),
+        checkLinecast(c, Lines.segmentFromPoints(Vector2D.of(-1, 0), Vector2D.of(5, 0), TEST_PRECISION),
                 Vector2D.of(2 - sqrt3, 0), Vector2D.of(2 + sqrt3, 0));
-        checkLinecast(c, Segment.fromPoints(Vector2D.of(-1, 3), Vector2D.of(5, 3), TEST_PRECISION),
+        checkLinecast(c, Lines.segmentFromPoints(Vector2D.of(-1, 3), Vector2D.of(5, 3), TEST_PRECISION),
                 Vector2D.of(2, 3));
-        checkLinecast(c, Segment.fromPoints(Vector2D.of(-1, -2), Vector2D.of(5, -2), TEST_PRECISION));
+        checkLinecast(c, Lines.segmentFromPoints(Vector2D.of(-1, -2), Vector2D.of(5, -2), TEST_PRECISION));
     }
 
     @Test
     public void testLinecast_intersectionsNotInSegment() {
         // arrange
         Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
 
         // act/assert
         checkLinecast(c, line.segment(-1, 0));
@@ -263,7 +263,7 @@ public class CircleTest {
     public void testLinecast_segmentPointOnBoundary() {
         // arrange
         Circle c = Circle.from(Vector2D.of(2, 1), 2, TEST_PRECISION);
-        Line line = Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION);
         double sqrt3 = Math.sqrt(3);
         double start = 2 - sqrt3;
         double end = 2 + sqrt3;
@@ -285,7 +285,7 @@ public class CircleTest {
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
+        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(3, segments.size());
@@ -315,7 +315,7 @@ public class CircleTest {
         // assert
         checkBasicApproximationProperties(c, tree);
 
-        List<ConvexSubLine> segments = new ArrayList<>(tree.getBoundaries());
+        List<LineConvexSubset> segments = new ArrayList<>(tree.getBoundaries());
         Collections.sort(segments, SEGMENT_DIRECTION_COMPARATOR);
 
         Assert.assertEquals(4, segments.size());
@@ -495,7 +495,7 @@ public class CircleTest {
         }
     }
 
-    private static void checkLinecast(Circle c, ConvexSubLine segment, Vector2D... expectedPts) {
+    private static void checkLinecast(Circle c, LineConvexSubset segment, Vector2D... expectedPts) {
         // check linecast
         List<LinecastPoint2D> results = c.linecast(segment);
         Assert.assertEquals(expectedPts.length, results.size());
@@ -545,7 +545,7 @@ public class CircleTest {
         Assert.assertTrue("Expected approximation area to be less than circle", tree.getSize() < c.getSize());
     }
 
-    private static void assertFiniteSegment(ConvexSubLine segment, Vector2D start, Vector2D end) {
+    private static void assertFiniteSegment(LineConvexSubset segment, Vector2D start, Vector2D end) {
         Assert.assertFalse(segment.isInfinite());
         Assert.assertTrue(segment.isFinite());
 

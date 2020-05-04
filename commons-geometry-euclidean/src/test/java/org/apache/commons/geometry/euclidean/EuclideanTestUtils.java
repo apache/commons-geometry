@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -237,7 +237,7 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(SubHyperplane<Vector1D> sub, RegionLocation loc, Vector1D... pts) {
+    public static void assertRegionLocation(HyperplaneSubset<Vector1D> sub, RegionLocation loc, Vector1D... pts) {
         for (Vector1D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
@@ -248,7 +248,7 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(SubHyperplane<Vector2D> sub, RegionLocation loc, Vector2D... pts) {
+    public static void assertRegionLocation(HyperplaneSubset<Vector2D> sub, RegionLocation loc, Vector2D... pts) {
         for (Vector2D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
@@ -259,7 +259,7 @@ public final class EuclideanTestUtils {
      * @param loc
      * @param pts
      */
-    public static void assertRegionLocation(SubHyperplane<Vector3D> sub, RegionLocation loc, Vector3D... pts) {
+    public static void assertRegionLocation(HyperplaneSubset<Vector3D> sub, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }

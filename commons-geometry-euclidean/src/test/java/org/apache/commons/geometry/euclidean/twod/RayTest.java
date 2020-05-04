@@ -40,7 +40,7 @@ public class RayTest {
         Vector2D p1 = Vector2D.of(2, 2);
 
         // act
-        Ray ray = Ray.fromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(p0, p0.vectorTo(p1), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(ray.isFull());
@@ -67,7 +67,7 @@ public class RayTest {
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromPointAndDirection(p, d, TEST_PRECISION);
+            Lines.rayFromPointAndDirection(p, d, TEST_PRECISION);
         }, IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
@@ -78,10 +78,10 @@ public class RayTest {
         Vector2D p1 = Vector2D.of(1, 2);
         Vector2D p3 = Vector2D.of(3, 3);
 
-        Line line = Line.fromPoints(p0, p1, TEST_PRECISION);
+        Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        Ray ray = Ray.fromPoint(line, p3);
+        Ray ray = Lines.rayFromPoint(line, p3);
 
         // assert
         Assert.assertFalse(ray.isFull());
@@ -105,19 +105,19 @@ public class RayTest {
         // arrange
         Vector2D p = Vector2D.of(0, 2);
         Vector2D d = Vector2D.of(1, 1);
-        Line line = Line.fromPointAndDirection(p, d, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromPoint(line, Vector2D.NaN);
+            Lines.rayFromPoint(line, Vector2D.NaN);
         }, IllegalArgumentException.class, "Invalid ray start location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromPoint(line, Vector2D.POSITIVE_INFINITY);
+            Lines.rayFromPoint(line, Vector2D.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromPoint(line, Vector2D.NEGATIVE_INFINITY);
+            Lines.rayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: -Infinity");
     }
 
@@ -127,10 +127,10 @@ public class RayTest {
         Vector2D p0 = Vector2D.of(1, 1);
         Vector2D p1 = Vector2D.of(1, 2);
 
-        Line line = Line.fromPoints(p0, p1, TEST_PRECISION);
+        Line line = Lines.fromPoints(p0, p1, TEST_PRECISION);
 
         // act
-        Ray ray = Ray.fromLocation(line, -2);
+        Ray ray = Lines.rayFromLocation(line, -2);
 
         // assert
         Assert.assertFalse(ray.isFull());
@@ -154,19 +154,19 @@ public class RayTest {
         // arrange
         Vector2D p = Vector2D.of(0, 2);
         Vector2D d = Vector2D.of(1, 1);
-        Line line = Line.fromPointAndDirection(p, d, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(p, d, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromLocation(line, Double.NaN);
+            Lines.rayFromLocation(line, Double.NaN);
         }, IllegalArgumentException.class, "Invalid ray start location: NaN");
 
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromLocation(line, Double.POSITIVE_INFINITY);
+            Lines.rayFromLocation(line, Double.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: Infinity");
 
         GeometryTestUtils.assertThrows(() -> {
-            Ray.fromLocation(line, Double.NEGATIVE_INFINITY);
+            Lines.rayFromLocation(line, Double.NEGATIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid ray start location: -Infinity");
     }
 
@@ -176,7 +176,7 @@ public class RayTest {
         AffineTransformMatrix2D t = AffineTransformMatrix2D.createRotation(-0.5 * Math.PI)
                 .translate(Vector2D.Unit.PLUS_X);
 
-        Ray ray = Ray.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Ray result = ray.transform(t);
@@ -193,7 +193,7 @@ public class RayTest {
                 .translate(Vector2D.Unit.PLUS_X)
                 .scale(1, -1);
 
-        Ray ray = Ray.fromPointAndDirection(Vector2D.of(2, 3), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(2, 3), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Ray result = ray.transform(t);
@@ -211,7 +211,7 @@ public class RayTest {
         EuclideanTestUtils.permuteSkipZero(-4, 4, 1, (x, y) -> {
             Vector2D dir = Vector2D.of(x, y);
 
-            Ray ray = Ray.fromPointAndDirection(start, dir, TEST_PRECISION);
+            Ray ray = Lines.rayFromPointAndDirection(start, dir, TEST_PRECISION);
 
             // act
             ReverseRay rev = ray.reverse();
@@ -229,7 +229,7 @@ public class RayTest {
         // arrange
         Vector2D p1 = Vector2D.of(0, -1);
         Vector2D p2 = Vector2D.of(0, 1);
-        Ray ray = Ray.fromPointAndDirection(p1, p1.directionTo(p2), TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(p1, p1.directionTo(p2), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(p1, ray.closest(p1), TEST_EPS);
@@ -250,7 +250,7 @@ public class RayTest {
     @Test
     public void testClassify() {
         // arrange
-        Ray ray = Ray.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertRegionLocation(ray, RegionLocation.OUTSIDE,
@@ -273,44 +273,44 @@ public class RayTest {
 
         Vector2D delta = Vector2D.of(1e-11, 1e-11);
 
-        Ray ray = Ray.fromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(p0, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // --- act
 
         // parallel
-        checkSplit(ray.split(Line.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), 0, TEST_PRECISION)),
                 null, null,
                 p0, null);
-        checkSplit(ray.split(Line.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(Vector2D.of(2, 2), Math.PI, TEST_PRECISION)),
                 p0, null,
                 null, null);
 
         // coincident
-        checkSplit(ray.split(Line.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(p0.add(delta), 1e-20, TEST_PRECISION)),
                 null, null,
                 null, null);
 
         // through point on ray
-        checkSplit(ray.split(Line.fromPointAndAngle(p1, 1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(p1, 1, TEST_PRECISION)),
                 p0, p1,
                 p1, null);
-        checkSplit(ray.split(Line.fromPointAndAngle(p1, -1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(p1, -1, TEST_PRECISION)),
                 p1, null,
                 p0, p1);
 
         // through start point
-        checkSplit(ray.split(Line.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(p0.subtract(delta), 1, TEST_PRECISION)),
                 null, null,
                 p0, null);
-        checkSplit(ray.split(Line.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(p0.add(delta), -1, TEST_PRECISION)),
                 p0, null,
                 null, null);
 
         // intersection below minus
-        checkSplit(ray.split(Line.fromPointAndAngle(low, 1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(low, 1, TEST_PRECISION)),
                 null, null,
                 p0, null);
-        checkSplit(ray.split(Line.fromPointAndAngle(low, -1, TEST_PRECISION)),
+        checkSplit(ray.split(Lines.fromPointAndAngle(low, -1, TEST_PRECISION)),
                 p0, null,
                 null, null);
     }
@@ -318,7 +318,7 @@ public class RayTest {
     @Test
     public void testGetInterval() {
         // arrange
-        Ray ray = Ray.fromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(2, -1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Interval interval = ray.getInterval();
@@ -333,7 +333,7 @@ public class RayTest {
     @Test
     public void testToString() {
         // arrange
-        Ray ray = Ray.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 0), TEST_PRECISION);
 
         // act
         String str = ray.toString();
@@ -343,10 +343,10 @@ public class RayTest {
         GeometryTestUtils.assertContains(", direction= (1", str);
     }
 
-    private static void checkSplit(Split<ConvexSubLine> split, Vector2D minusStart, Vector2D minusEnd,
+    private static void checkSplit(Split<LineConvexSubset> split, Vector2D minusStart, Vector2D minusEnd,
             Vector2D plusStart, Vector2D plusEnd) {
 
-        ConvexSubLine minus = split.getMinus();
+        LineConvexSubset minus = split.getMinus();
         if (minusStart == null && minusEnd == null) {
             Assert.assertNull(minus);
         } else {
@@ -355,7 +355,7 @@ public class RayTest {
         }
 
 
-        ConvexSubLine plus = split.getPlus();
+        LineConvexSubset plus = split.getPlus();
         if (plusStart == null && plusEnd == null) {
             Assert.assertNull(plus);
         } else {

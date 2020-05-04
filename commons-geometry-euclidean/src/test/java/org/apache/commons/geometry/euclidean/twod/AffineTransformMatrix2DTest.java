@@ -1112,13 +1112,13 @@ public class AffineTransformMatrix2DTest {
 
         EuclideanTestUtils.permute(-10, 10, 1, (x, y) -> {
             Vector2D p2 = Vector2D.of(x, y);
-            Vector2D n = Line.fromPoints(p1, p2, TEST_PRECISION).getOffsetDirection();
+            Vector2D n = Lines.fromPoints(p1, p2, TEST_PRECISION).getOffsetDirection();
 
             Vector2D t2 = transform.apply(p2);
 
             Line tLine = transform.preservesOrientation() ?
-                    Line.fromPoints(t1, t2, TEST_PRECISION) :
-                    Line.fromPoints(t2, t1, TEST_PRECISION);
+                    Lines.fromPoints(t1, t2, TEST_PRECISION) :
+                    Lines.fromPoints(t2, t1, TEST_PRECISION);
             Vector2D expected = tLine.getOffsetDirection();
 
             Vector2D actual = normalTransform.apply(n).normalize();

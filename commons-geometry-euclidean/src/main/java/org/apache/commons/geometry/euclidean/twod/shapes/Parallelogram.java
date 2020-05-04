@@ -26,8 +26,8 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
-import org.apache.commons.geometry.euclidean.twod.Segment;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 
@@ -49,7 +49,7 @@ public final class Parallelogram extends ConvexArea {
      * @param boundaries the boundaries of the parallelogram; this must be a list
      *      with 4 elements
      */
-    private Parallelogram(final List<ConvexSubLine> boundaries) {
+    private Parallelogram(final List<LineConvexSubset> boundaries) {
         super(boundaries);
     }
 
@@ -129,11 +129,11 @@ public final class Parallelogram extends ConvexArea {
         final int len = vertices.size();
         final boolean preservesOrientation = transform.preservesOrientation();
 
-        final List<ConvexSubLine> boundaries = new ArrayList<>(UNIT_SQUARE_VERTICES.size());
+        final List<LineConvexSubset> boundaries = new ArrayList<>(UNIT_SQUARE_VERTICES.size());
 
         Vector2D p0;
         Vector2D p1;
-        ConvexSubLine boundary;
+        LineConvexSubset boundary;
         for (int i = 0; i < len; ++i) {
             p0 = vertices.get(i);
             p1 = vertices.get((i + 1) % len);
@@ -144,8 +144,8 @@ public final class Parallelogram extends ConvexArea {
             }
 
             boundary = preservesOrientation ?
-                    Segment.fromPoints(p0, p1, precision) :
-                    Segment.fromPoints(p1, p0, precision);
+                    Lines.segmentFromPoints(p0, p1, precision) :
+                    Lines.segmentFromPoints(p1, p0, precision);
 
             boundaries.add(boundary);
         }

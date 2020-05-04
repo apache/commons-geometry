@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.ConvexSubLine;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.geometry.euclidean.twod.shapes.Circle;
@@ -58,7 +58,7 @@ public class RegionBSPTree2DPerformance {
         /** Compute the boundaries for this instance.
          * @return the boundaries for this instance
          */
-        protected List<ConvexSubLine> computeBoundaries() {
+        protected List<LineConvexSubset> computeBoundaries() {
             final Circle circle = Circle.from(Vector2D.ZERO, 1, new EpsilonDoublePrecisionContext(1e-10));
             return circle.toTree(segments).getBoundaries();
         }
@@ -70,7 +70,7 @@ public class RegionBSPTree2DPerformance {
     public static class CircularBoundaryInput extends CircularBoundaryInputBase {
 
         /** List containing the convex boundaries of the circle approximation. */
-        private List<ConvexSubLine> boundaries;
+        private List<LineConvexSubset> boundaries;
 
         /** Set up the instance for the benchmark. */
         @Setup(Level.Iteration)
@@ -81,7 +81,7 @@ public class RegionBSPTree2DPerformance {
         /** Get the computed circle boundaries.
          * @return the computed circle boundaries
          */
-        public List<ConvexSubLine> getBoundaries() {
+        public List<LineConvexSubset> getBoundaries() {
             return boundaries;
         }
     }
@@ -120,7 +120,7 @@ public class RegionBSPTree2DPerformance {
     public RegionBSPTree2D insertConvexWorstCase(final CircularBoundaryInput input) {
         final RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-        for (ConvexSubLine boundary : input.getBoundaries()) {
+        for (LineConvexSubset boundary : input.getBoundaries()) {
             tree.insert(boundary);
         }
 
@@ -133,7 +133,7 @@ public class RegionBSPTree2DPerformance {
      * @return list of tree boundaries
      */
     @Benchmark
-    public List<ConvexSubLine> boundaryConvexWorstCase(final WorstCaseCircularRegionInput input) {
+    public List<LineConvexSubset> boundaryConvexWorstCase(final WorstCaseCircularRegionInput input) {
         return input.getTree().getBoundaries();
     }
 }

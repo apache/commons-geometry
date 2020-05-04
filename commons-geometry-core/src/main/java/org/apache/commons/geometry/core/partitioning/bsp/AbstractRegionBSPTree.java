@@ -26,13 +26,13 @@ import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.internal.IteratorTransform;
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor.ClosestFirstVisitor;
 
 /** Abstract {@link BSPTree} specialized for representing regions of space. For example,
@@ -146,75 +146,75 @@ public abstract class AbstractRegionBSPTree<
         return boundarySize;
     }
 
-    /** Insert a subhyperplane into the tree, using the default {@link RegionCutRule} of
+    /** Insert a hyperplane subset into the tree, using the default {@link RegionCutRule} of
      * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
-     * @param sub the subhyperplane to insert into the tree
+     * @param sub the hyperplane subset to insert into the tree
      */
-    public void insert(final SubHyperplane<P> sub) {
+    public void insert(final HyperplaneSubset<P> sub) {
         insert(sub, DEFAULT_REGION_CUT_RULE);
     }
 
-    /** Insert a subhyperplane into the tree.
-     * @param sub the subhyperplane to insert into the tree
+    /** Insert a hyperplane subset into the tree.
+     * @param sub the hyperplane subset to insert into the tree
      * @param cutRule rule used to determine the region locations of new child nodes
      */
-    public void insert(final SubHyperplane<P> sub, final RegionCutRule cutRule) {
+    public void insert(final HyperplaneSubset<P> sub, final RegionCutRule cutRule) {
         insert(sub.toConvex(), cutRule);
     }
 
-    /** Insert a convex subhyperplane into the tree, using the default {@link RegionCutRule} of
+    /** Insert a hyperplane convex subset into the tree, using the default {@link RegionCutRule} of
      * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
-     * @param convexSub the convex subhyperplane to insert into the tree
+     * @param convexSub the hyperplane convex subset to insert into the tree
      */
-    public void insert(final ConvexSubHyperplane<P> convexSub) {
+    public void insert(final HyperplaneConvexSubset<P> convexSub) {
         insert(convexSub, DEFAULT_REGION_CUT_RULE);
     }
 
-    /** Insert a convex subhyperplane into the tree.
-     * @param convexSub the convex subhyperplane to insert into the tree
+    /** Insert a hyperplane convex subset into the tree.
+     * @param convexSub the hyperplane convex subset to insert into the tree
      * @param cutRule rule used to determine the region locations of new child nodes
      */
-    public void insert(final ConvexSubHyperplane<P> convexSub, final RegionCutRule cutRule) {
+    public void insert(final HyperplaneConvexSubset<P> convexSub, final RegionCutRule cutRule) {
         insert(convexSub, getSubtreeInitializer(cutRule));
     }
 
-    /** Insert a set of convex subhyperplanes into the tree, using the default {@link RegionCutRule} of
+    /** Insert a set of hyperplane convex subsets into the tree, using the default {@link RegionCutRule} of
      * {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
-     * @param convexSubs iterable containing a collection of subhyperplanes
+     * @param convexSubs iterable containing a collection of hyperplane convex subsets
      *      to insert into the tree
      */
-    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs) {
+    public void insert(final Iterable<? extends HyperplaneConvexSubset<P>> convexSubs) {
         insert(convexSubs, DEFAULT_REGION_CUT_RULE);
     }
 
-    /** Insert a set of convex subhyperplanes into the tree.
-     * @param convexSubs iterable containing a collection of subhyperplanes
+    /** Insert a set of hyperplane convex subsets into the tree.
+     * @param convexSubs iterable containing a collection of hyperplane convex subsets
      *      to insert into the tree
      * @param cutRule rule used to determine the region locations of new child nodes
      */
-    public void insert(final Iterable<? extends ConvexSubHyperplane<P>> convexSubs, final RegionCutRule cutRule) {
-        for (final ConvexSubHyperplane<P> convexSub : convexSubs) {
+    public void insert(final Iterable<? extends HyperplaneConvexSubset<P>> convexSubs, final RegionCutRule cutRule) {
+        for (final HyperplaneConvexSubset<P> convexSub : convexSubs) {
             insert(convexSub, cutRule);
         }
     }
 
-    /** Insert all convex subhyperplanes from the given source into the tree, using the default
+    /** Insert all hyperplane convex subsets from the given source into the tree, using the default
      * {@link RegionCutRule} of {@link RegionCutRule#MINUS_INSIDE MINUS_INSIDE}.
-     * @param boundarySrc source of boundary convex subhyperplanes to insert
+     * @param boundarySrc source of boundary hyperplane subsets to insert
      *      into the tree
      */
-    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc) {
+    public void insert(final BoundarySource<? extends HyperplaneConvexSubset<P>> boundarySrc) {
         insert(boundarySrc, DEFAULT_REGION_CUT_RULE);
     }
 
-    /** Insert all convex subhyperplanes from the given source into the tree.
-     * @param boundarySrc source of boundary convex subhyperplanes to insert
+    /** Insert all hyperplane convex subsets from the given source into the tree.
+     * @param boundarySrc source of boundary hyperplane subsets to insert
      *      into the tree
      * @param cutRule rule used to determine the region locations of new child nodes
      */
-    public void insert(final BoundarySource<? extends ConvexSubHyperplane<P>> boundarySrc,
+    public void insert(final BoundarySource<? extends HyperplaneConvexSubset<P>> boundarySrc,
             final RegionCutRule cutRule) {
-        try (Stream<? extends ConvexSubHyperplane<P>> stream = boundarySrc.boundaryStream()) {
+        try (Stream<? extends HyperplaneConvexSubset<P>> stream = boundarySrc.boundaryStream()) {
             stream.forEach(c -> insert(c, cutRule));
         }
     }
@@ -252,18 +252,18 @@ public abstract class AbstractRegionBSPTree<
      * @return an {@link Iterable} for iterating over the boundaries of the region
      * @see #getBoundaries()
      */
-    public Iterable<? extends ConvexSubHyperplane<P>> boundaries() {
+    public Iterable<? extends HyperplaneConvexSubset<P>> boundaries() {
         return createBoundaryIterable(Function.identity());
     }
 
     /** Internal method for creating the iterable instances used to iterate the region boundaries.
-     * @param typeConverter function to convert the generic convex subhyperplane type into
+     * @param typeConverter function to convert the generic hyperplane subset type into
      *      the type specific for this tree
-     * @param <C> ConvexSubhyperplane implementation type
+     * @param <C> HyperplaneConvexSubset implementation type
      * @return an iterable to iterating the region boundaries
      */
-    protected <C extends ConvexSubHyperplane<P>> Iterable<C> createBoundaryIterable(
-            final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+    protected <C extends HyperplaneConvexSubset<P>> Iterable<C> createBoundaryIterable(
+            final Function<HyperplaneConvexSubset<P>, C> typeConverter) {
 
         return () -> new RegionBoundaryIterator<>(
                 getRoot().nodes().iterator(),
@@ -275,18 +275,18 @@ public abstract class AbstractRegionBSPTree<
      * the boundaries is determined by the internal structure of the tree.
      * @return a list of the boundaries of the region
      */
-    public List<? extends ConvexSubHyperplane<P>> getBoundaries() {
+    public List<? extends HyperplaneConvexSubset<P>> getBoundaries() {
         return createBoundaryList(Function.identity());
     }
 
-    /** Iternal method for creating a list of the region boundaries.
-     * @param typeConverter function to convert the generic convex subhyperplane type into
+    /** Internal method for creating a list of the region boundaries.
+     * @param typeConverter function to convert the generic convex subset type into
      *      the type specific for this tree
-     * @param <C> ConvexSubhyperplane implementation type
+     * @param <C> HyperplaneConvexSubset implementation type
      * @return a list of the region boundaries
      */
-    protected <C extends ConvexSubHyperplane<P>> List<C> createBoundaryList(
-            final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+    protected <C extends HyperplaneConvexSubset<P>> List<C> createBoundaryList(
+            final Function<HyperplaneConvexSubset<P>, C> typeConverter) {
 
         final List<C> result = new ArrayList<>();
 
@@ -406,7 +406,7 @@ public abstract class AbstractRegionBSPTree<
     }
 
     /** Change this region into its complement. All inside nodes become outside
-     * nodes and vice versa. The orientation of the cut subhyperplanes is not modified.
+     * nodes and vice versa. The orientations of the node cuts are not modified.
      */
     public void complement() {
         complementRecursive(getRoot());
@@ -546,7 +546,7 @@ public abstract class AbstractRegionBSPTree<
         /** The location for the node. This will only be set on leaf nodes. */
         private RegionLocation location;
 
-        /** Object representing the part of the node cut subhyperplane that lies on the
+        /** Object representing the part of the node cut hyperplane subset that lies on the
          * region boundary. This is calculated lazily and is only present on internal nodes.
          */
         private RegionCutBoundary<P> cutBoundary;
@@ -625,7 +625,7 @@ public abstract class AbstractRegionBSPTree<
         }
 
         /** Insert a cut into this node. If the given hyperplane intersects
-         * this node's region, then the node's cut is set to the {@link ConvexSubHyperplane}
+         * this node's region, then the node's cut is set to the {@link HyperplaneConvexSubset}
          * representing the intersection, new plus and minus child leaf nodes
          * are assigned, and true is returned. If the hyperplane does not intersect
          * the node's region, then the node's cut and plus and minus child references
@@ -676,9 +676,8 @@ public abstract class AbstractRegionBSPTree<
             return getSelf();
         }
 
-        /** Get the portion of the node's cut subhyperplane that lies on the boundary of the
-         * region.
-         * @return the portion of the node's cut subhyperplane that lies on the boundary of
+        /** Get the portion of the node's cut that lies on the boundary of the region.
+         * @return the portion of the node's cut that lies on the boundary of
          *      the region
          */
         public RegionCutBoundary<P> getCutBoundary() {
@@ -693,34 +692,33 @@ public abstract class AbstractRegionBSPTree<
             return cutBoundary;
         }
 
-        /** Compute the portion of the node's cut subhyperplane that lies on the boundary of
-         * the region. This method must only be called on internal nodes.
-         * @return object representing the portions of the node's cut subhyperplane that lie
-         *      on the region's boundary
+        /** Compute the portion of the node's cut that lies on the boundary of the region.
+         * This method must only be called on internal nodes.
+         * @return object representing the portions of the node's cut that lie on the region's boundary
          */
         private RegionCutBoundary<P> computeBoundary() {
-            ConvexSubHyperplane<P> sub = getCut();
+            HyperplaneConvexSubset<P> sub = getCut();
 
             // find the portions of the node cut sub-hyperplane that touch inside and
             // outside cells in the minus sub-tree
-            SubHyperplane.Builder<P> minusInBuilder = sub.builder();
-            SubHyperplane.Builder<P> minusOutBuilder = sub.builder();
+            HyperplaneSubset.Builder<P> minusInBuilder = sub.builder();
+            HyperplaneSubset.Builder<P> minusOutBuilder = sub.builder();
 
-            characterizeSubHyperplane(sub, getMinus(), minusInBuilder, minusOutBuilder);
+            characterizeHyperplaneSubset(sub, getMinus(), minusInBuilder, minusOutBuilder);
 
-            List<? extends ConvexSubHyperplane<P>> minusIn = minusInBuilder.build().toConvex();
-            List<? extends ConvexSubHyperplane<P>> minusOut = minusOutBuilder.build().toConvex();
+            List<? extends HyperplaneConvexSubset<P>> minusIn = minusInBuilder.build().toConvex();
+            List<? extends HyperplaneConvexSubset<P>> minusOut = minusOutBuilder.build().toConvex();
 
             // create the result boundary builders
-            SubHyperplane.Builder<P> insideFacing = sub.builder();
-            SubHyperplane.Builder<P> outsideFacing = sub.builder();
+            HyperplaneSubset.Builder<P> insideFacing = sub.builder();
+            HyperplaneSubset.Builder<P> outsideFacing = sub.builder();
 
             if (!minusIn.isEmpty()) {
                 // Add to the boundary anything that touches an inside cell in the minus sub-tree
                 // and an outside cell in the plus sub-tree. These portions are oriented with their
                 // plus side pointing to the outside of the region.
-                for (ConvexSubHyperplane<P> minusInFragment : minusIn) {
-                    characterizeSubHyperplane(minusInFragment, getPlus(), null, outsideFacing);
+                for (HyperplaneConvexSubset<P> minusInFragment : minusIn) {
+                    characterizeHyperplaneSubset(minusInFragment, getPlus(), null, outsideFacing);
                 }
             }
 
@@ -728,25 +726,26 @@ public abstract class AbstractRegionBSPTree<
                 // Add to the boundary anything that touches an outside cell in the minus sub-tree
                 // and an inside cell in the plus sub-tree. These portions are oriented with their
                 // plus side pointing to the inside of the region.
-                for (ConvexSubHyperplane<P> minusOutFragment : minusOut) {
-                    characterizeSubHyperplane(minusOutFragment, getPlus(), insideFacing, null);
+                for (HyperplaneConvexSubset<P> minusOutFragment : minusOut) {
+                    characterizeHyperplaneSubset(minusOutFragment, getPlus(), insideFacing, null);
                 }
             }
 
             return new RegionCutBoundary<>(insideFacing.build(), outsideFacing.build());
         }
 
-        /** Recursive method to characterize a convex subhyperplane with respect to the region's
+        /** Recursive method to characterize a hyperplane convex subset with respect to the region's
          * boundaries.
-         * @param sub the subhyperplane to characterize
-         * @param node the node to characterize the subhyperplane against
-         * @param in the builder that will receive the portions of the subhyperplane that lie in the inside
+         * @param sub the hyperplane convex subset to characterize
+         * @param node the node to characterize the hyperplane convex subset against
+         * @param in the builder that will receive the portions of the subset that lie in the inside
          *      of the region; may be null
-         * @param out the builder that will receive the portions of the subhyperplane that lie on the outside
+         * @param out the builder that will receive the portions of the subset that lie on the outside
          *      of the region; may be null
          */
-        private void characterizeSubHyperplane(final ConvexSubHyperplane<P> sub, final AbstractRegionNode<P, N> node,
-                final SubHyperplane.Builder<P> in, final SubHyperplane.Builder<P> out) {
+        private void characterizeHyperplaneSubset(final HyperplaneConvexSubset<P> sub,
+                final AbstractRegionNode<P, N> node, final HyperplaneSubset.Builder<P> in,
+                final HyperplaneSubset.Builder<P> out) {
 
             if (sub != null) {
                 if (node.isLeaf()) {
@@ -756,16 +755,16 @@ public abstract class AbstractRegionBSPTree<
                         out.add(sub);
                     }
                 } else {
-                    final Split<? extends ConvexSubHyperplane<P>> split = sub.split(node.getCutHyperplane());
+                    final Split<? extends HyperplaneConvexSubset<P>> split = sub.split(node.getCutHyperplane());
 
-                    // Continue further on down the subtree with the same subhyperplane if the
-                    // subhyperplane lies directly on the current node's cut
+                    // Continue further on down the subtree with the same subset if the
+                    // subset lies directly on the current node's cut
                     if (split.getLocation() == SplitLocation.NEITHER) {
-                        characterizeSubHyperplane(sub, node.getPlus(), in, out);
-                        characterizeSubHyperplane(sub, node.getMinus(), in, out);
+                        characterizeHyperplaneSubset(sub, node.getPlus(), in, out);
+                        characterizeHyperplaneSubset(sub, node.getMinus(), in, out);
                     } else {
-                        characterizeSubHyperplane(split.getPlus(), node.getPlus(), in, out);
-                        characterizeSubHyperplane(split.getMinus(), node.getMinus(), in, out);
+                        characterizeHyperplaneSubset(split.getPlus(), node.getPlus(), in, out);
+                        characterizeHyperplaneSubset(split.getMinus(), node.getMinus(), in, out);
                     }
                 }
             }
@@ -848,16 +847,16 @@ public abstract class AbstractRegionBSPTree<
             return Result.CONTINUE;
         }
 
-        /** Return true if the given node cut subhyperplane is a possible candidate for containing the
-         * closest region boundary point to the target.
-         * @param cut the node cut subhyperplane to test
+        /** Return true if the given node cut is a possible candidate for containing the closest region
+         * boundary point to the target.
+         * @param cut the node cut to test
          * @param target the target point being projected
          * @param currentMinDist the smallest distance found so far to a region boundary; this value is guaranteed
          *      to be non-negative
-         * @return true if the subhyperplane is a possible candidate for containing the closest region
+         * @return true if the cut is a possible candidate for containing the closest region
          *      boundary point to the target
          */
-        protected boolean isPossibleClosestCut(final SubHyperplane<P> cut, final P target,
+        protected boolean isPossibleClosestCut(final HyperplaneSubset<P> cut, final P target,
                 final double currentMinDist) {
             return Math.abs(cut.getHyperplane().offset(target)) <= currentMinDist;
         }
@@ -1093,26 +1092,26 @@ public abstract class AbstractRegionBSPTree<
         }
     }
 
-    /** Class that iterates over the boundary convex subhyperplanes from a set of region nodes.
+    /** Class that iterates over the boundary hyperplane convex subsets from a set of region nodes.
      * @param <P> Point implementation type
-     * @param <C> Boundary convex subhyperplane implementation type
+     * @param <C> Boundary hyperplane convex subset implementation type
      * @param <N> BSP tree node implementation type
      */
     private static final class RegionBoundaryIterator<
             P extends Point<P>,
-            C extends ConvexSubHyperplane<P>,
+            C extends HyperplaneConvexSubset<P>,
             N extends AbstractRegionNode<P, N>>
         extends IteratorTransform<N, C> {
 
-        /** Function that converts from the convex subhyperplane type to the output type. */
-        private final Function<ConvexSubHyperplane<P>, C> typeConverter;
+        /** Function that converts from the convex subset type to the output type. */
+        private final Function<HyperplaneConvexSubset<P>, C> typeConverter;
 
         /** Simple constructor.
          * @param inputIterator iterator that will provide all nodes in the tree
-         * @param typeConverter function that converts from the convex subhyperplane type to the output type
+         * @param typeConverter function that converts from the convex subset type to the output type
          */
         RegionBoundaryIterator(final Iterator<N> inputIterator,
-                final Function<ConvexSubHyperplane<P>, C> typeConverter) {
+                final Function<HyperplaneConvexSubset<P>, C> typeConverter) {
             super(inputIterator);
 
             this.typeConverter = typeConverter;
@@ -1124,18 +1123,18 @@ public abstract class AbstractRegionBSPTree<
             if (input.isInternal()) {
                 final RegionCutBoundary<P> cutBoundary = input.getCutBoundary();
 
-                final SubHyperplane<P> outsideFacing = cutBoundary.getOutsideFacing();
-                final SubHyperplane<P> insideFacing = cutBoundary.getInsideFacing();
+                final HyperplaneSubset<P> outsideFacing = cutBoundary.getOutsideFacing();
+                final HyperplaneSubset<P> insideFacing = cutBoundary.getInsideFacing();
 
                 if (outsideFacing != null && !outsideFacing.isEmpty()) {
-                    for (ConvexSubHyperplane<P> boundary : outsideFacing.toConvex()) {
+                    for (HyperplaneConvexSubset<P> boundary : outsideFacing.toConvex()) {
 
                         addOutput(typeConverter.apply(boundary));
                     }
                 }
                 if (insideFacing != null && !insideFacing.isEmpty()) {
-                    for (ConvexSubHyperplane<P> boundary : insideFacing.toConvex()) {
-                        ConvexSubHyperplane<P> reversed = boundary.reverse();
+                    for (HyperplaneConvexSubset<P> boundary : insideFacing.toConvex()) {
+                        HyperplaneConvexSubset<P> reversed = boundary.reverse();
 
                         addOutput(typeConverter.apply(reversed));
                     }
