@@ -18,7 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.function.BiFunction;
 
-import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingHyperplaneSubset;
+import org.apache.commons.geometry.core.partitioning.AbstractRegionEmbeddingHyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -33,7 +33,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * and other polygons in 3D are plane subsets. Instances may be finite or infinite.
  */
 public abstract class PlaneSubset
-    extends AbstractEmbeddingHyperplaneSubset<Vector3D, Vector2D, Plane> {
+    extends AbstractRegionEmbeddingHyperplaneSubset<Vector3D, Vector2D, Plane> {
     /** The plane defining this instance. */
     private final Plane plane;
 

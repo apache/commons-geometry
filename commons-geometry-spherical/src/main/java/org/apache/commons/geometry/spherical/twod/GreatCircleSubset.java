@@ -16,7 +16,7 @@
  */
 package org.apache.commons.geometry.spherical.twod;
 
-import org.apache.commons.geometry.core.partitioning.AbstractEmbeddingHyperplaneSubset;
+import org.apache.commons.geometry.core.partitioning.AbstractRegionEmbeddingHyperplaneSubset;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.Point1S;
 
@@ -24,7 +24,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
  * @see GreatCircles
  */
 public abstract class GreatCircleSubset
-    extends AbstractEmbeddingHyperplaneSubset<Point2S, Point1S, GreatCircle> {
+    extends AbstractRegionEmbeddingHyperplaneSubset<Point2S, Point1S, GreatCircle> {
     /** The great circle defining this instance. */
     private final GreatCircle circle;
 

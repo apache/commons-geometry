@@ -31,7 +31,6 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoints;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
-import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
 /** Class representing an arbitrary subset of a line using a {@link RegionBSPTree1D}.
@@ -70,36 +69,6 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
         super(line);
 
         this.region = region;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isFull() {
-        return region.isFull();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEmpty() {
-        return region.isEmpty();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isInfinite() {
-        return Double.isInfinite(getSize());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isFinite() {
-        return Double.isFinite(getSize());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getSize() {
-        return region.getSize();
     }
 
     /** {@inheritDoc} */
@@ -179,22 +148,6 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
                 null;
 
         return new Split<>(minus, plus);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D closest(final Vector2D pt) {
-        final Line line = getLine();
-
-        final Vector1D subPt = line.toSubspace(pt);
-        if (region.contains(subPt)) {
-            return line.toSpace(subPt);
-        }
-
-        final Vector1D subProjected = region.project(subPt);
-        return subProjected != null ?
-                line.toSpace(subProjected) :
-                null;
     }
 
     /** Add a line subset to this instance.

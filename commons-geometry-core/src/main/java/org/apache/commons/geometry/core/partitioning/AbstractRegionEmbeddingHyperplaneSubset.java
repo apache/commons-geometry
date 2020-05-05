@@ -18,6 +18,7 @@ package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Region;
+import org.apache.commons.geometry.core.RegionEmbedding;
 import org.apache.commons.geometry.core.RegionLocation;
 
 /** Abstract base class for hyperplane subset implementations that embed a lower-dimension region through
@@ -26,10 +27,10 @@ import org.apache.commons.geometry.core.RegionLocation;
  * @param <S> Subspace point implementation type
  * @param <H> Hyperplane containing the embedded subspace
  */
-public abstract class AbstractEmbeddingHyperplaneSubset<
+public abstract class AbstractRegionEmbeddingHyperplaneSubset<
     P extends Point<P>,
     S extends Point<S>,
-    H extends EmbeddingHyperplane<P, S>> implements HyperplaneSubset<P> {
+    H extends EmbeddingHyperplane<P, S>> implements HyperplaneSubset<P>, RegionEmbedding<P, S> {
 
     /** {@inheritDoc} */
     @Override
@@ -45,20 +46,14 @@ public abstract class AbstractEmbeddingHyperplaneSubset<
 
     /** {@inheritDoc} */
     @Override
-    public boolean isInfinite() {
-        return Double.isInfinite(getSize());
+    public S toSubspace(final P pt) {
+        return getHyperplane().toSubspace(pt);
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isFinite() {
-        return Double.isFinite(getSize());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getSize() {
-        return getSubspaceRegion().getSize();
+    public P toSpace(final S pt) {
+        return getHyperplane().toSpace(pt);
     }
 
     /** {@inheritDoc} */
@@ -98,8 +93,7 @@ public abstract class AbstractEmbeddingHyperplaneSubset<
     @Override
     public abstract H getHyperplane();
 
-    /** Return the embedded subspace region for this instance.
-     * @return the embedded subspace region for this instance
-     */
+    /** {@inheritDoc} */
+    @Override
     public abstract HyperplaneBoundedRegion<S> getSubspaceRegion();
 }

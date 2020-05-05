@@ -27,7 +27,7 @@ import org.apache.commons.geometry.core.partition.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractEmbeddingHyperplaneSubsetTest {
+public class AbstractRegionEmbeddingHyperplaneSubsetTest {
 
     @Test
     public void testSimpleProperties() {
@@ -59,6 +59,16 @@ public class AbstractEmbeddingHyperplaneSubsetTest {
 
         Assert.assertFalse(nan.isFinite());
         Assert.assertFalse(nan.isInfinite());
+    }
+
+    @Test
+    public void testSpaceConversions() {
+        // arrange
+        StubHyperplaneSubset sub = new StubHyperplaneSubset();
+
+        // act/assert
+        Assert.assertEquals(2.0, sub.toSubspace(new TestPoint2D(2.0, 3.0)).getX(), PartitionTestUtils.EPS);
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(2.0, 0.0), sub.toSpace(new TestPoint1D(2.0)));
     }
 
     @Test
@@ -102,7 +112,8 @@ public class AbstractEmbeddingHyperplaneSubsetTest {
         Assert.assertNull(sub.closest(new TestPoint2D(1, 1)));
     }
 
-    private static class StubHyperplaneSubset extends AbstractEmbeddingHyperplaneSubset<TestPoint2D, TestPoint1D, TestLine> {
+    private static class StubHyperplaneSubset
+        extends AbstractRegionEmbeddingHyperplaneSubset<TestPoint2D, TestPoint1D, TestLine> {
 
         private final StubRegion1D region;
 
@@ -112,6 +123,11 @@ public class AbstractEmbeddingHyperplaneSubsetTest {
 
         StubHyperplaneSubset(final double size) {
             this.region = new StubRegion1D(size);
+        }
+
+        @Override
+        public double getSize() {
+            return 0;
         }
 
         @Override

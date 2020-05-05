@@ -16,10 +16,8 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import org.apache.commons.geometry.core.RegionEmbedding;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
+import org.apache.commons.geometry.core.partitioning.AbstractRegionEmbeddingHyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
@@ -27,7 +25,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 /** Class representing a subset of points on a line in 2D Euclidean space. For example, line segments
  * and rays are line subsets. Line subsets may be finite or infinite.
  */
-public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEmbedding<Vector2D, Vector1D> {
+public abstract class LineSubset extends AbstractRegionEmbeddingHyperplaneSubset<Vector2D, Vector1D, Line> {
     /** The line containing this instance. */
     private final Line line;
 
@@ -51,18 +49,6 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
     @Override
     public Line getHyperplane() {
         return line;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector2D toSpace(final Vector1D pt) {
-        return line.toSpace(pt);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Vector1D toSubspace(final Vector2D pt) {
-        return line.toSubspace(pt);
     }
 
     /** {@inheritDoc} */
@@ -115,12 +101,6 @@ public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEm
     public DoublePrecisionContext getPrecision() {
         return line.getPrecision();
     }
-
-    /** Get the 1D subspace region for this line subset.
-     * @return the 1D subspace region for this line subset
-     */
-    @Override
-    public abstract HyperplaneBoundedRegion<Vector1D> getSubspaceRegion();
 
     /** Classify the given line abscissa value with respect to the subspace region.
      * @param abscissa the abscissa value to classify
