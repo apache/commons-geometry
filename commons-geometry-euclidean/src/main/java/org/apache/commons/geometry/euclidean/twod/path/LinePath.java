@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,51 +28,52 @@ import java.util.stream.Stream;
 import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.BoundarySource2D;
+import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Lines;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** Class representing a polyline, ie, a connected sequence of line segments. The line
- * segments in the polyline are connected end to end, with the end vertex of the previous
- * line segment equivalent to the start vertex of the next line segment.
- *
- * <p>In order to increase the flexibility of this class, the contained sequence elements are not
- * restricted to finite line segments but instead may be any type of
- * {@link LineConvexSubset line convex subset}, including types with infinite size. However, the
- * requirement that the end vertex of one element be connected to the start vertex of the next
- * remains, meaning that only the start element, end element or both may be infinite.</p>
+/** Class representing a connected path of {@link LineConvexSubset line convex subsets}.
+ * The elements in the path are connected end to end, with the end vertex of the previous
+ * element equivalent to the start vertex of the next element. Elements are not required to
+ * be finite. However, since path elements are connected, only the first element and/or last
+ * element may be infinite.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
- * @see <a href="https://en.wikipedia.org/wiki/Polygonal_chain">Polygonal chain</a>
  */
-public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
-    /** Polyline instance containing no segments. */
-    private static final Polyline EMPTY = new Polyline(Collections.emptyList());
+public class LinePath implements BoundarySource2D, Sized {
+    /** Line path instance containing no elements. */
+    private static final LinePath EMPTY = new LinePath(Collections.emptyList());
 
-    /** List of connected line subsets comprising the instance. */
+    /** The line convex subsets comprising the path. */
     private final List<LineConvexSubset> elements;
 
-    /** Simple constructor. No validation is performed on the input.
-     * @param elements connected line subsets comprising the instance
+    /** Simple constructor. Callers are responsible for ensuring that the given list of
+     * line subsets defines a valid path. No validation is performed.
+     * @param elements elements defining the path.
      */
-    private Polyline(final List<LineConvexSubset> elements) {
+    LinePath(final List<LineConvexSubset> elements) {
         this.elements = Collections.unmodifiableList(elements);
     }
 
     /** {@inheritDoc} */
     @Override
     public Stream<LineConvexSubset> boundaryStream() {
-        return getSequence().stream();
+        return getElements().stream();
     }
 
-    /** Get the sequence of line subsets comprising the polyline.
-     * @return the sequence of line subsets comprising the polyline
+    /** Get the sequence of line subsets comprising the path.
+     * @return the sequence of line subsets comprising the path
      */
-    public List<LineConvexSubset> getSequence() {
+    public List<LineConvexSubset> getElements() {
         return elements;
     }
 
-    /** Get the line subset at the start of the polyline or null if the polyline is empty. If the
-     * polyline consists of a single line subset, then the returned instance with be the same
+    /** Get the line subset at the start of the path or null if the path is empty. If the
+     * path consists of a single line subset, then the returned instance with be the same
      * as that returned by {@link #getEnd()}.
-     * @return the line subset at the start of the polyline or null if the polyline is empty
+     * @return the line subset at the start of the path or null if the path is empty
      * @see #getEnd()
      */
     public LineConvexSubset getStart() {
@@ -82,10 +83,10 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return null;
     }
 
-    /** Get the line subset at the end of the polyline or null if the polyline is empty. If the
-     * polyline consists of a single line subset, then the returned instance with be the same
+    /** Get the line subset at the end of the path or null if the path is empty. If the
+     * path consists of a single line subset, then the returned instance with be the same
      * as that returned by {@link #getStart()}.
-     * @return the line subset at the end of the polyline or null if the polyline is empty
+     * @return the line subset at the end of the path or null if the path is empty
      * @see #getStart()
      */
     public LineConvexSubset getEnd() {
@@ -95,11 +96,11 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return null;
     }
 
-    /** Get the sequence of vertices defined by the polyline. Vertices appear in the
+    /** Get the sequence of vertices defined by the path. Vertices appear in the
      * list as many times as they are visited in the path. For example, the vertex
-     * sequence for a closed polyline contains the start point at the beginning
+     * sequence for a closed path contains the start point at the beginning
      * of the list as well as the end.
-     * @return the sequence of vertices defined by the polyline
+     * @return the sequence of vertices defined by the path
      */
     public List<Vector2D> getVertexSequence() {
         final List<Vector2D> sequence = new ArrayList<>();
@@ -123,17 +124,17 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return sequence;
     }
 
-    /** Return true if the polyline has an element with infinite size.
-     * @return true if the polyline is infinite
+    /** Return true if the path has an element with infinite size.
+     * @return true if the path is infinite
      */
     @Override
     public boolean isInfinite() {
         return !isEmpty() && (getStartVertex() == null || getEndVertex() == null);
     }
 
-    /** Return true if the polyline has a finite size. This will be true if there are
-     * no elements in the polyline or if all elements have a finite length.
-     * @return true if the polyline is finite
+    /** Return true if the path has a finite size. This will be true if there are
+     * no elements in the path or if all elements have a finite length.
+     * @return true if the path is finite
      */
     @Override
     public boolean isFinite() {
@@ -142,7 +143,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
 
     /** {@inheritDoc}
      *
-     * <p>The size of the polyline is defined as the sum of the sizes of all path elements.</p>
+     * <p>The size of the path is defined as the sum of the sizes (lengths) of all path elements.</p>
      */
     @Override
     public double getSize() {
@@ -154,14 +155,14 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return sum;
     }
 
-    /** Return true if the polyline does not contain any elements.
-     * @return true if the polyline does not contain any elements
+    /** Return true if the path does not contain any elements.
+     * @return true if the path does not contain any elements
      */
     public boolean isEmpty() {
         return elements.isEmpty();
     }
 
-    /** Return true if the polyline is closed, meaning that the end point for the last
+    /** Return true if the path is closed, meaning that the end point for the last
      * element is equivalent to the start point of the first.
      * @return true if the end point for the last element is equivalent to the
      *      start point for the first
@@ -183,13 +184,13 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
      * @param transform the transform to apply
      * @return a new instance, transformed by the argument
      */
-    public Polyline transform(final Transform<Vector2D> transform) {
+    public LinePath transform(final Transform<Vector2D> transform) {
         if (!isEmpty()) {
             final List<LineConvexSubset> transformed = elements.stream()
                 .map(s -> s.transform(transform))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-            return new Polyline(transformed);
+            return new LinePath(transformed);
         }
 
         return this;
@@ -198,26 +199,26 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
     /** Return a new instance with all line subset directions, and their order,
      * reversed. The last line subset in this instance will be the first in the
      * returned instance.
-     * @return a new instance with the polyline reversed
+     * @return a new instance with the path reversed
      */
-    public Polyline reverse() {
+    public LinePath reverse() {
         if (!isEmpty()) {
             final List<LineConvexSubset> reversed = elements.stream()
                 .map(LineConvexSubset::reverse)
                 .collect(Collectors.toCollection(ArrayList::new));
             Collections.reverse(reversed);
 
-            return new Polyline(reversed);
+            return new LinePath(reversed);
         }
 
         return this;
     }
 
-    /** Simplify this polyline, if possible, by combining adjacent elements that lie on the
+    /** Simplify this path, if possible, by combining adjacent elements that lie on the
      * same line (as determined by {@link Line#equals(Object)}).
      * @return a simplified instance
      */
-    public Polyline simplify() {
+    public LinePath simplify() {
         final List<LineConvexSubset> simplified = new ArrayList<>();
 
         final int size = elements.size();
@@ -263,55 +264,43 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             simplified.set(0, combined);
         }
 
-        return new SimplifiedPolyline(simplified);
+        return new SimplifiedLinePath(simplified);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
-        return new BoundarySourceLinecaster2D(this).linecast(subset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
-        return new BoundarySourceLinecaster2D(this).linecastFirst(subset);
-    }
-
-    /** Return a string representation of the polyline.
+    /** Return a string representation of the path.
      *
      * <p>In order to keep the string representation short but useful, the exact format of the return
-     * value depends on the properties of the polyline. See below for examples.
+     * value depends on the properties of the path. See below for examples.
      *
      * <ul>
      *      <li>Empty path
      *          <ul>
-     *              <li>{@code Polyline[empty= true]}</li>
+     *              <li>{@code LinePath[empty= true]}</li>
      *          </ul>
      *      </li>
      *      <li>Single element
      *          <ul>
-     *              <li>{@code Polyline[single= Segment[startPoint= (0.0, 0.0), endPoint= (1.0, 0.0)]]}</li>
+     *              <li>{@code LinePath[single= Segment[startPoint= (0.0, 0.0), endPoint= (1.0, 0.0)]]}</li>
      *          </ul>
      *      </li>
      *      <li>Path with infinite start element
      *          <ul>
-     *              <li>{@code Polyline[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
+     *              <li>{@code LinePath[startDirection= (1.0, 0.0), vertices= [(1.0, 0.0), (1.0, 1.0)]]}</li>
      *          </ul>
      *      </li>
      *      <li>Path with infinite end element
      *          <ul>
-     *              <li>{@code Polyline[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+     *              <li>{@code LinePath[vertices= [(0.0, 1.0), (0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
      *          </ul>
      *      </li>
      *      <li>Path with infinite start and end elements
      *          <ul>
-     *              <li>{@code Polyline[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
+     *              <li>{@code LinePath[startDirection= (0.0, 1.0), vertices= [(0.0, 0.0)], endDirection= (1.0, 0.0)]}</li>
      *          </ul>
      *      </li>
      *      <li>Path with no infinite elements
      *          <ul>
-     *              <li>{@code Polyline[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
+     *              <li>{@code LinePath[vertices= [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]]}</li>
      *          </ul>
      *      </li>
      * </ul>
@@ -350,9 +339,9 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return sb.toString();
     }
 
-    /** Get the start vertex for the polyline or null if the polyline is empty
+    /** Get the start vertex for the path or null if the path is empty
      * or has an infinite start line subset.
-     * @return the start vertex for the polyline or null if the polyline does
+     * @return the start vertex for the path or null if the path does
      *      not start with a vertex
      */
     private Vector2D getStartVertex() {
@@ -360,14 +349,95 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return (seg != null) ? seg.getStartPoint() : null;
     }
 
-    /** Get the end vertex for the polyline or null if the polyline is empty
+    /** Get the end vertex for the path or null if the path is empty
      * or has an infinite end line subset.
-     * @return the end vertex for the polyline or null if the polyline does
+     * @return the end vertex for the path or null if the path does
      *      not end with a vertex
      */
     private Vector2D getEndVertex() {
         final LineConvexSubset seg = getEnd();
         return (seg != null) ? seg.getEndPoint() : null;
+    }
+
+    /** Build a new path from the given line subsets.
+     * @param subsets the line subsets to comprise the path
+     * @return new path containing the given line subsets in order
+     * @throws IllegalStateException if the line subsets do not form a connected path
+     */
+    public static LinePath from(final LineConvexSubset... subsets) {
+        return from(Arrays.asList(subsets));
+    }
+
+    /** Build a new path from the given line subsets.
+     * @param subsets the line subsets to comprise the path
+     * @return new path containing the given line subsets in order
+     * @throws IllegalStateException if the subsets do not form a connected path
+     */
+    public static LinePath from(final Collection<LineConvexSubset> subsets) {
+        final Builder builder = builder(null);
+
+        for (final LineConvexSubset subset : subsets) {
+            builder.append(subset);
+        }
+
+        return builder.build();
+    }
+
+    /** Build a new path from the given vertices. A line segment is created
+     * from the last vertex to the first one, if the two vertices are not already
+     * considered equal using the given precision context. This method is equivalent to
+     * calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * fromVertices(vertices, true, precision)}
+     * @param vertices the vertices to construct the closed path from
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new closed path constructed from the given vertices
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     */
+    public static LinePath fromVertexLoop(final Collection<Vector2D> vertices,
+            final DoublePrecisionContext precision) {
+
+        return fromVertices(vertices, true, precision);
+    }
+
+    /** Build a new path from the given vertices. No additional segment is added
+     * from the last vertex to the first. This method is equivalent to calling
+     * {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
+     * fromVertices(vertices, false, precision)}.
+     * @param vertices the vertices to construct the path from
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new path constructed from the given vertices
+     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+     */
+    public static LinePath fromVertices(final Collection<Vector2D> vertices,
+            final DoublePrecisionContext precision) {
+
+        return fromVertices(vertices, false, precision);
+    }
+
+    /** Build a new path from the given vertices.
+     * @param vertices the vertices to construct the path from
+     * @param close if true, a line segment is created from the last vertex
+     *      given to the first one, if the two vertices are not already considered
+     *      equal using the given precision context.
+     * @param precision precision context used to construct the line segment
+     *      instances for the path
+     * @return new path constructed from the given vertices
+     */
+    public static LinePath fromVertices(final Collection<Vector2D> vertices,
+            final boolean close, final DoublePrecisionContext precision) {
+
+        return builder(precision)
+                .appendVertices(vertices)
+                .build(close);
+    }
+
+    /** Return a path containing no elements.
+     * @return a path containing no elements
+     */
+    public static LinePath empty() {
+        return EMPTY;
     }
 
     /** Return a {@link Builder} instance configured with the given precision
@@ -381,103 +451,22 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         return new Builder(precision);
     }
 
-    /** Build a new polyline from the given line subsets.
-     * @param subsets the line subsets to comprise the polyline
-     * @return new polyline containing the given line subsets in order
-     * @throws IllegalStateException if the line subsets do not form a connected polyline
-     */
-    public static Polyline fromLineSubsets(final LineConvexSubset... subsets) {
-        return fromLineSubsets(Arrays.asList(subsets));
-    }
-
-    /** Build a new polyline from the given line subsets.
-     * @param subsets the line subsets to comprise the path
-     * @return new polyline containing the given line subsets in order
-     * @throws IllegalStateException if the subsets do not form a connected polyline
-     */
-    public static Polyline fromLineSubsets(final Collection<LineConvexSubset> subsets) {
-        final Builder builder = builder(null);
-
-        for (final LineConvexSubset subset : subsets) {
-            builder.append(subset);
-        }
-
-        return builder.build();
-    }
-
-    /** Build a new polyline from the given vertices. A line segment is created
-     * from the last vertex to the first one, if the two vertices are not already
-     * considered equal using the given precision context. This method is equivalent to
-     * calling {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
-     * fromVertices(vertices, true, precision)}
-     * @param vertices the vertices to construct the closed path from
-     * @param precision precision context used to construct the line segment
-     *      instances for the path
-     * @return new closed polyline constructed from the given vertices
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
-     */
-    public static Polyline fromVertexLoop(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
-
-        return fromVertices(vertices, true, precision);
-    }
-
-    /** Build a new polyline from the given vertices. No additional segment is added
-     * from the last vertex to the first. This method is equivalent to calling
-     * {@link #fromVertices(Collection, boolean, DoublePrecisionContext)
-     * fromVertices(vertices, false, precision)}.
-     * @param vertices the vertices to construct the path from
-     * @param precision precision context used to construct the line segment
-     *      instances for the path
-     * @return new polyline constructed from the given vertices
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
-     */
-    public static Polyline fromVertices(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
-
-        return fromVertices(vertices, false, precision);
-    }
-
-    /** Build a new polyline from the given vertices.
-     * @param vertices the vertices to construct the path from
-     * @param close if true, a line segment is created from the last vertex
-     *      given to the first one, if the two vertices are not already considered
-     *      equal using the given precision context.
-     * @param precision precision context used to construct the line segment
-     *      instances for the path
-     * @return new polyline constructed from the given vertices
-     */
-    public static Polyline fromVertices(final Collection<Vector2D> vertices,
-            final boolean close, final DoublePrecisionContext precision) {
-
-        return builder(precision)
-                .appendVertices(vertices)
-                .build(close);
-    }
-
-    /** Return a polyline containing no elements.
-     * @return a polyline containing no elements
-     */
-    public static Polyline empty() {
-        return EMPTY;
-    }
-
-    /** Class used to build polylines.
+    /** Class used to build line paths.
      */
     public static final class Builder {
-        /** Line subsets appended to the polyline. */
+        /** Line subsets appended to the path. */
         private List<LineConvexSubset> appended = null;
 
-        /** Line subsets prepended to the polyline. */
+        /** Line subsets prepended to the path. */
         private List<LineConvexSubset> prepended = null;
 
         /** Precision context used when creating line segments directly from vertices. */
         private DoublePrecisionContext precision;
 
-        /** The current vertex at the start of the polyline. */
+        /** The current vertex at the start of the path. */
         private Vector2D startVertex;
 
-        /** The current vertex at the end of the polyline. */
+        /** The current vertex at the end of the path. */
         private Vector2D endVertex;
 
         /** The precision context used when performing comparisons involving the current
@@ -508,8 +497,8 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Get the line subset at the start of the polyline or null if it does not exist.
-         * @return the line subset at the start of the polyline
+        /** Get the line subset at the start of the path or null if it does not exist.
+         * @return the line subset at the start of the path
          */
         public LineConvexSubset getStart() {
             LineConvexSubset start = getLast(prepended);
@@ -519,8 +508,8 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return start;
         }
 
-        /** Get the line subset at the end of the polyline or null if it does not exist.
-         * @return the line subset at the end of the polyline
+        /** Get the line subset at the end of the path or null if it does not exist.
+         * @return the line subset at the end of the path
          */
         public LineConvexSubset getEnd() {
             LineConvexSubset end = getLast(appended);
@@ -530,10 +519,10 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return end;
         }
 
-        /** Append a line subset to the end of the polyline.
-         * @param subset line subset to append to the polyline
+        /** Append a line subset to the end of the path.
+         * @param subset line subset to append to the path
          * @return the current builder instance
-         * @throws IllegalStateException if the polyline contains a previous element
+         * @throws IllegalStateException if the path contains a previous element
          *      and the end vertex of the previous element is not equivalent to the
          *      start vertex of the argument
          */
@@ -544,7 +533,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Add a vertex to the end of this polyline. If the polyline already has an end vertex,
+        /** Add a vertex to the end of this path. If the path already has an end vertex,
          * then a line segment is added between the previous end vertex and this vertex,
          * using the configured precision context.
          * @param vertex the vertex to add
@@ -576,7 +565,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Convenience method for appending a collection of vertices to the polyline in a single method call.
+        /** Convenience method for appending a collection of vertices to the path in a single method call.
          * @param vertices the vertices to append
          * @return this instance
          * @see #append(Vector2D)
@@ -589,7 +578,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Convenience method for appending multiple vertices to the polyline at once.
+        /** Convenience method for appending multiple vertices to the path at once.
          * @param vertices the vertices to append
          * @return this instance
          * @see #append(Vector2D)
@@ -598,10 +587,10 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return appendVertices(Arrays.asList(vertices));
         }
 
-        /** Prepend a line subset to the beginning of the polyline.
-         * @param subset line subset to prepend to the polyline
+        /** Prepend a line subset to the beginning of the path.
+         * @param subset line subset to prepend to the path
          * @return the current builder instance
-         * @throws IllegalStateException if the polyline contains a start element
+         * @throws IllegalStateException if the path contains a start element
          *      and the end vertex of the argument is not equivalent to the
          *      start vertex of the start element.
          */
@@ -612,7 +601,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Add a vertex to the front of this polyline. If the polyline already has a start vertex,
+        /** Add a vertex to the front of this path. If the path already has a start vertex,
          * then a line segment is added between this vertex and the previous start vertex,
          * using the configured precision context.
          * @param vertex the vertex to add
@@ -644,9 +633,9 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Convenience method for prepending a collection of vertices to the polyline in a single method call.
+        /** Convenience method for prepending a collection of vertices to the path in a single method call.
          * The vertices are logically prepended as a single group, meaning that the first vertex
-         * in the given collection appears as the first vertex in the polyline after this method call.
+         * in the given collection appears as the first vertex in the path after this method call.
          * Internally, this means that the vertices are actually passed to the {@link #prepend(Vector2D)}
          * method in reverse order.
          * @param vertices the vertices to prepend
@@ -657,9 +646,9 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return prependVertices(vertices.toArray(new Vector2D[0]));
         }
 
-        /** Convenience method for prepending multiple vertices to the polyline in a single method call.
+        /** Convenience method for prepending multiple vertices to the path in a single method call.
          * The vertices are logically prepended as a single group, meaning that the first vertex
-         * in the given collection appears as the first vertex in the polyline after this method call.
+         * in the given collection appears as the first vertex in the path after this method call.
          * Internally, this means that the vertices are actually passed to the {@link #prepend(Vector2D)}
          * method in reverse order.
          * @param vertices the vertices to prepend
@@ -674,28 +663,28 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return this;
         }
 
-        /** Close the current polyline and build a new {@link Polyline} instance.  This method is equivalent
+        /** Close the current path and build a new {@link LinePath} instance.  This method is equivalent
          * to {@code builder.build(true)}.
-         * @return new closed polyline instance
+         * @return new closed path instance
          */
-        public Polyline close() {
+        public LinePath close() {
             return build(true);
         }
 
-        /** Build a {@link Polyline} instance from the configured polyline. This method is equivalent
+        /** Build a {@link LinePath} instance from the configured path. This method is equivalent
          * to {@code builder.build(false)}.
-         * @return new polyline instance
+         * @return new path instance
          */
-        public Polyline build() {
+        public LinePath build() {
             return build(false);
         }
 
-        /** Build a {@link Polyline} instance from the configured polyline.
+        /** Build a {@link LinePath} instance from the configured path.
          * @param close if true, the path will be closed by adding an end point equivalent to the
          *      start point
-         * @return new polyline instance
+         * @return new path instance
          */
-        public Polyline build(final boolean close) {
+        public LinePath build(final boolean close) {
             if (close) {
                 closePath();
             }
@@ -722,7 +711,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
 
             if (result.isEmpty() && startVertex != null) {
                 throw new IllegalStateException(
-                        MessageFormat.format("Unable to create polyline; only a single vertex provided: {0} ",
+                        MessageFormat.format("Unable to create line path; only a single vertex provided: {0} ",
                                 startVertex));
             }
 
@@ -730,9 +719,10 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             appended = null;
             prepended = null;
 
-            // build the final polyline instance, using the shared empty instance if
+            // build the final path instance, using the shared empty instance if
             // no line subsets are present
-            return result.isEmpty() ? empty() : new Polyline(result);
+
+            return result.isEmpty() ? empty() : new LinePath(result);
         }
 
         /** Close the path by adding an end point equivalent to the path start point.
@@ -747,7 +737,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
                         appendInternal(Lines.segmentFromPoints(endVertex, startVertex, endVertexPrecision));
                     }
                 } else {
-                    throw new IllegalStateException("Unable to close polyline: polyline is infinite");
+                    throw new IllegalStateException("Unable to close line path: line path is infinite");
                 }
             }
         }
@@ -770,13 +760,13 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
                         !(nextStartVertex.eq(previousEndVertex, previousPrecision))) {
 
                     throw new IllegalStateException(
-                            MessageFormat.format("Polyline line subsets are not connected: previous= {0}, next= {1}",
+                            MessageFormat.format("Path line subsets are not connected: previous= {0}, next= {1}",
                                     previous, next));
                 }
             }
         }
 
-        /** Get the precision context used when adding raw vertices to the polyline. An exception is thrown
+        /** Get the precision context used when adding raw vertices to the path. An exception is thrown
          * if no precision has been specified.
          * @return the precision context used when creating working with raw vertices
          * @throws IllegalStateException if no precision context is configured
@@ -789,7 +779,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             return precision;
         }
 
-        /** Append the given, validated line subsets to the polyline.
+        /** Append the given, validated line subsets to the path.
          * @param subset validated line subset to append
          */
         private void appendInternal(final LineConvexSubset subset) {
@@ -808,7 +798,7 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
             appended.add(subset);
         }
 
-        /** Prepend the given, validated line subset to the polyline.
+        /** Prepend the given, validated line subset to the path.
          * @param subset validated line subset to prepend
          */
         private void prependInternal(final LineConvexSubset subset) {
@@ -852,23 +842,22 @@ public class Polyline implements BoundarySource2D, Linecastable2D, Sized {
         }
     }
 
-    /** Internal class returned when a polyline is simplified to remove
-     * unnecessary line subset divisions. The {@link #simplify()} method on this
-     * class simply returns the same instance.
+    /** Internal class returned when a line path is simplified to remove unnecessary line subset divisions.
+     * The {@link #simplify()} method on this class simply returns the same instance.
      */
-    private static final class SimplifiedPolyline extends Polyline {
+    private static final class SimplifiedLinePath extends LinePath {
         /** Create a new instance containing the given line subsets. No validation is
          * performed on the inputs. Caller must ensure that the given line subsets represent
          * a valid, simplified path.
-         * @param subsets line subsets comprising the path
+         * @param elements line subsets comprising the path
          */
-        private SimplifiedPolyline(final List<LineConvexSubset> subsets) {
-            super(subsets);
+        private SimplifiedLinePath(final List<LineConvexSubset> elements) {
+            super(elements);
         }
 
         /** {@inheritDoc} */
         @Override
-        public Polyline simplify() {
+        public SimplifiedLinePath simplify() {
             // already simplified
             return this;
         }

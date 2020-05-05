@@ -31,7 +31,6 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
@@ -39,7 +38,7 @@ import org.apache.commons.geometry.euclidean.twod.Vector2D;
  * Euclidean space.
  */
 public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, RegionBSPTree3D.RegionNode3D>
-    implements BoundarySource3D, Linecastable3D {
+    implements BoundarySource3D {
 
     /** Create a new, empty region. */
     public RegionBSPTree3D() {

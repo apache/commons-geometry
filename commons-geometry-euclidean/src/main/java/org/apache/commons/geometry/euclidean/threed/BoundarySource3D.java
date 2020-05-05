@@ -18,13 +18,16 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
+import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 
-/** Extension of the {@link BoundarySource} interface for Euclidean 3D
- * space.
+/** Extension of the {@link BoundarySource} interface for Euclidean 3D space.
  */
-public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset> {
+public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Linecastable3D {
 
     /** Return a BSP tree constructed from the boundaries contained in this instance.
      * The default implementation creates a new, empty tree and inserts the
@@ -36,6 +39,18 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset> {
         tree.insert(this);
 
         return tree;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
+        return new BoundarySourceLinecaster3D(this).linecast(subset);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
+        return new BoundarySourceLinecaster3D(this).linecastFirst(subset);
     }
 
     /** Return a {@link BoundarySource3D} instance containing the given boundaries.

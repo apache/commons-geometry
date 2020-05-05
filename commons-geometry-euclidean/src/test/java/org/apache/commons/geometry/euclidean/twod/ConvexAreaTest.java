@@ -29,6 +29,7 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -147,10 +148,10 @@ public class ConvexAreaTest {
         // assert
         Assert.assertNotSame(area, transformed);
 
-        List<Polyline> paths = transformed.getBoundaryPaths();
+        List<LinePath> paths = transformed.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        List<LineConvexSubset> segments = paths.get(0).getSequence();
+        List<LineConvexSubset> segments = paths.get(0).getElements();
         Assert.assertEquals(2, segments.size());
 
         LineConvexSubset firstSegment = segments.get(0);
@@ -1010,7 +1011,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_empty() {
         // act
-        ConvexArea area = ConvexArea.fromPath(Polyline.empty());
+        ConvexArea area = ConvexArea.fromPath(LinePath.empty());
 
         // assert
         Assert.assertTrue(area.isFull());
@@ -1019,7 +1020,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_infinite() {
         // act
-        ConvexArea area = ConvexArea.fromPath(Polyline.fromVertices(
+        ConvexArea area = ConvexArea.fromPath(LinePath.fromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION));
 
         // assert
@@ -1038,7 +1039,7 @@ public class ConvexAreaTest {
     @Test
     public void testFromPath_finite() {
         // act
-        ConvexArea area = ConvexArea.fromPath(Polyline.fromVertexLoop(
+        ConvexArea area = ConvexArea.fromPath(LinePath.fromVertexLoop(
                 Arrays.asList(
                         Vector2D.ZERO,
                         Vector2D.Unit.PLUS_X,
@@ -1059,7 +1060,7 @@ public class ConvexAreaTest {
     public void testFromPath_clockwiseWinding() {
         // act
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromPath(Polyline.fromVertexLoop(
+            ConvexArea.fromPath(LinePath.fromVertexLoop(
                     Arrays.asList(
                             Vector2D.ZERO,
                             Vector2D.Unit.PLUS_Y,

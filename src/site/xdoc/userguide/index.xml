@@ -600,7 +600,7 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             Additional
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Polyline.html">Polyline</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/path/LinePath.html">LinePath</a> -
                   Represents a connected sequence of line subsets.
               </li>
             </ul>
@@ -644,7 +644,7 @@ Vector2D bIntersection = segmentB.intersection(ray); // null - no intersection
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create a connected sequence of line segments forming the unit square
-Polyline path = Polyline.builder(precision)
+LinePath path = LinePath.builder(precision)
         .append(Vector2D.ZERO)
         .append(Vector2D.Unit.PLUS_X)
         .append(Vector2D.of(1, 1))
@@ -668,9 +668,9 @@ tree.union(copy);
 double size = tree.getSize(); // 1.75
 Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
 
-// get a polyline representing the boundary; a list is returned since trees
+// get a line path representing the boundary; a list is returned since trees
 // can represent disjoint regions
-List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
+List&lt;LinePath&gt; boundaries = tree.getBoundaryPaths(); // size = 1
         </source>
 
         <h5>Linecast</h5>

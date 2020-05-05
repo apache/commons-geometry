@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.euclidean.internal.AbstractPathConnector;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Abstract class for joining collections of line subsets into connected
  * paths. This class is not thread-safe.
  */
-public abstract class AbstractLineSubsetConnector
-    extends AbstractPathConnector<AbstractLineSubsetConnector.ConnectableLineSubset> {
+public abstract class AbstractLinePathConnector
+    extends AbstractPathConnector<AbstractLinePathConnector.ConnectableLineSubset> {
     /** Add a line subset to the connector, leaving it unconnected until a later call to
      * to {@link #connect(Iterable)} or {@link #connectAll()}.
      * @param subset line subset to add
@@ -76,7 +78,7 @@ public abstract class AbstractLineSubsetConnector
      * subsets into connected paths. This call is equivalent to
      * <pre>
      *      connector.add(subsets);
-     *      List&lt;Polyline&gt; result = connector.connectAll();
+     *      List&lt;LinePath&gt; result = connector.connectAll();
      * </pre>
      *
      * <p>The connector is reset after this call. Further calls to
@@ -86,36 +88,36 @@ public abstract class AbstractLineSubsetConnector
      * @see #add(Iterable)
      * @see #connectAll()
      */
-    public List<Polyline> connectAll(final Iterable<LineConvexSubset> subsets) {
+    public List<LinePath> connectAll(final Iterable<LineConvexSubset> subsets) {
         add(subsets);
         return connectAll();
     }
 
     /** Connect all current line subsets into connected paths, returning the result as a
-     * list of polylines.
+     * list of line paths.
      *
      * <p>The connector is reset after this call. Further calls to
      * add or connect line subsets will result in new paths being generated.</p>
      * @return the connected 2D paths
      */
-    public List<Polyline> connectAll() {
+    public List<LinePath> connectAll() {
         final List<ConnectableLineSubset> roots = computePathRoots();
-        final List<Polyline> paths = new ArrayList<>(roots.size());
+        final List<LinePath> paths = new ArrayList<>(roots.size());
 
         for (final ConnectableLineSubset root : roots) {
-            paths.add(toPolyline(root));
+            paths.add(toPath(root));
         }
 
         return paths;
     }
 
     /** Convert the linked list of path elements starting at the argument
-     * into a {@link Polyline}.
+     * into a {@link LinePath}.
      * @param root root of a connected path linked list
-     * @return a polyline representing the linked list path
+     * @return a line path representing the linked list path
      */
-    private Polyline toPolyline(final ConnectableLineSubset root) {
-        final Polyline.Builder builder = Polyline.builder(null);
+    private LinePath toPath(final ConnectableLineSubset root) {
+        final LinePath.Builder builder = LinePath.builder(null);
 
         builder.append(root.getLineSubset());
 

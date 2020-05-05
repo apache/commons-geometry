@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,13 +26,18 @@ import java.util.function.Consumer;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleLineSubsetConnector.Maximize;
-import org.apache.commons.geometry.euclidean.twod.InteriorAngleLineSubsetConnector.Minimize;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Lines;
+import org.apache.commons.geometry.euclidean.twod.Ray;
+import org.apache.commons.geometry.euclidean.twod.ReverseRay;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector.Maximize;
+import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector.Minimize;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class InteriorAngleLineSubsetConnectorTest {
+public class InteriorAngleLinePathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -46,7 +51,7 @@ public class InteriorAngleLineSubsetConnectorTest {
             List<LineConvexSubset> segments = new ArrayList<>();
 
             // act
-            List<Polyline> paths = connector.connectAll(segments);
+            List<LinePath> paths = connector.connectAll(segments);
 
             // assert
             Assert.assertEquals(0, paths.size());
@@ -62,7 +67,7 @@ public class InteriorAngleLineSubsetConnectorTest {
                     );
 
             // act
-            List<Polyline> paths = connector.connectAll(segments);
+            List<LinePath> paths = connector.connectAll(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -81,7 +86,7 @@ public class InteriorAngleLineSubsetConnectorTest {
                     );
 
             // act
-            List<Polyline> paths = connector.connectAll(segments);
+            List<LinePath> paths = connector.connectAll(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -98,7 +103,7 @@ public class InteriorAngleLineSubsetConnectorTest {
             List<LineConvexSubset> segments = shuffle(createSquare(Vector2D.ZERO, 1, 1));
 
             // act
-            List<Polyline> paths = connector.connectAll(segments);
+            List<LinePath> paths = connector.connectAll(segments);
 
             // assert
             Assert.assertEquals(1, paths.size());
@@ -126,7 +131,7 @@ public class InteriorAngleLineSubsetConnectorTest {
             shuffle(segments);
 
             // act
-            List<Polyline> paths = connector.connectAll(segments);
+            List<LinePath> paths = connector.connectAll(segments);
 
             // assert
             Assert.assertEquals(2, paths.size());
@@ -151,7 +156,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -175,7 +180,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         segments.add(Lines.segmentFromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -198,7 +203,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -224,7 +229,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         segments.add(Lines.segmentFromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -245,7 +250,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         segments.add(Lines.segmentFromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = InteriorAngleLineSubsetConnector.connectMaximized(segments);
+        List<LinePath> paths = InteriorAngleLinePathConnector.connectMaximized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -266,7 +271,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         segments.add(Lines.segmentFromPoints(Vector2D.of(2, 2), Vector2D.of(1, 3), TEST_PRECISION));
 
         // act
-        List<Polyline> paths = InteriorAngleLineSubsetConnector.connectMinimized(segments);
+        List<LinePath> paths = InteriorAngleLinePathConnector.connectMinimized(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -281,7 +286,7 @@ public class InteriorAngleLineSubsetConnectorTest {
      * Run the given consumer function twice, once with a Maximize instance and once with
      * a Minimize instance.
      */
-    private static void runWithMaxAndMin(Consumer<InteriorAngleLineSubsetConnector> body) {
+    private static void runWithMaxAndMin(Consumer<InteriorAngleLinePathConnector> body) {
         body.accept(new Maximize());
         body.accept(new Minimize());
     }
@@ -309,7 +314,7 @@ public class InteriorAngleLineSubsetConnectorTest {
         return segments;
     }
 
-    private static void assertInfinitePath(Polyline path, LineConvexSubset start, LineConvexSubset end, Vector2D... vertices) {
+    private static void assertInfinitePath(LinePath path, LineConvexSubset start, LineConvexSubset end, Vector2D... vertices) {
         Assert.assertTrue(path.isInfinite());
         Assert.assertFalse(path.isFinite());
 
@@ -319,14 +324,14 @@ public class InteriorAngleLineSubsetConnectorTest {
         assertPathVertices(path, vertices);
     }
 
-    private static void assertFinitePath(Polyline path, Vector2D... vertices) {
+    private static void assertFinitePath(LinePath path, Vector2D... vertices) {
         Assert.assertFalse(path.isInfinite());
         Assert.assertTrue(path.isFinite());
 
         assertPathVertices(path, vertices);
     }
 
-    private static void assertPathVertices(Polyline path, Vector2D... vertices) {
+    private static void assertPathVertices(LinePath path, Vector2D... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
         List<Vector2D> actualVertices = path.getVertexSequence();
 

@@ -225,6 +225,16 @@ public class LineConvexSubset3DTest {
     }
 
     @Test
+    public void testSpaceSubspaceConversion() {
+        // arrange
+        Segment3D segment = Lines3D.segmentFromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), segment.toSubspace(Vector3D.of(1, 3, 5)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 3, 0), segment.toSpace(Vector1D.of(3)), TEST_EPS);
+    }
+
+    @Test
     public void testGetSubspaceRegion() {
         // arrange
         Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 1), TEST_PRECISION);

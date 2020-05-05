@@ -30,12 +30,14 @@ import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 
 /** Class representing a finite or infinite convex area in Euclidean 2D space.
  * The boundaries of this area, if any, are composed of convex line subsets.
  */
 public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, LineConvexSubset>
-    implements BoundarySource2D, Linecastable2D {
+    implements BoundarySource2D {
 
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
@@ -68,8 +70,8 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * </ul>
      * @return the line subset paths comprising the boundary of the area.
      */
-    public List<Polyline> getBoundaryPaths() {
-        return InteriorAngleLineSubsetConnector.connectMinimized(getBoundaries());
+    public List<LinePath> getBoundaryPaths() {
+        return InteriorAngleLinePathConnector.connectMinimized(getBoundaries());
     }
 
     /** Get the vertices defining the area. The vertices lie at the intersections of the
@@ -80,12 +82,12 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * @return the vertices defining the area
      */
     public List<Vector2D> getVertices() {
-        final List<Polyline> paths = getBoundaryPaths();
+        final List<LinePath> paths = getBoundaryPaths();
 
         // we will only have vertices if we have a single path; otherwise, we have a full
         // area or two non-intersecting infinite line subsets
         if (paths.size() == 1) {
-            final Polyline path = paths.get(0);
+            final LinePath path = paths.get(0);
             final List<Vector2D> vertices = path.getVertexSequence();
 
             if (path.isClosed()) {
@@ -182,18 +184,6 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         return RegionBSPTree2D.from(getBoundaries(), true);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
-        return new BoundarySourceLinecaster2D(this).linecast(subset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
-        return new BoundarySourceLinecaster2D(this).linecastFirst(subset);
-    }
-
     /** Return an instance representing the full 2D area.
      * @return an instance representing the full 2D area.
      */
@@ -278,7 +268,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
      * @param path path to construct the area from
      * @return a convex area constructed from the line subsets in the given path
      */
-    public static ConvexArea fromPath(final Polyline path) {
+    public static ConvexArea fromPath(final LinePath path) {
         final List<Line> lines = path.boundaryStream()
                 .map(LineConvexSubset::getLine)
                 .collect(Collectors.toList());

@@ -26,16 +26,13 @@ import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBou
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
-import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
  * The boundaries of this area, if any, are composed of plane convex subsets.
  */
 public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, PlaneConvexSubset>
-    implements BoundarySource3D, Linecastable3D {
+    implements BoundarySource3D {
 
     /** Instance representing the full 3D volume. */
     private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
@@ -137,18 +134,6 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
     @Override
     public RegionBSPTree3D toTree() {
         return RegionBSPTree3D.from(getBoundaries(), true);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
-        return new BoundarySourceLinecaster3D(this).linecast(subset);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
-        return new BoundarySourceLinecaster3D(this).linecastFirst(subset);
     }
 
     /** {@inheritDoc} */

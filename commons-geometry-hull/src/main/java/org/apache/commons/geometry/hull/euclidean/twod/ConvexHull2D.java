@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.hull.ConvexHull;
 
 /**
@@ -36,7 +36,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
     private final List<Vector2D> vertices;
 
     /** Polyline path for the convex hull. */
-    private final Polyline path;
+    private final LinePath path;
 
     /** Simple constructor; no validation is performed.
      * @param vertices the vertices of the convex hull; callers are responsible for ensuring that
@@ -63,7 +63,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      * </ul>
      * @return polyline path defining the convex hull
      */
-    public Polyline getPath() {
+    public LinePath getPath() {
         return path;
     }
 
@@ -92,14 +92,14 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
      * @param precision precision context used to compare floating point values
      * @return path for the convex hull defined by the given vertices
      */
-    private static Polyline buildHullPath(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
+    private static LinePath buildHullPath(final Collection<Vector2D> vertices, final DoublePrecisionContext precision) {
         if (vertices.size() < 2) {
-            return Polyline.empty();
+            return LinePath.empty();
         }
 
         final boolean closeLoop = vertices.size() > 2;
 
-        return Polyline.builder(precision)
+        return LinePath.builder(precision)
                 .appendVertices(vertices)
                 .build(closeLoop);
     }

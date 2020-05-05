@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,12 +25,17 @@ import java.util.Random;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.AbstractLineSubsetConnector.ConnectableLineSubset;
+import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
+import org.apache.commons.geometry.euclidean.twod.Lines;
+import org.apache.commons.geometry.euclidean.twod.Segment;
+import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.AbstractLinePathConnector.ConnectableLineSubset;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AbstractLineSubsetConnectorTest {
+public class AbstractLinePathConnectorTest {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -45,7 +50,7 @@ public class AbstractLineSubsetConnectorTest {
     @Test
     public void testConnectAll_emptyCollection() {
         // act
-        List<Polyline> paths = connector.connectAll(Collections.emptyList());
+        List<LinePath> paths = connector.connectAll(Collections.emptyList());
 
         // assert
         Assert.assertEquals(0, paths.size());
@@ -57,13 +62,13 @@ public class AbstractLineSubsetConnectorTest {
         LineConvexSubset segment = Y_AXIS.span();
 
         // act
-        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
+        List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSequence().size());
+        LinePath path = paths.get(0);
+        Assert.assertEquals(1, path.getElements().size());
         Assert.assertSame(segment, path.getStart());
     }
 
@@ -73,13 +78,13 @@ public class AbstractLineSubsetConnectorTest {
         LineConvexSubset segment = Y_AXIS.rayFrom(Vector2D.ZERO);
 
         // act
-        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
+        List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSequence().size());
+        LinePath path = paths.get(0);
+        Assert.assertEquals(1, path.getElements().size());
         Assert.assertSame(segment, path.getStart());
     }
 
@@ -89,13 +94,13 @@ public class AbstractLineSubsetConnectorTest {
         LineConvexSubset segment = Y_AXIS.reverseRayTo(Vector2D.ZERO);
 
         // act
-        List<Polyline> paths = connector.connectAll(Arrays.asList(segment));
+        List<LinePath> paths = connector.connectAll(Arrays.asList(segment));
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertEquals(1, path.getSequence().size());
+        LinePath path = paths.get(0);
+        Assert.assertEquals(1, path.getElements().size());
         Assert.assertSame(segment, path.getStart());
     }
 
@@ -108,7 +113,7 @@ public class AbstractLineSubsetConnectorTest {
         List<LineConvexSubset> segments = Arrays.asList(a, b);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -120,15 +125,15 @@ public class AbstractLineSubsetConnectorTest {
     @Test
     public void testConnectAll_singleClosedPath() {
         // arrange
-        Polyline input = Polyline.builder(TEST_PRECISION)
+        LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
                 .close();
 
-        List<LineConvexSubset> segments = new ArrayList<>(input.getSequence());
+        List<LineConvexSubset> segments = new ArrayList<>(input.getElements());
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -140,27 +145,27 @@ public class AbstractLineSubsetConnectorTest {
     @Test
     public void testConnectAll_multipleClosedPaths() {
         // arrange
-        Polyline a = Polyline.builder(TEST_PRECISION)
+        LinePath a = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
                 .close();
 
-        Polyline b = Polyline.builder(TEST_PRECISION)
+        LinePath b = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(0, 1), Vector2D.of(-1, 0), Vector2D.of(-0.5, 0))
                 .close();
 
-        Polyline c = Polyline.builder(TEST_PRECISION)
+        LinePath c = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 3), Vector2D.of(0, 2), Vector2D.of(1, 2))
                 .close();
 
         List<LineConvexSubset> segments = new ArrayList<>();
-        segments.addAll(a.getSequence());
-        segments.addAll(b.getSequence());
-        segments.addAll(c.getSequence());
+        segments.addAll(a.getElements());
+        segments.addAll(b.getElements());
+        segments.addAll(c.getElements());
 
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -178,15 +183,15 @@ public class AbstractLineSubsetConnectorTest {
     @Test
     public void testConnectAll_singleOpenPath() {
         // arrange
-        Polyline input = Polyline.builder(TEST_PRECISION)
+        LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.ZERO, Vector2D.of(1, 0))
                 .build();
 
-        List<LineConvexSubset> segments = new ArrayList<>(input.getSequence());
+        List<LineConvexSubset> segments = new ArrayList<>(input.getElements());
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -202,24 +207,24 @@ public class AbstractLineSubsetConnectorTest {
         LineConvexSubset inputXInf = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.MINUS_X, TEST_PRECISION)
                 .rayFrom(Vector2D.ZERO);
 
-        Polyline closedPath = Polyline.builder(TEST_PRECISION)
+        LinePath closedPath = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3))
                 .close();
 
-        Polyline openPath = Polyline.builder(TEST_PRECISION)
+        LinePath openPath = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(-1, 3), Vector2D.of(0, 1), Vector2D.of(1, 1))
                 .build();
 
         List<LineConvexSubset> segments = new ArrayList<>();
         segments.add(inputYInf);
         segments.add(inputXInf);
-        segments.addAll(closedPath.getSequence());
-        segments.addAll(openPath.getSequence());
+        segments.addAll(closedPath.getElements());
+        segments.addAll(openPath.getElements());
 
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(3, paths.size());
@@ -227,11 +232,11 @@ public class AbstractLineSubsetConnectorTest {
         assertFinitePath(paths.get(0),
                 Vector2D.of(-1, 3), Vector2D.of(0, 1), Vector2D.of(1, 1));
 
-        Polyline infPath = paths.get(1);
+        LinePath infPath = paths.get(1);
         Assert.assertTrue(infPath.isInfinite());
-        Assert.assertEquals(2, infPath.getSequence().size());
-        Assert.assertSame(inputYInf, infPath.getSequence().get(0));
-        Assert.assertSame(inputXInf, infPath.getSequence().get(1));
+        Assert.assertEquals(2, infPath.getElements().size());
+        Assert.assertSame(inputYInf, infPath.getElements().get(0));
+        Assert.assertSame(inputXInf, infPath.getElements().get(1));
 
         assertFinitePath(paths.get(2),
                 Vector2D.of(0, 2), Vector2D.of(1, 2), Vector2D.of(1, 3), Vector2D.of(0, 2));
@@ -245,7 +250,7 @@ public class AbstractLineSubsetConnectorTest {
         List<LineConvexSubset> segments = Arrays.asList(Lines.fromPointAndAngle(p0, 0, TEST_PRECISION).segment(p0, p0));
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -263,7 +268,7 @@ public class AbstractLineSubsetConnectorTest {
         Vector2D almostP0 = Vector2D.of(-1e-20, -1e-20);
         Vector2D almostP1 = Vector2D.of(1 - 1e-15, 0);
 
-        Polyline input = Polyline.builder(TEST_PRECISION)
+        LinePath input = LinePath.builder(TEST_PRECISION)
                 .appendVertices(p0, p1)
                 .append(Lines.fromPointAndAngle(p1, 0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(p1, p1))
                 .append(Lines.fromPointAndAngle(p1, -0.25 * PlaneAngleRadians.PI, TEST_PRECISION).segment(almostP1, almostP1))
@@ -273,11 +278,11 @@ public class AbstractLineSubsetConnectorTest {
                         .segment(almostP0, almostP0))
                 .build();
 
-        List<LineConvexSubset> segments = new ArrayList<>(input.getSequence());
+        List<LineConvexSubset> segments = new ArrayList<>(input.getElements());
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
@@ -300,16 +305,16 @@ public class AbstractLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertSame(seg0, path.getSequence().get(0));
-        Assert.assertSame(seg2, path.getSequence().get(1));
-        Assert.assertSame(seg1, path.getSequence().get(2));
-        Assert.assertSame(seg3, path.getSequence().get(3));
+        LinePath path = paths.get(0);
+        Assert.assertSame(seg0, path.getElements().get(0));
+        Assert.assertSame(seg2, path.getElements().get(1));
+        Assert.assertSame(seg1, path.getElements().get(2));
+        Assert.assertSame(seg3, path.getElements().get(3));
     }
 
     @Test
@@ -326,16 +331,16 @@ public class AbstractLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertSame(seg2, path.getSequence().get(0));
-        Assert.assertSame(seg3, path.getSequence().get(1));
-        Assert.assertSame(seg0, path.getSequence().get(2));
-        Assert.assertSame(seg1, path.getSequence().get(3));
+        LinePath path = paths.get(0);
+        Assert.assertSame(seg2, path.getElements().get(0));
+        Assert.assertSame(seg3, path.getElements().get(1));
+        Assert.assertSame(seg0, path.getElements().get(2));
+        Assert.assertSame(seg1, path.getElements().get(3));
     }
 
     @Test
@@ -353,19 +358,19 @@ public class AbstractLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
 
-        Polyline path0 = paths.get(0);
-        Assert.assertEquals(1, path0.getSequence().size());
-        Assert.assertSame(seg2, path0.getSequence().get(0));
+        LinePath path0 = paths.get(0);
+        Assert.assertEquals(1, path0.getElements().size());
+        Assert.assertSame(seg2, path0.getElements().get(0));
 
-        Polyline path1 = paths.get(1);
-        Assert.assertEquals(2, path1.getSequence().size());
-        Assert.assertSame(seg0, path1.getSequence().get(0));
-        Assert.assertSame(seg1, path1.getSequence().get(1));
+        LinePath path1 = paths.get(1);
+        Assert.assertEquals(2, path1.getElements().size());
+        Assert.assertSame(seg0, path1.getElements().get(0));
+        Assert.assertSame(seg1, path1.getElements().get(1));
     }
 
     @Test
@@ -384,36 +389,36 @@ public class AbstractLineSubsetConnectorTest {
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
-        Assert.assertSame(seg0, path.getSequence().get(0));
-        Assert.assertSame(seg1, path.getSequence().get(1));
-        Assert.assertSame(seg2, path.getSequence().get(2));
+        LinePath path = paths.get(0);
+        Assert.assertSame(seg0, path.getElements().get(0));
+        Assert.assertSame(seg1, path.getElements().get(1));
+        Assert.assertSame(seg2, path.getElements().get(2));
     }
 
     @Test
     public void testConnectAll_intersectingPaths() {
         // arrange
-        Polyline a = Polyline.builder(TEST_PRECISION)
+        LinePath a = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(-1, 1), Vector2D.of(0.5, 0), Vector2D.of(-1, -1))
                 .build();
 
-        Polyline b = Polyline.builder(TEST_PRECISION)
+        LinePath b = LinePath.builder(TEST_PRECISION)
                 .appendVertices(Vector2D.of(1, 1), Vector2D.of(-0.5, 0), Vector2D.of(1, -1))
                 .build();
 
         List<LineConvexSubset> segments = new ArrayList<>();
-        segments.addAll(a.getSequence());
-        segments.addAll(b.getSequence());
+        segments.addAll(a.getElements());
+        segments.addAll(b.getElements());
 
         shuffle(segments);
 
         // act
-        List<Polyline> paths = connector.connectAll(segments);
+        List<LinePath> paths = connector.connectAll(segments);
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -432,15 +437,15 @@ public class AbstractLineSubsetConnectorTest {
         LineConvexSubset b = Lines.segmentFromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
-        List<Polyline> firstPaths = connector.connectAll(Arrays.asList(a));
-        List<Polyline> secondPaths = connector.connectAll(Arrays.asList(b));
+        List<LinePath> firstPaths = connector.connectAll(Arrays.asList(a));
+        List<LinePath> secondPaths = connector.connectAll(Arrays.asList(b));
 
         // assert
         Assert.assertEquals(1, firstPaths.size());
         Assert.assertEquals(1, secondPaths.size());
 
-        Assert.assertSame(a, firstPaths.get(0).getSequence().get(0));
-        Assert.assertSame(b, secondPaths.get(0).getSequence().get(0));
+        Assert.assertSame(a, firstPaths.get(0).getElements().get(0));
+        Assert.assertSame(b, secondPaths.get(0).getElements().get(0));
     }
 
     @Test
@@ -454,7 +459,7 @@ public class AbstractLineSubsetConnectorTest {
         connector.add(Arrays.asList(a, b));
         connector.add(Arrays.asList(c));
 
-        List<Polyline> paths = connector.connectAll();
+        List<LinePath> paths = connector.connectAll();
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -474,7 +479,7 @@ public class AbstractLineSubsetConnectorTest {
         connector.connect(Arrays.asList(a, b));
         connector.connect(Arrays.asList(c));
 
-        List<Polyline> paths = connector.connectAll();
+        List<LinePath> paths = connector.connectAll();
 
         // assert
         Assert.assertEquals(2, paths.size());
@@ -533,14 +538,14 @@ public class AbstractLineSubsetConnectorTest {
         return segments;
     }
 
-    private static void assertFinitePath(Polyline path, Vector2D... vertices) {
+    private static void assertFinitePath(LinePath path, Vector2D... vertices) {
         Assert.assertFalse(path.isInfinite());
         Assert.assertTrue(path.isFinite());
 
         assertPathVertices(path, vertices);
     }
 
-    private static void assertPathVertices(Polyline path, Vector2D... vertices) {
+    private static void assertPathVertices(LinePath path, Vector2D... vertices) {
         List<Vector2D> expectedVertices = Arrays.asList(vertices);
         List<Vector2D> actualVertices = path.getVertexSequence();
 
@@ -552,7 +557,7 @@ public class AbstractLineSubsetConnectorTest {
         }
     }
 
-    private static class TestConnector extends AbstractLineSubsetConnector {
+    private static class TestConnector extends AbstractLinePathConnector {
 
         @Override
         protected ConnectableLineSubset selectConnection(ConnectableLineSubset incoming, List<ConnectableLineSubset> outgoing) {

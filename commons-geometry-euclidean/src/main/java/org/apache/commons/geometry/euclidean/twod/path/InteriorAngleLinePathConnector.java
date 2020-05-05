@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.euclidean.twod;
+package org.apache.commons.geometry.euclidean.twod.path;
 
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.geometry.euclidean.twod.Line;
+import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 
 /** Line subset connector that selects between multiple connection options
@@ -33,7 +35,7 @@ import org.apache.commons.numbers.angle.PlaneAngleRadians;
  * angles respectively.
  * </p>
  */
-public abstract class InteriorAngleLineSubsetConnector extends AbstractLineSubsetConnector {
+public abstract class InteriorAngleLinePathConnector extends AbstractLinePathConnector {
     /** {@inheritDoc} */
     @Override
     protected ConnectableLineSubset selectConnection(final ConnectableLineSubset incoming,
@@ -71,7 +73,7 @@ public abstract class InteriorAngleLineSubsetConnector extends AbstractLineSubse
      * @return a list of connected line subset paths
      * @see Maximize
      */
-    public static List<Polyline> connectMaximized(final Collection<LineConvexSubset> subsets) {
+    public static List<LinePath> connectMaximized(final Collection<LineConvexSubset> subsets) {
         return new Maximize().connectAll(subsets);
     }
 
@@ -81,17 +83,17 @@ public abstract class InteriorAngleLineSubsetConnector extends AbstractLineSubse
      * @return a list of connected line subset paths
      * @see Minimize
      */
-    public static List<Polyline> connectMinimized(final Collection<LineConvexSubset> subsets) {
+    public static List<LinePath> connectMinimized(final Collection<LineConvexSubset> subsets) {
         return new Minimize().connectAll(subsets);
     }
 
-    /** Implementation of {@link InteriorAngleLineSubsetConnector} that chooses line subset
+    /** Implementation of {@link InteriorAngleLinePathConnector} that chooses line subset
      * connections that produce the largest interior angles. Another way to visualize this is
      * that when presented multiple connection options for a given line subset, this class will
      * choose the option that points most to the right when viewed in the direction of the incoming
      * line subset.
      */
-    public static final class Maximize extends InteriorAngleLineSubsetConnector {
+    public static final class Maximize extends InteriorAngleLinePathConnector {
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {
@@ -99,13 +101,13 @@ public abstract class InteriorAngleLineSubsetConnector extends AbstractLineSubse
         }
     }
 
-    /** Implementation of {@link InteriorAngleLineSubsetConnector} that chooses line subset
+    /** Implementation of {@link InteriorAngleLinePathConnector} that chooses line subset
      * connections that produce the smallest interior angles. Another way to visualize this is
      * that when presented multiple connection options for a given line subset, this class will
      * choose the option that points most to the left when viewed in the direction of the incoming
      * line subset.
      */
-    public static final class Minimize extends InteriorAngleLineSubsetConnector {
+    public static final class Minimize extends InteriorAngleLinePathConnector {
         /** {@inheritDoc} */
         @Override
         protected boolean isBetterAngle(double newAngle, double previousAngle) {

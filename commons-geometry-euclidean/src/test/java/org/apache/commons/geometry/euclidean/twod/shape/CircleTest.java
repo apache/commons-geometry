@@ -31,9 +31,9 @@ import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Lines;
 import org.apache.commons.geometry.euclidean.twod.PolarCoordinates;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -528,10 +528,10 @@ public class CircleTest {
         Assert.assertFalse(tree.isEmpty());
 
         // all vertices must be inside the circle or on the boundary
-        List<Polyline> paths = tree.getBoundaryPaths();
+        List<LinePath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
 
-        Polyline path = paths.get(0);
+        LinePath path = paths.get(0);
         Assert.assertTrue(path.isFinite());
 
         for (Vector2D vertex : path.getVertexSequence()) {

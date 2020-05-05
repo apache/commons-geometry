@@ -29,15 +29,17 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
+import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
  * Euclidean space.
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D>
-    implements BoundarySource2D, Linecastable2D {
+    implements BoundarySource2D {
 
     /** List of line subset paths comprising the region boundary. */
-    private List<Polyline> boundaryPaths;
+    private List<LinePath> boundaryPaths;
 
     /** Create a new, empty region.
      */
@@ -88,7 +90,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * interior of the region.
      * @return line subset paths representing the region boundary
      */
-    public List<Polyline> getBoundaryPaths() {
+    public List<LinePath> getBoundaryPaths() {
         if (boundaryPaths == null) {
             boundaryPaths = Collections.unmodifiableList(computeBoundaryPaths());
         }
@@ -184,12 +186,12 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
     /** Compute the line subset paths comprising the region boundary.
      * @return the line subset paths comprising the region boundary
      */
-    private List<Polyline> computeBoundaryPaths() {
-        final InteriorAngleLineSubsetConnector connector = new InteriorAngleLineSubsetConnector.Minimize();
+    private List<LinePath> computeBoundaryPaths() {
+        final InteriorAngleLinePathConnector connector = new InteriorAngleLinePathConnector.Minimize();
         connector.connect(boundaries());
 
         return connector.connectAll().stream()
-                .map(Polyline::simplify).collect(Collectors.toList());
+                .map(LinePath::simplify).collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */

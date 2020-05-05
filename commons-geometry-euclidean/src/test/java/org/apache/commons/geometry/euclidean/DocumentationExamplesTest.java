@@ -44,11 +44,11 @@ import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.Line;
 import org.apache.commons.geometry.euclidean.twod.LinecastPoint2D;
 import org.apache.commons.geometry.euclidean.twod.Lines;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Ray;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Segment;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.shape.Parallelogram;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
@@ -298,7 +298,7 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create a connected sequence of line segments forming the unit square
-        Polyline path = Polyline.builder(precision)
+        LinePath path = LinePath.builder(precision)
                 .append(Vector2D.ZERO)
                 .append(Vector2D.Unit.PLUS_X)
                 .append(Vector2D.of(1, 1))
@@ -322,9 +322,9 @@ public class DocumentationExamplesTest {
         double size = tree.getSize(); // 1.75
         Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
 
-        // get a polyline representing the boundary; a list is returned since trees
+        // get a line path representing the boundary; a list is returned since trees
         // can represent disjoint regions
-        List<Polyline> boundaries = tree.getBoundaryPaths(); // size = 1
+        List<LinePath> boundaries = tree.getBoundaryPaths(); // size = 1
 
         // ----------------
         Assert.assertEquals(1.75, size, TEST_EPS);

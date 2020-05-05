@@ -24,9 +24,9 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.LineConvexSubset;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.twod.rotation.Rotation2D;
 import org.junit.Assert;
 import org.junit.Test;
@@ -129,9 +129,9 @@ public class ParallelogramTest {
 
         // assert
         Assert.assertEquals(1, box.getBoundaryPaths().size());
-        Polyline path = box.getBoundaryPaths().get(0);
+        LinePath path = box.getBoundaryPaths().get(0);
 
-        List<LineConvexSubset> segments = path.getSequence();
+        List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(1, 2), Vector2D.of(3, 2));
@@ -147,9 +147,9 @@ public class ParallelogramTest {
 
         // assert
         Assert.assertEquals(1, box.getBoundaryPaths().size());
-        Polyline path = box.getBoundaryPaths().get(0);
+        LinePath path = box.getBoundaryPaths().get(0);
 
-        List<LineConvexSubset> segments = path.getSequence();
+        List<LineConvexSubset> segments = path.getElements();
         Assert.assertEquals(4, segments.size());
 
         assertSegment(segments.get(0), Vector2D.of(-1, -2), Vector2D.of(0, -2));

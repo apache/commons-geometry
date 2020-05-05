@@ -18,13 +18,13 @@ package org.apache.commons.geometry.euclidean.twod;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 
-/** Extension of the {@link BoundarySource} interface for Euclidean 2D
- * space.
+/** Extension of the {@link BoundarySource} interface for Euclidean 2D space.
  */
-public interface BoundarySource2D extends BoundarySource<LineConvexSubset> {
+public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Linecastable2D {
 
     /** Return a BSP tree constructed from the boundaries contained in this
      * instance. The default implementation creates a new, empty tree
@@ -36,6 +36,18 @@ public interface BoundarySource2D extends BoundarySource<LineConvexSubset> {
         tree.insert(this);
 
         return tree;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
+        return new BoundarySourceLinecaster2D(this).linecast(subset);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    default LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
+        return new BoundarySourceLinecaster2D(this).linecastFirst(subset);
     }
 
     /** Return a {@link BoundarySource2D} instance containing the given boundaries.

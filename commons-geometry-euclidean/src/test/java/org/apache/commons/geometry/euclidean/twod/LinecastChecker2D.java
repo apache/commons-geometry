@@ -25,7 +25,7 @@ import org.junit.Assert;
 
 /** Helper class designed to assist with linecast test assertions in 2D.
  */
-class LinecastChecker2D {
+public class LinecastChecker2D {
 
     private static final double TEST_EPS = 1e-10;
 
