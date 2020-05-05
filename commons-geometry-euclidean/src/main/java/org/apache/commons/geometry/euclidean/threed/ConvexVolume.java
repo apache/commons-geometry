@@ -26,9 +26,9 @@ import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBou
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
-import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.lines.Linecastable3D;
+import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.

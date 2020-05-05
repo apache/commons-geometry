@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.threed.lines.Lines3D;
-import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
+import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
+import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.junit.Test;
 
 public class BoundarySourceLinecaster3DTest {

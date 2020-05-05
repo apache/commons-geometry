@@ -581,7 +581,7 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
                 Represents a single (possibly infinite), convex area.
               </li>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/shapes/Circle.html">Circle</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/shape/Circle.html">Circle</a> -
                 Represents a circle.
               </li>
             </ul>
@@ -718,7 +718,7 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
                 Represents a single (possibly infinite), convex volume.
               </li>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/shapes/Sphere.html">Sphere</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/shape/Sphere.html">Sphere</a> -
                 Represents a sphere.
               </li>
             </ul>
@@ -743,15 +743,15 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
             Additional
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/lines/Line3D.html">Line3D</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Line3D.html">Line3D</a> -
                 Represents a line in 3D space.
               </li>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/lines/LineConvexSubset3D.html">LineConvexSubset3D</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/LineConvexSubset3D.html">LineConvexSubset3D</a> -
                 Represents a finite or infinite line convex subset. Subclasses include
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/lines/Segment3D.html">Segment3D</a>,
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/lines/Ray3D.html">Ray3D</a>, and
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/lines/ReverseRay3D.html">ReverseRay3D</a>.
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Segment3D.html">Segment3D</a>,
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Ray3D.html">Ray3D</a>, and
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/ReverseRay3D.html">ReverseRay3D</a>.
               </li>
             </ul>
           </li>

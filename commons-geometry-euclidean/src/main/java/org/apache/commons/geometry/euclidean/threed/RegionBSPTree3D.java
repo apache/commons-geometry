@@ -28,10 +28,10 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
-import org.apache.commons.geometry.euclidean.threed.lines.Line3D;
-import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
-import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.lines.Linecastable3D;
+import org.apache.commons.geometry.euclidean.threed.line.Line3D;
+import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 

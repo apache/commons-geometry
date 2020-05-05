@@ -22,9 +22,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.geometry.euclidean.threed.lines.LineConvexSubset3D;
-import org.apache.commons.geometry.euclidean.threed.lines.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.threed.lines.Linecastable3D;
+import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Linecastable3D;
 
 /** Class that performs linecast operations against arbitrary {@link BoundarySource3D}
  * instances. This class performs a brute-force computation of the intersections of the
