@@ -126,11 +126,6 @@ public class AbstractRegionEmbeddingHyperplaneSubsetTest {
         }
 
         @Override
-        public double getSize() {
-            return 0;
-        }
-
-        @Override
         public Builder<TestPoint2D> builder() {
             return null;
         }
