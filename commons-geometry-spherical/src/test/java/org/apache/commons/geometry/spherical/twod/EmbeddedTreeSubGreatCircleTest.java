@@ -20,9 +20,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -386,57 +383,6 @@ public class EmbeddedTreeSubGreatCircleTest {
     }
 
     @Test
-    public void testBuilder() {
-        // arrange
-        GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
-
-        EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle);
-
-        RegionBSPTree1S region = RegionBSPTree1S.empty();
-        region.add(AngularInterval.of(PlaneAngleRadians.PI, 1.25 * PlaneAngleRadians.PI, TEST_PRECISION));
-        region.add(AngularInterval.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION));
-
-        // act
-        EmbeddedTreeGreatCircleSubset.Builder builder = sub.builder();
-
-        builder.add(new EmbeddedTreeGreatCircleSubset(circle, region));
-        builder.add(circle.arc(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
-
-        EmbeddedTreeGreatCircleSubset result = builder.build();
-
-        // assert
-        List<GreatArc> arcs = result.toConvex();
-
-        Assert.assertEquals(2, arcs.size());
-        checkArc(arcs.get(0), Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0), Point2S.of(PlaneAngleRadians.PI_OVER_TWO, 0.25 * PlaneAngleRadians.PI));
-        checkArc(arcs.get(1), Point2S.PLUS_J, Point2S.MINUS_J);
-    }
-
-    @Test
-    public void testBuilder_invalidArgs() {
-        // arrange
-        GreatCircle circle = GreatCircles.fromPoints(Point2S.MINUS_K, Point2S.MINUS_J, TEST_PRECISION);
-        GreatCircle otherCircle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-
-        EmbeddedTreeGreatCircleSubset sub = new EmbeddedTreeGreatCircleSubset(circle);
-
-        EmbeddedTreeGreatCircleSubset.Builder builder = sub.builder();
-
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            builder.add(otherCircle.span());
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.add(new EmbeddedTreeGreatCircleSubset(otherCircle));
-        }, IllegalArgumentException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            builder.add(new UnknownHyperplaneSubset());
-        }, IllegalArgumentException.class);
-    }
-
-    @Test
     public void testToString() {
         // arrange
         GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
@@ -460,68 +406,5 @@ public class EmbeddedTreeSubGreatCircleTest {
     private static void checkArc(GreatArc arc, Point2S start, Point2S end) {
         SphericalTestUtils.assertPointsEq(start, arc.getStartPoint(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(end, arc.getEndPoint(), TEST_EPS);
-    }
-
-    private static class UnknownHyperplaneSubset implements HyperplaneSubset<Point2S> {
-
-        @Override
-        public Split<? extends HyperplaneSubset<Point2S>> split(Hyperplane<Point2S> splitter) {
-            return null;
-        }
-
-        @Override
-        public Hyperplane<Point2S> getHyperplane() {
-            return null;
-        }
-
-        @Override
-        public boolean isFull() {
-            return false;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public boolean isInfinite() {
-            return false;
-        }
-
-        @Override
-        public boolean isFinite() {
-            return false;
-        }
-
-        @Override
-        public double getSize() {
-            return 0;
-        }
-
-        @Override
-        public RegionLocation classify(Point2S point) {
-            return null;
-        }
-
-        @Override
-        public Point2S closest(Point2S point) {
-            return null;
-        }
-
-        @Override
-        public Builder<Point2S> builder() {
-            return null;
-        }
-
-        @Override
-        public HyperplaneSubset<Point2S> transform(Transform<Point2S> transform) {
-            return null;
-        }
-
-        @Override
-        public List<? extends HyperplaneConvexSubset<Point2S>> toConvex() {
-            return null;
-        }
     }
 }

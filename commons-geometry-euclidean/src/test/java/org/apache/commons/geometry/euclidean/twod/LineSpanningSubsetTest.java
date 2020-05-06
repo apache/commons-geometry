@@ -26,7 +26,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class LineSpanTest {
+public class LineSpanningSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 

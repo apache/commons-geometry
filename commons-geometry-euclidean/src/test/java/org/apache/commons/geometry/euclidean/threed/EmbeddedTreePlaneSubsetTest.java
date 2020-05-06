@@ -22,10 +22,6 @@ import java.util.List;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -412,42 +408,6 @@ public class EmbeddedTreePlaneSubsetTest {
     }
 
     @Test
-    public void testBuilder() {
-        // arrange
-        Plane mainPlane = Planes.fromPointAndPlaneVectors(
-                Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        EmbeddedTreePlaneSubset.Builder builder = new EmbeddedTreePlaneSubset.Builder(mainPlane);
-
-        ConvexArea a = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_Y), TEST_PRECISION);
-        ConvexArea b = ConvexArea.fromVertexLoop(
-                Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
-
-        Plane closePlane = Planes.fromPointAndPlaneVectors(
-                Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-
-        // act
-        builder.add(Planes.subsetFromConvexArea(closePlane, a));
-        builder.add(new EmbeddedTreePlaneSubset(closePlane, b.toTree()));
-
-        EmbeddedTreePlaneSubset result = builder.build();
-
-        // assert
-        Assert.assertFalse(result.isFull());
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertTrue(result.isFinite());
-        Assert.assertFalse(result.isInfinite());
-
-        checkPoints(result, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 1));
-        checkPoints(result, RegionLocation.OUTSIDE,
-                Vector3D.of(-1, 0.5, 1), Vector3D.of(2, 0.5, 1),
-                Vector3D.of(0.5, -1, 1), Vector3D.of(0.5, 2, 1));
-        checkPoints(result, RegionLocation.BOUNDARY,
-                Vector3D.of(0, 0, 1), Vector3D.of(1, 0, 1),
-                Vector3D.of(1, 1, 1), Vector3D.of(0, 1, 1));
-    }
-
-    @Test
     public void testSubPlaneAddMethods_validatesPlane() {
         // arrange
         EmbeddedTreePlaneSubset sp = new EmbeddedTreePlaneSubset(XY_PLANE, false);
@@ -466,47 +426,9 @@ public class EmbeddedTreePlaneSubsetTest {
         }, IllegalArgumentException.class);
     }
 
-    @Test
-    public void testBuilder_addUnknownType() {
-        // arrange
-        EmbeddedTreePlaneSubset.Builder sp = new EmbeddedTreePlaneSubset.Builder(XY_PLANE);
-
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            sp.add(new StubSubPlane(XY_PLANE));
-        }, IllegalArgumentException.class);
-    }
-
-    private static void checkPoints(EmbeddedTreePlaneSubset sp, RegionLocation loc, Vector3D... pts) {
+    private static void checkPoints(EmbeddedTreePlaneSubset ps, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
-            Assert.assertEquals("Unexpected subplane location for point " + pt, loc, sp.classify(pt));
-        }
-    }
-
-    private static class StubSubPlane extends PlaneSubset implements HyperplaneSubset<Vector3D> {
-
-        StubSubPlane(Plane plane) {
-            super(plane);
-        }
-
-        @Override
-        public Split<? extends HyperplaneSubset<Vector3D>> split(Hyperplane<Vector3D> splitter) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public HyperplaneSubset<Vector3D> transform(Transform<Vector3D> transform) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List<? extends HyperplaneConvexSubset<Vector3D>> toConvex() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public HyperplaneBoundedRegion<Vector2D> getSubspaceRegion() {
-            throw new UnsupportedOperationException();
+            Assert.assertEquals("Unexpected location for point " + pt, loc, ps.classify(pt));
         }
     }
 }

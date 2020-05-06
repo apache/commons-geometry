@@ -239,7 +239,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    private static class CutAngleConvexSubset implements HyperplaneConvexSubset<Point1S> {
+    private static final class CutAngleConvexSubset implements HyperplaneConvexSubset<Point1S> {
         /** The hyperplane containing for this instance. */
         private final CutAngle hyperplane;
 
@@ -380,7 +380,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
      * a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
      * for the correct functioning of partitioning code.
      */
-    public static final class CutAngleSubsetBuilder implements HyperplaneSubset.Builder<Point1S> {
+    private static final class CutAngleSubsetBuilder implements HyperplaneSubset.Builder<Point1S> {
         /** Base hyperplane subset for the builder. */
         private final CutAngleConvexSubset base;
 

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -31,7 +32,6 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Binary space partitioning (BSP) tree representing a region in three dimensional
@@ -353,8 +353,8 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          * @param reverse if true, the boundary contribution is reversed before being added to the total.
          */
         private void addBoundaryContribution(final HyperplaneSubset<Vector3D> boundary, boolean reverse) {
-            final EmbeddedTreePlaneSubset boundarySubset = (EmbeddedTreePlaneSubset) boundary;
-            final RegionBSPTree2D base = boundarySubset.getSubspaceRegion();
+            final PlaneSubset boundarySubset = (PlaneSubset) boundary;
+            final HyperplaneBoundedRegion<Vector2D> base = boundarySubset.getSubspaceRegion();
 
             final double area = base.getSize();
             final Vector2D baseBarycenter = base.getBarycenter();

@@ -274,4 +274,16 @@ public final class Lines {
         throw new IllegalArgumentException(MessageFormat.format(
                 "Invalid line subset interval: {0}, {1}", Double.toString(a), Double.toString(b)));
     }
+
+    /** Validate that the actual line is equivalent to the expected line, throwing an exception if not.
+     * @param expected the expected line
+     * @param actual the actual line
+     * @throws IllegalArgumentException if the actual line is not equivalent to the expected line
+     */
+    static void validateLinesEquivalent(final Line expected, final Line actual) {
+        if (!expected.eq(actual, expected.getPrecision())) {
+            throw new IllegalArgumentException("Arguments do not represent the same line. Expected " +
+                    expected + " but was " + actual + ".");
+        }
+    }
 }

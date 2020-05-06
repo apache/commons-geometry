@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.spherical.oned.CutAngle;
@@ -136,7 +134,7 @@ public final class EmbeddedTreeGreatCircleSubset extends GreatCircleSubset {
      *      a great circle equivalent to this instance
      */
     public void add(final GreatArc arc) {
-        validateGreatCircle(arc.getCircle());
+        GreatCircles.validateGreatCirclesEquivalent(getCircle(), arc.getCircle());
 
         region.add(arc.getSubspaceRegion());
     }
@@ -148,7 +146,7 @@ public final class EmbeddedTreeGreatCircleSubset extends GreatCircleSubset {
      *      a great circle equivalent to this instance
      */
     public void add(final EmbeddedTreeGreatCircleSubset subcircle) {
-        validateGreatCircle(subcircle.getCircle());
+        GreatCircles.validateGreatCirclesEquivalent(getCircle(), subcircle.getCircle());
 
         region.union(subcircle.getSubspaceRegion());
     }
@@ -166,67 +164,5 @@ public final class EmbeddedTreeGreatCircleSubset extends GreatCircleSubset {
             .append(']');
 
         return sb.toString();
-    }
-
-    /** Validate that the given great circle is equivalent to the circle
-     * defining this instance.
-     * @param inputCircle the great circle to validate
-     * @throws IllegalArgumentException if the argument is not equivalent
-     *      to the great circle for this instance
-     */
-    private void validateGreatCircle(final GreatCircle inputCircle) {
-        final GreatCircle circle = getCircle();
-
-        if (!circle.eq(inputCircle, circle.getPrecision())) {
-            throw new IllegalArgumentException("Argument is not on the same " +
-                    "great circle. Expected " + circle + " but was " +
-                    inputCircle);
-        }
-    }
-
-    /** {@link HyperplaneSubset.Builder} implementation for great circle subsets.
-     */
-    public static final class Builder implements HyperplaneSubset.Builder<Point2S> {
-
-        /** SubGreatCircle instance created by this builder. */
-        private final EmbeddedTreeGreatCircleSubset subcircle;
-
-        /** Construct a new instance for building regions for the given great circle.
-         * @param circle the underlying great circle for the region
-         */
-        public Builder(final GreatCircle circle) {
-            this.subcircle = new EmbeddedTreeGreatCircleSubset(circle);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneSubset<Point2S> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneConvexSubset<Point2S> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public EmbeddedTreeGreatCircleSubset build() {
-            return subcircle;
-        }
-
-        /** Internal method for adding hyperplane subsets to this builder.
-         * @param sub the hyperplane subset to add; either convex or non-convex
-         */
-        private void addInternal(final HyperplaneSubset<Point2S> sub) {
-            if (sub instanceof GreatArc) {
-                subcircle.add((GreatArc) sub);
-            } else if (sub instanceof EmbeddedTreeGreatCircleSubset) {
-                subcircle.add((EmbeddedTreeGreatCircleSubset) sub);
-            } else {
-                throw new IllegalArgumentException("Unsupported hyperplane subset type: " + sub.getClass().getName());
-            }
-        }
     }
 }

@@ -261,4 +261,16 @@ public final class Planes {
 
         return new PlaneConvexSubset(plane, area);
     }
+
+    /** Validate that the actual plane is equivalent to the expected plane, throwing an exception if not.
+     * @param expected the expected plane
+     * @param actual the actual plane
+     * @throws IllegalArgumentException if the actual plane is not equivalent to the expected plane
+     */
+    static void validatePlanesEquivalent(final Plane expected, final Plane actual) {
+        if (!expected.eq(actual, expected.getPrecision())) {
+            throw new IllegalArgumentException("Arguments do not represent the same plane. Expected " +
+                    expected + " but was " + actual + ".");
+        }
+    }
 }

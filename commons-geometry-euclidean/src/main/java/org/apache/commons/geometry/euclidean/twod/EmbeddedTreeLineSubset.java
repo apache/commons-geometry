@@ -22,8 +22,6 @@ import java.util.List;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -156,7 +154,7 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
      *      a line equivalent to this instance
      */
     public void add(final LineConvexSubset subset) {
-        validateLine(subset.getLine());
+        Lines.validateLinesEquivalent(getLine(), subset.getLine());
 
         region.add(subset.getInterval());
     }
@@ -168,7 +166,7 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
      *      a line equivalent to this instance
      */
     public void add(final EmbeddedTreeLineSubset subset) {
-        validateLine(subset.getLine());
+        Lines.validateLinesEquivalent(getLine(), subset.getLine());
 
         region.union(subset.getSubspaceRegion());
     }
@@ -196,67 +194,5 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
     @Override
     RegionLocation classifyAbscissa(final double abscissa) {
         return region.classify(abscissa);
-    }
-
-    /** Validate that the given line is equivalent to the line
-     * defining this instance.
-     * @param inputLine the line to validate
-     * @throws IllegalArgumentException if the given line is not equivalent
-     *      to the line for this instance
-     */
-    private void validateLine(final Line inputLine) {
-        final Line line = getLine();
-
-        if (!line.eq(inputLine, line.getPrecision())) {
-            throw new IllegalArgumentException("Argument is not on the same " +
-                    "line. Expected " + line + " but was " +
-                    inputLine);
-        }
-    }
-
-    /** {@link HyperplaneSubset.Builder} implementation for line subsets.
-     */
-    public static final class Builder implements HyperplaneSubset.Builder<Vector2D> {
-
-        /** Line subset instance created by this builder. */
-        private final EmbeddedTreeLineSubset lineSubset;
-
-        /** Construct a new instance for building a line subset for the given line.
-         * @param line the underlying line for the subset
-         */
-        public Builder(final Line line) {
-            this.lineSubset = new EmbeddedTreeLineSubset(line);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneSubset<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneConvexSubset<Vector2D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public EmbeddedTreeLineSubset build() {
-            return lineSubset;
-        }
-
-        /** Internal method for adding hyperplane subsets to this builder.
-         * @param sub the hyperplane subset to add; either convex or non-convex
-         */
-        private void addInternal(final HyperplaneSubset<Vector2D> sub) {
-            if (sub instanceof LineConvexSubset) {
-                lineSubset.add((LineConvexSubset) sub);
-            } else if (sub instanceof EmbeddedTreeLineSubset) {
-                lineSubset.add((EmbeddedTreeLineSubset) sub);
-            } else {
-                throw new IllegalArgumentException("Unsupported hyperplane subset type: " + sub.getClass().getName());
-            }
-        }
     }
 }

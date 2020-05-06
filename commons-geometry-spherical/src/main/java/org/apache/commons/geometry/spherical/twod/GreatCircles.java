@@ -127,4 +127,18 @@ public final class GreatCircles {
     public static GreatArc arcFromInterval(final GreatCircle circle, final AngularInterval.Convex interval) {
         return new GreatArc(circle, interval);
     }
+
+    /** Validate that the actual great circle is equivalent to the expected great circle,
+     * throwing an exception if not.
+     * @param expected the expected great circle
+     * @param actual the actual great circle
+     * @throws IllegalArgumentException if the actual great circle is not equivalent to the
+     *      expected great circle
+     */
+    static void validateGreatCirclesEquivalent(final GreatCircle expected, final GreatCircle actual) {
+        if (!expected.eq(actual, expected.getPrecision())) {
+            throw new IllegalArgumentException("Arguments do not represent the same great circle. Expected " +
+                    expected + " but was " + actual + ".");
+        }
+    }
 }

@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
-import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
@@ -118,7 +116,7 @@ public final class EmbeddedTreePlaneSubset extends PlaneSubset {
      *      a plane equivalent to this instance
      */
     public void add(final PlaneConvexSubset subset) {
-        validatePlane(subset.getPlane());
+        Planes.validatePlanesEquivalent(getPlane(), subset.getPlane());
 
         region.add(subset.getSubspaceRegion());
     }
@@ -129,70 +127,8 @@ public final class EmbeddedTreePlaneSubset extends PlaneSubset {
      *      a plane equivalent to this instance
      */
     public void add(final EmbeddedTreePlaneSubset subset) {
-        validatePlane(subset.getPlane());
+        Planes.validatePlanesEquivalent(getPlane(), subset.getPlane());
 
         region.union(subset.getSubspaceRegion());
-    }
-
-    /** Validate that the given plane is equivalent to the plane
-     * defining this instance.
-     * @param inputPlane plane to validate
-     * @throws IllegalArgumentException if the given plane is not equivalent
-     *      to the plane for this instance
-     */
-    private void validatePlane(final Plane inputPlane) {
-        final Plane plane = getPlane();
-
-        if (!plane.eq(inputPlane, plane.getPrecision())) {
-            throw new IllegalArgumentException("Argument is not on the same " +
-                    "plane. Expected " + plane + " but was " +
-                    inputPlane);
-        }
-    }
-
-    /** {@link HyperplaneSubset.Builder} implementation for plane subsets.
-     */
-    public static class Builder implements HyperplaneSubset.Builder<Vector3D> {
-
-        /** Plane subset instance created by this builder. */
-        private final EmbeddedTreePlaneSubset subset;
-
-        /** Construct a new instance for building a subset region for the given plane.
-         * @param plane the underlying plane for the subset
-         */
-        public Builder(final Plane plane) {
-            this.subset = new EmbeddedTreePlaneSubset(plane);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneSubset<Vector3D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void add(final HyperplaneConvexSubset<Vector3D> sub) {
-            addInternal(sub);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public EmbeddedTreePlaneSubset build() {
-            return subset;
-        }
-
-        /** Internal method for adding hyperplane subsets to this builder.
-         * @param sub the hyperplane subset to add; either convex or non-convex
-         */
-        private void addInternal(final HyperplaneSubset<Vector3D> sub) {
-            if (sub instanceof PlaneConvexSubset) {
-                subset.add((PlaneConvexSubset) sub);
-            } else if (sub instanceof EmbeddedTreePlaneSubset) {
-                subset.add((EmbeddedTreePlaneSubset) sub);
-            } else {
-                throw new IllegalArgumentException("Unsupported plane subset type: " + sub.getClass().getName());
-            }
-        }
     }
 }
