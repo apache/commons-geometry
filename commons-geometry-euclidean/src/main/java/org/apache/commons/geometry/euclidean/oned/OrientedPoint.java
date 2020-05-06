@@ -16,18 +16,18 @@
  */
 package org.apache.commons.geometry.euclidean.oned;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractHyperplane;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** This class represents a 1D oriented hyperplane.
@@ -36,6 +36,7 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  * boolean indicating if the direction is positive or negative.</p>
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see OrientedPoints
  */
 public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     implements Hyperplane<Vector1D> {
@@ -51,7 +52,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
      *      otherwise, it will point toward negative infinity.
      * @param precision precision context used to compare floating point values
      */
-    private OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
+    OrientedPoint(final Vector1D point, final boolean positiveFacing, final DoublePrecisionContext precision) {
         super(precision);
 
         this.point = point;
@@ -116,7 +117,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             transformedDir = transformedPoint.vectorTo(transformedPointPlusDir);
         }
 
-        return OrientedPoint.fromPointAndDirection(
+        return OrientedPoints.fromPointAndDirection(
                     transformedPoint,
                     transformedDir,
                     getPrecision()
@@ -177,10 +178,15 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return this.point;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     *
+     * <p>Since there are no subspaces in 1D, this method effectively returns a stub implementation of
+     * {@link HyperplaneConvexSubset}, the main purpose of which is to support the proper functioning
+     * of the partitioning code.</p>
+     */
     @Override
-    public SubOrientedPoint span() {
-        return new SubOrientedPoint(this);
+    public HyperplaneConvexSubset<Vector1D> span() {
+        return new OrientedPointConvexSubset(this);
     }
 
     /** Return true if this instance should be considered equivalent to the argument, using the
@@ -243,97 +249,18 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         return sb.toString();
     }
 
-    /** Create a new instance from the given location and boolean direction value.
-     * @param location the location of the hyperplane
-     * @param positiveFacing if true, the hyperplane will face toward positive infinity;
-     *      otherwise, it will point toward negative infinity.
-     * @param precision precision context used to compare floating point values
-     * @return a new instance
-     */
-    public static OrientedPoint fromLocationAndDirection(final double location, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
-        return fromPointAndDirection(Vector1D.of(location), positiveFacing, precision);
-    }
-
-    /** Create a new instance from the given point and boolean direction value.
-     * @param point the location of the hyperplane
-     * @param positiveFacing if true, the hyperplane will face toward positive infinity;
-     *      otherwise, it will point toward negative infinity.
-     * @param precision precision context used to compare floating point values
-     * @return a new instance
-     */
-    public static OrientedPoint fromPointAndDirection(final Vector1D point, final boolean positiveFacing,
-            final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, positiveFacing, precision);
-    }
-
-    /** Create a new instance from the given point and direction.
-     * @param point the location of the hyperplane
-     * @param direction the direction of the plus side of the hyperplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance oriented in the given direction
-     * @throws IllegalArgumentException if the direction is zero as evaluated by the
-     *      given precision context
-     */
-    public static OrientedPoint fromPointAndDirection(final Vector1D point, final Vector1D direction,
-            final DoublePrecisionContext precision) {
-        if (direction.isZero(precision)) {
-            throw new IllegalArgumentException("Oriented point direction cannot be zero");
-        }
-
-        final boolean positiveFacing = direction.getX() > 0;
-
-        return new OrientedPoint(point, positiveFacing, precision);
-    }
-
-    /** Create a new instance at the given point, oriented so that it is facing positive infinity.
-     * @param point the location of the hyperplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance oriented toward positive infinity
-     */
-    public static OrientedPoint createPositiveFacing(final Vector1D point, final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, true, precision);
-    }
-
-    /** Create a new instance at the given location, oriented so that it is facing positive infinity.
-     * @param location the location of the hyperplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance oriented toward positive infinity
-     */
-    public static OrientedPoint createPositiveFacing(final double location, final DoublePrecisionContext precision) {
-        return new OrientedPoint(Vector1D.of(location), true, precision);
-    }
-
-    /** Create a new instance at the given point, oriented so that it is facing negative infinity.
-     * @param point the location of the hyperplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance oriented toward negative infinity
-     */
-    public static OrientedPoint createNegativeFacing(final Vector1D point, final DoublePrecisionContext precision) {
-        return new OrientedPoint(point, false, precision);
-    }
-
-    /** Create a new instance at the given location, oriented so that it is facing negative infinity.
-     * @param location the location of the hyperplane
-     * @param precision precision context used to compare floating point values
-     * @return a new instance oriented toward negative infinity
-     */
-    public static OrientedPoint createNegativeFacing(final double location, final DoublePrecisionContext precision) {
-        return new OrientedPoint(Vector1D.of(location), false, precision);
-    }
-
-    /** {@link ConvexSubHyperplane} implementation for Euclidean 1D space. Since there are no subspaces in 1D,
+    /** {@link HyperplaneConvexSubset} implementation for Euclidean 1D space. Since there are no subspaces in 1D,
      * this is effectively a stub implementation, its main use being to allow for the correct functioning of
      * partitioning code.
      */
-    public static class SubOrientedPoint implements ConvexSubHyperplane<Vector1D> {
+    private static class OrientedPointConvexSubset implements HyperplaneConvexSubset<Vector1D> {
         /** The underlying hyperplane for this instance. */
         private final OrientedPoint hyperplane;
 
         /** Simple constructor.
          * @param hyperplane underlying hyperplane instance
          */
-        public SubOrientedPoint(final OrientedPoint hyperplane) {
+        OrientedPointConvexSubset(final OrientedPoint hyperplane) {
             this.hyperplane = hyperplane;
         }
 
@@ -411,11 +338,11 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public Split<SubOrientedPoint> split(final Hyperplane<Vector1D> splitter) {
+        public Split<OrientedPointConvexSubset> split(final Hyperplane<Vector1D> splitter) {
             final HyperplaneLocation side = splitter.classify(hyperplane.getPoint());
 
-            SubOrientedPoint minus = null;
-            SubOrientedPoint plus = null;
+            OrientedPointConvexSubset minus = null;
+            OrientedPointConvexSubset plus = null;
 
             if (side == HyperplaneLocation.MINUS) {
                 minus = this;
@@ -428,26 +355,26 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc} */
         @Override
-        public List<SubOrientedPoint> toConvex() {
-            return Arrays.asList(this);
+        public List<OrientedPointConvexSubset> toConvex() {
+            return Collections.singletonList(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint transform(final Transform<Vector1D> transform) {
-            return getHyperplane().transform(transform).span();
+        public OrientedPointConvexSubset transform(final Transform<Vector1D> transform) {
+            return new OrientedPointConvexSubset(getHyperplane().transform(transform));
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPointBuilder builder() {
-            return new SubOrientedPointBuilder(this);
+        public OrientedPointSubsetBuilder builder() {
+            return new OrientedPointSubsetBuilder(this);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint reverse() {
-            return new SubOrientedPoint(hyperplane.reverse());
+        public OrientedPointConvexSubset reverse() {
+            return new OrientedPointConvexSubset(hyperplane.reverse());
         }
 
         /** {@inheritDoc} */
@@ -463,36 +390,36 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         }
     }
 
-    /** {@link SubHyperplane.Builder} implementation for Euclidean 1D space. Similar to {@link SubOrientedPoint},
-     * this is effectively a stub implementation since there are no subspaces of 1D space. Its primary use is to allow
-     * for the correct functioning of partitioning code.
+    /** {@link HyperplaneSubset.Builder} implementation for Euclidean 1D space. Similar to
+     * {@link OrientedPointConvexSubset}, this is effectively a stub implementation since there are no subspaces
+     * of 1D space. Its primary use is to allow for the correct functioning of partitioning code.
      */
-    public static final class SubOrientedPointBuilder implements SubHyperplane.Builder<Vector1D> {
-        /** Base subhyperplane for the builder. */
-        private final SubOrientedPoint base;
+    private static final class OrientedPointSubsetBuilder implements HyperplaneSubset.Builder<Vector1D> {
+        /** Base hyperplane subset for the builder. */
+        private final OrientedPointConvexSubset base;
 
-        /** Construct a new instance using the given base subhyperplane.
-         * @param base base subhyperplane for the instance
+        /** Construct a new instance using the given base hyperplane subset.
+         * @param base base hyperplane subset for the instance
          */
-        private SubOrientedPointBuilder(final SubOrientedPoint base) {
+        OrientedPointSubsetBuilder(final OrientedPointConvexSubset base) {
             this.base = base;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(final SubHyperplane<Vector1D> sub) {
+        public void add(final HyperplaneSubset<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public void add(final ConvexSubHyperplane<Vector1D> sub) {
+        public void add(final HyperplaneConvexSubset<Vector1D> sub) {
             validateHyperplane(sub);
         }
 
         /** {@inheritDoc} */
         @Override
-        public SubOrientedPoint build() {
+        public OrientedPointConvexSubset build() {
             return base;
         }
 
@@ -508,12 +435,12 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
             return sb.toString();
         }
 
-        /** Validate the given subhyperplane lies on the same hyperplane.
-         * @param sub subhyperplane to validate
+        /** Validate that the given hyperplane subset lies on the same hyperplane as this instance.
+         * @param sub hyperplane subset to validate
          * @throws IllegalArgumentException if the argument does not lie on
          *      the same hyperplane as this instance
          */
-        private void validateHyperplane(final SubHyperplane<Vector1D> sub) {
+        private void validateHyperplane(final HyperplaneSubset<Vector1D> sub) {
             final OrientedPoint baseHyper = base.getHyperplane();
             final OrientedPoint inputHyper = (OrientedPoint) sub.getHyperplane();
 

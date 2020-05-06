@@ -46,13 +46,13 @@ public class RegionBSPTree2STest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final GreatCircle EQUATOR = GreatCircle.fromPoleAndU(
+    private static final GreatCircle EQUATOR = GreatCircles.fromPoleAndU(
             Vector3D.Unit.PLUS_Z, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final GreatCircle X_MERIDIAN = GreatCircle.fromPoleAndU(
+    private static final GreatCircle X_MERIDIAN = GreatCircles.fromPoleAndU(
             Vector3D.Unit.PLUS_Y, Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
-    private static final GreatCircle Y_MERIDIAN = GreatCircle.fromPoleAndU(
+    private static final GreatCircle Y_MERIDIAN = GreatCircles.fromPoleAndU(
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
@@ -627,12 +627,12 @@ public class RegionBSPTree2STest {
     @Test
     public void testSplit_both() {
         // arrange
-        GreatCircle c1 = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
+        GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
 
         RegionBSPTree2S tree = ConvexArea2S.fromBounds(c1, c2).toTree();
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2S> split = tree.split(splitter);
@@ -663,7 +663,7 @@ public class RegionBSPTree2STest {
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
                 ), TEST_PRECISION).toTree();
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, -1, 1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(0, -1, 1), TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2S> split = tree.split(splitter);
@@ -685,7 +685,7 @@ public class RegionBSPTree2STest {
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
                 ), TEST_PRECISION).toTree();
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, -1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(0, 1, -1), TEST_PRECISION);
 
         // act
         Split<RegionBSPTree2S> split = tree.split(splitter);
@@ -838,7 +838,7 @@ public class RegionBSPTree2STest {
     }
 
     /**
-     * Insert convex subhyperplanes defining the positive quadrant area.
+     * Insert hyperplane convex subsets defining the positive quadrant area.
      * @param tree
      */
     private static void insertPositiveQuadrant(RegionBSPTree2S tree) {
@@ -851,8 +851,8 @@ public class RegionBSPTree2STest {
 
     private static Point2S triangleBarycenter(Point2S p1, Point2S p2, Point2S p3) {
         // compute the barycenter using intersection mid point arcs
-        GreatCircle c1 = GreatCircle.fromPoints(p1, p2.slerp(p3, 0.5), TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPoints(p2, p1.slerp(p3, 0.5), TEST_PRECISION);
+        GreatCircle c1 = GreatCircles.fromPoints(p1, p2.slerp(p3, 0.5), TEST_PRECISION);
+        GreatCircle c2 = GreatCircles.fromPoints(p2, p1.slerp(p3, 0.5), TEST_PRECISION);
 
         return c1.intersection(c2);
     }
@@ -892,10 +892,10 @@ public class RegionBSPTree2STest {
         Point2S barycenter = region.getBarycenter();
         double size = region.getSize();
 
-        GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPole(barycenter.getVector(), TEST_PRECISION);
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
-            GreatCircle splitter = GreatCircle.fromPoints(barycenter, pt, TEST_PRECISION);
+            GreatCircle splitter = GreatCircles.fromPoints(barycenter, pt, TEST_PRECISION);
 
             Split<RegionBSPTree2S> split = region.split(splitter);
 

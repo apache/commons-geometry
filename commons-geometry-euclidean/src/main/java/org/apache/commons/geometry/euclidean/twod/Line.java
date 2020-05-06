@@ -16,6 +16,7 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
@@ -24,7 +25,6 @@ import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.numbers.arrays.LinearCombination;
@@ -54,9 +54,14 @@ import org.apache.commons.numbers.arrays.LinearCombination;
  * the set of points at zero offset, the left half plane is the set of
  * points with negative offsets and the right half plane is the set of
  * points with positive offsets.</p>
+ * @see Lines
  */
 public final class Line extends AbstractHyperplane<Vector2D>
     implements EmbeddingHyperplane<Vector2D, Vector1D> {
+
+    /** Format string for creating line string representations. */
+    static final String TO_STRING_FORMAT = "{0}[origin= {1}, direction= {2}]";
+
     /** The direction of the line as a normalized vector. */
     private final Vector2D direction;
 
@@ -68,7 +73,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param originOffset The signed distance between the line and the origin.
      * @param precision Precision context used to compare floating point numbers.
      */
-    private Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
+    Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
         super(precision);
 
         this.direction = direction;
@@ -132,7 +137,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
         final Vector2D tOrigin = transform.apply(origin);
         final Vector2D tOriginPlusDir = transform.apply(origin.add(getDirection()));
 
-        return fromPoints(tOrigin, tOriginPlusDir, getPrecision());
+        return Lines.fromPoints(tOrigin, tOriginPlusDir, getPrecision());
     }
 
     /** Get an object containing the current line transformed by the argument along with a
@@ -163,7 +168,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
         final Vector2D p1 = transform.apply(origin);
         final Vector2D p2 = transform.apply(origin.add(direction));
 
-        final Line tLine = Line.fromPoints(p1, p2, getPrecision());
+        final Line tLine = Lines.fromPoints(p1, p2, getPrecision());
 
         final Vector1D tSubspaceOrigin = tLine.toSubspace(p1);
         final Vector1D tSubspaceDirection = tSubspaceOrigin.vectorTo(tLine.toSubspace(p2));
@@ -178,62 +183,81 @@ public final class Line extends AbstractHyperplane<Vector2D>
 
     /** {@inheritDoc} */
     @Override
-    public Segment span() {
-        return segment(Interval.full());
+    public LineConvexSubset span() {
+        return Lines.span(this);
     }
 
-    /** Create a new line segment from the given interval.
-     * @param interval interval representing the 1D region for the line segment
-     * @return a new line segment on this line
-     */
-    public Segment segment(final Interval interval) {
-        return Segment.fromInterval(this, interval);
-    }
-
-    /** Create a new line segment from the given interval.
+    /** Create a new line segment from the given 1D interval. The returned line
+     * segment consists of all points between the two locations, regardless of the order the
+     * arguments are given.
      * @param a first 1D location for the interval
      * @param b second 1D location for the interval
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either of the locations is NaN or infinite
+     * @see Lines#segmentFromLocations(Line, double, double)
      */
     public Segment segment(final double a, final double b) {
-        return Segment.fromInterval(this, a, b);
+        return Lines.segmentFromLocations(this, a, b);
     }
 
-    /** Create a new line segment between the projections of the two
-     * given points onto this line.
+    /** Create a new line segment from two points. The returned segment represents all points on this line
+     * between the projected locations of {@code a} and {@code b}. The points may be given in any order.
      * @param a first point
      * @param b second point
      * @return a new line segment on this line
+     * @throws IllegalArgumentException if either point contains NaN or infinite coordinate values
+     * @see Lines#segmentFromPoints(Line, Vector2D, Vector2D)
      */
     public Segment segment(final Vector2D a, final Vector2D b) {
-        return Segment.fromInterval(this, toSubspace(a), toSubspace(b));
+        return Lines.segmentFromPoints(this, a, b);
     }
 
-    /** Create a new line segment that starts at infinity and continues along
-     * the line up to the projection of the given point.
-     * @param pt point defining the end point of the line segment; the end point
+    /** Create a new convex line subset that starts at infinity and continues along
+     * the line up to the projection of the given end point.
+     * @param endPoint point defining the end point of the line subset; the end point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a new, half-open line subset that ends at the given point
+     * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
+     * @see Lines#reverseRayFromPoint(Line, Vector2D)
      */
-    public Segment segmentTo(final Vector2D pt) {
-        return segment(Double.NEGATIVE_INFINITY, toSubspace(pt).getX());
+    public ReverseRay reverseRayTo(final Vector2D endPoint) {
+        return Lines.reverseRayFromPoint(this, endPoint);
     }
 
-    /** Create a new line segment that starts at the projection of the given point
-     * and continues in the direction of the line to infinity, similar to a ray.
-     * @param pt point defining the start point of the line segment; the start point
+    /** Create a new convex line subset that starts at infinity and continues along
+     * the line up to the given 1D location.
+     * @param endLocation the 1D location of the end of the half-line
+     * @return a new, half-open line subset that ends at the given 1D location
+     * @throws IllegalArgumentException if {@code endLocation} is NaN or infinite
+     * @see Lines#reverseRayFromLocation(Line, double)
+     */
+    public ReverseRay reverseRayTo(final double endLocation) {
+        return Lines.reverseRayFromLocation(this, endLocation);
+    }
+
+    /** Create a new ray instance that starts at the projection of the given point
+     * and continues in the direction of the line to infinity.
+     * @param startPoint point defining the start point of the ray; the start point
      *      is equal to the projection of this point onto the line
-     * @return a new, half-open line segment
+     * @return a ray starting at the projected point and extending along this line
+     *      to infinity
+     * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
+     * @see Lines#rayFromPoint(Line, Vector2D)
      */
-    public Segment segmentFrom(final Vector2D pt) {
-        return segment(toSubspace(pt).getX(), Double.POSITIVE_INFINITY);
+    public Ray rayFrom(final Vector2D startPoint) {
+        return Lines.rayFromPoint(this, startPoint);
     }
 
-    /** Create a new, empty subline based on this line.
-     * @return a new, empty subline based on this line
+    /** Create a new ray instance that starts at the given 1D location and continues in
+     * the direction of the line to infinity.
+     * @param startLocation 1D location defining the start point of the ray
+     * @return a ray starting at the given 1D location and extending along this line
+     *      to infinity
+     * @throws IllegalArgumentException if {@code startLocation} is NaN or infinite
+     * @see Lines#rayFromLocation(Line, double)
      */
-    public SubLine subline() {
-        return new SubLine(this);
+    public Ray rayFrom(final double startLocation) {
+        return Lines.rayFromLocation(this, startLocation);
     }
 
     /** Get the abscissa of the given point on the line. The abscissa represents
@@ -478,63 +502,10 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName())
-            .append("[origin= ")
-            .append(getOrigin())
-            .append(", direction= ")
-            .append(direction)
-            .append(']');
-
-        return sb.toString();
-    }
-
-    /** Create a line from two points lying on the line. The line points in the direction
-     * from {@code p1} to {@code p2}.
-     * @param p1 first point
-     * @param p2 second point
-     * @param precision precision context used to compare floating point values
-     * @return new line containing {@code p1} and {@code p2} and pointing in the direction
-     *      from {@code p1} to {@code p2}
-     * @throws IllegalArgumentException If the vector between {@code p1} and {@code p2} has zero length,
-     *      as evaluated by the given precision context
-     */
-    public static Line fromPoints(final Vector2D p1, final Vector2D p2, final DoublePrecisionContext precision) {
-        return fromPointAndDirection(p1, p1.vectorTo(p2), precision);
-    }
-
-    /** Create a line from a point and direction.
-     * @param pt point belonging to the line
-     * @param dir the direction of the line
-     * @param precision precision context used to compare floating point values
-     * @return new line containing {@code pt} and pointing in direction {@code dir}
-     * @throws IllegalArgumentException If {@code dir} has zero length, as evaluated by the
-     *      given precision context
-     */
-    public static Line fromPointAndDirection(final Vector2D pt, final Vector2D dir,
-            final DoublePrecisionContext precision) {
-        if (dir.isZero(precision)) {
-            throw new IllegalArgumentException("Line direction cannot be zero");
-        }
-
-        final Vector2D normalizedDir = dir.normalize();
-        final double originOffset = normalizedDir.signedArea(pt);
-
-        return new Line(normalizedDir, originOffset, precision);
-    }
-
-    /** Create a line from a point lying on the line and an angle relative to the abscissa (x) axis. Note that the
-     * line does not need to intersect the x-axis; the given angle is simply relative to it.
-     * @param pt point belonging to the line
-     * @param angle angle of the line with respect to abscissa (x) axis, in radians
-     * @param precision precision context used to compare floating point values
-     * @return new line containing {@code pt} and forming the given angle with the
-     *      abscissa (x) axis.
-     */
-    public static Line fromPointAndAngle(final Vector2D pt, final double angle,
-            final DoublePrecisionContext precision) {
-        final Vector2D.Unit dir = Vector2D.Unit.from(Math.cos(angle), Math.sin(angle));
-        return fromPointAndDirection(pt, dir, precision);
+        return MessageFormat.format(TO_STRING_FORMAT,
+                getClass().getSimpleName(),
+                getOrigin(),
+                getDirection());
     }
 
     /** Class containing a transformed line instance along with a subspace (1D) transform. The subspace

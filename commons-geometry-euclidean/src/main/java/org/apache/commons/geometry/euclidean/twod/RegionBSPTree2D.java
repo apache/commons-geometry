@@ -29,15 +29,17 @@ import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTreeVisitor;
 import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
+import org.apache.commons.geometry.euclidean.twod.path.InteriorAngleLinePathConnector;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 
 /** Binary space partitioning (BSP) tree representing a region in two dimensional
  * Euclidean space.
  */
 public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, RegionBSPTree2D.RegionNode2D>
-    implements BoundarySource2D, Linecastable2D {
+    implements BoundarySource2D {
 
-    /** List of line segment paths comprising the region boundary. */
-    private List<Polyline> boundaryPaths;
+    /** List of line subset paths comprising the region boundary. */
+    private List<LinePath> boundaryPaths;
 
     /** Create a new, empty region.
      */
@@ -67,28 +69,28 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public Iterable<Segment> boundaries() {
-        return createBoundaryIterable(b -> (Segment) b);
+    public Iterable<LineConvexSubset> boundaries() {
+        return createBoundaryIterable(b -> (LineConvexSubset) b);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<Segment> boundaryStream() {
+    public Stream<LineConvexSubset> boundaryStream() {
         return StreamSupport.stream(boundaries().spliterator(), false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<Segment> getBoundaries() {
-        return createBoundaryList(b -> (Segment) b);
+    public List<LineConvexSubset> getBoundaries() {
+        return createBoundaryList(b -> (LineConvexSubset) b);
     }
 
-    /** Get the boundary of the region as a list of connected line segment paths. The
-     * line segments are oriented such that their minus (left) side lies on the
+    /** Get the boundary of the region as a list of connected line subset paths.
+     * The line subset are oriented such that their minus (left) side lies on the
      * interior of the region.
-     * @return line segment paths representing the region boundary
+     * @return line subset paths representing the region boundary
      */
-    public List<Polyline> getBoundaryPaths() {
+    public List<LinePath> getBoundaryPaths() {
         if (boundaryPaths == null) {
             boundaryPaths = Collections.unmodifiableList(computeBoundaryPaths());
         }
@@ -165,8 +167,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint2D> linecast(final Segment segment) {
-        final LinecastVisitor visitor = new LinecastVisitor(segment, false);
+    public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
+        final LinecastVisitor visitor = new LinecastVisitor(subset, false);
         accept(visitor);
 
         return visitor.getResults();
@@ -174,22 +176,22 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
     /** {@inheritDoc} */
     @Override
-    public LinecastPoint2D linecastFirst(final Segment segment) {
-        final LinecastVisitor visitor = new LinecastVisitor(segment, true);
+    public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
+        final LinecastVisitor visitor = new LinecastVisitor(subset, true);
         accept(visitor);
 
         return visitor.getFirstResult();
     }
 
-    /** Compute the line segment paths comprising the region boundary.
-     * @return the line segment paths comprising the region boundary
+    /** Compute the line subset paths comprising the region boundary.
+     * @return the line subset paths comprising the region boundary
      */
-    private List<Polyline> computeBoundaryPaths() {
-        final InteriorAngleSegmentConnector connector = new InteriorAngleSegmentConnector.Minimize();
+    private List<LinePath> computeBoundaryPaths() {
+        final InteriorAngleLinePathConnector connector = new InteriorAngleLinePathConnector.Minimize();
         connector.connect(boundaries());
 
         return connector.connectAll().stream()
-                .map(Polyline::simplify).collect(Collectors.toList());
+                .map(LinePath::simplify).collect(Collectors.toList());
     }
 
     /** {@inheritDoc} */
@@ -202,7 +204,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             return new RegionSizeProperties<>(0, null);
         }
 
-        // compute the size based on the boundary segments
+        // compute the size based on the boundary line subsets
         double quadrilateralAreaSum = 0.0;
 
         double scaledSumX = 0.0;
@@ -212,9 +214,9 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         Vector2D endPoint;
         double signedArea;
 
-        for (final Segment segment : boundaries()) {
+        for (final LineConvexSubset boundary : boundaries()) {
 
-            if (segment.isInfinite()) {
+            if (boundary.isInfinite()) {
                 // at least on boundary is infinite, meaning that
                 // the size is also infinite
                 quadrilateralAreaSum = Double.POSITIVE_INFINITY;
@@ -222,8 +224,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                 break;
             }
 
-            startPoint = segment.getStartPoint();
-            endPoint = segment.getEndPoint();
+            startPoint = boundary.getStartPoint();
+            endPoint = boundary.getEndPoint();
 
             // compute the area
             signedArea = startPoint.signedArea(endPoint);
@@ -286,7 +288,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @return a new tree instance constructed from the given boundaries
      * @see #from(Iterable, boolean)
      */
-    public static RegionBSPTree2D from(final Iterable<Segment> boundaries) {
+    public static RegionBSPTree2D from(final Iterable<LineConvexSubset> boundaries) {
         return from(boundaries, false);
     }
 
@@ -297,7 +299,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      * @param full if true, the initial tree will contain the entire space
      * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree2D from(final Iterable<Segment> boundaries, final boolean full) {
+    public static RegionBSPTree2D from(final Iterable<LineConvexSubset> boundaries, final boolean full) {
         final RegionBSPTree2D tree = new RegionBSPTree2D(full);
         tree.insert(boundaries);
 
@@ -366,8 +368,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
      */
     private static final class LinecastVisitor implements BSPTreeVisitor<Vector2D, RegionNode2D> {
 
-        /** The line segment to intersect with the boundaries of the BSP tree. */
-        private final Segment linecastSegment;
+        /** The line subset to intersect with the boundaries of the BSP tree. */
+        private final LineConvexSubset linecastSubset;
 
         /** If true, the visitor will stop visiting the tree once the first linecast
          * point is determined.
@@ -380,13 +382,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         /** List of results from the linecast operation. */
         private final List<LinecastPoint2D> results = new ArrayList<>();
 
-        /** Create a new instance with the given intersecting line segment.
-         * @param linecastSegment segment to intersect with the BSP tree region boundary
+        /** Create a new instance with the given intersecting line subset.
+         * @param linecastSubset line subset to intersect with the BSP tree region boundary
          * @param firstOnly if true, the visitor will stop visiting the tree once the first
          *      linecast point is determined
          */
-        LinecastVisitor(final Segment linecastSegment, final boolean firstOnly) {
-            this.linecastSegment = linecastSegment;
+        LinecastVisitor(final LineConvexSubset linecastSubset, final boolean firstOnly) {
+            this.linecastSubset = linecastSubset;
             this.firstOnly = firstOnly;
         }
 
@@ -415,7 +417,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         @Override
         public Order visitOrder(final RegionNode2D internalNode) {
             final Line cut = (Line) internalNode.getCutHyperplane();
-            final Line line = linecastSegment.getLine();
+            final Line line = linecastSubset.getLine();
 
             final boolean plusIsNear = line.getDirection().dot(cut.getOffsetDirection()) < 0;
 
@@ -428,8 +430,8 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         @Override
         public Result visit(final RegionNode2D node) {
             if (node.isInternal()) {
-                // check if the line segment intersects the cut subhyperplane
-                final Line line = linecastSegment.getLine();
+                // check if the line subset intersects the node cut
+                final Line line = linecastSubset.getLine();
                 final Vector2D pt = ((Line) node.getCutHyperplane()).intersection(line);
 
                 if (pt != null) {
@@ -438,7 +440,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                         // we have results and we are now sure that no other intersection points will be
                         // found that are closer or at the same position on the intersecting line.
                         return Result.TERMINATE;
-                    } else if (linecastSegment.contains(pt)) {
+                    } else if (linecastSubset.contains(pt)) {
                         // we've potentially found a new linecast point; add it to the list of potential
                         // results
                         final LinecastPoint2D potentialResult = computeLinecastPoint(pt, node);
@@ -458,8 +460,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
         /** Compute the linecast point for the given intersection point and tree node, returning null
          * if the point does not actually lie on the region boundary.
          * @param pt intersection point
-         * @param node node containing the cut subhyperplane that the linecast line
-         *      intersected with
+         * @param node node containing the cut that the linecast line intersected with
          * @return a new linecast point instance or null if the intersection point does not lie
          *      on the region boundary
          */
@@ -485,7 +486,7 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
                     normal = normal.negate();
                 }
 
-                return new LinecastPoint2D(pt, normal, linecastSegment.getLine());
+                return new LinecastPoint2D(pt, normal, linecastSubset.getLine());
             }
 
             return null;

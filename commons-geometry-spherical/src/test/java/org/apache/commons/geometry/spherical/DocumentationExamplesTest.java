@@ -28,6 +28,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 import org.apache.commons.geometry.spherical.oned.RegionBSPTree1S;
 import org.apache.commons.geometry.spherical.twod.GreatArcPath;
 import org.apache.commons.geometry.spherical.twod.GreatCircle;
+import org.apache.commons.geometry.spherical.twod.GreatCircles;
 import org.apache.commons.geometry.spherical.twod.Point2S;
 import org.apache.commons.geometry.spherical.twod.RegionBSPTree2S;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -90,8 +91,8 @@ public class DocumentationExamplesTest {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
         // create two great circles
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
+        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, precision);
 
         // find the two intersection points of the great circles
         Point2S ptA = a.intersection(b); //(pi, pi/2)
@@ -117,7 +118,7 @@ public class DocumentationExamplesTest {
         RegionBSPTree2S tree = path.toTree();
 
         // split in two through the barycenter
-        GreatCircle splitter = GreatCircle.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
+        GreatCircle splitter = GreatCircles.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
         Split<RegionBSPTree2S> split = tree.split(splitter);
 
         // compute some properties for the minus side

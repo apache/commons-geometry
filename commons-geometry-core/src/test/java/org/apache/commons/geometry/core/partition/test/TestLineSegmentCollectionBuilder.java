@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 
-public class TestLineSegmentCollectionBuilder implements SubHyperplane.Builder<TestPoint2D> {
+public class TestLineSegmentCollectionBuilder implements HyperplaneSubset.Builder<TestPoint2D> {
 
     private final TestLine line;
 
@@ -35,22 +35,22 @@ public class TestLineSegmentCollectionBuilder implements SubHyperplane.Builder<T
 
     /** {@inheritDoc} */
     @Override
-    public void add(SubHyperplane<TestPoint2D> sub) {
-        for (ConvexSubHyperplane<TestPoint2D> convex : sub.toConvex()) {
+    public void add(HyperplaneSubset<TestPoint2D> sub) {
+        for (HyperplaneConvexSubset<TestPoint2D> convex : sub.toConvex()) {
             add(convex);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void add(ConvexSubHyperplane<TestPoint2D> convex) {
+    public void add(HyperplaneConvexSubset<TestPoint2D> convex) {
         TestLineSegment seg = (TestLineSegment) convex;
         addSegment(seg.getStart(), seg.getEnd());
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubHyperplane<TestPoint2D> build() {
+    public HyperplaneSubset<TestPoint2D> build() {
         List<TestLineSegment> segments = new ArrayList<>();
 
         for (SegmentInterval interval : intervals) {

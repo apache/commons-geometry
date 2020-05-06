@@ -21,11 +21,11 @@ import java.util.stream.Stream;
 import org.apache.commons.geometry.core.Point;
 
 /** Interface representing an object that can produce region boundaries as a stream
- * of convex subhyperplanes.
- * @param <C> Convex subhyperplane implementation type
+ * of hyperplane convex subsets.
+ * @param <C> Hyperplane convex subset implementation type
  */
 @FunctionalInterface
-public interface BoundarySource<C extends ConvexSubHyperplane<? extends Point<?>>> {
+public interface BoundarySource<C extends HyperplaneConvexSubset<? extends Point<?>>> {
 
     /** Return a stream containing the boundaries for this instance.
      * @return a stream containing the boundaries for this instance

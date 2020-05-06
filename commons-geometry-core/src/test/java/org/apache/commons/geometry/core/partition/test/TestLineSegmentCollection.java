@@ -22,16 +22,16 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 
 /** Class containing a collection line segments. This class should only be used for
  * testing purposes.
  */
-public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D> {
-    /** The collection of line-segments making up the subhyperplane.
+public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> {
+    /** The collection of line-segments making up the subset.
      */
     private final List<TestLineSegment> segments;
 
@@ -174,19 +174,19 @@ public class TestLineSegmentCollection implements SubHyperplane<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public List<ConvexSubHyperplane<TestPoint2D>> toConvex() {
+    public List<HyperplaneConvexSubset<TestPoint2D>> toConvex() {
         return new ArrayList<>(segments);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubHyperplane<TestPoint2D> transform(Transform<TestPoint2D> transform) {
+    public HyperplaneSubset<TestPoint2D> transform(Transform<TestPoint2D> transform) {
         throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubHyperplane.Builder<TestPoint2D> builder() {
+    public HyperplaneSubset.Builder<TestPoint2D> builder() {
         return new TestLineSegmentCollectionBuilder(segments.get(0).getHyperplane());
     }
 }

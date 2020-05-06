@@ -21,7 +21,7 @@ import org.apache.commons.geometry.core.Region;
 
 /** Interface representing regions with boundaries defined by hyperplanes or
  * portions of hyperplanes. This interface is intended to represent closed regions
- * with finite sizes as well as infinite and empty spaces. Regions of this type
+ * with finite sizes as well as infinite and empty regions. Regions of this type
  * can be recursively split by hyperplanes into similar regions.
  * @param <P> Point implementation type
  */

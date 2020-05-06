@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
@@ -186,8 +186,8 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
 
     /** {@inheritDoc} */
     @Override
-    public GreatArc trim(final ConvexSubHyperplane<Point2S> convexSubHyperplane) {
-        return (GreatArc) super.trim(convexSubHyperplane);
+    public GreatArc trim(final HyperplaneConvexSubset<Point2S> sub) {
+        return (GreatArc) super.trim(sub);
     }
 
     /** Return an instance representing the full spherical 2D space.
@@ -250,14 +250,14 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
             }
 
             if (prev != null && !cur.eq(prev, precision)) {
-                circles.add(GreatCircle.fromPoints(prev, cur, precision));
+                circles.add(GreatCircles.fromPoints(prev, cur, precision));
             }
 
             prev = cur;
         }
 
         if (close && cur != null && !cur.eq(first, precision)) {
-            circles.add(GreatCircle.fromPoints(cur, first, precision));
+            circles.add(GreatCircles.fromPoints(cur, first, precision));
         }
 
         if (!vertices.isEmpty() && circles.isEmpty()) {

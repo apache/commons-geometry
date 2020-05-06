@@ -17,9 +17,9 @@
 package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 
 /** BSP Tree implementation class for testing purposes.
@@ -32,15 +32,15 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
         return new TestNode(this);
     }
 
-    public void insert(final SubHyperplane<TestPoint2D> sub) {
+    public void insert(final HyperplaneSubset<TestPoint2D> sub) {
         insert(sub.toConvex());
     }
 
-    public void insert(final ConvexSubHyperplane<TestPoint2D> sub) {
+    public void insert(final HyperplaneConvexSubset<TestPoint2D> sub) {
         insert(sub, root -> { });
     }
 
-    public void insert(final Iterable<? extends ConvexSubHyperplane<TestPoint2D>> subs) {
+    public void insert(final Iterable<? extends HyperplaneConvexSubset<TestPoint2D>> subs) {
         subs.forEach(this::insert);
     }
 
@@ -58,6 +58,11 @@ public class TestBSPTree extends AbstractBSPTree<TestPoint2D, TestBSPTree.TestNo
             final AbstractBSPTree<TestPoint2D, TestBSPTree.TestNode> plus) {
 
         super.splitIntoTrees(splitter, minus, plus);
+    }
+
+    @Override
+    protected void copyNodeProperties(final TestNode src, final TestNode dst) {
+        // do nothing
     }
 
     /** BSP Tree node class for {@link TestBSPTree}.

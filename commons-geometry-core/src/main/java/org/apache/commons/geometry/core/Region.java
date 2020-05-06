@@ -20,7 +20,7 @@ package org.apache.commons.geometry.core;
  * into sets of points lying on the inside, outside, and boundary.
  * @param <P> Point implementation type
  */
-public interface Region<P extends Point<P>> {
+public interface Region<P extends Point<P>> extends Sized {
 
     /** Return true if the region spans the entire space. In other words,
      * a region is full if no points in the space are classified as
@@ -34,13 +34,6 @@ public interface Region<P extends Point<P>> {
      * @return true if the region is empty
      */
     boolean isEmpty();
-
-    /** Get the size of the region. The meaning of this will vary depending on
-     * the space and dimension of the region. For example, in Euclidean space,
-     * this will be a length in 1D, an area in 2D, and a volume in 3D.
-     * @return the size of the region
-     */
-    double getSize();
 
     /** Get the size of the boundary of the region. The size is a value in
      * the {@code d-1} dimension space. For example, in Euclidean space,

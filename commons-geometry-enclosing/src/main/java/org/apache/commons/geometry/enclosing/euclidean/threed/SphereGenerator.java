@@ -25,6 +25,7 @@ import org.apache.commons.geometry.enclosing.EnclosingBall;
 import org.apache.commons.geometry.enclosing.SupportBallGenerator;
 import org.apache.commons.geometry.enclosing.euclidean.twod.DiskGenerator;
 import org.apache.commons.geometry.euclidean.threed.Plane;
+import org.apache.commons.geometry.euclidean.threed.Planes;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.apache.commons.numbers.fraction.BigFraction;
@@ -61,7 +62,7 @@ public class SphereGenerator implements SupportBallGenerator<Vector3D> {
         }
         final Vector3D vC = support.get(2);
         if (support.size() < 4) {
-            final Plane p = Plane.fromPoints(vA, vB, vC, precision);
+            final Plane p = Planes.fromPoints(vA, vB, vC, precision);
             final EnclosingBall<Vector2D> disk =
                     new DiskGenerator().ballOnSupport(Arrays.asList(p.toSubspace(vA),
                                                                     p.toSubspace(vB),

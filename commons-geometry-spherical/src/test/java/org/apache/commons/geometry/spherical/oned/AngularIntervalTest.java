@@ -125,13 +125,13 @@ public class AngularIntervalTest {
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-3);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-2);
 
-        CutAngle zeroPos = CutAngle.createPositiveFacing(Point1S.ZERO, precisionA);
-        CutAngle zeroNeg = CutAngle.createNegativeFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroPos = CutAngles.createPositiveFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroNeg = CutAngles.createNegativeFacing(Point1S.ZERO, precisionA);
 
-        CutAngle piPos = CutAngle.createPositiveFacing(Point1S.PI, precisionA);
-        CutAngle piNeg = CutAngle.createNegativeFacing(Point1S.PI, precisionA);
+        CutAngle piPos = CutAngles.createPositiveFacing(Point1S.PI, precisionA);
+        CutAngle piNeg = CutAngles.createNegativeFacing(Point1S.PI, precisionA);
 
-        CutAngle almostPiPos = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI + 5e-3), precisionB);
+        CutAngle almostPiPos = CutAngles.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI + 5e-3), precisionB);
 
         // act/assert
         checkInterval(AngularInterval.of(zeroNeg, piPos), 0, PlaneAngleRadians.PI);
@@ -148,8 +148,8 @@ public class AngularIntervalTest {
     @Test
     public void testOf_orientedPoints_invalidArgs() {
         // arrange
-        CutAngle pt = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
-        CutAngle nan = CutAngle.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
+        CutAngle pt = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle nan = CutAngles.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -460,7 +460,7 @@ public class AngularIntervalTest {
     public void testSplit_full() {
         // arrange
         AngularInterval interval = AngularInterval.full();
-        CutAngle pt = CutAngle.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
+        CutAngle pt = CutAngles.createNegativeFacing(PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = interval.split(pt);
@@ -487,7 +487,7 @@ public class AngularIntervalTest {
     public void testSplit_interval_both() {
         // arrange
         AngularInterval interval = AngularInterval.of(PlaneAngleRadians.PI_OVER_TWO, PlaneAngleRadians.PI, TEST_PRECISION);
-        CutAngle cut = CutAngle.createNegativeFacing(0.75 * PlaneAngleRadians.PI, TEST_PRECISION);
+        CutAngle cut = CutAngles.createNegativeFacing(0.75 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree1S> split = interval.split(cut);
@@ -602,13 +602,13 @@ public class AngularIntervalTest {
         DoublePrecisionContext precisionA = new EpsilonDoublePrecisionContext(1e-3);
         DoublePrecisionContext precisionB = new EpsilonDoublePrecisionContext(1e-2);
 
-        CutAngle zeroPos = CutAngle.createPositiveFacing(Point1S.ZERO, precisionA);
-        CutAngle zeroNeg = CutAngle.createNegativeFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroPos = CutAngles.createPositiveFacing(Point1S.ZERO, precisionA);
+        CutAngle zeroNeg = CutAngles.createNegativeFacing(Point1S.ZERO, precisionA);
 
-        CutAngle piPos = CutAngle.createPositiveFacing(Point1S.PI, precisionA);
-        CutAngle piNeg = CutAngle.createNegativeFacing(Point1S.PI, precisionA);
+        CutAngle piPos = CutAngles.createPositiveFacing(Point1S.PI, precisionA);
+        CutAngle piNeg = CutAngles.createNegativeFacing(Point1S.PI, precisionA);
 
-        CutAngle almostPiPos = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI + 5e-3), precisionB);
+        CutAngle almostPiPos = CutAngles.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI + 5e-3), precisionB);
 
         // act/assert
         checkInterval(AngularInterval.Convex.of(zeroNeg, piPos), 0, PlaneAngleRadians.PI);
@@ -625,8 +625,8 @@ public class AngularIntervalTest {
     @Test
     public void testConvex_of_cutAngles_invalidArgs() {
         // arrange
-        CutAngle pt = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
-        CutAngle nan = CutAngle.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
+        CutAngle pt = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle nan = CutAngles.createPositiveFacing(Point1S.NaN, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -643,8 +643,8 @@ public class AngularIntervalTest {
 
         GeometryTestUtils.assertThrows(() -> {
             AngularInterval.Convex.of(
-                    CutAngle.createNegativeFacing(1, TEST_PRECISION),
-                    CutAngle.createPositiveFacing(0.5, TEST_PRECISION));
+                    CutAngles.createNegativeFacing(1, TEST_PRECISION),
+                    CutAngles.createPositiveFacing(0.5, TEST_PRECISION));
         }, IllegalArgumentException.class);
     }
 
@@ -670,7 +670,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_full() {
         // arrange
         AngularInterval.Convex full = AngularInterval.full();
-        CutAngle splitter = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = full.splitDiameter(splitter);
@@ -686,7 +686,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_full_splitOnZero() {
         // arrange
         AngularInterval.Convex full = AngularInterval.full();
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = full.splitDiameter(splitter);
@@ -702,7 +702,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_minus() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(0.1, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -718,7 +718,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_plus() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(-0.4 * PlaneAngleRadians.PI, 0.4 * PlaneAngleRadians.PI, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -734,7 +734,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_both_negativeFacingSplitter() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -750,7 +750,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_both_positiveFacingSplitter() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -766,7 +766,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_both_antipodal_negativeFacingSplitter() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -782,7 +782,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_both_antipodal_positiveFacingSplitter() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createPositiveFacing(Point1S.ZERO, TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(Point1S.ZERO, TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -798,7 +798,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_splitOnBoundary_negativeFacing() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(PlaneAngleRadians.PI_OVER_TWO, -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createNegativeFacing(Point1S.of(PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);
@@ -814,7 +814,7 @@ public class AngularIntervalTest {
     public void testSplitDiameter_splitOnBoundary_positiveFacing() {
         // arrange
         AngularInterval.Convex interval = AngularInterval.Convex.of(0, PlaneAngleRadians.PI, TEST_PRECISION);
-        CutAngle splitter = CutAngle.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
+        CutAngle splitter = CutAngles.createPositiveFacing(Point1S.of(PlaneAngleRadians.PI), TEST_PRECISION);
 
         // act
         Split<AngularInterval.Convex> split = interval.splitDiameter(splitter);

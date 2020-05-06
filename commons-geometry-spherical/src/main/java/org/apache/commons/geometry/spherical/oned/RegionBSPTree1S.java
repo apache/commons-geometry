@@ -25,8 +25,8 @@ import java.util.Objects;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -148,7 +148,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
      */
     public Split<RegionBSPTree1S> splitDiameter(final CutAngle splitter) {
 
-        final CutAngle opposite = CutAngle.fromPointAndDirection(
+        final CutAngle opposite = CutAngles.fromPointAndDirection(
                 splitter.getPoint().antipodal(),
                 !splitter.isPositiveFacing(),
                 splitter.getPrecision());
@@ -288,7 +288,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 min = min.reverse();
             }
         } else {
-            min = CutAngle.createNegativeFacing(0.0, precision);
+            min = CutAngles.createNegativeFacing(0.0, precision);
         }
 
         if (max != null) {
@@ -296,7 +296,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
                 max = max.reverse();
             }
         } else {
-            max = CutAngle.createPositiveFacing(PlaneAngleRadians.TWO_PI, precision);
+            max = CutAngles.createPositiveFacing(PlaneAngleRadians.TWO_PI, precision);
         }
 
         return AngularInterval.of(min, max);
@@ -487,7 +487,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
 
         /** {@inheritDoc} */
         @Override
-        protected boolean isPossibleClosestCut(final SubHyperplane<Point1S> cut, final Point1S target,
+        protected boolean isPossibleClosestCut(final HyperplaneSubset<Point1S> cut, final Point1S target,
                 final double minDist) {
             // since the space wraps around, consider any cut as possibly being the closest
             return true;

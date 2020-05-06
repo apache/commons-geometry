@@ -18,13 +18,14 @@ package org.apache.commons.geometry.euclidean;
 
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 
 /**
- * Class containing various euclidean-related test utilities.
+ * Class containing various Euclidean-related test utilities.
  */
 public final class EuclideanTestUtils {
 
@@ -228,6 +229,39 @@ public final class EuclideanTestUtils {
     public static void assertRegionLocation(Region<Vector3D> region, RegionLocation loc, Vector3D... pts) {
         for (Vector3D pt : pts) {
             Assert.assertEquals("Unexpected region location for point " + pt, loc, region.classify(pt));
+        }
+    }
+
+    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+     * @param sub
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(HyperplaneSubset<Vector1D> sub, RegionLocation loc, Vector1D... pts) {
+        for (Vector1D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
+        }
+    }
+
+    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+     * @param sub
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(HyperplaneSubset<Vector2D> sub, RegionLocation loc, Vector2D... pts) {
+        for (Vector2D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
+        }
+    }
+
+    /** Assert that all of the given points lie within the specified location relative to {@code sub}.
+     * @param sub
+     * @param loc
+     * @param pts
+     */
+    public static void assertRegionLocation(HyperplaneSubset<Vector3D> sub, RegionLocation loc, Vector3D... pts) {
+        for (Vector3D pt : pts) {
+            Assert.assertEquals("Unexpected region location for point " + pt, loc, sub.classify(pt));
         }
     }
 }

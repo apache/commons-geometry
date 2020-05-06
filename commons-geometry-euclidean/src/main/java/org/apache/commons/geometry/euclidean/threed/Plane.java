@@ -16,9 +16,6 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.commons.geometry.core.Transform;
@@ -27,12 +24,15 @@ import org.apache.commons.geometry.core.partitioning.EmbeddingHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.threed.line.Line3D;
+import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Class representing a plane in 3 dimensional Euclidean space.
+ * @see Planes
  */
 public final class Plane extends AbstractHyperplane<Vector3D>
     implements EmbeddingHyperplane<Vector3D, Vector2D> {
@@ -57,7 +57,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
      * @param originOffset offset of the origin with respect to the plane.
      * @param precision precision context used to compare floating point values
      */
-    private Plane(final Vector3D u, final Vector3D v, final Vector3D w, double originOffset,
+    Plane(final Vector3D u, final Vector3D v, final Vector3D w, double originOffset,
             final DoublePrecisionContext precision) {
 
         super(precision);
@@ -169,7 +169,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final Vector3D p1 = project(line.getOrigin());
         final Vector3D p2 = p1.add(projectedLineDirection);
 
-        return Line3D.fromPoints(p1, p2, getPrecision());
+        return Lines3D.fromPoints(p1, p2, getPrecision());
     }
 
     /**
@@ -223,7 +223,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final Vector3D p2 = transform.apply(origin.add(u));
         final Vector3D p3 = transform.apply(origin.add(v));
 
-        return fromPoints(p1, p2, p3, getPrecision());
+        return Planes.fromPoints(p1, p2, p3, getPrecision());
     }
 
     /** Get an object containing the current plane transformed by the argument along with a
@@ -255,7 +255,7 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         final Vector3D p2 = transform.apply(origin.add(u));
         final Vector3D p3 = transform.apply(origin.add(v));
 
-        final Plane tPlane = fromPoints(p1, p2, p3, getPrecision());
+        final Plane tPlane = Planes.fromPoints(p1, p2, p3, getPrecision());
 
         final Vector2D tSubspaceOrigin = tPlane.toSubspace(p1);
         final Vector2D tSubspaceU = tSubspaceOrigin.vectorTo(tPlane.toSubspace(p2));
@@ -374,8 +374,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
         if (getPrecision().eqZero(direction.norm())) {
             return null;
         }
-        final Vector3D point = intersection(this, other, Plane.fromNormal(direction, getPrecision()));
-        return Line3D.fromPointAndDirection(point, direction, getPrecision());
+        final Vector3D point = intersection(this, other, Planes.fromNormal(direction, getPrecision()));
+        return Lines3D.fromPointAndDirection(point, direction, getPrecision());
     }
 
     /**
@@ -426,8 +426,8 @@ public final class Plane extends AbstractHyperplane<Vector3D>
 
     /** {@inheritDoc} */
     @Override
-    public ConvexSubPlane span() {
-        return ConvexSubPlane.fromConvexArea(this, ConvexArea.full());
+    public PlaneConvexSubset span() {
+        return Planes.subsetFromConvexArea(this, ConvexArea.full());
     }
 
     /**
@@ -563,168 +563,6 @@ public final class Plane extends AbstractHyperplane<Vector3D>
             .append(']');
 
         return sb.toString();
-    }
-
-    /**
-     * Build a plane from a point and two (on plane) vectors.
-     * @param p the provided point (on plane)
-     * @param u u vector (on plane)
-     * @param v v vector (on plane)
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
-     */
-    public static Plane fromPointAndPlaneVectors(final Vector3D p, final Vector3D u, final Vector3D v,
-            final DoublePrecisionContext precision) {
-        final Vector3D uNorm = u.normalize();
-        final Vector3D vNorm = uNorm.orthogonal(v);
-        final Vector3D wNorm = uNorm.cross(vNorm).normalize();
-        final double originOffset = -p.dot(wNorm);
-
-        return new Plane(uNorm, vNorm, wNorm, originOffset, precision);
-    }
-
-    /**
-     * Build a plane from a normal.
-     * Chooses origin as point on plane.
-     * @param normal    normal direction to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
-     */
-    public static Plane fromNormal(final Vector3D normal, final DoublePrecisionContext precision) {
-        return fromPointAndNormal(Vector3D.ZERO, normal, precision);
-    }
-
-    /**
-     * Build a plane from a point and a normal.
-     *
-     * @param p         point belonging to the plane
-     * @param normal    normal direction to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalArgumentException if the norm of the given values is zero, NaN, or infinite.
-     */
-    public static Plane fromPointAndNormal(final Vector3D p, final Vector3D normal,
-            final DoublePrecisionContext precision) {
-        final Vector3D w = normal.normalize();
-        final double originOffset = -p.dot(w);
-
-        final Vector3D u = w.orthogonal();
-        final Vector3D v = w.cross(u);
-
-        return new Plane(u, v, w, originOffset, precision);
-    }
-
-    /**
-     * Build a plane from three points.
-     * <p>
-     * The plane is oriented in the direction of {@code (p2-p1) ^ (p3-p1)}
-     * </p>
-     *
-     * @param p1        first point belonging to the plane
-     * @param p2        second point belonging to the plane
-     * @param p3        third point belonging to the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane
-     * @throws IllegalArgumentException if the points do not define a unique plane
-     */
-    public static Plane fromPoints(final Vector3D p1, final Vector3D p2, final Vector3D p3,
-            final DoublePrecisionContext precision) {
-        return Plane.fromPoints(Arrays.asList(p1, p2, p3), precision);
-    }
-
-    /** Construct a plane from a collection of points lying on the plane. The plane orientation is
-     * determined by the overall orientation of the point sequence. For example, if the points wind
-     * around the z-axis in a counter-clockwise direction, then the plane normal will point up the
-     * +z axis. If the points wind in the opposite direction, then the plane normal will point down
-     * the -z axis. The {@code u} vector for the plane is set to the first non-zero vector between
-     * points in the sequence (ie, the first direction in the path).
-     *
-     * @param pts collection of sequenced points lying on the plane
-     * @param precision precision context used to compare floating point values
-     * @return a new plane containing the given points
-     * @throws IllegalArgumentException if the given collection does not contain at least 3 points or the
-     *      points do not define a unique plane
-     */
-    public static Plane fromPoints(final Collection<Vector3D> pts, final DoublePrecisionContext precision) {
-
-        if (pts.size() < 3) {
-            throw new IllegalArgumentException("At least 3 points are required to define a plane; " +
-                    "argument contains only " + pts.size() + ".");
-        }
-
-        final Iterator<Vector3D> it = pts.iterator();
-
-        final Vector3D startPt = it.next();
-
-        Vector3D u = null;
-        Vector3D w = null;
-
-        Vector3D currentPt;
-        Vector3D prevPt = startPt;
-
-        Vector3D currentVector = null;
-        Vector3D prevVector = null;
-
-        Vector3D cross = null;
-        double crossNorm;
-        double crossSumX = 0.0;
-        double crossSumY = 0.0;
-        double crossSumZ = 0.0;
-
-        boolean nonPlanar = false;
-
-        while (it.hasNext()) {
-            currentPt = it.next();
-
-            if (!currentPt.eq(prevPt, precision)) {
-                currentVector = startPt.vectorTo(currentPt);
-
-                if (u == null) {
-                    // save the first non-zero vector as our u vector
-                    u = currentVector.normalize();
-                }
-                if (prevVector != null) {
-                    cross = prevVector.cross(currentVector);
-
-                    crossSumX += cross.getX();
-                    crossSumY += cross.getY();
-                    crossSumZ += cross.getZ();
-
-                    crossNorm = cross.norm();
-
-                    if (!precision.eqZero(crossNorm)) {
-                        // the cross product has non-zero magnitude
-                        if (w == null) {
-                            // save the first non-zero cross product as our normal
-                            w = cross.normalize();
-                        } else if (!precision.eq(1.0, Math.abs(w.dot(cross) / crossNorm))) {
-                            // if the normalized dot product is not either +1 or -1, then
-                            // the points are not coplanar
-                            nonPlanar = true;
-                            break;
-                        }
-                    }
-                }
-
-                prevVector = currentVector;
-                prevPt = currentPt;
-            }
-        }
-
-        if (u == null || w == null || nonPlanar) {
-            throw new IllegalArgumentException("Points do not define a plane: " + pts);
-        }
-
-        if (w.dot(Vector3D.of(crossSumX, crossSumY, crossSumZ)) < 0) {
-            w = w.negate();
-        }
-
-        final Vector3D v = w.cross(u);
-        final double originOffset = -startPt.dot(w);
-
-        return new Plane(u, v, w, originOffset, precision);
     }
 
     /** Class containing a transformed plane instance along with a subspace (2D) transform. The subspace

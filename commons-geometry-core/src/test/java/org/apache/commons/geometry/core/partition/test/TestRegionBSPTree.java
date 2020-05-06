@@ -17,7 +17,7 @@
 package org.apache.commons.geometry.core.partition.test;
 
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -39,7 +39,7 @@ public final class TestRegionBSPTree extends AbstractRegionBSPTree<TestPoint2D, 
     /**
      * Expose the direct node cut method for easier creation of test tree structures.
      */
-    public void cutNode(final TestRegionNode node, final ConvexSubHyperplane<TestPoint2D> cut) {
+    public void cutNode(final TestRegionNode node, final HyperplaneConvexSubset<TestPoint2D> cut) {
         super.setNodeCut(node, cut, getSubtreeInitializer(RegionCutRule.MINUS_INSIDE));
     }
 

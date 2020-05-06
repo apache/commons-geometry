@@ -236,9 +236,9 @@ public class GreatArcPathTest {
         Point2S ptC = Point2S.of(1, PlaneAngleRadians.PI_OVER_TWO - 1);
         Point2S ptD = Point2S.of(2, PlaneAngleRadians.PI_OVER_TWO - 1);
 
-        GreatArc a = GreatArc.fromPoints(ptA, ptB, TEST_PRECISION);
-        GreatArc b = GreatArc.fromPoints(ptB, ptC, TEST_PRECISION);
-        GreatArc c = GreatArc.fromPoints(ptC, ptD, TEST_PRECISION);
+        GreatArc a = GreatCircles.arcFromPoints(ptA, ptB, TEST_PRECISION);
+        GreatArc b = GreatCircles.arcFromPoints(ptB, ptC, TEST_PRECISION);
+        GreatArc c = GreatCircles.arcFromPoints(ptC, ptD, TEST_PRECISION);
 
         // act
         GreatArcPath path = GreatArcPath.fromArcs(a, b, c);
@@ -262,7 +262,7 @@ public class GreatArcPathTest {
     @Test
     public void testFromArcs_full() {
         // arrange
-        GreatArc fullArc = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+        GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
 
         // act
         GreatArcPath path = GreatArcPath.fromArcs(fullArc);
@@ -286,7 +286,7 @@ public class GreatArcPathTest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        GreatArc fullArc = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
+        GreatArc fullArc = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION).span();
         GreatArcPath path = GreatArcPath.fromArcs(fullArc);
 
         // act
@@ -382,10 +382,10 @@ public class GreatArcPathTest {
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
+        GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
             .appendVertices(c, d)
             .append(e)
-            .append(GreatArc.fromPoints(e, a, TEST_PRECISION))
+            .append(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
             .build();
 
         // assert
@@ -418,10 +418,10 @@ public class GreatArcPathTest {
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.prepend(GreatArc.fromPoints(e, a, TEST_PRECISION))
+        GreatArcPath path = builder.prepend(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
             .prependPoints(Arrays.asList(c, d))
             .prepend(b)
-            .prepend(GreatArc.fromPoints(a, b, TEST_PRECISION))
+            .prepend(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
             .build();
 
         // assert
@@ -490,11 +490,11 @@ public class GreatArcPathTest {
         GreatArcPath.Builder builder = GreatArcPath.builder(TEST_PRECISION);
 
         // act
-        GreatArcPath path = builder.append(GreatArc.fromPoints(a, b, TEST_PRECISION))
-                .prepend(GreatArc.fromPoints(e, a, TEST_PRECISION))
+        GreatArcPath path = builder.append(GreatCircles.arcFromPoints(a, b, TEST_PRECISION))
+                .prepend(GreatCircles.arcFromPoints(e, a, TEST_PRECISION))
                 .append(c)
                 .prepend(d)
-                .append(GreatArc.fromPoints(c, d, TEST_PRECISION))
+                .append(GreatCircles.arcFromPoints(c, d, TEST_PRECISION))
                 .build();
 
         // assert
@@ -538,14 +538,14 @@ public class GreatArcPathTest {
             GreatArcPath.builder(TEST_PRECISION)
                 .append(Point2S.PLUS_I)
                 .append(Point2S.PLUS_J)
-                .append(GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
+                .append(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
         }, IllegalStateException.class, Pattern.compile("^Path arcs are not connected.*"));
 
         GeometryTestUtils.assertThrows(() -> {
             GreatArcPath.builder(TEST_PRECISION)
                 .prepend(Point2S.PLUS_I)
                 .prepend(Point2S.PLUS_J)
-                .prepend(GreatArc.fromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
+                .prepend(GreatCircles.arcFromPoints(Point2S.PLUS_K, Point2S.MINUS_J, TEST_PRECISION));
         }, IllegalStateException.class, Pattern.compile("^Path arcs are not connected.*"));
     }
 
@@ -554,13 +554,13 @@ public class GreatArcPathTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             GreatArcPath.builder(TEST_PRECISION)
-                .append(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
+                .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .append(Point2S.PLUS_J);
         }, IllegalStateException.class, Pattern.compile("^Cannot add point .* after full arc.*"));
 
         GeometryTestUtils.assertThrows(() -> {
             GreatArcPath.builder(TEST_PRECISION)
-                .prepend(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
+                .prepend(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .prepend(Point2S.PLUS_J);
         }, IllegalStateException.class, Pattern.compile("^Cannot add point .* before full arc.*"));
     }
@@ -586,7 +586,7 @@ public class GreatArcPathTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             GreatArcPath.builder(TEST_PRECISION)
-                .append(GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
+                .append(GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION).span())
                 .close();
         }, IllegalStateException.class, "Unable to close path: path is full");
     }
@@ -606,7 +606,7 @@ public class GreatArcPathTest {
     @Test
     public void testToString_singleFullArc() {
         // arrange
-        GreatArcPath path = GreatArcPath.fromArcs(GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
+        GreatArcPath path = GreatArcPath.fromArcs(GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION).span());
 
         // act
         String str = path.toString();

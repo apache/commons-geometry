@@ -1103,13 +1103,13 @@ public class AffineTransformMatrix3DTest {
 
         EuclideanTestUtils.permute(-10, 10, 1, (x, y, z) -> {
             Vector3D p3 = Vector3D.of(x, y, z);
-            Vector3D n = Plane.fromPoints(p1, p2, p3, TEST_PRECISION).getNormal();
+            Vector3D n = Planes.fromPoints(p1, p2, p3, TEST_PRECISION).getNormal();
 
             Vector3D t3 = transform.apply(p3);
 
             Plane tPlane = transform.preservesOrientation() ?
-                    Plane.fromPoints(t1, t2, t3, TEST_PRECISION) :
-                    Plane.fromPoints(t1, t3, t2, TEST_PRECISION);
+                    Planes.fromPoints(t1, t2, t3, TEST_PRECISION) :
+                    Planes.fromPoints(t1, t3, t2, TEST_PRECISION);
             Vector3D expected = tPlane.getNormal();
 
             Vector3D actual = normalTransform.apply(n).normalize();

@@ -23,16 +23,16 @@ import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBoundedRegion;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
- * The boundaries of this area, if any, are composed of convex subplanes.
+ * The boundaries of this area, if any, are composed of plane convex subsets.
  */
-public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, ConvexSubPlane>
-    implements BoundarySource3D, Linecastable3D {
+public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D, PlaneConvexSubset>
+    implements BoundarySource3D {
 
     /** Instance representing the full 3D volume. */
     private static final ConvexVolume FULL = new ConvexVolume(Collections.emptyList());
@@ -41,13 +41,13 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
      * represents the boundary of a convex area. No validation is performed.
      * @param boundaries the boundaries of the convex area
      */
-    protected ConvexVolume(final List<ConvexSubPlane> boundaries) {
+    protected ConvexVolume(final List<PlaneConvexSubset> boundaries) {
         super(boundaries);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Stream<ConvexSubPlane> boundaryStream() {
+    public Stream<PlaneConvexSubset> boundaryStream() {
         return getBoundaries().stream();
     }
 
@@ -60,7 +60,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
         double volumeSum = 0.0;
 
-        for (final ConvexSubPlane boundary : getBoundaries()) {
+        for (final PlaneConvexSubset boundary : getBoundaries()) {
             if (boundary.isInfinite()) {
                 return Double.POSITIVE_INFINITY;
             }
@@ -87,7 +87,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
         double sumY = 0.0;
         double sumZ = 0.0;
 
-        for (final ConvexSubPlane boundary : getBoundaries()) {
+        for (final PlaneConvexSubset boundary : getBoundaries()) {
             if (boundary.isInfinite()) {
                 return null;
             }
@@ -126,7 +126,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
     /** {@inheritDoc} */
     @Override
     public Split<ConvexVolume> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, ConvexSubPlane.class, ConvexVolume::new);
+        return splitInternal(splitter, this, PlaneConvexSubset.class, ConvexVolume::new);
     }
 
     /** Return a BSP tree representing the same region as this instance.
@@ -138,20 +138,8 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
     /** {@inheritDoc} */
     @Override
-    public List<LinecastPoint3D> linecast(final Segment3D segment) {
-        return new BoundarySourceLinecaster3D(this).linecast(segment);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public LinecastPoint3D linecastFirst(final Segment3D segment) {
-        return new BoundarySourceLinecaster3D(this).linecastFirst(segment);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ConvexSubPlane trim(final ConvexSubHyperplane<Vector3D> convexSubHyperplane) {
-        return (ConvexSubPlane) super.trim(convexSubHyperplane);
+    public PlaneConvexSubset trim(final HyperplaneConvexSubset<Vector3D> convexSubset) {
+        return (PlaneConvexSubset) super.trim(convexSubset);
     }
 
     /** Return a new instance transformed by the argument.
@@ -159,7 +147,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
      * @return a new instance transformed by the argument
      */
     public ConvexVolume transform(final Transform<Vector3D> transform) {
-        return transformInternal(transform, this, ConvexSubPlane.class, ConvexVolume::new);
+        return transformInternal(transform, this, PlaneConvexSubset.class, ConvexVolume::new);
     }
 
     /** Return an instance representing the full 3D volume.
@@ -196,7 +184,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
      *      meaning that there is no region that is on the minus side of all of the bounding planes.
      */
     public static ConvexVolume fromBounds(final Iterable<Plane> boundingPlanes) {
-        final List<ConvexSubPlane> facets = new ConvexRegionBoundaryBuilder<>(ConvexSubPlane.class)
+        final List<PlaneConvexSubset> facets = new ConvexRegionBoundaryBuilder<>(PlaneConvexSubset.class)
                 .build(boundingPlanes);
         return facets.isEmpty() ? full() : new ConvexVolume(facets);
     }

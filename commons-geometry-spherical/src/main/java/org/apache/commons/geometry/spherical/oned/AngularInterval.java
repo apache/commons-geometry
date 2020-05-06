@@ -246,8 +246,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
             return Collections.singletonList(new Convex(minBoundary, maxBoundary));
         }
 
-        final CutAngle midPos = CutAngle.createPositiveFacing(midpoint, minBoundary.getPrecision());
-        final CutAngle midNeg = CutAngle.createNegativeFacing(midpoint, maxBoundary.getPrecision());
+        final CutAngle midPos = CutAngles.createPositiveFacing(midpoint, minBoundary.getPrecision());
+        final CutAngle midNeg = CutAngles.createNegativeFacing(midpoint, maxBoundary.getPrecision());
 
         return Arrays.asList(
                     new Convex(minBoundary, midPos),
@@ -349,8 +349,8 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
         final Point1S adjustedMax = max.above(min);
 
         return factory.apply(
-                    CutAngle.createNegativeFacing(min, precision),
-                    CutAngle.createPositiveFacing(adjustedMax, precision)
+                    CutAngles.createNegativeFacing(min, precision),
+                    CutAngles.createPositiveFacing(adjustedMax, precision)
                 );
     }
 
@@ -384,7 +384,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
 
         final CutAngle min = a.isPositiveFacing() ? b : a;
         final CutAngle max = a.isPositiveFacing() ? a : b;
-        final CutAngle adjustedMax = CutAngle.createPositiveFacing(
+        final CutAngle adjustedMax = CutAngles.createPositiveFacing(
                 max.getPoint().above(min.getPoint()),
                 max.getPrecision());
 
@@ -487,7 +487,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
          */
         public Split<Convex> splitDiameter(final CutAngle splitter) {
 
-            final CutAngle opposite = CutAngle.fromPointAndDirection(
+            final CutAngle opposite = CutAngles.fromPointAndDirection(
                     splitter.getPoint().antipodal(),
                     !splitter.isPositiveFacing(),
                     splitter.getPrecision());

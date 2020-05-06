@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -32,6 +31,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -85,7 +85,7 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_singleBound() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(circle);
@@ -115,8 +115,8 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_lune_intersectionAtPoles() {
         // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_K, Point2S.PLUS_I, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoints(
                 Point2S.of(0.25 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO), Point2S.PLUS_K, TEST_PRECISION);
 
         // act
@@ -151,8 +151,8 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_lune_intersectionAtEquator() {
         // arrange
-        GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoints(Point2S.PLUS_J, Point2S.PLUS_K, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(a, b);
@@ -188,9 +188,9 @@ public class ConvexArea2STest {
     @Test
     public void testFromBounds_triangle_large() {
         // arrange
-        GreatCircle a = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(Arrays.asList(a, b, c));
@@ -237,9 +237,9 @@ public class ConvexArea2STest {
         Point2S p2 = Point2S.of(azMax, polarBottom);
         Point2S p3 = Point2S.of(azMid, polarTop);
 
-        GreatCircle a = GreatCircle.fromPoints(p1, p2, TEST_PRECISION);
-        GreatCircle b = GreatCircle.fromPoints(p2, p3, TEST_PRECISION);
-        GreatCircle c = GreatCircle.fromPoints(p3, p1, TEST_PRECISION);
+        GreatCircle a = GreatCircles.fromPoints(p1, p2, TEST_PRECISION);
+        GreatCircle b = GreatCircles.fromPoints(p2, p3, TEST_PRECISION);
+        GreatCircle c = GreatCircles.fromPoints(p3, p1, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(Arrays.asList(a, b, c));
@@ -282,10 +282,10 @@ public class ConvexArea2STest {
         Point2S p3 = Point2S.of(0.2, 0.5);
         Point2S p4 = Point2S.of(0.3, 0.2);
 
-        GreatCircle c1 = GreatCircle.fromPoints(p1, p2, TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPoints(p2, p3, TEST_PRECISION);
-        GreatCircle c3 = GreatCircle.fromPoints(p3, p4, TEST_PRECISION);
-        GreatCircle c4 = GreatCircle.fromPoints(p4, p1, TEST_PRECISION);
+        GreatCircle c1 = GreatCircles.fromPoints(p1, p2, TEST_PRECISION);
+        GreatCircle c2 = GreatCircles.fromPoints(p2, p3, TEST_PRECISION);
+        GreatCircle c3 = GreatCircles.fromPoints(p3, p4, TEST_PRECISION);
+        GreatCircle c4 = GreatCircles.fromPoints(p4, p1, TEST_PRECISION);
 
         // act
         ConvexArea2S area = ConvexArea2S.fromBounds(c1, c2, c3, c4);
@@ -539,7 +539,7 @@ public class ConvexArea2STest {
     @Test
     public void testBoundaryStream() {
         // arrange
-        GreatCircle circle = GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION);
         ConvexArea2S area = ConvexArea2S.fromBounds(circle);
 
         // act
@@ -566,7 +566,7 @@ public class ConvexArea2STest {
     public void testGetInteriorAngles_noAngles() {
         // act/assert
         Assert.assertEquals(0, ConvexArea2S.full().getInteriorAngles().length);
-        Assert.assertEquals(0, ConvexArea2S.fromBounds(GreatCircle.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION))
+        Assert.assertEquals(0, ConvexArea2S.fromBounds(GreatCircles.fromPole(Vector3D.Unit.PLUS_X, TEST_PRECISION))
                 .getInteriorAngles().length);
     }
 
@@ -577,7 +577,7 @@ public class ConvexArea2STest {
         Point2S p2 = Point2S.PLUS_I;
         Point2S p4 = Point2S.PLUS_J;
 
-        GreatCircle base = GreatCircle.fromPoints(p2, p4, TEST_PRECISION);
+        GreatCircle base = GreatCircles.fromPoints(p2, p4, TEST_PRECISION);
         GreatCircle c1 = base.transform(Transform2S.createRotation(p2, -0.2));
         GreatCircle c2 = base.transform(Transform2S.createRotation(p4, 0.1));
 
@@ -637,24 +637,24 @@ public class ConvexArea2STest {
     @Test
     public void testTrim() {
         // arrange
-        GreatCircle c1 = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
+        GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
 
-        GreatCircle slanted = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
+        GreatCircle slanted = GreatCircles.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         ConvexArea2S area = ConvexArea2S.fromBounds(c1, c2);
 
         // act/assert
-        checkArc(area.trim(GreatArc.fromPoints(Point2S.of(0.1, PlaneAngleRadians.PI_OVER_TWO), Point2S.MINUS_I, TEST_PRECISION)),
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.1, PlaneAngleRadians.PI_OVER_TWO), Point2S.MINUS_I, TEST_PRECISION)),
                 Point2S.PLUS_J, Point2S.of(0.75 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO));
 
-        checkArc(area.trim(GreatArc.fromPoints(Point2S.MINUS_I, Point2S.of(0.2, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION)),
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.of(0.2, PlaneAngleRadians.PI_OVER_TWO), TEST_PRECISION)),
                 Point2S.of(0.75 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO), Point2S.PLUS_J);
 
-        checkArc(area.trim(GreatArc.fromPoints(Point2S.of(0.6 * PlaneAngleRadians.PI, 0.1), Point2S.of(0.7 * PlaneAngleRadians.PI, 0.8), TEST_PRECISION)),
+        checkArc(area.trim(GreatCircles.arcFromPoints(Point2S.of(0.6 * PlaneAngleRadians.PI, 0.1), Point2S.of(0.7 * PlaneAngleRadians.PI, 0.8), TEST_PRECISION)),
                 Point2S.of(0.6 * PlaneAngleRadians.PI, 0.1), Point2S.of(0.7 * PlaneAngleRadians.PI, 0.8));
 
-        Assert.assertNull(area.trim(GreatArc.fromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION)));
+        Assert.assertNull(area.trim(GreatCircles.arcFromPoints(Point2S.MINUS_I, Point2S.MINUS_J, TEST_PRECISION)));
 
         checkArc(area.trim(slanted.span()), c1.intersection(slanted), slanted.intersection(c2));
     }
@@ -662,12 +662,12 @@ public class ConvexArea2STest {
     @Test
     public void testSplit_both() {
         // arrange
-        GreatCircle c1 = GreatCircle.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        GreatCircle c2 = GreatCircle.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
+        GreatCircle c1 = GreatCircles.fromPole(Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        GreatCircle c2 = GreatCircles.fromPole(Vector3D.of(1, 1, 0), TEST_PRECISION);
 
         ConvexArea2S area = ConvexArea2S.fromBounds(c1, c2);
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(-1, 0, 1), TEST_PRECISION);
 
         // act
         Split<ConvexArea2S> split = area.split(splitter);
@@ -694,7 +694,7 @@ public class ConvexArea2STest {
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
                 ), TEST_PRECISION);
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, -1, 1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(0, -1, 1), TEST_PRECISION);
 
         // act
         Split<ConvexArea2S> split = area.split(splitter);
@@ -713,7 +713,7 @@ public class ConvexArea2STest {
                     Point2S.PLUS_I, Point2S.PLUS_K, Point2S.MINUS_J
                 ), TEST_PRECISION);
 
-        GreatCircle splitter = GreatCircle.fromPole(Vector3D.of(0, 1, -1), TEST_PRECISION);
+        GreatCircle splitter = GreatCircles.fromPole(Vector3D.of(0, 1, -1), TEST_PRECISION);
 
         // act
         Split<ConvexArea2S> split = area.split(splitter);
@@ -807,10 +807,10 @@ public class ConvexArea2STest {
 
         SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, barycenter);
 
-        GreatCircle circle = GreatCircle.fromPole(barycenter.getVector(), TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPole(barycenter.getVector(), TEST_PRECISION);
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
-            GreatCircle splitter = GreatCircle.fromPoints(barycenter, pt, TEST_PRECISION);
+            GreatCircle splitter = GreatCircles.fromPoints(barycenter, pt, TEST_PRECISION);
 
             Split<ConvexArea2S> split = area.split(splitter);
 

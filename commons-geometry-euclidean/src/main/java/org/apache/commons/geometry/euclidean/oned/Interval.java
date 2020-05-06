@@ -117,6 +117,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * does not exist.
      * @return true if the region is infinite
      */
+    @Override
     public boolean isInfinite() {
         return minBoundary == null || maxBoundary == null;
     }
@@ -125,6 +126,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
      * boundaries exist and the region size is finite.
      * @return true if the region is finite
      */
+    @Override
     public boolean isFinite() {
         return !isInfinite();
     }
@@ -312,9 +314,9 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
                 low = this;
             } else {
                 // the interval is split in two
-                low = new Interval(minBoundary, OrientedPoint.createPositiveFacing(
+                low = new Interval(minBoundary, OrientedPoints.createPositiveFacing(
                         splitPoint, splitOrientedPoint.getPrecision()));
-                high = new Interval(OrientedPoint.createNegativeFacing(
+                high = new Interval(OrientedPoints.createNegativeFacing(
                         splitPoint, splitOrientedPoint.getPrecision()), maxBoundary);
             }
         }
@@ -365,11 +367,11 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
         final double max = Math.max(a, b);
 
         final OrientedPoint minBoundary = Double.isFinite(min) ?
-                OrientedPoint.fromLocationAndDirection(min, false, precision) :
+                OrientedPoints.fromLocationAndDirection(min, false, precision) :
                 null;
 
         final OrientedPoint maxBoundary = Double.isFinite(max) ?
-                OrientedPoint.fromLocationAndDirection(max, true, precision) :
+                OrientedPoints.fromLocationAndDirection(max, true, precision) :
                 null;
 
         if (minBoundary == null && maxBoundary == null) {

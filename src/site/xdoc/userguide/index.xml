@@ -252,20 +252,13 @@ v1.eq(v3, precision); // true - approximately equal according to the given preci
           distance from the point to the closest point on the hyperplane, with the sign of the distance being positive
           if the point lies on the plus side of the hyperplane and minus otherwise. Points lying directly on the
           hyperplane have an offset of zero.
-         </p>
-         <p>
-          A subset of the points in a hyperplane is called a <em>subhyperplane</em>.
-          A triangular facet of a polyhedron in Euclidean 3D space, for example, is a subhyperplane because its
-          interior represents a subset of the plane defined by the three points. Any subset of the points in a
-          hyperplane is a subhyperplane; the region does not need to be contiguous or even finite. In fact, a
-          subhyperplane can contain the entire hyperplane itself.
         </p>
         <p>
           Hyperplanes place a key role in <em>Commons Geometry</em> not only because of their importance geometrically but also
           because they form the basis for the region classes and algorithms, such as <a href="#bsp_trees">BSP trees</a>.
           Hyperplanes are represented in code with the
           <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a>
-          interface, with each space and dimension contains its own custom implementation. Users are not intended to
+          interface, with each space and dimension containing its own custom implementation. Users are not intended to
           implement this interface.
         </p>
       </subsection>
@@ -332,7 +325,7 @@ RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
 // insert a "structural" cut, meaning a cut whose children have the same inside/outside
 // status as the parent; this will help keep our tree balanced and limit its overall height
-tree.getRoot().insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
+tree.getRoot().insertCut(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), precision),
         RegionCutRule.INHERIT);
 
 RegionBSPTree2D.RegionNode2D currentNode;
@@ -340,18 +333,18 @@ RegionBSPTree2D.RegionNode2D currentNode;
 // insert on the plus side of the structural diagonal cut
 currentNode = tree.getRoot().getPlus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
+currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision));
 currentNode = currentNode.getMinus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
+currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y, precision));
 
 // insert on the plus side of the structural diagonal cut
 currentNode = tree.getRoot().getMinus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
+currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.Unit.MINUS_X, precision));
 currentNode = currentNode.getMinus();
 
-currentNode.insertCut(Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
+currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.MINUS_Y, precision));
 
 // compute some tree properties
 int count = tree.count(); // number of nodes in the tree = 11
@@ -362,7 +355,7 @@ Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
 
         <h5>Standard BSP Tree Region Creation</h5>
         <p>
-          The example below uses the standard approach to building BSP tree regions by inserting subhyperplanes
+          The example below uses the standard approach to building BSP tree regions by inserting hyperplane subsets
           into the tree. The shape is the same as the example above.
         </p>
         <source>
@@ -371,12 +364,12 @@ DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 // create a tree representing an empty space (nothing "inside")
 RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
-// insert the subhyperplanes
+// insert the hyperplane subsets
 tree.insert(Arrays.asList(
-            Segment.fromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
-            Segment.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
-            Segment.fromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
-            Segment.fromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
+            Lines.segmentFromPoints(Vector2D.ZERO, Vector2D.of(1, 0), precision),
+            Lines.segmentFromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), precision),
+            Lines.segmentFromPoints(Vector2D.of(1, 1), Vector2D.of(0, 1), precision),
+            Lines.segmentFromPoints(Vector2D.of(0, 1), Vector2D.ZERO, precision)
         ));
 
 // compute some tree properties
@@ -411,11 +404,6 @@ Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
               <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/Hyperplane.html">Hyperplane</a> -
               Geometric primitive; serves to partition the space.
             </li>
-            <li>
-              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/ConvexSubHyperplane.html">ConvexSubHyperplane</a> -
-              Represents convex regions embedded in hyperplanes. This interface is frequently used to define the boundaries
-              of regions, such as the facets of polyhedrons in Euclidean 3D space.
-            </li>
           </ul>
         </li>
         <li>
@@ -431,17 +419,25 @@ Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
           <strong><em>One or more</em> implementations of...</strong>
           <ul>
             <li>
-                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/SubHyperplane.html">SubHyperplane</a> -
-                Represents an arbitrary region embedded in a hyperplane, such as a 2D polygon on a 3D plane in Euclidean space.
-                This is a base interface of
-                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/ConvexSubHyperplane.html">ConvexSubHyperplane</a>,
-                but does not require that the represented subhyperplane be convex. Thus, non-convex and disjoint regions
-                can be represented.
+                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneSubset.html">HyperplaneSubset</a> -
+                Represents an arbitrary subset of points in a hyperplane, such as set of 1D intervals on a line or a
+                polygonal area on a 3D plane. This is a base interface of
+                <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneConvexSubset.html">HyperplaneConvexSubset</a>,
+                but does not require that the represented subset be convex. Thus, non-convex and disjoint regions
+                can be represented. Instances may have finite or infinite size.
+            </li>
+            <li>
+              <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/partitioning/HyperplaneConvexSubset.html">HyperplaneConvexSubset</a> -
+              Represents convex subsets of points in hyperplanes. This interface is frequently used to define the boundaries
+              of regions, such as line segments in Euclidean 2D space and polyhedron facets in Euclidean 3D space. Instances
+              of this type may be finite (such as line segments) or infinite (such as rays).
             </li>
             <li>
               <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Region.html">Region</a> -
-              Represents a region in the space. For example, in Euclidean space, this will be a length in 1D, an
-              area in 2D, and a volume in 3D. Many regions are implemented using <a href="#bsp_trees">BSP trees</a>.
+              Represents a region in the space. Regions partition their surrounding space into sets of points lying
+              on the inside, outside, and boundary of the region. Examples include circles, spheres, polygons, and
+              polyhedrons. Each dimension and space has at least one region type implemented using
+              <a href="#bsp_trees">BSP trees</a>. Instances may have finite or infinite size.
             </li>
             <li>
               <a class="code" href="../commons-geometry-core/apidocs/org/apache/commons/geometry/core/Transform.html">Transform</a> -
@@ -464,7 +460,7 @@ Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
       <h4>Points and Vectors</h4>
       <p>
         Mathematically, points and vectors are separate, distinct entities. Points represent specific
-        locations in space while vectors represent displacements between vectors. However, since the use of these
+        locations in space while vectors represent displacements between points. However, since the use of these
         types is so closely related and the data structures are so similar, they have been merged into a single set
         of Euclidean <em>"VectorXD"</em> classes that implement both interfaces using Cartesian coordinates:
         <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/Vector1D.html">Vector1D</a>,
@@ -484,11 +480,6 @@ Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
           <li>
             Hyperplane -
             <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoint.html">OrientedPoint</a>
-          </li>
-          <li>
-            ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoint.SubOrientedPoint.html">SubOrientedPoint</a>
-            (Stub implementation since no subspace exists.)
           </li>
           <li>
             Region
@@ -548,7 +539,7 @@ tree.add(Interval.of(1.5, 3, precision));
 tree.add(Interval.of(-1, -2, precision));
 
 // compute the size;
-tree.getSize(); // 3
+double size = tree.getSize(); // 3
 
 // convert back to intervals
 List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
@@ -567,12 +558,16 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Line.html">Line</a>
           </li>
           <li>
-            SubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/SubLine.html">SubLine</a>
+            HyperplaneSubset -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/LineSubset.html">LineSubset</a>
           </li>
           <li>
-            ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>
+            HyperplaneConvexSubset -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/LineConvexSubset.html">LineConvexSubset</a>
+            (subclasses include
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>,
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Ray.html">Ray</a>, and
+              <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ReverseRay.html">ReverseRay</a>)
           </li>
           <li>
             Region
@@ -584,6 +579,10 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
               <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ConvexArea.html">ConvexArea</a> -
                 Represents a single (possibly infinite), convex area.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/shape/Circle.html">Circle</a> -
+                Represents a circle.
               </li>
             </ul>
 
@@ -601,8 +600,8 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
             Additional
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Polyline.html">Polyline</a> -
-                  Represents a connected sequence of line segments.
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/path/LinePath.html">LinePath</a> -
+                  Represents a connected sequence of line subsets.
               </li>
             </ul>
           </li>
@@ -615,8 +614,8 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create some lines
-Line a = Line.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
-Line b = Line.fromPointAndDirection(Vector2D.of(1, -1), Vector2D.Unit.PLUS_Y, precision);
+Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(2, 2), precision);
+Line b = Lines.fromPointAndDirection(Vector2D.of(1, -1), Vector2D.Unit.PLUS_Y, precision);
 
 // compute the intersection and angles
 Vector2D intersection = a.intersection(b); // (1, 1)
@@ -629,14 +628,15 @@ double angleBtoA = b.angle(a); // -pi/4
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create some line segments
-Segment closedPosX = Segment.fromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1) , precision);
-Segment closedNegX = Segment.fromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
-Segment halfOpen = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, precision)
-        .segmentFrom(Vector2D.of(2, 0));
+Segment segmentA = Lines.segmentFromPoints(Vector2D.of(3, -1), Vector2D.of(3, 1), precision);
+Segment segmentB = Lines.segmentFromPoints(Vector2D.of(-3, -1), Vector2D.of(-3, 1), precision);
+
+// create a ray to intersect against the segments
+Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(2, 0), Vector2D.Unit.PLUS_X, precision);
 
 // compute some intersections
-Vector2D posXIntersection = closedPosX.intersection(halfOpen); // (3, 0)
-Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no intersection
+Vector2D aIntersection = segmentA.intersection(ray); // (3, 0)
+Vector2D bIntersection = segmentB.intersection(ray); // null - no intersection
         </source>
 
         <h5>BSP tree union</h5>
@@ -644,7 +644,7 @@ Vector2D negXIntersection = closedNegX.intersection(halfOpen); // null - no inte
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create a connected sequence of line segments forming the unit square
-Polyline path = Polyline.builder(precision)
+LinePath path = LinePath.builder(precision)
         .append(Vector2D.ZERO)
         .append(Vector2D.Unit.PLUS_X)
         .append(Vector2D.of(1, 1))
@@ -668,9 +668,9 @@ tree.union(copy);
 double size = tree.getSize(); // 1.75
 Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
 
-// get a polyline representing the boundary; a list is returned since trees
+// get a line path representing the boundary; a list is returned since trees
 // can represent disjoint regions
-List&lt;Polyline&gt; boundaries = tree.getBoundaryPaths(); // size = 1
+List&lt;LinePath&gt; boundaries = tree.getBoundaryPaths(); // size = 1
         </source>
 
         <h5>Linecast</h5>
@@ -680,7 +680,7 @@ DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 Parallelogram box = Parallelogram.axisAligned(Vector2D.ZERO, Vector2D.of(2, 1), precision);
 
 LinecastPoint2D pt = box.linecastFirst(
-        Segment.fromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
+        Lines.segmentFromPoints(Vector2D.of(1, 0.5), Vector2D.of(4, 0.5), precision));
 
 Vector2D intersection = pt.getPoint(); // (2.0, 0.5)
 Vector2D normal = pt.getNormal(); // (1.0, 0.0)
@@ -699,12 +699,12 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
             <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Plane.html">Plane</a>
           </li>
           <li>
-            SubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/SubPlane.html">SubPlane</a>
+            HyperplaneSubset -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/PlaneSubset.html">PlaneSubset</a>
           </li>
           <li>
-            ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexSubPlane.html">ConvexSubPlane</a>
+            HyperplaneConvexSubset -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/PlaneConvexSubset.html">PlaneConvexSubset</a>
           </li>
           <li>
             Region
@@ -716,6 +716,10 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
               <li>
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexVolume.html">ConvexVolume</a> -
                 Represents a single (possibly infinite), convex volume.
+              </li>
+              <li>
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/shape/Sphere.html">Sphere</a> -
+                Represents a sphere.
               </li>
             </ul>
 
@@ -739,13 +743,15 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
             Additional
             <ul>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Line3D.html">Line3D</a> -
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Line3D.html">Line3D</a> -
                 Represents a line in 3D space.
               </li>
               <li>
-                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Segment3D.html">Segment3D</a> -
-                Represents a line segment in 3D space. Since the segment can extend to infinity in either direction, this
-                class can also be used to represent rays.
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/LineConvexSubset3D.html">LineConvexSubset3D</a> -
+                Represents a finite or infinite line convex subset. Subclasses include
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Segment3D.html">Segment3D</a>,
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Ray3D.html">Ray3D</a>, and
+                <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/ReverseRay3D.html">ReverseRay3D</a>.
               </li>
             </ul>
           </li>
@@ -758,8 +764,8 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create two planes
-Plane a = Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
-Plane b = Plane.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
+Plane a = Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, precision);
+Plane b = Planes.fromPointAndPlaneVectors(Vector3D.of(1, 1, 1),
         Vector3D.Unit.PLUS_Z, Vector3D.Unit.MINUS_Y, precision);
 
 // compute the intersection
@@ -770,7 +776,7 @@ Vector3D dir = line.getDirection(); // (0, 1, 0)
 
         <h5>Transforms</h5>
         <source>
-List&lt;Vector3D&gt; inputPts = Arrays.asList(
+List&gt;Vector3D&lt; inputPts = Arrays.asList(
         Vector3D.ZERO,
         Vector3D.Unit.PLUS_X,
         Vector3D.Unit.PLUS_Y,
@@ -784,11 +790,11 @@ QuaternionRotation rot = QuaternionRotation.fromAxisAngle(Vector3D.Unit.PLUS_Z,
         PlaneAngleRadians.PI_OVER_TWO);
 
 // transform the input points
-List&lt;Vector3D&gt; matOutput = inputPts.stream()
+List&gt;Vector3D&lt; matOutput = inputPts.stream()
         .map(mat)
         .collect(Collectors.toList()); // [(1, 2, 3), (3, 2, 3), (1, 4, 3), (1, 2, 5)]
 
-List&lt;Vector3D&gt; rotOutput = inputPts.stream()
+List&gt;Vector3D&lt; rotOutput = inputPts.stream()
         .map(rot)
         .collect(Collectors.toList()); // [(0, 0, 0), (0, 1, 0), (-1, 0, 0), (0, 0, 1)]
         </source>
@@ -816,31 +822,36 @@ Vector3D[][] faceIndices = {
 // convert the vertices to convex subplanes and insert into a bsp tree
 RegionBSPTree3D tree = RegionBSPTree3D.empty();
 Arrays.stream(faceIndices)
-    .map(vertices -> ConvexSubPlane.fromVertexLoop(Arrays.asList(vertices), precision))
+    .map(vertices -> Planes.subsetFromVertexLoop(Arrays.asList(vertices), precision))
     .forEach(tree::insert);
 
 // split the region through its barycenter along a diagonal of the base
-Plane cutter = Plane.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
+Plane cutter = Planes.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
 Split&lt;RegionBSPTree3D&gt; split = tree.split(cutter);
 
-// compute some properties for the minus side of the split and convert back to subhyperplanes
+// compute some properties for the minus side of the split and convert back to hyperplane subsets
 // (ie, boundary facets)
 RegionBSPTree3D minus = split.getMinus();
 
 double minusSize = minus.getSize(); // 1/6
-List&lt;ConvexSubPlane&gt; minusBoundaries = minus.getBoundaries(); // size = 4
+List&lt;PlaneConvexSubset&gt; minusBoundaries = minus.getBoundaries(); // size = 4
         </source>
 
         <h5>Linecast</h5>
         <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 2, 3), precision)
+// create a BSP tree representing an axis-aligned cube with corners at (0, 0, 0) and (1, 1, 1)
+RegionBSPTree3D tree = Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(1, 1, 1), precision)
         .toTree();
 
-List&lt;LinecastPoint3D&gt; pts = tree.linecast(
-        Line3D.fromPoints(Vector3D.of(0.5, 0.5, -10), Vector3D.of(0.5, 0.5, 10), precision));
+// create a ray starting on one side of the cube and pointing through its center
+Ray3D ray = Lines3D.rayFromPointAndDirection(Vector3D.of(0.5, 0.5, -1), Vector3D.Unit.PLUS_Z, precision);
 
+// perform the linecast
+List&gt;LinecastPoint3D&lt; pts = tree.linecast(ray);
+
+// check the results
 int intersectionCount = pts.size(); // intersectionCount = 2
 Vector3D intersection = pts.get(0).getPoint(); // (0.5, 0.5, 0.0)
 Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
@@ -894,11 +905,6 @@ Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
           <li>
             Hyperplane -
             <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngle.html">CutAngle</a>
-          </li>
-          <li>
-            ConvexSubHyperplane -
-            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngle.SubCutAngle.html">SubCutAngle</a> -
-            (Stub implementation since no subspace exists.)
           </li>
           <li>
             Region
@@ -977,11 +983,11 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
             <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatCircle.html">GreatCircle</a>
           </li>
           <li>
-            SubHyperplane -
-            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/SubGreatCircle.html">SubGreatCircle</a>
+            HyperplaneSubset -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatCircleSubset.html">GreatCircleSubset</a>
           </li>
           <li>
-            ConvexSubHyperplane -
+            HyperplaneConvexSubset -
             <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArc.html">GreatArc</a>
           </li>
           <li>
@@ -1025,8 +1031,8 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
 // create two great circles
-GreatCircle a = GreatCircle.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
-GreatCircle b = GreatCircle.fromPole(Vector3D.Unit.PLUS_Z, precision);
+GreatCircle a = GreatCircles.fromPoints(Point2S.PLUS_I, Point2S.PLUS_K, precision);
+GreatCircle b = GreatCircles.fromPole(Vector3D.Unit.PLUS_Z, precision);
 
 // find the two intersection points of the great circles
 Point2S ptA = a.intersection(b); //(pi, pi/2)
@@ -1048,7 +1054,7 @@ GreatArcPath path = GreatArcPath.builder(precision)
 RegionBSPTree2S tree = path.toTree();
 
 // split in two through the barycenter
-GreatCircle splitter = GreatCircle.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
+GreatCircle splitter = GreatCircles.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
 Split&lt;RegionBSPTree2S&gt; split = tree.split(splitter);
 
 // compute some properties for the minus side
@@ -1161,7 +1167,7 @@ boolean containsAll = pts.stream().allMatch(region::contains); // true - region 
       <source>
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-10);
 
-List&lt;Vector3D&gt; points = Arrays.asList(
+List&gt;Vector3D&lt; points = Arrays.asList(
             Vector3D.of(0, 0, 1),
             Vector3D.of(0.75, 0, 1),
             Vector3D.of(2, 0, 1),
@@ -1171,7 +1177,7 @@ List&lt;Vector3D&gt; points = Arrays.asList(
 // compute the enclosing ball
 WelzlEncloser3D encloser = new WelzlEncloser3D(precision);
 
-EnclosingBall&lt;Vector3D&gt; sphere = encloser.enclose(points);
+EnclosingBall&gt;Vector3D&lt; sphere = encloser.enclose(points);
 
 // check the generated ball
 Vector3D center = sphere.getCenter(); // (1, 0, 1)

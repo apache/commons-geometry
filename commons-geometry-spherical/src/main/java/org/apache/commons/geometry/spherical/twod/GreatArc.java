@@ -20,14 +20,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.spherical.oned.AngularInterval;
 import org.apache.commons.geometry.spherical.oned.CutAngle;
-import org.apache.commons.geometry.spherical.oned.Point1S;
+import org.apache.commons.geometry.spherical.oned.CutAngles;
 import org.apache.commons.geometry.spherical.oned.Transform1S;
 
 /** Class representing a single, <em>convex</em> angular interval in a {@link GreatCircle}. Convex
@@ -38,8 +37,9 @@ import org.apache.commons.geometry.spherical.oned.Transform1S;
  * an angular size of less than or equal to {@code pi} radians.
  *
  * <p>Instances of this class are guaranteed to be immutable.</p>
+ * @see GreatCircles
  */
-public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubHyperplane<Point2S> {
+public final class GreatArc extends GreatCircleSubset implements HyperplaneConvexSubset<Point2S> {
     /** The interval representing the region of the great circle contained in the arc.
      */
     private final AngularInterval.Convex interval;
@@ -48,7 +48,7 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
      * @param circle defining great circle instance
      * @param interval convex angular interval embedded in the great circle
      */
-    private GreatArc(final GreatCircle circle, final AngularInterval.Convex interval) {
+    GreatArc(final GreatCircle circle, final AngularInterval.Convex interval) {
         super(circle);
 
         this.interval = interval;
@@ -121,7 +121,7 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
         if (intersection != null) {
             // use a negative-facing cut angle to account for the fact that the great circle
             // poles point to the minus side of the circle
-            final CutAngle subSplitter = CutAngle.createNegativeFacing(
+            final CutAngle subSplitter = CutAngles.createNegativeFacing(
                     thisCircle.toSubspace(intersection), splitterCircle.getPrecision());
 
             final Split<AngularInterval.Convex> subSplit = interval.splitDiameter(subSplitter);
@@ -132,8 +132,8 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
             } else if (subLoc == SplitLocation.PLUS) {
                 plus = this;
             } else if (subLoc == SplitLocation.BOTH) {
-                minus = GreatArc.fromInterval(thisCircle, subSplit.getMinus());
-                plus = GreatArc.fromInterval(thisCircle, subSplit.getPlus());
+                minus = GreatCircles.arcFromInterval(thisCircle, subSplit.getMinus());
+                plus = GreatCircles.arcFromInterval(thisCircle, subSplit.getPlus());
             }
         }
 
@@ -189,35 +189,5 @@ public final class GreatArc extends AbstractSubGreatCircle implements ConvexSubH
         }
 
         return sb.toString();
-    }
-
-    /** Construct an arc along the shortest path between the given points. The underlying
-     * great circle is oriented in the direction from {@code start} to {@code end}.
-     * @param start start point for the interval
-     * @param end end point point for the interval
-     * @param precision precision context used to compare floating point numbers
-     * @return an arc representing the shortest path between the given points
-     * @throws IllegalArgumentException if either of the given points is NaN or infinite, or if the given
-     *      points are equal or antipodal as evaluated by the given precision context
-     * @see GreatCircle#fromPoints(Point2S, Point2S, org.apache.commons.geometry.core.precision.DoublePrecisionContext)
-     */
-    public static GreatArc fromPoints(final Point2S start, final Point2S end, final DoublePrecisionContext precision) {
-        final GreatCircle circle = GreatCircle.fromPoints(start, end, precision);
-
-        final Point1S subspaceStart = circle.toSubspace(start);
-        final Point1S subspaceEnd = circle.toSubspace(end);
-        final AngularInterval.Convex interval = AngularInterval.Convex.of(subspaceStart, subspaceEnd, precision);
-
-        return fromInterval(circle, interval);
-    }
-
-    /** Construct an arc from a great circle and an angular interval.
-     * @param circle circle defining the arc
-     * @param interval interval representing the portion of the circle contained
-     *      in the arc
-     * @return an arc created from the given great circle and interval
-     */
-    public static GreatArc fromInterval(final GreatCircle circle, final AngularInterval.Convex interval) {
-        return new GreatArc(circle, interval);
     }
 }

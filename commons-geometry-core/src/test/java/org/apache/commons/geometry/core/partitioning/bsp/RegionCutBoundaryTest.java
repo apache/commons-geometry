@@ -133,7 +133,7 @@ public class RegionCutBoundaryTest {
     }
 
     @Test
-    public void testContains_nullSubHyperplanes() {
+    public void testContains_nullHyperplaneSubsets() {
         // arrange
         RegionCutBoundary<TestPoint2D> boundary = new RegionCutBoundary<>(null, null);
 

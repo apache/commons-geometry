@@ -32,7 +32,10 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.threed.RegionBSPTree3D.RegionNode3D;
-import org.apache.commons.geometry.euclidean.threed.shapes.Parallelepiped;
+import org.apache.commons.geometry.euclidean.threed.line.Line3D;
+import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
+import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
+import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -114,7 +117,7 @@ public class RegionBSPTree3DTest {
     public void testCopy() {
         // arrange
         RegionBSPTree3D tree = new RegionBSPTree3D(true);
-        tree.getRoot().cut(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        tree.getRoot().cut(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         RegionBSPTree3D copy = tree.copy();
@@ -130,7 +133,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<ConvexSubPlane> facets = new ArrayList<>();
+        List<PlaneConvexSubset> facets = new ArrayList<>();
         tree.boundaries().forEach(facets::add);
 
         // assert
@@ -143,7 +146,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<ConvexSubPlane> facets = tree.getBoundaries();
+        List<PlaneConvexSubset> facets = tree.getBoundaries();
 
         // assert
         Assert.assertEquals(6, facets.size());
@@ -155,7 +158,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
 
         // act
-        List<ConvexSubPlane> facets = tree.boundaryStream().collect(Collectors.toList());
+        List<PlaneConvexSubset> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(6, facets.size());
@@ -167,7 +170,7 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = RegionBSPTree3D.full();
 
         // act
-        List<ConvexSubPlane> facets = tree.boundaryStream().collect(Collectors.toList());
+        List<PlaneConvexSubset> facets = tree.boundaryStream().collect(Collectors.toList());
 
         // assert
         Assert.assertEquals(0, facets.size());
@@ -186,7 +189,7 @@ public class RegionBSPTree3DTest {
     public void testHalfSpace() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.insert(Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
+        tree.insert(Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // assert
         Assert.assertFalse(tree.isEmpty());
@@ -213,15 +216,15 @@ public class RegionBSPTree3DTest {
         Vector3D min = Vector3D.ZERO;
         Vector3D max = Vector3D.of(1, 1, 1);
 
-        Plane top = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
-        Plane bottom = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
-        Plane left = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_X, TEST_PRECISION);
-        Plane right = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_X, TEST_PRECISION);
-        Plane front = Plane.fromPointAndNormal(min, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
-        Plane back = Plane.fromPointAndNormal(max, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
+        Plane top = Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        Plane bottom = Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Z, TEST_PRECISION);
+        Plane left = Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_X, TEST_PRECISION);
+        Plane right = Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Plane front = Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Y, TEST_PRECISION);
+        Plane back = Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        Plane diag = Plane.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(0.5, -0.5, 0), TEST_PRECISION);
-        Plane midCut = Plane.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
+        Plane diag = Planes.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(0.5, -0.5, 0), TEST_PRECISION);
+        Plane midCut = Planes.fromPointAndNormal(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_Z, TEST_PRECISION);
 
         tree.getRoot()
             .cut(diag, RegionCutRule.INHERIT);
@@ -261,9 +264,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Planes.subsetFromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Planes.subsetFromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ));
 
@@ -284,9 +287,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries_fullIsTrue() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Planes.subsetFromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    ConvexSubPlane.fromVertexLoop(Arrays.asList(
+                    Planes.subsetFromVertexLoop(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ), true);
 
@@ -327,7 +330,7 @@ public class RegionBSPTree3DTest {
     @Test
     public void testFromConvexVolume_infinite() {
         // arrange
-        ConvexVolume volume = ConvexVolume.fromBounds(Plane.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        ConvexVolume volume = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
 
         // act
         RegionBSPTree3D tree = volume.toTree();
@@ -346,13 +349,13 @@ public class RegionBSPTree3DTest {
     public void testFromConvexVolume_finite() {
         // arrange
         ConvexVolume volume = ConvexVolume.fromBounds(
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
 
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
-                    Plane.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION)
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(Vector3D.of(1, 1, 1), Vector3D.Unit.PLUS_Z, TEST_PRECISION)
                 );
 
         // act
@@ -379,11 +382,11 @@ public class RegionBSPTree3DTest {
         // act/assert
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
     }
 
     @Test
@@ -394,11 +397,11 @@ public class RegionBSPTree3DTest {
         // act/assert
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.ZERO, Vector3D.Unit.PLUS_X, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Segment3D.fromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.Unit.MINUS_X, Vector3D.Unit.PLUS_X, TEST_PRECISION));
     }
 
     @Test
@@ -409,7 +412,7 @@ public class RegionBSPTree3DTest {
         // act/assert
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
 
         Vector3D corner = Vector3D.of(1, 1, 1);
 
@@ -420,13 +423,13 @@ public class RegionBSPTree3DTest {
             .and(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
-            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
             .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
-            .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
     }
 
     @Test
@@ -439,7 +442,7 @@ public class RegionBSPTree3DTest {
         // act/assert
         LinecastChecker3D.with(tree)
             .expectNothing()
-            .whenGiven(Line3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.of(0, 5, 5), Vector3D.of(1, 6, 6), TEST_PRECISION));
 
         Vector3D corner = Vector3D.of(1, 1, 1);
 
@@ -450,13 +453,13 @@ public class RegionBSPTree3DTest {
             .and(corner, Vector3D.Unit.MINUS_X)
             .and(corner, Vector3D.Unit.MINUS_Y)
             .and(corner, Vector3D.Unit.MINUS_Z)
-            .whenGiven(Line3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.ZERO, corner, TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
             .expect(corner, Vector3D.Unit.MINUS_X)
             .and(corner, Vector3D.Unit.MINUS_Y)
             .and(corner, Vector3D.Unit.MINUS_Z)
-            .whenGiven(Segment3D.fromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.of(0.5, 0.5, 0.5), corner, TEST_PRECISION));
     }
 
     @Test
@@ -464,13 +467,13 @@ public class RegionBSPTree3DTest {
         // arrange
         RegionBSPTree3D a = RegionBSPTree3D.empty();
         Parallelepiped.axisAligned(Vector3D.ZERO, Vector3D.of(0.5, 1, 1), TEST_PRECISION).boundaryStream()
-            .map(ConvexSubPlane::reverse)
+            .map(PlaneConvexSubset::reverse)
             .forEach(a::insert);
         a.complement();
 
         RegionBSPTree3D b = RegionBSPTree3D.empty();
         Parallelepiped.axisAligned(Vector3D.of(0.5, 0, 0), Vector3D.of(1, 1, 1), TEST_PRECISION).boundaryStream()
-            .map(ConvexSubPlane::reverse)
+            .map(PlaneConvexSubset::reverse)
             .forEach(b::insert);
         b.complement();
 
@@ -487,24 +490,24 @@ public class RegionBSPTree3DTest {
             .expect(corner, Vector3D.Unit.PLUS_Z)
             .and(corner, Vector3D.Unit.PLUS_Y)
             .and(corner, Vector3D.Unit.PLUS_X)
-            .whenGiven(Segment3D.fromPoints(Vector3D.of(0.25, 0.25, 0.25), Vector3D.of(2, 2, 2), TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.of(0.25, 0.25, 0.25), Vector3D.of(2, 2, 2), TEST_PRECISION));
     }
 
     @Test
     public void testLinecast_removesDuplicatePoints() {
         // arrange
         RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        tree.insert(Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span());
-        tree.insert(Plane.fromNormal(Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
+        tree.insert(Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).span());
+        tree.insert(Planes.fromNormal(Vector3D.Unit.PLUS_Y, TEST_PRECISION).span());
 
         // act/assert
         LinecastChecker3D.with(tree)
             .expect(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
-            .whenGiven(Line3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
+            .whenGiven(Lines3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
 
         LinecastChecker3D.with(tree)
         .expect(Vector3D.ZERO, Vector3D.Unit.PLUS_Y)
-            .whenGiven(Segment3D.fromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
+            .whenGiven(Lines3D.segmentFromPoints(Vector3D.of(1, 1, 1), Vector3D.of(-1, -1, -1), TEST_PRECISION));
     }
 
     @Test
@@ -512,63 +515,63 @@ public class RegionBSPTree3DTest {
         // arrange
         RegionBSPTree3D tree = createRect(Vector3D.of(-1, -1, -1), Vector3D.of(1, 1, 1));
 
-        Line3D xPlus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
-        Line3D xMinus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_PRECISION);
+        Line3D xPlus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(1, 0, 0), TEST_PRECISION);
+        Line3D xMinus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(-1, 0, 0), TEST_PRECISION);
 
-        Line3D yPlus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 1, 0), TEST_PRECISION);
-        Line3D yMinus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, -1, 0), TEST_PRECISION);
+        Line3D yPlus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 1, 0), TEST_PRECISION);
+        Line3D yMinus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, -1, 0), TEST_PRECISION);
 
-        Line3D zPlus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_PRECISION);
-        Line3D zMinus = Line3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 0, -1), TEST_PRECISION);
+        Line3D zPlus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 0, 1), TEST_PRECISION);
+        Line3D zMinus = Lines3D.fromPoints(Vector3D.ZERO, Vector3D.of(0, 0, -1), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-1.1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-1.1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(-0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xPlus.segmentFrom(Vector3D.of(1.1, 0, 0))));
+                tree.linecastFirst(xPlus.rayFrom(Vector3D.of(-0.9, 0, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(xPlus.rayFrom(Vector3D.of(1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(1.1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1.1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(1, 0, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(1, 0, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0),
-                tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(0.9, 0, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(xMinus.segmentFrom(Vector3D.of(-1.1, 0, 0))));
+                tree.linecastFirst(xMinus.rayFrom(Vector3D.of(0.9, 0, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(xMinus.rayFrom(Vector3D.of(-1.1, 0, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -1.1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1.1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, -0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yPlus.segmentFrom(Vector3D.of(0, 1.1, 0))));
+                tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, -0.9, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(yPlus.rayFrom(Vector3D.of(0, 1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 1.1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1.1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 1, 0))).getNormal(), TEST_EPS);
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 1, 0))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -1, 0),
-                tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, 0.9, 0))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(yMinus.segmentFrom(Vector3D.of(0, -1.1, 0))));
+                tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, 0.9, 0))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(yMinus.rayFrom(Vector3D.of(0, -1.1, 0))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -1.1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1.1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, -0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zPlus.segmentFrom(Vector3D.of(0, 0, 1.1))));
+                tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, -0.9))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(zPlus.rayFrom(Vector3D.of(0, 0, 1.1))));
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 1.1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1.1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 1))).getNormal(), TEST_EPS);
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 1))).getNormal(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, -1),
-                tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, 0.9))).getNormal(), TEST_EPS);
-        Assert.assertNull(tree.linecastFirst(zMinus.segmentFrom(Vector3D.of(0, 0, -1.1))));
+                tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, 0.9))).getNormal(), TEST_EPS);
+        Assert.assertNull(tree.linecastFirst(zMinus.rayFrom(Vector3D.of(0, 0, -1.1))));
     }
 
     // issue GEOMETRY-38
@@ -581,23 +584,23 @@ public class RegionBSPTree3DTest {
 
         RegionBSPTree3D tree = createRect(lowerCorner, upperCorner);
 
-        Line3D upDiagonal = Line3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
+        Line3D upDiagonal = Lines3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
         Line3D downDiagonal = upDiagonal.reverse();
 
         // act/assert
-        LinecastPoint3D upFromOutsideResult = tree.linecastFirst(upDiagonal.segmentFrom(Vector3D.of(-1, -1, -1)));
+        LinecastPoint3D upFromOutsideResult = tree.linecastFirst(upDiagonal.rayFrom(Vector3D.of(-1, -1, -1)));
         Assert.assertNotNull(upFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, upFromOutsideResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D upFromCenterResult = tree.linecastFirst(upDiagonal.segmentFrom(center));
+        LinecastPoint3D upFromCenterResult = tree.linecastFirst(upDiagonal.rayFrom(center));
         Assert.assertNotNull(upFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, upFromCenterResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D downFromOutsideResult = tree.linecastFirst(downDiagonal.segmentFrom(Vector3D.of(2, 2, 2)));
+        LinecastPoint3D downFromOutsideResult = tree.linecastFirst(downDiagonal.rayFrom(Vector3D.of(2, 2, 2)));
         Assert.assertNotNull(downFromOutsideResult);
         EuclideanTestUtils.assertCoordinatesEqual(upperCorner, downFromOutsideResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D downFromCenterResult = tree.linecastFirst(downDiagonal.segmentFrom(center));
+        LinecastPoint3D downFromCenterResult = tree.linecastFirst(downDiagonal.rayFrom(center));
         Assert.assertNotNull(downFromCenterResult);
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, downFromCenterResult.getPoint(), TEST_EPS);
     }
@@ -613,17 +616,17 @@ public class RegionBSPTree3DTest {
 
         Vector3D firstPointOnLine = Vector3D.of(0.5, -1.0, 0);
         Vector3D secondPointOnLine = Vector3D.of(0.5, 2.0, 0);
-        Line3D bottomLine = Line3D.fromPoints(firstPointOnLine, secondPointOnLine, TEST_PRECISION);
+        Line3D bottomLine = Lines3D.fromPoints(firstPointOnLine, secondPointOnLine, TEST_PRECISION);
 
         Vector3D expectedIntersection1 = Vector3D.of(0.5, 0, 0.0);
         Vector3D expectedIntersection2 = Vector3D.of(0.5, 1.0, 0.0);
 
         // act/assert
-        LinecastPoint3D bottom = tree.linecastFirst(bottomLine.segmentFrom(firstPointOnLine));
+        LinecastPoint3D bottom = tree.linecastFirst(bottomLine.rayFrom(firstPointOnLine));
         Assert.assertNotNull(bottom);
         EuclideanTestUtils.assertCoordinatesEqual(expectedIntersection1, bottom.getPoint(), TEST_EPS);
 
-        bottom = tree.linecastFirst(bottomLine.segmentFrom(Vector3D.of(0.5, 0.1, 0.0)));
+        bottom = tree.linecastFirst(bottomLine.rayFrom(Vector3D.of(0.5, 0.1, 0.0)));
         Assert.assertNotNull(bottom);
         Vector3D intersection = bottom.getPoint();
         Assert.assertNotNull(intersection);
@@ -639,14 +642,14 @@ public class RegionBSPTree3DTest {
         RegionBSPTree3D tree = createRect(lowerCorner, upperCorner);
 
         Vector3D pt = Vector3D.of(0.5, 0.5, 0);
-        Line3D intoBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.Unit.PLUS_Z), TEST_PRECISION);
-        Line3D outOfBoxLine = Line3D.fromPoints(pt, pt.add(Vector3D.Unit.MINUS_Z), TEST_PRECISION);
+        Line3D intoBoxLine = Lines3D.fromPoints(pt, pt.add(Vector3D.Unit.PLUS_Z), TEST_PRECISION);
+        Line3D outOfBoxLine = Lines3D.fromPoints(pt, pt.add(Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         // act/assert
-        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.segmentFrom(pt));
+        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.rayFrom(pt));
         EuclideanTestUtils.assertCoordinatesEqual(pt, intoBoxResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.segmentFrom(pt));
+        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.rayFrom(pt));
         EuclideanTestUtils.assertCoordinatesEqual(pt, outOfBoxResult.getPoint(), TEST_EPS);
     }
 
@@ -658,14 +661,14 @@ public class RegionBSPTree3DTest {
 
         RegionBSPTree3D tree = createRect(lowerCorner, upperCorner);
 
-        Line3D intoBoxLine = Line3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
+        Line3D intoBoxLine = Lines3D.fromPoints(lowerCorner, upperCorner, TEST_PRECISION);
         Line3D outOfBoxLine = intoBoxLine.reverse();
 
         // act/assert
-        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.segmentFrom(lowerCorner));
+        LinecastPoint3D intoBoxResult = tree.linecastFirst(intoBoxLine.rayFrom(lowerCorner));
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, intoBoxResult.getPoint(), TEST_EPS);
 
-        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.segmentFrom(lowerCorner));
+        LinecastPoint3D outOfBoxResult = tree.linecastFirst(outOfBoxLine.rayFrom(lowerCorner));
         EuclideanTestUtils.assertCoordinatesEqual(lowerCorner, outOfBoxResult.getPoint(), TEST_EPS);
     }
 
@@ -677,7 +680,7 @@ public class RegionBSPTree3DTest {
 
         RegionBSPTree3D tree = createRect(lowerCorner, upperCorner);
 
-        Line3D line = Line3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0.5, 0.5, 0.5), Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.Unit.MINUS_X,
@@ -923,11 +926,11 @@ public class RegionBSPTree3DTest {
         Vector3D vertex3 = Vector3D.of(2, 3, 3);
         Vector3D vertex4 = Vector3D.of(1, 3, 4);
 
-        List<ConvexSubPlane> boundaries = Arrays.asList(
-                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
-                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
-                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
-                ConvexSubPlane.fromVertexLoop(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
+        List<PlaneConvexSubset> boundaries = Arrays.asList(
+                Planes.subsetFromVertexLoop(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
+                Planes.subsetFromVertexLoop(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
+                Planes.subsetFromVertexLoop(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
+                Planes.subsetFromVertexLoop(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
             );
 
         // act
@@ -1465,7 +1468,7 @@ public class RegionBSPTree3DTest {
         // arrange
         RegionBSPTree3D tree = createRect(Vector3D.of(-0.5, -0.5, -0.5), Vector3D.of(0.5, 0.5, 0.5));
 
-        Plane splitter = Plane.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
+        Plane splitter = Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         Split<RegionBSPTree3D> split = tree.split(splitter);
@@ -1525,7 +1528,7 @@ public class RegionBSPTree3DTest {
             {3, 0, 4, 7}
         };
 
-        List<ConvexSubPlane> faces = indexedFacetsToBoundaries(vertices, facets);
+        List<PlaneConvexSubset> faces = indexedFacetsToBoundaries(vertices, facets);
 
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.full();
@@ -1542,8 +1545,8 @@ public class RegionBSPTree3DTest {
                 Vector3D.of(-1, 1, 1), Vector3D.of(4, 1, 1));
     }
 
-    private static List<ConvexSubPlane> indexedFacetsToBoundaries(Vector3D[] vertices, int[][] facets) {
-        List<ConvexSubPlane> boundaries = new ArrayList<>();
+    private static List<PlaneConvexSubset> indexedFacetsToBoundaries(Vector3D[] vertices, int[][] facets) {
+        List<PlaneConvexSubset> boundaries = new ArrayList<>();
 
         List<Vector3D> vertexList = new ArrayList<>();
 
@@ -1554,7 +1557,7 @@ public class RegionBSPTree3DTest {
                 vertexList.add(vertices[indices[j]]);
             }
 
-            boundaries.add(ConvexSubPlane.fromVertexLoop(vertexList, TEST_PRECISION));
+            boundaries.add(Planes.subsetFromVertexLoop(vertexList, TEST_PRECISION));
 
             vertexList.clear();
         }
@@ -1578,8 +1581,8 @@ public class RegionBSPTree3DTest {
         final Vector3D topZ = Vector3D.of(center.getX(), center.getY(), center.getZ() + radius);
         final Vector3D bottomZ = Vector3D.of(center.getX(), center.getY(), center.getZ() - radius);
 
-        planes.add(Plane.fromPointAndNormal(topZ, Vector3D.Unit.PLUS_Z, TEST_PRECISION));
-        planes.add(Plane.fromPointAndNormal(bottomZ, Vector3D.Unit.MINUS_Z, TEST_PRECISION));
+        planes.add(Planes.fromPointAndNormal(topZ, Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        planes.add(Planes.fromPointAndNormal(bottomZ, Vector3D.Unit.MINUS_Z, TEST_PRECISION));
 
         // add the side planes
         final double vDelta = PlaneAngleRadians.PI / stacks;
@@ -1613,7 +1616,7 @@ public class RegionBSPTree3DTest {
                 norm = Vector3D.of(x, y, stackHeight).normalize();
                 pt = center.add(norm.multiply(adjustedRadius));
 
-                planes.add(Plane.fromPointAndNormal(pt, norm, TEST_PRECISION));
+                planes.add(Planes.fromPointAndNormal(pt, norm, TEST_PRECISION));
             }
         }
 

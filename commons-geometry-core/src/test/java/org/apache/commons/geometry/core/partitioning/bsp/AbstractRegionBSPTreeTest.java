@@ -34,10 +34,10 @@ import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree;
 import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree.TestRegionNode;
 import org.apache.commons.geometry.core.partition.test.TestTransform2D;
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
-import org.apache.commons.geometry.core.partitioning.SubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree.RegionSizeProperties;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,7 +109,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_subhyperplanes_mixedCutRules() {
+    public void testInsert_hyperplaneSubsets_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(new TestLineSegmentCollection(Arrays.asList(segs[0])), RegionCutRule.PLUS_INSIDE);
@@ -122,7 +122,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convexSubhyperplanes_mixedCutRules() {
+    public void testInsert_hyperplaneConvexSubsets_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(segs[0], RegionCutRule.PLUS_INSIDE);
@@ -134,7 +134,7 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testInsert_convexSubhyperplaneList_mixedCutRules() {
+    public void testInsert_hyperplaneConvexSubsetList_mixedCutRules() {
         // act/assert
         checkMixedCutRuleInsertion(segs -> {
             tree.insert(Arrays.asList(segs[0]), RegionCutRule.PLUS_INSIDE);
@@ -162,7 +162,7 @@ public class AbstractRegionBSPTreeTest {
         });
     }
 
-    /** Helper function to check the insertion of subhyperplanes using different region cut rules.
+    /** Helper function to check the insertion of hyperplane subsets using different region cut rules.
      * @param fn
      */
     private void checkMixedCutRuleInsertion(Consumer<TestLineSegment[]> fn) {
@@ -440,7 +440,7 @@ public class AbstractRegionBSPTreeTest {
 
         // act
         List<TestLineSegment> segments = new ArrayList<>();
-        for (ConvexSubHyperplane<TestPoint2D> sub : tree.boundaries()) {
+        for (HyperplaneConvexSubset<TestPoint2D> sub : tree.boundaries()) {
             segments.add((TestLineSegment) sub);
         }
 
@@ -461,7 +461,7 @@ public class AbstractRegionBSPTreeTest {
 
         // act
         List<TestLineSegment> segments = new ArrayList<>();
-        for (ConvexSubHyperplane<TestPoint2D> sub : tree.boundaries()) {
+        for (HyperplaneConvexSubset<TestPoint2D> sub : tree.boundaries()) {
             segments.add((TestLineSegment) sub);
         }
 
@@ -491,7 +491,7 @@ public class AbstractRegionBSPTreeTest {
 
         // act
         List<TestLineSegment> segments = new ArrayList<>();
-        for (ConvexSubHyperplane<TestPoint2D> sub : tree.getBoundaries()) {
+        for (HyperplaneConvexSubset<TestPoint2D> sub : tree.getBoundaries()) {
             segments.add((TestLineSegment) sub);
         }
 
@@ -512,7 +512,7 @@ public class AbstractRegionBSPTreeTest {
 
         // act
         List<TestLineSegment> segments = new ArrayList<>();
-        for (ConvexSubHyperplane<TestPoint2D> sub : tree.getBoundaries()) {
+        for (HyperplaneConvexSubset<TestPoint2D> sub : tree.getBoundaries()) {
             segments.add((TestLineSegment) sub);
         }
 
@@ -1552,7 +1552,7 @@ public class AbstractRegionBSPTreeTest {
                 new TestLineSegment(new TestPoint2D(-4, -5), new TestPoint2D(1, 0))));
     }
 
-    private static void assertCutBoundarySegment(final SubHyperplane<TestPoint2D> boundary, final TestPoint2D start,
+    private static void assertCutBoundarySegment(final HyperplaneSubset<TestPoint2D> boundary, final TestPoint2D start,
             final TestPoint2D end) {
         Assert.assertFalse("Expected boundary to not be empty", boundary.isEmpty());
 

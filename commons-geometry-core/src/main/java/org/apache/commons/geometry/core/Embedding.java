@@ -36,36 +36,36 @@ import java.util.stream.Collectors;
 public interface Embedding<P extends Point<P>, S extends Point<S>> {
 
     /** Transform a space point into a subspace point.
-     * @param point n-dimension point of the space
+     * @param pt n-dimension point of the space
      * @return lower-dimension point of the subspace corresponding to
      *      the specified space point
      * @see #toSpace
      */
-    S toSubspace(P point);
+    S toSubspace(P pt);
 
     /** Transform a collection of space points into subspace points.
-     * @param points collection of n-dimension points to transform
+     * @param pts collection of n-dimension points to transform
      * @return collection of transformed lower-dimension points.
      * @see #toSubspace(Point)
      */
-    default List<S> toSubspace(final Collection<P> points) {
-        return points.stream().map(this::toSubspace).collect(Collectors.toList());
+    default List<S> toSubspace(final Collection<P> pts) {
+        return pts.stream().map(this::toSubspace).collect(Collectors.toList());
     }
 
     /** Transform a subspace point into a space point.
-     * @param point lower-dimension point of the subspace
+     * @param pt lower-dimension point of the subspace
      * @return n-dimension point of the space corresponding to the
      *      specified subspace point
      * @see #toSubspace(Point)
      */
-    P toSpace(S point);
+    P toSpace(S pt);
 
     /** Transform a collection of subspace points into space points.
-     * @param points collection of lower-dimension points to transform
+     * @param pts collection of lower-dimension points to transform
      * @return collection of transformed n-dimension points.
      * @see #toSpace(Point)
      */
-    default List<P> toSpace(final Collection<S> points) {
-        return points.stream().map(this::toSpace).collect(Collectors.toList());
+    default List<P> toSpace(final Collection<S> pts) {
+        return pts.stream().map(this::toSpace).collect(Collectors.toList());
     }
 }

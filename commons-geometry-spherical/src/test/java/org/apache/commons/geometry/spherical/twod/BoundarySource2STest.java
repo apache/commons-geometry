@@ -35,7 +35,7 @@ public class BoundarySource2STest {
     @Test
     public void testToTree() {
         // act
-        List<GreatArc> arcs = Arrays.asList(GreatArc.fromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
+        List<GreatArc> arcs = Arrays.asList(GreatCircles.arcFromPoints(Point2S.PLUS_I, Point2S.PLUS_J, TEST_PRECISION));
         BoundarySource2S src = () -> arcs.stream();
 
         // act

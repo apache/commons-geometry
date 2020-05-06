@@ -25,8 +25,8 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,8 +45,8 @@ public class ConvexHull2DTest {
         // assert
         Assert.assertEquals(0, hull.getVertices().size());
 
-        Polyline path = hull.getPath();
-        Assert.assertEquals(0, path.getSegments().size());
+        LinePath path = hull.getPath();
+        Assert.assertEquals(0, path.getElements().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
@@ -65,8 +65,8 @@ public class ConvexHull2DTest {
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        Polyline path = hull.getPath();
-        Assert.assertEquals(0, path.getSegments().size());
+        LinePath path = hull.getPath();
+        Assert.assertEquals(0, path.getElements().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(0, pathVertices.size());
@@ -85,8 +85,8 @@ public class ConvexHull2DTest {
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        Polyline path = hull.getPath();
-        Assert.assertEquals(1, path.getSegments().size());
+        LinePath path = hull.getPath();
+        Assert.assertEquals(1, path.getElements().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(2, pathVertices.size());
@@ -107,8 +107,8 @@ public class ConvexHull2DTest {
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        Polyline path = hull.getPath();
-        Assert.assertEquals(3, path.getSegments().size());
+        LinePath path = hull.getPath();
+        Assert.assertEquals(3, path.getElements().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(4, pathVertices.size());
@@ -132,8 +132,8 @@ public class ConvexHull2DTest {
         // assert
         Assert.assertEquals(vertices, hull.getVertices());
 
-        Polyline path = hull.getPath();
-        Assert.assertEquals(4, path.getSegments().size());
+        LinePath path = hull.getPath();
+        Assert.assertEquals(4, path.getElements().size());
 
         List<Vector2D> pathVertices = path.getVertexSequence();
         Assert.assertEquals(5, pathVertices.size());

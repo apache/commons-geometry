@@ -100,7 +100,7 @@ public class AbstractHyperplaneTest {
         }
 
         @Override
-        public ConvexSubHyperplane<TestPoint2D> span() {
+        public HyperplaneConvexSubset<TestPoint2D> span() {
             return null;
         }
     }

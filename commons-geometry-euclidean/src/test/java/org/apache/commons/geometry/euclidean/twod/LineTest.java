@@ -21,7 +21,6 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.AffineTransformMatrix1D;
-import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -38,67 +37,67 @@ public class LineTest {
     @Test
     public void testFromPoints() {
         // act/assert
-        checkLine(Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
-        checkLine(Line.fromPoints(Vector2D.ZERO, Vector2D.of(100, 0), TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.ZERO, Vector2D.of(100, 0), TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
-        checkLine(Line.fromPoints(Vector2D.of(100, 0), Vector2D.ZERO, TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.of(100, 0), Vector2D.ZERO, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.MINUS_X);
-        checkLine(Line.fromPoints(Vector2D.of(-100, 0), Vector2D.of(100, 0), TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.of(-100, 0), Vector2D.of(100, 0), TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
 
-        checkLine(Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 2), TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 2), TEST_PRECISION),
                 Vector2D.of(-1, 1), Vector2D.of(1, 1).normalize());
-        checkLine(Line.fromPoints(Vector2D.of(0, 2), Vector2D.of(-2, 0), TEST_PRECISION),
+        checkLine(Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(-2, 0), TEST_PRECISION),
                 Vector2D.of(-1, 1), Vector2D.of(-1, -1).normalize());
     }
 
     @Test
     public void testFromPoints_pointsTooClose() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Line.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
+        GeometryTestUtils.assertThrows(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
-        GeometryTestUtils.assertThrows(() -> Line.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1 + 1e-11, 1e-11), TEST_PRECISION),
+        GeometryTestUtils.assertThrows(() -> Lines.fromPoints(Vector2D.Unit.PLUS_X, Vector2D.of(1 + 1e-11, 1e-11), TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
     public void testFromPointAndDirection() {
         // act/assert
-        checkLine(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
+        checkLine(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
-        checkLine(Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(100, 0), TEST_PRECISION),
+        checkLine(Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(100, 0), TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
-        checkLine(Line.fromPointAndDirection(Vector2D.of(-100, 0), Vector2D.of(100, 0), TEST_PRECISION),
+        checkLine(Lines.fromPointAndDirection(Vector2D.of(-100, 0), Vector2D.of(100, 0), TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
 
-        checkLine(Line.fromPointAndDirection(Vector2D.of(-2, 0), Vector2D.of(1, 1), TEST_PRECISION),
+        checkLine(Lines.fromPointAndDirection(Vector2D.of(-2, 0), Vector2D.of(1, 1), TEST_PRECISION),
                 Vector2D.of(-1, 1), Vector2D.of(1, 1).normalize());
-        checkLine(Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(-1, -1), TEST_PRECISION),
+        checkLine(Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(-1, -1), TEST_PRECISION),
                 Vector2D.of(-1, 1), Vector2D.of(-1, -1).normalize());
     }
 
     @Test
     public void testFromPointAndDirection_directionIsZero() {
         // act/assert
-        GeometryTestUtils.assertThrows(() -> Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
+        GeometryTestUtils.assertThrows(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.ZERO, TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
-        GeometryTestUtils.assertThrows(() -> Line.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(1e-11, -1e-12), TEST_PRECISION),
+        GeometryTestUtils.assertThrows(() -> Lines.fromPointAndDirection(Vector2D.Unit.PLUS_X, Vector2D.of(1e-11, -1e-12), TEST_PRECISION),
                 IllegalArgumentException.class, "Line direction cannot be zero");
     }
 
     @Test
     public void testFromPointAndAngle() {
         // act/assert
-        checkLine(Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
+        checkLine(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION),
                 Vector2D.ZERO, Vector2D.Unit.PLUS_X);
-        checkLine(Line.fromPointAndAngle(Vector2D.of(1, 1), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
+        checkLine(Lines.fromPointAndAngle(Vector2D.of(1, 1), PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
                 Vector2D.of(1, 0), Vector2D.Unit.PLUS_Y);
-        checkLine(Line.fromPointAndAngle(Vector2D.of(-1, -1), PlaneAngleRadians.PI, TEST_PRECISION),
+        checkLine(Lines.fromPointAndAngle(Vector2D.of(-1, -1), PlaneAngleRadians.PI, TEST_PRECISION),
                 Vector2D.of(0, -1), Vector2D.Unit.MINUS_X);
-        checkLine(Line.fromPointAndAngle(Vector2D.of(1, -1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
+        checkLine(Lines.fromPointAndAngle(Vector2D.of(1, -1), -PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION),
                 Vector2D.of(1, 0), Vector2D.Unit.MINUS_Y);
-        checkLine(Line.fromPointAndAngle(Vector2D.of(-1, 1), PlaneAngleRadians.TWO_PI, TEST_PRECISION),
+        checkLine(Lines.fromPointAndAngle(Vector2D.of(-1, 1), PlaneAngleRadians.TWO_PI, TEST_PRECISION),
                 Vector2D.of(0, 1), Vector2D.Unit.PLUS_X);
     }
 
@@ -108,7 +107,7 @@ public class LineTest {
         Vector2D vec = Vector2D.of(1, 2);
 
         for (double theta = -4 * PlaneAngleRadians.PI; theta < 2 * PlaneAngleRadians.PI; theta += 0.1) {
-            Line line = Line.fromPointAndAngle(vec, theta, TEST_PRECISION);
+            Line line = Lines.fromPointAndAngle(vec, theta, TEST_PRECISION);
 
             // act/assert
             Assert.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(theta),
@@ -122,85 +121,85 @@ public class LineTest {
         Vector2D vec = Vector2D.of(-1, -2);
 
         // act/assert
-        Assert.assertEquals(0, Line.fromPointAndAngle(vec, 0.0, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, Line.fromPointAndAngle(vec, PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(0, Line.fromPointAndAngle(vec, PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, 0.0, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
 
-        Assert.assertEquals(0, Line.fromPointAndAngle(vec, -2 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(PlaneAngleRadians.PI, Line.fromPointAndAngle(vec, -3 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
-        Assert.assertEquals(0, Line.fromPointAndAngle(vec, -4 * PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, -2 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(PlaneAngleRadians.PI, Lines.fromPointAndAngle(vec, -3 * PlaneAngleRadians.PI, TEST_PRECISION).getAngle(), TEST_EPS);
+        Assert.assertEquals(0, Lines.fromPointAndAngle(vec, -4 * PlaneAngleRadians.TWO_PI, TEST_PRECISION).getAngle(), TEST_EPS);
     }
 
     @Test
     public void testGetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X,
-                Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y,
-                Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X,
-                Line.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 2), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 2), TEST_PRECISION).getDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X,
-                Line.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y,
-                Line.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y,
-                Line.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, -1).normalize(),
-                Line.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1).normalize(),
-                Line.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getDirection(), TEST_EPS);
     }
 
     @Test
     public void testGetOffsetDirection() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y,
-                Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X,
-                Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y,
-                Line.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 2), Vector2D.of(1, 2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_Y,
-                Line.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.MINUS_X,
-                Line.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X,
-                Line.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1).normalize(),
-                Line.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1).normalize(),
-                Line.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getOffsetDirection(), TEST_EPS);
     }
 
     @Test
     public void testGetOrigin() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO,
-                Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 0), TEST_PRECISION).getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO,
-                Line.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 1), Vector2D.of(0, -1), TEST_PRECISION).getOrigin(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 2),
-                Line.fromPoints(Vector2D.of(2, 2), Vector2D.of(3, 2), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 2), Vector2D.of(3, 2), TEST_PRECISION).getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, -2),
-                Line.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(10, -2), Vector2D.of(10.1, -2), TEST_PRECISION).getOrigin(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 0),
-                Line.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(3, 2), Vector2D.of(3, 1), TEST_PRECISION).getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 0),
-                Line.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(-3, 10), Vector2D.of(-3, 10.1), TEST_PRECISION).getOrigin(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1),
-                Line.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(2, 0), TEST_PRECISION).getOrigin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1),
-                Line.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getOrigin(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(2, 0), Vector2D.of(0, 2), TEST_PRECISION).getOrigin(), TEST_EPS);
     }
 
     @Test
@@ -210,27 +209,27 @@ public class LineTest {
 
         // act/assert
         Assert.assertEquals(0.0,
-                Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
         Assert.assertEquals(0.0,
-                Line.fromPoints(Vector2D.of(0, 0), Vector2D.of(-1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 0), Vector2D.of(-1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
 
         Assert.assertEquals(sqrt2,
-                Line.fromPoints(Vector2D.of(-1, 1), Vector2D.of(0, 2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(-1, 1), Vector2D.of(0, 2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
         Assert.assertEquals(-sqrt2,
-                Line.fromPoints(Vector2D.of(0, -2), Vector2D.of(1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, -2), Vector2D.of(1, -1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
 
         Assert.assertEquals(-sqrt2,
-                Line.fromPoints(Vector2D.of(0, 2), Vector2D.of(-1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(0, 2), Vector2D.of(-1, 1), TEST_PRECISION).getOriginOffset(), TEST_EPS);
         Assert.assertEquals(sqrt2,
-                Line.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
+                Lines.fromPoints(Vector2D.of(1, -1), Vector2D.of(0, -2), TEST_PRECISION).getOriginOffset(), TEST_EPS);
     }
 
     @Test
     public void testGetPrecision() {
         // act/assert
-        Assert.assertSame(TEST_PRECISION, Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
-        Assert.assertSame(TEST_PRECISION, Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
-        Assert.assertSame(TEST_PRECISION, Line.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).getPrecision());
+        Assert.assertSame(TEST_PRECISION, Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
+        Assert.assertSame(TEST_PRECISION, Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION).getPrecision());
+        Assert.assertSame(TEST_PRECISION, Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION).getPrecision());
     }
 
     @Test
@@ -238,7 +237,7 @@ public class LineTest {
         // arrange
         Vector2D pt = Vector2D.of(0, 1);
         Vector2D dir = Vector2D.Unit.PLUS_X;
-        Line line = Line.fromPointAndDirection(pt, dir, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(pt, dir, TEST_PRECISION);
 
         // act
         Line reversed = line.reverse();
@@ -255,7 +254,7 @@ public class LineTest {
     @Test
     public void testAbscissa() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(-2, -2), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0.0, line.abscissa(Vector2D.of(-3, 4)), TEST_EPS);
@@ -267,7 +266,7 @@ public class LineTest {
     @Test
     public void testToSubspace() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0.0, line.toSubspace(Vector2D.of(-3, 4)).getX(), TEST_EPS);
@@ -282,7 +281,7 @@ public class LineTest {
         double invSqrt2 = 1 / Math.sqrt(2);
         Vector2D dir = Vector2D.of(invSqrt2, invSqrt2);
 
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, line.toSpace(Vector1D.of(0)), TEST_EPS);
@@ -309,7 +308,7 @@ public class LineTest {
                 );
         Vector2D dir = Vector2D.of(cos, sin);
 
-        Line line = Line.fromPointAndAngle(pt, angle, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(pt, angle, TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(origin, line.toSpace(Vector1D.of(0)), TEST_EPS);
@@ -323,10 +322,10 @@ public class LineTest {
     @Test
     public void testIntersection() {
         // arrange
-        Line a = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line c = Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
-        Line d = Line.fromPointAndDirection(Vector2D.of(0, -1), Vector2D.of(2, -1), TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
+        Line d = Lines.fromPointAndDirection(Vector2D.of(0, -1), Vector2D.of(2, -1), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, a.intersection(b), TEST_EPS);
@@ -351,11 +350,11 @@ public class LineTest {
     @Test
     public void testIntersection_parallel() {
         // arrange
-        Line a = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
-        Line c = Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
-        Line d = Line.fromPointAndDirection(Vector2D.of(0, -1), Vector2D.of(2, 1), TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
+        Line d = Lines.fromPointAndDirection(Vector2D.of(0, -1), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertNull(a.intersection(b));
@@ -368,11 +367,11 @@ public class LineTest {
     @Test
     public void testIntersection_coincident() {
         // arrange
-        Line a = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
-        Line c = Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
-        Line d = Line.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
+        Line d = Lines.fromPointAndDirection(Vector2D.of(0, 2), Vector2D.of(2, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertNull(a.intersection(b));
@@ -385,9 +384,9 @@ public class LineTest {
     @Test
     public void testAngle() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(1, 4), PlaneAngleRadians.PI, TEST_PRECISION);
-        Line c = Line.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.of(1, 4), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(1, 1), Vector2D.of(2, 2), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0.0, a.angle(a), TEST_EPS);
@@ -406,12 +405,12 @@ public class LineTest {
     @Test
     public void testProject() {
         // --- arrange
-        Line xAxis = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line yAxis = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line xAxis = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line yAxis = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
 
         double diagonalYIntercept = 1;
         Vector2D diagonalDir = Vector2D.of(1, 2);
-        Line diagonal = Line.fromPointAndDirection(Vector2D.of(0, diagonalYIntercept), diagonalDir, TEST_PRECISION);
+        Line diagonal = Lines.fromPointAndDirection(Vector2D.of(0, diagonalYIntercept), diagonalDir, TEST_PRECISION);
 
         EuclideanTestUtils.permute(-5, 5, 0.5, (x, y) -> {
             Vector2D pt = Vector2D.of(x, y);
@@ -433,34 +432,20 @@ public class LineTest {
     @Test
     public void testSpan() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
-        Segment result = line.span();
+        LineConvexSubset result = line.span();
 
         // assert
         Assert.assertSame(line, result.getHyperplane());
-        GeometryTestUtils.assertPositiveInfinity(result.getSize());
-    }
-
-    @Test
-    public void testSegment_interval() {
-        // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
-        Interval interval = Interval.of(1, 2, TEST_PRECISION);
-
-        // act
-        Segment segment = line.segment(interval);
-
-        // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertSame(interval, segment.getSubspaceRegion());
+        Assert.assertSame(line, result.getLine());
     }
 
     @Test
     public void testSegment_doubles() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(1, 2);
@@ -474,7 +459,7 @@ public class LineTest {
     @Test
     public void testSegment_pointsOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(Vector2D.of(3, 1), Vector2D.of(2, 1));
@@ -488,7 +473,7 @@ public class LineTest {
     @Test
     public void testSegment_pointsProjectedOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
 
         // act
         Segment segment = line.segment(Vector2D.of(-3, 2), Vector2D.of(2, -1));
@@ -500,88 +485,111 @@ public class LineTest {
     }
 
     @Test
-    public void testSegmentTo_pointOnLine() {
+    public void testLineTo_pointOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentTo(Vector2D.of(-3, 1));
+        ReverseRay halfLine = line.reverseRayTo(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentTo_pointProjectedOnLine() {
+    public void testLineTo_pointProjectedOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentTo(Vector2D.of(-3, 5));
+        ReverseRay halfLine = line.reverseRayTo(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        Assert.assertNull(segment.getStartPoint());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getEndPoint(), TEST_EPS);
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertTrue(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertFalse(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(1, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentFrom_pointOnLine() {
+    public void testLineTo_double() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentFrom(Vector2D.of(-3, 1));
+        ReverseRay halfLine = line.reverseRayTo(-1);
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
+        Assert.assertSame(line, halfLine.getLine());
+        Assert.assertTrue(halfLine.isInfinite());
+        Assert.assertNull(halfLine.getStartPoint());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), halfLine.getEndPoint(), TEST_EPS);
 
-        Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertTrue(halfLine.contains(Vector2D.of(2, 1)));
+        Assert.assertFalse(halfLine.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSegmentFrom_pointProjectedOnLine() {
+    public void testRayFrom_pointOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        Segment segment = line.segmentFrom(Vector2D.of(-3, 5));
+        Ray ray = line.rayFrom(Vector2D.of(-3, 1));
 
         // assert
-        Assert.assertSame(line, segment.getLine());
-        Assert.assertTrue(segment.isInfinite());
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segment.getStartPoint(), TEST_EPS);
-        Assert.assertNull(segment.getEndPoint());
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
 
-        Assert.assertFalse(segment.contains(Vector2D.of(1, 1)));
-        Assert.assertTrue(segment.contains(Vector2D.of(-4, 1)));
+        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
-    public void testSubline() {
+    public void testRayFrom_pointProjectedOnLine() {
         // arrange
-        Line line = Line.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act
-        SubLine subline = line.subline();
+        Ray ray = line.rayFrom(Vector2D.of(-3, 5));
 
         // assert
-        Assert.assertSame(line, subline.getLine());
-        Assert.assertTrue(subline.isEmpty());
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
+
+        Assert.assertFalse(ray.contains(Vector2D.of(1, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
+    }
+
+    @Test
+    public void testRayFrom_double() {
+        // arrange
+        Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), PlaneAngleRadians.PI, TEST_PRECISION);
+
+        // act
+        Ray ray = line.rayFrom(-1);
+
+        // assert
+        Assert.assertSame(line, ray.getLine());
+        Assert.assertTrue(ray.isInfinite());
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), ray.getStartPoint(), TEST_EPS);
+        Assert.assertNull(ray.getEndPoint());
+
+        Assert.assertFalse(ray.contains(Vector2D.of(2, 1)));
+        Assert.assertTrue(ray.contains(Vector2D.of(-4, 1)));
     }
 
     @Test
@@ -589,10 +597,10 @@ public class LineTest {
         // arrange
         double dist = Math.sin(Math.atan2(2, 1));
 
-        Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.of(-3, 0), Vector2D.of(0, 6), TEST_PRECISION);
-        Line c = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line d = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.of(-3, 0), Vector2D.of(0, 6), TEST_PRECISION);
+        Line c = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(-dist, a.offset(b), TEST_EPS);
@@ -608,8 +616,8 @@ public class LineTest {
     @Test
     public void testOffset_coincidentLines() {
         // arrange
-        Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line c = b.reverse();
 
         // act/assert
@@ -625,10 +633,10 @@ public class LineTest {
     @Test
     public void testOffset_nonParallelLines() {
         // arrange
-        Line a = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line c = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line d = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line c = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0, a.offset(b), TEST_EPS);
@@ -644,7 +652,7 @@ public class LineTest {
     @Test
     public void testOffset_point() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         Line reversed = line.reverse();
 
         // act/assert
@@ -664,7 +672,7 @@ public class LineTest {
     @Test
     public void testOffset_point_permute() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         Vector2D lineOrigin = line.getOrigin();
 
         EuclideanTestUtils.permute(-5, 5, 0.5, (x, y) -> {
@@ -685,14 +693,14 @@ public class LineTest {
     @Test
     public void testSimilarOrientation() {
         // arrange
-        Line a = Line.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
-        Line b = Line.fromPointAndAngle(Vector2D.of(4, 5), 0.0, TEST_PRECISION);
-        Line c = Line.fromPointAndAngle(Vector2D.of(-1, -3), 0.4 * PlaneAngleRadians.PI, TEST_PRECISION);
-        Line d = Line.fromPointAndAngle(Vector2D.of(1, 0), -0.4 * PlaneAngleRadians.PI, TEST_PRECISION);
+        Line a = Lines.fromPointAndAngle(Vector2D.ZERO, 0.0, TEST_PRECISION);
+        Line b = Lines.fromPointAndAngle(Vector2D.of(4, 5), 0.0, TEST_PRECISION);
+        Line c = Lines.fromPointAndAngle(Vector2D.of(-1, -3), 0.4 * PlaneAngleRadians.PI, TEST_PRECISION);
+        Line d = Lines.fromPointAndAngle(Vector2D.of(1, 0), -0.4 * PlaneAngleRadians.PI, TEST_PRECISION);
 
-        Line e = Line.fromPointAndAngle(Vector2D.of(6, -3), PlaneAngleRadians.PI, TEST_PRECISION);
-        Line f = Line.fromPointAndAngle(Vector2D.of(8, 5), 0.8 * PlaneAngleRadians.PI, TEST_PRECISION);
-        Line g = Line.fromPointAndAngle(Vector2D.of(6, -3), -0.8 * PlaneAngleRadians.PI, TEST_PRECISION);
+        Line e = Lines.fromPointAndAngle(Vector2D.of(6, -3), PlaneAngleRadians.PI, TEST_PRECISION);
+        Line f = Lines.fromPointAndAngle(Vector2D.of(8, 5), 0.8 * PlaneAngleRadians.PI, TEST_PRECISION);
+        Line g = Lines.fromPointAndAngle(Vector2D.of(6, -3), -0.8 * PlaneAngleRadians.PI, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.similarOrientation(a));
@@ -718,9 +726,9 @@ public class LineTest {
     @Test
     public void testSimilarOrientation_orthogonal() {
         // arrange
-        Line a = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.of(4, 5), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line c = Line.fromPointAndDirection(Vector2D.of(-4, -5), Vector2D.Unit.MINUS_Y, TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.of(4, 5), Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(-4, -5), Vector2D.Unit.MINUS_Y, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.similarOrientation(b));
@@ -734,10 +742,10 @@ public class LineTest {
         // arrange
         double dist = Math.sin(Math.atan2(2, 1));
 
-        Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.of(-3, 0), Vector2D.of(0, 6), TEST_PRECISION);
-        Line c = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line d = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.of(-3, 0), Vector2D.of(0, 6), TEST_PRECISION);
+        Line c = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, -2), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(dist, a.distance(b), TEST_EPS);
@@ -753,8 +761,8 @@ public class LineTest {
     @Test
     public void testDistance_coincidentLines() {
         // arrange
-        Line a = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.of(-2, 0), Vector2D.of(0, 4), TEST_PRECISION);
         Line c = b.reverse();
 
         // act/assert
@@ -770,10 +778,10 @@ public class LineTest {
     @Test
     public void testDistance_nonParallelLines() {
         // arrange
-        Line a = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line b = Line.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line c = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
-        Line d = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
+        Line a = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line b = Lines.fromPoints(Vector2D.ZERO, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line c = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line d = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(0, 4), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0, a.distance(b), TEST_EPS);
@@ -789,7 +797,7 @@ public class LineTest {
     @Test
     public void testDistance() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         // act/assert
         Assert.assertEquals(0, line.distance(line.getOrigin()), TEST_EPS);
@@ -802,7 +810,7 @@ public class LineTest {
         // arrange
         Vector2D origin = Vector2D.of(-1, 1);
         double d = Math.sqrt(2);
-        Line line = Line.fromPointAndDirection(origin, Vector2D.of(1, 1), TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(origin, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(origin, line.pointAt(0, 0), TEST_EPS);
@@ -819,7 +827,7 @@ public class LineTest {
     @Test
     public void testPointAt_abscissaOffsetRoundtrip() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(2, 1), Vector2D.of(-2, -2), TEST_PRECISION);
 
         for (double abscissa = -2.0; abscissa < 2.0; abscissa += 0.2) {
             for (double offset = -2.0; offset < 2.0; offset += 0.2) {
@@ -839,13 +847,13 @@ public class LineTest {
         // arrange
         Vector2D pt = Vector2D.of(1, 2);
         Vector2D dir = Vector2D.of(3, 7);
-        Line a = Line.fromPointAndDirection(pt, dir, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.of(0, -4), dir, TEST_PRECISION);
-        Line c = Line.fromPointAndDirection(Vector2D.of(-2, -2), dir.negate(), TEST_PRECISION);
-        Line d = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(pt, dir, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.of(0, -4), dir, TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(-2, -2), dir.negate(), TEST_PRECISION);
+        Line d = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
-        Line e = Line.fromPointAndDirection(pt, dir, TEST_PRECISION);
-        Line f = Line.fromPointAndDirection(pt, dir.negate(), TEST_PRECISION);
+        Line e = Lines.fromPointAndDirection(pt, dir, TEST_PRECISION);
+        Line f = Lines.fromPointAndDirection(pt, dir.negate(), TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.contains(a));
@@ -869,20 +877,20 @@ public class LineTest {
 
         Vector2D p = Vector2D.of(1, 2);
 
-        Line line = Line.fromPointAndAngle(p, 0.0, precision);
+        Line line = Lines.fromPointAndAngle(p, 0.0, precision);
 
         // act/assert
         Vector2D offset1 = Vector2D.of(0, 1e-4);
         Vector2D offset2 = Vector2D.of(0, 2e-3);
 
-        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.add(offset1), 0.0, precision)));
-        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p.subtract(offset1), 0.0, precision)));
+        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p.add(offset1), 0.0, precision)));
+        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p.subtract(offset1), 0.0, precision)));
 
-        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.add(offset2), 0.0, precision)));
-        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p.subtract(offset2), 0.0, precision)));
+        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p.add(offset2), 0.0, precision)));
+        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p.subtract(offset2), 0.0, precision)));
 
-        Assert.assertTrue(line.contains(Line.fromPointAndAngle(p, 1e-4, precision)));
-        Assert.assertFalse(line.contains(Line.fromPointAndAngle(p, 1e-2, precision)));
+        Assert.assertTrue(line.contains(Lines.fromPointAndAngle(p, 1e-4, precision)));
+        Assert.assertFalse(line.contains(Lines.fromPointAndAngle(p, 1e-2, precision)));
     }
 
     @Test
@@ -890,7 +898,7 @@ public class LineTest {
         // arrange
         Vector2D p1 = Vector2D.of(-1, 0);
         Vector2D p2 = Vector2D.of(0, 2);
-        Line line = Line.fromPoints(p1, p2, TEST_PRECISION);
+        Line line = Lines.fromPoints(p1, p2, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(line.contains(p1));
@@ -922,7 +930,7 @@ public class LineTest {
         Vector2D p2 = Vector2D.of(0, 2);
         Vector2D mid = p1.lerp(p2, 0.5);
 
-        Line line = Line.fromPoints(p1, p2, precision);
+        Line line = Lines.fromPoints(p1, p2, precision);
         Vector2D dir = line.getOffsetDirection();
 
         // act/assert
@@ -936,7 +944,7 @@ public class LineTest {
     @Test
     public void testDistance_point() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         Line reversed = line.reverse();
 
         // act/assert
@@ -956,7 +964,7 @@ public class LineTest {
     @Test
     public void testDistance_point_permute() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(-1, 0), Vector2D.of(0, 2), TEST_PRECISION);
         Vector2D lineOrigin = line.getOrigin();
 
         EuclideanTestUtils.permute(-5, 5, 0.5, (x, y) -> {
@@ -975,10 +983,10 @@ public class LineTest {
     public void testIsParallel() {
         // arrange
         Vector2D dir = Vector2D.of(3, 7);
-        Line a = Line.fromPointAndDirection(Vector2D.of(1, 2), dir, TEST_PRECISION);
-        Line b = Line.fromPointAndDirection(Vector2D.of(0, -4), dir, TEST_PRECISION);
-        Line c = Line.fromPointAndDirection(Vector2D.of(-2, -2), dir.negate(), TEST_PRECISION);
-        Line d = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line a = Lines.fromPointAndDirection(Vector2D.of(1, 2), dir, TEST_PRECISION);
+        Line b = Lines.fromPointAndDirection(Vector2D.of(0, -4), dir, TEST_PRECISION);
+        Line c = Lines.fromPointAndDirection(Vector2D.of(-2, -2), dir.negate(), TEST_PRECISION);
+        Line d = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         Assert.assertTrue(a.isParallel(a));
@@ -1002,11 +1010,11 @@ public class LineTest {
         Vector2D p1 = Vector2D.of(1, 2);
         Vector2D p2 = Vector2D.of(1, -2);
 
-        Line line = Line.fromPointAndAngle(p1, 0.0, precision);
+        Line line = Lines.fromPointAndAngle(p1, 0.0, precision);
 
         // act/assert
-        Assert.assertTrue(line.isParallel(Line.fromPointAndAngle(p2, 1e-4, precision)));
-        Assert.assertFalse(line.isParallel(Line.fromPointAndAngle(p2, 1e-2, precision)));
+        Assert.assertTrue(line.isParallel(Lines.fromPointAndAngle(p2, 1e-4, precision)));
+        Assert.assertFalse(line.isParallel(Lines.fromPointAndAngle(p2, 1e-2, precision)));
     }
 
     @Test
@@ -1021,9 +1029,9 @@ public class LineTest {
         Vector2D p1 = Vector2D.of(0, 1);
         Vector2D p2 = Vector2D.of(1, 0);
 
-        Line horizontal = Line.fromPointAndDirection(p1, Vector2D.Unit.PLUS_X, TEST_PRECISION);
-        Line vertical = Line.fromPointAndDirection(p2, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
-        Line diagonal = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+        Line horizontal = Lines.fromPointAndDirection(p1, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line vertical = Lines.fromPointAndDirection(p2, Vector2D.Unit.PLUS_Y, TEST_PRECISION);
+        Line diagonal = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
 
         // act/assert
         Assert.assertSame(TEST_PRECISION, horizontal.transform(scale).getPrecision());
@@ -1053,7 +1061,7 @@ public class LineTest {
     public void testTransform_collapsedPoints() {
         // arrange
         AffineTransformMatrix2D scaleCollapse = AffineTransformMatrix2D.createScale(0, 1);
-        Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
@@ -1064,7 +1072,7 @@ public class LineTest {
     @Test
     public void testSubspaceTransform() {
         // arrange
-        Line line = Line.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        Line line = Lines.fromPoints(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         // act/assert
         checkSubspaceTransform(line.subspaceTransform(AffineTransformMatrix2D.createScale(2, 3)),
@@ -1094,7 +1102,7 @@ public class LineTest {
     @Test
     public void testSubspaceTransform_transformsPointsCorrectly() {
         // arrange
-        Line line = Line.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.of(1, 0), Vector2D.of(1, 1), TEST_PRECISION);
 
         EuclideanTestUtils.permuteSkipZero(-2, 2, 0.5, (a, b) -> {
             // create a somewhat complicate transform to try to hit all of the edge cases
@@ -1125,13 +1133,13 @@ public class LineTest {
         Vector2D p = Vector2D.of(1, 2);
         double angle = 1.0;
 
-        Line a = Line.fromPointAndAngle(p, angle, precision);
-        Line b = Line.fromPointAndAngle(Vector2D.ZERO, angle, precision);
-        Line c = Line.fromPointAndAngle(p, angle + 1.0, precision);
+        Line a = Lines.fromPointAndAngle(p, angle, precision);
+        Line b = Lines.fromPointAndAngle(Vector2D.ZERO, angle, precision);
+        Line c = Lines.fromPointAndAngle(p, angle + 1.0, precision);
 
-        Line d = Line.fromPointAndAngle(p, angle, precision);
-        Line e = Line.fromPointAndAngle(p.add(Vector2D.of(1e-4, 1e-4)), angle, precision);
-        Line f = Line.fromPointAndAngle(p, angle + 1e-4, precision);
+        Line d = Lines.fromPointAndAngle(p, angle, precision);
+        Line e = Lines.fromPointAndAngle(p.add(Vector2D.of(1e-4, 1e-4)), angle, precision);
+        Line f = Lines.fromPointAndAngle(p, angle + 1e-4, precision);
 
         // act/assert
         Assert.assertTrue(a.eq(a, precision));
@@ -1158,11 +1166,11 @@ public class LineTest {
         Vector2D p = Vector2D.of(1, 2);
         Vector2D v = Vector2D.of(1, 1);
 
-        Line a = Line.fromPointAndDirection(p, v, precision1);
-        Line b = Line.fromPointAndDirection(Vector2D.ZERO, v, precision1);
-        Line c = Line.fromPointAndDirection(p, v.negate(), precision1);
-        Line d = Line.fromPointAndDirection(p, v, precision2);
-        Line e = Line.fromPointAndDirection(p, v, precision1);
+        Line a = Lines.fromPointAndDirection(p, v, precision1);
+        Line b = Lines.fromPointAndDirection(Vector2D.ZERO, v, precision1);
+        Line c = Lines.fromPointAndDirection(p, v.negate(), precision1);
+        Line d = Lines.fromPointAndDirection(p, v, precision2);
+        Line e = Lines.fromPointAndDirection(p, v, precision1);
 
         // act/assert
         int aHash = a.hashCode();
@@ -1184,11 +1192,11 @@ public class LineTest {
         Vector2D p = Vector2D.of(1, 2);
         Vector2D v = Vector2D.of(1, 1);
 
-        Line a = Line.fromPointAndDirection(p, v, precision1);
-        Line b = Line.fromPointAndDirection(Vector2D.ZERO, v, precision1);
-        Line c = Line.fromPointAndDirection(p, v.negate(), precision1);
-        Line d = Line.fromPointAndDirection(p, v, precision2);
-        Line e = Line.fromPointAndDirection(p, v, precision1);
+        Line a = Lines.fromPointAndDirection(p, v, precision1);
+        Line b = Lines.fromPointAndDirection(Vector2D.ZERO, v, precision1);
+        Line c = Lines.fromPointAndDirection(p, v.negate(), precision1);
+        Line d = Lines.fromPointAndDirection(p, v, precision2);
+        Line e = Lines.fromPointAndDirection(p, v, precision1);
 
         // act/assert
         Assert.assertTrue(a.equals(a));
@@ -1206,7 +1214,7 @@ public class LineTest {
     @Test
     public void testToString() {
         // arrange
-        Line line = Line.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
+        Line line = Lines.fromPointAndDirection(Vector2D.ZERO, Vector2D.Unit.PLUS_X, TEST_PRECISION);
 
         // act
         String str = line.toString();

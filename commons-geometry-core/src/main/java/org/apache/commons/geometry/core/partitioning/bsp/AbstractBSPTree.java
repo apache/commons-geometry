@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.geometry.core.Point;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.ConvexSubHyperplane;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -49,7 +49,7 @@ import org.apache.commons.geometry.core.partitioning.SplitLocation;
  *      <li>Since the methods used to construct and modify trees can vary by use case, no public API is provided
  *      for manipulating the tree. Subclasses are expected to use the protected methods of this class to
  *      create their own. For tree construction, subclasses are expected to pass their own {@link SubtreeInitializer}
- *      instances to {@link #insert(ConvexSubHyperplane, SubtreeInitializer) insert} and
+ *      instances to {@link #insert(HyperplaneConvexSubset, SubtreeInitializer) insert} and
  *      {@link #cutNode(AbstractNode, Hyperplane, SubtreeInitializer) cutNode} in order to set the correct properties on
  *      tree nodes. To support tree copying, subclasses must also override
  *      {@link #copyNodeProperties(AbstractNode, AbstractNode) copyNodeProperties}.</li>
@@ -212,17 +212,15 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     /** Copy non-structural node properties from {@code src} to {@code dst}.
      * Non-structural properties are those properties not directly related
      * to the structure of the BSP tree, i.e. properties other than parent/child
-     * connections and cut subhyperplanes. Subclasses should override this method
-     * when additional properties are stored on nodes.
+     * connections and cuts. Subclasses should override this method to copy additional
+     * properties stored on nodes.
      * @param src source node
      * @param dst destination node
      */
-    protected void copyNodeProperties(final N src, final N dst) {
-        // no-op
-    }
+    protected abstract void copyNodeProperties(N src, N dst);
 
     /** Create a non-structural copy of the given node. Properties such as parent/child
-     * connections and cut subhyperplanes are <em>not</em> copied.
+     * connections and cuts are <em>not</em> copied.
      * @param src the node to copy; does not need to belong to the current tree
      * @return the copied node
      * @see AbstractBSPTree#copyNodeProperties(AbstractNode, AbstractNode)
@@ -250,7 +248,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
             copyNodeProperties(src, dst);
 
             // copy the subtree structure
-            ConvexSubHyperplane<P> cut = null;
+            HyperplaneConvexSubset<P> cut = null;
             N minus = null;
             N plus = null;
 
@@ -333,7 +331,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param start the node to begin the search with
      * @param pt the point to check
      * @param cutRule value determining the search behavior when the test point
-     *      lies directly on the cut subhyperplane of an internal node
+     *      lies directly on the cut of an internal node
      * @return the smallest node in the tree containing the point
      */
     protected N findNode(final N start, final P pt, final FindNodeCutRule cutRule) {
@@ -425,7 +423,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      *      path from the given node to the root of the tree.</li>
      *      <li>If the remaining portion of the hyperplane is <em>not</em> empty, then
      *          <ul>
-     *              <li>the remaining portion becomes the cut subhyperplane for the node,</li>
+     *              <li>the remaining portion becomes the cut hyperplane subset for the node,</li>
      *              <li>two new child nodes are created and initialized with
      *              {@code subtreeInitializer}, and</li>
      *              <li>true is returned.</li>
@@ -453,8 +451,8 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * @param subtreeInitializer object used to initialize any newly-created subtrees
      * @return true if the node was cut and two new child nodes were created;
      *      otherwise false
-     * @see #trimToNode(AbstractNode, ConvexSubHyperplane)
-     * @see #setNodeCut(AbstractNode, ConvexSubHyperplane, SubtreeInitializer)
+     * @see #trimToNode(AbstractNode, HyperplaneConvexSubset)
+     * @see #setNodeCut(AbstractNode, HyperplaneConvexSubset, SubtreeInitializer)
      * @see #removeNodeCut(AbstractNode)
      * @see #invalidate()
      */
@@ -463,7 +461,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         // cut the hyperplane using all hyperplanes from this node up
         // to the root
-        final ConvexSubHyperplane<P> cut = trimToNode(node, cutter.span());
+        final HyperplaneConvexSubset<P> cut = trimToNode(node, cutter.span());
         if (cut == null || cut.isEmpty()) {
             // insertion failed; the node was not cut
             removeNodeCut(node);
@@ -474,18 +472,18 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return true;
     }
 
-    /** Trim the given subhyperplane to the region defined by the given node. This method cuts the
-     * subhyperplane with the cut hyperplanes (binary partitioners) of all parent nodes up to
-     * the root and returns the trimmed subhyperplane or {@code null} if the subhyperplane lies
-     * outside of the region defined by the node.
+    /** Trim the given hyperplane convex subset to the region defined by the given node. This method
+     * cuts the subset with the cut hyperplanes (binary partitioners) of all parent nodes up to the
+     * root and returns the trimmed subset or {@code null} if the subset lies outside of the region
+     * defined by the node.
      *
-     * <p>If the subhyperplane is directly coincident with a binary partitioner of a parent node,
+     * <p>If the subset is directly coincident with a binary partitioner of a parent node,
      * then the relative orientations of the associated hyperplanes are used to determine the behavior,
      * as described below.
      * <ul>
-     *      <li>If the orientations are <strong>similar</strong>, then the subhyperplane is determined to
+     *      <li>If the orientations are <strong>similar</strong>, then the subset is determined to
      *      lie <em>outside</em> of the node's region and {@code null} is returned.</li>
-     *      <li>If the orientations are <strong>different</strong> (ie, opposite), then the subhyperplane
+     *      <li>If the orientations are <strong>different</strong> (ie, opposite), then the subset
      *      is determined to lie <em>inside</em> of the node's region and the fit operation continues
      *      with the remaining parent nodes.</li>
      * </ul>
@@ -503,24 +501,24 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
      * hyperplane to the tree that is coincident with a parent node but with the opposite orientation,
      * <em>does</em> add information to the tree.
      *
-     * @param node the node representing the region to fit the subhyperplane to
-     * @param sub the subhyperplane to trim to the node's region
-     * @return the trimmed subhyperplane or null if the given subhyperplane does not intersect
+     * @param node the node representing the region to fit the hyperplane subset to
+     * @param sub the hyperplane subset to trim to the node's region
+     * @return the trimmed hyperplane subset or null if the given hyperplane subset does not intersect
      *      the node's region
      */
-    protected ConvexSubHyperplane<P> trimToNode(final N node, final ConvexSubHyperplane<P> sub) {
+    protected HyperplaneConvexSubset<P> trimToNode(final N node, final HyperplaneConvexSubset<P> sub) {
 
-        ConvexSubHyperplane<P> result = sub;
+        HyperplaneConvexSubset<P> result = sub;
 
         N parentNode = node.getParent();
         N currentNode = node;
 
         while (parentNode != null && result != null) {
-            final Split<? extends ConvexSubHyperplane<P>> split = result.split(parentNode.getCutHyperplane());
+            final Split<? extends HyperplaneConvexSubset<P>> split = result.split(parentNode.getCutHyperplane());
 
             if (split.getLocation() == SplitLocation.NEITHER) {
                 // if we're directly on the splitter and have the same orientation, then
-                // we say the subhyperplane does not lie in the node's region (no new information
+                // we say the subset does not lie in the node's region (no new information
                 // is added to the tree in this case)
                 if (result.getHyperplane().similarOrientation(parentNode.getCutHyperplane())) {
                     result = null;
@@ -556,19 +554,19 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return false;
     }
 
-    /** Set the cut subhyperplane for the given node. Two new child nodes are created for the given
+    /** Set the cut hyperplane subset for the given node. Two new child nodes are created for the
      * node and the new subtree is initialized with {@code subtreeInitializer}.
      *
      * <p>This method performs absolutely <em>no</em> validation on the given cut
-     * subhyperplane. It is the responsibility of the caller to ensure that the
-     * subhyperplane fits the region represented by the node.</p>
+     * hyperplane subset. It is the responsibility of the caller to ensure that the
+     * hyperplane subset fits the region represented by the node.</p>
      *
      * <p>This method always calls {@link #invalidate()} to invalidate cached tree properties.</p>
      * @param node the node to cut
-     * @param cut the convex subhyperplane to set as the node cut
+     * @param cut the hyperplane convex subset to set as the node cut
      * @param subtreeInitializer object used to initialize the newly-created subtree
      */
-    protected void setNodeCut(final N node, final ConvexSubHyperplane<P> cut,
+    protected void setNodeCut(final N node, final HyperplaneConvexSubset<P> cut,
             final SubtreeInitializer<N> subtreeInitializer) {
 
         node.setSubtree(cut, createNode(), createNode());
@@ -578,35 +576,35 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         invalidate();
     }
 
-    /** Insert the given convex subhyperplane into the tree, starting at the root node. Any subtrees
+    /** Insert the given hyperplane convex subset into the tree, starting at the root node. Any subtrees
      * created are initialized with {@code subtreeInit}.
-     * @param convexSub convex subhyperplane to insert into the tree
+     * @param convexSub hyperplane convex subset to insert into the tree
      * @param subtreeInit object used to initialize newly created subtrees
      */
-    protected void insert(final ConvexSubHyperplane<P> convexSub, final SubtreeInitializer<N> subtreeInit) {
+    protected void insert(final HyperplaneConvexSubset<P> convexSub, final SubtreeInitializer<N> subtreeInit) {
         insertRecursive(getRoot(), convexSub,
                 convexSub.getHyperplane().span(), subtreeInit);
     }
 
-    /** Recursively insert a subhyperplane into the tree at the given node.
+    /** Recursively insert a hyperplane convex subset into the tree at the given node.
      * @param node the node to begin insertion with
-     * @param insert the subhyperplane to insert
-     * @param trimmed subhyperplane containing the result of splitting the entire
+     * @param insert the hyperplane subset to insert
+     * @param trimmed hyperplane subset containing the result of splitting the entire
      *      space with each hyperplane from this node to the root
      * @param subtreeInit object used to initialize newly created subtrees
      */
-    private void insertRecursive(final N node, final ConvexSubHyperplane<P> insert,
-            final ConvexSubHyperplane<P> trimmed, final SubtreeInitializer<N> subtreeInit) {
+    private void insertRecursive(final N node, final HyperplaneConvexSubset<P> insert,
+            final HyperplaneConvexSubset<P> trimmed, final SubtreeInitializer<N> subtreeInit) {
         if (node.isLeaf()) {
             setNodeCut(node, trimmed, subtreeInit);
         } else {
-            final Split<? extends ConvexSubHyperplane<P>> insertSplit = insert.split(node.getCutHyperplane());
+            final Split<? extends HyperplaneConvexSubset<P>> insertSplit = insert.split(node.getCutHyperplane());
 
-            final ConvexSubHyperplane<P> minus = insertSplit.getMinus();
-            final ConvexSubHyperplane<P> plus = insertSplit.getPlus();
+            final HyperplaneConvexSubset<P> minus = insertSplit.getMinus();
+            final HyperplaneConvexSubset<P> plus = insertSplit.getPlus();
 
             if (minus != null || plus != null) {
-                final Split<? extends ConvexSubHyperplane<P>> trimmedSplit = trimmed.split(node.getCutHyperplane());
+                final Split<? extends HyperplaneConvexSubset<P>> trimmedSplit = trimmed.split(node.getCutHyperplane());
 
                 if (minus != null) {
                     insertRecursive(node.getMinus(), minus, trimmedSplit.getMinus(), subtreeInit);
@@ -642,7 +640,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
     private void transformRecursive(final N node, final Transform<P> t, final boolean swapChildren) {
         if (node.isInternal()) {
             // transform our cut
-            final ConvexSubHyperplane<P> transformedCut = node.getCut().transform(t);
+            final HyperplaneConvexSubset<P> transformedCut = node.getCut().transform(t);
 
             // transform our children
             transformRecursive(node.getMinus(), t, swapChildren);
@@ -680,29 +678,29 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         }
     }
 
-    /** Split the subtree rooted at the given node by a partitioning convex subhyperplane defined
+    /** Split the subtree rooted at the given node by a partitioning convex subset defined
      * on the same region as the node. The subtree rooted at {@code node} is imported into
      * this tree, meaning that if it comes from a different tree, the other tree is not
      * modified.
      * @param node the root node of the subtree to split; may come from a different tree,
      *      in which case the other tree is not modified
-     * @param partitioner partitioning convex subhyperplane
+     * @param partitioner partitioning convex subset
      * @return node containing the split subtree
      */
-    protected N splitSubtree(final N node, final ConvexSubHyperplane<P> partitioner) {
+    protected N splitSubtree(final N node, final HyperplaneConvexSubset<P> partitioner) {
         if (node.isLeaf()) {
             return splitLeafNode(node, partitioner);
         }
         return splitInternalNode(node, partitioner);
     }
 
-    /** Split the given leaf node by a partitioning convex subhyperplane defined on the
+    /** Split the given leaf node by a partitioning convex subset defined on the
      * same region and import it into this tree.
      * @param node the leaf node to split
-     * @param partitioner partitioning convex subhyperplane
+     * @param partitioner partitioning convex subset
      * @return node containing the split subtree
      */
-    private N splitLeafNode(final N node, final ConvexSubHyperplane<P> partitioner) {
+    private N splitLeafNode(final N node, final HyperplaneConvexSubset<P> partitioner) {
         // in this case, we just create a new parent node with the partitioner as its
         // cut and two copies of the original node as children
         final N parent = createNode();
@@ -711,16 +709,17 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         return parent;
     }
 
-    /** Split the given internal node by a partitioning convex subhyperplane defined on the same region
+    /** Split the given internal node by a partitioning convex subset defined on the same region
      * as the node and import it into this tree.
      * @param node the internal node to split
-     * @param partitioner partitioning convex subhyperplane
+     * @param partitioner partitioning convex subset
      * @return node containing the split subtree
      */
-    private N splitInternalNode(final N node, final ConvexSubHyperplane<P> partitioner) {
+    private N splitInternalNode(final N node, final HyperplaneConvexSubset<P> partitioner) {
         // split the partitioner and node cut with each other's hyperplanes to determine their relative positions
-        final Split<? extends ConvexSubHyperplane<P>> partitionerSplit = partitioner.split(node.getCutHyperplane());
-        final Split<? extends ConvexSubHyperplane<P>> nodeCutSplit = node.getCut().split(partitioner.getHyperplane());
+        final Split<? extends HyperplaneConvexSubset<P>> partitionerSplit = partitioner.split(node.getCutHyperplane());
+        final Split<? extends HyperplaneConvexSubset<P>> nodeCutSplit =
+                node.getCut().split(partitioner.getHyperplane());
 
         final SplitLocation partitionerSplitSide = partitionerSplit.getLocation();
         final SplitLocation nodeCutSplitSide = nodeCutSplit.getLocation();
@@ -822,15 +821,15 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
         /** The parent node; this will be null for the tree root node. */
         private N parent;
 
-        /** The subhyperplane cutting the node's region; this will be null for leaf nodes. */
-        private ConvexSubHyperplane<P> cut;
+        /** The hyperplane convex subset cutting the node's region; this will be null for leaf nodes. */
+        private HyperplaneConvexSubset<P> cut;
 
-        /** The node lying on the minus side of the cut subhyperplane; this will be null
+        /** The node lying on the minus side of the cut hyperplane; this will be null
          * for leaf nodes.
          */
         private N minus;
 
-        /** The node lying on the plus side of the cut subhyperplane; this will be null
+        /** The node lying on the plus side of the cut hyperplane; this will be null
          * for leaf nodes.
          */
         private N plus;
@@ -961,7 +960,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
-        public ConvexSubHyperplane<P> getCut() {
+        public HyperplaneConvexSubset<P> getCut() {
             return cut;
         }
 
@@ -985,7 +984,7 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
 
         /** {@inheritDoc} */
         @Override
-        public ConvexSubHyperplane<P> trim(final ConvexSubHyperplane<P> sub) {
+        public HyperplaneConvexSubset<P> trim(final HyperplaneConvexSubset<P> sub) {
             return getTree().trimToNode(getSelf(), sub);
         }
 
@@ -1005,14 +1004,14 @@ public abstract class AbstractBSPTree<P extends Point<P>, N extends AbstractBSPT
          * all null (representing a leaf node) or all non-null (representing an internal node).
          *
          * <p>Absolutely no validation is performed on the arguments. Callers are responsible for
-         * ensuring that any given subhyperplane fits the region defined by the node and that
+         * ensuring that any given hyperplane subset fits the region defined by the node and that
          * any child nodes belong to this tree and are correctly initialized.</p>
          *
-         * @param newCut the new cut subhyperplane for the node
+         * @param newCut the new cut hyperplane subset for the node
          * @param newMinus the new minus child for the node
          * @param newPlus the new plus child for the node
          */
-        protected void setSubtree(final ConvexSubHyperplane<P> newCut, final N newMinus, final N newPlus) {
+        protected void setSubtree(final HyperplaneConvexSubset<P> newCut, final N newMinus, final N newPlus) {
             this.cut = newCut;
 
             final N self = getSelf();

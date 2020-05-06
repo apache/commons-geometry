@@ -186,7 +186,7 @@ public abstract class AbstractGreatArcConnector
         public boolean endPointsEq(final ConnectableGreatArc other) {
             if (hasEnd() && other.hasEnd()) {
                 return arc.getEndPoint()
-                        .eq(other.arc.getEndPoint(), arc.getPrecision());
+                        .eq(other.arc.getEndPoint(), arc.getCircle().getPrecision());
             }
 
             return false;
@@ -196,7 +196,7 @@ public abstract class AbstractGreatArcConnector
          * @return true if this instance has a size equivalent to zero.
          */
         public boolean hasZeroSize() {
-            return arc != null && arc.getPrecision().eqZero(arc.getSize());
+            return arc != null && arc.getCircle().getPrecision().eqZero(arc.getSize());
         }
 
         /** {@inheritDoc} */
@@ -206,7 +206,7 @@ public abstract class AbstractGreatArcConnector
             final Point2S nextStart = next.start;
 
             return end != null && nextStart != null &&
-                    end.eq(nextStart, arc.getPrecision());
+                    end.eq(nextStart, arc.getCircle().getPrecision());
         }
 
         /** {@inheritDoc} */
@@ -229,7 +229,7 @@ public abstract class AbstractGreatArcConnector
             if (candidate.hasStart()) {
                 final double candidatePolar = candidate.getArc().getStartPoint().getPolar();
                 final double thisPolar = arc.getEndPoint().getPolar();
-                final int cmp = arc.getPrecision().compare(candidatePolar, thisPolar);
+                final int cmp = arc.getCircle().getPrecision().compare(candidatePolar, thisPolar);
 
                 return ascending ? cmp <= 0 : cmp >= 0;
             }

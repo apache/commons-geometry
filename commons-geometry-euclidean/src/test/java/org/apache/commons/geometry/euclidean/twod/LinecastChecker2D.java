@@ -25,7 +25,7 @@ import org.junit.Assert;
 
 /** Helper class designed to assist with linecast test assertions in 2D.
  */
-class LinecastChecker2D {
+public class LinecastChecker2D {
 
     private static final double TEST_EPS = 1e-10;
 
@@ -94,7 +94,7 @@ class LinecastChecker2D {
      * expected results.
      * @param segment
      */
-    public void whenGiven(final Segment segment) {
+    public void whenGiven(final LineConvexSubset segment) {
         Line line = segment.getLine();
 
         checkLinecastResults(target.linecast(segment), line);
