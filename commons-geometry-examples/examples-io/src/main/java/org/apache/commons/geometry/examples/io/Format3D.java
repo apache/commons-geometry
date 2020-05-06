@@ -30,10 +30,10 @@ import java.nio.file.Files;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.Polyline;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
-import org.apache.commons.geometry.euclidean.threed.ConvexSubPlane;
+import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 
 /**
  * Utility class for writing out 3D scenes in various file formats.
@@ -95,7 +95,7 @@ public final class Format3D {
                                 BoundarySource3D src) {
         // Create mesh data (vertices and facets).
         final Mesh mesh = new Mesh(precision);
-        try (Stream<ConvexSubPlane> stream = src.boundaryStream()) {
+        try (Stream<PlaneConvexSubset> stream = src.boundaryStream()) {
             stream.forEach(mesh::add);
         }
 
@@ -181,28 +181,28 @@ public final class Format3D {
         }
 
         /**
-         * Adds a plane to this mesh.
+         * Adds a plane subset to this mesh.
          *
-         * @param subplane Convex subplane boundary.
+         * @param boundary Convex plane boundary.
          */
-        private void add(ConvexSubPlane subplane) {
-            if (!subplane.isEmpty()) {
-                if (!subplane.isFinite()) {
-                    throw new IllegalArgumentException("Cannot add infinite subplane: " + subplane);
+        private void add(PlaneConvexSubset boundary) {
+            if (!boundary.isEmpty()) {
+                if (!boundary.isFinite()) {
+                    throw new IllegalArgumentException("Cannot add infinite plane subset: " + boundary);
                 }
 
-                final ConvexArea area = subplane.getSubspaceRegion();
-                for (final Polyline boundaryPath : area.getBoundaryPaths()) {
-                    final List<Vector3D> subplaneVertices = subplane.getPlane()
+                final ConvexArea area = boundary.getSubspaceRegion();
+                for (final LinePath boundaryPath : area.getBoundaryPaths()) {
+                    final List<Vector3D> boundaryVertices = boundary.getPlane()
                         .toSpace(boundaryPath.getVertexSequence());
 
                     // use a triangle fan to add the path
-                    final Vector3D p0 = subplaneVertices.get(0);
-                    for (int i = 2; i < subplaneVertices.size(); i++) {
+                    final Vector3D p0 = boundaryVertices.get(0);
+                    for (int i = 2; i < boundaryVertices.size(); i++) {
                         facets.add(new int[] {
                                 getVertexIndex(p0),
-                                getVertexIndex(subplaneVertices.get(i - 1)),
-                                getVertexIndex(subplaneVertices.get(i))
+                                getVertexIndex(boundaryVertices.get(i - 1)),
+                                getVertexIndex(boundaryVertices.get(i))
                             });
                     }
                 }
