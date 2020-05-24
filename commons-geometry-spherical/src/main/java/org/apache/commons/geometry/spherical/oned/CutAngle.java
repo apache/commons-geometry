@@ -258,7 +258,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns false.</p>
+        * <p>This method always returns {@code false}.</p>
         */
         @Override
         public boolean isFull() {
@@ -267,7 +267,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns false.</p>
+        * <p>This method always returns {@code false}.</p>
         */
         @Override
         public boolean isEmpty() {
@@ -276,7 +276,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc}
          *
-         * <p>This method simply returns false.</p>
+         * <p>This method always returns {@code false}.</p>
          */
         @Override
         public boolean isInfinite() {
@@ -285,7 +285,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns true.</p>
+        * <p>This method always returns {@code true}.</p>
         */
         @Override
         public boolean isFinite() {
@@ -294,11 +294,20 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
 
         /** {@inheritDoc}
          *
-         *  <p>This method simply returns {@code 0}.</p>
+         *  <p>This method always returns {@code 0}.</p>
          */
         @Override
         public double getSize() {
             return 0;
+        }
+
+        /** {@inheritDoc}
+         *
+         * <p>This method returns the point for the underlying hyperplane.</p>
+         */
+        @Override
+        public Point1S getBarycenter() {
+            return hyperplane.getPoint();
         }
 
         /** {@inheritDoc}

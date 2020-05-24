@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.bsp.AbstractBSPTree;
@@ -32,7 +31,6 @@ import org.apache.commons.geometry.core.partitioning.bsp.RegionCutBoundary;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
 /** Binary space partitioning (BSP) tree representing a region in three dimensional
  * Euclidean space.
@@ -205,7 +203,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @return a new tree instance constructed from the given boundaries
      * @see #from(Iterable, boolean)
      */
-    public static RegionBSPTree3D from(final Iterable<PlaneConvexSubset> boundaries) {
+    public static RegionBSPTree3D from(final Iterable<? extends PlaneConvexSubset> boundaries) {
         return from(boundaries, false);
     }
 
@@ -216,7 +214,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      * @param full if true, the initial tree will contain the entire space
      * @return a new tree instance constructed from the given boundaries
      */
-    public static RegionBSPTree3D from(final Iterable<PlaneConvexSubset> boundaries, final boolean full) {
+    public static RegionBSPTree3D from(final Iterable<? extends PlaneConvexSubset> boundaries, final boolean full) {
         final RegionBSPTree3D tree = new RegionBSPTree3D(full);
         tree.insert(boundaries);
 
@@ -354,29 +352,26 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          */
         private void addBoundaryContribution(final HyperplaneSubset<Vector3D> boundary, boolean reverse) {
             final PlaneSubset boundarySubset = (PlaneSubset) boundary;
-            final HyperplaneBoundedRegion<Vector2D> base = boundarySubset.getSubspaceRegion();
 
-            final double area = base.getSize();
-            final Vector2D baseBarycenter = base.getBarycenter();
+            final Plane boundaryPlane = boundarySubset.getPlane();
+            final double boundaryArea = boundarySubset.getSize();
+            final Vector3D boundaryBarycenter = boundarySubset.getBarycenter();
 
-            if (Double.isInfinite(area)) {
+            if (Double.isInfinite(boundaryArea)) {
                 volumeSum = Double.POSITIVE_INFINITY;
-            } else if (baseBarycenter != null) {
-                final Plane plane = boundarySubset.getPlane();
-                final Vector3D facetBarycenter = plane.toSpace(base.getBarycenter());
-
+            } else if (boundaryBarycenter != null) {
                 // the volume here is actually 3x the actual pyramid volume; we'll apply
                 // the final scaling all at once at the end
-                double scaledVolume = area * facetBarycenter.dot(plane.getNormal());
+                double scaledVolume = boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
                 if (reverse) {
                     scaledVolume = -scaledVolume;
                 }
 
                 volumeSum += scaledVolume;
 
-                sumX += scaledVolume * facetBarycenter.getX();
-                sumY += scaledVolume * facetBarycenter.getY();
-                sumZ += scaledVolume * facetBarycenter.getZ();
+                sumX += scaledVolume * boundaryBarycenter.getX();
+                sumY += scaledVolume * boundaryBarycenter.getY();
+                sumZ += scaledVolume * boundaryBarycenter.getZ();
             }
         }
     }

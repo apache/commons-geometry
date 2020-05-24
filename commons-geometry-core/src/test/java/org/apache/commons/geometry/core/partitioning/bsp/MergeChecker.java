@@ -23,9 +23,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
-import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
+import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.junit.Assert;
 
 /** Helper class with a fluent API used to construct assert conditions on tree merge operations.

@@ -23,11 +23,25 @@ import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.Transform;
 
-/** Interface representing a subset of the points lying on a hyperplane. Examples include
+/** Interface representing a subset of the points lying in a hyperplane. Examples include
  * rays and line segments in Euclidean 2D space and triangular facets in Euclidean 3D space.
  * Hyperplane subsets can have finite or infinite size and can represent contiguous regions
  * of the hyperplane (as in the examples aboves); multiple, disjoint regions; or the
  * {@link Hyperplane#span() entire hyperplane}.
+ *
+ * <p>This interface is very similar to the {@link org.apache.commons.geometry.core.Region Region}
+ * interface but has slightly different semantics. Whereas {@code Region} instances represent sets
+ * of points that can expand through all of the dimensions of a space, {@code HyperplaneSubset} instances
+ * are constrained to their containing hyperplane and are more accurately defined as {@code Region}s
+ * of the {@code n-1} dimension subspace defined by the hyperplane. This makes the methods of this interface
+ * have slightly different meanings as compared to their {@code Region} counterparts. For example, consider
+ * a triangular facet in Euclidean 3D space. The {@link #getSize()} method of this hyperplane subset does
+ * not return the <em>volume</em> of the instance (which would be {@code 0}) as a regular 3D region would, but
+ * rather returns the <em>area</em> of the 2D polygon defined by the facet. Similarly, the {@link #classify(Point)}
+ * method returns {@link RegionLocation#INSIDE} for points that lie inside of the 2D polygon defined by the
+ * facet, instead of the {@link RegionLocation#BOUNDARY} value that would be expected if the facet was considered
+ * as a true 3D region with zero thickness.
+ * </p>
  *
  * @param <P> Point implementation type
  * @see Hyperplane
@@ -50,6 +64,13 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      * @return true if this instance does not contain any points
      */
     boolean isEmpty();
+
+    /** Get the barycenter of the hyperplane subset or null if no barycenter exists or
+     * one exists but is not unique. A barycenter will not exist for empty or
+     * infinite hyperplane subsets.
+     * @return the barycenter of the hyperplane subset or null if no unique barycenter exists
+     */
+    P getBarycenter();
 
     /** Classify a point with respect to the subset region. The point is classified as follows:
      * <ul>
@@ -99,7 +120,9 @@ public interface HyperplaneSubset<P extends Point<P>> extends Splittable<P, Hype
      */
     HyperplaneSubset<P> transform(Transform<P> transform);
 
-    /** Convert this instance into a list of convex child subsets.
+    /** Convert this instance into a list of convex child subsets representing the same region.
+     * Implementations are not required to return an optimal convex subdivision of the current
+     * instance. They are free to return whatever subdivision is readily available.
      * @return a list of hyperplane convex subsets representing the same subspace
      *      region as this instance
      */

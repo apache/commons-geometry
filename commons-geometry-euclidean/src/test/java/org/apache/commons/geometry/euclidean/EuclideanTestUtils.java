@@ -16,9 +16,12 @@
  */
 package org.apache.commons.geometry.euclidean;
 
+import java.util.List;
+
 import org.apache.commons.geometry.core.Region;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
@@ -183,6 +186,46 @@ public final class EuclideanTestUtils {
         String msg = "Expected value to be positive infinity but was " + value;
         Assert.assertTrue(msg, Double.isInfinite(value));
         Assert.assertTrue(msg, value > 0);
+    }
+
+    /**
+     * Assert that the given lists represent equivalent vertex loops. The loops must contain the same sequence
+     * of vertices but do not need to start at the same point.
+     * @param expected
+     * @param actual
+     * @param precision
+     */
+    public static void assertVertexLoopSequence(List<Vector3D> expected, List<Vector3D> actual,
+            DoublePrecisionContext precision) {
+        Assert.assertEquals("Vertex sequences have different sizes", expected.size(), actual.size());
+
+        if (expected.size() > 0) {
+
+            int offset = -1;
+            Vector3D start = expected.get(0);
+            for (int i = 0; i < actual.size(); ++i) {
+                if (actual.get(i).eq(start, precision)) {
+                    offset = i;
+                    break;
+                }
+            }
+
+            if (offset < 0) {
+                Assert.fail("Vertex loops do not share any points: expected " + expected + " but was " + actual);
+            }
+
+            Vector3D expectedVertex;
+            Vector3D actualVertex;
+            for (int i = 0; i < expected.size(); ++i) {
+                expectedVertex = expected.get(i);
+                actualVertex = actual.get((i + offset) % actual.size());
+
+                if (!expectedVertex.eq(actualVertex, precision)) {
+                    Assert.fail("Unexpected vertex at index " + i + ": expected " + expectedVertex +
+                            " but was " + actualVertex);
+                }
+            }
+        }
     }
 
     /**

@@ -63,7 +63,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     static final String TO_STRING_FORMAT = "{0}[origin= {1}, direction= {2}]";
 
     /** The direction of the line as a normalized vector. */
-    private final Vector2D direction;
+    private final Vector2D.Unit direction;
 
     /** The distance between the origin and the line. */
     private final double originOffset;
@@ -73,7 +73,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
      * @param originOffset The signed distance between the line and the origin.
      * @param precision Precision context used to compare floating point numbers.
      */
-    Line(final Vector2D direction, final double originOffset, final DoublePrecisionContext precision) {
+    Line(final Vector2D.Unit direction, final double originOffset, final DoublePrecisionContext precision) {
         super(precision);
 
         this.direction = direction;
@@ -93,7 +93,7 @@ public final class Line extends AbstractHyperplane<Vector2D>
     /** Get the direction of the line.
      * @return the direction of the line
      */
-    public Vector2D getDirection() {
+    public Vector2D.Unit getDirection() {
         return direction;
     }
 

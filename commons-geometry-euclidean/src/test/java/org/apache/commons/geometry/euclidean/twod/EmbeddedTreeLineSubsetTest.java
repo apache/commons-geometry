@@ -53,6 +53,9 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertTrue(sub.isEmpty());
         Assert.assertFalse(sub.isInfinite());
         Assert.assertTrue(sub.isFinite());
+
+        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
+        Assert.assertNull(sub.getBarycenter());
     }
 
     @Test
@@ -68,6 +71,9 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertFalse(sub.isEmpty());
         Assert.assertTrue(sub.isInfinite());
         Assert.assertFalse(sub.isFinite());
+
+        GeometryTestUtils.assertPositiveInfinity(sub.getSize());
+        Assert.assertNull(sub.getBarycenter());
     }
 
     @Test
@@ -87,6 +93,9 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertFalse(sub.isEmpty());
         Assert.assertTrue(sub.isInfinite());
         Assert.assertFalse(sub.isFinite());
+
+        GeometryTestUtils.assertPositiveInfinity(sub.getSize());
+        Assert.assertNull(sub.getBarycenter());
     }
 
     @Test
@@ -148,7 +157,7 @@ public class EmbeddedTreeLineSubsetTest {
         // act
         subset.add(Lines.subsetFromInterval(line, 2, 4));
         subset.add(Lines.subsetFromInterval(otherLine, 1, 3));
-        subset.add(Lines.segmentFromPoints(Vector2D.of(-4, 1), Vector2D.of(-1, 1), TEST_PRECISION));
+        subset.add(Lines.segmentFromPoints(Vector2D.of(-3, 1), Vector2D.of(-1, 1), TEST_PRECISION));
 
         // assert
         Assert.assertFalse(subset.isFull());
@@ -156,11 +165,14 @@ public class EmbeddedTreeLineSubsetTest {
 
         List<LineConvexSubset> segments = subset.toConvex();
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-4, 1), segments.get(0).getStartPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-3, 1), segments.get(0).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), segments.get(0).getEndPoint(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), segments.get(1).getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEndPoint(), TEST_EPS);
+
+        Assert.assertEquals(5, subset.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.7, 1), subset.getBarycenter(), TEST_EPS);
     }
 
     @Test
@@ -203,6 +215,9 @@ public class EmbeddedTreeLineSubsetTest {
 
         Assert.assertEquals(aTreeCount, aTree.count());
         Assert.assertEquals(bTreeCount, bTree.count());
+
+        GeometryTestUtils.assertPositiveInfinity(subset.getSize());
+        Assert.assertNull(subset.getBarycenter());
     }
 
     @Test
@@ -221,6 +236,40 @@ public class EmbeddedTreeLineSubsetTest {
         GeometryTestUtils.assertThrows(() -> {
             subset.add(new EmbeddedTreeLineSubset(otherLine));
         }, IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testGetBounds_noBounds() {
+        // arrange
+        Line line = Lines.fromPointAndAngle(Vector2D.of(1, 0), 0.25 * Math.PI, TEST_PRECISION);
+
+        EmbeddedTreeLineSubset full = new EmbeddedTreeLineSubset(line, RegionBSPTree1D.full());
+        EmbeddedTreeLineSubset empty = new EmbeddedTreeLineSubset(line, RegionBSPTree1D.empty());
+        EmbeddedTreeLineSubset halfFull = new EmbeddedTreeLineSubset(line, Interval.min(1.0, TEST_PRECISION).toTree());
+
+        // act/assert
+        Assert.assertNull(full.getBounds());
+        Assert.assertNull(empty.getBounds());
+        Assert.assertNull(halfFull.getBounds());
+    }
+
+    @Test
+    public void testGetBounds_hasBounds() {
+        // arrange
+        Line line = Lines.fromPoints(Vector2D.ZERO, Vector2D.of(1, 1), TEST_PRECISION);
+
+        EmbeddedTreeLineSubset subset = new EmbeddedTreeLineSubset(line, false);
+
+        double sqrt2 = Math.sqrt(2);
+        subset.getSubspaceRegion().add(Interval.of(-2 * sqrt2, -sqrt2, TEST_PRECISION));
+        subset.getSubspaceRegion().add(Interval.of(0, sqrt2, TEST_PRECISION));
+
+        // act
+        Bounds2D bounds = subset.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-2, -2), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1), bounds.getMax(), TEST_EPS);
     }
 
     @Test

@@ -23,16 +23,7 @@ package org.apache.commons.geometry.core;
  * @see Region
  */
 public interface RegionEmbedding<P extends Point<P>, S extends Point<S>>
-    extends Embedding<P, S>, Sized {
-
-    /** Get the size of the instance, which by default is the size of the embedded
-     * subspace region.
-     * @return the size of instance
-     */
-    @Override
-    default double getSize() {
-        return getSubspaceRegion().getSize();
-    }
+    extends Embedding<P, S> {
 
     /** Get the embedded subspace region.
      * @return the embedded subspace region

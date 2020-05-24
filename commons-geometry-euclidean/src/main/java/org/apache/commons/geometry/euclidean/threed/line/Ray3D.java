@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a ray in 3D Euclidean space. A ray is a portion of a line consisting of
@@ -105,6 +106,24 @@ public final class Ray3D extends LineConvexSubset3D {
     @Override
     public double getSubspaceEnd() {
         return Double.POSITIVE_INFINITY;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector3D getBarycenter() {
+        return null; // infinite; no center
+    }
+
+   /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code null}.</p>
+    */
+    @Override
+    public Bounds3D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** Get the direction of the ray. This is a convenience method for {@code ray.getLine().getDirection()}.

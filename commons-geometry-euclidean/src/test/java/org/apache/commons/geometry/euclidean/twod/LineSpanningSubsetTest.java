@@ -51,6 +51,8 @@ public class LineSpanningSubsetTest {
         Assert.assertFalse(result.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(result.getSize());
+        Assert.assertNull(result.getBarycenter());
+        Assert.assertNull(result.getBounds());
 
         Assert.assertNull(result.getStartPoint());
         GeometryTestUtils.assertNegativeInfinity(result.getSubspaceStart());

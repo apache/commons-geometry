@@ -22,6 +22,8 @@ import java.util.List;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.line.Line3D.SubspaceTransform;
 
@@ -63,6 +65,45 @@ public final class EmbeddedTreeLineSubset3D extends LineSubset3D {
         this.region = region;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public double getSize() {
+        return region.getSize();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionBSPTree1D getSubspaceRegion() {
+        return region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D getBarycenter() {
+        final Vector1D subcenter = region.getBarycenter();
+        return subcenter != null ?
+                getLine().toSpace(subcenter) :
+                null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds3D getBounds() {
+        final double min = region.getMin();
+        final double max = region.getMax();
+
+        if (Double.isFinite(min) && Double.isFinite(max)) {
+            final Line3D line = getLine();
+
+            return Bounds3D.builder()
+                    .add(line.toSpace(min))
+                    .add(line.toSpace(max))
+                    .build();
+        }
+
+        return null;
+    }
+
     /** Transform this instance.
      * @param transform the transform to apply
      * @return a new, transformed instance
@@ -93,12 +134,6 @@ public final class EmbeddedTreeLineSubset3D extends LineSubset3D {
         }
 
         return convex;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public RegionBSPTree1D getSubspaceRegion() {
-        return region;
     }
 
     /** {@inheritDoc} */

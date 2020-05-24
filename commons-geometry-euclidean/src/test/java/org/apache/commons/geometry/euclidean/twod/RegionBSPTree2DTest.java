@@ -175,6 +175,31 @@ public class RegionBSPTree2DTest {
     }
 
     @Test
+    public void testGetBounds_hasBounds() {
+        // arrange
+        RegionBSPTree2D tree = Parallelogram.axisAligned(Vector2D.of(2, 3), Vector2D.of(5, 8), TEST_PRECISION)
+                .toTree();
+
+        // act
+        Bounds2D bounds = tree.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 3), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(5, 8), bounds.getMax(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBounds_noBounds() {
+        // act/assert
+        Assert.assertNull(RegionBSPTree2D.empty().getBounds());
+        Assert.assertNull(RegionBSPTree2D.full().getBounds());
+
+        RegionBSPTree2D halfFull = RegionBSPTree2D.empty();
+        halfFull.getRoot().insertCut(Lines.fromPointAndAngle(Vector2D.ZERO, 0, TEST_PRECISION));
+        Assert.assertNull(halfFull.getBounds());
+    }
+
+    @Test
     public void testGetBoundaryPaths_cachesResult() {
         // arrange
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
@@ -221,11 +246,11 @@ public class RegionBSPTree2DTest {
         RegionBSPTree2D tree = RegionBSPTree2D.empty();
 
         // act
-        tree.add(ConvexArea.fromVertexLoop(Arrays.asList(
+        tree.add(ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(2, 0),
                     Vector2D.of(2, 2), Vector2D.of(0, 2)
                 ), TEST_PRECISION));
-        tree.add(ConvexArea.fromVertexLoop(Arrays.asList(
+        tree.add(ConvexArea.convexPolygonFromVertices(Arrays.asList(
                 Vector2D.of(1, 1), Vector2D.of(3, 1),
                 Vector2D.of(3, 3), Vector2D.of(1, 3)
             ), TEST_PRECISION));

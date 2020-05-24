@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
@@ -41,6 +42,17 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
         return tree;
     }
 
+    /** Return the boundaries of this instance as a stream of {@link Triangle3D}
+     * instances. An {@link IllegalStateException} exception is thrown while reading
+     * from the stream if any boundary cannot be converted to a triangle (i.e. if it
+     * has infinite size).
+     * @return a stream of triangles representing the instance boundaries
+     * @see org.apache.commons.geometry.euclidean.threed.PlaneSubset#toTriangles()
+     */
+    default Stream<Triangle3D> triangleStream() {
+        return boundaryStream().flatMap(b -> b.toTriangles().stream());
+    }
+
     /** {@inheritDoc} */
     @Override
     default List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
@@ -51,6 +63,15 @@ public interface BoundarySource3D extends BoundarySource<PlaneConvexSubset>, Lin
     @Override
     default LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
         return new BoundarySourceLinecaster3D(this).linecastFirst(subset);
+    }
+
+    /** Get a {@link Bounds3D} object defining the axis-aligned box containing all vertices
+     * in the boundaries for this instance. Null is returned if any boundaries are infinite
+     * or no vertices were found.
+     * @return the bounding box for this instance or null if no valid bounds could be determined
+     */
+    default Bounds3D getBounds() {
+        return new BoundarySourceBoundsBuilder3D().getBounds(this);
     }
 
     /** Return a {@link BoundarySource3D} instance containing the given boundaries.

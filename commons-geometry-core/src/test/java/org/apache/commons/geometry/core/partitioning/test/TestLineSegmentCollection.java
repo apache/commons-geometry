@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition.test;
+package org.apache.commons.geometry.core.partitioning.test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
+import org.apache.commons.geometry.core.partitioning.Split;
 
 /** Class containing a collection line segments. This class should only be used for
  * testing purposes.
@@ -106,6 +106,12 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
         }
 
         return size;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D getBarycenter() {
+        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */

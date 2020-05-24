@@ -23,106 +23,60 @@ import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.euclidean.threed.Plane.SubspaceTransform;
-import org.apache.commons.geometry.euclidean.threed.line.Line3D;
-import org.apache.commons.geometry.euclidean.threed.line.LineConvexSubset3D;
-import org.apache.commons.geometry.euclidean.twod.AffineTransformMatrix2D;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.Vector2D;
 
-/** Class representing a convex subset of points in a plane. The subset may be finite
- * or infinite.
- * @see Planes
+/** Interface representing a finite or infinite convex subset of points in a plane in Euclidean 3D
+ * space.
  */
-public final class PlaneConvexSubset extends PlaneSubset
-    implements HyperplaneConvexSubset<Vector3D>  {
-    /** The embedded 2D area. */
-    private final ConvexArea area;
-
-    /** Create a new instance from its component parts.
-     * @param plane plane the the convex area is embedded in
-     * @param area the embedded convex area
-     */
-    PlaneConvexSubset(final Plane plane, final ConvexArea area) {
-        super(plane);
-
-        this.area = area;
-    }
+public interface PlaneConvexSubset extends PlaneSubset, HyperplaneConvexSubset<Vector3D> {
 
     /** {@inheritDoc} */
     @Override
-    public List<PlaneConvexSubset> toConvex() {
+    PlaneConvexSubset reverse();
+
+    /** {@inheritDoc} */
+    @Override
+    PlaneConvexSubset transform(Transform<Vector3D> transform);
+
+    /** {@inheritDoc} */
+    @Override
+    Split<PlaneConvexSubset> split(Hyperplane<Vector3D> splitter);
+
+    /** {@inheritDoc} */
+    @Override
+    PlaneConvexSubset.Embedded getEmbedded();
+
+    /** Get the vertices for the convex subset in a counter-clockwise order as viewed looking down the plane
+     * normal. Each vertex in the returned list is unique. If the boundary of the subset is closed, the start
+     * vertex is <em>not</em> repeated at the end of the list.
+     *
+     * <p>It is important to note that, in general, the list of vertices returned by this method
+     * is not sufficient to completely characterize the subset. For example, a simple triangle
+     * has 3 vertices, but an infinite area constructed from two parallel lines and two lines that
+     * intersect between them will also have 3 vertices. It is also possible for non-empty subsets to
+     * contain no vertices at all. For example, a subset with no boundaries (representing the full
+     * plane), a subset with a single boundary (ie, a half-plane), or a subset with two parallel boundaries will
+     * not contain any vertices.</p>
+     * @return the list of vertices for the plane convex subset in a counter-clockwise order as viewed looking
+     *      down the plane normal
+     */
+    List<Vector3D> getVertices();
+
+    /** {@inheritDoc}
+     *
+     * <p>This method simply returns a singleton list containing this object.</p>
+     */
+    @Override
+    default List<PlaneConvexSubset> toConvex() {
         return Collections.singletonList(this);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public PlaneConvexSubset reverse() {
-        final Plane plane = getPlane();
-        final Plane rPlane = plane.reverse();
-
-        final Vector2D rU = rPlane.toSubspace(plane.toSpace(Vector2D.Unit.PLUS_X));
-        final Vector2D rV = rPlane.toSubspace(plane.toSpace(Vector2D.Unit.PLUS_Y));
-
-        final AffineTransformMatrix2D transform =
-                AffineTransformMatrix2D.fromColumnVectors(rU, rV);
-
-        return new PlaneConvexSubset(rPlane, area.transform(transform));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public PlaneConvexSubset transform(final Transform<Vector3D> transform) {
-        final SubspaceTransform st = getPlane().subspaceTransform(transform);
-        final ConvexArea tArea = area.transform(st.getTransform());
-
-        return Planes.subsetFromConvexArea(st.getPlane(), tArea);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ConvexArea getSubspaceRegion() {
-        return area;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Split<PlaneConvexSubset> split(final Hyperplane<Vector3D> splitter) {
-        return splitInternal(splitter, this, (p, r) -> new PlaneConvexSubset(p, (ConvexArea) r));
-    }
-
-    /** Get the unique intersection of this plane subset with the given line. Null is
-     * returned if no unique intersection point exists (ie, the line and plane are
-     * parallel or coincident) or the line does not intersect the plane subset.
-     * @param line line to intersect with this plane subset
-     * @return the unique intersection point between the line and this plane subset
-     *      or null if no such point exists.
-     * @see Plane#intersection(Line3D)
+    /** Interface used to represent plane convex subsets as embedded 2D subspace regions.
      */
-    public Vector3D intersection(final Line3D line) {
-        final Vector3D pt = getPlane().intersection(line);
-        return (pt != null && contains(pt)) ? pt : null;
-    }
+    interface Embedded extends PlaneSubset.Embedded {
 
-    /** Get the unique intersection of this plane subset with the given line subset. Null
-     * is returned if the underlying line and plane do not have a unique intersection
-     * point (ie, they are parallel or coincident) or the intersection point is unique
-     * but is not contained in both the line subset and plane subset.
-     * @param lineSubset line subset to intersect with
-     * @return the unique intersection point between this plane subset and the argument or
-     *      null if no such point exists.
-     * @see Plane#intersection(Line3D)
-     */
-    public Vector3D intersection(final LineConvexSubset3D lineSubset) {
-        final Vector3D pt = intersection(lineSubset.getLine());
-        return (pt != null && lineSubset.contains(pt)) ? pt : null;
-    }
-
-    /** Get the vertices for the plane subset. The vertices lie at the intersections of the
-     * 2D area bounding lines.
-     * @return the vertices for the plane subset
-     */
-    public List<Vector3D> getVertices() {
-        return getPlane().toSpace(area.getVertices());
+        /** {@inheritDoc} */
+        @Override
+        ConvexArea getSubspaceRegion();
     }
 }

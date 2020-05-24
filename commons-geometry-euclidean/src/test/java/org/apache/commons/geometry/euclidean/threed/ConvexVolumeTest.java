@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -69,8 +70,9 @@ public class ConvexVolumeTest {
         Assert.assertEquals(1, boundaries.size());
 
         PlaneConvexSubset sp = boundaries.get(0);
-        Assert.assertEquals(0, sp.getSubspaceRegion().getBoundaries().size());
-        Assert.assertSame(plane, sp.getPlane());
+        Assert.assertEquals(0, sp.getEmbedded().getSubspaceRegion().getBoundaries().size());
+        EuclideanTestUtils.assertCoordinatesEqual(plane.getOrigin(), sp.getPlane().getOrigin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(plane.getNormal(), sp.getPlane().getNormal(), TEST_EPS);
     }
 
     @Test
@@ -83,6 +85,97 @@ public class ConvexVolumeTest {
 
         // assert
         Assert.assertEquals(0, boundaries.size());
+    }
+
+    @Test
+    public void testTriangleStream_noBoundaries() {
+        // arrange
+        ConvexVolume full = ConvexVolume.full();
+
+        // act
+        List<Triangle3D> tris = full.triangleStream().collect(Collectors.toList());
+
+        // act/assert
+        Assert.assertEquals(0, tris.size());
+    }
+
+    @Test
+    public void testTriangleStream_infinite() {
+        // arrange
+        Pattern pattern = Pattern.compile("^Cannot convert infinite plane subset to triangles: .*");
+
+        ConvexVolume half = ConvexVolume.fromBounds(
+                Planes.fromNormal(Vector3D.Unit.MINUS_X, TEST_PRECISION)
+            );
+
+        ConvexVolume quadrant = ConvexVolume.fromBounds(
+                    Planes.fromNormal(Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Planes.fromNormal(Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Planes.fromNormal(Vector3D.Unit.MINUS_Z, TEST_PRECISION)
+                );
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            half.triangleStream().collect(Collectors.toList());
+        }, IllegalStateException.class, pattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            quadrant.triangleStream().collect(Collectors.toList());
+        }, IllegalStateException.class, pattern);
+    }
+
+    @Test
+    public void testTriangleStream_finite() {
+        // arrange
+        Vector3D min = Vector3D.ZERO;
+        Vector3D max = Vector3D.of(1, 1, 1);
+
+        ConvexVolume box = ConvexVolume.fromBounds(
+                    Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(min, Vector3D.Unit.MINUS_Z, TEST_PRECISION),
+
+                    Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_X, TEST_PRECISION),
+                    Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_Y, TEST_PRECISION),
+                    Planes.fromPointAndNormal(max, Vector3D.Unit.PLUS_Z, TEST_PRECISION)
+                );
+
+        // act
+        List<Triangle3D> tris = box.triangleStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(12, tris.size());
+
+        Bounds3D.Builder boundsBuilder = Bounds3D.builder();
+        tris.forEach(t -> boundsBuilder.addAll(t.getVertices()));
+
+        Bounds3D bounds = boundsBuilder.build();
+        EuclideanTestUtils.assertCoordinatesEqual(min, bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(max, bounds.getMax(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBounds_noBounds() {
+        // arrange
+        ConvexVolume full = ConvexVolume.full();
+        ConvexVolume halfFull = ConvexVolume.fromBounds(Planes.fromNormal(Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertNull(full.getBounds());
+        Assert.assertNull(halfFull.getBounds());
+    }
+
+    @Test
+    public void testGetBounds_hasBounds() {
+        // arrange
+        ConvexVolume vol = rect(Vector3D.of(1, 1, 1), 0.5, 1, 2);
+
+        // act
+        Bounds3D bounds = vol.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, -1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2, 3), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -188,7 +281,7 @@ public class ConvexVolumeTest {
         ConvexVolume vol = rect(Vector3D.ZERO, 0.5, 0.5, 0.5);
 
         PlaneConvexSubset subplane = Planes.subsetFromConvexArea(
-                Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION), ConvexArea.full());
+                Planes.fromNormal(Vector3D.Unit.PLUS_X, TEST_PRECISION).getEmbedding(), ConvexArea.full());
 
         // act
         PlaneConvexSubset trimmed = vol.trim(subplane);
@@ -196,15 +289,13 @@ public class ConvexVolumeTest {
         // assert
         Assert.assertEquals(1, trimmed.getSize(), TEST_EPS);
 
-        List<Vector3D> vertices = trimmed.getPlane().toSpace(
-                trimmed.getSubspaceRegion().getBoundaryPaths().get(0).getVertexSequence());
+        List<Vector3D> vertices = trimmed.getVertices();
 
-        Assert.assertEquals(5, vertices.size());
+        Assert.assertEquals(4, vertices.size());
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0.5, -0.5), vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0.5, 0.5), vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -0.5, 0.5), vertices.get(2), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, -0.5, -0.5), vertices.get(3), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0.5, -0.5), vertices.get(4), TEST_EPS);
     }
 
     @Test

@@ -17,8 +17,8 @@
 package org.apache.commons.geometry.core.partitioning;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.test.TestLine;
-import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.test.TestLine;
+import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.junit.Assert;

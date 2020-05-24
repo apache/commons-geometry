@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -50,6 +51,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(p1, seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p2, seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
@@ -92,6 +94,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2.5), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
@@ -117,6 +120,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -166,6 +170,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -189,6 +194,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -212,6 +218,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getEndPoint(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getBarycenter(), TEST_EPS);
 
         Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
@@ -240,6 +247,19 @@ public class SegmentTest {
         GeometryTestUtils.assertThrows(() -> {
             Lines.segmentFromLocations(line, 1, Double.POSITIVE_INFINITY);
         }, IllegalArgumentException.class, "Invalid line segment locations: 1.0, Infinity");
+    }
+
+    @Test
+    public void testGetBounds() {
+        // arrange
+        Segment seg = Lines.segmentFromPoints(Vector2D.of(-1, 4), Vector2D.of(2, -2), TEST_PRECISION);
+
+        // act
+        Bounds2D bounds = seg.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -2), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 4), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -406,6 +426,29 @@ public class SegmentTest {
         checkSplit(seg.split(Lines.fromPointAndAngle(high, -1, TEST_PRECISION)),
                 null, null,
                 p0, p1);
+    }
+
+    @Test
+    public void testSplit_pointsOnSplitterWithLineIntersection() {
+        // arrange
+        // Create a segment with both of its points lying on the splitter but with the intersection
+        // of the lines lying far enough away from the segment start point along the line to be
+        // considered a valid 1D distance for a split. In this case, no split should be performed since
+        // both points still lie on the splitter.
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+
+        Segment seg = Lines.segmentFromPoints(Vector2D.of(1, 1e-8), Vector2D.of(1.01, 1e-6), precision);
+
+        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0, precision);
+
+        // act
+        Split<LineConvexSubset> split = seg.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.NEITHER, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertNull(split.getPlus());
     }
 
     @Test

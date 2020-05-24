@@ -36,9 +36,9 @@ public class BoundarySource3DTest {
     @Test
     public void testToTree() {
         // act
-        PlaneConvexSubset a = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        PlaneConvexSubset b = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset b = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         BoundarySource3D src = BoundarySource3D.from(a, b);
@@ -79,9 +79,9 @@ public class BoundarySource3DTest {
     @Test
     public void testFrom_varargs() {
         // act
-        PlaneConvexSubset a = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        PlaneConvexSubset b = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset b = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         BoundarySource3D src = BoundarySource3D.from(a, b);
@@ -110,9 +110,9 @@ public class BoundarySource3DTest {
     @Test
     public void testFrom_list() {
         // act
-        PlaneConvexSubset a = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset a = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION);
-        PlaneConvexSubset b = Planes.subsetFromVertexLoop(
+        PlaneConvexSubset b = Planes.convexPolygonFromVertices(
                 Arrays.asList(Vector3D.ZERO, Vector3D.Unit.PLUS_Y, Vector3D.Unit.MINUS_Z), TEST_PRECISION);
 
         List<PlaneConvexSubset> input = new ArrayList<>();

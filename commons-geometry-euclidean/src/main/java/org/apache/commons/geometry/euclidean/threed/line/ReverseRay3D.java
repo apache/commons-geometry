@@ -17,6 +17,7 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a portion of a line in 3D Euclidean space that starts at infinity and
@@ -106,6 +107,24 @@ public final class ReverseRay3D extends LineConvexSubset3D {
     @Override
     public double getSubspaceEnd() {
         return end;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector3D getBarycenter() {
+        return null; // infinite; no center
+    }
+
+   /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code null}.</p>
+    */
+    @Override
+    public Bounds3D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** {@inheritDoc} */

@@ -19,7 +19,10 @@ package org.apache.commons.geometry.spherical.twod;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.geometry.core.partitioning.AbstractRegionEmbeddingHyperplaneSubset;
+import org.apache.commons.geometry.core.RegionEmbedding;
+import org.apache.commons.geometry.core.RegionLocation;
+import org.apache.commons.geometry.core.internal.HyperplaneSubsets;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
@@ -28,8 +31,7 @@ import org.apache.commons.geometry.spherical.oned.Point1S;
 /** Class representing a subset of the points in a great circle.
  * @see GreatCircles
  */
-public abstract class GreatCircleSubset
-    extends AbstractRegionEmbeddingHyperplaneSubset<Point2S, Point1S, GreatCircle> {
+public abstract class GreatCircleSubset implements HyperplaneSubset<Point2S>, RegionEmbedding<Point2S, Point1S> {
     /** The great circle defining this instance. */
     private final GreatCircle circle;
 
@@ -56,7 +58,63 @@ public abstract class GreatCircleSubset
 
     /** {@inheritDoc} */
     @Override
+    public Point1S toSubspace(final Point2S pt) {
+        return circle.toSubspace(pt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point2S toSpace(final Point1S pt) {
+        return circle.toSpace(pt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFull() {
+        return getSubspaceRegion().isFull();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isEmpty() {
+        return getSubspaceRegion().isEmpty();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getSize() {
+        return getSubspaceRegion().getSize();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point2S getBarycenter() {
+        final Point1S subspaceBarycenter = getSubspaceRegion().getBarycenter();
+        if (subspaceBarycenter != null) {
+            return getCircle().toSpace(subspaceBarycenter);
+        }
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RegionLocation classify(final Point2S pt) {
+        return HyperplaneSubsets.classifyAgainstEmbeddedRegion(pt, circle, getSubspaceRegion());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Point2S closest(final Point2S pt) {
+        return HyperplaneSubsets.closestToEmbeddedRegion(pt, circle, getSubspaceRegion());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public abstract List<GreatArc> toConvex();
+
+    /** {@inheritDoc} */
+    @Override
+    public abstract HyperplaneBoundedRegion<Point1S> getSubspaceRegion();
 
     /** {@inheritDoc} */
     @Override

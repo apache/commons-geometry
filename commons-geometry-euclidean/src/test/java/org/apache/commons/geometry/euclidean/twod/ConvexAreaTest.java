@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.geometry.core.GeometryTestUtils;
@@ -53,6 +54,7 @@ public class ConvexAreaTest {
         Assert.assertEquals(0.0, area.getBoundarySize(), TEST_EPS);
         GeometryTestUtils.assertPositiveInfinity(area.getSize());
         Assert.assertNull(area.getBarycenter());
+        Assert.assertNull(area.getBounds());
     }
 
     @Test
@@ -170,7 +172,7 @@ public class ConvexAreaTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(1, 2));
 
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.of(1, 1), Vector2D.of(2, 1),
                     Vector2D.of(2, 2), Vector2D.of(1, 2)
                 ), TEST_PRECISION);
@@ -198,7 +200,7 @@ public class ConvexAreaTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, 2));
 
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.of(1, 1), Vector2D.of(2, 1),
                     Vector2D.of(2, 2), Vector2D.of(1, 2)
                 ), TEST_PRECISION);
@@ -226,7 +228,7 @@ public class ConvexAreaTest {
         // arrange
         AffineTransformMatrix2D mat = AffineTransformMatrix2D.createScale(Vector2D.of(-1, -2));
 
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.of(1, 1), Vector2D.of(2, 1),
                     Vector2D.of(2, 2), Vector2D.of(1, 2)
                 ), TEST_PRECISION);
@@ -292,7 +294,7 @@ public class ConvexAreaTest {
     @Test
     public void testGetVertices_finite() {
         // arrange
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.Unit.PLUS_X,
                     Vector2D.Unit.PLUS_Y
@@ -307,6 +309,27 @@ public class ConvexAreaTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, vertices.get(0), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_X, vertices.get(1), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.Unit.PLUS_Y, vertices.get(2), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBounds_infinite() {
+        // act/assert
+        Assert.assertNull(ConvexArea.full().getBounds());
+        Assert.assertNull(ConvexArea.fromBounds(
+                Lines.fromPointAndAngle(Vector2D.ZERO, PlaneAngleRadians.PI_OVER_TWO, TEST_PRECISION)).getBounds());
+    }
+
+    @Test
+    public void testGetBounds_square() {
+        // arrange
+        ConvexArea area = ConvexArea.fromBounds(createSquareBoundingLines(Vector2D.of(-1, -1), 2, 1));
+
+        // act
+        Bounds2D bounds = area.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 0), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -722,7 +745,7 @@ public class ConvexAreaTest {
     @Test
     public void testLinecast() {
         // arrange
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO, Vector2D.of(1, 0),
                     Vector2D.of(1, 1), Vector2D.of(0, 1)
                 ), TEST_PRECISION);
@@ -759,179 +782,69 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testFromVertices_noVertices() {
-        // act
-        ConvexArea area = ConvexArea.fromVertices(Arrays.asList(), TEST_PRECISION);
-
-        // assert
-        Assert.assertTrue(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
-        GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getBarycenter());
-    }
-
-    @Test
-    public void testFromVertices_singleUniqueVertex() {
+    public void testConvexPolygonFromVertices_notEnoughUniqueVertices() {
         // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
 
+        Pattern unclosedPattern = Pattern.compile("Cannot construct convex polygon from unclosed path.*");
+        Pattern notEnoughElementsPattern =
+                Pattern.compile("Cannot construct convex polygon from path with less than 3 elements.*");
+        Pattern nonConvexPattern = Pattern.compile("Cannot construct convex polygon from non-convex path.*");
+
+        Pattern singleVertexPattern =
+                Pattern.compile("Unable to create line path; only a single unique vertex provided.*");
+
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertices(Arrays.asList(Vector2D.ZERO), precision);
-        }, IllegalStateException.class);
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(), precision);
+        }, IllegalArgumentException.class, unclosedPattern);
 
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertices(Arrays.asList(Vector2D.ZERO, Vector2D.of(1e-4, 1e-4)), precision);
-        }, IllegalStateException.class);
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO), precision);
+        }, IllegalStateException.class, singleVertexPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO, Vector2D.of(1e-4, 1e-4)), precision);
+        }, IllegalStateException.class, singleVertexPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), precision);
+        }, IllegalArgumentException.class, notEnoughElementsPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(
+                    Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, 1e-4)), precision);
+        }, IllegalArgumentException.class, notEnoughElementsPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(
+                    Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.of(1, -1)), precision);
+        }, IllegalArgumentException.class, nonConvexPattern);
     }
 
     @Test
-    public void testFromVertices_twoVertices() {
-        // act
-        ConvexArea area = ConvexArea.fromVertices(Arrays.asList(
-                    Vector2D.ZERO,
-                    Vector2D.Unit.PLUS_X
-                ), TEST_PRECISION);
-
-        // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
-        Assert.assertNull(area.getBarycenter());
-
-        Assert.assertTrue(area.contains(Vector2D.Unit.PLUS_Y));
-        Assert.assertFalse(area.contains(Vector2D.Unit.MINUS_Y));
-    }
-
-    @Test
-    public void testFromVertices_threeVertices() {
-        // act
-        ConvexArea area = ConvexArea.fromVertices(Arrays.asList(
-                    Vector2D.ZERO,
-                    Vector2D.Unit.PLUS_X,
-                    Vector2D.of(1, 1)
-                ), TEST_PRECISION);
-
-        // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
-        Assert.assertNull(area.getBarycenter());
-
-        Assert.assertTrue(area.contains(Vector2D.Unit.PLUS_Y));
-        Assert.assertFalse(area.contains(Vector2D.Unit.MINUS_Y));
-        Assert.assertFalse(area.contains(Vector2D.of(2, 2)));
-    }
-
-    @Test
-    public void testFromVertices_finite() {
-        // act
-        ConvexArea area = ConvexArea.fromVertices(Arrays.asList(
-                    Vector2D.ZERO,
-                    Vector2D.Unit.PLUS_X,
-                    Vector2D.of(1, 1),
-                    Vector2D.Unit.PLUS_Y,
-                    Vector2D.ZERO
-                ), TEST_PRECISION);
-
-        // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        Assert.assertEquals(1, area.getSize(), TEST_EPS);
-        Assert.assertEquals(4, area.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
-    }
-
-    @Test
-    public void testFromVertices_handlesDuplicatePoints() {
+    public void testConvexPolygonFromVertices_triangle() {
         // arrange
-        double eps = 1e-3;
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
+        Vector2D p0 = Vector2D.of(1, 2);
+        Vector2D p1 = Vector2D.of(2, 2);
+        Vector2D p2 = Vector2D.of(2, 3);
 
         // act
-        ConvexArea area = ConvexArea.fromVertices(Arrays.asList(
-                    Vector2D.ZERO,
-                    Vector2D.of(1e-4, 1e-4),
-                    Vector2D.Unit.PLUS_X,
-                    Vector2D.of(1, 1e-4),
-                    Vector2D.of(1, 1),
-                    Vector2D.of(0, 1),
-                    Vector2D.of(1e-4, 1),
-                    Vector2D.of(1e-4, 1e-4)
-                ), precision);
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(p0, p1, p2), TEST_PRECISION);
 
         // assert
         Assert.assertFalse(area.isFull());
         Assert.assertFalse(area.isEmpty());
 
-        Assert.assertEquals(1, area.getSize(), eps);
-        Assert.assertEquals(4, area.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), eps);
+        Assert.assertEquals(0.5, area.getSize(), TEST_EPS);
+        Assert.assertEquals(2 + Math.sqrt(2), area.getBoundarySize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.centroid(p0, p1, p2), area.getBarycenter(), TEST_EPS);
     }
 
     @Test
-    public void testFromVertices_clockwiseWinding() {
+    public void testConvexPolygonFromVertices_square_closeRequired() {
         // act
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertices(
-                    Arrays.asList(
-                            Vector2D.ZERO,
-                            Vector2D.Unit.PLUS_Y,
-                            Vector2D.of(1, 1),
-                            Vector2D.Unit.PLUS_X,
-                            Vector2D.ZERO
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testFromVertexLoops_noVertices() {
-        // act
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(), TEST_PRECISION);
-
-        // assert
-        Assert.assertTrue(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
-        GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getBarycenter());
-    }
-
-    @Test
-    public void testFromVertexLoop_singleUniqueVertex() {
-        // arrange
-        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-3);
-
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertexLoop(Arrays.asList(Vector2D.ZERO), precision);
-        }, IllegalStateException.class);
-
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.of(1e-4, 1e-4)), precision);
-        }, IllegalStateException.class);
-    }
-
-    @Test
-    public void testFromVertexLoop_twoVertices_fails() {
-        // act/assert
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertexLoop(Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testFromVertexLoop_square_closeRequired() {
-        // act
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.Unit.PLUS_X,
                     Vector2D.of(1, 1),
@@ -948,9 +861,9 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testFromVertexLoop_square_closeNotRequired() {
+    public void testConvexPolygonFromVertices_square_closeNotRequired() {
         // act
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.Unit.PLUS_X,
                     Vector2D.of(1, 1),
@@ -968,13 +881,13 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testFromVertexLoop_handlesDuplicatePoints() {
+    public void testConvexPolygonFromVertices_handlesDuplicatePoints() {
         // arrange
         double eps = 1e-3;
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(eps);
 
         // act
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.of(1e-4, 1e-4),
                     Vector2D.Unit.PLUS_X,
@@ -995,51 +908,9 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testFromVertexLoop_clockwiseWinding() {
+    public void testConvexPolygonFromPath() {
         // act
-        GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromVertexLoop(
-                    Arrays.asList(
-                            Vector2D.ZERO,
-                            Vector2D.Unit.PLUS_Y,
-                            Vector2D.of(1, 1),
-                            Vector2D.Unit.PLUS_X
-                    ), TEST_PRECISION);
-        }, IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testFromPath_empty() {
-        // act
-        ConvexArea area = ConvexArea.fromPath(LinePath.empty());
-
-        // assert
-        Assert.assertTrue(area.isFull());
-    }
-
-    @Test
-    public void testFromPath_infinite() {
-        // act
-        ConvexArea area = ConvexArea.fromPath(LinePath.fromVertices(
-                Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION));
-
-        // assert
-        Assert.assertFalse(area.isFull());
-        Assert.assertFalse(area.isEmpty());
-
-        GeometryTestUtils.assertPositiveInfinity(area.getBoundarySize());
-        GeometryTestUtils.assertPositiveInfinity(area.getSize());
-        Assert.assertNull(area.getBarycenter());
-
-        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.INSIDE, Vector2D.Unit.PLUS_Y);
-        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.BOUNDARY, Vector2D.ZERO);
-        EuclideanTestUtils.assertRegionLocation(area, RegionLocation.OUTSIDE, Vector2D.Unit.MINUS_Y);
-    }
-
-    @Test
-    public void testFromPath_finite() {
-        // act
-        ConvexArea area = ConvexArea.fromPath(LinePath.fromVertexLoop(
+        ConvexArea area = ConvexArea.convexPolygonFromPath(LinePath.fromVertexLoop(
                 Arrays.asList(
                         Vector2D.ZERO,
                         Vector2D.Unit.PLUS_X,
@@ -1057,17 +928,74 @@ public class ConvexAreaTest {
     }
 
     @Test
-    public void testFromPath_clockwiseWinding() {
-        // act
+    public void testConvexPolygonFromVertices_notConvex() {
+        // arrange
+        Pattern msgPattern = Pattern.compile("Cannot construct convex polygon from non-convex path.*");
+
+        // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            ConvexArea.fromPath(LinePath.fromVertexLoop(
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(
+                        Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(2, 0)
+                    ), TEST_PRECISION);
+        }, IllegalArgumentException.class, msgPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(
+                        Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, -1)
+                    ), TEST_PRECISION);
+        }, IllegalArgumentException.class, msgPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(
+                    Arrays.asList(
+                            Vector2D.ZERO,
+                            Vector2D.Unit.PLUS_Y,
+                            Vector2D.of(1, 1),
+                            Vector2D.Unit.PLUS_X
+                    ), TEST_PRECISION);
+        }, IllegalArgumentException.class, msgPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromVertices(Arrays.asList(
+                        Vector2D.ZERO, Vector2D.of(2, 0),
+                        Vector2D.of(2, 2), Vector2D.of(1, 1),
+                        Vector2D.of(1.5, 1)
+                    ), TEST_PRECISION);
+        }, IllegalArgumentException.class, msgPattern);
+    }
+
+    @Test
+    public void testConvexPolygonFromPath_invalidPaths() {
+        // arrange
+        Pattern unclosedPattern = Pattern.compile("Cannot construct convex polygon from unclosed path.*");
+        Pattern notEnoughElementsPattern =
+                Pattern.compile("Cannot construct convex polygon from path with less than 3 elements.*");
+        Pattern nonConvexPattern = Pattern.compile("Cannot construct convex polygon from non-convex path.*");
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromPath(LinePath.empty());
+        }, IllegalArgumentException.class, unclosedPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromPath(LinePath.fromVertices(
+                    Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X), TEST_PRECISION));
+        }, IllegalArgumentException.class, unclosedPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromPath(LinePath.fromVertices(
+                    Arrays.asList(Vector2D.ZERO, Vector2D.Unit.PLUS_X, Vector2D.ZERO), TEST_PRECISION));
+        }, IllegalArgumentException.class, notEnoughElementsPattern);
+
+        GeometryTestUtils.assertThrows(() -> {
+            ConvexArea.convexPolygonFromPath(LinePath.fromVertexLoop(
                     Arrays.asList(
                             Vector2D.ZERO,
                             Vector2D.Unit.PLUS_Y,
                             Vector2D.of(1, 1),
                             Vector2D.Unit.PLUS_X
                     ), TEST_PRECISION));
-        }, IllegalArgumentException.class);
+        }, IllegalArgumentException.class, nonConvexPattern);
     }
 
     @Test

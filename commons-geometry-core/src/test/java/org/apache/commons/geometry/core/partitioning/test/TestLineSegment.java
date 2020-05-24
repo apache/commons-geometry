@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition.test;
+package org.apache.commons.geometry.core.partitioning.test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -137,6 +137,12 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
     @Override
     public double getSize() {
         return Math.abs(start - end);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TestPoint2D getBarycenter() {
+        return line.toSpace(0.5 * (end - start));
     }
 
     /** {@inheritDoc} */

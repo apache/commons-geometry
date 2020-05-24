@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction3N;
@@ -71,20 +73,20 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         return cmp;
     };
 
-    /** Abscissa (first coordinate value). */
+    /** X coordinate value (abscissa). */
     private final double x;
 
-    /** Ordinate (second coordinate value). */
+    /** Y coordinate value (ordinate). */
     private final double y;
 
-    /** Height (third coordinate value). */
+    /** Z coordinate value (height). */
     private final double z;
 
     /** Simple constructor.
      * Build a vector from its coordinates
-     * @param x abscissa
-     * @param y ordinate
-     * @param z height
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
      */
     private Vector3D(double x, double y, double z) {
         this.x = x;
@@ -92,22 +94,22 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
         this.z = z;
     }
 
-    /** Returns the abscissa (first coordinate) value of the instance.
-     * @return the abscissa
+    /** Return the x coordinate value (abscissa) of the instance.
+     * @return the x coordinate value
      */
     public double getX() {
         return x;
     }
 
-    /** Returns the ordinate (second coordinate) value of the instance.
-     * @return the ordinate
+    /** Return the y coordinate value (ordinate) of the instance.
+     * @return the y coordinate value
      */
     public double getY() {
         return y;
     }
 
-    /** Returns the height (third coordinate) value of the instance.
-     * @return the height
+    /** Returns the z coordinate value (height) of the instance.
+     * @return the z coordinate value
      */
     public double getZ() {
         return z;
@@ -481,9 +483,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
     }
 
     /** Returns a vector with the given coordinate values.
-     * @param x abscissa (first coordinate value)
-     * @param y abscissa (second coordinate value)
-     * @param z height (third coordinate value)
+     * @param x x coordinate value
+     * @param y y coordinate value
+     * @param z z coordinate value
      * @return vector instance
      */
     public static Vector3D of(final double x, final double y, final double z) {
@@ -510,6 +512,149 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
      */
     public static Vector3D parse(final String str) {
         return SimpleTupleFormat.getDefault().parse(str, Vector3D::new);
+    }
+
+    /** Return a vector containing the maximum component values from all input vectors.
+     * @param first first vector
+     * @param more additional vectors
+     * @return a vector containing the maximum component values from all input vectors
+     */
+    public static Vector3D max(final Vector3D first, final Vector3D... more) {
+        return computeMax(first, Arrays.asList(more).iterator());
+    }
+
+    /** Return a vector containing the maximum component values from all input vectors.
+     * @param vecs input vectors
+     * @return a vector containing the maximum component values from all input vectors
+     * @throws IllegalArgumentException if the argument does not contain any vectors
+     */
+    public static Vector3D max(final Iterable<Vector3D> vecs) {
+        final Iterator<Vector3D> it = vecs.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute vector max: no vectors given");
+        }
+
+        return computeMax(it.next(), it);
+    }
+
+    /** Internal method for computing a max vector.
+     * @param first first vector
+     * @param more iterator with additional vectors
+     * @return vector containing the maximum component values of all input vectors
+     */
+    private static Vector3D computeMax(final Vector3D first, final Iterator<Vector3D> more) {
+        double x = first.getX();
+        double y = first.getY();
+        double z = first.getZ();
+
+        Vector3D vec;
+        while (more.hasNext()) {
+            vec = more.next();
+
+            x = Math.max(x, vec.getX());
+            y = Math.max(y, vec.getY());
+            z = Math.max(z, vec.getZ());
+        }
+
+        return Vector3D.of(x, y, z);
+    }
+
+    /** Return a vector containing the minimum component values from all input vectors.
+     * @param first first vector
+     * @param more additional vectors
+     * @return a vector containing the minimum component values from all input vectors
+     */
+    public static Vector3D min(final Vector3D first, final Vector3D... more) {
+        return computeMin(first, Arrays.asList(more).iterator());
+    }
+
+    /** Return a vector containing the minimum component values from all input vectors.
+     * @param vecs input vectors
+     * @return a vector containing the minimum component values from all input vectors
+     * @throws IllegalArgumentException if the argument does not contain any vectors
+     */
+    public static Vector3D min(final Iterable<Vector3D> vecs) {
+        final Iterator<Vector3D> it = vecs.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute vector min: no vectors given");
+        }
+
+        return computeMin(it.next(), it);
+    }
+
+    /** Internal method for computing a min vector.
+     * @param first first vector
+     * @param more iterator with additional vectors
+     * @return vector containing the minimum component values of all input vectors
+     */
+    private static Vector3D computeMin(final Vector3D first, final Iterator<Vector3D> more) {
+        double x = first.getX();
+        double y = first.getY();
+        double z = first.getZ();
+
+        Vector3D vec;
+        while (more.hasNext()) {
+            vec = more.next();
+
+            x = Math.min(x, vec.getX());
+            y = Math.min(y, vec.getY());
+            z = Math.min(z, vec.getZ());
+        }
+
+        return Vector3D.of(x, y, z);
+    }
+
+    /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
+     * of points.
+     * @param first first point
+     * @param more additional points
+     * @return the centroid of the given points
+     */
+    public static Vector3D centroid(final Vector3D first, final Vector3D... more) {
+        return computeCentroid(first, Arrays.asList(more).iterator());
+    }
+
+    /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
+     * of points.
+     * @param pts the points to compute the centroid of
+     * @return the centroid of the given points
+     * @throws IllegalArgumentException if the argument contains no points
+     */
+    public static Vector3D centroid(final Iterable<Vector3D> pts) {
+        final Iterator<Vector3D> it = pts.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute centroid: no points given");
+        }
+
+        return computeCentroid(it.next(), it);
+    }
+
+    /** Internal method for computing the centroid of a set of points.
+     * @param first first point
+     * @param more iterator with additional points
+     * @return the centroid of the point set
+     */
+    private static Vector3D computeCentroid(final Vector3D first, final Iterator<Vector3D> more) {
+        double x = first.getX();
+        double y = first.getY();
+        double z = first.getZ();
+
+        int count = 1;
+
+        Vector3D pt;
+        while (more.hasNext()) {
+            pt = more.next();
+
+            x += pt.getX();
+            y += pt.getY();
+            z += pt.getZ();
+
+            ++count;
+        }
+
+        double invCount = 1.0 / count;
+
+        return new Vector3D(invCount * x, invCount * y, invCount * z);
     }
 
     /** Returns a vector consisting of the linear combination of the inputs.
@@ -615,9 +760,9 @@ public class Vector3D extends MultiDimensionalEuclideanVector<Vector3D> {
 
         /** Simple constructor. Callers are responsible for ensuring that the given
          * values represent a normalized vector.
-         * @param x abscissa (first coordinate value)
-         * @param y ordinate (second coordinate value)
-         * @param z height (third coordinate value)
+         * @param x x coordinate value
+         * @param y x coordinate value
+         * @param z x coordinate value
          */
         private Unit(final double x, final double y, final double z) {
             super(x, y, z);

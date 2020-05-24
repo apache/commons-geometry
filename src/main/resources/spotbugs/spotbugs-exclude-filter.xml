@@ -29,8 +29,32 @@
   <Class name="~.*\.jmh\.generated\..*" />
 
   <Match>
-    <!-- This is a false positive. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <!-- This is a false positive in JDK 11. See https://github.com/spotbugs/spotbugs/issues/756 -->
     <Class name="org.apache.commons.geometry.core.partitioning.bsp.AbstractRegionBSPTree"/>
+    <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
+
+    <Match>
+    <!-- This is a false positive in JDK 11. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Class name="org.apache.commons.geometry.euclidean.threed.BoundarySourceBoundsBuilder3D" />
+    <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
+
+    <Match>
+    <!-- This is a false positive in JDK 11. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Class name="org.apache.commons.geometry.euclidean.threed.BoundarySourceLinecaster3D" />
+    <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
+
+    <Match>
+    <!-- This is a false positive in JDK 11. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Class name="org.apache.commons.geometry.euclidean.twod.BoundarySourceBoundsBuilder2D" />
+    <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+  </Match>
+
+    <Match>
+    <!-- This is a false positive in JDK 11. See https://github.com/spotbugs/spotbugs/issues/756 -->
+    <Class name="org.apache.commons.geometry.euclidean.twod.BoundarySourceLinecaster2D" />
     <BugPattern name="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
   </Match>
 

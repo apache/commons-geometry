@@ -17,6 +17,8 @@
 
 package org.apache.commons.geometry.euclidean.threed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
@@ -1205,6 +1207,83 @@ public class Vector3DTest {
                 IllegalArgumentException.class);
         GeometryTestUtils.assertThrows(() -> Vector3D.Unit.from(1.0, 1.0, Double.POSITIVE_INFINITY),
                 IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testMax() {
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 100),
+                Vector3D.max(Arrays.asList(Vector3D.of(-100, 1, 100))), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 1, 100),
+                Vector3D.max(Arrays.asList(Vector3D.of(-100, 1, 100), Vector3D.of(0, 1, 0))), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2),
+                Vector3D.max(Vector3D.of(-2, 0, 0), Vector3D.of(-1, -5, 1), Vector3D.of(-10, -10, 2)), EPS);
+    }
+
+    @Test
+    public void testMax_noPointsGiven() {
+        // arrange
+        String msg = "Cannot compute vector max: no vectors given";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Vector3D.max(new ArrayList<>());
+        }, IllegalArgumentException.class, msg);
+    }
+
+    @Test
+    public void testMin() {
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 100),
+                Vector3D.min(Arrays.asList(Vector3D.of(-100, 1, 100))), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-100, 1, 0),
+                Vector3D.min(Arrays.asList(Vector3D.of(-100, 1, 100), Vector3D.of(0, 1, 0))), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-10, -10, 0),
+                Vector3D.min(Vector3D.of(-2, 0, 0), Vector3D.of(-1, -5, 1), Vector3D.of(-10, -10, 2)), EPS);
+    }
+
+    @Test
+    public void testMin_noPointsGiven() {
+        // arrange
+        String msg = "Cannot compute vector min: no vectors given";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Vector3D.min(new ArrayList<>());
+        }, IllegalArgumentException.class, msg);
+    }
+
+    @Test
+    public void testCentroid() {
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3),
+                Vector3D.centroid(Vector3D.of(1, 2, 3)), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2.5, 3.5, 4.5),
+                Vector3D.centroid(Vector3D.of(1, 2, 3), Vector3D.of(2, 3, 4),
+                        Vector3D.of(3, 4, 5), Vector3D.of(4, 5, 6)), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3),
+                Vector3D.centroid(Arrays.asList(Vector3D.of(1, 2, 3))), EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 1, 1.5),
+                Vector3D.centroid(Arrays.asList(Vector3D.of(1, 2, 3), Vector3D.of(1, 2, 3),
+                        Vector3D.ZERO, Vector3D.ZERO)), EPS);
+    }
+
+    @Test
+    public void testCentroid_noPointsGiven() {
+        // arrange
+        String msg = "Cannot compute centroid: no points given";
+
+        // act/assert
+        GeometryTestUtils.assertThrows(() -> {
+            Vector3D.centroid(new ArrayList<>());
+        }, IllegalArgumentException.class, msg);
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a line segment in 3D Euclidean space. A line segment is a portion of
@@ -104,6 +105,21 @@ public final class Segment3D extends LineConvexSubset3D {
     @Override
     public double getSize() {
         return end - start;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector3D getBarycenter() {
+        return getLine().toSpace((0.5 * (end - start)) + start);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds3D getBounds() {
+        return Bounds3D.builder()
+                .add(getStartPoint())
+                .add(getEndPoint())
+                .build();
     }
 
     /** {@inheritDoc} */

@@ -257,6 +257,11 @@ public class GreatCircleSubsetTest {
         }
 
         @Override
+        public Point2S getBarycenter() {
+            return null;
+        }
+
+        @Override
         public RegionLocation classify(Point2S point) {
             return null;
         }

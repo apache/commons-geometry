@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.core.internal.HyperplaneSubsets;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.partitioning.SplitLocation;
@@ -29,6 +30,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoint;
 import org.apache.commons.geometry.euclidean.oned.OrientedPoints;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
+import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.twod.Line.SubspaceTransform;
 
 /** Class representing an arbitrary subset of a line using a {@link RegionBSPTree1D}.
@@ -67,6 +69,58 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
         super(line);
 
         this.region = region;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isFull() {
+        return region.isFull();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isEmpty() {
+        return region.isEmpty();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getSize() {
+        return region.getSize();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D getBarycenter() {
+        final Vector1D subspaceBarycenter = region.getBarycenter();
+        if (subspaceBarycenter != null) {
+            return getLine().toSpace(subspaceBarycenter);
+        }
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds2D getBounds() {
+        final double min = region.getMin();
+        final double max = region.getMax();
+
+        if (Double.isFinite(min) && Double.isFinite(max)) {
+            final Line line = getLine();
+
+            return Bounds2D.builder()
+                    .add(line.toSpace(min))
+                    .add(line.toSpace(max))
+                    .build();
+        }
+
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D closest(final Vector2D pt) {
+        return HyperplaneSubsets.closestToEmbeddedRegion(pt, getLine(), region);
     }
 
     /** {@inheritDoc} */

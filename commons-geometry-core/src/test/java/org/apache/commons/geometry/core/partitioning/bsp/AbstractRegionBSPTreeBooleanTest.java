@@ -19,11 +19,11 @@ package org.apache.commons.geometry.core.partitioning.bsp;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
-import org.apache.commons.geometry.core.partition.test.TestLine;
-import org.apache.commons.geometry.core.partition.test.TestLineSegment;
-import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partition.test.TestRegionBSPTree;
+import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
+import org.apache.commons.geometry.core.partitioning.test.TestLine;
+import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
+import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.test.TestRegionBSPTree;
 import org.junit.Test;
 
 public class AbstractRegionBSPTreeBooleanTest {

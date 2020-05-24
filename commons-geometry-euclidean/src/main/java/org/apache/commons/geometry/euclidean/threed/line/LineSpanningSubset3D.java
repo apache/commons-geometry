@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.threed.line;
 import java.text.MessageFormat;
 
 import org.apache.commons.geometry.core.Transform;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing the span of a line in 3D Euclidean space. This is the set of all points
@@ -96,6 +97,24 @@ final class LineSpanningSubset3D extends LineConvexSubset3D {
     @Override
     public double getSubspaceEnd() {
         return Double.POSITIVE_INFINITY;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector3D getBarycenter() {
+        return null; // infinite; no center
+    }
+
+    /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code null}.</p>
+    */
+    @Override
+    public Bounds3D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** {@inheritDoc} */

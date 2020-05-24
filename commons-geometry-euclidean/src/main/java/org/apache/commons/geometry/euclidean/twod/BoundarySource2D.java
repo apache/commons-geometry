@@ -50,6 +50,15 @@ public interface BoundarySource2D extends BoundarySource<LineConvexSubset>, Line
         return new BoundarySourceLinecaster2D(this).linecastFirst(subset);
     }
 
+    /** Get a {@link Bounds2D} object defining the axis-aligned box containing all vertices
+     * in the boundaries for this instance. Null is returned if any boundaries are infinite
+     * or no vertices were found.
+     * @return the bounding box for this instance or null if no valid bounds could be determined
+     */
+    default Bounds2D getBounds() {
+        return new BoundarySourceBoundsBuilder2D().getBounds(this);
+    }
+
     /** Return a {@link BoundarySource2D} instance containing the given boundaries.
      * @param boundaries line subsets to include in the boundary source
      * @return a boundary source containing the given boundaries

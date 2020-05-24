@@ -71,7 +71,7 @@ public final class ConvexHull2D implements ConvexHull<Vector2D> {
     @Override
     public ConvexArea getRegion() {
         return path.isClosed() ?
-                ConvexArea.fromPath(path) :
+                ConvexArea.convexPolygonFromPath(path) :
                 null;
     }
 

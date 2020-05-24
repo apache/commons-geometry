@@ -995,19 +995,19 @@ public class LinePathTest {
 
         String startOpenStr = startOpenPath.toString();
         GeometryTestUtils.assertContains("LinePath[startDirection= ", startOpenStr);
-        GeometryTestUtils.assertContains("vertices=", startOpenStr);
+        GeometryTestUtils.assertContains("vertexSequence=", startOpenStr);
 
         String endOpenStr = endOpenPath.toString();
-        GeometryTestUtils.assertContains("LinePath[vertices= ", endOpenStr);
+        GeometryTestUtils.assertContains("LinePath[vertexSequence= ", endOpenStr);
         GeometryTestUtils.assertContains("endDirection= ", endOpenStr);
 
         String doubleOpenStr = doubleOpenPath.toString();
         GeometryTestUtils.assertContains("startDirection= ", doubleOpenStr);
-        GeometryTestUtils.assertContains("vertices= ", doubleOpenStr);
+        GeometryTestUtils.assertContains("vertexSequence= ", doubleOpenStr);
         GeometryTestUtils.assertContains("endDirection= ", doubleOpenStr);
 
         String nonOpenStr = nonOpenPath.toString();
-        GeometryTestUtils.assertContains("LinePath[vertices= ", nonOpenStr);
+        GeometryTestUtils.assertContains("LinePath[vertexSequence= ", nonOpenStr);
     }
 
     @Test

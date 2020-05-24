@@ -80,7 +80,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
     /** Get the direction of the hyperplane's plus side.
      * @return the hyperplane direction
      */
-    public Vector1D getDirection() {
+    public Vector1D.Unit getDirection() {
         return positiveFacing ? Vector1D.Unit.PLUS : Vector1D.Unit.MINUS;
     }
 
@@ -272,7 +272,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns false.</p>
+        * <p>This method always returns {@code false}.</p>
         */
         @Override
         public boolean isFull() {
@@ -281,7 +281,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns false.</p>
+        * <p>This method always returns {@code false}.</p>
         */
         @Override
         public boolean isEmpty() {
@@ -290,7 +290,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
          *
-         * <p>This method simply returns false.</p>
+         * <p>This method always returns {@code false}.</p>
          */
         @Override
         public boolean isInfinite() {
@@ -299,7 +299,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
         *
-        * <p>This method simply returns true.</p>
+        * <p>This method always returns {@code true}.</p>
         */
         @Override
         public boolean isFinite() {
@@ -308,11 +308,20 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
 
         /** {@inheritDoc}
          *
-         *  <p>This method simply returns {@code 0}.</p>
+         *  <p>This method always returns {@code 0}.</p>
          */
         @Override
         public double getSize() {
             return 0;
+        }
+
+        /** {@inheritDoc}
+        *
+        *  <p>This method returns the point for the defining hyperplane.</p>
+        */
+        @Override
+        public Vector1D getBarycenter() {
+            return hyperplane.getPoint();
         }
 
         /** {@inheritDoc}

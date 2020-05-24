@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -55,6 +56,8 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -96,6 +99,8 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -110,15 +115,15 @@ public class RayTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Lines.rayFromPoint(line, Vector2D.NaN);
-        }, IllegalArgumentException.class, "Invalid ray start location: NaN");
+        }, IllegalArgumentException.class, "Invalid ray start point: (NaN, NaN)");
 
         GeometryTestUtils.assertThrows(() -> {
             Lines.rayFromPoint(line, Vector2D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start location: Infinity");
+        }, IllegalArgumentException.class, "Invalid ray start point: (Infinity, Infinity)");
 
         GeometryTestUtils.assertThrows(() -> {
             Lines.rayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid ray start location: -Infinity");
+        }, IllegalArgumentException.class, "Invalid ray start point: (-Infinity, -Infinity)");
     }
 
     @Test
@@ -145,6 +150,8 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
     }
@@ -313,6 +320,25 @@ public class RayTest {
         checkSplit(ray.split(Lines.fromPointAndAngle(low, -1, TEST_PRECISION)),
                 p0, null,
                 null, null);
+    }
+
+    @Test
+    public void testSplit_smallAngle_pointOnSplitter() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+
+        Ray ray = Lines.rayFromPointAndDirection(Vector2D.of(1, 1e-6), Vector2D.of(-1, -1e-2), precision);
+
+        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0, precision);
+
+        // act
+        Split<LineConvexSubset> split = ray.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertSame(ray, split.getPlus());
     }
 
     @Test

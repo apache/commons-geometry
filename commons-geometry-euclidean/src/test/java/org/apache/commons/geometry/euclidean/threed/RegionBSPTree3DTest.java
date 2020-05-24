@@ -36,6 +36,7 @@ import org.apache.commons.geometry.euclidean.threed.line.Line3D;
 import org.apache.commons.geometry.euclidean.threed.line.LinecastPoint3D;
 import org.apache.commons.geometry.euclidean.threed.line.Lines3D;
 import org.apache.commons.geometry.euclidean.threed.shape.Parallelepiped;
+import org.apache.commons.geometry.euclidean.twod.path.LinePath;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -177,6 +178,72 @@ public class RegionBSPTree3DTest {
     }
 
     @Test
+    public void testTriangleStream_noBoundaries() {
+        // arrange
+        RegionBSPTree3D full = RegionBSPTree3D.full();
+        RegionBSPTree3D empty = RegionBSPTree3D.empty();
+
+        // act/assert
+        Assert.assertEquals(0, full.triangleStream().collect(Collectors.toList()).size());
+        Assert.assertEquals(0, empty.triangleStream().collect(Collectors.toList()).size());
+    }
+
+    @Test
+    public void testTriangleStream() {
+        // arrange
+        RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+
+        // act
+        List<Triangle3D> tris = tree.triangleStream().collect(Collectors.toList());
+
+        // assert
+        Assert.assertEquals(12, tris.size());
+    }
+
+    @Test
+    public void testTriangleStream_roundTrip() {
+        // arrange
+        RegionBSPTree3D a = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+        RegionBSPTree3D b = createRect(Vector3D.of(0.5, 0.5, 0.5), Vector3D.of(1.5, 1.5, 1.5));
+
+        RegionBSPTree3D tree = RegionBSPTree3D.empty();
+        tree.union(a);
+        tree.union(b);
+
+        // act
+        List<Triangle3D> tris = tree.triangleStream().collect(Collectors.toList());
+        RegionBSPTree3D result = RegionBSPTree3D.from(tris);
+
+        // assert
+        Assert.assertEquals(15.0 / 8.0, result.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.75, 0.75, 0.75), result.getBarycenter(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBounds_hasBounds() {
+        // arrange
+        RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 1, 1));
+
+        // act
+        Bounds3D bounds = tree.getBounds();
+
+        // assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
+    }
+
+    @Test
+    public void testGetBounds_noBounds() {
+        // act/assert
+        Assert.assertNull(RegionBSPTree3D.empty().getBounds());
+        Assert.assertNull(RegionBSPTree3D.full().getBounds());
+
+        RegionBSPTree3D halfFull = RegionBSPTree3D.empty();
+        halfFull.getRoot().insertCut(Planes.fromPointAndNormal(Vector3D.ZERO, Vector3D.Unit.PLUS_Z, TEST_PRECISION));
+        Assert.assertNull(halfFull.getBounds());
+    }
+
+    @Test
     public void testToTree_returnsSameInstance() {
         // arrange
         RegionBSPTree3D tree = createRect(Vector3D.ZERO, Vector3D.of(1, 2, 1));
@@ -264,9 +331,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    Planes.subsetFromVertexLoop(Arrays.asList(
+                    Planes.convexPolygonFromVertices(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    Planes.subsetFromVertexLoop(Arrays.asList(
+                    Planes.convexPolygonFromVertices(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ));
 
@@ -287,9 +354,9 @@ public class RegionBSPTree3DTest {
     public void testFrom_boundaries_fullIsTrue() {
         // act
         RegionBSPTree3D tree = RegionBSPTree3D.from(Arrays.asList(
-                    Planes.subsetFromVertexLoop(Arrays.asList(
+                    Planes.convexPolygonFromVertices(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y), TEST_PRECISION),
-                    Planes.subsetFromVertexLoop(Arrays.asList(
+                    Planes.convexPolygonFromVertices(Arrays.asList(
                             Vector3D.ZERO, Vector3D.Unit.MINUS_Z, Vector3D.Unit.PLUS_X), TEST_PRECISION)
                 ), true);
 
@@ -927,10 +994,10 @@ public class RegionBSPTree3DTest {
         Vector3D vertex4 = Vector3D.of(1, 3, 4);
 
         List<PlaneConvexSubset> boundaries = Arrays.asList(
-                Planes.subsetFromVertexLoop(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
-                Planes.subsetFromVertexLoop(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
-                Planes.subsetFromVertexLoop(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
-                Planes.subsetFromVertexLoop(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
+                Planes.convexPolygonFromVertices(Arrays.asList(vertex3, vertex2, vertex1), TEST_PRECISION),
+                Planes.convexPolygonFromVertices(Arrays.asList(vertex2, vertex3, vertex4), TEST_PRECISION),
+                Planes.convexPolygonFromVertices(Arrays.asList(vertex4, vertex3, vertex1), TEST_PRECISION),
+                Planes.convexPolygonFromVertices(Arrays.asList(vertex1, vertex2, vertex4), TEST_PRECISION)
             );
 
         // act
@@ -1557,7 +1624,16 @@ public class RegionBSPTree3DTest {
                 vertexList.add(vertices[indices[j]]);
             }
 
-            boundaries.add(Planes.subsetFromVertexLoop(vertexList, TEST_PRECISION));
+            // insert into an embedded tree and convert to convex polygons so that we can support
+            // non-convex facet boundaries
+            EmbeddingPlane plane = Planes.fromPoints(vertexList, TEST_PRECISION).getEmbedding();
+
+            LinePath subPath = LinePath.builder(TEST_PRECISION)
+                    .appendVertices(plane.toSubspace(vertexList))
+                    .close();
+            EmbeddedTreePlaneSubset subset = new EmbeddedTreePlaneSubset(plane, subPath.toTree());
+
+            boundaries.addAll(subset.toConvex());
 
             vertexList.clear();
         }

@@ -19,8 +19,9 @@ package org.apache.commons.geometry.euclidean.twod;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.geometry.core.RegionEmbedding;
 import org.apache.commons.geometry.core.RegionLocation;
-import org.apache.commons.geometry.core.partitioning.AbstractRegionEmbeddingHyperplaneSubset;
+import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
@@ -30,7 +31,7 @@ import org.apache.commons.geometry.euclidean.oned.Vector1D;
 /** Class representing a subset of points on a line in 2D Euclidean space. For example, line segments
  * and rays are line subsets. Line subsets may be finite or infinite.
  */
-public abstract class LineSubset extends AbstractRegionEmbeddingHyperplaneSubset<Vector2D, Vector1D, Line> {
+public abstract class LineSubset implements HyperplaneSubset<Vector2D>, RegionEmbedding<Vector2D, Vector1D> {
     /** The line containing this instance. */
     private final Line line;
 
@@ -58,7 +59,30 @@ public abstract class LineSubset extends AbstractRegionEmbeddingHyperplaneSubset
 
     /** {@inheritDoc} */
     @Override
+    public Vector1D toSubspace(final Vector2D pt) {
+        return line.toSubspace(pt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D toSpace(final Vector1D pt) {
+        return line.toSpace(pt);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public abstract List<LineConvexSubset> toConvex();
+
+    /** Get a {@link Bounds2D} object defining an axis-aligned bounding box containing all
+     * vertices for this subset. Null is returned if the subset is infinite or does not
+     * contain any vertices.
+     * @return the bounding box for this instance or null if no valid bounds could be determined
+     */
+    public abstract Bounds2D getBounds();
+
+    /** {@inheritDoc} */
+    @Override
+    public abstract HyperplaneBoundedRegion<Vector1D> getSubspaceRegion();
 
     /** {@inheritDoc} */
     @Override

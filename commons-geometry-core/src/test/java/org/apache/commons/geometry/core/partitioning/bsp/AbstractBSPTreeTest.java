@@ -27,16 +27,16 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.geometry.core.Transform;
-import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
-import org.apache.commons.geometry.core.partition.test.TestBSPTree;
-import org.apache.commons.geometry.core.partition.test.TestBSPTree.TestNode;
-import org.apache.commons.geometry.core.partition.test.TestLine;
-import org.apache.commons.geometry.core.partition.test.TestLineSegment;
-import org.apache.commons.geometry.core.partition.test.TestLineSegmentCollection;
-import org.apache.commons.geometry.core.partition.test.TestPoint2D;
-import org.apache.commons.geometry.core.partition.test.TestTransform2D;
 import org.apache.commons.geometry.core.partitioning.BoundarySource;
 import org.apache.commons.geometry.core.partitioning.bsp.BSPTree.FindNodeCutRule;
+import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
+import org.apache.commons.geometry.core.partitioning.test.TestBSPTree;
+import org.apache.commons.geometry.core.partitioning.test.TestLine;
+import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
+import org.apache.commons.geometry.core.partitioning.test.TestLineSegmentCollection;
+import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.test.TestTransform2D;
+import org.apache.commons.geometry.core.partitioning.test.TestBSPTree.TestNode;
 import org.junit.Assert;
 import org.junit.Test;
 

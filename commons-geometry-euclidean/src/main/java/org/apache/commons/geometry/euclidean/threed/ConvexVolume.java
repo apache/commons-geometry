@@ -26,7 +26,6 @@ import org.apache.commons.geometry.core.partitioning.AbstractConvexHyperplaneBou
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
-import org.apache.commons.geometry.euclidean.twod.ConvexArea;
 
 /** Class representing a finite or infinite convex volume in Euclidean 3D space.
  * The boundaries of this area, if any, are composed of plane convex subsets.
@@ -65,14 +64,11 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
                 return Double.POSITIVE_INFINITY;
             }
 
-            final Plane plane = boundary.getPlane();
-            final ConvexArea subarea = boundary.getSubspaceRegion();
+            final Plane boundaryPlane = boundary.getPlane();
+            final double boundaryArea = boundary.getSize();
+            final Vector3D boundaryBarycenter = boundary.getBarycenter();
 
-            final Vector3D facetBarycenter = boundary.getHyperplane().toSpace(
-                    subarea.getBarycenter());
-
-
-            volumeSum += subarea.getSize() * facetBarycenter.dot(plane.getNormal());
+            volumeSum += boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
         }
 
         return volumeSum / 3.0;
@@ -92,19 +88,17 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
                 return null;
             }
 
-            final Plane plane = boundary.getPlane();
-            final ConvexArea subarea = boundary.getSubspaceRegion();
+            final Plane boundaryPlane = boundary.getPlane();
+            final double boundaryArea = boundary.getSize();
+            final Vector3D boundaryBarycenter = boundary.getBarycenter();
 
-            final Vector3D facetBarycenter = boundary.getHyperplane().toSpace(
-                    subarea.getBarycenter());
-
-            final double scaledVolume = subarea.getSize() * facetBarycenter.dot(plane.getNormal());
+            final double scaledVolume = boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
 
             volumeSum += scaledVolume;
 
-            sumX += scaledVolume * facetBarycenter.getX();
-            sumY += scaledVolume * facetBarycenter.getY();
-            sumZ += scaledVolume * facetBarycenter.getZ();
+            sumX += scaledVolume * boundaryBarycenter.getX();
+            sumY += scaledVolume * boundaryBarycenter.getY();
+            sumZ += scaledVolume * boundaryBarycenter.getZ();
         }
 
         if (volumeSum > 0) {

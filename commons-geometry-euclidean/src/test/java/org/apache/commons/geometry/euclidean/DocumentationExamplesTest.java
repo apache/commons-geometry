@@ -29,6 +29,7 @@ import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
+import org.apache.commons.geometry.euclidean.threed.ConvexPolygon3D;
 import org.apache.commons.geometry.euclidean.threed.Plane;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
 import org.apache.commons.geometry.euclidean.threed.Planes;
@@ -407,27 +408,27 @@ public class DocumentationExamplesTest {
     public void testRegionBSPTree3DExample() {
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        // create the faces of a pyrmaid with a square base and its apex pointing along the
+        // create the faces of a pyramid with a square base and its apex pointing along the
         // positive z axis
-        Vector3D a1 = Vector3D.Unit.PLUS_Z;
-        Vector3D b1 = Vector3D.of(0.5, 0.5, 0.0);
-        Vector3D b2 = Vector3D.of(0.5, -0.5, 0.0);
-        Vector3D b3 = Vector3D.of(-0.5, -0.5, 0.0);
-        Vector3D b4 = Vector3D.of(-0.5, 0.5, 0.0);
-
-        Vector3D[][] faceIndices = {
-            {b1, a1, b2},
-            {b2, a1, b3},
-            {b3, a1, b4},
-            {b4, a1, b1},
-            {b1, b2, b3, b4}
+        Vector3D[] vertices = {
+            Vector3D.Unit.PLUS_Z,
+            Vector3D.of(0.5, 0.5, 0.0),
+            Vector3D.of(0.5, -0.5, 0.0),
+            Vector3D.of(-0.5, -0.5, 0.0),
+            Vector3D.of(-0.5, 0.5, 0.0)
         };
 
-        // convert the vertices to convex subplanes and insert into a bsp tree
-        RegionBSPTree3D tree = RegionBSPTree3D.empty();
-        Arrays.stream(faceIndices)
-            .map(vertices -> Planes.subsetFromVertexLoop(Arrays.asList(vertices), precision))
-            .forEach(tree::insert);
+        int[][] faceIndices = {
+            {1, 0, 2},
+            {2, 0, 3},
+            {3, 0, 4},
+            {4, 0, 1},
+            {1, 2, 3, 4}
+        };
+
+        // convert the vertices and faces to convex polygons and use to construct a BSP tree
+        List<ConvexPolygon3D> faces = Planes.indexedConvexPolygons(vertices, faceIndices, precision);
+        RegionBSPTree3D tree = RegionBSPTree3D.from(faces);
 
         // split the region through its barycenter along a diagonal of the base
         Plane cutter = Planes.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
