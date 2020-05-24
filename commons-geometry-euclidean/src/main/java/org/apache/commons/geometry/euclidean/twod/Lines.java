@@ -57,7 +57,7 @@ public final class Lines {
             throw new IllegalArgumentException("Line direction cannot be zero");
         }
 
-        final Vector2D normalizedDir = dir.normalize();
+        final Vector2D.Unit normalizedDir = dir.normalize();
         final double originOffset = normalizedDir.signedArea(pt);
 
         return new Line(normalizedDir, originOffset, precision);
@@ -102,7 +102,10 @@ public final class Lines {
      * @throws IllegalArgumentException if any coordinate in {@code startPoint} is NaN or infinite
      */
     public static Ray rayFromPoint(final Line line, final Vector2D startPoint) {
-        return rayFromLocation(line, line.abscissa(startPoint));
+        if (!startPoint.isFinite()) {
+            throw new IllegalArgumentException("Invalid ray start point: " + startPoint);
+        }
+        return new Ray(line, line.project(startPoint));
     }
 
     /** Construct a ray starting at the given 1D location on {@code line} and continuing in the
@@ -117,8 +120,7 @@ public final class Lines {
         if (!Double.isFinite(startLocation)) {
             throw new IllegalArgumentException("Invalid ray start location: " + Double.toString(startLocation));
         }
-
-        return new Ray(line, startLocation);
+        return new Ray(line, line.toSpace(startLocation));
     }
 
     /** Construct a reverse ray from an end point and a line direction.
@@ -145,7 +147,10 @@ public final class Lines {
      * @throws IllegalArgumentException if any coordinate in {@code endPoint} is NaN or infinite
      */
     public static ReverseRay reverseRayFromPoint(final Line line, final Vector2D endPoint) {
-        return reverseRayFromLocation(line, line.abscissa(endPoint));
+        if (!endPoint.isFinite()) {
+            throw new IllegalArgumentException("Invalid reverse ray end point: " + endPoint);
+        }
+        return new ReverseRay(line, line.project(endPoint));
     }
 
     /** Construct a reverse ray starting at infinity and continuing in the direction of {@code line}
@@ -161,7 +166,7 @@ public final class Lines {
             throw new IllegalArgumentException("Invalid reverse ray end location: " + Double.toString(endLocation));
         }
 
-        return new ReverseRay(line, endLocation);
+        return new ReverseRay(line, line.toSpace(endLocation));
     }
 
     /** Construct a new line segment from two points. A new line is created for the segment and points in the
@@ -212,7 +217,7 @@ public final class Lines {
             final double min = Math.min(a, b);
             final double max = Math.max(a, b);
 
-            return new Segment(line, min, max);
+            return new Segment(line, line.toSpace(min), line.toSpace(max));
         }
 
         throw new IllegalArgumentException(
@@ -260,13 +265,13 @@ public final class Lines {
         if (hasMin) {
             if (hasMax) {
                 // has both
-                return new Segment(line, min, max);
+                return new Segment(line, line.toSpace(min), line.toSpace(max));
             }
             // min only
-            return new Ray(line, min);
+            return new Ray(line, line.toSpace(min));
         } else if (hasMax) {
             // max only
-            return new ReverseRay(line, max);
+            return new ReverseRay(line, line.toSpace(max));
         } else if (Double.isInfinite(min) && Double.isInfinite(max) && Double.compare(min, max) < 0) {
             return new LineSpanningSubset(line);
         }

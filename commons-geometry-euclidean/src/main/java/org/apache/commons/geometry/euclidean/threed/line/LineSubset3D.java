@@ -17,14 +17,16 @@
 package org.apache.commons.geometry.euclidean.threed.line;
 
 import org.apache.commons.geometry.core.RegionEmbedding;
+import org.apache.commons.geometry.core.Sized;
 import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /** Class representing a subset of a line in 3D Euclidean space. For example, line segments,
  * rays, and disjoint combinations of the two are line subsets. Line subsets may be finite or infinite.
  */
-public abstract class LineSubset3D implements RegionEmbedding<Vector3D, Vector1D> {
+public abstract class LineSubset3D implements RegionEmbedding<Vector3D, Vector1D>, Sized {
     /** The line containing this instance. */
     private final Line3D line;
 
@@ -53,6 +55,20 @@ public abstract class LineSubset3D implements RegionEmbedding<Vector3D, Vector1D
     public Vector1D toSubspace(final Vector3D pt) {
         return line.toSubspace(pt);
     }
+
+    /** Get the center of the line subset, or null if the subset is empty of
+     * infinite.
+     * @return the center of the line subset, or null if the subset is empty of
+     *      infinite
+     */
+    public abstract Vector3D getBarycenter();
+
+    /** Get the 3D bounding box of the line subset or null if the subset is
+     * empty or infinite.
+     * @return the 3D bounding box the line subset or null if the subset is
+     *      empty or infinite
+     */
+    public abstract Bounds3D getBounds();
 
     /** Get the subspace region for the instance.
      * @return the subspace region for the instance

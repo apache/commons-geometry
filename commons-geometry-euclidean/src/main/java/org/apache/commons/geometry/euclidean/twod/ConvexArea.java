@@ -16,12 +16,10 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.geometry.core.Transform;
@@ -38,6 +36,9 @@ import org.apache.commons.geometry.euclidean.twod.path.LinePath;
  */
 public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, LineConvexSubset>
     implements BoundarySource2D {
+
+    /** Error message used when attempting to construct a convex polygon from a non-convex line path. */
+    private static final String NON_CONVEX_PATH_ERROR = "Cannot construct convex polygon from non-convex path: ";
 
     /** Instance representing the full 2D plane. */
     private static final ConvexArea FULL = new ConvexArea(Collections.emptyList());
@@ -74,12 +75,18 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         return InteriorAngleLinePathConnector.connectMinimized(getBoundaries());
     }
 
-    /** Get the vertices defining the area. The vertices lie at the intersections of the
-     * area bounding lines. Note that it is possible for areas to contain no vertices at
-     * all. For example, an area with no boundaries (representing the full space), an area
-     * with a single boundary, or an area one with two parallel boundaries will not contain
-     * vertices.
-     * @return the vertices defining the area
+    /** Get the vertices for the area in a counter-clockwise order. Each vertex in the
+     * returned list is unique. If the boundary of the area is closed, the start vertex is
+     * <em>not</em> repeated at the end of the list.
+     *
+     * <p>It is important to note that, in general, the list of vertices returned by this method
+     * is not sufficient to completely characterize the area. For example, a simple triangle
+     * has 3 vertices, but an infinite area constructed from two parallel lines and two lines that
+     * intersect between them will also have 3 vertices. It is also possible for non-empty areas to
+     * contain no vertices at all. For example, an area with no boundaries (representing the full
+     * space), an area with a single boundary, or an area with two parallel boundaries will not
+     * contain any vertices.</p>
+     * @return the list of vertices for the area in a counter-clockwise order
      */
     public List<Vector2D> getVertices() {
         final List<LinePath> paths = getBoundaryPaths();
@@ -191,89 +198,74 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
         return FULL;
     }
 
-    /** Construct a convex area by creating lines between adjacent vertices. The vertices must be given in a
-     * counter-clockwise around order the interior of the shape. If the area is intended to be closed, the
-     * beginning point must be repeated at the end of the path.
-     * @param vertices vertices to use to construct the area
-     * @param precision precision context used to create new line instances
-     * @return a convex area constructed using lines between adjacent vertices
-     * @see #fromVertexLoop(Collection, DoublePrecisionContext)
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+    /** Construct a convex polygon from the given vertices.
+     * @param vertices vertices to use to construct the polygon
+     * @param precision precision context used for floating point comparisons
+     * @return a convex polygon constructed using the given vertices
+     * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
+     * @throws IllegalArgumentException if the constructed path does not define a closed, convex polygon
+     * @see LinePath#fromVertexLoop(Collection, DoublePrecisionContext)
      */
-    public static ConvexArea fromVertices(final Collection<Vector2D> vertices,
+    public static ConvexArea convexPolygonFromVertices(final Collection<Vector2D> vertices,
             final DoublePrecisionContext precision) {
-        return fromVertices(vertices, false, precision);
+        return convexPolygonFromPath(LinePath.fromVertexLoop(vertices, precision));
     }
 
-    /** Construct a convex area by creating lines between adjacent vertices. An implicit line is created between the
-     * last vertex given and the first one. The vertices must be given in a counter-clockwise around order the interior
-     * of the shape.
-     * @param vertices vertices to use to construct the area
-     * @param precision precision context used to create new line instances
-     * @return a convex area constructed using lines between adjacent vertices
-     * @see #fromVertices(Collection, DoublePrecisionContext)
-     * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
+    /** Construct a convex polygon from a line path.
+     * @param path path to construct the polygon from
+     * @return a convex polygon constructed from the given line path
+     * @throws IllegalArgumentException if the path does not define a closed, convex polygon
      */
-    public static ConvexArea fromVertexLoop(final Collection<Vector2D> vertices,
-            final DoublePrecisionContext precision) {
-        return fromVertices(vertices, true, precision);
-    }
-
-    /** Construct a convex area from lines between adjacent vertices.
-     * @param vertices vertices to use to construct the area
-     * @param close if true, an additional line will be created between the last and first vertex
-     * @param precision precision context used to create new line instances
-     * @return a convex area constructed using lines between adjacent vertices
-     */
-    public static ConvexArea fromVertices(final Collection<Vector2D> vertices, boolean close,
-            final DoublePrecisionContext precision) {
-        if (vertices.isEmpty()) {
-            return full();
+    public static ConvexArea convexPolygonFromPath(final LinePath path) {
+        // ensure that the path is closed; this also ensures that we do not have any infinite elements
+        if (!path.isClosed()) {
+            throw new IllegalArgumentException("Cannot construct convex polygon from unclosed path: " + path);
         }
 
-        final List<Line> lines = new ArrayList<>();
+        final List<LineConvexSubset> elements = path.getElements();
+        if (elements.size() < 3) {
+            throw new IllegalArgumentException(
+                    "Cannot construct convex polygon from path with less than 3 elements: " + path);
+        }
 
-        Vector2D first = null;
-        Vector2D prev = null;
-        Vector2D cur = null;
+        // go through the elements and validate that the produced area is convex and finite;
+        // use the precision context from the first path element
+        LineConvexSubset startElement = elements.get(0);
+        Vector2D startVertex = startElement.getStartPoint();
+        DoublePrecisionContext precision = startElement.getPrecision();
 
-        for (final Vector2D vertex : vertices) {
-            cur = vertex;
+        Vector2D curVector;
+        Vector2D prevVector = null;
 
-            if (first == null) {
-                first = cur;
+        double signedArea;
+        double totalSignedArea = 0.0;
+
+        LineConvexSubset element;
+
+        // we can skip the last element since the we know that the path is closed, meaning that the
+        // last element's end point is equal to our start point
+        for (int i = 0; i < elements.size() - 1; ++i) {
+            element = elements.get(i);
+
+            curVector = startVertex.vectorTo(element.getEndPoint());
+
+            if (prevVector != null) {
+                signedArea = prevVector.signedArea(curVector);
+                if (precision.lt(signedArea, 0.0)) {
+                    throw new IllegalArgumentException(NON_CONVEX_PATH_ERROR + path);
+                }
+
+                totalSignedArea += signedArea;
             }
 
-            if (prev != null && !cur.eq(prev, precision)) {
-                lines.add(Lines.fromPoints(prev, cur, precision));
-            }
-
-            prev = cur;
+            prevVector = curVector;
         }
 
-        if (close && cur != null && !cur.eq(first, precision)) {
-            lines.add(Lines.fromPoints(cur, first, precision));
+        if (precision.lte(totalSignedArea, 0.0)) {
+            throw new IllegalArgumentException(NON_CONVEX_PATH_ERROR + path);
         }
 
-        if (!vertices.isEmpty() && lines.isEmpty()) {
-            throw new IllegalStateException("Unable to create convex area: only a single unique vertex provided");
-        }
-
-        return fromBounds(lines);
-    }
-
-    /** Construct a convex area from a line subset path. The area represents the intersection of all of the
-     * negative half-spaces of the lines in the path. The boundaries of the returned area may therefore not
-     * match the line subsets in the path.
-     * @param path path to construct the area from
-     * @return a convex area constructed from the line subsets in the given path
-     */
-    public static ConvexArea fromPath(final LinePath path) {
-        final List<Line> lines = path.boundaryStream()
-                .map(LineConvexSubset::getLine)
-                .collect(Collectors.toList());
-
-        return fromBounds(lines);
+        return new ConvexArea(elements);
     }
 
     /** Create a convex area formed by the intersection of the negative half-spaces of the

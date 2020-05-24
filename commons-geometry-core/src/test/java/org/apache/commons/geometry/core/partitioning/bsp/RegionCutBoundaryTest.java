@@ -16,9 +16,9 @@
  */
 package org.apache.commons.geometry.core.partitioning.bsp;
 
-import org.apache.commons.geometry.core.partition.test.PartitionTestUtils;
-import org.apache.commons.geometry.core.partition.test.TestLineSegment;
-import org.apache.commons.geometry.core.partition.test.TestPoint2D;
+import org.apache.commons.geometry.core.partitioning.test.PartitionTestUtils;
+import org.apache.commons.geometry.core.partitioning.test.TestLineSegment;
+import org.apache.commons.geometry.core.partitioning.test.TestPoint2D;
 import org.junit.Assert;
 import org.junit.Test;
 

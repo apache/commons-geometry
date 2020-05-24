@@ -30,48 +30,39 @@ import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
  */
 public final class Segment extends LineConvexSubset {
 
-    /** Start abscissa for the segment. */
-    private final double start;
+    /** Start point for the segment. */
+    private final Vector2D startPoint;
 
-    /** End abscissa for the segment. */
-    private final double end;
+    /** End point for the segment. */
+    private final Vector2D endPoint;
 
-    /** Construct a new instance from a line and two points on the line. The points are projected onto
-     * the line and must be in order of increasing abscissa. No validation is performed.
+    /** Construct a new instance from a line and two points on the line. Callers are responsible for
+     * ensuring that the given points lie on the line and are in order of increasing abscissa.
+     * No validation is performed.
      * @param line line for the segment
      * @param startPoint segment start point
      * @param endPoint segment end point
      */
     Segment(final Line line, final Vector2D startPoint, final Vector2D endPoint) {
-        this(line, line.abscissa(startPoint), line.abscissa(endPoint));
-    }
-
-    /** Construct a new instance from a line and two abscissa locations on the line.
-     * The abscissa locations must be in increasing order. No validation is performed.
-     * @param line line for the segment
-     * @param start abscissa start location
-     * @param end abscissa end location
-     */
-    Segment(final Line line, final double start, final double end) {
         super(line);
 
-        this.start = start;
-        this.end = end;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@code false}.</p>
-    */
+     *
+     * <p>This method always returns {@code false}.</p>
+     */
     @Override
     public boolean isFull() {
         return false;
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@code false}.</p>
-    */
+     *
+     * <p>This method always returns {@code false}.</p>
+     */
     @Override
     public boolean isInfinite() {
         return false;
@@ -89,31 +80,46 @@ public final class Segment extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     public double getSize() {
-        return end - start;
+        return startPoint.distance(endPoint);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Vector2D getBarycenter() {
+        return startPoint.lerp(endPoint, 0.5);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D getStartPoint() {
-        return getLine().toSpace(start);
+        return startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getSubspaceStart() {
-        return start;
+        return getLine().abscissa(startPoint);
     }
 
     /** {@inheritDoc} */
     @Override
     public Vector2D getEndPoint() {
-        return getLine().toSpace(end);
+        return endPoint;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getSubspaceEnd() {
-        return end;
+        return getLine().abscissa(endPoint);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds2D getBounds() {
+        return Bounds2D.builder()
+                .add(startPoint)
+                .add(endPoint)
+                .build();
     }
 
     /** {@inheritDoc} */
@@ -130,7 +136,7 @@ public final class Segment extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     public Segment reverse() {
-        return new Segment(getLine().reverse(), -end, -start);
+        return new Segment(getLine().reverse(), endPoint, startPoint);
     }
 
     /** {@inheritDoc} */
@@ -151,9 +157,9 @@ public final class Segment extends LineConvexSubset {
     @Override
     RegionLocation classifyAbscissa(final double abscissa) {
         final DoublePrecisionContext precision = getPrecision();
-        int startCmp = precision.compare(abscissa, start);
+        int startCmp = precision.compare(abscissa, getSubspaceStart());
         if (startCmp > 0) {
-            int endCmp = precision.compare(abscissa, end);
+            int endCmp = precision.compare(abscissa, getSubspaceEnd());
             if (endCmp < 0) {
                 return RegionLocation.INSIDE;
             } else if (endCmp == 0) {
@@ -169,32 +175,37 @@ public final class Segment extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     double closestAbscissa(final double abscissa) {
-        return Math.max(start, Math.min(end, abscissa));
+        return Math.max(getSubspaceStart(), Math.min(getSubspaceEnd(), abscissa));
     }
 
     /** {@inheritDoc} */
     @Override
     Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
         final Line line = getLine();
-        final double splitAbscissa = line.abscissa(intersection);
 
-        Segment low = null;
-        Segment high = null;
+        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
 
-        final DoublePrecisionContext precision = getPrecision();
-        int startCmp = precision.compare(splitAbscissa, start);
-        if (startCmp <= 0) {
-            high = this;
-        }  else {
-            int endCmp = precision.compare(splitAbscissa, end);
-            if (endCmp >= 0) {
-                low = this;
-            } else {
-                low = new Segment(line, start, splitAbscissa);
-                high = new Segment(line, splitAbscissa, end);
-            }
+        final int startCmp = splitterPrecision.compare(splitter.offset(startPoint), 0.0);
+        final int endCmp = splitterPrecision.compare(splitter.offset(endPoint), 0.0);
+
+        if (startCmp == 0 && endCmp == 0) {
+            // the entire segment is directly on the splitter line
+            return new Split<>(null, null);
+        } else if (startCmp < 1 && endCmp < 1) {
+            // the entire segment is on the minus side
+            return new Split<>(this, null);
+        } else if (startCmp > -1 && endCmp > -1) {
+            // the entire segment is on the plus side
+            return new Split<>(null, this);
         }
 
-        return createSplitResult(splitter, low, high);
+        // we need to split the line
+        final Segment startSegment = new Segment(line, startPoint, intersection);
+        final Segment endSegment = new Segment(line, intersection, endPoint);
+
+        final Segment minus = (startCmp > 0) ? endSegment : startSegment;
+        final Segment plus = (startCmp > 0) ? startSegment : endSegment;
+
+        return new Split<>(minus, plus);
     }
 }

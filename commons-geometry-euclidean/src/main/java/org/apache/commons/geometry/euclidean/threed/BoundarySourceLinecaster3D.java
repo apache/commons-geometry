@@ -46,20 +46,22 @@ final class BoundarySourceLinecaster3D implements Linecastable3D {
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint3D> linecast(final LineConvexSubset3D subset) {
-        final List<LinecastPoint3D> results =  getIntersectionStream(subset)
-                .collect(Collectors.toCollection(ArrayList::new));
+        try (Stream<LinecastPoint3D> stream = getIntersectionStream(subset)) {
 
-        LinecastPoint3D.sortAndFilter(results);
+            final List<LinecastPoint3D> results = stream.collect(Collectors.toCollection(ArrayList::new));
+            LinecastPoint3D.sortAndFilter(results);
 
-        return results;
+            return results;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public LinecastPoint3D linecastFirst(final LineConvexSubset3D subset) {
-        return getIntersectionStream(subset)
-                .min(LinecastPoint3D.ABSCISSA_ORDER)
-                .orElse(null);
+        try (Stream<LinecastPoint3D> stream = getIntersectionStream(subset)) {
+            return stream.min(LinecastPoint3D.ABSCISSA_ORDER)
+                    .orElse(null);
+        }
     }
 
     /** Return a stream containing intersections between the boundary source and the

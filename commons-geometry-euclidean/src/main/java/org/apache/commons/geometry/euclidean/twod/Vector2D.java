@@ -16,7 +16,9 @@
  */
 package org.apache.commons.geometry.euclidean.twod;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.geometry.core.internal.DoubleFunction2N;
@@ -453,6 +455,143 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         return SimpleTupleFormat.getDefault().parse(str, Vector2D::new);
     }
 
+    /** Return a vector containing the maximum component values from all input vectors.
+     * @param first first vector
+     * @param more additional vectors
+     * @return a vector containing the maximum component values from all input vectors
+     */
+    public static Vector2D max(final Vector2D first, final Vector2D... more) {
+        return computeMax(first, Arrays.asList(more).iterator());
+    }
+
+    /** Return a vector containing the maximum component values from all input vectors.
+     * @param vecs input vectors
+     * @return a vector containing the maximum component values from all input vectors
+     * @throws IllegalArgumentException if the argument does not contain any vectors
+     */
+    public static Vector2D max(final Iterable<Vector2D> vecs) {
+        final Iterator<Vector2D> it = vecs.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute vector max: no vectors given");
+        }
+
+        return computeMax(it.next(), it);
+    }
+
+    /** Internal method for computing a max vector.
+     * @param first first vector
+     * @param more iterator with additional vectors
+     * @return vector containing the maximum component values of all input vectors
+     */
+    private static Vector2D computeMax(final Vector2D first, final Iterator<Vector2D> more) {
+        double x = first.getX();
+        double y = first.getY();
+
+        Vector2D vec;
+        while (more.hasNext()) {
+            vec = more.next();
+
+            x = Math.max(x, vec.getX());
+            y = Math.max(y, vec.getY());
+        }
+
+        return Vector2D.of(x, y);
+    }
+
+    /** Return a vector containing the minimum component values from all input vectors.
+     * @param first first vector
+     * @param more more vectors
+     * @return a vector containing the minimum component values from all input vectors
+     */
+    public static Vector2D min(final Vector2D first, final Vector2D... more) {
+        return computeMin(first, Arrays.asList(more).iterator());
+    }
+
+    /** Return a vector containing the minimum component values from all input vectors.
+     * @param vecs input vectors
+     * @return a vector containing the minimum component values from all input vectors
+     * @throws IllegalArgumentException if the argument does not contain any vectors
+     */
+    public static Vector2D min(final Iterable<Vector2D> vecs) {
+        final Iterator<Vector2D> it = vecs.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute vector min: no vectors given");
+        }
+
+        return computeMin(it.next(), it);
+    }
+
+    /** Internal method for computing a min vector.
+     * @param first first vector
+     * @param more iterator with additional vectors
+     * @return vector containing the minimum component values of all input vectors
+     */
+    private static Vector2D computeMin(final Vector2D first, final Iterator<Vector2D> more) {
+        double x = first.getX();
+        double y = first.getY();
+
+        Vector2D vec;
+        while (more.hasNext()) {
+            vec = more.next();
+
+            x = Math.min(x, vec.getX());
+            y = Math.min(y, vec.getY());
+        }
+
+        return Vector2D.of(x, y);
+    }
+
+    /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
+     * of points.
+     * @param first first point
+     * @param more additional points
+     * @return the centroid of the given points
+     */
+    public static Vector2D centroid(final Vector2D first, final Vector2D... more) {
+        return computeCentroid(first, Arrays.asList(more).iterator());
+    }
+
+    /** Compute the centroid of the given points. The centroid is the arithmetic mean position of a set
+     * of points.
+     * @param pts the points to compute the centroid of
+     * @return the centroid of the given points
+     * @throws IllegalArgumentException if the argument contains no points
+     */
+    public static Vector2D centroid(final Iterable<Vector2D> pts) {
+        final Iterator<Vector2D> it = pts.iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Cannot compute centroid: no points given");
+        }
+
+        return computeCentroid(it.next(), it);
+    }
+
+    /** Internal method for computing the centroid of a set of points.
+     * @param first first point
+     * @param more iterator with additional points
+     * @return the centroid of the point set
+     */
+    private static Vector2D computeCentroid(final Vector2D first, final Iterator<Vector2D> more) {
+        double x = first.getX();
+        double y = first.getY();
+
+        int count = 1;
+
+        Vector2D pt;
+        while (more.hasNext()) {
+            pt = more.next();
+
+            x += pt.getX();
+            y += pt.getY();
+
+            ++count;
+        }
+
+        double invCount = 1.0 / count;
+
+        return new Vector2D(invCount * x, invCount * y);
+    }
+
     /** Returns a vector consisting of the linear combination of the inputs.
      * <p>
      * A linear combination is the sum of all of the inputs multiplied by their
@@ -598,6 +737,12 @@ public class Vector2D extends MultiDimensionalEuclideanVector<Vector2D> {
         @Override
         public Unit normalize() {
             return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Vector2D.Unit orthogonal() {
+            return new Unit(-getY(), getX());
         }
 
         /** {@inheritDoc} */

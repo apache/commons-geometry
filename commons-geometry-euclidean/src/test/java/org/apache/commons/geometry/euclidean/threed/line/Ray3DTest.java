@@ -55,6 +55,9 @@ public class Ray3DTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
     }
 
     @Test
@@ -90,6 +93,9 @@ public class Ray3DTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
     }
 
     @Test
@@ -130,6 +136,9 @@ public class Ray3DTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
+
+        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getBounds());
     }
 
     @Test

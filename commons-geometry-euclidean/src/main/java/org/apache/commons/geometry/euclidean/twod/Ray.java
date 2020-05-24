@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a ray in 2D Euclidean space. A ray is a portion of a line consisting of
  * a single start point and extending to infinity along the direction of the line.
@@ -29,26 +30,18 @@ import org.apache.commons.geometry.core.partitioning.Split;
  */
 public final class Ray extends LineConvexSubset {
 
-    /** The start abscissa value for the ray. */
-    private final double start;
+    /** The start point for the ray. */
+    private final Vector2D startPoint;
 
-    /** Construct a ray from a line and a start point. The start point is projected
-     * onto the line. No validation is performed.
+    /** Construct a ray from a line and a start point. Callers are responsible for ensuring that the
+     * given point lies on the line. No validation is performed.
      * @param line line for the ray
      * @param startPoint start point for the ray
      */
     Ray(final Line line, final Vector2D startPoint) {
-        this(line, line.abscissa(startPoint));
-    }
-
-    /** Construct a ray from a line and a 1D start location. No validation is performed.
-     * @param line line for the ray
-     * @param start 1D start location
-     */
-    Ray(final Line line, final double start) {
         super(line);
 
-        this.start = start;
+        this.startPoint = startPoint;
     }
 
     /** {@inheritDoc}
@@ -87,15 +80,24 @@ public final class Ray extends LineConvexSubset {
         return Double.POSITIVE_INFINITY;
     }
 
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector2D getBarycenter() {
+        return null;
+    }
+
     @Override
     public Vector2D getStartPoint() {
-        return getLine().toSpace(start);
+        return startPoint;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getSubspaceStart() {
-        return start;
+        return getLine().abscissa(startPoint);
     }
 
     /** {@inheritDoc}
@@ -108,12 +110,21 @@ public final class Ray extends LineConvexSubset {
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
-    */
+     *
+     * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+     */
     @Override
     public double getSubspaceEnd() {
         return Double.POSITIVE_INFINITY;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Bounds2D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** Get the direction of the ray. This is a convenience method for {@code ray.getLine().getDirection()}.
@@ -135,7 +146,7 @@ public final class Ray extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     public ReverseRay reverse() {
-        return new ReverseRay(getLine().reverse(), -start);
+        return new ReverseRay(getLine().reverse(), startPoint);
     }
 
     /** {@inheritDoc} */
@@ -155,7 +166,7 @@ public final class Ray extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     RegionLocation classifyAbscissa(double abscissa) {
-        int cmp = getPrecision().compare(abscissa, start);
+        int cmp = getPrecision().compare(abscissa, getSubspaceStart());
         if (cmp > 0) {
             return RegionLocation.INSIDE;
         } else if (cmp == 0) {
@@ -168,27 +179,33 @@ public final class Ray extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     double closestAbscissa(double abscissa) {
-        return Math.max(start, abscissa);
+        return Math.max(getSubspaceStart(), abscissa);
     }
 
     /** {@inheritDoc} */
     @Override
     Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
-
         final Line line = getLine();
-        final double splitAbscissa = line.abscissa(intersection);
+        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
 
-        LineConvexSubset low = null;
-        LineConvexSubset high = null;
+        final int startCmp = splitterPrecision.compare(splitter.offset(startPoint), 0.0);
+        final boolean pointsTowardPlus = splitter.getOffsetDirection().dot(line.getDirection()) >= 0.0;
 
-        int cmp = getPrecision().compare(splitAbscissa, start);
-        if (cmp > 0) {
-            low = new Segment(line, start, splitAbscissa);
-            high = new Ray(line, splitAbscissa);
-        } else {
-            high = this;
+        if (pointsTowardPlus && startCmp > -1) {
+            // entirely on plus side
+            return new Split<>(null, this);
+        } else if (!pointsTowardPlus && startCmp < 1) {
+            // entirely on minus side
+            return new Split<>(this, null);
         }
 
-        return createSplitResult(splitter, low, high);
+        // we're going to be split
+        final Segment splitSeg = new Segment(line, startPoint, intersection);
+        final Ray splitRay = new Ray(line, intersection);
+
+        final LineConvexSubset minus = (startCmp > 0) ? splitRay : splitSeg;
+        final LineConvexSubset plus = (startCmp > 0) ? splitSeg : splitRay;
+
+        return new Split<>(minus, plus);
     }
 }

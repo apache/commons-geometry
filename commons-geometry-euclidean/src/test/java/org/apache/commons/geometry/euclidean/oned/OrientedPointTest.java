@@ -424,7 +424,7 @@ public class OrientedPointTest {
     @Test
     public void testSubset_simpleMethods() {
         // arrange
-        OrientedPoint pt = OrientedPoints.createPositiveFacing(0, TEST_PRECISION);
+        OrientedPoint pt = OrientedPoints.createPositiveFacing(2, TEST_PRECISION);
         HyperplaneConvexSubset<Vector1D> sub = pt.span();
 
         // act/assert
@@ -434,6 +434,7 @@ public class OrientedPointTest {
         Assert.assertFalse(sub.isInfinite());
         Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), sub.getBarycenter(), TEST_EPS);
 
         List<? extends HyperplaneConvexSubset<Vector1D>> list = sub.toConvex();
         Assert.assertEquals(1, list.size());

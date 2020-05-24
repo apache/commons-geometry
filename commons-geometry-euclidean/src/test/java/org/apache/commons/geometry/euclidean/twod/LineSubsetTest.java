@@ -43,6 +43,17 @@ public class LineSubsetTest {
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
     @Test
+    public void testToSubspaceAndToSpace() {
+        // arrange
+        LineSubset subset = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION)
+                .span();
+
+        // act/assert
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 1), subset.toSpace(Vector1D.of(2)), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), subset.toSubspace(Vector2D.of(2, 1)), TEST_EPS);
+    }
+
+    @Test
     public void testBuilder_empty() {
         // arrange
         Line line = Lines.fromPointAndAngle(Vector2D.of(0, 1), 0.0, TEST_PRECISION);
@@ -294,6 +305,16 @@ public class LineSubsetTest {
             @Override
             public double getSize() {
                 return 0;
+            }
+
+            @Override
+            public Vector2D getBarycenter() {
+                return null;
+            }
+
+            @Override
+            public Bounds2D getBounds() {
+                return null;
             }
 
             @Override

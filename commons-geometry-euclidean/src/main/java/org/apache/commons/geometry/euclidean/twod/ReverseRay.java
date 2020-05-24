@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 
 /** Class representing a portion of a line in 2D Euclidean space that starts at infinity and
  * continues in the direction of the line up to a single end point. This is equivalent to taking a
@@ -30,26 +31,18 @@ import org.apache.commons.geometry.core.partitioning.Split;
  */
 public final class ReverseRay extends LineConvexSubset {
 
-    /** The abscissa of the endpoint. */
-    private final double end;
+    /** The end point of the reverse ray. */
+    private final Vector2D endPoint;
 
-    /** Construct a new instance from the given line and end point. The end point is projected onto
-     * the line. No validation is performed.
+    /** Construct a new instance from the given line and end point. Callers are responsible for ensuring that
+     * the given end point lies on the line. No validation is performed.
      * @param line line for the instance
      * @param endPoint end point for the instance
      */
     ReverseRay(final Line line, final Vector2D endPoint) {
-        this(line, line.abscissa(endPoint));
-    }
-
-    /** Construct a new instance from the given line and 1D end location. No validation is performed.
-     * @param line line for the instance
-     * @param end end location for the instance
-     */
-    ReverseRay(final Line line, final double end) {
         super(line);
 
-        this.end = end;
+        this.endPoint = endPoint;
     }
 
     /** {@inheritDoc}
@@ -62,36 +55,45 @@ public final class ReverseRay extends LineConvexSubset {
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@code true}.</p>
-    */
+     *
+     * <p>This method always returns {@code true}.</p>
+     */
     @Override
     public boolean isInfinite() {
         return true;
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@code false}.</p>
-    */
+     *
+     * <p>This method always returns {@code false}.</p>
+     */
     @Override
     public boolean isFinite() {
         return false;
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
-    */
+     *
+     * <p>This method always returns {@link Double#POSITIVE_INFINITY}.</p>
+     */
     @Override
     public double getSize() {
         return Double.POSITIVE_INFINITY;
     }
 
     /** {@inheritDoc}
-    *
-    * <p>This method always returns {@code null}.</p>
-    */
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector2D getBarycenter() {
+        return null;
+    }
+
+    /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
     @Override
     public Vector2D getStartPoint() {
         return null;
@@ -109,13 +111,22 @@ public final class ReverseRay extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     public Vector2D getEndPoint() {
-        return getLine().toSpace(end);
+        return endPoint;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getSubspaceEnd() {
-        return end;
+        return getLine().abscissa(endPoint);
+    }
+
+    /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code null}.</p>
+    */
+    @Override
+    public Bounds2D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** {@inheritDoc} */
@@ -130,7 +141,7 @@ public final class ReverseRay extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     public Ray reverse() {
-        return new Ray(getLine().reverse(), -end);
+        return new Ray(getLine().reverse(), endPoint);
     }
 
     /** {@inheritDoc} */
@@ -150,7 +161,7 @@ public final class ReverseRay extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     RegionLocation classifyAbscissa(double abscissa) {
-        int cmp = getPrecision().compare(abscissa, end);
+        int cmp = getPrecision().compare(abscissa, getSubspaceEnd());
         if (cmp < 0) {
             return RegionLocation.INSIDE;
         } else if (cmp == 0) {
@@ -163,27 +174,33 @@ public final class ReverseRay extends LineConvexSubset {
     /** {@inheritDoc} */
     @Override
     double closestAbscissa(double abscissa) {
-        return Math.min(end, abscissa);
+        return Math.min(getSubspaceEnd(), abscissa);
     }
 
     /** {@inheritDoc} */
     @Override
     protected Split<LineConvexSubset> splitOnIntersection(final Line splitter, final Vector2D intersection) {
-
         final Line line = getLine();
-        final double splitAbscissa = line.abscissa(intersection);
+        final DoublePrecisionContext splitterPrecision = splitter.getPrecision();
 
-        LineConvexSubset low = null;
-        LineConvexSubset high = null;
+        final int endCmp = splitterPrecision.compare(splitter.offset(endPoint), 0.0);
+        final boolean pointsTowardPlus = splitter.getOffsetDirection().dot(line.getDirection()) >= 0.0;
 
-        int cmp = getPrecision().compare(splitAbscissa, end);
-        if (cmp < 0) {
-            low = new ReverseRay(line, splitAbscissa);
-            high = new Segment(line, splitAbscissa, end);
-        } else {
-            low = this;
+        if (pointsTowardPlus && endCmp < 1) {
+            // entirely on minus side
+            return new Split<>(this, null);
+        } else if (!pointsTowardPlus && endCmp > -1) {
+            // entirely on plus side
+            return new Split<>(null, this);
         }
 
-        return createSplitResult(splitter, low, high);
+        // we're going to be split
+        final Segment splitSeg = new Segment(line, intersection, endPoint);
+        final ReverseRay splitRevRay = new ReverseRay(line, intersection);
+
+        final LineConvexSubset minus = (endCmp > 0) ? splitRevRay : splitSeg;
+        final LineConvexSubset plus = (endCmp > 0) ? splitSeg : splitRevRay;
+
+        return new Split<>(minus, plus);
     }
 }

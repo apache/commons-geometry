@@ -42,20 +42,22 @@ final class BoundarySourceLinecaster2D implements Linecastable2D {
     /** {@inheritDoc} */
     @Override
     public List<LinecastPoint2D> linecast(final LineConvexSubset subset) {
-        final List<LinecastPoint2D> results = getIntersectionStream(subset)
-                .collect(Collectors.toCollection(ArrayList::new));
+        try (Stream<LinecastPoint2D> stream = getIntersectionStream(subset)) {
 
-        LinecastPoint2D.sortAndFilter(results);
+            final List<LinecastPoint2D> results = stream.collect(Collectors.toCollection(ArrayList::new));
+            LinecastPoint2D.sortAndFilter(results);
 
-        return results;
+            return results;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public LinecastPoint2D linecastFirst(final LineConvexSubset subset) {
-        return getIntersectionStream(subset)
-                .min(LinecastPoint2D.ABSCISSA_ORDER)
-                .orElse(null);
+        try (Stream<LinecastPoint2D> stream = getIntersectionStream(subset)) {
+            return stream.min(LinecastPoint2D.ABSCISSA_ORDER)
+                    .orElse(null);
+        }
     }
 
     /** Return a stream containing intersections between the boundary source and the

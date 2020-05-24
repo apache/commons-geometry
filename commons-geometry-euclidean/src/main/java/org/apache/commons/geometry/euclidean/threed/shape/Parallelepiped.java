@@ -200,7 +200,7 @@ public final class Parallelepiped extends ConvexVolume {
                 Arrays.asList(pd, pc, pb, pa) :
                 Arrays.asList(pa, pb, pc, pd);
 
-        return Planes.subsetFromVertexLoop(loop, precision);
+        return Planes.convexPolygonFromVertices(loop, precision);
     }
 
     /** Ensure that the given points defining one side of a parallelepiped face are separated by a non-zero

@@ -16,24 +16,23 @@
  */
 package org.apache.commons.geometry.examples.io;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Comparator;
 import java.util.stream.Stream;
-import java.text.DecimalFormat;
-import java.io.File;
-import java.io.Writer;
-import java.io.IOException;
-import java.nio.file.Files;
 
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
-import org.apache.commons.geometry.euclidean.twod.ConvexArea;
-import org.apache.commons.geometry.euclidean.twod.path.LinePath;
-import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.BoundarySource3D;
 import org.apache.commons.geometry.euclidean.threed.PlaneConvexSubset;
+import org.apache.commons.geometry.euclidean.threed.Triangle3D;
+import org.apache.commons.geometry.euclidean.threed.Vector3D;
 
 /**
  * Utility class for writing out 3D scenes in various file formats.
@@ -185,26 +184,18 @@ public final class Format3D {
          *
          * @param boundary Convex plane boundary.
          */
-        private void add(PlaneConvexSubset boundary) {
+        private void add(final PlaneConvexSubset boundary) {
             if (!boundary.isEmpty()) {
                 if (!boundary.isFinite()) {
                     throw new IllegalArgumentException("Cannot add infinite plane subset: " + boundary);
                 }
 
-                final ConvexArea area = boundary.getSubspaceRegion();
-                for (final LinePath boundaryPath : area.getBoundaryPaths()) {
-                    final List<Vector3D> boundaryVertices = boundary.getPlane()
-                        .toSpace(boundaryPath.getVertexSequence());
-
-                    // use a triangle fan to add the path
-                    final Vector3D p0 = boundaryVertices.get(0);
-                    for (int i = 2; i < boundaryVertices.size(); i++) {
-                        facets.add(new int[] {
-                                getVertexIndex(p0),
-                                getVertexIndex(boundaryVertices.get(i - 1)),
-                                getVertexIndex(boundaryVertices.get(i))
-                            });
-                    }
+                for (final Triangle3D tri : boundary.toTriangles()) {
+                    facets.add(new int[] {
+                            getVertexIndex(tri.getPoint1()),
+                            getVertexIndex(tri.getPoint2()),
+                            getVertexIndex(tri.getPoint3())
+                        });
                 }
             }
         }

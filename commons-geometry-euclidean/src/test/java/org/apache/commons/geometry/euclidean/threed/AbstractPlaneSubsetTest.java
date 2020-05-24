@@ -23,25 +23,25 @@ import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.partitioning.Hyperplane;
-import org.apache.commons.geometry.core.partitioning.HyperplaneBoundedRegion;
 import org.apache.commons.geometry.core.partitioning.HyperplaneConvexSubset;
 import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.twod.ConvexArea;
+import org.apache.commons.geometry.euclidean.twod.RegionBSPTree2D;
 import org.apache.commons.geometry.euclidean.twod.Vector2D;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PlaneSubsetTest {
+public class AbstractPlaneSubsetTest {
 
     private static final double TEST_EPS = 1e-10;
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private static final Plane XY_PLANE = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
+    private static final EmbeddingPlane XY_PLANE = Planes.fromPointAndPlaneVectors(Vector3D.ZERO,
             Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
     @Test
@@ -67,7 +67,7 @@ public class PlaneSubsetTest {
     @Test
     public void testBuilder_addSingleConvex_returnsSameInstance() {
         // arrange
-        PlaneConvexSubset convex = Planes.subsetFromVertexLoop(Arrays.asList(
+        PlaneConvexSubset convex = Planes.convexPolygonFromVertices(Arrays.asList(
                     Vector3D.ZERO,
                     Vector3D.of(1, 0, 0),
                     Vector3D.of(0, 1, 0)
@@ -87,7 +87,7 @@ public class PlaneSubsetTest {
     @Test
     public void testBuilder_addSingleTreeSubset() {
         // arrange
-        ConvexArea area = ConvexArea.fromVertexLoop(Arrays.asList(
+        ConvexArea area = ConvexArea.convexPolygonFromVertices(Arrays.asList(
                     Vector2D.ZERO,
                     Vector2D.of(1, 0),
                     Vector2D.of(0, 1)
@@ -122,17 +122,17 @@ public class PlaneSubsetTest {
     @Test
     public void testBuilder_addMixed_convexFirst() {
         // arrange
-        Plane mainPlane = Planes.fromPointAndPlaneVectors(
+        EmbeddingPlane mainPlane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        ConvexArea a = ConvexArea.fromVertexLoop(
+        ConvexArea a = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, 1).normalize()), TEST_PRECISION);
-        ConvexArea b = ConvexArea.fromVertexLoop(
+        ConvexArea b = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 1).normalize(), Vector2D.of(0, 1)), TEST_PRECISION);
-        ConvexArea c = ConvexArea.fromVertexLoop(
+        ConvexArea c = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
-        Plane closePlane = Planes.fromPointAndPlaneVectors(
+        EmbeddingPlane closePlane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
@@ -161,18 +161,18 @@ public class PlaneSubsetTest {
 
     @Test
     public void testBuilder_addMixed_treeSubsetFirst() {
-     // arrange
-        Plane mainPlane = Planes.fromPointAndPlaneVectors(
+        // arrange
+        EmbeddingPlane mainPlane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(0, 0, 1), Vector3D.Unit.PLUS_X, Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
-        ConvexArea a = ConvexArea.fromVertexLoop(
+        ConvexArea a = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 0), Vector2D.of(1, 1).normalize()), TEST_PRECISION);
-        ConvexArea b = ConvexArea.fromVertexLoop(
+        ConvexArea b = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.ZERO, Vector2D.of(1, 1).normalize(), Vector2D.of(0, 1)), TEST_PRECISION);
-        ConvexArea c = ConvexArea.fromVertexLoop(
+        ConvexArea c = ConvexArea.convexPolygonFromVertices(
                 Arrays.asList(Vector2D.Unit.PLUS_X, Vector2D.of(1, 1), Vector2D.Unit.PLUS_Y), TEST_PRECISION);
 
-        Plane closePlane = Planes.fromPointAndPlaneVectors(
+        EmbeddingPlane closePlane = Planes.fromPointAndPlaneVectors(
                 Vector3D.of(1e-16, 0, 1), Vector3D.of(1, 1e-16, 0), Vector3D.Unit.PLUS_Y, TEST_PRECISION);
 
         // act
@@ -200,7 +200,7 @@ public class PlaneSubsetTest {
     }
 
     @Test
-    public void testBuilder_nullArguments() {
+    public void testBuilder_add_nullArguments() {
         // arrange
         HyperplaneSubset.Builder<Vector3D> builder = XY_PLANE.span().builder();
 
@@ -215,9 +215,9 @@ public class PlaneSubsetTest {
     }
 
     @Test
-    public void testBuilder_argumentsFromDifferentPlanes() {
+    public void testBuilder_add_argumentsFromDifferentPlanes() {
         // arrange
-        PlaneConvexSubset convex = Planes.subsetFromVertexLoop(Arrays.asList(
+        ConvexPolygon3D convex = Planes.convexPolygonFromVertices(Arrays.asList(
                 Vector3D.ZERO,
                 Vector3D.of(1, 0, 1),
                 Vector3D.of(0, 1, 1)
@@ -225,24 +225,27 @@ public class PlaneSubsetTest {
 
         HyperplaneSubset.Builder<Vector3D> builder = XY_PLANE.span().builder();
 
+        RegionBSPTree2D tree = RegionBSPTree2D.empty();
+        tree.add(convex.getEmbedded().getSubspaceRegion());
+
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             builder.add(convex);
         }, IllegalArgumentException.class);
 
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(new EmbeddedTreePlaneSubset(convex.getPlane(), convex.getSubspaceRegion().toTree()));
+            builder.add(new EmbeddedTreePlaneSubset(convex.getPlane().getEmbedding(), tree));
         }, IllegalArgumentException.class);
     }
 
     @Test
-    public void testBuilder_addUnknownType() {
+    public void testBuilder_add_addUnknownType() {
         // arrange
         HyperplaneSubset.Builder<Vector3D> builder = XY_PLANE.span().builder();
 
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
-            builder.add(new StubSubPlane(Planes.fromNormal(Vector3D.Unit.PLUS_Y, TEST_PRECISION)));
+            builder.add(new StubPlaneSubset(XY_PLANE));
         }, IllegalArgumentException.class);
     }
 
@@ -252,14 +255,46 @@ public class PlaneSubsetTest {
         }
     }
 
-    private static class StubSubPlane extends PlaneSubset implements HyperplaneSubset<Vector3D> {
+    private static class StubPlaneSubset extends AbstractPlaneSubset {
 
-        StubSubPlane(Plane plane) {
-            super(plane);
+        private final Plane plane;
+
+        StubPlaneSubset(final Plane plane) {
+            this.plane = plane;
         }
 
         @Override
-        public Split<? extends HyperplaneSubset<Vector3D>> split(Hyperplane<Vector3D> splitter) {
+        public Plane getPlane() {
+            return plane;
+        }
+
+        @Override
+        public List<PlaneConvexSubset> toConvex() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<Triangle3D> toTriangles() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isFull() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public RegionLocation classify(Vector3D pt) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Vector3D closest(Vector3D pt) {
             throw new UnsupportedOperationException();
         }
 
@@ -269,12 +304,27 @@ public class PlaneSubsetTest {
         }
 
         @Override
-        public List<PlaneConvexSubset> toConvex() {
+        public Split<? extends HyperplaneSubset<Vector3D>> split(Hyperplane<Vector3D> splitter) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public HyperplaneBoundedRegion<Vector2D> getSubspaceRegion() {
+        public double getSize() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Vector3D getBarycenter() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public PlaneSubset.Embedded getEmbedded() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Bounds3D getBounds() {
             throw new UnsupportedOperationException();
         }
     }

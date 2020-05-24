@@ -14,89 +14,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.commons.geometry.core.partition.test;
+package org.apache.commons.geometry.core.partitioning.test;
 
 import org.apache.commons.geometry.core.Point;
 
-/** Class representing a point in two dimensional Euclidean space. This
+/** Class representing a point in one dimensional Euclidean space. This
  * class should only be used for testing purposes.
  */
-public class TestPoint2D implements Point<TestPoint2D> {
-
-    /** Instance representing the coordinates {@code (0, 0)} */
-    public static final TestPoint2D ZERO = new TestPoint2D(0, 0);
-
-    /** Instance representing the coordinates {@code (1, 0)} */
-    public static final TestPoint2D PLUS_X = new TestPoint2D(1, 0);
-
-    /** Instance representing the coordinates {@code (0, 1)} */
-    public static final TestPoint2D PLUS_Y = new TestPoint2D(0, 1);
-
+public class TestPoint1D implements Point<TestPoint1D> {
     /** X coordinate */
     private final double x;
 
-    /** Y coordinate */
-    private final double y;
-
     /** Simple constructor.
      * @param x x coordinate
-     * @param y y coordinate
      */
-    public TestPoint2D(final double x, final double y) {
+    public TestPoint1D(final double x) {
         this.x = x;
-        this.y = y;
     }
 
-    /** Get the x coordinate value.
-     * @return x coordinate value
+    /** Get the x coordinate of the point.
+     * @return the x coordinate of the point
      */
     public double getX() {
         return x;
     }
 
-    /** Get the y coordinate value.
-     * @return y coordinate value
-     */
-    public double getY() {
-        return y;
-    }
-
     /** {@inheritDoc} */
     @Override
     public int getDimension() {
-        return 2;
+        return 1;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isNaN() {
-        return Double.isNaN(x) || Double.isNaN(y);
+        return Double.isNaN(x);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isInfinite() {
-        return Double.isInfinite(x) || Double.isInfinite(y);
+        return Double.isInfinite(x);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean isFinite() {
-        return Double.isFinite(x) && Double.isFinite(y);
+        return Double.isFinite(x);
     }
 
     /** {@inheritDoc} */
     @Override
-    public double distance(TestPoint2D p) {
-        final double dx = x - p.x;
-        final double dy = y - p.y;
-
-        return Math.sqrt((dx * dx) + (dy * dy));
+    public double distance(final TestPoint1D p) {
+        return Math.abs(this.x - p.x);
     }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return "(" + x + ")";
     }
 }

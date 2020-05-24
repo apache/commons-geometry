@@ -73,6 +73,15 @@ final class LineSpanningSubset extends LineConvexSubset {
     }
 
     /** {@inheritDoc}
+     *
+     * <p>This method always returns {@code null}.</p>
+     */
+    @Override
+    public Vector2D getBarycenter() {
+        return null;
+    }
+
+    /** {@inheritDoc}
     *
     * <p>This method always returns {@code null}.</p>
     */
@@ -106,6 +115,15 @@ final class LineSpanningSubset extends LineConvexSubset {
     @Override
     public double getSubspaceEnd() {
         return Double.POSITIVE_INFINITY;
+    }
+
+    /** {@inheritDoc}
+    *
+    * <p>This method always returns {@code null}.</p>
+    */
+    @Override
+    public Bounds2D getBounds() {
+        return null; // infinite; no bounds
     }
 
     /** {@inheritDoc} */

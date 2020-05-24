@@ -18,6 +18,7 @@ package org.apache.commons.geometry.euclidean.threed.line;
 
 import java.util.List;
 
+import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.Transform;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
@@ -25,6 +26,7 @@ import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.oned.RegionBSPTree1D;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
@@ -38,36 +40,39 @@ public class EmbeddedTreeLineSubset3DTest {
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
 
-    private Line3D line = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 0), TEST_PRECISION);
+    private Line3D testLine = Lines3D.fromPointAndDirection(Vector3D.ZERO, Vector3D.of(1, 1, 0), TEST_PRECISION);
 
     @Test
     public void testCtor_default() {
         // act
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(testLine, sub.getLine());
         Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
+        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
     }
 
     @Test
     public void testCtor_true() {
         // act
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, true);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(testLine, sub.getLine());
         Assert.assertTrue(sub.getSubspaceRegion().isFull());
+        GeometryTestUtils.assertPositiveInfinity(sub.getSize());
     }
 
     @Test
     public void testCtor_false() {
         // act
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, false);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, false);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(testLine, sub.getLine());
         Assert.assertTrue(sub.getSubspaceRegion().isEmpty());
+        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
     }
 
     @Test
@@ -76,17 +81,83 @@ public class EmbeddedTreeLineSubset3DTest {
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, tree);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, tree);
 
         // assert
-        Assert.assertSame(line, sub.getLine());
+        Assert.assertSame(testLine, sub.getLine());
         Assert.assertSame(tree, sub.getSubspaceRegion());
+        Assert.assertEquals(0, sub.getSize(), TEST_EPS);
+    }
+
+    @Test
+    public void testProperties_full() {
+        // arrange
+        EmbeddedTreeLineSubset3D full = new EmbeddedTreeLineSubset3D(testLine, true);
+
+        // act/assert
+        Assert.assertTrue(full.isInfinite());
+        Assert.assertFalse(full.isFinite());
+
+        GeometryTestUtils.assertPositiveInfinity(full.getSize());
+        Assert.assertNull(full.getBarycenter());
+        Assert.assertNull(full.getBounds());
+    }
+
+    @Test
+    public void testProperties_empty() {
+        // arrange
+        EmbeddedTreeLineSubset3D empty = new EmbeddedTreeLineSubset3D(testLine, false);
+
+        // act/assert
+        Assert.assertFalse(empty.isInfinite());
+        Assert.assertTrue(empty.isFinite());
+
+        Assert.assertEquals(0, empty.getSize(), TEST_EPS);
+        Assert.assertNull(empty.getBarycenter());
+        Assert.assertNull(empty.getBounds());
+    }
+
+    @Test
+    public void testProperties_half() {
+        // arrange
+        EmbeddedTreeLineSubset3D half = new EmbeddedTreeLineSubset3D(testLine, false);
+        half.getSubspaceRegion().add(Interval.min(1, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertTrue(half.isInfinite());
+        Assert.assertFalse(half.isFinite());
+
+        GeometryTestUtils.assertPositiveInfinity(half.getSize());
+        Assert.assertNull(half.getBarycenter());
+        Assert.assertNull(half.getBounds());
+    }
+
+    @Test
+    public void testProperties_finite() {
+        // arrange
+        Line3D line = Lines3D.fromPointAndDirection(Vector3D.of(0, 0, 1), Vector3D.of(1, 1, 0), TEST_PRECISION);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line);
+
+        double sqrt2 = Math.sqrt(2);
+        sub.getSubspaceRegion().add(Interval.of(0, sqrt2, TEST_PRECISION));
+        sub.getSubspaceRegion().add(Interval.of(-2 * sqrt2, -sqrt2, TEST_PRECISION));
+
+        // act/assert
+        Assert.assertFalse(sub.isInfinite());
+        Assert.assertTrue(sub.isFinite());
+
+        Assert.assertEquals(2 * sqrt2, sub.getSize(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, 1), sub.getBarycenter(), TEST_EPS);
+
+        Bounds3D bounds = sub.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-2, -2, 1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), bounds.getMax(), TEST_EPS);
     }
 
     @Test
     public void testTransform_full() {
         // arrange
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, true);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -113,10 +184,10 @@ public class EmbeddedTreeLineSubset3DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(
-                line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
-                line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
+                testLine.toSubspace(Vector3D.of(1, 1, 0)).getX(),
+                testLine.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, tree);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, tree);
 
         Transform<Vector3D> transform = AffineTransformMatrix3D.identity()
                 .translate(Vector3D.of(1, 0, 0))
@@ -150,7 +221,7 @@ public class EmbeddedTreeLineSubset3DTest {
     @Test
     public void testToConvex_full() {
         // arrange
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, true);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, true);
 
         // act
         List<LineConvexSubset3D> segments = sub.toConvex();
@@ -165,10 +236,10 @@ public class EmbeddedTreeLineSubset3DTest {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(
-                line.toSubspace(Vector3D.of(1, 1, 0)).getX(),
-                line.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
+                testLine.toSubspace(Vector3D.of(1, 1, 0)).getX(),
+                testLine.toSubspace(Vector3D.of(2, 2, 0)).getX(), TEST_PRECISION));
 
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line, tree);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine, tree);
 
         // act
         List<LineConvexSubset3D> segments = sub.toConvex();
@@ -184,7 +255,7 @@ public class EmbeddedTreeLineSubset3DTest {
     @Test
     public void testToString() {
         // arrange
-        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(line);
+        EmbeddedTreeLineSubset3D sub = new EmbeddedTreeLineSubset3D(testLine);
 
         // act
         String str = sub.toString();

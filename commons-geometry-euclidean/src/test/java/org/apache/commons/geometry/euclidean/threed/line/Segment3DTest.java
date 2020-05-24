@@ -22,6 +22,7 @@ import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
 import org.apache.commons.geometry.euclidean.oned.Interval;
 import org.apache.commons.geometry.euclidean.threed.AffineTransformMatrix3D;
+import org.apache.commons.geometry.euclidean.threed.Bounds3D;
 import org.apache.commons.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.geometry.euclidean.threed.rotation.QuaternionRotation;
 import org.junit.Assert;
@@ -54,6 +55,11 @@ public class Segment3DTest {
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(2, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 2), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -94,6 +100,11 @@ public class Segment3DTest {
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(4, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 2), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, -1, 2), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 3, 2), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -117,6 +128,11 @@ public class Segment3DTest {
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 0), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -164,6 +180,11 @@ public class Segment3DTest {
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -185,6 +206,11 @@ public class Segment3DTest {
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(3, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 0.5), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, -1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 2), bounds.getMax(), TEST_EPS);
     }
 
     @Test
@@ -206,6 +232,11 @@ public class Segment3DTest {
         Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);
 
         Assert.assertEquals(0, seg.getSize(), TEST_EPS);
+
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), seg.getBarycenter(), TEST_EPS);
+        Bounds3D bounds = seg.getBounds();
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMin(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0, 1), bounds.getMax(), TEST_EPS);
     }
 
     @Test

@@ -324,7 +324,7 @@ public class LinePath implements BoundarySource2D, Sized {
                     .append(", ");
             }
 
-            sb.append("vertices= ")
+            sb.append("vertexSequence= ")
                 .append(getVertexSequence());
 
             final LineConvexSubset endElement = getEnd();
@@ -392,6 +392,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new closed path constructed from the given vertices
+     * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
     public static LinePath fromVertexLoop(final Collection<Vector2D> vertices,
@@ -408,6 +409,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new path constructed from the given vertices
+     * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
      * @see #fromVertices(Collection, boolean, DoublePrecisionContext)
      */
     public static LinePath fromVertices(final Collection<Vector2D> vertices,
@@ -424,6 +426,7 @@ public class LinePath implements BoundarySource2D, Sized {
      * @param precision precision context used to construct the line segment
      *      instances for the path
      * @return new path constructed from the given vertices
+     * @throws IllegalStateException if {@code vertices} contains only a single unique vertex
      */
     public static LinePath fromVertices(final Collection<Vector2D> vertices,
             final boolean close, final DoublePrecisionContext precision) {
@@ -666,6 +669,7 @@ public class LinePath implements BoundarySource2D, Sized {
         /** Close the current path and build a new {@link LinePath} instance.  This method is equivalent
          * to {@code builder.build(true)}.
          * @return new closed path instance
+         * @throws IllegalStateException if the builder was given only a single unique vertex
          */
         public LinePath close() {
             return build(true);
@@ -674,6 +678,7 @@ public class LinePath implements BoundarySource2D, Sized {
         /** Build a {@link LinePath} instance from the configured path. This method is equivalent
          * to {@code builder.build(false)}.
          * @return new path instance
+         * @throws IllegalStateException if the builder was given only a single unique vertex
          */
         public LinePath build() {
             return build(false);
@@ -683,6 +688,7 @@ public class LinePath implements BoundarySource2D, Sized {
          * @param close if true, the path will be closed by adding an end point equivalent to the
          *      start point
          * @return new path instance
+         * @throws IllegalStateException if the builder was given only a single unique vertex
          */
         public LinePath build(final boolean close) {
             if (close) {
@@ -711,7 +717,7 @@ public class LinePath implements BoundarySource2D, Sized {
 
             if (result.isEmpty() && startVertex != null) {
                 throw new IllegalStateException(
-                        MessageFormat.format("Unable to create line path; only a single vertex provided: {0} ",
+                        MessageFormat.format("Unable to create line path; only a single unique vertex provided: {0} ",
                                 startVertex));
             }
 

@@ -19,6 +19,7 @@ package org.apache.commons.geometry.euclidean.twod;
 import org.apache.commons.geometry.core.GeometryTestUtils;
 import org.apache.commons.geometry.core.RegionLocation;
 import org.apache.commons.geometry.core.partitioning.Split;
+import org.apache.commons.geometry.core.partitioning.SplitLocation;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
 import org.apache.commons.geometry.euclidean.EuclideanTestUtils;
@@ -55,6 +56,8 @@ public class ReverseRayTest {
         Assert.assertEquals(1, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
+        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -94,6 +97,8 @@ public class ReverseRayTest {
         Assert.assertEquals(3, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
+        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -106,15 +111,15 @@ public class ReverseRayTest {
         // act/assert
         GeometryTestUtils.assertThrows(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.NaN);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: NaN");
+        }, IllegalArgumentException.class, "Invalid reverse ray end point: (NaN, NaN)");
 
         GeometryTestUtils.assertThrows(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.POSITIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: Infinity");
+        }, IllegalArgumentException.class, "Invalid reverse ray end point: (Infinity, Infinity)");
 
         GeometryTestUtils.assertThrows(() -> {
             Lines.reverseRayFromPoint(line, Vector2D.NEGATIVE_INFINITY);
-        }, IllegalArgumentException.class, "Invalid reverse ray end location: -Infinity");
+        }, IllegalArgumentException.class, "Invalid reverse ray end point: (-Infinity, -Infinity)");
     }
 
     @Test
@@ -141,6 +146,8 @@ public class ReverseRayTest {
         Assert.assertEquals(-2, revRay.getSubspaceEnd(), TEST_EPS);
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
+        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getBounds());
     }
 
     @Test
@@ -307,6 +314,26 @@ public class ReverseRayTest {
         checkSplit(revRay.split(Lines.fromPointAndAngle(high, -1, TEST_PRECISION)),
                 null, null,
                 null, p0);
+    }
+
+    @Test
+    public void testSplit_smallAngle_pointOnSplitter() {
+        // arrange
+        DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-5);
+
+        ReverseRay revRay = Lines.reverseRayFromPointAndDirection(
+                Vector2D.of(1, 1e-6), Vector2D.of(-1, 1e-2), precision);
+
+        Line splitter = Lines.fromPointAndAngle(Vector2D.ZERO, 0, precision);
+
+        // act
+        Split<LineConvexSubset> split = revRay.split(splitter);
+
+        // assert
+        Assert.assertEquals(SplitLocation.PLUS, split.getLocation());
+
+        Assert.assertNull(split.getMinus());
+        Assert.assertSame(revRay, split.getPlus());
     }
 
     @Test

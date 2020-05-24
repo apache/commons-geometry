@@ -26,6 +26,7 @@ import org.apache.commons.geometry.core.partitioning.HyperplaneSubset;
 import org.apache.commons.geometry.core.partitioning.Split;
 import org.apache.commons.geometry.core.precision.DoublePrecisionContext;
 import org.apache.commons.geometry.core.precision.EpsilonDoublePrecisionContext;
+import org.apache.commons.geometry.spherical.SphericalTestUtils;
 import org.apache.commons.numbers.angle.PlaneAngleRadians;
 import org.junit.Assert;
 import org.junit.Test;
@@ -391,7 +392,7 @@ public class CutAngleTest {
     @Test
     public void testSubset_simpleMethods() {
         // arrange
-        CutAngle pt = CutAngles.createPositiveFacing(0, TEST_PRECISION);
+        CutAngle pt = CutAngles.createPositiveFacing(1, TEST_PRECISION);
         HyperplaneConvexSubset<Point1S> sub = pt.span();
 
         // act/assert
@@ -401,6 +402,7 @@ public class CutAngleTest {
         Assert.assertFalse(sub.isInfinite());
         Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.getBarycenter(), TEST_EPS);
 
         List<? extends HyperplaneConvexSubset<Point1S>> list = sub.toConvex();
         Assert.assertEquals(1, list.size());
