@@ -388,7 +388,8 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
         <em>Commons Geometry</em> contains a number of core interfaces that appear throughout the library, generally
         following the same implementation patterns. For each space and dimension, there are interfaces that are always
         implemented with a single class, some that may have more than one implementation, and some that are optional.
-        See the summary below for details.
+        Additionally, each space and dimension has a primary factory class containing static factory methods for
+        producing hyperplanes and common hyperplane subsets. See the summary below for details.
       </p>
 
       <h5>Each supported space and dimension contains...</h5>
@@ -481,6 +482,9 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
             Hyperplane -
             <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoint.html">OrientedPoint</a>
           </li>
+          <li>Hyperplane Factory Class -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/OrientedPoints.html">OrientedPoints</a>
+          </li>
           <li>
             Region
             <ul>
@@ -501,7 +505,6 @@ Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/oned/AffineTransformMatrix1D.html">AffineTransformMatrix1D</a> -
                 Represents affine transforms using a 2x2 matrix.
               </li>
-
             </ul>
           </li>
         </ul>
@@ -568,6 +571,9 @@ List&lt;Interval&gt; intervals = tree.toIntervals(); // size = 2
               <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Segment.html">Segment</a>,
               <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Ray.html">Ray</a>, and
               <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/ReverseRay.html">ReverseRay</a>)
+          </li>
+          <li>Hyperplane / HyperplaneSubset Factory Class -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/twod/Lines.html">Lines</a>
           </li>
           <li>
             Region
@@ -712,6 +718,9 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
               <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/ConvexPolygon3D.html">ConvexPolygon3D</a> and
               <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Triangle3D.html">Triangle3D</a>)
           </li>
+          <li>Hyperplane / HyperplaneSubset Factory Class -
+            <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/Planes.html">Planes</a>
+          </li>
           <li>
             Region
             <ul>
@@ -758,6 +767,9 @@ Vector2D normal = pt.getNormal(); // (1.0, 0.0)
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Segment3D.html">Segment3D</a>,
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Ray3D.html">Ray3D</a>, and
                 <a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/ReverseRay3D.html">ReverseRay3D</a>.
+              </li>
+              <li><a class="code" href="../commons-geometry-euclidean/apidocs/org/apache/commons/geometry/euclidean/threed/line/Lines3D.html">Lines3D</a> -
+                Factory class for 3D lines and line subsets.
               </li>
             </ul>
           </li>
@@ -913,6 +925,10 @@ Vector3D normal = pts.get(0).getNormal(); // (0.0, 0.0, -1.0)
             <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngle.html">CutAngle</a>
           </li>
           <li>
+            Hyperplane Factory Class -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/oned/CutAngles.html">CutAngles</a>
+          </li>
+          <li>
             Region
             <ul>
               <li>
@@ -995,6 +1011,10 @@ List&lt;AngularInterval&gt; intervals = tree.toIntervals(); //size = 2
           <li>
             HyperplaneConvexSubset -
             <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatArc.html">GreatArc</a>
+          </li>
+          <li>
+            Hyperplane / HyperplaneSubset Factory Class -
+            <a class="code" href="../commons-geometry-spherical/apidocs/org/apache/commons/geometry/spherical/twod/GreatCircles.html">GreatCircles</a>
           </li>
           <li>
             Region
