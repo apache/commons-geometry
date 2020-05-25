@@ -171,18 +171,18 @@ public class RegionBSPTree2S extends AbstractRegionBSPTree<Point2S, RegionBSPTre
         final DoublePrecisionContext precision = ((GreatArc) getRoot().getCut()).getPrecision();
 
         double sizeSum = 0;
-        Vector3D barycenterVector = Vector3D.ZERO;
+        Vector3D centroidVector = Vector3D.ZERO;
 
         for (final ConvexArea2S area : areas) {
             sizeSum += area.getSize();
-            barycenterVector = barycenterVector.add(area.getWeightedBarycenterVector());
+            centroidVector = centroidVector.add(area.getWeightedCentroidVector());
         }
 
-        final Point2S barycenter = barycenterVector.eq(Vector3D.ZERO, precision) ?
+        final Point2S centroid = centroidVector.eq(Vector3D.ZERO, precision) ?
                 null :
-                Point2S.from(barycenterVector);
+                Point2S.from(centroidVector);
 
-        return new RegionSizeProperties<>(sizeSum, barycenter);
+        return new RegionSizeProperties<>(sizeSum, centroid);
     }
 
     /** {@inheritDoc} */

@@ -55,7 +55,7 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertTrue(sub.isFinite());
 
         Assert.assertEquals(0, sub.getSize(), TEST_EPS);
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertFalse(sub.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(sub.getSize());
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertFalse(sub.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(sub.getSize());
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class EmbeddedTreeLineSubsetTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(4, 1), segments.get(1).getEndPoint(), TEST_EPS);
 
         Assert.assertEquals(5, subset.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.7, 1), subset.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.7, 1), subset.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class EmbeddedTreeLineSubsetTest {
         Assert.assertEquals(bTreeCount, bTree.count());
 
         GeometryTestUtils.assertPositiveInfinity(subset.getSize());
-        Assert.assertNull(subset.getBarycenter());
+        Assert.assertNull(subset.getCentroid());
     }
 
     @Test

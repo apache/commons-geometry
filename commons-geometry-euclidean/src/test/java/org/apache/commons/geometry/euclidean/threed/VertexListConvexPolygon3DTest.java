@@ -59,7 +59,7 @@ public class VertexListConvexPolygon3DTest {
         Assert.assertFalse(p.isInfinite());
 
         Assert.assertEquals(0.5, p.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.0 / 3.0, 1.0 / 3.0, 1), p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.0 / 3.0, 1.0 / 3.0, 1), p.getCentroid(), TEST_EPS);
 
         Assert.assertSame(XY_PLANE_Z1, p.getPlane());
 
@@ -94,9 +94,9 @@ public class VertexListConvexPolygon3DTest {
     }
 
     @Test
-    public void testGetBarycenter_linearVertices() {
+    public void testGetCentroid_linearVertices() {
         // this should not happen with all of the checks in place for constructing these
-        // instances; this test is to ensure that the barycenter computation can still handle
+        // instances; this test is to ensure that the centroid computation can still handle
         // the situation
 
         // arrange
@@ -104,7 +104,7 @@ public class VertexListConvexPolygon3DTest {
         VertexListConvexPolygon3D p = new VertexListConvexPolygon3D(XY_PLANE_Z1, vertices);
 
         // act
-        Vector3D center = p.getBarycenter();
+        Vector3D center = p.getCentroid();
 
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), center, TEST_EPS);

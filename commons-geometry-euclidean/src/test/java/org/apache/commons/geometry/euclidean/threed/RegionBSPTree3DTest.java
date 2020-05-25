@@ -81,7 +81,7 @@ public class RegionBSPTree3DTest {
         Assert.assertFalse(tree.isFull());
         Assert.assertTrue(tree.isEmpty());
 
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
         Assert.assertEquals(0.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -102,7 +102,7 @@ public class RegionBSPTree3DTest {
         Assert.assertTrue(tree.isFull());
         Assert.assertFalse(tree.isEmpty());
 
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -216,7 +216,7 @@ public class RegionBSPTree3DTest {
 
         // assert
         Assert.assertEquals(15.0 / 8.0, result.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.75, 0.75, 0.75), result.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.75, 0.75, 0.75), result.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -264,7 +264,7 @@ public class RegionBSPTree3DTest {
 
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
         EuclideanTestUtils.assertPositiveInfinity(tree.getBoundarySize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -316,7 +316,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE, Vector3D.of(0.5, 0.5, 0.5));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, min, max);
@@ -388,7 +388,7 @@ public class RegionBSPTree3DTest {
 
         // act
         RegionBSPTree3D tree = volume.toTree();
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         // assert
         Assert.assertTrue(tree.isFull());
@@ -405,7 +405,7 @@ public class RegionBSPTree3DTest {
         // assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE, Vector3D.of(0, 0, 1));
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY, Vector3D.ZERO);
@@ -431,7 +431,7 @@ public class RegionBSPTree3DTest {
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
@@ -784,7 +784,7 @@ public class RegionBSPTree3DTest {
 
         EuclideanTestUtils.assertPositiveInfinity(tree.getSize());
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.INSIDE,
                 Vector3D.of(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE),
@@ -806,7 +806,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(1.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(6.0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -868,7 +868,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -893,7 +893,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(10.0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -921,7 +921,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), eps);
         Assert.assertEquals(10.0, tree.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.4166e-8, 0, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5 + 5.4166e-8, 0, 0), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -945,7 +945,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0), tree.getCentroid(), TEST_EPS);
 
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
@@ -972,7 +972,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(2.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(12.0, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0, 0),
@@ -1007,7 +1007,7 @@ public class RegionBSPTree3DTest {
         // assert
         Assert.assertEquals(1.0 / 3.0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(2.0 * Math.sqrt(3.0), tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), tree.getCentroid(), TEST_EPS);
 
         double third = 1.0 / 3.0;
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.BOUNDARY,
@@ -1041,7 +1041,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(sphereVolume(radius), tree.getSize(), approximationTolerance);
         Assert.assertEquals(sphereSurface(radius), tree.getBoundarySize(), approximationTolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 3), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-0.1, 2, 3),
@@ -1154,7 +1154,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1232,7 +1232,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(sphereVolume(radius), result.getSize(), tolerance);
         Assert.assertEquals(sphereSurface(radius), result.getBoundarySize(), tolerance);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, result.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1346,7 +1346,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(result.getBarycenter());
+        Assert.assertNull(result.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1420,7 +1420,7 @@ public class RegionBSPTree3DTest {
 
         Assert.assertEquals(0.0, result.getSize(), TEST_EPS);
         Assert.assertEquals(0.0, result.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(result.getBarycenter());
+        Assert.assertNull(result.getCentroid());
 
         EuclideanTestUtils.assertRegionLocation(result, RegionLocation.OUTSIDE,
                 Vector3D.of(-1.1, 0, 0),
@@ -1503,7 +1503,7 @@ public class RegionBSPTree3DTest {
 
         ConvexVolume vol = result.get(0);
         Assert.assertEquals(1, vol.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), vol.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1.5, 2.5, 3.5), vol.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -1524,10 +1524,10 @@ public class RegionBSPTree3DTest {
         ConvexVolume large = smallFirst ? result.get(1) : result.get(0);
 
         Assert.assertEquals(1, small.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4.5, 5.5, 6.5), small.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(4.5, 5.5, 6.5), small.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(2, large.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0.5, 0.5), large.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 0.5, 0.5), large.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -1545,11 +1545,11 @@ public class RegionBSPTree3DTest {
 
         RegionBSPTree3D minus = split.getMinus();
         Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getCentroid(), TEST_EPS);
 
         RegionBSPTree3D plus = split.getPlus();
         Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -1560,15 +1560,15 @@ public class RegionBSPTree3DTest {
         // act/assert
         ConvexVolume rootVol = tree.getRoot().getNodeRegion();
         GeometryTestUtils.assertPositiveInfinity(rootVol.getSize());
-        Assert.assertNull(rootVol.getBarycenter());
+        Assert.assertNull(rootVol.getCentroid());
 
         ConvexVolume plusVol = tree.getRoot().getPlus().getNodeRegion();
         GeometryTestUtils.assertPositiveInfinity(plusVol.getSize());
-        Assert.assertNull(plusVol.getBarycenter());
+        Assert.assertNull(plusVol.getCentroid());
 
         ConvexVolume centerVol = tree.findNode(Vector3D.of(0.5, 0.5, 0.5)).getNodeRegion();
         Assert.assertEquals(1, centerVol.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), centerVol.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), centerVol.getCentroid(), TEST_EPS);
     }
 
     // GEOMETRY-59

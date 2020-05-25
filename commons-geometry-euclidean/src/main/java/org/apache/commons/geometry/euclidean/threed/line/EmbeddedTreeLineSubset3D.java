@@ -79,8 +79,8 @@ public final class EmbeddedTreeLineSubset3D extends LineSubset3D {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
-        final Vector1D subcenter = region.getBarycenter();
+    public Vector3D getCentroid() {
+        final Vector1D subcenter = region.getCentroid();
         return subcenter != null ?
                 getLine().toSpace(subcenter) :
                 null;

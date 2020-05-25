@@ -69,10 +69,10 @@ abstract class AbstractEmbeddedRegionPlaneSubset extends AbstractPlaneSubset imp
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
-        final Vector2D subspaceBarycenter = getSubspaceRegion().getBarycenter();
-        if (subspaceBarycenter != null) {
-            return getPlane().toSpace(subspaceBarycenter);
+    public Vector3D getCentroid() {
+        final Vector2D subspaceCentroid = getSubspaceRegion().getCentroid();
+        if (subspaceCentroid != null) {
+            return getPlane().toSpace(subspaceCentroid);
         }
         return null;
     }

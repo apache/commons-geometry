@@ -308,7 +308,7 @@ public class LineSubsetTest {
             }
 
             @Override
-            public Vector2D getBarycenter() {
+            public Vector2D getCentroid() {
                 return null;
             }
 

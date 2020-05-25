@@ -405,21 +405,21 @@ public class IntervalTest {
     }
 
     @Test
-    public void testGetBarycenter() {
+    public void testGetCentroid() {
         // act/assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.ZERO,
-                Interval.of(-1, 1, TEST_PRECISION).getBarycenter(), TEST_EPS);
+                Interval.of(-1, 1, TEST_PRECISION).getCentroid(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(10),
-                Interval.of(10, 10, TEST_PRECISION).getBarycenter(), TEST_EPS);
+                Interval.of(10, 10, TEST_PRECISION).getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2),
-                Interval.of(1, 3, TEST_PRECISION).getBarycenter(), TEST_EPS);
+                Interval.of(1, 3, TEST_PRECISION).getCentroid(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(-1),
-                Interval.of(-2, 0, TEST_PRECISION).getBarycenter(), TEST_EPS);
+                Interval.of(-2, 0, TEST_PRECISION).getCentroid(), TEST_EPS);
 
-        Assert.assertNull(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getBarycenter());
-        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getBarycenter());
-        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getBarycenter());
+        Assert.assertNull(Interval.of(1, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
+        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, 1, TEST_PRECISION).getCentroid());
+        Assert.assertNull(Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, TEST_PRECISION).getCentroid());
     }
 
     @Test

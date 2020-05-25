@@ -109,7 +109,7 @@ public final class Segment3D extends LineConvexSubset3D {
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
+    public Vector3D getCentroid() {
         return getLine().toSpace((0.5 * (end - start)) + start);
     }
 

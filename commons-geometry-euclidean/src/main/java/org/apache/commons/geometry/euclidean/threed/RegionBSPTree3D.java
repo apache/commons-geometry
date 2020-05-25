@@ -283,13 +283,13 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
      *  The volume of the region is computed using the equation
      *  <code>V = (1/3)*&Sigma;<sub>F</sub>[(C<sub>F</sub>&sdot;N<sub>F</sub>)*area(F)]</code>,
      *  where <code>F</code> represents each face in the region, <code>C<sub>F</sub></code>
-     *  represents the barycenter of the face, and <code>N<sub>F</sub></code> represents the
+     *  represents the centroid of the face, and <code>N<sub>F</sub></code> represents the
      *  normal of the face. (More details can be found in the article
      *  <a href="https://en.wikipedia.org/wiki/Polyhedron#Volume">here</a>.)
      *  This essentially splits up the region into pyramids with a 2D face forming
-     *  the base of each pyramid. The barycenter is computed in a similar way. The barycenter
+     *  the base of each pyramid. The centroid is computed in a similar way. The centroid
      *  of each pyramid is calculated using the fact that it is located 3/4 of the way along the
-     *  line from the apex to the base. The region barycenter then becomes the volume-weighted
+     *  line from the apex to the base. The region centroid then becomes the volume-weighted
      *  average of these pyramid centers.
      *  @see https://en.wikipedia.org/wiki/Polyhedron#Volume
      */
@@ -298,13 +298,13 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
         /** Accumulator for boundary volume contributions. */
         private double volumeSum;
 
-        /** Barycenter contribution x coordinate accumulator. */
+        /** Centroid contribution x coordinate accumulator. */
         private double sumX;
 
-        /** Barycenter contribution y coordinate accumulator. */
+        /** Centroid contribution y coordinate accumulator. */
         private double sumY;
 
-        /** Barycenter contribution z coordinate accumulator. */
+        /** Centroid contribution z coordinate accumulator. */
         private double sumZ;
 
         /** {@inheritDoc} */
@@ -324,7 +324,7 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
          */
         public RegionSizeProperties<Vector3D> getRegionSizeProperties() {
             double size = Double.POSITIVE_INFINITY;
-            Vector3D barycenter = null;
+            Vector3D centroid = null;
 
             // we only have a finite size if the volume sum is finite and positive
             // (negative indicates a finite outside surrounded by an infinite inside)
@@ -334,15 +334,15 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
                 // Since the volume we used when adding together the boundary contributions
                 // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
-                // of 3/4 to adjust for the actual barycenter position in each pyramid.
-                final double barycenterScale = 1.0 / (4 * size);
-                barycenter =  Vector3D.of(
-                        sumX * barycenterScale,
-                        sumY * barycenterScale,
-                        sumZ * barycenterScale);
+                // of 3/4 to adjust for the actual centroid position in each pyramid.
+                final double centroidScale = 1.0 / (4 * size);
+                centroid =  Vector3D.of(
+                        sumX * centroidScale,
+                        sumY * centroidScale,
+                        sumZ * centroidScale);
             }
 
-            return new RegionSizeProperties<>(size, barycenter);
+            return new RegionSizeProperties<>(size, centroid);
         }
 
         /** Add the contribution of the given node cut boundary. If {@code reverse} is true,
@@ -355,23 +355,23 @@ public final class RegionBSPTree3D extends AbstractRegionBSPTree<Vector3D, Regio
 
             final Plane boundaryPlane = boundarySubset.getPlane();
             final double boundaryArea = boundarySubset.getSize();
-            final Vector3D boundaryBarycenter = boundarySubset.getBarycenter();
+            final Vector3D boundaryCentroid = boundarySubset.getCentroid();
 
             if (Double.isInfinite(boundaryArea)) {
                 volumeSum = Double.POSITIVE_INFINITY;
-            } else if (boundaryBarycenter != null) {
+            } else if (boundaryCentroid != null) {
                 // the volume here is actually 3x the actual pyramid volume; we'll apply
                 // the final scaling all at once at the end
-                double scaledVolume = boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
+                double scaledVolume = boundaryArea * boundaryCentroid.dot(boundaryPlane.getNormal());
                 if (reverse) {
                     scaledVolume = -scaledVolume;
                 }
 
                 volumeSum += scaledVolume;
 
-                sumX += scaledVolume * boundaryBarycenter.getX();
-                sumY += scaledVolume * boundaryBarycenter.getY();
-                sumZ += scaledVolume * boundaryBarycenter.getZ();
+                sumX += scaledVolume * boundaryCentroid.getX();
+                sumY += scaledVolume * boundaryCentroid.getY();
+                sumZ += scaledVolume * boundaryCentroid.getZ();
             }
         }
     }

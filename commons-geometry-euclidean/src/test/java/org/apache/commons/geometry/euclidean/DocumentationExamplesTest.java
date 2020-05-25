@@ -67,7 +67,7 @@ public class DocumentationExamplesTest {
         // construct a precision context to handle floating-point comparisons
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-        // create a binary space partitioning tree representing the unit cube
+        // create a binary space partitioning (BSP) tree representing the unit cube
         // centered on the origin
         RegionBSPTree3D region = Parallelepiped.builder(precision)
                 .setPosition(Vector3D.ZERO)
@@ -84,11 +84,11 @@ public class DocumentationExamplesTest {
 
         // compute some properties of the intersection region
         double size = region.getSize(); // 0.8284271247461903
-        Vector3D center = region.getBarycenter(); // (0, 0, 0)
+        Vector3D centroid = region.getCentroid(); // (0, 0, 0)
 
         // -----------
         Assert.assertEquals(0.8284271247461903, size, TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, center, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, centroid, TEST_EPS);
     }
 
     @Test
@@ -167,13 +167,13 @@ public class DocumentationExamplesTest {
         int count = tree.count(); // number of nodes in the tree = 11
         int height = tree.height(); // height of the tree = 3
         double size = tree.getSize(); // size of the region = 1
-        Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
+        Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
 
         // ---------
         Assert.assertEquals(1, size, TEST_EPS);
         Assert.assertEquals(11, count);
         Assert.assertEquals(3, height);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), barycenter, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), centroid, TEST_EPS);
     }
 
     @Test
@@ -195,13 +195,13 @@ public class DocumentationExamplesTest {
         int count = tree.count(); // number of nodes in the tree = 9
         int height = tree.height(); // height of the tree = 4
         double size = tree.getSize(); // size of the region = 1
-        Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
+        Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
 
         // ---------
         Assert.assertEquals(1, size, TEST_EPS);
         Assert.assertEquals(9, count);
         Assert.assertEquals(4, height);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), barycenter, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), centroid, TEST_EPS);
     }
 
     @Test
@@ -321,7 +321,7 @@ public class DocumentationExamplesTest {
 
         // compute some properties
         double size = tree.getSize(); // 1.75
-        Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
+        Vector2D centroid = tree.getCentroid(); // (0.75, 0.75)
 
         // get a line path representing the boundary; a list is returned since trees
         // can represent disjoint regions
@@ -329,7 +329,7 @@ public class DocumentationExamplesTest {
 
         // ----------------
         Assert.assertEquals(1.75, size, TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.75, 0.75), center, TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.75, 0.75), centroid, TEST_EPS);
         Assert.assertEquals(1, boundaries.size());
     }
 
@@ -430,8 +430,8 @@ public class DocumentationExamplesTest {
         List<ConvexPolygon3D> faces = Planes.indexedConvexPolygons(vertices, faceIndices, precision);
         RegionBSPTree3D tree = RegionBSPTree3D.from(faces);
 
-        // split the region through its barycenter along a diagonal of the base
-        Plane cutter = Planes.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
+        // split the region through its centroid along a diagonal of the base
+        Plane cutter = Planes.fromPointAndNormal(tree.getCentroid(), Vector3D.Unit.from(1, 1, 0), precision);
         Split<RegionBSPTree3D> split = tree.split(cutter);
 
         // compute some properties for the minus side of the split and convert back to hyperplane subsets

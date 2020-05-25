@@ -261,7 +261,7 @@ public class RegionBSPTree2DTest {
 
         Assert.assertEquals(7, tree.getSize(), TEST_EPS);
         Assert.assertEquals(12, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), tree.getCentroid(), TEST_EPS);
 
         checkClassify(tree, RegionLocation.INSIDE,
                 Vector2D.of(1, 1), Vector2D.of(1.5, 1.5), Vector2D.of(2, 2));
@@ -353,7 +353,7 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(area.isEmpty());
 
         Assert.assertEquals(1, area.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), area.getCentroid(), TEST_EPS);
 
         checkClassify(area, RegionLocation.INSIDE, Vector2D.of(0.5, 0.5));
         checkClassify(area, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1));
@@ -381,7 +381,7 @@ public class RegionBSPTree2DTest {
 
         // assert
         Collections.sort(result, (a, b) ->
-            Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getBarycenter(), b.getBarycenter()));
+            Vector2D.COORDINATE_ASCENDING_ORDER.compare(a.getCentroid(), b.getCentroid()));
 
         Assert.assertEquals(2, result.size());
 
@@ -390,7 +390,7 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(firstArea.isEmpty());
 
         Assert.assertEquals(0.5, firstArea.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.0 / 3.0, 2.0 / 3.0), firstArea.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.0 / 3.0, 2.0 / 3.0), firstArea.getCentroid(), TEST_EPS);
 
         checkClassify(firstArea, RegionLocation.INSIDE, Vector2D.of(1.0 / 3.0, 2.0 / 3.0));
         checkClassify(firstArea, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1), Vector2D.of(0.5, 0.5));
@@ -403,7 +403,7 @@ public class RegionBSPTree2DTest {
         Assert.assertFalse(secondArea.isEmpty());
 
         Assert.assertEquals(0.5, secondArea.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2.0 / 3.0, 1.0 / 3.0), secondArea.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2.0 / 3.0, 1.0 / 3.0), secondArea.getCentroid(), TEST_EPS);
 
         checkClassify(secondArea, RegionLocation.INSIDE, Vector2D.of(2.0 / 3.0, 1.0 / 3.0));
         checkClassify(secondArea, RegionLocation.BOUNDARY, Vector2D.ZERO, Vector2D.of(1, 1), Vector2D.of(0.5, 0.5));
@@ -574,7 +574,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -589,7 +589,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -605,7 +605,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
@@ -635,7 +635,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
@@ -664,7 +664,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
@@ -711,7 +711,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(4, tree.getBoundarySize(), TEST_EPS);
 
@@ -741,7 +741,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         GeometryTestUtils.assertPositiveInfinity(tree.getBoundarySize());
 
@@ -779,7 +779,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         Assert.assertEquals(0.5, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.0 / 3.0), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 1.0 / 3.0), tree.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
@@ -810,7 +810,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(1.0 + Math.sqrt(2) + Math.sqrt(5), tree.getBoundarySize(), TEST_EPS);
 
@@ -841,7 +841,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         Assert.assertEquals(8, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 1.5), tree.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 
@@ -882,7 +882,7 @@ public class RegionBSPTree2DTest {
 
         // act/assert
         GeometryTestUtils.assertPositiveInfinity(tree.getSize());
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(16, tree.getBoundarySize(), TEST_EPS);
 

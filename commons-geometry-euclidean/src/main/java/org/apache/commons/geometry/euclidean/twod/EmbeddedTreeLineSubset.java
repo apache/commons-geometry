@@ -91,10 +91,10 @@ public final class EmbeddedTreeLineSubset extends LineSubset {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D getBarycenter() {
-        final Vector1D subspaceBarycenter = region.getBarycenter();
-        if (subspaceBarycenter != null) {
-            return getLine().toSpace(subspaceBarycenter);
+    public Vector2D getCentroid() {
+        final Vector1D subspaceCentroid = region.getCentroid();
+        if (subspaceCentroid != null) {
+            return getLine().toSpace(subspaceCentroid);
         }
         return null;
     }

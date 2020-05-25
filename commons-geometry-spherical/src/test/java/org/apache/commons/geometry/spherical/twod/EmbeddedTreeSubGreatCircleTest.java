@@ -55,7 +55,7 @@ public class EmbeddedTreeSubGreatCircleTest {
         Assert.assertFalse(sub.isInfinite());
 
         Assert.assertEquals(0, sub.getSize(), TEST_EPS);
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
 
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.5) {
             for (double p = 0; p <= PlaneAngleRadians.PI; p += 0.5) {
@@ -76,7 +76,7 @@ public class EmbeddedTreeSubGreatCircleTest {
         Assert.assertFalse(sub.isInfinite());
 
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, sub.getSize(), TEST_EPS);
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
 
         for (double az = 0; az < PlaneAngleRadians.TWO_PI; az += 0.1) {
             checkClassify(sub, RegionLocation.INSIDE, Point2S.of(az, PlaneAngleRadians.PI_OVER_TWO));
@@ -99,7 +99,7 @@ public class EmbeddedTreeSubGreatCircleTest {
         Assert.assertFalse(sub.isInfinite());
 
         Assert.assertEquals(0, sub.getSize(), TEST_EPS);
-        Assert.assertNull(sub.getBarycenter());
+        Assert.assertNull(sub.getCentroid());
 
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.5) {
             for (double p = 0; p <= PlaneAngleRadians.PI; p += 0.5) {
@@ -124,7 +124,7 @@ public class EmbeddedTreeSubGreatCircleTest {
 
         Assert.assertEquals(1, sub.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.of(1.5, PlaneAngleRadians.PI_OVER_TWO),
-                sub.getBarycenter(), TEST_EPS);
+                sub.getCentroid(), TEST_EPS);
 
         checkClassify(sub, RegionLocation.INSIDE, Point2S.of(1.5, PlaneAngleRadians.PI_OVER_TWO));
 

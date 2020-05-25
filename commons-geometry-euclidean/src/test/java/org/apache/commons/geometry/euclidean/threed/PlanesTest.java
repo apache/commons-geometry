@@ -231,7 +231,7 @@ public class PlanesTest {
         // assert
         Assert.assertEquals(0.5, tri.getSize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(5.0 / 3.0, 1, 4.0 / 3.0),
-                tri.getBarycenter(), TEST_EPS);
+                tri.getCentroid(), TEST_EPS);
     }
 
     @Test

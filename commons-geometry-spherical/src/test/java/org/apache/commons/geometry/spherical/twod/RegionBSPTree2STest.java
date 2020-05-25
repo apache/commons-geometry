@@ -39,9 +39,9 @@ public class RegionBSPTree2STest {
 
     private static final double TEST_EPS = 1e-10;
 
-    // alternative epsilon value for checking the barycenters of complex
+    // alternative epsilon value for checking the centroids of complex
     // or very small regions
-    private static final double BARYCENTER_EPS = 1e-5;
+    private static final double CENTROID_EPS = 1e-5;
 
     private static final DoublePrecisionContext TEST_PRECISION =
             new EpsilonDoublePrecisionContext(TEST_EPS);
@@ -360,7 +360,7 @@ public class RegionBSPTree2STest {
         SphericalTestUtils.assertPointsEq(Point2S.MINUS_I,
                 tree.project(Point2S.of(PlaneAngleRadians.PI + 0.5, PlaneAngleRadians.PI_OVER_TWO)), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.project(tree.getBarycenter()), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.project(tree.getCentroid()), TEST_EPS);
     }
 
     @Test
@@ -377,7 +377,7 @@ public class RegionBSPTree2STest {
 
         // act/assert
         Assert.assertEquals(4 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -392,7 +392,7 @@ public class RegionBSPTree2STest {
 
         // act/assert
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
@@ -409,9 +409,9 @@ public class RegionBSPTree2STest {
         // act/assert
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getBoundarySize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(tree);
+        checkCentroidConsistency(tree);
 
         List<GreatArc> arcs = tree.getBoundaries();
         Assert.assertEquals(1, arcs.size());
@@ -443,7 +443,7 @@ public class RegionBSPTree2STest {
         // assert
         Assert.assertEquals(2 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(4 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
 
         List<GreatArcPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(2, paths.size());
@@ -475,9 +475,9 @@ public class RegionBSPTree2STest {
         Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
                 .add(Point2S.PLUS_I.getVector())
                 .add(Point2S.MINUS_J.getVector()));
-        SphericalTestUtils.assertPointsEq(center, tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(center, tree.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(tree);
+        checkCentroidConsistency(tree);
 
         List<GreatArcPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
@@ -509,9 +509,9 @@ public class RegionBSPTree2STest {
         Point2S center = Point2S.from(Point2S.MINUS_K.getVector()
                 .add(Point2S.PLUS_I.getVector())
                 .add(Point2S.MINUS_J.getVector()));
-        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(tree);
+        checkCentroidConsistency(tree);
 
         List<GreatArcPath> paths = tree.getBoundaryPaths();
         Assert.assertEquals(1, paths.size());
@@ -552,8 +552,8 @@ public class RegionBSPTree2STest {
         double boundarySize = 4 * (outerSideLength + innerSideLength);
         Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEq(center, tree.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(tree);
+        SphericalTestUtils.assertPointsEq(center, tree.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(tree);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
     }
@@ -594,8 +594,8 @@ public class RegionBSPTree2STest {
         double boundarySize = 4 * (outerSideLength + midSideLength + innerSideLength);
         Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
 
-        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(tree);
+        SphericalTestUtils.assertPointsEq(center.antipodal(), tree.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(tree);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, center);
     }
@@ -620,8 +620,8 @@ public class RegionBSPTree2STest {
         double boundarySize = 8 * sphericalHypot(radius, radius);
         Assert.assertEquals(boundarySize, tree.getBoundarySize(), TEST_EPS);
 
-        // should be null since no unique barycenter exists
-        Assert.assertNull(tree.getBarycenter());
+        // should be null since no unique centroid exists
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -716,10 +716,10 @@ public class RegionBSPTree2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, tree.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, tree.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(tree);
+        checkCentroidConsistency(tree);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE,
                 Point2S.of(-0.25 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI));
@@ -745,16 +745,16 @@ public class RegionBSPTree2STest {
         // act/assert
         ConvexArea2S rootRegion = root.getNodeRegion();
         Assert.assertEquals(4 * PlaneAngleRadians.PI, rootRegion.getSize(), TEST_EPS);
-        Assert.assertNull(rootRegion.getBarycenter());
+        Assert.assertNull(rootRegion.getCentroid());
 
         ConvexArea2S minusRegion = minus.getNodeRegion();
         Assert.assertEquals(2 * PlaneAngleRadians.PI, minusRegion.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, minusRegion.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, minusRegion.getCentroid(), TEST_EPS);
 
         ConvexArea2S minusPlusRegion = minusPlus.getNodeRegion();
         Assert.assertEquals(PlaneAngleRadians.PI, minusPlusRegion.getSize(), TEST_EPS);
         SphericalTestUtils.assertPointsEq(Point2S.of(1.5 * PlaneAngleRadians.PI, 0.25 * PlaneAngleRadians.PI),
-                minusPlusRegion.getBarycenter(), TEST_EPS);
+                minusPlusRegion.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -784,24 +784,24 @@ public class RegionBSPTree2STest {
         Assert.assertEquals(0.013964220234478741, france.getSize(), TEST_EPS);
 
         SphericalTestUtils.assertPointsEq(Point2S.of(0.04368552749392928, 0.7590839905197961),
-                france.getBarycenter(), BARYCENTER_EPS);
+                france.getCentroid(), CENTROID_EPS);
 
-        checkBarycenterConsistency(france);
+        checkCentroidConsistency(france);
     }
 
     @Test
-    public void testCircleToPolygonBarycenter() {
+    public void testCircleToPolygonCentroid() {
         double radius = 0.0001;
         Point2S center = Point2S.of(1.0, 1.0);
         int numPts = 200;
 
         // counterclockwise
         RegionBSPTree2S ccw = circleToPolygon(center, radius, numPts, false);
-        SphericalTestUtils.assertPointsEq(center, ccw.getBarycenter(), BARYCENTER_EPS);
+        SphericalTestUtils.assertPointsEq(center, ccw.getCentroid(), CENTROID_EPS);
 
-        // clockwise; barycenter should just be antipodal for the circle center
+        // clockwise; centroid should just be antipodal for the circle center
         RegionBSPTree2S cw = circleToPolygon(center, radius, numPts, true);
-        SphericalTestUtils.assertPointsEq(center.antipodal(), cw.getBarycenter(), BARYCENTER_EPS);
+        SphericalTestUtils.assertPointsEq(center.antipodal(), cw.getCentroid(), CENTROID_EPS);
     }
 
     @Test
@@ -849,8 +849,8 @@ public class RegionBSPTree2STest {
             ));
     }
 
-    private static Point2S triangleBarycenter(Point2S p1, Point2S p2, Point2S p3) {
-        // compute the barycenter using intersection mid point arcs
+    private static Point2S triangleCentroid(Point2S p1, Point2S p2, Point2S p3) {
+        // compute the centroid using intersection mid point arcs
         GreatCircle c1 = GreatCircles.fromPoints(p1, p2.slerp(p3, 0.5), TEST_PRECISION);
         GreatCircle c2 = GreatCircles.fromPoints(p2, p1.slerp(p3, 0.5), TEST_PRECISION);
 
@@ -888,14 +888,14 @@ public class RegionBSPTree2STest {
         return Point2S.of(Math.toRadians(longitude), Math.toRadians(90.0 - latitude));
     }
 
-    private static void checkBarycenterConsistency(RegionBSPTree2S region) {
-        Point2S barycenter = region.getBarycenter();
+    private static void checkCentroidConsistency(RegionBSPTree2S region) {
+        Point2S centroid = region.getCentroid();
         double size = region.getSize();
 
-        GreatCircle circle = GreatCircles.fromPole(barycenter.getVector(), TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPole(centroid.getVector(), TEST_PRECISION);
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
-            GreatCircle splitter = GreatCircles.fromPoints(barycenter, pt, TEST_PRECISION);
+            GreatCircle splitter = GreatCircles.fromPoints(centroid, pt, TEST_PRECISION);
 
             Split<RegionBSPTree2S> split = region.split(splitter);
 
@@ -907,18 +907,18 @@ public class RegionBSPTree2STest {
             RegionBSPTree2S plus = split.getPlus();
             double plusSize = plus.getSize();
 
-            Point2S computedBarycenter = Point2S.from(weightedBarycenterVector(minus)
-                    .add(weightedBarycenterVector(plus)));
+            Point2S computedCentroid = Point2S.from(weightedCentroidVector(minus)
+                    .add(weightedCentroidVector(plus)));
 
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
-            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, TEST_EPS);
+            SphericalTestUtils.assertPointsEq(centroid, computedCentroid, TEST_EPS);
         }
     }
 
-    private static Vector3D weightedBarycenterVector(RegionBSPTree2S tree) {
+    private static Vector3D weightedCentroidVector(RegionBSPTree2S tree) {
         Vector3D sum = Vector3D.ZERO;
         for (ConvexArea2S convex : tree.toConvex()) {
-            sum = sum.add(convex.getWeightedBarycenterVector());
+            sum = sum.add(convex.getWeightedCentroidVector());
         }
 
         return sum;

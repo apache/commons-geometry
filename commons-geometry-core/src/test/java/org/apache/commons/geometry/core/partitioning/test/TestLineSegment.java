@@ -141,7 +141,7 @@ public class TestLineSegment implements HyperplaneConvexSubset<TestPoint2D> {
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D getBarycenter() {
+    public TestPoint2D getCentroid() {
         return line.toSpace(0.5 * (end - start));
     }
 

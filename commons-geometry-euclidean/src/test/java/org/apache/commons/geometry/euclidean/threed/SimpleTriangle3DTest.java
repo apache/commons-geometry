@@ -72,7 +72,7 @@ public class SimpleTriangle3DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 3), subspaceVertices.get(2), TEST_EPS);
 
         Assert.assertEquals(0.5, tri.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(5.0 / 3.0, 7.0 / 3.0, 1), tri.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(5.0 / 3.0, 7.0 / 3.0, 1), tri.getCentroid(), TEST_EPS);
 
         Bounds3D bounds = tri.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, 1), bounds.getMin(), TEST_EPS);

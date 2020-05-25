@@ -108,7 +108,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      *  the full space.
      * @return the midpoint of the interval or null if the interval represents
      *      the full space
-     * @see #getBarycenter()
+     * @see #getCentroid()
      */
     public Point1S getMidPoint() {
         return midpoint;
@@ -152,7 +152,7 @@ public class AngularInterval implements HyperplaneBoundedRegion<Point1S> {
      * @see #getMidPoint()
      */
     @Override
-    public Point1S getBarycenter() {
+    public Point1S getCentroid() {
         return getMidPoint();
     }
 

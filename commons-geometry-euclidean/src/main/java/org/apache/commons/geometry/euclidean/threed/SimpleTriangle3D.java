@@ -85,7 +85,7 @@ final class SimpleTriangle3D extends AbstractConvexPolygon3D implements Triangle
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
+    public Vector3D getCentroid() {
         return Vector3D.centroid(p1, p2, p3);
     }
 

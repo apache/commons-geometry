@@ -51,7 +51,7 @@ public class ConvexVolumeTest {
         Assert.assertFalse(vol.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(vol.getSize());
-        Assert.assertNull(vol.getBarycenter());
+        Assert.assertNull(vol.getCentroid());
 
         Assert.assertEquals(0, vol.getBoundaries().size());
         Assert.assertEquals(0, vol.getBoundarySize(), TEST_EPS);
@@ -210,7 +210,7 @@ public class ConvexVolumeTest {
         // assert
         Assert.assertEquals(1, tree.getSize(), TEST_EPS);
         Assert.assertEquals(6, tree.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.5, 0.5, 0.5), tree.getCentroid(), TEST_EPS);
 
         EuclideanTestUtils.assertRegionLocation(tree, RegionLocation.OUTSIDE,
                 Vector3D.of(-1, 0.5, 0.5), Vector3D.of(2, 0.5, 0.5),
@@ -239,7 +239,7 @@ public class ConvexVolumeTest {
         Assert.assertFalse(vol.isEmpty());
 
         GeometryTestUtils.assertPositiveInfinity(vol.getSize());
-        Assert.assertNull(vol.getBarycenter());
+        Assert.assertNull(vol.getCentroid());
 
         Assert.assertEquals(1, vol.getBoundaries().size());
         GeometryTestUtils.assertPositiveInfinity(vol.getBoundarySize());
@@ -259,7 +259,7 @@ public class ConvexVolumeTest {
         Assert.assertFalse(vol.isEmpty());
 
         Assert.assertEquals(8, vol.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), vol.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 1, 1), vol.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(6, vol.getBoundaries().size());
         Assert.assertEquals(28, vol.getBoundarySize(), TEST_EPS);
@@ -313,11 +313,11 @@ public class ConvexVolumeTest {
 
         ConvexVolume minus = split.getMinus();
         Assert.assertEquals(0.5, minus.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.25, 0, 0), minus.getCentroid(), TEST_EPS);
 
         ConvexVolume plus = split.getPlus();
         Assert.assertEquals(0.5, plus.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0.25, 0, 0), plus.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -377,7 +377,7 @@ public class ConvexVolumeTest {
         Assert.assertEquals(2, transformed.getSize(), TEST_EPS);
         Assert.assertEquals(10, transformed.getBoundarySize(), TEST_EPS);
 
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 2, 3), transformed.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2, 2, 3), transformed.getCentroid(), TEST_EPS);
     }
 
     private static ConvexVolume rect(Vector3D center, double xDelta, double yDelta, double zDelta) {

@@ -66,9 +66,9 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
             final Plane boundaryPlane = boundary.getPlane();
             final double boundaryArea = boundary.getSize();
-            final Vector3D boundaryBarycenter = boundary.getBarycenter();
+            final Vector3D boundaryCentroid = boundary.getCentroid();
 
-            volumeSum += boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
+            volumeSum += boundaryArea * boundaryCentroid.dot(boundaryPlane.getNormal());
         }
 
         return volumeSum / 3.0;
@@ -76,7 +76,7 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
+    public Vector3D getCentroid() {
         double volumeSum = 0.0;
 
         double sumX = 0.0;
@@ -90,15 +90,15 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
             final Plane boundaryPlane = boundary.getPlane();
             final double boundaryArea = boundary.getSize();
-            final Vector3D boundaryBarycenter = boundary.getBarycenter();
+            final Vector3D boundaryCentroid = boundary.getCentroid();
 
-            final double scaledVolume = boundaryArea * boundaryBarycenter.dot(boundaryPlane.getNormal());
+            final double scaledVolume = boundaryArea * boundaryCentroid.dot(boundaryPlane.getNormal());
 
             volumeSum += scaledVolume;
 
-            sumX += scaledVolume * boundaryBarycenter.getX();
-            sumY += scaledVolume * boundaryBarycenter.getY();
-            sumZ += scaledVolume * boundaryBarycenter.getZ();
+            sumX += scaledVolume * boundaryCentroid.getX();
+            sumY += scaledVolume * boundaryCentroid.getY();
+            sumZ += scaledVolume * boundaryCentroid.getZ();
         }
 
         if (volumeSum > 0) {
@@ -106,12 +106,12 @@ public class ConvexVolume extends AbstractConvexHyperplaneBoundedRegion<Vector3D
 
             // Since the volume we used when adding together the boundary contributions
             // was 3x the actual pyramid size, we'll multiply by 1/4 here instead
-            // of 3/4 to adjust for the actual barycenter position in each pyramid.
-            final double barycenterScale = 1.0 / (4 * size);
+            // of 3/4 to adjust for the actual centroid position in each pyramid.
+            final double centroidScale = 1.0 / (4 * size);
             return Vector3D.of(
-                    sumX * barycenterScale,
-                    sumY * barycenterScale,
-                    sumZ * barycenterScale);
+                    sumX * centroidScale,
+                    sumY * centroidScale,
+                    sumZ * centroidScale);
         }
 
         return null;

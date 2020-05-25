@@ -95,13 +95,13 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
 
     /** {@inheritDoc} */
     @Override
-    public Vector3D getBarycenter() {
+    public Vector3D getCentroid() {
         final List<Vector3D> vertices = getVertices();
 
         double areaSum = 0.0;
-        double scaledBarycenterSumX = 0.0;
-        double scaledBarycenterSumY = 0.0;
-        double scaledBarycenterSumZ = 0.0;
+        double scaledCentroidSumX = 0.0;
+        double scaledCentroidSumY = 0.0;
+        double scaledCentroidSumZ = 0.0;
 
         Iterator<Vector3D> it = vertices.iterator();
 
@@ -114,19 +114,19 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
         Vector3D curVec = null;
 
         double triArea;
-        Vector3D triBarycenter;
+        Vector3D triCentroid;
         while (it.hasNext()) {
             curPt = it.next();
             curVec = startPt.vectorTo(curPt);
 
             triArea = 0.5 * prevVec.cross(curVec).norm();
-            triBarycenter = Vector3D.centroid(startPt, prevPt, curPt);
+            triCentroid = Vector3D.centroid(startPt, prevPt, curPt);
 
             areaSum += triArea;
 
-            scaledBarycenterSumX += triArea * triBarycenter.getX();
-            scaledBarycenterSumY += triArea * triBarycenter.getY();
-            scaledBarycenterSumZ += triArea * triBarycenter.getZ();
+            scaledCentroidSumX += triArea * triCentroid.getX();
+            scaledCentroidSumY += triArea * triCentroid.getY();
+            scaledCentroidSumZ += triArea * triCentroid.getZ();
 
             prevPt = curPt;
             prevVec = curVec;
@@ -135,9 +135,9 @@ abstract class AbstractConvexPolygon3D extends AbstractPlaneSubset implements Co
         if (areaSum > 0.0) {
             final double scale = 1 / areaSum;
             return Vector3D.of(
-                        scale * scaledBarycenterSumX,
-                        scale * scaledBarycenterSumY,
-                        scale * scaledBarycenterSumZ
+                        scale * scaledCentroidSumX,
+                        scale * scaledCentroidSumY,
+                        scale * scaledCentroidSumZ
                     );
         }
 

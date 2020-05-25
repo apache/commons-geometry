@@ -232,13 +232,13 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
 
             quadrilateralAreaSum += signedArea;
 
-            // compute scaled coordinate values for the barycenter
+            // compute scaled coordinate values for the centroid
             scaledSumX += signedArea * (startPoint.getX() + endPoint.getX());
             scaledSumY += signedArea * (startPoint.getY() + endPoint.getY());
         }
 
         double size = Double.POSITIVE_INFINITY;
-        Vector2D barycenter = null;
+        Vector2D centroid = null;
 
         // The area is finite only if the computed quadrilateral area is finite and non-negative.
         // Negative areas indicate that the region is inside-out, with a finite outside surrounded
@@ -247,11 +247,11 @@ public final class RegionBSPTree2D extends AbstractRegionBSPTree<Vector2D, Regio
             size = 0.5 * quadrilateralAreaSum;
 
             if (quadrilateralAreaSum > 0.0) {
-                barycenter = Vector2D.of(scaledSumX, scaledSumY).multiply(1.0 / (3.0 * quadrilateralAreaSum));
+                centroid = Vector2D.of(scaledSumX, scaledSumY).multiply(1.0 / (3.0 * quadrilateralAreaSum));
             }
         }
 
-        return new RegionSizeProperties<>(size, barycenter);
+        return new RegionSizeProperties<>(size, centroid);
     }
 
     /** {@inheritDoc} */

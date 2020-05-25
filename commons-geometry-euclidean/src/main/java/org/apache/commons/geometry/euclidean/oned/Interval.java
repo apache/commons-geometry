@@ -281,7 +281,7 @@ public final class Interval implements HyperplaneBoundedRegion<Vector1D> {
 
     /** {@inheritDoc} */
     @Override
-    public Vector1D getBarycenter() {
+    public Vector1D getCentroid() {
         if (isInfinite()) {
             return null;
         }

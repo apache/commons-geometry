@@ -113,7 +113,7 @@ public final class Ray3D extends LineConvexSubset3D {
      * <p>This method always returns {@code null}.</p>
      */
     @Override
-    public Vector3D getBarycenter() {
+    public Vector3D getCentroid() {
         return null; // infinite; no center
     }
 

@@ -63,7 +63,7 @@ public class CircleTest {
         Assert.assertFalse(c.isEmpty());
 
         Assert.assertSame(center, c.getCenter());
-        Assert.assertSame(center, c.getBarycenter());
+        Assert.assertSame(center, c.getCentroid());
 
         Assert.assertEquals(3, c.getRadius(), 0.0);
 
@@ -373,7 +373,7 @@ public class CircleTest {
         double eps = 5e-3;
         Assert.assertEquals(c.getSize(), tree.getSize(), eps);
         Assert.assertEquals(c.getBoundarySize(), tree.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(c.getBarycenter(), tree.getBarycenter(), eps);
+        EuclideanTestUtils.assertCoordinatesEqual(c.getCentroid(), tree.getCentroid(), eps);
     }
 
     @Test
@@ -538,8 +538,8 @@ public class CircleTest {
             Assert.assertTrue("Expected vertex to be contained in circle: " + vertex, c.contains(vertex));
         }
 
-        // circle must contain barycenter
-        EuclideanTestUtils.assertRegionLocation(c, RegionLocation.INSIDE, tree.getBarycenter());
+        // circle must contain centroid
+        EuclideanTestUtils.assertRegionLocation(c, RegionLocation.INSIDE, tree.getCentroid());
 
         // area must be less than the circle
         Assert.assertTrue("Expected approximation area to be less than circle", tree.getSize() < c.getSize());

@@ -51,7 +51,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(p1, seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p2, seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
@@ -94,7 +94,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 3), seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2.5), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2.5), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(3, seg.getSubspaceEnd(), TEST_EPS);
@@ -120,7 +120,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 2), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(2, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -170,7 +170,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -194,7 +194,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, -1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 2), seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 0.5), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(-1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(2, seg.getSubspaceEnd(), TEST_EPS);
@@ -218,7 +218,7 @@ public class SegmentTest {
 
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getStartPoint(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getEndPoint(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(-1, 1), seg.getCentroid(), TEST_EPS);
 
         Assert.assertEquals(1, seg.getSubspaceStart(), TEST_EPS);
         Assert.assertEquals(1, seg.getSubspaceEnd(), TEST_EPS);

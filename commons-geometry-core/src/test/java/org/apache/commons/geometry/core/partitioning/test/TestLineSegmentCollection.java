@@ -110,7 +110,7 @@ public class TestLineSegmentCollection implements HyperplaneSubset<TestPoint2D> 
 
     /** {@inheritDoc} */
     @Override
-    public TestPoint2D getBarycenter() {
+    public TestPoint2D getCentroid() {
         throw new UnsupportedOperationException();
     }
 

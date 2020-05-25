@@ -640,7 +640,7 @@ public class AbstractRegionBSPTreeTest {
         Assert.assertNotSame(second, third);
 
         Assert.assertEquals(1234, first.getSize(), PartitionTestUtils.EPS);
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), first.getBarycenter());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), first.getCentroid());
     }
 
     @Test
@@ -651,10 +651,10 @@ public class AbstractRegionBSPTreeTest {
     }
 
     @Test
-    public void testGetBarycenter() {
+    public void testGetCentroid() {
         // act/assert
         // make sure our stub value is pulled
-        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), tree.getBarycenter());
+        PartitionTestUtils.assertPointsEqual(new TestPoint2D(12, 34), tree.getCentroid());
     }
 
     @Test

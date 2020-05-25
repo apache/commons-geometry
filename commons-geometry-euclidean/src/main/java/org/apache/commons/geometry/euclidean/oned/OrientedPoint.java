@@ -320,7 +320,7 @@ public final class OrientedPoint extends AbstractHyperplane<Vector1D>
         *  <p>This method returns the point for the defining hyperplane.</p>
         */
         @Override
-        public Vector1D getBarycenter() {
+        public Vector1D getCentroid() {
             return hyperplane.getPoint();
         }
 

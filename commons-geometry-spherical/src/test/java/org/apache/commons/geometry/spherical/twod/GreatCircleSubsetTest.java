@@ -257,7 +257,7 @@ public class GreatCircleSubsetTest {
         }
 
         @Override
-        public Point2S getBarycenter() {
+        public Point2S getCentroid() {
             return null;
         }
 

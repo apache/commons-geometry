@@ -307,8 +307,8 @@ public abstract class AbstractRegionBSPTree<
 
     /** {@inheritDoc} */
     @Override
-    public P getBarycenter() {
-        return getRegionSizeProperties().getBarycenter();
+    public P getCentroid() {
+        return getRegionSizeProperties().getCentroid();
     }
 
     /** Helper method implementing the algorithm for splitting a tree by a hyperplane. Subclasses
@@ -890,16 +890,16 @@ public abstract class AbstractRegionBSPTree<
         /** The size of the region. */
         private final double size;
 
-        /** The barycenter of the region. */
-        private final P barycenter;
+        /** The centroid of the region. */
+        private final P centroid;
 
         /** Simple constructor.
          * @param size the region size
-         * @param barycenter the region barycenter
+         * @param centroid the region centroid
          */
-        public RegionSizeProperties(final double size, final P barycenter) {
+        public RegionSizeProperties(final double size, final P centroid) {
             this.size = size;
-            this.barycenter = barycenter;
+            this.centroid = centroid;
         }
 
         /** Get the size of the region.
@@ -909,11 +909,11 @@ public abstract class AbstractRegionBSPTree<
             return size;
         }
 
-        /** Get the barycenter of the region.
-         * @return the barycenter of the region
+        /** Get the centroid of the region.
+         * @return the centroid of the region
          */
-        public P getBarycenter() {
-            return barycenter;
+        public P getCentroid() {
+            return centroid;
         }
     }
 

@@ -143,7 +143,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D getBarycenter() {
+    public Vector2D getCentroid() {
         final List<LineConvexSubset> boundaries = getBoundaries();
 
         double quadrilateralAreaSum = 0.0;
@@ -156,7 +156,7 @@ public class ConvexArea extends AbstractConvexHyperplaneBoundedRegion<Vector2D, 
 
         for (final LineConvexSubset seg : boundaries) {
             if (seg.isInfinite()) {
-                // infinite => no barycenter
+                // infinite => no centroid
                 return null;
             }
 

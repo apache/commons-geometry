@@ -117,8 +117,8 @@ public class DocumentationExamplesTest {
         // convert to a region
         RegionBSPTree2S tree = path.toTree();
 
-        // split in two through the barycenter
-        GreatCircle splitter = GreatCircles.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
+        // split in two through the centroid
+        GreatCircle splitter = GreatCircles.fromPoints(tree.getCentroid(), Point2S.PLUS_K, precision);
         Split<RegionBSPTree2S> split = tree.split(splitter);
 
         // compute some properties for the minus side

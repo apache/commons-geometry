@@ -508,26 +508,26 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
         /** Total computed size of all inside regions. */
         private double size;
 
-        /** Raw sum of the barycenters of each inside interval. */
-        private double rawBarycenterSum;
+        /** Raw sum of the centroids of each inside interval. */
+        private double rawCentroidSum;
 
-        /** The sum of the barycenter of each inside interval, scaled by the size of the interval. */
-        private double scaledBarycenterSum;
+        /** The sum of the centroids of each inside interval, scaled by the size of the interval. */
+        private double scaledCentroidSum;
 
         /** {@inheritDoc} */
         @Override
-        public void accept(OrientedPoint min, OrientedPoint max) {
+        public void accept(final OrientedPoint min, final OrientedPoint max) {
             ++count;
 
             final double minLoc = (min != null) ? min.getLocation() : Double.NEGATIVE_INFINITY;
             final double maxLoc = (max != null) ? max.getLocation() : Double.POSITIVE_INFINITY;
 
             final double intervalSize = maxLoc - minLoc;
-            final double intervalBarycenter = 0.5 * (maxLoc + minLoc);
+            final double intervalCentroid = 0.5 * (maxLoc + minLoc);
 
             size += intervalSize;
-            rawBarycenterSum += intervalBarycenter;
-            scaledBarycenterSum += intervalSize * intervalBarycenter;
+            rawCentroidSum += intervalCentroid;
+            scaledCentroidSum += intervalSize * intervalCentroid;
         }
 
         /** Get the computed properties for the region. This must only be called after
@@ -535,20 +535,20 @@ public final class RegionBSPTree1D extends AbstractRegionBSPTree<Vector1D, Regio
          * @return properties for the region
          */
         public RegionSizeProperties<Vector1D> getRegionSizeProperties() {
-            Vector1D barycenter = null;
+            Vector1D centroid = null;
 
             if (count > 0 && Double.isFinite(size)) {
                 if (size > 0.0) {
                     // use the scaled sum if we have a non-zero size
-                    barycenter = Vector1D.of(scaledBarycenterSum / size);
+                    centroid = Vector1D.of(scaledCentroidSum / size);
                 } else {
                     // use the raw sum if we don't have a size; this will be
                     // the case if the region only contains points with zero size
-                    barycenter = Vector1D.of(rawBarycenterSum / count);
+                    centroid = Vector1D.of(rawCentroidSum / count);
                 }
             }
 
-            return new RegionSizeProperties<>(size, barycenter);
+            return new RegionSizeProperties<>(size, centroid);
         }
     }
 }

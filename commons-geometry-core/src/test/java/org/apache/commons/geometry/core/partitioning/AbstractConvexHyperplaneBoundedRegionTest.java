@@ -589,7 +589,7 @@ public class AbstractConvexHyperplaneBoundedRegionTest {
         }
 
         @Override
-        public TestPoint2D getBarycenter() {
+        public TestPoint2D getCentroid() {
             throw new UnsupportedOperationException();
         }
 

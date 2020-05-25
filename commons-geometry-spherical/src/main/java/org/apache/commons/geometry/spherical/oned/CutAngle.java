@@ -306,7 +306,7 @@ public final class CutAngle extends AbstractHyperplane<Point1S> {
          * <p>This method returns the point for the underlying hyperplane.</p>
          */
         @Override
-        public Point1S getBarycenter() {
+        public Point1S getCentroid() {
             return hyperplane.getPoint();
         }
 

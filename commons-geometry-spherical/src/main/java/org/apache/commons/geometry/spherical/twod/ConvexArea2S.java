@@ -127,39 +127,39 @@ public final class ConvexArea2S extends AbstractConvexHyperplaneBoundedRegion<Po
 
     /** {@inheritDoc} */
     @Override
-    public Point2S getBarycenter() {
-        final Vector3D weighted = getWeightedBarycenterVector();
+    public Point2S getCentroid() {
+        final Vector3D weighted = getWeightedCentroidVector();
         return weighted == null ? null : Point2S.from(weighted);
     }
 
-    /** Returns the weighted vector for the barycenter. This vector is computed by scaling the
+    /** Returns the weighted vector for the centroid. This vector is computed by scaling the
      * pole vector of the great circle of each boundary arc by the size of the arc and summing
-     * the results. By combining the weighted barycenter vectors of multiple areas, a single
-     * barycenter can be computed for the whole group.
-     * @return weighted barycenter vector.
+     * the results. By combining the weighted centroid vectors of multiple areas, a single
+     * centroid can be computed for the whole group.
+     * @return weighted centroid vector.
      * @see <a href="https://archive.org/details/centroidinertiat00broc">
      *  <em>The Centroid and Inertia Tensor for a Spherical Triangle</em> - John E. Brock</a>
      */
-    Vector3D getWeightedBarycenterVector() {
+    Vector3D getWeightedCentroidVector() {
         final List<GreatArc> arcs = getBoundaries();
         switch (arcs.size()) {
         case 0:
-            // full space; no barycenter
+            // full space; no centroid
             return null;
         case 1:
-            // hemisphere; barycenter is the pole of the hemisphere
+            // hemisphere; centroid is the pole of the hemisphere
             final GreatArc singleArc = arcs.get(0);
             return singleArc.getCircle().getPole().withNorm(singleArc.getSize());
         default:
             // 2 or more sides; use an extension of the approach outlined here:
             // https://archive.org/details/centroidinertiat00broc
-            // In short, the barycenter is the sum of the pole vectors of each side
+            // In short, the centroid is the sum of the pole vectors of each side
             // multiplied by their arc lengths.
-            Vector3D barycenter = Vector3D.ZERO;
+            Vector3D centroid = Vector3D.ZERO;
             for (final GreatArc arc : getBoundaries()) {
-                barycenter = barycenter.add(arc.getCircle().getPole().withNorm(arc.getSize()));
+                centroid = centroid.add(arc.getCircle().getPole().withNorm(arc.getSize()));
             }
-            return barycenter;
+            return centroid;
         }
     }
 

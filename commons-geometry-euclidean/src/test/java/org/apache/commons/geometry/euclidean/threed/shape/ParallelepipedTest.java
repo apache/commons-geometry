@@ -61,7 +61,7 @@ public class ParallelepipedTest {
         // assert
         Assert.assertEquals(1, p.getSize(), TEST_EPS);
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getCentroid(), TEST_EPS);
 
         List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
@@ -96,7 +96,7 @@ public class ParallelepipedTest {
         Assert.assertEquals(2, p.getSize(), TEST_EPS);
         Assert.assertEquals(4 + (4 * Math.sqrt(2.5)), p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * invSqrt2, invSqrt2, 2),
-                p.getBarycenter(), TEST_EPS);
+                p.getCentroid(), TEST_EPS);
 
         assertVertices(p,
             Vector3D.of(0, invSqrt2, 1.5),
@@ -128,7 +128,7 @@ public class ParallelepipedTest {
         Assert.assertEquals(2, p.getSize(), TEST_EPS);
         Assert.assertEquals(4 + (4 * Math.sqrt(2.5)), p.getBoundarySize(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2 * invSqrt2, invSqrt2, -2),
-                p.getBarycenter(), TEST_EPS);
+                p.getCentroid(), TEST_EPS);
 
         assertVertices(p,
             Vector3D.of(0, invSqrt2, -1.5),
@@ -233,7 +233,7 @@ public class ParallelepipedTest {
         // assert
         Assert.assertEquals(1, p.getSize(), TEST_EPS);
         Assert.assertEquals(6, p.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getCentroid(), TEST_EPS);
 
         List<PlaneConvexSubset> boundaries = p.getBoundaries();
         Assert.assertEquals(6, boundaries.size());
@@ -266,7 +266,7 @@ public class ParallelepipedTest {
         // assert
         Assert.assertEquals(6, p.getSize(), TEST_EPS);
         Assert.assertEquals(22, p.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, -1), p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(1, 2, -1), p.getCentroid(), TEST_EPS);
 
         assertVertices(p,
             Vector3D.of(0, 1.5, 0.5),
@@ -294,7 +294,7 @@ public class ParallelepipedTest {
         // assert
         Assert.assertEquals(0.125, p.getSize(), TEST_EPS);
         Assert.assertEquals(1.5, p.getBoundarySize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.ZERO, p.getCentroid(), TEST_EPS);
 
         assertVertices(p,
             Vector3D.of(-0.25, -0.25, -0.25),
@@ -319,7 +319,7 @@ public class ParallelepipedTest {
 
         // assert
         Assert.assertEquals(27, tree.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2.5, 3.5, 4.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(2.5, 3.5, 4.5), tree.getCentroid(), TEST_EPS);
     }
 
     private static void assertVertices(Parallelepiped p, Vector3D... vertices) {

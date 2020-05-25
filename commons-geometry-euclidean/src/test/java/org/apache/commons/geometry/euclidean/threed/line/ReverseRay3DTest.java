@@ -56,7 +56,7 @@ public class ReverseRay3DTest {
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
 
-        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getCentroid());
         Assert.assertNull(revRay.getBounds());
     }
 
@@ -94,7 +94,7 @@ public class ReverseRay3DTest {
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
 
-        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getCentroid());
         Assert.assertNull(revRay.getBounds());
     }
 
@@ -137,7 +137,7 @@ public class ReverseRay3DTest {
 
         GeometryTestUtils.assertPositiveInfinity(revRay.getSize());
 
-        Assert.assertNull(revRay.getBarycenter());
+        Assert.assertNull(revRay.getCentroid());
         Assert.assertNull(revRay.getBounds());
     }
 

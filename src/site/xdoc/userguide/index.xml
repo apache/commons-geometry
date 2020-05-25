@@ -350,7 +350,7 @@ currentNode.insertCut(Lines.fromPointAndDirection(Vector2D.of(0, 1), Vector2D.Un
 int count = tree.count(); // number of nodes in the tree = 11
 int height = tree.height(); // height of the tree = 3
 double size = tree.getSize(); // size of the region = 1
-Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
+Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
         </source>
 
         <h5>Standard BSP Tree Region Creation</h5>
@@ -376,7 +376,7 @@ tree.insert(Arrays.asList(
 int count = tree.count(); // number of nodes in the tree = 9
 int height = tree.height(); // height of the tree = 4
 double size = tree.getSize(); // size of the region = 1
-Vector2D barycenter = tree.getBarycenter(); // region barycenter = (0.5, 0.5)
+Vector2D centroid = tree.getCentroid(); // region centroid = (0.5, 0.5)
         </source>
 
       </subsection>
@@ -666,7 +666,7 @@ tree.union(copy);
 
 // compute some properties
 double size = tree.getSize(); // 1.75
-Vector2D center = tree.getBarycenter(); // (0.75, 0.75)
+Vector2D centroid = tree.getCentroid(); // (0.75, 0.75)
 
 // get a line path representing the boundary; a list is returned since trees
 // can represent disjoint regions
@@ -831,8 +831,8 @@ int[][] faceIndices = {
 List&lt;ConvexPolygon3D&gt; faces = Planes.indexedConvexPolygons(vertices, faceIndices, precision);
 RegionBSPTree3D tree = RegionBSPTree3D.from(faces);
 
-// split the region through its barycenter along a diagonal of the base
-Plane cutter = Planes.fromPointAndNormal(tree.getBarycenter(), Vector3D.Unit.from(1, 1, 0), precision);
+// split the region through its centroid along a diagonal of the base
+Plane cutter = Planes.fromPointAndNormal(tree.getCentroid(), Vector3D.Unit.from(1, 1, 0), precision);
 Split&lt;RegionBSPTree3D&gt; split = tree.split(cutter);
 
 // compute some properties for the minus side of the split and convert back to hyperplane subsets
@@ -1059,8 +1059,8 @@ GreatArcPath path = GreatArcPath.builder(precision)
 // convert to a region
 RegionBSPTree2S tree = path.toTree();
 
-// split in two through the barycenter
-GreatCircle splitter = GreatCircles.fromPoints(tree.getBarycenter(), Point2S.PLUS_K, precision);
+// split in two through the centroid
+GreatCircle splitter = GreatCircles.fromPoints(tree.getCentroid(), Point2S.PLUS_K, precision);
 Split&lt;RegionBSPTree2S&gt; split = tree.split(splitter);
 
 // compute some properties for the minus side

@@ -593,7 +593,7 @@ public class EmbeddedTreePlaneSubsetTest {
 
         // assert
         Assert.assertEquals(4, ps.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), ps.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(0, 0, 1), ps.getCentroid(), TEST_EPS);
 
         Bounds3D bounds = ps.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, -1, 1), bounds.getMin(), TEST_EPS);
@@ -620,7 +620,7 @@ public class EmbeddedTreePlaneSubsetTest {
 
         // assert
         Assert.assertEquals(2, ps.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0.5, 1), ps.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, 0.5, 1), ps.getCentroid(), TEST_EPS);
 
         Bounds3D bounds = ps.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-2, 0, 1), bounds.getMin(), TEST_EPS);
@@ -647,7 +647,7 @@ public class EmbeddedTreePlaneSubsetTest {
 
         // assert
         Assert.assertEquals(2, ps.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -1, 1), ps.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -1, 1), ps.getCentroid(), TEST_EPS);
 
         Bounds3D bounds = ps.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-1, -2, 1), bounds.getMin(), TEST_EPS);

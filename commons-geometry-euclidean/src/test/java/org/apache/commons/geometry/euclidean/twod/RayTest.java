@@ -56,7 +56,7 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getCentroid());
         Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
@@ -99,7 +99,7 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getCentroid());
         Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);
@@ -150,7 +150,7 @@ public class RayTest {
         GeometryTestUtils.assertPositiveInfinity(ray.getSubspaceEnd());
 
         GeometryTestUtils.assertPositiveInfinity(ray.getSize());
-        Assert.assertNull(ray.getBarycenter());
+        Assert.assertNull(ray.getCentroid());
         Assert.assertNull(ray.getBounds());
 
         EuclideanTestUtils.assertCoordinatesEqual(p0.vectorTo(p1), ray.getDirection(), TEST_EPS);

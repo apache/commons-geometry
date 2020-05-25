@@ -56,12 +56,12 @@ public abstract class LineSubset3D implements RegionEmbedding<Vector3D, Vector1D
         return line.toSubspace(pt);
     }
 
-    /** Get the center of the line subset, or null if the subset is empty of
-     * infinite.
-     * @return the center of the line subset, or null if the subset is empty of
+    /** Get the centroid, or geometric center, of the line subset or null if
+     * the subset is empty or infinite.
+     * @return the centroid of the line subset, or null if the subset is empty or
      *      infinite
      */
-    public abstract Vector3D getBarycenter();
+    public abstract Vector3D getCentroid();
 
     /** Get the 3D bounding box of the line subset or null if the subset is
      * empty or infinite.

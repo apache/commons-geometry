@@ -110,7 +110,7 @@ public abstract class AbstractNSphere<V extends EuclideanVector<V>> implements R
      * <p>This method is an alias for {@link #getCenter()}.</p>
      */
     @Override
-    public V getBarycenter() {
+    public V getCentroid() {
         return getCenter();
     }
 

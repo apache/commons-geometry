@@ -314,7 +314,7 @@ public class AbstractPlaneSubsetTest {
         }
 
         @Override
-        public Vector3D getBarycenter() {
+        public Vector3D getCentroid() {
             throw new UnsupportedOperationException();
         }
 

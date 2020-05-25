@@ -52,7 +52,7 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(4 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        Assert.assertNull(area.getBarycenter());
+        Assert.assertNull(area.getCentroid());
 
         Assert.assertEquals(0, area.getBoundaries().size());
 
@@ -72,7 +72,7 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(0, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(4 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        Assert.assertNull(area.getBarycenter());
+        Assert.assertNull(area.getCentroid());
 
         Assert.assertEquals(0, area.getBoundaries().size());
 
@@ -95,8 +95,8 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(2 * PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, area.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(area);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_J, area.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(area);
 
         Assert.assertEquals(1, area.getBoundaries().size());
         GreatArc arc = area.getBoundaries().get(0);
@@ -127,8 +127,9 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0.125 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO), area.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(area);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0.125 * PlaneAngleRadians.PI, PlaneAngleRadians.PI_OVER_TWO),
+                area.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(2, arcs.size());
@@ -162,8 +163,8 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(area);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(2, arcs.size());
@@ -201,10 +202,10 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -252,10 +253,10 @@ public class ConvexArea2STest {
         double size = PlaneAngleRadians.TWO_PI - a.angle(b) - b.angle(c) - c.angle(a);
         Assert.assertEquals(size, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(p1, p2, p3);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(p1, p2, p3);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -299,7 +300,7 @@ public class ConvexArea2STest {
         double size = 2 * PlaneAngleRadians.PI - c1.angle(c2) - c2.angle(c3) - c3.angle(c4) - c4.angle(c1);
         Assert.assertEquals(size, area.getSize(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(4, arcs.size());
@@ -346,10 +347,10 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.MINUS_I, Point2S.MINUS_K, Point2S.MINUS_J);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.MINUS_I, Point2S.MINUS_K, Point2S.MINUS_J);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -391,8 +392,8 @@ public class ConvexArea2STest {
         Assert.assertFalse(area.isEmpty());
         Assert.assertEquals(2 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI, area.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getBarycenter(), TEST_EPS);
-        checkBarycenterConsistency(area);
+        SphericalTestUtils.assertPointsEq(Point2S.of(0, 0.25 * PlaneAngleRadians.PI), area.getCentroid(), TEST_EPS);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(2, arcs.size());
@@ -428,10 +429,10 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -465,8 +466,8 @@ public class ConvexArea2STest {
         // assert
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
         List<Point2S> vertices = area.getBoundaryPath().getVertices();
         Assert.assertEquals(4, vertices.size());
@@ -504,10 +505,10 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.PLUS_I, Point2S.PLUS_J, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -611,10 +612,10 @@ public class ConvexArea2STest {
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, area.getBoundarySize(), TEST_EPS);
         Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, area.getSize(), TEST_EPS);
 
-        Point2S expectedBarycenter = triangleBarycenter(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
-        SphericalTestUtils.assertPointsEq(expectedBarycenter, area.getBarycenter(), TEST_EPS);
+        Point2S expectedCentroid = triangleCentroid(Point2S.MINUS_J, Point2S.PLUS_I, Point2S.PLUS_K);
+        SphericalTestUtils.assertPointsEq(expectedCentroid, area.getCentroid(), TEST_EPS);
 
-        checkBarycenterConsistency(area);
+        checkCentroidConsistency(area);
 
         List<GreatArc> arcs = sortArcs(area.getBoundaries());
         Assert.assertEquals(3, arcs.size());
@@ -755,7 +756,7 @@ public class ConvexArea2STest {
         Assert.assertFalse(tree.isEmpty());
 
         Assert.assertEquals(area.getSize(), tree.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(area.getBarycenter(), tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(area.getCentroid(), tree.getCentroid(), TEST_EPS);
     }
 
     private static List<GreatArc> sortArcs(List<GreatArc> arcs) {
@@ -767,8 +768,8 @@ public class ConvexArea2STest {
         return result;
     }
 
-    private static Point2S triangleBarycenter(Point2S p1, Point2S p2, Point2S p3) {
-        // compute the barycenter as the sum of the cross product of each point pair weighted by
+    private static Point2S triangleCentroid(Point2S p1, Point2S p2, Point2S p3) {
+        // compute the centroid as the sum of the cross product of each point pair weighted by
         // the angle between the points
         Vector3D v1 = p1.getVector();
         Vector3D v2 = p2.getVector();
@@ -801,16 +802,16 @@ public class ConvexArea2STest {
         }
     }
 
-    private static void checkBarycenterConsistency(ConvexArea2S area) {
-        Point2S barycenter = area.getBarycenter();
+    private static void checkCentroidConsistency(ConvexArea2S area) {
+        Point2S centroid = area.getCentroid();
         double size = area.getSize();
 
-        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, barycenter);
+        SphericalTestUtils.checkClassify(area, RegionLocation.INSIDE, centroid);
 
-        GreatCircle circle = GreatCircles.fromPole(barycenter.getVector(), TEST_PRECISION);
+        GreatCircle circle = GreatCircles.fromPole(centroid.getVector(), TEST_PRECISION);
         for (double az = 0; az <= PlaneAngleRadians.TWO_PI; az += 0.2) {
             Point2S pt = circle.toSpace(Point1S.of(az));
-            GreatCircle splitter = GreatCircles.fromPoints(barycenter, pt, TEST_PRECISION);
+            GreatCircle splitter = GreatCircles.fromPoints(centroid, pt, TEST_PRECISION);
 
             Split<ConvexArea2S> split = area.split(splitter);
 
@@ -822,11 +823,11 @@ public class ConvexArea2STest {
             ConvexArea2S plus = split.getPlus();
             double plusSize = plus.getSize();
 
-            Point2S computedBarycenter = Point2S.from(minus.getWeightedBarycenterVector()
-                    .add(plus.getWeightedBarycenterVector()));
+            Point2S computedCentroid = Point2S.from(minus.getWeightedCentroidVector()
+                    .add(plus.getWeightedCentroidVector()));
 
             Assert.assertEquals(size, minusSize + plusSize, TEST_EPS);
-            SphericalTestUtils.assertPointsEq(barycenter, computedBarycenter, TEST_EPS);
+            SphericalTestUtils.assertPointsEq(centroid, computedCentroid, TEST_EPS);
         }
     }
 }

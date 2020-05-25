@@ -42,12 +42,19 @@ public interface Region<P extends Point<P>> extends Sized {
      */
     double getBoundarySize();
 
-    /** Get the barycenter of the region or null if no barycenter exists or
-     * one exists but is not unique. A barycenter will not exist for empty or
+    /** Get the centroid, or geometric center, of the region or null if no centroid
+     * exists or one exists but is not unique. A centroid will not exist for empty or
      * infinite regions.
-     * @return the barycenter of the region or null if no unique barycenter exists
+     *
+     * <p>The centroid of a geometric object is defined as the mean position of
+     * all points in the object, including interior points, vertices, and other points
+     * lying on the boundary. If a physical object has a uniform density, then its center
+     * of mass is the same as its geometric centroid.
+     * </p>
+     * @return the centroid of the region or null if no unique centroid exists
+     * @see <a href="https://en.wikipedia.org/wiki/Centroid">Centroid</a>
      */
-    P getBarycenter();
+    P getCentroid();
 
     /** Classify the given point with respect to the region.
      * @param pt the point to classify

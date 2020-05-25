@@ -45,7 +45,7 @@
 // construct a precision context to handle floating-point comparisons
 DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-6);
 
-// create a binary space partitioning tree representing the unit cube
+// create a binary space partitioning (BSP) tree representing the unit cube
 // centered on the origin
 RegionBSPTree3D region = Parallelepiped.builder(precision)
         .setPosition(Vector3D.ZERO)
@@ -62,7 +62,7 @@ region.intersection(copy);
 
 // compute some properties of the intersection region
 double size = region.getSize(); // 0.8284271247461903
-Vector3D center = region.getBarycenter(); // (0, 0, 0)
+Vector3D centroid = region.getCentroid(); // (0, 0, 0)
 </source>
     </section>
 

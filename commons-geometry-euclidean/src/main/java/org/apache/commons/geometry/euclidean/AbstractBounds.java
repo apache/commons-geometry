@@ -66,10 +66,10 @@ public abstract class AbstractBounds<
         return min.vectorTo(max);
     }
 
-    /** Return the center of the bounding box.
-     * @return the center of the bounding box
+    /** Get the centroid, or geometric center, of the bounding box.
+     * @return the centroid of the bounding box
      */
-    public P getBarycenter() {
+    public P getCentroid() {
         return min.lerp(max, 0.5);
     }
 

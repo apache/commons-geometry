@@ -402,7 +402,7 @@ public class CutAngleTest {
         Assert.assertFalse(sub.isInfinite());
         Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEqual(Point1S.of(1), sub.getCentroid(), TEST_EPS);
 
         List<? extends HyperplaneConvexSubset<Point1S>> list = sub.toConvex();
         Assert.assertEquals(1, list.size());

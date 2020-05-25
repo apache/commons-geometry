@@ -99,7 +99,7 @@ public class EmbeddedTreeLineSubset3DTest {
         Assert.assertFalse(full.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(full.getSize());
-        Assert.assertNull(full.getBarycenter());
+        Assert.assertNull(full.getCentroid());
         Assert.assertNull(full.getBounds());
     }
 
@@ -113,7 +113,7 @@ public class EmbeddedTreeLineSubset3DTest {
         Assert.assertTrue(empty.isFinite());
 
         Assert.assertEquals(0, empty.getSize(), TEST_EPS);
-        Assert.assertNull(empty.getBarycenter());
+        Assert.assertNull(empty.getCentroid());
         Assert.assertNull(empty.getBounds());
     }
 
@@ -128,7 +128,7 @@ public class EmbeddedTreeLineSubset3DTest {
         Assert.assertFalse(half.isFinite());
 
         GeometryTestUtils.assertPositiveInfinity(half.getSize());
-        Assert.assertNull(half.getBarycenter());
+        Assert.assertNull(half.getCentroid());
         Assert.assertNull(half.getBounds());
     }
 
@@ -147,7 +147,7 @@ public class EmbeddedTreeLineSubset3DTest {
         Assert.assertTrue(sub.isFinite());
 
         Assert.assertEquals(2 * sqrt2, sub.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, 1), sub.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-0.5, -0.5, 1), sub.getCentroid(), TEST_EPS);
 
         Bounds3D bounds = sub.getBounds();
         EuclideanTestUtils.assertCoordinatesEqual(Vector3D.of(-2, -2, 1), bounds.getMin(), TEST_EPS);

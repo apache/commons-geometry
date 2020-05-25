@@ -51,7 +51,7 @@ public class RegionBSPTree1STest {
 
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class RegionBSPTree1STest {
 
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class RegionBSPTree1STest {
 
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class RegionBSPTree1STest {
 
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RegionBSPTree1STest {
 
         Assert.assertEquals(0, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class RegionBSPTree1STest {
             Assert.assertEquals(PlaneAngleRadians.PI_OVER_TWO, tree.getSize(), TEST_EPS);
             Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
             Assert.assertEquals(PlaneAngleRadians.normalizeBetweenZeroAndTwoPi(theta + (0.25 * PlaneAngleRadians.PI)),
-                    tree.getBarycenter().getNormalizedAzimuth(), TEST_EPS);
+                    tree.getCentroid().getNormalizedAzimuth(), TEST_EPS);
         }
     }
 
@@ -676,7 +676,7 @@ public class RegionBSPTree1STest {
         // act/assert
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.25 * PlaneAngleRadians.PI, tree.getBarycenter().getAzimuth(), TEST_EPS);
+        Assert.assertEquals(0.25 * PlaneAngleRadians.PI, tree.getCentroid().getAzimuth(), TEST_EPS);
     }
 
     @Test
@@ -688,7 +688,7 @@ public class RegionBSPTree1STest {
         // act/assert
         Assert.assertEquals(1.5 * PlaneAngleRadians.PI, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(1.25 * PlaneAngleRadians.PI, tree.getBarycenter().getAzimuth(), TEST_EPS);
+        Assert.assertEquals(1.25 * PlaneAngleRadians.PI, tree.getCentroid().getAzimuth(), TEST_EPS);
     }
 
     @Test
@@ -701,7 +701,7 @@ public class RegionBSPTree1STest {
         // act/assert
         Assert.assertEquals(0.2, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertEquals(0.15, tree.getBarycenter().getAzimuth(), TEST_EPS);
+        Assert.assertEquals(0.15, tree.getCentroid().getAzimuth(), TEST_EPS);
     }
 
     @Test
@@ -715,9 +715,9 @@ public class RegionBSPTree1STest {
         Assert.assertEquals(0.6, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
 
-        Vector2D barycenterVector = Point1S.of(0.1).getVector().withNorm(0.2)
+        Vector2D centroidVector = Point1S.of(0.1).getVector().withNorm(0.2)
                 .add(Point1S.of(0.5).getVector().withNorm(0.4));
-        Assert.assertEquals(Point1S.from(barycenterVector).getAzimuth(), tree.getBarycenter().getAzimuth(), TEST_EPS);
+        Assert.assertEquals(Point1S.from(centroidVector).getAzimuth(), tree.getCentroid().getAzimuth(), TEST_EPS);
     }
 
     @Test
@@ -730,7 +730,7 @@ public class RegionBSPTree1STest {
         // act/assert
         Assert.assertEquals(4, tree.getSize(), TEST_EPS);
         Assert.assertEquals(0, tree.getBoundarySize(), TEST_EPS);
-        Assert.assertNull(tree.getBarycenter()); // no unique barycenter exists
+        Assert.assertNull(tree.getCentroid()); // no unique centroid exists
     }
 
     @Test

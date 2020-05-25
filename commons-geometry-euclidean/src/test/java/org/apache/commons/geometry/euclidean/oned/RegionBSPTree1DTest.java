@@ -962,7 +962,7 @@ public class RegionBSPTree1DTest {
     }
 
     @Test
-    public void testGetBarycenter_infinite() {
+    public void testGetCentroid_infinite() {
         // arrange
         RegionBSPTree1D full = RegionBSPTree1D.full();
 
@@ -973,22 +973,22 @@ public class RegionBSPTree1DTest {
         negHalfSpace.getRoot().cut(OrientedPoints.createPositiveFacing(3.0, TEST_PRECISION));
 
         // act/assert
-        Assert.assertNull(full.getBarycenter());
-        Assert.assertNull(posHalfSpace.getBarycenter());
-        Assert.assertNull(negHalfSpace.getBarycenter());
+        Assert.assertNull(full.getCentroid());
+        Assert.assertNull(posHalfSpace.getCentroid());
+        Assert.assertNull(negHalfSpace.getCentroid());
     }
 
     @Test
-    public void testGetBarycenter_empty() {
+    public void testGetCentroid_empty() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
 
         // act/assert
-        Assert.assertNull(tree.getBarycenter());
+        Assert.assertNull(tree.getCentroid());
     }
 
     @Test
-    public void testGetBarycenter_exactPoints() {
+    public void testGetCentroid_exactPoints() {
         // arrange
         RegionBSPTree1D singlePoint = RegionBSPTree1D.empty();
         singlePoint.add(Interval.of(1, 1, TEST_PRECISION));
@@ -999,12 +999,12 @@ public class RegionBSPTree1DTest {
         multiplePoints.add(Interval.of(6, 6, TEST_PRECISION));
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), singlePoint.getBarycenter(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), multiplePoints.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1), singlePoint.getCentroid(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), multiplePoints.getCentroid(), TEST_EPS);
     }
 
     @Test
-    public void testGetBarycenter_pointsWithinPrecision() {
+    public void testGetCentroid_pointsWithinPrecision() {
      // arrange
         DoublePrecisionContext precision = new EpsilonDoublePrecisionContext(1e-1);
 
@@ -1017,23 +1017,23 @@ public class RegionBSPTree1DTest {
         multiplePoints.add(Interval.of(6, 6.02, precision));
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.01), singlePoint.getBarycenter(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(6.01 / 3), multiplePoints.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.01), singlePoint.getCentroid(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(6.01 / 3), multiplePoints.getCentroid(), TEST_EPS);
     }
 
     @Test
-    public void testGetBarycenter_nonEmptyIntervals() {
+    public void testGetCentroid_nonEmptyIntervals() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
         tree.add(Interval.of(3, 5, TEST_PRECISION));
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(9.5 / 3), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(9.5 / 3), tree.getCentroid(), TEST_EPS);
     }
 
     @Test
-    public void testGetBarycenter_complementedRegion() {
+    public void testGetCentroid_complementedRegion() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(Double.NEGATIVE_INFINITY, 2, TEST_PRECISION));
@@ -1042,11 +1042,11 @@ public class RegionBSPTree1DTest {
         tree.complement();
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(3), tree.getCentroid(), TEST_EPS);
     }
 
     @Test
-    public void testGetBarycenter_intervalWithPoints() {
+    public void testGetCentroid_intervalWithPoints() {
         // arrange
         RegionBSPTree1D tree = RegionBSPTree1D.empty();
         tree.add(Interval.of(1, 2, TEST_PRECISION));
@@ -1054,7 +1054,7 @@ public class RegionBSPTree1DTest {
         tree.add(Interval.of(5, 5, TEST_PRECISION));
 
         // act/assert
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.5), tree.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(1.5), tree.getCentroid(), TEST_EPS);
     }
 
     @Test

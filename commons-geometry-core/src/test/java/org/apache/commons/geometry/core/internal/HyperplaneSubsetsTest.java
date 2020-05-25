@@ -112,7 +112,7 @@ public class HyperplaneSubsetsTest {
         }
 
         @Override
-        public TestPoint1D getBarycenter() {
+        public TestPoint1D getCentroid() {
             throw new UnsupportedOperationException();
         }
 

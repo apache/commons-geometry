@@ -56,7 +56,7 @@ public class SphereTest {
         Assert.assertFalse(s.isEmpty());
 
         Assert.assertSame(center, s.getCenter());
-        Assert.assertSame(center, s.getBarycenter());
+        Assert.assertSame(center, s.getCentroid());
 
         Assert.assertEquals(3, s.getRadius(), 0.0);
 
@@ -345,7 +345,7 @@ public class SphereTest {
         double eps = 0.1;
         Assert.assertEquals(s.getSize(), tree.getSize(), eps);
         Assert.assertEquals(s.getBoundarySize(), tree.getBoundarySize(), eps);
-        EuclideanTestUtils.assertCoordinatesEqual(s.getBarycenter(), tree.getBarycenter(), eps);
+        EuclideanTestUtils.assertCoordinatesEqual(s.getCentroid(), tree.getCentroid(), eps);
     }
 
     @Test
@@ -522,8 +522,7 @@ public class SphereTest {
             }
         }
 
-
-        // sphere must contain barycenter
-        EuclideanTestUtils.assertRegionLocation(s, RegionLocation.INSIDE, tree.getBarycenter());
+        // sphere must contain centroid
+        EuclideanTestUtils.assertRegionLocation(s, RegionLocation.INSIDE, tree.getCentroid());
     }
 }

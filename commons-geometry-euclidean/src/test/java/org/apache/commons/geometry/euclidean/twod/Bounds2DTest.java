@@ -54,7 +54,7 @@ public class Bounds2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMax(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, b.getDiagonal(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, b.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p1, b.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class Bounds2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(0, 5), b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 6), b.getMax(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 1), b.getDiagonal(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 5.5), b.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1.5, 5.5), b.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class Bounds2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(p1, b.getMax(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.ZERO, b.getDiagonal(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(p1, b.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(p1, b.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class Bounds2DTest {
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 4), b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 6), b.getMax(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 2), b.getDiagonal(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 5), b.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(2, 5), b.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class Bounds2DTest {
 
         // act/assert
         assertContainsStrict(b, true,
-                b.getBarycenter(),
+                b.getCentroid(),
                 Vector2D.of(0, 4), Vector2D.of(2, 6),
                 Vector2D.of(1, 5),
                 Vector2D.of(0, 5), Vector2D.of(2, 5),
@@ -207,7 +207,7 @@ public class Bounds2DTest {
 
         // act/assert
         assertContainsWithPrecision(b, true,
-                b.getBarycenter(),
+                b.getCentroid(),
                 Vector2D.of(1, 5), Vector2D.of(0, 4), Vector2D.of(2, 6),
                 Vector2D.of(0, 5), Vector2D.of(2, 5),
                 Vector2D.of(1, 4), Vector2D.of(1, 6),
@@ -346,7 +346,7 @@ public class Bounds2DTest {
 
         // assert
         Assert.assertEquals(4, p.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 5), p.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 5), p.getCentroid(), TEST_EPS);
     }
 
     @Test
@@ -468,7 +468,7 @@ public class Bounds2DTest {
         // assert
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(1, 6), b.getMin(), TEST_EPS);
         EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(5, 10), b.getMax(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 8), b.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector2D.of(3, 8), b.getCentroid(), TEST_EPS);
     }
 
     @Test

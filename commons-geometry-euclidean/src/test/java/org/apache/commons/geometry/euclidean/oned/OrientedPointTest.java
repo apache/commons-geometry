@@ -434,7 +434,7 @@ public class OrientedPointTest {
         Assert.assertFalse(sub.isInfinite());
         Assert.assertTrue(sub.isFinite());
         Assert.assertEquals(0.0, sub.getSize(), TEST_EPS);
-        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), sub.getBarycenter(), TEST_EPS);
+        EuclideanTestUtils.assertCoordinatesEqual(Vector1D.of(2), sub.getCentroid(), TEST_EPS);
 
         List<? extends HyperplaneConvexSubset<Vector1D>> list = sub.toConvex();
         Assert.assertEquals(1, list.size());

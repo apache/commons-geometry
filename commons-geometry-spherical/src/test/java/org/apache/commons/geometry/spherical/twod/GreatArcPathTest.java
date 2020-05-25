@@ -335,7 +335,7 @@ public class GreatArcPathTest {
         Assert.assertFalse(tree.isEmpty());
 
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, tree.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(Point2S.PLUS_K, tree.getCentroid(), TEST_EPS);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.PLUS_K);
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE, Point2S.MINUS_K);
@@ -363,7 +363,7 @@ public class GreatArcPathTest {
                 .add(Point2S.PLUS_J.getVector())
                 .add(Point2S.PLUS_K.getVector()));
 
-        SphericalTestUtils.assertPointsEq(bc, tree.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(bc, tree.getCentroid(), TEST_EPS);
 
         SphericalTestUtils.checkClassify(tree, RegionLocation.INSIDE, Point2S.of(0.5, 0.5));
         SphericalTestUtils.checkClassify(tree, RegionLocation.OUTSIDE,

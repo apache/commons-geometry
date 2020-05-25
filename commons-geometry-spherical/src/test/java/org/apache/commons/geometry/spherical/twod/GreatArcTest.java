@@ -55,7 +55,7 @@ public class GreatArcTest {
         Assert.assertNull(arc.getEndPoint());
 
         Assert.assertEquals(PlaneAngleRadians.TWO_PI, arc.getSize(), TEST_EPS);
-        Assert.assertNull(arc.getBarycenter());
+        Assert.assertNull(arc.getCentroid());
 
         for (double az = 0; az < PlaneAngleRadians.TWO_PI; az += 0.1) {
             checkClassify(arc, RegionLocation.INSIDE, Point2S.of(az, PlaneAngleRadians.PI_OVER_TWO));
@@ -373,7 +373,7 @@ public class GreatArcTest {
         checkClassify(arc, RegionLocation.OUTSIDE, mid.antipodal());
 
         Assert.assertEquals(start.distance(end), arc.getSize(), TEST_EPS);
-        SphericalTestUtils.assertPointsEq(mid, arc.getBarycenter(), TEST_EPS);
+        SphericalTestUtils.assertPointsEq(mid, arc.getCentroid(), TEST_EPS);
     }
 
     private static void checkGreatCircle(GreatCircle circle, Vector3D pole, Vector3D x) {

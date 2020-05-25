@@ -85,7 +85,7 @@ public final class Segment extends LineConvexSubset {
 
     /** {@inheritDoc} */
     @Override
-    public Vector2D getBarycenter() {
+    public Vector2D getCentroid() {
         return startPoint.lerp(endPoint, 0.5);
     }
 

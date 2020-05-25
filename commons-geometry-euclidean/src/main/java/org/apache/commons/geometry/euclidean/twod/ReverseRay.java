@@ -86,7 +86,7 @@ public final class ReverseRay extends LineConvexSubset {
      * <p>This method always returns {@code null}.</p>
      */
     @Override
-    public Vector2D getBarycenter() {
+    public Vector2D getCentroid() {
         return null;
     }
 

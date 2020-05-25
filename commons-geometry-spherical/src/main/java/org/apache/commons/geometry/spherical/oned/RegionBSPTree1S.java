@@ -343,7 +343,7 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
         }
 
         double size = 0;
-        Vector2D scaledBarycenterSum = Vector2D.ZERO;
+        Vector2D scaledCentroidSum = Vector2D.ZERO;
 
         double intervalSize;
 
@@ -351,16 +351,16 @@ public class RegionBSPTree1S extends AbstractRegionBSPTree<Point1S, RegionBSPTre
             intervalSize = interval.getSize();
 
             size += intervalSize;
-            scaledBarycenterSum = scaledBarycenterSum.add(interval.getBarycenter().getVector().withNorm(intervalSize));
+            scaledCentroidSum = scaledCentroidSum.add(interval.getCentroid().getVector().withNorm(intervalSize));
         }
 
         final DoublePrecisionContext precision = ((CutAngle) getRoot().getCutHyperplane()).getPrecision();
 
-        final Point1S barycenter = scaledBarycenterSum.eq(Vector2D.ZERO, precision) ?
+        final Point1S centroid = scaledCentroidSum.eq(Vector2D.ZERO, precision) ?
                  null :
-                 Point1S.from(scaledBarycenterSum);
+                 Point1S.from(scaledCentroidSum);
 
-        return new RegionSizeProperties<>(size, barycenter);
+        return new RegionSizeProperties<>(size, centroid);
     }
 
     /** {@inheritDoc} */

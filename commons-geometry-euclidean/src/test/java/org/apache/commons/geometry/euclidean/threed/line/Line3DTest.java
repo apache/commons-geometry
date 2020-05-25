@@ -360,7 +360,7 @@ public class Line3DTest {
         Assert.assertNull(span.getStartPoint());
         Assert.assertNull(span.getEndPoint());
 
-        Assert.assertNull(span.getBarycenter());
+        Assert.assertNull(span.getCentroid());
         Assert.assertNull(span.getBounds());
 
         GeometryTestUtils.assertNegativeInfinity(span.getSubspaceStart());

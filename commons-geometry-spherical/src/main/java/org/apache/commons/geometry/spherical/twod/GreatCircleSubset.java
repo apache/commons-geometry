@@ -88,10 +88,10 @@ public abstract class GreatCircleSubset implements HyperplaneSubset<Point2S>, Re
 
     /** {@inheritDoc} */
     @Override
-    public Point2S getBarycenter() {
-        final Point1S subspaceBarycenter = getSubspaceRegion().getBarycenter();
-        if (subspaceBarycenter != null) {
-            return getCircle().toSpace(subspaceBarycenter);
+    public Point2S getCentroid() {
+        final Point1S subspaceCentroid = getSubspaceRegion().getCentroid();
+        if (subspaceCentroid != null) {
+            return getCircle().toSpace(subspaceCentroid);
         }
         return null;
     }
